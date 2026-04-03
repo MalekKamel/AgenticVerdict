@@ -1,264 +1,647 @@
-# Phase 0: Foundation - Overview
+# Phase 0: Foundation — Overview
 
-## Phase Summary
-
-Phase 0 establishes the foundational infrastructure and architectural patterns for the AgenticVerdict multi-platform judgment form system. This phase creates the bedrock upon which all subsequent phases will build, focusing on infrastructure, core domain models, and essential architectural patterns.
-
-## Phase Objectives
-
-### Primary Objectives
-
-1. **Establish Monorepo Infrastructure**
-   - Set up a scalable monorepo structure using modern tooling
-   - Configure build, test, and development tooling
-   - Establish code organization patterns and package boundaries
-
-2. **Define Core Domain Models**
-   - Create TypeScript domain models representing core business entities
-   - Establish type safety across the application
-   - Define interfaces for judgment forms, cases, users, and platforms
-
-3. **Build Configuration Foundation**
-   - Implement schema-based configuration system
-   - Create validation infrastructure for all configuration types
-   - Establish configuration loading and caching mechanisms
-
-4. **Establish Data Layer Foundation**
-   - Design database schema foundations
-   - Set up ORM with type-safe query builders
-   - Create migration infrastructure and seed data mechanisms
-
-5. **Implement Multi-Tenancy Core**
-   - Design tenant isolation architecture
-   - Create tenant context management
-   - Establish tenant-specific data routing
-
-6. **Build Platform Adapter Infrastructure**
-   - Define platform adapter interfaces
-   - Create base adapter classes with common functionality
-   - Establish platform integration patterns
-
-7. **Establish Agent Runtime Foundation**
-   - Set up AI agent framework integration
-   - Create agent lifecycle management
-   - Implement agent orchestration base patterns
-
-8. **Implement Security Foundation**
-   - Set up authentication and authorization infrastructure
-   - Implement password hashing and JWT token management
-   - Create role-based access control (RBAC) foundation
-
-9. **Build Observability Infrastructure**
-   - Set up structured logging
-   - Implement metrics collection foundation
-   - Create distributed tracing setup
-   - Establish health check endpoints
-
-10. **Create Internationalization Infrastructure**
-    - Set up i18n framework with message extraction
-    - Create translation management system
-    - Establish locale detection and routing
-
-## Success Criteria
-
-### Technical Criteria
-
-- [ ] Monorepo builds successfully across all packages
-- [ ] All TypeScript code passes strict type checking
-- [ ] Test suite achieves 80%+ code coverage
-- [ ] Database migrations run successfully forward and backward
-- [ ] Configuration validation prevents all invalid states
-- [ ] Tenant isolation is enforced at data level
-- [ ] Platform adapters can be loaded and instantiated dynamically
-- [ ] Agent runtime can execute basic reasoning workflows
-- [ ] Authentication endpoints issue and validate JWT tokens
-- [ ] Logging infrastructure outputs structured JSON logs
-- [ ] Health check endpoints respond within 100ms
-- [ ] i18n system loads translations for all supported locales
-
-### Quality Criteria
-
-- [ ] Zero known security vulnerabilities in dependencies
-- [ ] API response times < 200ms for 95th percentile
-- [ ] Build completes in under 5 minutes
-- [ ] Test suite completes in under 3 minutes
-- [ ] Code documentation covers all public interfaces
-- [ ] Architecture Decision Records (ADRs) document key decisions
-
-## Dependencies
-
-### External Dependencies
-
-**None** - This is the foundation phase with no dependencies on other project phases.
-
-### Key External Integrations
-
-- Node.js 20+ LTS
-- PostgreSQL 16+ (or compatible)
-- Redis 7+ (for caching and sessions)
-- AI Provider APIs (OpenAI, Anthropic, or local models)
-
-## High-Level Approach
-
-### 1. Infrastructure-First Strategy
-
-We begin with infrastructure because it's the foundation for everything else:
-
-- **Week 1-2**: Monorepo setup, build tooling, development environment
-- **Week 3-4**: Core domain models and configuration system
-- **Week 5-6**: Database schema and migration infrastructure
-- **Week 7-8**: Multi-tenancy and platform adapter foundations
-
-### 2. Type Safety and Validation
-
-TypeScript + Zod provides end-to-end type safety:
-
-```typescript
-// Runtime validation + TypeScript types in one
-const JudgmentFormSchema = z.object({
-  id: z.uuid(),
-  caseNumber: z.string().min(1),
-  tenantId: z.uuid(),
-  // ... generates TypeScript types automatically
-});
-```
-
-### 3. Modular Architecture
-
-Each package has a single responsibility:
-
-```
-packages/
-├── domain/          # Pure business logic, no framework dependencies
-├── infrastructure/  # Database, caching, external services
-├── platform-adapters/  # Platform integration layer
-├── agent-runtime/   # AI agent orchestration
-├── web-api/         # REST/GraphQL API
-└── web-ui/          # Frontend application
-```
-
-### 4. Test-Driven Development
-
-Each component includes:
-
-- Unit tests for business logic
-- Integration tests for data layer
-- E2E tests for critical workflows
-- Performance tests for API endpoints
-
-### 5. Documentation-First
-
-All public APIs include:
-
-- JSDoc comments with examples
-- Architectural Decision Records (ADRs)
-- Runbook documentation for operations
-- API documentation (OpenAPI/GraphQL Schema)
-
-## Key Outcomes
-
-### Deliverables
-
-1. **Monorepo Structure**
-   - 12+ packages with clear boundaries
-   - Turborepo with build caching
-   - ESLint, Prettier, TypeScript configs
-   - Husky pre-commit hooks
-
-2. **Domain Model Library**
-   - 30+ TypeScript interfaces
-   - Zod validation schemas
-   - Domain service interfaces
-   - Error type hierarchy
-
-3. **Configuration System**
-   - 10+ configuration schemas
-   - Validation middleware
-   - Environment-based loading
-   - Configuration documentation
-
-4. **Database Foundation**
-   - 20+ table definitions
-   - Migration system
-   - Seed data framework
-   - Query builder wrappers
-
-5. **Multi-Tenancy Core**
-   - Tenant middleware
-   - Row-level security policies
-   - Tenant context propagation
-   - Tenant provisioning API
-
-6. **Platform Adapter Framework**
-   - Base adapter classes
-   - 3+ example adapters
-   - Adapter registry
-   - Testing utilities
-
-7. **Agent Runtime Base**
-   - Agent lifecycle management
-   - Tool definition framework
-   - Memory abstraction layer
-   - Example agent implementations
-
-8. **Security Infrastructure**
-   - Authentication endpoints
-   - JWT token handling
-   - Password hashing utilities
-   - RBAC permission system
-
-9. **Observability Stack**
-   - Structured JSON logging
-   - OpenTelemetry integration
-   - Metrics collection
-   - Health check endpoints
-
-10. **Internationalization System**
-    - Message extraction pipeline
-    - Translation management
-    - Locale routing
-    - 20+ translated strings
-
-### Technical Debt Prevention
-
-By investing in foundation infrastructure:
-
-- **Consistent Patterns**: All future code follows established conventions
-- **Type Safety**: Catches errors at compile time, not runtime
-- **Testing Infrastructure**: Makes tests easy to write and fast to run
-- **Documentation**: Reduces onboarding time for new developers
-- **Scalability**: Architecture supports growth without major refactoring
-
-## Next Phase Connection
-
-Phase 0 delivers the foundation that enables:
-
-- **Phase 1 - Core Services**: Build business logic on solid infrastructure
-- **Phase 2 - Platform Integrations**: Extend adapters with real integrations
-- **Phase 3 - AI Agent System**: Implement sophisticated agents using runtime
-- **Phase 4 - User Interface**: Build UI with confidence in backend stability
-
-## Risk Mitigation
-
-### Key Risks Addressed
-
-1. **Technology Lock-in**: Abstract interfaces allow swapping implementations
-2. **Performance Issues**: Profiling tools identify bottlenecks early
-3. **Security Vulnerabilities**: Security reviews and automated scanning
-4. **Team Onboarding**: Comprehensive documentation and examples
-5. **Scaling Challenges**: Architecture designed for horizontal scaling
-
-### Success Metrics
-
-- Build time: < 5 minutes (with cache)
-- Test execution: < 3 minutes
-- API p95 latency: < 200ms
-- Developer onboarding: < 1 day to first contribution
-- Zero production incidents in first month
+**Project:** AgenticVerdict — Multi-Platform Marketing Analytics Agent System  
+**Phase Duration:** Weeks 1-2  
+**Status:** Planning
 
 ---
 
-**Phase Status**: Not Started
-**Estimated Duration**: 8-10 weeks
-**Team Size**: 4-6 developers
-**Last Updated**: 2026-04-03
+## Executive Summary
+
+Phase 0: Foundation establishes the critical infrastructure and architectural patterns that will support the entire AgenticVerdict system. This phase creates the bedrock upon which all subsequent phases will build, implementing the core multi-tenant architecture, configuration management systems, development infrastructure, and base technical capabilities that must remain stable throughout the project lifecycle.
+
+The phase focuses on delivering a production-ready monorepo structure with comprehensive tooling, implementing the configuration-driven architecture that enables multi-tenancy, establishing the database layer with tenant isolation patterns, building foundational UI components with internationalization support, and setting up testing infrastructure that will ensure quality throughout development.
+
+**Primary Objective:** Establish a stable, scalable, and maintainable foundation that supports the complete system requirements without requiring architectural changes in later phases.
+
+---
+
+## Alignment with Project Goals
+
+### Multi-Tenancy Requirements
+
+Phase 0 implements the fundamental patterns required for multi-tenant SaaS architecture:
+
+- **Tenant Context Propagation:** AsyncLocalStorage-based context management ensures tenant isolation across all layers
+- **Configuration-Driven Design:** CompanyConfig schema with Zod validation enables zero-code tenant provisioning
+- **Row-Level Security:** Database schema with PostgreSQL RLS policies enforces tenant data isolation at the data layer
+- **Dynamic Platform Injection:** Platform adapters loaded via configuration without code modifications
+
+### Configuration-Driven Architecture
+
+The foundation implements the single source of truth for all company-specific behavior:
+
+- **Configuration Schema:** Comprehensive Zod schemas validate company configurations at runtime
+- **ConfigManager Service:** Cached configuration loading with validation and error handling
+- **Environment Agnostic:** Configuration supports development (mock data) and production (real APIs) seamlessly
+- **Hot Reloading:** Configuration changes can be applied without service restart (future enhancement)
+
+### Internationalization from Day One
+
+Phase 0 establishes full i18n support before business logic:
+
+- **RTL/LTR Support:** Layout systems adapt to text direction based on language configuration
+- **Multi-Language Infrastructure:** Translation files and formatters for Arabic, English, and French
+- **Locale-Aware Formatting:** Date, currency, and number formatting per region configuration
+- **Cultural Adaptation:** UI components consider cultural context (e.g., Arabic-first for Saudi users)
+
+### Type Safety and Validation
+
+Strict TypeScript and validation patterns established in Phase 0:
+
+- **Zero `any` Policy:** Strict TypeScript mode prevents type erosion
+- **End-to-End Types:** Shared types package ensures consistency across packages
+- **Runtime Validation:** Zod schemas validate all external inputs and configurations
+- **Compile-Time Safety:** Drizzle ORM provides compile-time query validation
+
+---
+
+## Position Within Development Roadmap
+
+### Phase 0 Foundation (Current Phase)
+**Weeks 1-2** — Infrastructure, architecture patterns, base capabilities
+
+### Phase 1: Platform Integration
+**Weeks 3-5** — Platform adapters, OAuth, data normalization
+- *Dependency:* Phase 0 configuration management and database layer
+- *Dependency:* Phase 0 base UI components for platform connection screens
+
+### Phase 2: Agent Intelligence
+**Weeks 6-8** — AI agent orchestration, LangChain integration
+- *Dependency:* Phase 0 configuration schemas for AI model selection
+- *Dependency:* Phase 0 database layer for storing agent state and results
+
+### Phase 3: Report Generation
+**Weeks 9-11** — PDF/Excel generation, multi-language templates
+- *Dependency:* Phase 0 i18n infrastructure for RTL/LTR support
+- *Dependency:* Phase 0 base UI components for report preview
+
+### Phase 4: Production Hardening
+**Weeks 12-14** — Testing, optimization, deployment
+- *Dependency:* Phase 0 testing infrastructure and CI/CD setup
+- *Dependency:* All foundation infrastructure for load testing and optimization
+
+---
+
+## Dependencies and Prerequisites
+
+### External Dependencies
+
+#### Development Environment
+- **Node.js 20 LTS:** Required for AsyncLocalStorage and performance improvements
+- **pnpm 8+:** Efficient monorepo package management
+- **Git 2.40+:** Version control with hook support
+- **Docker 24+:** Local PostgreSQL development environment
+
+#### Cloud Services (Development)
+- **PostgreSQL 16:** Local development via Docker; production via managed service (e.g., Supabase, AWS RDS)
+- **Redis 7:** Local development via Docker; production via Upstash Redis
+- **GitHub:** Repository hosting with Actions for CI/CD
+
+#### Third-Party APIs (Optional for Phase 0)
+- **Anthropic API:** For AI model testing (can use mock data)
+- **OpenAI API:** Fallback AI model testing (can use mock data)
+
+### Internal Dependencies
+
+**None** — This is the foundation phase with no dependencies on previous implementation phases.
+
+### Knowledge Prerequisites
+
+Development team should have familiarity with:
+- TypeScript advanced patterns (generics, utility types, type guards)
+- React Server Components and Next.js 15 App Router
+- PostgreSQL and SQL query optimization
+- Multi-tenant architecture patterns
+- AsyncLocalStorage and context propagation
+- Monorepo development workflows
+
+---
+
+## Success Criteria and Measurable Outcomes
+
+### Infrastructure Success Criteria
+
+#### Monorepo Setup
+- [ ] Turborepo configured with proper build pipeline and caching
+- [ ] All packages can build independently and in dependency order
+- [ ] Development servers start with single command (`pnpm dev`)
+- [ ] Build time under 30 seconds for cold start, under 5 seconds for cached builds
+
+#### Configuration Management
+- [ ] CompanyConfig schema validates all required fields with Zod
+- [ ] ConfigManager loads and caches configurations with <50ms latency
+- [ ] Configuration validation fails fast with clear error messages
+- [ ] Sample configurations provided for Masafh and hypothetical company
+
+#### Database Layer
+- [ ] Drizzle schema defined with all core tables
+- [ ] Row-level security policies enforce tenant isolation
+- [ ] Migration system tracks all schema changes
+- [ ] Database connection pooling configured (max 20 connections)
+- [ ] Query execution time P95 < 100ms for standard queries
+
+#### UI Foundation
+- [ ] Base component library with 20+ reusable components
+- [ ] RTL/LTR layout system switches based on language
+- [ ] All components support Arabic, English, and French
+- [ ] Component Storybook for visual testing and documentation
+
+#### Internationalization
+- [ ] Translation files for all supported languages (ar, en, fr)
+- [ ] Locale formatters for dates, currencies, and numbers
+- [ ] RTL layout system works correctly for Arabic
+- [ ] Language switching works without page reload
+
+#### Testing Infrastructure
+- [ ] Vitest configured with coverage reporting
+- [ ] Test utilities and mocks for external dependencies
+- [ ] CI/CD pipeline runs tests on every commit
+- [ ] Test coverage reporting integrated with pull requests
+
+### Quality Gates
+
+#### Code Quality
+- [ ] Zero TypeScript `any` types in committed code
+- [ ] ESLint passes with zero errors
+- [ ] Prettier formatting enforced via pre-commit hooks
+- [ ] Code coverage ≥70% for all new code (≥80% for business logic)
+
+#### Performance Benchmarks
+- [ ] Configuration loading <50ms (cached)
+- [ ] Database queries <100ms P95 for standard operations
+- [ ] Monorepo build time <30s (cold), <5s (cached)
+- [ ] Development server start time <10s
+
+#### Documentation Standards
+- [ ] All public APIs documented with TSDoc comments
+- [ ] README files in each package with usage examples
+- [ ] Architecture decisions recorded in ADR format
+- [ ] Development setup documented with troubleshooting guide
+
+---
+
+## Risk Assessment and Mitigation Strategies
+
+### Technical Risks
+
+#### Risk: Multi-Tenancy Architecture Complexity
+**Impact:** High | **Likelihood:** Medium
+
+**Description:** Improper tenant isolation could lead to data leaks between companies.
+
+**Mitigation Strategies:**
+- Implement defense-in-depth with application-level and database-level isolation
+- Use AsyncLocalStorage for guaranteed context propagation
+- Implement comprehensive integration tests for tenant isolation
+- Add automated database policy testing in CI/CD
+- Security review of all tenant-scoped database operations
+
+**Success Metrics:**
+- All integration tests pass tenant isolation scenarios
+- Security audit finds no cross-tenant data access vulnerabilities
+- Database query logs show proper tenant ID filtering
+
+#### Risk: TypeScript Type System Erosion
+**Impact:** High | **Likelihood:** Medium
+
+**Description:** Use of `any` types or loose typing could undermine type safety and lead to runtime errors.
+
+**Mitigation Strategies:**
+- Enable strict TypeScript mode with no implicit any
+- Pre-commit hooks prevent commits with `any` types
+- Code review checklist includes type safety verification
+- Regular dependency audits for packages with poor types
+- Shared types package for cross-package consistency
+
+**Success Metrics:**
+- Zero `any` types in committed code
+- TypeScript compilation time under 30 seconds
+- Zero type-related runtime errors in production
+
+#### Risk: Database Schema Evolution Challenges
+**Impact:** Medium | **Likelihood:** Medium
+
+**Description:** Schema changes in later phases could require migrations that break existing data.
+
+**Mitigation Strategies:**
+- Use Drizzle ORM's migration system from day one
+- Implement comprehensive migration testing with seed data
+- Document all schema changes with migration notes
+- Create migration rollback procedures
+- Use feature flags for schema-dependent functionality
+
+**Success Metrics:**
+- All migrations tested on production-like data
+- Rollback procedures tested and documented
+- Zero data loss during schema changes
+
+#### Risk: Internationalization Complexity
+**Impact:** Medium | **Likelihood:** High
+
+**Description:** RTL layout and multi-language support could introduce UI bugs and formatting issues.
+
+**Mitigation Strategies:**
+- Implement RTL layout system from day one
+- Create visual regression tests for all supported languages
+- Use locale-aware formatters for dates, currencies, numbers
+- Native speaker review for Arabic translations
+- Comprehensive testing of language switching
+
+**Success Metrics:**
+- All UI components render correctly in RTL and LTR
+- Currency/date formatting matches locale expectations
+- Arabic translation validated by native speaker
+- Zero layout bugs in RTL mode
+
+### Development Risks
+
+#### Risk: Scope Creep in Foundation Phase
+**Impact:** Medium | **Likelihood:** Medium
+
+**Description:** Attempting to implement features from later phases could delay foundation completion.
+
+**Mitigation Strategies:**
+- Strict adherence to Phase 0 task list
+- Weekly review of progress against acceptance criteria
+- Clear definition of "foundation" vs. "feature" work
+- Phase gate review before moving to Phase 1
+- Architectural decision records for any scope additions
+
+**Success Metrics:**
+- 100% of Phase 0 tasks completed
+- Zero features from later phases implemented
+- Phase gate review approved by technical lead
+
+#### Risk: Tooling and Learning Curve
+**Impact:** Low | **Likelihood:** Medium
+
+**Description:** Team unfamiliarity with Turborepo, Drizzle, or other tools could slow development.
+
+**Mitigation Strategies:**
+- Allocate time for tooling research and experimentation
+- Create internal documentation for common workflows
+- Pair programming for complex tooling setup
+- Reference documentation for troubleshooting
+- Regular knowledge-sharing sessions
+
+**Success Metrics:**
+- Development team demonstrates tool proficiency
+- Troubleshooting guide covers common issues
+- Setup time <30 minutes for new developers
+
+### Operational Risks
+
+#### Risk: Development Environment Inconsistencies
+**Impact:** Medium | **Likelihood:** Low
+
+**Description:** Inconsistent local environments could lead to "works on my machine" issues.
+
+**Mitigation Strategies:**
+- Docker Compose for PostgreSQL and Redis
+- Comprehensive setup documentation with troubleshooting
+- Automated environment validation script
+- Version pinning for all dependencies
+- Regular dependency updates in dedicated branches
+
+**Success Metrics:**
+- New developer setup time <1 hour
+- Zero environment-related bugs in sprint
+- Automated validation passes for all team members
+
+---
+
+## Key Architectural Decisions
+
+### Decision 1: Shared Database with Row-Level Security
+
+**Context:** Multi-tenant SaaS requiring complete data isolation between companies.
+
+**Options Considered:**
+1. **Separate Database per Tenant** — Maximum isolation but higher operational overhead
+2. **Shared Database with Application-Level Isolation** — Simpler but vulnerable to bugs
+3. **Shared Database with Row-Level Security** — Balanced approach with defense-in-depth
+
+**Decision:** Shared Database with Row-Level Security
+
+**Rationale:**
+- PostgreSQL RLS provides enforcement at the database level, preventing application bugs from leaking data
+- Lower operational overhead compared to managing hundreds of databases
+- Easier to implement cross-tenant analytics (if needed in future)
+- Tenant ID set at session level via `SET LOCAL app.current_tenant_id`
+- AsyncLocalStorage ensures consistent tenant context throughout request lifecycle
+
+**Trade-offs:**
+- Requires careful migration planning to avoid breaking existing queries
+- Slightly more complex query patterns (tenant ID in all queries)
+- Database connection pooling must handle tenant switching
+
+**Implementation:**
+```typescript
+// Tenant context propagation
+export async function dbScoped<T>(callback: (db: DB) => Promise<T>): Promise<T> {
+  const context = getTenantContext();
+  await db.execute(`SET LOCAL app.current_tenant_id = '${context.companyId}'`);
+  return callback(db);
+}
+
+// RLS policy
+CREATE POLICY company_isolation_policy ON companies
+  FOR ALL USING (id = current_setting('app.current_tenant_id')::uuid);
+```
+
+---
+
+### Decision 2: Configuration-Driven Multi-Tenancy
+
+**Context:** Support multiple companies, industries, regions, and languages without code changes.
+
+**Options Considered:**
+1. **Code-Based Tenant Configuration** — Simple but requires deployment for changes
+2. **Database-Stored Configuration** — Dynamic but adds database dependency
+3. **Git-Tracked Configuration Files** — Version controlled but requires deployment
+4. **Hybrid: Git + Database Caching** — Version control with runtime flexibility
+
+**Decision:** Git-Tracked Configuration Files with Runtime Caching
+
+**Rationale:**
+- Configuration changes are version controlled and reviewed via pull requests
+- No database dependency for configuration loading (failsafe)
+- Runtime caching (L1 in-memory + L2 Redis) provides <50ms latency
+- Configuration validation on load prevents invalid configs
+- Easy to create new company configurations via copy-paste
+
+**Trade-offs:**
+- Configuration changes require deployment (can be mitigated with hot reloading)
+- Need to balance between flexibility and schema stability
+- Large configurations may impact cold start time
+
+**Implementation:**
+```typescript
+// ConfigManager with caching
+class ConfigManager {
+  private cache = new Map<string, CompanyConfig>();
+  
+  async loadCompanyConfig(companyId: string): Promise<CompanyConfig> {
+    if (this.cache.has(companyId)) {
+      return this.cache.get(companyId)!;
+    }
+    
+    const config = await this.loadFromDisk(companyId);
+    const validated = CompanyConfigSchema.parse(config);
+    this.cache.set(companyId, validated);
+    return validated;
+  }
+}
+```
+
+---
+
+### Decision 3: Monorepo with Turborepo
+
+**Context:** Multiple applications (web, API, worker) and shared packages requiring coordinated builds.
+
+**Options Considered:**
+1. **Single Package** — Simple but poor code organization
+2. **Multi-Repo** — Clear boundaries but difficult to share code
+3. **Monorepo with Lerna** — Mature but slower build times
+4. **Monorepo with Turborepo** — Modern with excellent caching
+
+**Decision:** Monorepo with Turborepo + pnpm
+
+**Rationale:**
+- Turborepo's remote caching provides significant build time improvements
+- pnpm's efficient disk usage and strict dependency management
+- Easy to share code across apps and packages
+- Single commit can span multiple packages
+- Consistent tooling and configuration across entire project
+- Turborepo's pipeline definition ensures correct build order
+
+**Trade-offs:**
+- Initial setup complexity higher than single repo
+- Need to manage inter-package dependencies carefully
+- Build time can increase if not properly cached
+
+**Implementation:**
+```json
+// turbo.json
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    }
+  }
+}
+```
+
+---
+
+### Decision 4: Drizzle ORM over Prisma
+
+**Context:** Type-safe database access with excellent performance and TypeScript integration.
+
+**Options Considered:**
+1. **Prisma** — Popular and mature but higher bundle size and slower queries
+2. **Drizzle ORM** — Smaller bundle, faster queries, better TypeScript types
+3. **TypeORM** — Mature but less type-safe
+
+**Decision:** Drizzle ORM
+
+**Rationale:**
+- 2-10x faster query execution compared to Prisma (based on benchmarks)
+- Smaller bundle size (~50KB vs Prisma's ~800KB)
+- Better TypeScript types with compile-time query validation
+- SQL-like syntax for complex queries
+- No query engine overhead (Prisma runs separate query engine process)
+- Excellent migration system with SQL-based migrations
+
+**Trade-offs:**
+- Smaller community compared to Prisma
+- Less mature tooling ecosystem
+- Steeper learning curve for developers familiar with Prisma
+
+**Implementation:**
+```typescript
+// Example query with Drizzle
+const results = await db
+  .select()
+  .from(companies)
+  .where(eq(companies.id, companyId))
+  .limit(1);
+```
+
+---
+
+### Decision 5: Mantine UI + shadcn/ui Components
+
+**Context:** Modern, accessible UI components with excellent TypeScript support and RTL capabilities.
+
+**Options Considered:**
+1. **Material-UI (MUI)** — Popular but larger bundle size
+2. **Ant Design** — Comprehensive but less flexible
+3. **Chakra UI** — Good but less mature than Mantine
+4. **Mantine + shadcn/ui** — Best of both worlds with full customization
+
+**Decision:** Mantine UI as base, supplemented with shadcn/ui components
+
+**Rationale:**
+- Mantine provides 100+ production-ready components
+- Excellent TypeScript support with zero `any` types
+- Built-in hooks and utilities reduce boilerplate
+- Native RTL support for Arabic layouts
+- Smaller bundle size with tree-shaking
+- shadcn/ui provides highly customizable components for specific needs
+- Both libraries have excellent documentation and examples
+
+**Trade-offs:**
+- Need to maintain consistency between two component libraries
+- Slightly higher initial setup complexity
+- Need to establish design system guidelines
+
+**Implementation:**
+```typescript
+// Mantine provider with RTL support
+import { MantineProvider, createTheme } from '@mantine/core';
+
+const theme = createTheme({
+  dir: textDirection, // 'rtl' or 'ltr' based on language
+  fontFamily: 'Inter, sans-serif',
+});
+```
+
+---
+
+### Decision 6: Vitest over Jest
+
+**Context:** Fast, modern testing framework with excellent TypeScript integration.
+
+**Options Considered:**
+1. **Jest** — Industry standard but slower and heavier
+2. **Vitest** — Faster with native ESM support
+3. **uvu** — Minimalist but fewer features
+
+**Decision:** Vitest
+
+**Rationale:**
+- Native ESM support (no Babel transform overhead)
+- 10x faster than Jest for most test suites
+- Compatible with Jest API (easy migration)
+- Built-in code coverage with c8
+- Excellent TypeScript support
+- Watch mode with instant feedback
+- Works seamlessly with Turborepo pipeline
+
+**Trade-offs:**
+- Smaller ecosystem compared to Jest
+- Some Jest ecosystem packages may not be compatible
+
+**Implementation:**
+```typescript
+// Example test with Vitest
+import { describe, it, expect } from 'vitest';
+
+describe('ConfigManager', () => {
+  it('should load company configuration', async () => {
+    const config = await configManager.loadCompanyConfig('masafh');
+    expect(config.companyName).toBe('Masafh');
+  });
+});
+```
+
+---
+
+## Cross-Cutting Concerns
+
+### Security Considerations
+
+**Credential Management:**
+- Platform API credentials stored encrypted at rest
+- Credentials never logged or exposed in error messages
+- Development credentials separate from production
+- Environment variables for sensitive configuration
+
+**Tenant Isolation:**
+- Row-level security enforced at database level
+- Application-level tenant context validation
+- Regular security audits for cross-tenant access
+
+**Input Validation:**
+- All external inputs validated via Zod schemas
+- SQL injection prevention via parameterized queries
+- XSS prevention via React's built-in escaping
+
+### Observability Strategy
+
+**Structured Logging:**
+- Pino logger for structured JSON logs
+- Log levels: error, warn, info, debug
+- Tenant context included in all log entries
+- Request ID for distributed tracing
+
+**Metrics Collection:**
+- Prometheus-compatible metrics
+- Counter, gauge, histogram metric types
+- Per-tenant metrics for platform usage
+- Performance metrics for API endpoints
+
+**Error Tracking:**
+- Sentry integration for error monitoring
+- Tenant context in error reports
+- Performance monitoring for slow operations
+
+### Performance Optimization
+
+**Caching Strategy:**
+- L1 cache: In-memory node-cache (5-minute TTL)
+- L2 cache: Upstash Redis distributed cache
+- Cache invalidation on configuration changes
+- Cache warming for frequently accessed data
+
+**Database Optimization:**
+- Connection pooling (max 20 connections)
+- Query optimization with proper indexes
+- Read replicas for reporting queries (future)
+- Materialized views for common aggregations (future)
+
+**Build Optimization:**
+- Turborepo remote caching for builds
+- Tree-shaking for minimal bundle sizes
+- Code splitting for faster page loads
+- Image optimization with Next.js Image
+
+---
+
+## Next Steps
+
+1. **Review and Approval:** Technical lead reviews and approves Phase 0 overview
+2. **Task Breakdown:** Create detailed `tasks.md` with all implementation tasks
+3. **Acceptance Criteria:** Define specific `acceptance-criteria.md` for validation
+4. **Setup Development Environment:** Ensure all team members have required tools
+5. **Begin Implementation:** Start with monorepo setup and configuration management
+
+---
+
+## Document Metadata
+
+**Phase:** 0 — Foundation  
+**Duration:** Weeks 1-2  
+**Author:** AgenticVerdict Development Team  
+**Last Updated:** 2026-04-03  
+**Status:** Ready for Review  
+**Version:** 1.0
+
+---
+
+## Related Documentation
+
+- [Project Requirements](/docs/05-project-management/requirements.md)
+- [Development Roadmap](/docs/05-project-management/roadmap-development.md)
+- [Testing Strategy](/docs/02-planning-and-methodology/testing-strategy.md)
+- [Technology Research](/docs/04-technology-research/research-overview.md)
+- [Phase 0 Tasks](/docs/03-development-phases/phase-00-foundation/tasks.md)
+- [Phase 0 Acceptance Criteria](/docs/03-development-phases/phase-00-foundation/acceptance-criteria.md)
