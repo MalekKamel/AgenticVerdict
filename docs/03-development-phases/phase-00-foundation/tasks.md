@@ -4,6 +4,8 @@
 
 This document provides a comprehensive task breakdown for Phase 0: Foundation, organized by functional area with dependencies, effort estimates, and integration points.
 
+**Sequencing note:** For incremental delivery and alignment with the 5-phase roadmap, see [implementation-scope.md](./implementation-scope.md) (waves, deferred agent/platform depth).
+
 **Phase Duration**: 2 weeks (Weeks 1-2)
 **Team Size**: 2-3 developers
 **Total Estimated Effort**: 80-120 hours
@@ -148,7 +150,7 @@ Establish the UI foundation using Next.js 15 with Mantine UI components, Tailwin
 |---------|-------------|------------|------------------|--------------|--------|
 | 0.44 | Initialize Next.js 15 app with App Router | Medium | 3 hours | 0.1 | TODO |
 | 0.45 | Set up Mantine UI with TypeScript | Medium | 3 hours | 0.44 | TODO |
-| 0.46 | Configure Tailwind CSS and antd-style | Medium | 3 hours | 0.44 | TODO |
+| 0.46 | Configure PostCSS / Tailwind if required for app styling (Mantine-first) | Medium | 3 hours | 0.44 | TODO |
 | 0.47 | Create base layout components | Medium | 4 hours | 0.45 | TODO |
 | 0.48 | Implement theme provider (light/dark mode) | Medium | 4 hours | 0.45 | TODO |
 | 0.49 | Create common UI components (Button, Input, Card) | Medium | 4 hours | 0.45 | TODO |

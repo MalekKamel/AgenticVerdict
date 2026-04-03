@@ -58,8 +58,9 @@ The acceptance criteria are organized by deliverable, with specific functional r
   - `AIConfig` (model selection, provider settings)
   - `FeatureFlagsConfig` (feature toggles)
 - [ ] `ConfigManager` class implements:
-  - Load configuration from database
-  - Load configuration from environment variables
+  - Load configuration from **versioned files** (primary for Phase 0; see `implementation-scope.md`)
+  - Load configuration from environment variables (overrides / secrets)
+  - Optional: load from database in later iterations—**not** a Phase 0 blocker if file + env paths are complete
   - Merge multiple configuration sources with precedence rules
   - Validate configuration against schemas
   - Cache configuration with TTL
@@ -77,7 +78,7 @@ The acceptance criteria are organized by deliverable, with specific functional r
 
 ### Testing Requirements
 - **Unit test coverage**: 90% for ConfigManager and validation logic
-- **Integration tests**: Configuration loading from database and environment
+- **Integration tests**: Configuration loading from files and environment (and database when implemented)
 - **E2E tests**: Application starts with valid config, fails with invalid config
 
 ### Exit Criteria

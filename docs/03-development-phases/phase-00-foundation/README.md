@@ -1,7 +1,7 @@
 # Phase 0: Foundation - Index & Quick Reference
 
 **Duration**: Weeks 1-2  
-**Status**: 🔴 Not Started  
+**Status**: 🟡 In Progress  
 **Last Updated**: 2026-04-03
 
 ---
@@ -37,9 +37,10 @@ Phase 0 establishes the foundational infrastructure for the entire AgenticVerdic
 
 | Document | Description | Status |
 |----------|-------------|--------|
-| [Overview](./overview.md) | Phase objectives, scope, timeline, and risk assessment | 🔴 Not Started |
-| [Tasks](./tasks.md) | Complete task breakdown with dependencies and estimates | 🔴 Not Started |
-| [Acceptance Criteria](./acceptance-criteria.md) | Quality gates, exit criteria, and phase transition requirements | 🔴 Not Started |
+| [Overview](./overview.md) | Phase objectives, scope, timeline, and risk assessment | 🟡 In Progress |
+| [Tasks](./tasks.md) | Complete task breakdown with dependencies and estimates | 🟡 In Progress |
+| [Acceptance Criteria](./acceptance-criteria.md) | Quality gates, exit criteria, and phase transition requirements | 🟡 In Progress |
+| [Implementation scope](./implementation-scope.md) | Waves, config source of truth, deferrals vs. `tasks.md` | 🟡 Active |
 
 ### Related Documentation
 
@@ -187,16 +188,21 @@ turbo run format
 agenticverdict/
 ├── apps/
 │   ├── web/              # Next.js application (Phase 0)
-│   ├── api/              # Fastify API service (Phase 2)
-│   └── worker/           # Background job processor (Phase 3)
+│   ├── api/              # Fastify API (Phase 0 late or Phase 1)
+│   └── worker/           # BullMQ worker (Phase 3; optional stub in Phase 0)
 ├── packages/
-│   ├── core/             # Domain entities, value objects
-│   ├── config/           # CompanyConfig schema, loading logic
-│   ├── database/         # Drizzle schema, migrations
-│   ├── ui/               # Mantine component library
-│   ├── i18n/             # Internationalization (ar/en)
+│   ├── core/             # Tenant context, domain helpers
+│   ├── config/           # CompanyConfig schema, file loading
+│   ├── database/         # Drizzle schema, migrations, dbScoped
+│   ├── platform-adapters/  # Plugin interfaces (Phase 1-heavy)
+│   ├── agent-runtime/    # LangChain/LangGraph (Phase 2-heavy)
+│   ├── report-generator/ # Reports (Phase 3)
+│   ├── ui/               # Shared Mantine-based components
+│   ├── i18n/             # Shared messages/helpers (optional vs app-local)
 │   └── types/            # Shared TypeScript types
 ```
+
+See [implementation-scope.md](./implementation-scope.md) for what must exist in Phase 0 versus later phases.
 
 ### Multi-Tenancy Pattern
 

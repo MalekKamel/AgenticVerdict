@@ -1,0 +1,9 @@
+{
+  "Home": {
+    "title": "AgenticVerdict",
+    "subtitle": "Foundation shell — tenant config loaded on the server.",
+    "companyLabel": "Loaded company",
+    "languageLabel": "Language",
+    "regionLabel": "Region"
+  }
+}
