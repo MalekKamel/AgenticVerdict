@@ -48,9 +48,13 @@ docs/
 │   │   └── acceptance-criteria.md               # From PHASE_02_ACCEPTANCE.md
 │   │
 │   ├── phase-03-report-generation/
-│   │   ├── overview.md                          # From PHASE_03_OVERVIEW.md
-│   │   ├── tasks.md                             # From PHASE_03_TASKS.md
-│   │   └── acceptance-criteria.md               # From PHASE_03_ACCEPTANCE.md
+│   │   ├── README.md
+│   │   ├── overview.md
+│   │   ├── analysis-summary.md
+│   │   ├── gap-analysis.md
+│   │   ├── execution-plan.md
+│   │   ├── tasks.md
+│   │   └── acceptance-criteria.md
 │   │
 │   ├── phase-04-production-hardening/
 │   │   ├── overview.md                          # From PHASE_04_OVERVIEW.md

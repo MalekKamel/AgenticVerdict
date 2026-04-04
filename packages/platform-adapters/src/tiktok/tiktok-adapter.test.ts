@@ -43,7 +43,8 @@ describe("TikTokPlatformAdapter", () => {
   });
 
   it("authenticates with accessToken and validates advertiser", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const u = String(input);
       if (u.includes("/user/info/")) {
@@ -74,7 +75,8 @@ describe("TikTokPlatformAdapter", () => {
   });
 
   it("exchanges authCode when provided with app credentials", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const u = String(input);
       if (u.includes("/oauth2/access_token/")) {
@@ -115,7 +117,8 @@ describe("TikTokPlatformAdapter", () => {
   });
 
   it("refreshes via appId, secret, refreshToken before validate", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockImplementation(async (input, init) => {
       const u = String(input);
       if (u.includes("/oauth2/access_token/")) {
@@ -153,7 +156,8 @@ describe("TikTokPlatformAdapter", () => {
   });
 
   it("fetchMetrics aggregates list and report calls", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const u = String(input);
       if (u.includes("/user/info/") || u.includes("/advertiser/info/")) {

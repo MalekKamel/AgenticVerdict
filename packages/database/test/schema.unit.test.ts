@@ -10,6 +10,7 @@ describe("database schema exports", () => {
       "i18nStrings",
       "marketingMetrics",
       "platformCredentials",
+      "provenanceRecords",
       "reportTemplates",
       "reports",
       "users",

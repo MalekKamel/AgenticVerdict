@@ -78,12 +78,12 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 
 ### Critical Path Dependencies
 
-| Dependency | Impact | Resolution Timeline |
-|------------|---------|---------------------|
-| Phase 0 Architecture Complete | Blocks adapter interface design | Day 0 |
-| All API Credentials Available | Blocks platform integration | Day 0 |
-| Environment Configuration | Blocks testing and deployment | Day 0 |
-| Monitoring Infrastructure | Blocks production readiness | Week 2 |
+| Dependency                    | Impact                          | Resolution Timeline |
+| ----------------------------- | ------------------------------- | ------------------- |
+| Phase 0 Architecture Complete | Blocks adapter interface design | Day 0               |
+| All API Credentials Available | Blocks platform integration     | Day 0               |
+| Environment Configuration     | Blocks testing and deployment   | Day 0               |
+| Monitoring Infrastructure     | Blocks production readiness     | Week 2              |
 
 ## High-Level Approach
 
@@ -92,6 +92,7 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 #### 1. Foundation First (Weeks 1-2)
 
 **Core Infrastructure**
+
 - Implement base adapter interface and abstract classes
 - Set up caching infrastructure (Redis/Memcached)
 - Configure rate limiting middleware
@@ -103,6 +104,7 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 #### 2. Platform Adapter Development (Weeks 3-6)
 
 **Priority Sequence**
+
 1. **Meta (Facebook/Instagram)** - Highest business priority
 2. **GA4 (Google Analytics 4)** - Core analytics foundation
 3. **Google Search Console** - SEO insights
@@ -110,6 +112,7 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 5. **TikTok** - Emerging platform (if API access available)
 
 **Development Pattern**
+
 - Implement adapter using base framework
 - Add platform-specific authentication
 - Implement data retrieval methods
@@ -122,6 +125,7 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 #### 3. Integration and Testing (Weeks 7-8)
 
 **Testing Approach**
+
 - Unit tests for each adapter (individual methods)
 - Integration tests for adapter-platform communication
 - End-to-end tests for complete data flows
@@ -133,6 +137,7 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 #### 4. Production Readiness (Weeks 9-10)
 
 **Deployment Activities**
+
 - Load testing and performance tuning
 - Security audit and penetration testing
 - Documentation completion
@@ -143,47 +148,79 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 
 ### Technical Approach
 
-#### Adapter Architecture Pattern
+#### Adapter architecture (as implemented in `@agenticverdict/platform-adapters`)
+
+Adapters implement a **single, tenant-scoped interface**. Optional concerns (cache, token bucket, circuit breaker, metrics, DLQ) are composed via `BasePlatformAdapter` constructor options — not extra interface methods.
 
 ```typescript
-// Base Adapter Interface
+// Canonical Phase 1 adapter surface (TypeScript)
+import type { PlatformType } from "@agenticverdict/types";
+
 interface PlatformAdapter {
-  // Authentication
-  authenticate(credentials: ApiCredentials): Promise<boolean>
-  validateToken(): Promise<boolean>
-  refreshToken(): Promise<string>
-
-  // Data Operations
-  fetchMetrics(metrics: Metric[], dateRange: DateRange): Promise<NormalizedData>
-  fetchAccounts(): Promise<Account[]>
-  fetchCampaigns(accountId: string): Promise<Campaign[]>
-
-  // Health & Status
-  healthCheck(): Promise<HealthStatus>
-  getRateLimitStatus(): RateLimitStatus
+  readonly platform: PlatformType;
+  authenticate(credentials: PlatformCredentials): Promise<void>;
+  /** Vendor-specific payload; consumers normalize via normalizeData. */
+  fetchMetrics(dateRange: DateRangeIso): Promise<unknown>;
+  normalizeData(rawData: unknown, dateRange: DateRangeIso): NormalizedPlatformSnapshot;
+  isHealthy(): Promise<boolean>;
 }
 
-// Concrete Adapter Implementation
-class MetaAdapter implements PlatformAdapter {
-  // Platform-specific implementation
-}
+// BasePlatformAdapterOptions (excerpt): tenantId, cache?, cacheTtlSeconds?,
+// tokenBucket?, circuitBreaker?, metrics?, deadLetterQueue?, backoff?
 ```
+
+Platform-specific adapters (Meta, GA4, GSC, GBP, TikTok) extend `BasePlatformAdapter` and implement `doAuthenticate`, `fetchRawMetrics`, and `normalizeData`.
+
+#### Cache integration API (`PlatformCache`)
+
+The cache layer is an **injectable dependency** per adapter instance:
+
+| Operation                     | Contract                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| `get(key)`                    | Returns cached JSON **string** or `null`                                   |
+| `set(key, value, ttlSeconds)` | Stores string payload with TTL                                             |
+| `delete(key)`                 | Invalidates a key                                                          |
+| `getMetrics()`                | Hits, misses, sets, errors, latency (operational visibility)               |
+| `isDistributed()`             | `true` when backed by Upstash (or similar); `false` for in-memory fallback |
+
+**Cache keys** are produced by `buildAdapterCacheKey({ tenantId, platform, dateRange, segment? })` and use the stable prefix pattern `av:adapter:{tenantId}:{platform}:{segment}:{startInclusive}:{endInclusive}` (default `segment` = `metrics`).
+
+**Default TTLs (seconds)** for raw fetch payloads by platform: Meta **120**, GA4 **300**, GSC **600**, GBP **600**, TikTok **120** (`defaultAdapterCacheTtlSeconds`). Callers may override `cacheTtlSeconds` per adapter instance.
+
+#### Data freshness requirements
+
+- **Definition:** “Fresh” means the cached payload, if present, was written within the **TTL window** for that platform; otherwise the adapter **refetches** from the vendor API (subject to rate limiting and circuit breaker).
+- **Stale reads:** When the cache is unavailable, adapters **degrade** to live fetch; no silent cross-tenant reuse.
+- **Tenant isolation:** Keys **always** include `tenantId`; shared keys across tenants are forbidden.
+- **Reporting:** Downstream analytics and Phase 2 agents must treat `NormalizedPlatformSnapshot` as **point-in-time**; include capture metadata from normalization where available.
+
+#### Performance baseline metrics (engineering targets)
+
+| Signal                           | Target            | Notes                                                                      |
+| -------------------------------- | ----------------- | -------------------------------------------------------------------------- |
+| Cached adapter read (p95)        | &lt; 200ms        | Deserialize + normalize if needed                                          |
+| Uncached vendor round-trip (p95) | &lt; 2s           | Excluding vendor outages; per platform variance                            |
+| Cache hit rate (hot paths)       | ≥ 80%             | Measured via `PlatformCache.getMetrics()` + adapter metrics                |
+| Cache operation latency (p95)    | &lt; 10ms         | Redis/Upstash; higher for in-memory is acceptable in dev                   |
+| Token bucket / rate limit        | Platform profiles | Prevents throttling (Meta, GA4, GSC, TikTok limits documented per adapter) |
 
 #### Data Normalization Strategy
 
 **Standardized Schema**
+
 ```typescript
 interface NormalizedMetric {
-  platform: string
-  metric: string
-  value: number
-  timestamp: Date
-  dimensions: Record<string, string>
-  metadata: Record<string, any>
+  platform: string;
+  metric: string;
+  value: number;
+  timestamp: Date;
+  dimensions: Record<string, string>;
+  metadata: Record<string, unknown>;
 }
 ```
 
 **Transformation Pipeline**
+
 1. Platform-specific response → Raw data model
 2. Raw data model → Normalized data model
 3. Validation and quality checks
@@ -193,16 +230,19 @@ interface NormalizedMetric {
 #### Resilience Patterns
 
 **Circuit Breaker**
+
 - Open circuit after 5 consecutive failures
 - Half-open state after 60 seconds
 - Close circuit after 3 successful requests
 
 **Retry Logic**
+
 - Exponential backoff: 1s, 2s, 4s, 8s, 16s
 - Max 3 retry attempts
 - Jitter added to prevent thundering herd
 
 **Rate Limiting**
+
 - Platform-specific limits enforced locally
 - Token bucket algorithm for smooth throttling
 - Priority queues for critical requests
@@ -258,14 +298,14 @@ interface NormalizedMetric {
 
 ### Technical Metrics
 
-| Metric | Target | Measurement Method |
-|--------|--------|-------------------|
-| Adapter Availability | 99.9% | Uptime monitoring |
-| API Success Rate | >99.9% | Error tracking |
-| Average Response Time | <2s | Performance monitoring |
-| Cache Hit Rate | >80% | Cache metrics |
-| Cost per API Call | <$0.001 | Cost tracking |
-| Test Coverage | >80% | Code coverage reports |
+| Metric                | Target  | Measurement Method     |
+| --------------------- | ------- | ---------------------- |
+| Adapter Availability  | 99.9%   | Uptime monitoring      |
+| API Success Rate      | >99.9%  | Error tracking         |
+| Average Response Time | <2s     | Performance monitoring |
+| Cache Hit Rate        | >80%    | Cache metrics          |
+| Cost per API Call     | <$0.001 | Cost tracking          |
+| Test Coverage         | >80%    | Code coverage reports  |
 
 ## Risks and Mitigations
 
@@ -298,6 +338,7 @@ interface NormalizedMetric {
 **Total Duration**: 10 weeks
 
 **Milestones**
+
 - Week 2: Infrastructure foundation complete
 - Week 4: Meta and GA4 adapters operational
 - Week 6: All adapters implemented
@@ -316,6 +357,6 @@ interface NormalizedMetric {
 ---
 
 **Document Owner**: Engineering Team Lead
-**Last Updated**: 2025-04-03
-**Version**: 1.0
-**Status**: Draft
+**Last Updated**: 2026-04-04
+**Version**: 1.1
+**Status**: Draft (aligned with [Remediation Plan — Part 1](/docs/03-development-phases/REMEDIATION_PLAN.md))

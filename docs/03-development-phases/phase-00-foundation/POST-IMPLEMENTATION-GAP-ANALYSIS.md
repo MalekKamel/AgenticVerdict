@@ -212,12 +212,12 @@ The Phase 0 Foundation implementation has been **successfully completed** with a
 
 #### ⚠️ Gaps (Low Severity)
 
-| ID   | Gap                              | Acceptance Criteria                                | Impact | Remediation                                 |
-| ---- | -------------------------------- | -------------------------------------------------- | ------ | ------------------------------------------- |
-| U5-1 | Coverage not measured            | "Unit test coverage: 70% for custom components"    | Low    | Add unit tests for UI components            |
-| U5-2 | French locale not implemented    | "Supported locales: English, Arabic"               | Low    | Add `fr` locale when required by product    |
-| U5-3 | Component load size not measured | "Component library initial load < 200KB (gzipped)" | Low    | Run bundle analysis and document            |
-| U5-4 | Accessibility not tested         | "All components WCAG 2.1 AA compliant"             | Medium | Add axe-core or similar for a11y validation |
+| ID   | Gap                                      | Acceptance Criteria                                | Impact   | Remediation                                                                                   |
+| ---- | ---------------------------------------- | -------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| U5-1 | Coverage not measured                    | "Unit test coverage: 70% for custom components"    | Low      | Add unit tests for UI components                                                              |
+| U5-2 | Third locale / `fr` — **not applicable** | Supported locales: **English, Arabic** only        | **None** | **Not a gap:** **`fr` is not required**; add locales only if product scope explicitly expands |
+| U5-3 | Component load size not measured         | "Component library initial load < 200KB (gzipped)" | Low      | Run bundle analysis and document                                                              |
+| U5-4 | Accessibility not tested                 | "All components WCAG 2.1 AA compliant"             | Medium   | Add axe-core or similar for a11y validation                                                   |
 
 #### Compliance Status
 

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import type { MarketingVerdict } from "@agenticverdict/types";
 import { requireTenantContext } from "@agenticverdict/core";
 
 import type { AgentFactory } from "./agent-factory";
@@ -18,7 +19,11 @@ import {
 } from "./specialized-marketing-agents";
 import { marketingPipelineTimingToLogFields } from "./agent-performance-metrics";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
-import { parseVerdictFromAgentText, VerdictParseError, type Verdict } from "./verdict-schema";
+import {
+  legacyVerdictToMarketingVerdict,
+  parseVerdictFromAgentText,
+  VerdictParseError,
+} from "./verdict-schema";
 
 export type MarketingPipelineStageName = "analysis" | "insights" | "verdict";
 
@@ -34,7 +39,7 @@ export interface MarketingPipelineState {
   workflowId: string;
   status: MarketingPipelineStatus;
   stages: MarketingPipelineStageRecord[];
-  verdict?: Verdict;
+  verdict?: MarketingVerdict;
   /** Present when verdict JSON could not be parsed but the text answer is retained. */
   verdictRawAnswer?: string;
   error?: { stage: MarketingPipelineStageName; message: string; cause?: unknown };
@@ -226,7 +231,11 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
     });
 
     try {
-      const verdict = parseVerdictFromAgentText(verdictTimed.result.answer);
+      const legacyVerdict = parseVerdictFromAgentText(verdictTimed.result.answer);
+      const verdict = legacyVerdictToMarketingVerdict(legacyVerdict, {
+        tenantId: options.ctx.tenantId,
+        analysisId: workflowId,
+      });
       const completed: MarketingPipelineState = {
         workflowId,
         status: "completed",

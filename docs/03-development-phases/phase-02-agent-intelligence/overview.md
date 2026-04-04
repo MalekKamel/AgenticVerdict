@@ -2,7 +2,29 @@
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
 **Status:** Not Started
-**Last Updated:** April 4, 2026
+**Last Updated:** 2026-04-04
+
+---
+
+## API and data contracts (Phase 03 prerequisites)
+
+Phase 2 delivers **agent intelligence** and exposes **read and validation HTTP APIs** for insights, verdicts, and analysis bundles. Canonical REST shapes are defined in [**API_SPECIFICATIONS.md**](./API_SPECIFICATIONS.md) (OpenAPI-oriented). Authentication uses **JWT** with **tenant-scoped** access; rate limits and error envelopes match that document.
+
+### Unified `MarketingVerdict` schema (single source of truth)
+
+**There is no separate “Phase 2 internal verdict” type that Phase 3 must transform.** The **`MarketingVerdict`** contract (TypeScript + Zod in `@agenticverdict/types`, implemented under [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) **R-7**) is reused **across Phases 01–04**: normalization metadata feeds it, agents produce it, reports consume it, delivery layers archive it. Optional fields (e.g. `reportMetadata`) allow Phase 3 to enrich without breaking Phase 2 producers.
+
+### `GeneratedInsight` schema
+
+Insights are **typed, scored artifacts** (e.g. anomaly, trend, opportunity, warning) with **confidence**, **relevance**, **evidence links**, and **platform attribution**. They are listed on `GET /api/v1/insights` and embedded in `GET /api/v1/analysis-results/:id`. Exact field list and enums are specified in [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) and mirrored in `@agenticverdict/types` when implemented.
+
+### Data validation interface
+
+A **data quality** layer (see remediation **R-10**) validates insights and verdicts before persistence or handoff to reports: `validateInsight`, `validateVerdict`, structured **`ValidationResult`** (`isValid`, `score` 0–100, `errors`, `warnings`, `recommendations`, metadata). **`POST /api/v1/insights/validate`** and **`POST /api/v1/verdicts/validate`** expose this for tooling, CI, and admin review.
+
+### Provenance tracking
+
+Each analysis run carries **`ProvenanceInfo`**: data sources (platform, date range, **freshness** in hours, **qualityScore**), model/agent identifiers, and an ordered list of **transformations** (normalization, merges, etc.). `GET /api/v1/analysis-results/:id` returns a full bundle including provenance, insights, and verdicts for audit and Phase 3 narrative generation.
 
 ---
 
@@ -84,6 +106,7 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 - [ ] Company context propagates through agent workflows (tenant ID, industry, region, goals)
 - [ ] Agent telemetry integrates with Phase 0 logging system
 - [ ] LangSmith tracing captures all agent executions
+- [ ] **HTTP API layer** (`apps/api`) implements routes in [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) with JWT, tenant scope, and rate limits (see [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) Part 2 **R-1–R-6**)
 
 ---
 
@@ -287,9 +310,9 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 
 **Foundation for Phase 3**
 
-- Agent-generated insights for report templates
-- Verdict data structure for report generation
-- Agent output validation framework
+- Agent-generated **insights** and **verdicts** using the **same** `GeneratedInsight` and **`MarketingVerdict`** types reports will render (no cross-phase schema rewrite)
+- **HTTP APIs** for insights, verdicts, analysis results, and validation (see [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md))
+- **Provenance** and **validation** contracts for trustworthy report narratives
 - Performance benchmarks for SLA definition
 
 ### Business Value
@@ -414,7 +437,7 @@ For reference, here's what each Phase 1 adapter provides to Phase 2 agents:
 
 ---
 
-**Phase 2 Owner:** Development Lead
-**Technical Reviewer:** AI/ML Specialist
-**Dependencies:** Phase 1 (Platform Integration) ✅ COMPLETE
-**Blocks:** Phase 3 (Report Generation) cannot start without agent outputs
+**Phase 2 Owner:** Development Lead  
+**Technical Reviewer:** AI/ML Specialist  
+**Dependencies:** Phase 1 (Platform Integration) ✅ COMPLETE  
+**Blocks:** Phase 3 (Report Generation) requires agent outputs **and** stable contracts in [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) / unified `MarketingVerdict` (**R-7**)

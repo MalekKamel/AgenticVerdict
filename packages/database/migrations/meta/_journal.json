@@ -15,6 +15,13 @@
       "when": 1775261986051,
       "tag": "0001_companies_active",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775330491477,
+      "tag": "0002_provenance_records",
+      "breakpoints": true
     }
   ]
 }

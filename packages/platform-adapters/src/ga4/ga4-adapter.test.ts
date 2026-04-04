@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import { PlatformAuthError, PlatformError } from "../errors";
 import { testAdapterTenantId } from "../test-utils";
@@ -11,8 +11,15 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-function createAnalyticsFetch(): typeof fetch {
-  return vi.fn(async (url: string) => {
+function fetchInputToString(input: Parameters<typeof fetch>[0]): string {
+  if (typeof input === "string") return input;
+  if (input instanceof URL) return input.href;
+  return input.url;
+}
+
+function createAnalyticsFetch(): MockedFunction<typeof fetch> {
+  return vi.fn(async (input: Parameters<typeof fetch>[0]) => {
+    const url = fetchInputToString(input);
     if (url.includes("tokeninfo")) {
       return jsonResponse({ expires_in: "3600", aud: "test.apps.googleusercontent.com" });
     }
@@ -33,7 +40,7 @@ function createAnalyticsFetch(): typeof fetch {
       return jsonResponse({ kind: "analyticsData#funnelReport" });
     }
     return jsonResponse({ error: { message: `unexpected ${url}`, status: "UNKNOWN" } }, 500);
-  }) as unknown as typeof fetch;
+  });
 }
 
 describe("Ga4PlatformAdapter", () => {

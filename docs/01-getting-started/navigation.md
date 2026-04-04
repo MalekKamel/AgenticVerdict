@@ -395,7 +395,7 @@ For any scope modification:
 - [Phase 0: Foundation](../03-development-phases/phase-00-foundation/PHASE_00_OVERVIEW.md)
 - [Phase 1: Platform Integration](../03-development-phases/phase-01-platform-integration/PHASE_01_OVERVIEW.md)
 - [Phase 2: Agent Intelligence](../03-development-phases/phase-02-agent-intelligence/PHASE_02_OVERVIEW.md)
-- [Phase 3: Report Generation](../03-development-phases/phase-03-report-generation/PHASE_03_OVERVIEW.md)
+- [Phase 3: Report Generation](../03-development-phases/phase-03-report-generation/overview.md)
 - [Phase 4: Production Hardening](../03-development-phases/phase-04-production-hardening/PHASE_04_OVERVIEW.md)
 
 ### Research Documents

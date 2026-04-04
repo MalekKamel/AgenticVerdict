@@ -244,21 +244,39 @@ export {
   type AgentMessageType,
 } from "./agent-protocol";
 export {
+  extractJsonObjectText,
+  legacyVerdictSchema,
+  legacyVerdictToMarketingVerdict,
   marketingInsightSchema,
+  parseVerdictFromAgentText,
+  safeParseVerdictFromAgentText,
   verdictActionItemSchema,
   verdictEvidenceSchema,
   verdictRecommendationSchema,
   verdictSchema,
-  extractJsonObjectText,
-  parseVerdictFromAgentText,
-  safeParseVerdictFromAgentText,
   VerdictParseError,
+  type LegacyAgentVerdict,
+  type LegacyVerdictNormalizationContext,
   type MarketingInsight,
   type Verdict,
   type VerdictActionItem,
   type VerdictEvidence,
   type VerdictRecommendation,
 } from "./verdict-schema";
+export {
+  DataQualityService,
+  type AnalysisResultValidationInput,
+  type DataQualityValidator,
+  type ValidationConfig,
+  type ValidationError,
+  type ValidationResult,
+  type ValidationWarning,
+} from "./validation/data-quality";
+export {
+  ProvenanceTracker,
+  type ProvenanceRecordPayload,
+  type ProvenanceTrackerState,
+} from "./provenance/tracker";
 export {
   buildSpecializedMarketingFactoryConfig,
   createSpecializedMarketingProductionAgent,

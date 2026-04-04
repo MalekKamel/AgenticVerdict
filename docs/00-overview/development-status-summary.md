@@ -97,18 +97,18 @@ Severity is **blocking** for formal phase exit vs **important** vs **later**. Li
 
 ### 3.1 Relative to Phase 0 acceptance criteria (`acceptance-criteria.md`)
 
-| Topic             | Gap                                                                                                                                             | Severity   |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| Monorepo          | `apps/api`, `apps/worker` and some planned `packages/*` still absent                                                                            | Important  |
-| Configuration     | No single `ConfigManager` class / env-merge layer as named in older task lists; file-based load is primary                                      | Important  |
-| Database          | Compare live Drizzle schema + migrations to the full table list in acceptance criteria; close any remaining tables/policies                     | Important  |
-| RLS               | Policies and `dbScoped` exist; **prove** end-to-end tenant isolation for every tenant-owned table per acceptance criteria                       | Important  |
-| Multi-tenancy     | Production-style resolution (JWT, host, headers) and `runWithTenantContext` on all server paths that touch `dbScoped` still need product wiring | Blocking\* |
-| UI foundation     | No Storybook; shared `packages/ui` not extracted                                                                                                | Important  |
-| i18n              | French (`fr`) not in routing; translation coverage minimal                                                                                      | Important  |
-| Testing           | Global coverage targets (e.g. 85%+ business logic) and Playwright E2E not yet met per methodology docs                                          | Important  |
-| CI/CD             | CI present (`.github/workflows/ci.yml`); extend with Postgres services / coverage gates as needed                                               | Later      |
-| Performance / NFR | Production SLAs and endurance still unverified (see Phase 01 review and `PERFORMANCE-BENCHMARKS.md`)                                            | Important  |
+| Topic             | Gap                                                                                                                                               | Severity   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| Monorepo          | `apps/api`, `apps/worker` and some planned `packages/*` still absent                                                                              | Important  |
+| Configuration     | No single `ConfigManager` class / env-merge layer as named in older task lists; file-based load is primary                                        | Important  |
+| Database          | Compare live Drizzle schema + migrations to the full table list in acceptance criteria; close any remaining tables/policies                       | Important  |
+| RLS               | Policies and `dbScoped` exist; **prove** end-to-end tenant isolation for every tenant-owned table per acceptance criteria                         | Important  |
+| Multi-tenancy     | Production-style resolution (JWT, host, headers) and `runWithTenantContext` on all server paths that touch `dbScoped` still need product wiring   | Blocking\* |
+| UI foundation     | No Storybook; shared `packages/ui` not extracted                                                                                                  | Important  |
+| i18n              | Required locales **`ar`/`en`** are in routing; translation depth beyond minimal coverage remains a quality follow-up ( **`fr` is not required** ) | Important  |
+| Testing           | Global coverage targets (e.g. 85%+ business logic) and Playwright E2E not yet met per methodology docs                                            | Important  |
+| CI/CD             | CI present (`.github/workflows/ci.yml`); extend with Postgres services / coverage gates as needed                                                 | Later      |
+| Performance / NFR | Production SLAs and endurance still unverified (see Phase 01 review and `PERFORMANCE-BENCHMARKS.md`)                                              | Important  |
 
 \*Blocking for **end-to-end multi-tenant product behavior**, not for continued Phase 02 scaffolding.
 
@@ -122,13 +122,13 @@ Severity is **blocking** for formal phase exit vs **important** vs **later**. Li
 
 ### 3.3 Relative to suggested waves (`implementation-scope.md`)
 
-| Wave | Intended outcome   | Gap / update (2026-04-04)                                                    |
-| ---- | ------------------ | ---------------------------------------------------------------------------- |
-| W0   | Monorepo + tooling | Husky, lint-staged, commitlint still optional                                |
-| W1   | Config + types     | Env-merge / hot-reload / doc generator gaps remain                           |
-| W2   | DB + tenancy       | Migrations and RLS work advanced; finish verification vs acceptance criteria |
-| W3   | Web + i18n         | **Health routes added**; `fr` locale still missing                           |
-| W4   | Testing + CI       | **CI added**; coverage enforcement and Playwright still open                 |
+| Wave | Intended outcome   | Gap / update (2026-04-04)                                                                                 |
+| ---- | ------------------ | --------------------------------------------------------------------------------------------------------- |
+| W0   | Monorepo + tooling | Husky, lint-staged, commitlint still optional                                                             |
+| W1   | Config + types     | Env-merge / hot-reload / doc generator gaps remain                                                        |
+| W2   | DB + tenancy       | Migrations and RLS work advanced; finish verification vs acceptance criteria                              |
+| W3   | Web + i18n         | **Health routes added**; required **`ar`/`en`** locale shell met (**`fr` not in scope** as a requirement) |
+| W4   | Testing + CI       | **CI added**; coverage enforcement and Playwright still open                                              |
 
 ### 3.4 Phase 01 follow-ups (from implementation review)
 
@@ -156,7 +156,7 @@ See [`reviews/phase-01-implementation-review-2026-04-04.md`](./reviews/phase-01-
 
 5. **`apps/api` + `apps/worker`** — Standalone API and BullMQ worker per target architecture.
 6. **Playwright** — Locale redirect + critical journeys.
-7. **Shared UI / i18n** — `packages/ui`, optional `fr` routing, broader message keys.
+7. **Shared UI / i18n** — `packages/ui`, broader message keys; **additional locales beyond required `ar`/`en` only if product scope explicitly expands** ( **`fr` is not required** ).
 8. **Dev environment** — `docker-compose.yml` (Postgres 16; optional Redis) if not already adopted team-wide.
 
 ### 4.3 Continuous

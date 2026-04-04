@@ -15,6 +15,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a developer, I need a consistent interface for all platform adapters so that I can build integrations efficiently and maintain them easily.
 
 **Technical Details**:
+
 - Create `PlatformAdapter` interface with standard methods
 - Implement `BaseAdapter` abstract class with common functionality
 - Define data models for requests and responses
@@ -22,6 +23,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Implement logging and metrics collection
 
 **Acceptance Criteria**:
+
 - [ ] `PlatformAdapter` interface defined with all required methods
 - [ ] `BaseAdapter` class implements authentication, retry logic, and error handling
 - [ ] Adapter registry can load and instantiate adapters by platform name
@@ -33,10 +35,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 5 days
 
 **Dependencies**:
+
 - Phase 0 architecture documentation
 - Technology stack selection complete
 
 **Deliverables**:
+
 - `/src/adapters/interface.ts` - Adapter interface definition
 - `/src/adapters/base.ts` - Base adapter implementation
 - `/src/adapters/registry.ts` - Adapter registry and factory
@@ -53,14 +57,16 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system, I need to cache platform responses so that I can reduce API costs and improve response times.
 
 **Technical Details**:
-- Set up Redis/Memcached cluster
-- Implement cache client with connection pooling
-- Create cache key generation strategy
-- Implement TTL management per platform and data type
-- Add cache warming for frequently accessed data
-- Implement cache invalidation strategy
+
+- Set up Redis/Memcached cluster (production: **Upstash Redis**; dev: in-memory `MemoryPlatformCache`)
+- Implement the **`PlatformCache`** contract consumed by adapters: `get` / `set` / `delete` / `getMetrics` / `isDistributed` (string payloads + TTL seconds)
+- **Cache keys:** `buildAdapterCacheKey({ tenantId, platform, dateRange, segment? })` → `av:adapter:{tenantId}:{platform}:{segment}:{start}:{end}`
+- **Default TTLs:** Meta/TikTok **120s**, GA4 **300s**, GSC/GBP **600s** (`defaultAdapterCacheTtlSeconds`); override via `cacheTtlSeconds` on `BasePlatformAdapterOptions`
+- Add cache warming for frequently accessed data (optional)
+- Implement cache invalidation strategy (TTL-first; explicit `delete` for admin flows)
 
 **Acceptance Criteria**:
+
 - [ ] Cache service deployed and operational
 - [ ] Cache hit rate >80% for frequently accessed data
 - [ ] Cache response time <10ms (p95)
@@ -73,10 +79,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 4 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Infrastructure provisioning (Phase 0)
 
 **Deliverables**:
+
 - `/src/cache/cache-client.ts` - Cache client implementation
 - `/src/cache/key-generator.ts` - Cache key strategy
 - `/src/cache/ttl-manager.ts` - TTL management
@@ -93,6 +101,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system, I need to manage API request rates so that I don't exceed platform limits and get blocked.
 
 **Technical Details**:
+
 - Implement token bucket algorithm for rate limiting
 - Create rate limit store (Redis-based)
 - Platform-specific rate limit configurations
@@ -101,6 +110,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Automatic request throttling when limits approached
 
 **Acceptance Criteria**:
+
 - [ ] Rate limiter enforces platform-specific limits
 - [ ] Token bucket algorithm prevents request bursts
 - [ ] Priority queue handles critical requests first
@@ -113,10 +123,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 4 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 
 **Deliverables**:
+
 - `/src/rate-limit/limiter.ts` - Rate limiting implementation
 - `/src/rate-limit/priority-queue.ts` - Request priority system
 - `/src/rate-limit/config.ts` - Platform-specific configurations
@@ -132,6 +144,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system, I need to detect and handle platform API failures so that a single platform issue doesn't crash the entire system.
 
 **Technical Details**:
+
 - Implement circuit breaker state machine (closed/open/half-open)
 - Configure failure thresholds per platform
 - Implement timeout handling
@@ -140,6 +153,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Automatic recovery mechanisms
 
 **Acceptance Criteria**:
+
 - [ ] Circuit breaker opens after 5 consecutive failures
 - [ ] Half-open state after 60 seconds
 - [ ] Circuit closes after 3 consecutive successes
@@ -152,10 +166,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 3 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 
 **Deliverables**:
+
 - `/src/circuit-breaker/circuit-breaker.ts` - Circuit breaker implementation
 - `/src/circuit-breaker/fallback.ts` - Fallback strategies
 - `/src/circuit-breaker/config.ts` - Platform-specific configurations
@@ -171,6 +187,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system, I need to handle errors gracefully and retry failed requests so that temporary issues don't cause data loss.
 
 **Technical Details**:
+
 - Implement retry policy (exponential backoff with jitter)
 - Define retryable vs non-retryable errors
 - Create error classification system
@@ -179,6 +196,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Retry metrics tracking
 
 **Acceptance Criteria**:
+
 - [ ] Retry attempts: exponential backoff (1s, 2s, 4s, 8s, 16s)
 - [ ] Max 3 retry attempts per request
 - [ ] Jitter added to prevent thundering herd
@@ -191,10 +209,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 3 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.4 (Circuit Breaker)
 
 **Deliverables**:
+
 - `/src/error-handling/retry.ts` - Retry logic implementation
 - `/src/error-handling/classifier.ts` - Error classification
 - `/src/error-handling/dead-letter-queue.ts` - Failed request handling
@@ -210,6 +230,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As an operator, I need to monitor the health of all platform adapters so that I can detect and respond to issues quickly.
 
 **Technical Details**:
+
 - Implement health check endpoints for each adapter
 - Create health metrics collection (success rate, latency, errors)
 - Build monitoring dashboards (Grafana/Datadog)
@@ -218,6 +239,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Create health status API
 
 **Acceptance Criteria**:
+
 - [ ] Health check endpoint for each adapter (/health/{platform})
 - [ ] Overall health endpoint (/health) aggregating all adapters
 - [ ] Metrics: uptime, success rate, error rate, latency (p50/p95/p99)
@@ -230,10 +252,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 4 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Monitoring infrastructure (Phase 0)
 
 **Deliverables**:
+
 - `/src/monitoring/health.ts` - Health check implementation
 - `/src/monitoring/metrics.ts` - Metrics collection
 - `/src/monitoring/dashboard.ts` - Dashboard configuration
@@ -252,6 +276,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a marketer, I need to access Facebook and Instagram advertising data so that I can analyze campaign performance and optimize spend.
 
 **Technical Details**:
+
 - Implement OAuth 2.0 authentication flow
 - Connect to Meta Marketing API (Graph API)
 - Implement data fetching for:
@@ -264,6 +289,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add rate limiting awareness (Meta has strict limits)
 
 **Acceptance Criteria**:
+
 - [ ] OAuth authentication flow working
 - [ ] Campaign data retrieved successfully
 - [ ] Ad set data retrieved successfully
@@ -280,6 +306,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 8 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 - Task 1.3 (Rate Limiting System)
@@ -288,6 +315,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Meta API credentials
 
 **Deliverables**:
+
 - `/src/adapters/meta/meta-adapter.ts` - Meta adapter implementation
 - `/src/adapters/meta/auth.ts` - OAuth authentication
 - `/src/adapters/meta/transformers.ts` - Data transformation
@@ -297,6 +325,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - API documentation
 
 **Platform-Specific Considerations**:
+
 - Meta has strict rate limits (200 calls/hour per ad account)
 - Insights API requires time ranges and has retention limits
 - Pagination uses cursors, not offsets
@@ -312,6 +341,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As an analyst, I need to access Google Analytics 4 data so that I can understand user behavior and measure conversion performance.
 
 **Technical Details**:
+
 - Implement OAuth 2.0 authentication flow
 - Connect to GA4 Data API (Google Analytics Data API v1)
 - Implement data fetching for:
@@ -325,6 +355,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add quota management (50,000 requests/day per project)
 
 **Acceptance Criteria**:
+
 - [ ] OAuth authentication flow working
 - [ ] Event data retrieved successfully
 - [ ] Dimension data retrieved successfully
@@ -343,6 +374,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 7 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 - Task 1.3 (Rate Limiting System)
@@ -351,6 +383,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - GA4 credentials and test property
 
 **Deliverables**:
+
 - `/src/adapters/ga4/ga4-adapter.ts` - GA4 adapter implementation
 - `/src/adapters/ga4/auth.ts` - OAuth authentication
 - `/src/adapters/ga4/transformers.ts` - Data transformation
@@ -360,6 +393,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - API documentation
 
 **Platform-Specific Considerations**:
+
 - GA4 has a 50,000 requests/day quota per project
 - Date ranges limited to 365 days per request
 - Sampling occurs for large datasets
@@ -376,6 +410,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As an SEO specialist, I need to access Google Search Console data so that I can monitor search performance and identify optimization opportunities.
 
 **Technical Details**:
+
 - Implement OAuth 2.0 authentication flow
 - Connect to Search Console API
 - Implement data fetching for:
@@ -389,6 +424,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add rate limiting (5 queries per second per user)
 
 **Acceptance Criteria**:
+
 - [ ] OAuth authentication flow working
 - [ ] Search analytics data retrieved successfully
 - [ ] Coverage reports retrieved
@@ -408,6 +444,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 6 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 - Task 1.3 (Rate Limiting System)
@@ -416,6 +453,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Search Console credentials and test property
 
 **Deliverables**:
+
 - `/src/adapters/gsc/gsc-adapter.ts` - GSC adapter implementation
 - `/src/adapters/gsc/auth.ts` - OAuth authentication
 - `/src/adapters/gsc/transformers.ts` - Data transformation
@@ -425,6 +463,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - API documentation
 
 **Platform-Specific Considerations**:
+
 - Search Console has a 5 QPS rate limit
 - Date range limited to 16 months of historical data
 - Search analytics data is aggregated and anonymous
@@ -441,6 +480,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a local business owner, I need to access Google Business Profile data so that I can monitor customer engagement and local search performance.
 
 **Technical Details**:
+
 - Implement OAuth 2.0 authentication flow
 - Connect to Google Business Profile API
 - Implement data fetching for:
@@ -455,6 +495,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add location-specific metrics
 
 **Acceptance Criteria**:
+
 - [ ] OAuth authentication flow working
 - [ ] Business location data retrieved successfully
 - [ ] Reviews data retrieved and monitored
@@ -473,6 +514,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 5 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 - Task 1.3 (Rate Limiting System)
@@ -481,6 +523,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Google Business Profile credentials and test account
 
 **Deliverables**:
+
 - `/src/adapters/gbp/gbp-adapter.ts` - GBP adapter implementation
 - `/src/adapters/gbp/auth.ts` - OAuth authentication
 - `/src/adapters/gbp/transformers.ts` - Data transformation
@@ -490,6 +533,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - API documentation
 
 **Platform-Specific Considerations**:
+
 - API requires location-based access
 - Multi-location accounts require pagination
 - Reviews have API-specific rate limits
@@ -506,6 +550,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a marketer, I need to access TikTok advertising data so that I can analyze campaign performance on this emerging platform.
 
 **Technical Details**:
+
 - Implement OAuth 2.0 authentication flow
 - Connect to TikTok Marketing API
 - Implement data fetching for:
@@ -518,6 +563,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add support for TikTok pixel data
 
 **Acceptance Criteria**:
+
 - [ ] OAuth authentication flow working
 - [ ] Campaign data retrieved successfully
 - [ ] Ad group data retrieved successfully
@@ -535,6 +581,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 6 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - Task 1.2 (Caching Infrastructure)
 - Task 1.3 (Rate Limiting System)
@@ -543,6 +590,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - TikTok API credentials (if available)
 
 **Deliverables**:
+
 - `/src/adapters/tiktok/tiktok-adapter.ts` - TikTok adapter implementation
 - `/src/adapters/tiktok/auth.ts` - OAuth authentication
 - `/src/adapters/tiktok/transformers.ts` - Data transformation
@@ -552,6 +600,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - API documentation
 
 **Platform-Specific Considerations**:
+
 - TikTok API has different rate limits per endpoint
 - Some endpoints require advertiser-level access
 - TikTok's pagination uses cursor-based approach
@@ -572,6 +621,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As an analyst, I need consistent data structures across all platforms so that I can perform cross-platform analysis without complex transformations.
 
 **Technical Details**:
+
 - Define unified data schema for common metrics
 - Implement platform-specific data transformers
 - Create dimension mapping (campaign names, dates, etc.)
@@ -581,6 +631,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Implement metadata enrichment
 
 **Acceptance Criteria**:
+
 - [ ] Unified schema defined for all metric types
 - [ ] Platform transformers convert to unified schema
 - [ ] Dimension mapping handles platform differences
@@ -596,10 +647,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 6 days
 
 **Dependencies**:
+
 - Task 1.1 (Base Adapter Interface)
 - All adapter tasks (2.1-2.5)
 
 **Deliverables**:
+
 - `/src/normalization/schema.ts` - Unified schema definitions
 - `/src/normalization/transformers.ts` - Platform transformers
 - `/src/normalization/mappers.ts` - Dimension and unit mappers
@@ -617,6 +670,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system, I need to validate all incoming data so that I can ensure data quality and catch issues early.
 
 **Technical Details**:
+
 - Implement field-level validation rules
 - Create cross-field validation (e.g., spend <= budget)
 - Implement range validation (no negative impressions)
@@ -626,6 +680,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add validation metrics and alerting
 
 **Acceptance Criteria**:
+
 - [ ] Field-level validation for all required fields
 - [ ] Cross-field validation working
 - [ ] Range validation prevents invalid values
@@ -640,9 +695,11 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 4 days
 
 **Dependencies**:
+
 - Task 3.1 (Data Normalization Layer)
 
 **Deliverables**:
+
 - `/src/validation/validators.ts` - Validation rules
 - `/src/validation/outliers.ts` - Outlier detection
 - `/src/validation/scoring.ts` - Quality scoring
@@ -660,6 +717,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a developer, I need integration tests so that I can verify the entire system works end-to-end.
 
 **Technical Details**:
+
 - Create integration test environment
 - Implement end-to-end tests for each adapter
 - Create test data fixtures
@@ -669,6 +727,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add performance benchmarking
 
 **Acceptance Criteria**:
+
 - [ ] Integration test environment operational
 - [ ] End-to-end tests for all adapters
 - [ ] Mock API servers for each platform
@@ -682,11 +741,13 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 6 days
 
 **Dependencies**:
+
 - All adapter tasks (2.1-2.5)
 - Task 3.1 (Data Normalization Layer)
 - Task 3.2 (Data Validation Framework)
 
 **Deliverables**:
+
 - `/tests/integration/` - Integration test suite
 - `/tests/mock-servers/` - Mock API servers
 - `/tests/load-tests/` - Load testing scripts
@@ -705,6 +766,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a developer, I need clear documentation so that I can integrate with adapters quickly and correctly.
 
 **Technical Details**:
+
 - Document all adapter methods and parameters
 - Create usage examples for common scenarios
 - Document error codes and resolutions
@@ -714,6 +776,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add code samples in multiple languages
 
 **Acceptance Criteria**:
+
 - [ ] All adapter methods documented
 - [ ] Usage examples for all major operations
 - [ ] Error codes documented with resolutions
@@ -727,9 +790,11 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 4 days
 
 **Dependencies**:
+
 - All adapter tasks (2.1-2.5)
 
 **Deliverables**:
+
 - `/docs/api/` - API documentation
 - `/docs/examples/` - Usage examples
 - `/docs/troubleshooting/` - Troubleshooting guides
@@ -745,6 +810,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As an operator, I need runbooks so that I can respond to incidents and perform maintenance efficiently.
 
 **Technical Details**:
+
 - Create deployment runbooks
 - Add monitoring and alerting guides
 - Create incident response procedures
@@ -754,6 +820,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Create disaster recovery procedures
 
 **Acceptance Criteria**:
+
 - [ ] Deployment runbook created
 - [ ] Monitoring and alerting guide created
 - [ ] Incident response procedures documented
@@ -767,10 +834,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 3 days
 
 **Dependencies**:
+
 - Task 1.6 (Health Monitoring System)
 - All adapter tasks (2.1-2.5)
 
 **Deliverables**:
+
 - `/docs/runbooks/deployment.md` - Deployment guide
 - `/docs/runbooks/monitoring.md` - Monitoring guide
 - `/docs/runbooks/incidents.md` - Incident response
@@ -787,6 +856,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **User Story**: As a system owner, I need performance benchmarks so that I can ensure the system meets performance requirements and detect regressions.
 
 **Technical Details**:
+
 - Define performance metrics (latency, throughput, error rate)
 - Create performance testing suite
 - Establish baseline performance for each adapter
@@ -795,6 +865,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Add performance alerting
 
 **Acceptance Criteria**:
+
 - [ ] Performance metrics defined
 - [ ] Performance testing suite created
 - [ ] Baseline performance established for all adapters
@@ -807,10 +878,12 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 **Estimated Effort**: 3 days
 
 **Dependencies**:
+
 - All adapter tasks (2.1-2.5)
 - Task 3.3 (Integration Test Suite)
 
 **Deliverables**:
+
 - `/tests/performance/` - Performance test suite
 - `/docs/performance/` - Performance documentation
 - Performance monitoring dashboards
@@ -882,19 +955,19 @@ The critical path for Phase 1 is:
 
 ## Estimated Total Effort
 
-| Work Stream | Tasks | Total Effort |
-|-------------|-------|--------------|
-| Foundation Infrastructure | 6 | 23 days |
-| Platform Adapters | 5 | 32 days |
-| Data Quality & Integration | 3 | 16 days |
-| Documentation & Operations | 3 | 10 days |
-| **Total** | **17** | **81 days** |
+| Work Stream                | Tasks  | Total Effort |
+| -------------------------- | ------ | ------------ |
+| Foundation Infrastructure  | 6      | 23 days      |
+| Platform Adapters          | 5      | 32 days      |
+| Data Quality & Integration | 3      | 16 days      |
+| Documentation & Operations | 3      | 10 days      |
+| **Total**                  | **17** | **81 days**  |
 
 **Calendar Time**: 10 weeks (assuming 2 developers and task parallelization)
 
 ---
 
 **Document Owner**: Engineering Team Lead
-**Last Updated**: 2025-04-03
-**Version**: 1.0
-**Status**: Draft
+**Last Updated**: 2026-04-04
+**Version**: 1.1
+**Status**: Draft (aligned with [Remediation Plan — Part 1](/docs/03-development-phases/REMEDIATION_PLAN.md))

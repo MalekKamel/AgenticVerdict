@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import { PlatformAuthError, PlatformError, PlatformRateLimitError } from "../errors";
 import {
@@ -66,7 +66,7 @@ describe("ga4DataApiPost", () => {
   it("accepts paths that already start with /", async () => {
     const fetchImpl = vi.fn(() =>
       Promise.resolve(new Response(JSON.stringify({ rows: [] }), { status: 200 })),
-    );
+    ) as MockedFunction<typeof fetch>;
     await ga4DataApiPost("/v1beta/properties/x:runReport", {}, { accessToken: "t", fetchImpl });
     expect(fetchImpl.mock.calls[0]?.[0]).toBe(
       "https://analyticsdata.googleapis.com/v1beta/properties/x:runReport",

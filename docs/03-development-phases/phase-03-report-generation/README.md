@@ -1,37 +1,32 @@
-# Phase 03: Report Generation
+# Phase 03: Report Generation & Delivery
 
-This directory contains documentation for the report generation phase of the AgenticVerdict project.
+Documentation for the report generation phase of the AgenticVerdict project.
 
-## Overview
+## Purpose
 
-Phase 03 develops comprehensive reporting and data visualization features that present analysis results and insights to users.
+Phase 03 delivers end-to-end reporting: templates, multi-format generation (PDF, DOCX, HTML), internationalization (including RTL), integration with agent outputs, delivery, scheduling, and report history.
 
-## Contents
+## Document index
 
-- **overview.md** - Phase objectives, scope, and strategic approach
-- **tasks.md** - Detailed task breakdown with dependencies and ownership
-- **acceptance-criteria.md** - Definition of done and phase completion requirements
+| Document                                           | Description                                                |
+| -------------------------------------------------- | ---------------------------------------------------------- |
+| [overview.md](./overview.md)                       | Objectives, scope, dependencies, and high-level approach   |
+| [analysis-summary.md](./analysis-summary.md)       | Executive summary of readiness, risks, and recommendations |
+| [gap-analysis.md](./gap-analysis.md)               | Full gap analysis vs. requirements (Phases 00–02 → 03)     |
+| [tasks.md](./tasks.md)                             | Prerequisites (PR-1–PR-7) and Phase 03 task breakdown      |
+| [execution-plan.md](./execution-plan.md)           | Timeline, milestones, resources, and risks                 |
+| [acceptance-criteria.md](./acceptance-criteria.md) | Definition of done and verification                        |
 
-## Key Objectives
+## Planning baseline (2026-04-04)
 
-- Design and implement report templates
-- Create data visualization components
-- Develop export functionality (PDF, HTML, etc.)
-- Build interactive dashboards
-- Implement report scheduling and distribution
+A transition review aligned Phase 03 planning with **actual** Phase 00–02 implementation. Key outcomes:
+
+- **Prerequisites** (approximately 4–5 weeks) must complete before core Phase 03 work: API surface for insights/verdicts, schema alignment, template and design configuration, validation, provenance, and email delivery.
+- **Revised duration**: on the order of **17–18 weeks** of execution effort versus an original 8–10 week estimate, driven by infrastructure (report-generator package, i18n, worker) and integration work.
+
+Start with [analysis-summary.md](./analysis-summary.md) for the one-page view; use [gap-analysis.md](./gap-analysis.md) and [tasks.md](./tasks.md) for depth.
 
 ## Dependencies
 
-- **Depends on**: Phase 00 (Foundation) - requires infrastructure and patterns
-- **Depends on**: Phase 02 (Agent Intelligence) - reports depend on agent analysis
-- **Blocks**: Phase 04 (Production Hardening) - features must be complete before hardening
-
-## Success Criteria
-
-Phase 03 is complete when:
-- Report templates are designed and implemented
-- Data visualizations are functional
-- Export functionality works for all formats
-- Dashboards display accurate data
-- User acceptance testing is complete
-- Performance meets requirements
+- **Requires**: Phase 00 (Foundation), Phase 01 (Platform Integration), Phase 02 (Agent Intelligence), plus the **prerequisites** listed in [tasks.md](./tasks.md).
+- **Enables**: Phase 04 (Production Hardening).

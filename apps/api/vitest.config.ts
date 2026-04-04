@@ -4,5 +4,8 @@ export default defineConfig({
   test: {
     environment: "node",
     passWithNoTests: true,
+    env: {
+      VITEST: "true",
+    },
   },
 });

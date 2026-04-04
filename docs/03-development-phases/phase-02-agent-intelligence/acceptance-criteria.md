@@ -2,7 +2,7 @@
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
 **Status:** Not Started
-**Last Updated:** April 3, 2026
+**Last Updated:** 2026-04-04
 
 ---
 
@@ -150,6 +150,44 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 - End-to-end workflow tests
 - Agent communication tests
 - Performance benchmarks
+
+---
+
+### 1.7 HTTP API layer (external contracts)
+
+**Criteria:**
+
+- [ ] **1.7.1** `GET /api/v1/insights` implemented per [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) (filters, sort, pagination, response envelope)
+- [ ] **1.7.2** `GET /api/v1/verdicts` implemented; each item conforms to unified **`MarketingVerdict`** (no parallel DTO)
+- [ ] **1.7.3** `GET /api/v1/analysis-results/:id` returns insights, verdicts, and **`ProvenanceInfo`** for the same tenant
+- [ ] **1.7.4** `POST /api/v1/insights/validate` and `POST /api/v1/verdicts/validate` return `ValidationResult` (score, errors, warnings, recommendations)
+- [ ] **1.7.5** **JWT authentication** on all routes; **401** invalid/missing token; **403** wrong tenant or role
+- [ ] **1.7.6** **Rate limiting** per tenant (e.g. insights list **100/min**; configurable per route); **429** with `Retry-After` when exceeded
+- [ ] **1.7.7** Error responses follow a **stable JSON error envelope** (code, message, optional `details`) as documented in API specifications
+- [ ] **1.7.8** OpenAPI description in repo matches deployed behavior (review as part of phase gate)
+
+**Validation Method:**
+
+- Contract tests against OpenAPI / schemathesis or equivalent
+- Manual smoke with JWT from staging
+- Load test verifying 429 + `Retry-After`
+
+---
+
+### 1.8 Unified schemas, validation, and provenance
+
+**Criteria:**
+
+- [ ] **1.8.1** **`MarketingVerdict`** is the **only** verdict shape used from agent output through Phase 3 reports (see [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) **R-7**)
+- [ ] **1.8.2** **`GeneratedInsight`** schema documented and enforced (Zod + TypeScript) with type, confidence, relevance, evidence, platform attribution
+- [ ] **1.8.3** Data-quality **`ValidationResult`** contract implemented for insights and verdicts (shared between API and agent-runtime per **R-10**)
+- [ ] **1.8.4** **Provenance** captured for each analysis (`dataSources`, transformations, model/agent ids, quality scores) and returned on analysis-result API (**R-11**)
+- [ ] **1.8.5** No **transformation layer** between “agent verdict” and “report verdict” — only optional **enrichment** fields (e.g. `reportMetadata`)
+
+**Validation Method:**
+
+- Schema snapshot tests on golden JSON fixtures
+- E2E test: run analysis → fetch `analysis-results/:id` → assert provenance + schema parity with stored verdicts
 
 ---
 
@@ -307,7 +345,7 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 - [ ] **4.1.2** Tool development guide with examples
 - [ ] **4.1.3** Prompt engineering best practices documented
 - [ ] **4.1.4** Agent testing guide with examples
-- [ ] **4.1.5** API documentation for all agent interfaces
+- [ ] **4.1.5** API documentation for all agent interfaces **and** REST routes ([API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md))
 - [ ] **4.1.6** Configuration reference for agent settings
 - [ ] **4.1.7** Troubleshooting guide for common issues
 
@@ -490,7 +528,7 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 - [ ] **7.3.4** Production readiness confirmed
 - [ ] **7.3.5** Feature documentation complete
 - [ ] **7.3.6** Training materials prepared
-- [ ] \*\*7.3.7] Rollback plan documented
+- [ ] **7.3.7** Rollback plan documented
 
 **Sign-off Required:**
 
@@ -535,9 +573,9 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 **All of the following must be true:**
 
-- [ ] **8.3.1** Agent outputs validated for report generation
-- [ ] **8.3.2** Verdict schema finalized and documented
-- [ ] **8.3.3** Report data contracts defined
+- [ ] **8.3.1** Agent outputs validated for report generation using the **same** types as HTTP APIs
+- [ ] **8.3.2** **`MarketingVerdict`** finalized in `@agenticverdict/types` and referenced by Phase 3 docs (**R-7**)
+- [ ] **8.3.3** Report data contracts **are** the unified insight/verdict schemas plus template variables (no second verdict model)
 - [ ] **8.3.4** Performance SLAs defined for report generation
 - [ ] **8.3.5** Agent monitoring integrated with report system
 - [ ] **8.3.6** Phase 3 blockers resolved
@@ -662,8 +700,8 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** April 3, 2026
+**Document Version:** 1.1
+**Last Updated:** 2026-04-04
 **Next Review:** End of Week 1, Phase 2
 **Owner:** Development Lead
 **Approvers:** Technical Lead, QA Lead, Product Owner

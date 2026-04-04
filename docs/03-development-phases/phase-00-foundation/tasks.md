@@ -182,24 +182,24 @@ Establish the UI foundation using Next.js 15 with Mantine UI components, Tailwin
 
 ## 6. i18n Infrastructure
 
-### Overview
+### Overview (partial — `@agenticverdict/i18n` v0.1)
 
-Implement comprehensive internationalization support with Arabic (RTL) and English (LTR) languages, including locale detection, message management, and RTL/LTR layout switching.
+Implement **core** internationalization: Arabic (RTL) and English (LTR) in the **shared** package via formatters aligned with tenant `LocalizationConfig`. The web app uses `next-intl` for messages and routing; **French** is **out of scope** for the shared package in Phase 0. See [overview.md](./overview.md#internationalization-from-day-one-partial--shared-package).
 
 ### Tasks
 
-| Task ID | Description                                        | Complexity | Estimated Effort | Dependencies | Status |
-| ------- | -------------------------------------------------- | ---------- | ---------------- | ------------ | ------ |
-| 0.54    | Choose and configure i18n framework (next-intl)    | Medium     | 3 hours          | None         | Done   |
-| 0.55    | Create locale definitions (ar, en)                 | Low        | 2 hours          | 0.54         | Done   |
-| 0.56    | Implement locale detection middleware              | Medium     | 3 hours          | 0.54         | Done   |
-| 0.57    | Create message file structure and loading          | Medium     | 4 hours          | 0.54, 0.55   | Done   |
-| 0.58    | Implement RTL/LTR layout switching                 | High       | 5 hours          | 0.51, 0.56   | Done   |
-| 0.59    | Create locale-specific formatters (date, currency) | Medium     | 4 hours          | 0.16, 0.55   | Done   |
-| 0.60    | Implement message extraction pipeline              | Medium     | 4 hours          | 0.57         | Done   |
-| 0.61    | Create initial translations (common UI strings)    | Medium     | 4 hours          | 0.57         | Done   |
-| 0.62    | Set up locale routing with URL prefixes            | Medium     | 3 hours          | 0.56         | Done   |
-| 0.63    | Implement translation validation                   | Low        | 2 hours          | 0.57         | Done   |
+| Task ID | Description                                                  | Complexity | Estimated Effort | Dependencies | Status |
+| ------- | ------------------------------------------------------------ | ---------- | ---------------- | ------------ | ------ |
+| 0.54    | Choose and configure i18n framework (next-intl)              | Medium     | 3 hours          | None         | Done   |
+| 0.55    | Create locale definitions (ar, en)                           | Low        | 2 hours          | 0.54         | Done   |
+| 0.56    | Implement locale detection middleware                        | Medium     | 3 hours          | 0.54         | Done   |
+| 0.57    | Create message file structure and loading                    | Medium     | 4 hours          | 0.54, 0.55   | Done   |
+| 0.58    | Implement RTL/LTR layout switching                           | High       | 5 hours          | 0.51, 0.56   | Done   |
+| 0.59    | Create locale-specific formatters (date, currency)           | Medium     | 4 hours          | 0.16, 0.55   | Done   |
+| 0.60    | Implement message extraction pipeline                        | Medium     | 4 hours          | 0.57         | Done   |
+| 0.61    | Create initial translations (common UI strings; en/ar focus) | Medium     | 4 hours          | 0.57         | Done   |
+| 0.62    | Set up locale routing with URL prefixes                      | Medium     | 3 hours          | 0.56         | Done   |
+| 0.63    | Implement translation validation                             | Low        | 2 hours          | 0.57         | Done   |
 
 **Subtotal**: 34 hours (4.25 days)
 
@@ -207,13 +207,32 @@ Implement comprehensive internationalization support with Arabic (RTL) and Engli
 
 **Cross-Cutting Concerns**:
 
-- **i18n**: All user-facing strings must be externalized
+- **i18n**: All user-facing strings must be externalized in the web app; shared package focuses on **en/ar** formatters
 - **Multi-Tenancy**: Language preference from tenant config
 - **Testing**: Validate RTL layout doesn't break components
 
 ---
 
-## 7. Platform Adapter Infrastructure
+## 7. Report template & design system contracts (Phase 03 prerequisites)
+
+### Overview
+
+Document and (in later remediation) implement **template configuration** and **design system tokens** so Phase 03 can render reports consistently with the web shell. Specifications are owned in Phase 0 docs; Zod modules follow [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) R-8/R-9.
+
+### Tasks
+
+| Task ID | Description                                                           | Complexity | Estimated Effort | Dependencies | Status     |
+| ------- | --------------------------------------------------------------------- | ---------- | ---------------- | ------------ | ---------- |
+| 0.103   | Document template configuration schema contract (sections, variables) | Low        | 2 hours          | None         | Done       |
+| 0.104   | Document design system tokens contract (color, type, spacing, motion) | Low        | 2 hours          | None         | Done       |
+| 0.105   | Implement `TemplateConfig` Zod schema in `packages/config`            | High       | 16 hours         | 0.103        | TODO (R-8) |
+| 0.106   | Implement `DesignTokens` Zod schema + defaults in `packages/config`   | Medium     | 8 hours          | 0.104        | TODO (R-9) |
+
+**Cross-cutting:** Templates and tokens remain **configuration-driven** — no per-company branching in report core code.
+
+---
+
+## 8. Platform Adapter Infrastructure
 
 ### Overview
 
@@ -246,7 +265,7 @@ Define and implement the platform adapter interface and base classes, establishi
 
 ---
 
-## 8. Agent Runtime Foundation
+## 9. Agent Runtime Foundation
 
 ### Overview
 
@@ -279,7 +298,7 @@ Set up the AI agent orchestration infrastructure using LangChain.js and LangGrap
 
 ---
 
-## 9. Testing Infrastructure
+## 10. Testing Infrastructure
 
 ### Overview
 
@@ -312,7 +331,7 @@ Establish comprehensive testing infrastructure using Vitest for unit tests, Play
 
 ---
 
-## 10. DevOps & CI/CD
+## 11. DevOps & CI/CD
 
 ### Overview
 
@@ -348,19 +367,20 @@ Set up development operations infrastructure including Git hooks, linting, forma
 
 ### Total Effort by Category
 
-| Category                        | Estimated Hours | Estimated Days |
-| ------------------------------- | --------------- | -------------- |
-| Monorepo Setup & Infrastructure | 36              | 4.5            |
-| Configuration Management        | 37              | 4.6            |
-| Database Layer                  | 48              | 6.0            |
-| Multi-Tenancy Core              | 44              | 5.5            |
-| UI Foundation                   | 36              | 4.5            |
-| i18n Infrastructure             | 34              | 4.25           |
-| Platform Adapter Infrastructure | 43              | 5.4            |
-| Agent Runtime Foundation        | 46              | 5.75           |
-| Testing Infrastructure          | 35              | 4.4            |
-| DevOps & CI/CD                  | 25              | 3.1            |
-| **Total**                       | **384**         | **48**         |
+| Category                           | Estimated Hours | Estimated Days |
+| ---------------------------------- | --------------- | -------------- |
+| Monorepo Setup & Infrastructure    | 36              | 4.5            |
+| Configuration Management           | 37              | 4.6            |
+| Database Layer                     | 48              | 6.0            |
+| Multi-Tenancy Core                 | 44              | 5.5            |
+| UI Foundation                      | 36              | 4.5            |
+| i18n Infrastructure                | 34              | 4.25           |
+| Report template & design contracts | 28              | 3.5            |
+| Platform Adapter Infrastructure    | 43              | 5.4            |
+| Agent Runtime Foundation           | 46              | 5.75           |
+| Testing Infrastructure             | 35              | 4.4            |
+| DevOps & CI/CD                     | 25              | 3.1            |
+| **Total**                          | **412**         | **51.5**       |
 
 ### Parallel Work Streams
 
@@ -424,6 +444,7 @@ Week 2:
 
 - UI Foundation (0.44-0.53)
 - i18n Infrastructure (0.54-0.63)
+- Template & design contracts (0.103–0.106; docs complete, schemas per remediation R-8/R-9)
 - Database Layer (0.23-0.33)
 - Multi-Tenancy Core (0.34-0.43)
 
@@ -548,7 +569,7 @@ Week 2:
 
 ### Technical Completion
 
-- [ ] All 102 tasks completed
+- [ ] All 106 tasks completed (including 0.103–0.106 template/design contracts)
 - [ ] Monorepo builds successfully across all packages
 - [ ] All TypeScript code passes strict type checking (zero `any`)
 - [ ] Test suite achieves 70%+ coverage
@@ -579,7 +600,7 @@ Week 2:
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2026-04-03
+**Document Version:** 1.1
+**Last Updated:** 2026-04-04
 **Status:** Ready for Implementation
 **Next Review:** End of Week 1

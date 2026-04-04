@@ -11,7 +11,8 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 describe("tiktokOauth2AccessToken", () => {
   it("exchanges refresh_token for access_token", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,
@@ -49,7 +50,8 @@ describe("tiktokOauth2AccessToken", () => {
   });
 
   it("exchanges authorization_code when authCode is provided", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,
@@ -82,7 +84,8 @@ describe("tiktokOauth2AccessToken", () => {
   });
 
   it("throws when response omits access_token", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,
@@ -105,7 +108,8 @@ describe("tiktokOauth2AccessToken", () => {
 
 describe("validateTikTokAccessToken", () => {
   it("maps HTTP errors via mapTikTokHttpError", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ code: 40_102, message: "bad" }), {
         status: 200,
@@ -117,7 +121,8 @@ describe("validateTikTokAccessToken", () => {
   });
 
   it("calls user/info and succeeds on code 0", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(jsonResponse({ code: 0, message: "OK", data: {} }));
 
     await validateTikTokAccessToken("tok", fetchMock as typeof fetch, false);

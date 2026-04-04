@@ -6,10 +6,12 @@ This directory contains reference materials, lookup documents, and auxiliary res
 
 - **prompts.md** - Collection of useful prompts and templates for AI-assisted development
 - **links-and-resources.md** - External references, documentation links, and helpful resources
+- **runbooks/** - Operational playbooks (API troubleshooting, email delivery, remediation handoff)
 
 ## Purpose
 
 The Reference section provides:
+
 - Quick access to commonly used information
 - Reusable templates and prompts
 - External documentation and resources
@@ -18,6 +20,7 @@ The Reference section provides:
 ## Usage
 
 This is a lookup directory for all team members. Use it to:
+
 - Find prompts for common development tasks
 - Access external documentation and resources
 - Reference standards and conventions
@@ -26,6 +29,7 @@ This is a lookup directory for all team members. Use it to:
 ## Contributing
 
 When adding reference materials:
+
 1. Choose descriptive, kebab-case filenames
 2. Organize by topic or utility
 3. Include brief descriptions of what the reference provides

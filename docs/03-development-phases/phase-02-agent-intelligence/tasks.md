@@ -1,9 +1,9 @@
 # Phase 2: Agent Runtime & Intelligence - Detailed Task List
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
-**Total Tasks:** 27 tasks across 7 categories
+**Total Tasks:** 31 tasks across 8 categories
 **Status:** Not Started
-**Last Updated:** April 3, 2026
+**Last Updated:** 2026-04-04
 
 ---
 
@@ -16,6 +16,7 @@
 5. **Retry & Fallback Strategies** (2 tasks)
 6. **Specialized Agents** (6 tasks)
 7. **Testing & Validation** (4 tasks)
+8. **HTTP API & external contracts** (4 tasks) — specifications in [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md); implementation tracked under [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) **R-1–R-6**
 
 ---
 
@@ -886,20 +887,7 @@ interface RetryConfig {
 - Action-oriented recommendations
 - Evidence-based conclusions
 
-**Verdict Structure:**
-
-```typescript
-interface Verdict {
-  summary: string;
-  sentiment: "positive" | "neutral" | "negative";
-  score: number; // 0-100
-  keyInsights: Insight[];
-  recommendations: Recommendation[];
-  actionItems: ActionItem[];
-  evidence: Evidence[];
-  nextSteps: string[];
-}
-```
+**Verdict structure:** Use the unified **`MarketingVerdict`** type from `@agenticverdict/types` (see [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) **R-7**) — **do not** maintain a parallel `Verdict` interface. Phase 3 report templates bind directly to this schema (optional `reportMetadata` for layout hints).
 
 **Deliverables:**
 
@@ -996,7 +984,7 @@ interface AgentMessage {
 **Orchestration Features:**
 
 - Agent execution scheduling
-- Data transformation between agents
+- **Pass-through of shared types** (`GeneratedInsight[]`, `MarketingVerdict[]`) between steps — **no** alternate DTOs or transformation layers; enrich in place using the same Zod contracts
 - Error recovery and retry
 - State persistence and resumption
 - Progress tracking
@@ -1303,6 +1291,73 @@ interface QualityValidator {
 
 ---
 
+## Category 8: HTTP API & external contracts
+
+### Task 8.1: Insights retrieval API
+
+**Description:** Implement `GET /api/v1/insights` with filter, sort, and pagination per [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md).
+
+**Acceptance Criteria:**
+
+- [ ] Response matches `InsightListResponse`; items validate as `GeneratedInsight`
+- [ ] JWT required; tenant scope enforced
+- [ ] Rate limit: **100 req/min** per tenant (configurable); **5-minute** response cache where applicable
+- [ ] OpenAPI fragment kept in sync with implementation
+
+**Estimated Effort:** 16 hours (see remediation R-1)
+
+**Dependencies:** Agent pipelines persisting or projecting insights; auth middleware (R-5)
+
+---
+
+### Task 8.2: Verdicts retrieval API
+
+**Description:** Implement `GET /api/v1/verdicts` with optional `campaignId`, `verdictType`, `dateRange` filters.
+
+**Acceptance Criteria:**
+
+- [ ] Response matches `VerdictListResponse`; items validate as **`MarketingVerdict`** (unified schema)
+- [ ] JWT + tenant scope; rate limit; **10-minute** cache where applicable
+- [ ] OpenAPI fragment in sync
+
+**Estimated Effort:** 16 hours (see remediation R-2)
+
+**Dependencies:** Task 6.3 output type = `MarketingVerdict`; auth middleware (R-5)
+
+---
+
+### Task 8.3: Analysis result bundle API
+
+**Description:** Implement `GET /api/v1/analysis-results/:id` returning insights, verdicts, and **`ProvenanceInfo`**.
+
+**Acceptance Criteria:**
+
+- [ ] Payload matches `AnalysisResultResponse`; provenance complete for all listed sources
+- [ ] JWT + tenant scope; no cross-tenant `analysisId` access
+- [ ] OpenAPI fragment in sync
+
+**Estimated Effort:** 8 hours (see remediation R-3)
+
+**Dependencies:** Provenance tracker (remediation R-11) or interim stub documented
+
+---
+
+### Task 8.4: Validation APIs
+
+**Description:** Implement `POST /api/v1/insights/validate` and `POST /api/v1/verdicts/validate` delegating to the data-quality service (remediation R-10).
+
+**Acceptance Criteria:**
+
+- [ ] Request/response bodies match [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md)
+- [ ] JWT + tenant scope; suitable rate limits for batch validation
+- [ ] Returns `ValidationResult` with score, errors, warnings, recommendations
+
+**Estimated Effort:** 16 hours (see remediation R-4)
+
+**Dependencies:** Data quality validator interface; unified schemas (R-7)
+
+---
+
 ## Task Summary
 
 ### Effort Summary
@@ -1316,7 +1371,8 @@ interface QualityValidator {
 | Retry & Fallback Strategies           | 2      | 10 hours      |
 | Specialized Agents                    | 6      | 58 hours      |
 | Testing & Validation                  | 4      | 34 hours      |
-| **Total**                             | **27** | **186 hours** |
+| HTTP API & external contracts         | 4      | 56 hours      |
+| **Total**                             | **31** | **242 hours** |
 
 ### Critical Path
 
@@ -1345,4 +1401,4 @@ interface QualityValidator {
 **Phase 2 Status:** Ready to start pending Phase 1 completion
 **Next Review:** End of Week 1
 **Blocking Issues:** None identified
-**Dependencies:** Phase 1 must be 100% complete
+**Dependencies:** Phase 1 must be 100% complete; API route implementation may proceed in parallel with agents once contracts in [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) are frozen

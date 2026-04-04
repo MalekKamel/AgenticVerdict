@@ -51,7 +51,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("authenticates with access token", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/me?")) {
@@ -75,7 +75,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("accepts tokenToExchange as an alternative to refreshToken", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/oauth/access_token")) {
@@ -106,7 +106,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("exchanges token when app credentials and refresh token are present", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/oauth/access_token")) {
@@ -139,7 +139,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("aggregates campaign pagination across pages", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     let campaignRequests = 0;
 
     fetchMock.mockImplementation(async (input) => {
@@ -194,7 +194,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("maps Graph rate limit errors to PlatformRateLimitError", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse(
         {
@@ -258,7 +258,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("consumes the per-request token bucket when one is configured", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/me?")) {
@@ -288,7 +288,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("throws when ad account id is missing after auth (defensive)", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/me?")) {
@@ -316,7 +316,7 @@ describe("MetaPlatformAdapter", () => {
   });
 
   it("uses cache on repeated fetchMetrics when cache enabled", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL) => Promise<Response>>();
+    const fetchMock = vi.fn<(input: Parameters<typeof fetch>[0]) => Promise<Response>>();
     fetchMock.mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : (input as Request).url;
       if (url.includes("/me?")) {

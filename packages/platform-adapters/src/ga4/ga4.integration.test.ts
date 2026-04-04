@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { Ga4PlatformAdapter, ga4CredentialKeys } from "./ga4-adapter";
 

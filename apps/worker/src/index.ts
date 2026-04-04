@@ -1,5 +1,14 @@
 /**
- * BullMQ job processor entry — scaffolded in Phase 0.
- * Production workers are implemented alongside async features in later phases.
+ * BullMQ job processor entry — Phase 0 scaffold extended with email delivery (remediation R-12).
  */
-export const WORKER_STUB_VERSION = "0.0.0";
+export const WORKER_PACKAGE_VERSION = "0.1.0";
+
+export {
+  createEmailDeliveryServiceFromEnv,
+  ResendEmailDeliveryService,
+  sendReportEmail,
+  type DeliveryResult,
+  type EmailAttachment,
+  type EmailDeliveryService,
+  type SendReportEmailParams,
+} from "./services/email";

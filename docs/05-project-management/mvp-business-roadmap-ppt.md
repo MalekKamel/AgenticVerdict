@@ -260,12 +260,12 @@
 │                 PHASE 01: PLATFORM INTEGRATION                  │
 │                                                                 │
 │  Five Platform Connectors:                                      │
-│  ┌────────┐  ┌──────┐  ┌─────┐  ┌─────┐  ┌────────┐           │
-│  │  Meta  │  │ GA4  │  │ GSC │  │ GBP │  │ TikTok │           │
-│  │  Ads   │  │      │  │     │  │     │  │  Ads   │           │
-│  └───┬────┘  └──┬───┘  └──┬──┘  └──┬──┘  └───┬────┘           │
-│      │          │         │        │         │                 │
-│      └──────────┴─────────┴────────┴─────────┘                 │
+│  ┌────────┐  ┌──────┐  ┌─────┐  ┌─────┐  ┌────────┐             │
+│  │  Meta  │  │ GA4  │  │ GSC │  │ GBP │  │ TikTok │             │
+│  │  Ads   │  │      │  │     │  │     │  │  Ads   │             │
+│  └───┬────┘  └──┬───┘  └──┬──┘  └──┬──┘  └───┬────┘             │
+│      │          │         │        │         │                  │
+│      └──────────┴─────────┴────────┴─────────┘                  │
 │                         │                                       │
 │                         ▼                                       │
 │              ┌─────────────────────┐                            │
@@ -278,7 +278,7 @@
 │  • Two-tier caching (80%+ hit rate target)                      │
 │  • Health monitoring dashboard                                  │
 │                                                                 │
-│  📊 Demo 2: Platform Integration Showcase                       │
+│📊 Demo 2: Platform Integration Showcase                         │
 │     Show: Live data from all 5 platforms, normalization, health │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -292,20 +292,20 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                  PHASE 02: AGENT INTELLIGENCE                   │
+│                   AGENT INTELLIGENCE                            │
 │                                                                 │
 │  AI Analyst Engine:                                             │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │                                                          │    │
-│  │   Primary Model:  Claude 3.5 Sonnet                      │    │
-│  │   Fallback Model: GPT-4o                                 │    │
-│  │                                                          │    │
-│  │   ┌─────────────┐    ┌─────────────┐    ┌────────────┐   │    │
-│  │   │ Cross-      │    │  Insight    │    │  Verdict   │   │    │
-│  │   │ Platform    │───▶│ Generation  │───▶│  Engine    │   │    │
-│  │   │ Analysis    │    │             │    │            │   │    │
-│  │   └─────────────┘    └─────────────┘    └────────────┘   │    │
-│  │                                                          │    │
+│  │                                                         │    │
+│  │   Primary Model:  Claude 3.5 Sonnet                     │    │
+│  │   Fallback Model: GPT-4o                                │    │
+│  │                                                         │    │
+│  │   ┌─────────────┐    ┌─────────────┐    ┌────────────┐  │    │
+│  │   │ Cross-      │    │  Insight    │    │  Verdict   │  │    │
+│  │   │ Platform    │───▶│ Generation  │───▶│  Engine    │  │    │
+│  │   │ Analysis    │    │             │    │            │  │    │
+│  │   └─────────────┘    └─────────────┘    └────────────┘  │    │
+│  │                                                         │    │
 │  └─────────────────────────────────────────────────────────┘    │
 │                                                                 │
 │  What It Produces:                                              │
@@ -317,10 +317,6 @@
 │  │   Verdict: Reallocate 20% of Meta budget to SEO content │    │
 │  │   creation."                                            │    │
 │  └─────────────────────────────────────────────────────────┘    │
-│                                                                 │
-│  📊 Demo 3: AI Analyst in Action                                │
-│     Show: Live analysis session with real data and verdicts     │
-│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -332,16 +328,16 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                  PHASE 03: REPORT GENERATION                    │
+│                    REPORT GENERATION                            │
 │                                                                 │
 │  Report Outputs:                                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  PDF Report  │  │ Excel Report │  │  Email Delivery      │  │
-│  │              │  │              │  │                      │  │
-│  │  Professional│  │  Raw data    │  │  Scheduled sending   │  │
-│  │  formatting  │  │  alongside   │  │  with PDF attached   │  │
-│  │  + Arabic RTL│  │  analysis    │  │                      │  │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │  PDF Report  │  │ Excel Report │  │  Email Delivery      │   │
+│  │              │  │              │  │                      │   │
+│  │  Professional│  │  Raw data    │  │  Scheduled sending   │   │
+│  │  formatting  │  │  alongside   │  │  with PDF attached   │   │
+│  │  + Arabic RTL│  │  analysis    │  │                      │   │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
 │                                                                 │
 │  Web Report Viewer:                                             │
 │  ┌─────────────────────────────────────────────────────────┐    │
@@ -352,11 +348,6 @@
 │  └─────────────────────────────────────────────────────────┘    │
 │                                                                 │
 │  Performance Target: PDF generation under 60 seconds            │
-│                                                                 │
-│  📊 Demo 4: Report Delivery Showcase                            │
-│     Show: PDF generation, email arrival, web viewer (Arabic +   │
-│     English)                                                    │
-│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

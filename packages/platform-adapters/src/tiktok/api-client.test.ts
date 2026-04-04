@@ -16,7 +16,8 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 describe("tiktokMarketingGet", () => {
   it("throws when HTTP status is not ok", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ code: 40_999, message: "x" }), {
         status: 500,
@@ -37,7 +38,8 @@ describe("tiktokMarketingGet", () => {
   });
 
   it("omits empty string query params", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,
@@ -57,7 +59,8 @@ describe("tiktokMarketingGet", () => {
   });
 
   it("returns data on success envelope", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,
@@ -79,7 +82,8 @@ describe("tiktokMarketingGet", () => {
 
 describe("tiktokFetchAllListPages", () => {
   it("follows page_info total_number across pages", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     let n = 0;
     fetchMock.mockImplementation(async (input) => {
       const u = String(input);
@@ -119,7 +123,8 @@ describe("tiktokFetchAllListPages", () => {
 
 describe("tiktokFetchIntegratedCampaignReport", () => {
   it("aggregates paginated integrated rows", async () => {
-    const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
+    const fetchMock =
+      vi.fn<(input: Parameters<typeof fetch>[0], init?: RequestInit) => Promise<Response>>();
     fetchMock.mockResolvedValue(
       jsonResponse({
         code: 0,

@@ -31,19 +31,19 @@ describe("mapGoogleJsonApiHttpError", () => {
   it("maps 404 to not_found", () => {
     const e = mapGoogleJsonApiHttpError("gsc", 404, { error: { message: "unknown site" } });
     expect(e).toBeInstanceOf(PlatformError);
-    expect(e.code).toBe("not_found");
+    expect((e as PlatformError).code).toBe("not_found");
   });
 
   it("maps other 4xx to invalid_request", () => {
     const e = mapGoogleJsonApiHttpError("gsc", 412, { error: { message: "precondition" } });
     expect(e).toBeInstanceOf(PlatformError);
-    expect(e.code).toBe("invalid_request");
+    expect((e as PlatformError).code).toBe("invalid_request");
   });
 
   it("maps 5xx to upstream_error", () => {
     const e = mapGoogleJsonApiHttpError("gsc", 503, { error: { message: "unavailable" } });
     expect(e).toBeInstanceOf(PlatformError);
-    expect(e.code).toBe("upstream_error");
+    expect((e as PlatformError).code).toBe("upstream_error");
   });
 
   it("falls back to HTTP status text when error.message is empty", () => {

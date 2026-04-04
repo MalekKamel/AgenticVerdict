@@ -1,1 +1,49 @@
-export type PlatformType = "meta" | "ga4" | "gsc" | "gbp" | "tiktok";
+export type { PlatformType } from "./platform";
+
+export type { DateRange, MetricReference } from "./common";
+export { dateRangeSchema, metricReferenceSchema } from "./common";
+
+export type {
+  AnalysisResultResponse,
+  DataSourceProvenance,
+  ProvenanceInfo,
+  Transformation,
+} from "./analysis";
+export {
+  analysisResultResponseSchema,
+  dataSourceProvenanceSchema,
+  provenanceInfoSchema,
+  transformationSchema,
+} from "./analysis";
+
+export type { GeneratedInsight, InsightType } from "./insight";
+export { generatedInsightSchema, insightTypeSchema } from "./insight";
+
+export type {
+  DataSourceInfo,
+  HistoricalTrend,
+  MarketingVerdict,
+  MethodologyInfo,
+  VerdictActionItem,
+  VerdictEvidence,
+  VerdictEvidenceSource,
+  VerdictInsight,
+  VerdictRecommendation,
+  VerdictType,
+  VerdictVisualization,
+} from "./verdict";
+export {
+  dataSourceInfoSchema,
+  dataSourcePlatformSchema,
+  historicalTrendSchema,
+  marketingVerdictReportMetadataSchema,
+  marketingVerdictSchema,
+  methodologyInfoSchema,
+  verdictActionItemSchema,
+  verdictEvidenceSchema,
+  verdictEvidenceSourceSchema,
+  verdictInsightSchema,
+  verdictRecommendationSchema,
+  verdictTypeSchema,
+  verdictVisualizationSchema,
+} from "./verdict";
