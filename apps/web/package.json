@@ -17,6 +17,8 @@
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/core": "workspace:*",
     "@agenticverdict/i18n": "workspace:*",
+    "@agenticverdict/platform-adapters": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
     "@mantine/core": "^7.15.2",
     "@mantine/form": "^7.15.2",
     "@mantine/hooks": "^7.15.2",

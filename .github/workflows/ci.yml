@@ -46,6 +46,12 @@ jobs:
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
 
+      - name: Phase 01 integration — mock APIs, load, chaos, performance
+        run: pnpm run test:phase01-integration
+
+      - name: OpenAPI lint (Phase 01 health spec)
+        run: pnpm run lint:openapi
+
   e2e:
     name: E2E (Playwright)
     runs-on: ubuntu-latest

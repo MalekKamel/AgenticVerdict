@@ -20,4 +20,11 @@ describe("createAdapterRegistry", () => {
     const registry = createAdapterRegistry();
     expect(() => registry.resolve("meta", undefined)).toThrow(/No adapter registered/);
   });
+
+  it("lists registered platforms", () => {
+    const registry = createAdapterRegistry();
+    registry.register("meta", () => createSyntheticAdapter("meta"));
+    expect(registry.has("meta")).toBe(true);
+    expect(registry.platforms()).toEqual(["meta"]);
+  });
 });

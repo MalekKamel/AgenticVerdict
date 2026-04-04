@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: AgenticVerdict — Platform adapter health API
+  description: >
+    HTTP surface exposed by the Next.js web app for adapter infrastructure health.
+    Implemented under `apps/web/src/app/api/health/`. Does not document future tRPC or Fastify APIs.
+  version: 1.0.0
+  license:
+    name: LicenseRef-Proprietary
+    url: https://github.com/
+
+# Public health probes; wire gateway auth in production if these must not be anonymous.
+security: []
+
+servers:
+  - url: /
+    description: Deployment origin (e.g. https://app.example.com)
+
+paths:
+  /api/health:
+    get:
+      summary: Web service and infrastructure summary
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Web process is up; infrastructure may still be degraded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebHealthResponse"
+        "500":
+          description: Unexpected server error
+
+  /api/health/adapters:
+    get:
+      summary: Aggregated adapter infrastructure health
+      operationId: getAdaptersHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: All components report healthy enough for `status=ok`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfrastructureHealthReport"
+        "503":
+          description: One or more components or platform scores are degraded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfrastructureHealthReport"
+
+  /api/health/platforms/{platform}:
+    get:
+      summary: Health metrics row for a single platform
+      operationId: getPlatformHealth
+      tags:
+        - Health
+      parameters:
+        - name: platform
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/PlatformSlug"
+      responses:
+        "200":
+          description: Platform row found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformHealthReport"
+        "400":
+          description: Unknown platform slug
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBody"
+        "404":
+          description: Platform row not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBody"
+
+components:
+  schemas:
+    PlatformSlug:
+      type: string
+      enum:
+        - meta
+        - ga4
+        - gsc
+        - gbp
+        - tiktok
+
+    ErrorBody:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: unknown_platform
+
+    WebHealthResponse:
+      type: object
+      required:
+        - status
+        - service
+        - infrastructure
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+            - degraded
+        service:
+          type: string
+          example: web
+        infrastructure:
+          $ref: "#/components/schemas/InfrastructureHealthReport"
+
+    InfrastructureHealthReport:
+      type: object
+      required:
+        - status
+        - components
+        - platforms
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+            - degraded
+        components:
+          type: object
+          required:
+            - cache
+            - redis
+            - deadLetter
+            - circuitBreaker
+            - retryPolicy
+          properties:
+            cache:
+              $ref: "#/components/schemas/ComponentHealthWithCacheMetrics"
+            redis:
+              $ref: "#/components/schemas/ComponentHealth"
+            deadLetter:
+              type: object
+              required:
+                - status
+                - backlog
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - ok
+                    - degraded
+                backlog:
+                  type: integer
+                  minimum: 0
+            circuitBreaker:
+              type: object
+              required:
+                - status
+                - note
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - ok
+                note:
+                  type: string
+            retryPolicy:
+              type: object
+              required:
+                - status
+                - note
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - ok
+                note:
+                  type: string
+        platforms:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlatformHealthReport"
+
+    ComponentHealth:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+            - degraded
+            - down
+        detail:
+          type: string
+
+    ComponentHealthWithCacheMetrics:
+      allOf:
+        - $ref: "#/components/schemas/ComponentHealth"
+        - type: object
+          properties:
+            metrics:
+              description: Cache implementation metrics; null when cache is not wired
+              type: object
+              nullable: true
+              additionalProperties: true
+
+    AdapterMetricSnapshot:
+      type: object
+      required:
+        - successCount
+        - failureCount
+        - cacheHits
+        - cacheMisses
+        - latencyMsP50
+        - latencyMsP95
+        - latencyMsP99
+      properties:
+        successCount:
+          type: integer
+          minimum: 0
+        failureCount:
+          type: integer
+          minimum: 0
+        cacheHits:
+          type: integer
+          minimum: 0
+        cacheMisses:
+          type: integer
+          minimum: 0
+        latencyMsP50:
+          type: number
+          nullable: true
+        latencyMsP95:
+          type: number
+          nullable: true
+        latencyMsP99:
+          type: number
+          nullable: true
+
+    PlatformHealthReport:
+      type: object
+      required:
+        - platform
+        - healthScore
+        - adapter
+        - status
+      properties:
+        platform:
+          $ref: "#/components/schemas/PlatformSlug"
+        healthScore:
+          type: number
+        adapter:
+          $ref: "#/components/schemas/AdapterMetricSnapshot"
+        status:
+          type: string
+          enum:
+            - ok
+            - degraded
+            - unknown
+
+tags:
+  - name: Health
+    description: Adapter infrastructure probes

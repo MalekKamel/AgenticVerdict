@@ -25,16 +25,16 @@ export class MockPlatformAdapter extends BasePlatformAdapter {
   private readonly authFailureMessage?: string;
   private readonly records?: NormalizedMetricRecord[];
 
-  constructor(platform: PlatformType, options: MockPlatformAdapterOptions = {}) {
+  constructor(platform: PlatformType, options: MockPlatformAdapterOptions) {
     const { rawResponse, authFailureMessage, records, ...baseOptions } = options;
-    super(baseOptions);
+    super(platform, baseOptions);
     this.platform = platform;
     this.rawResponse = rawResponse ?? { mock: true, platform };
     this.authFailureMessage = authFailureMessage;
     this.records = records;
   }
 
-  async authenticate(credentials: PlatformCredentials): Promise<void> {
+  protected async doAuthenticate(credentials: PlatformCredentials): Promise<void> {
     if (this.authFailureMessage) {
       throw new PlatformAuthError(this.platform, this.authFailureMessage);
     }

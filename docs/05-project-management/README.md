@@ -5,13 +5,13 @@ This directory contains project oversight documentation for project managers, te
 ## Contents
 
 - **project-charter.md** - Project charter combining analysis summary and project context
-- **requirements.md** - Extracted and consolidated project requirements
-- **architecture-principles.md** - Core architectural principles and design guidelines
+- **requirements.md** - Consolidated project requirements (v1.1+: platform adapter `tenantId`, security expectations, links to Phase 01 operations docs)
 - **roadmap-development.md** - Development roadmap and milestone planning
 
 ## Purpose
 
 The Project Management section provides:
+
 - Formal project definition and charter
 - Clear requirements and success criteria
 - Architectural governance and principles
@@ -20,6 +20,7 @@ The Project Management section provides:
 ## For Project Managers
 
 Use these documents to:
+
 - Track project progress against charter
 - Manage stakeholder expectations
 - Coordinate resources and dependencies
@@ -28,6 +29,7 @@ Use these documents to:
 ## For Technical Leadership
 
 Reference these documents for:
+
 - Architectural decision-making guidance
 - Requirements traceability
 - Strategic planning and prioritization
@@ -36,6 +38,7 @@ Reference these documents for:
 ## For Stakeholders
 
 Review these documents to understand:
+
 - Project scope and objectives
 - Success criteria and deliverables
 - Timeline and milestones
@@ -47,6 +50,6 @@ Review these documents to understand:
 
 **Requirements**: Comprehensive list of functional and non-functional requirements.
 
-**Architecture Principles**: Guidelines that ensure technical decisions align with project goals.
-
 **Roadmap**: High-level timeline showing phases, milestones, and dependencies.
+
+**Phase 01 operations** (adapter API, security model, runbooks): [`../03-development-phases/phase-01-platform-integration/operations/README.md`](../03-development-phases/phase-01-platform-integration/operations/README.md)

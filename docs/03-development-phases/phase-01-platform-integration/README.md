@@ -8,9 +8,12 @@ Phase 01 integrates core platforms, services, and APIs required for the applicat
 
 ## Contents
 
-- **overview.md** - Phase objectives, scope, and strategic approach
-- **tasks.md** - Detailed task breakdown with dependencies and ownership
-- **acceptance-criteria.md** - Definition of done and phase completion requirements
+- **overview.md** — Phase objectives, scope, and strategic approach
+- **tasks.md** — Detailed task breakdown with dependencies and ownership
+- **acceptance-criteria.md** — Definition of done and phase completion requirements
+- **EXECUTION-PLAN.md** — Ordered execution phases and verification
+- **operations/** — API reference, auth guides, OpenAPI health spec, runbooks ([operations/README.md](./operations/README.md))
+- **Cross-phase context** — [phase-overview.md](../phase-overview.md)
 
 ## Key Objectives
 
@@ -28,8 +31,11 @@ Phase 01 integrates core platforms, services, and APIs required for the applicat
 ## Success Criteria
 
 Phase 01 is complete when:
+
 - All required external services are integrated
 - Authentication and authorization are working
 - Data persistence is operational
 - Service communication is established
 - Integration tests are passing
+
+**Product requirement (cross-reference):** Every `BasePlatformAdapter` (and mocks used in its place) MUST be constructed with a **non-empty `tenantId`** from request or job context — see [`requirements.md`](../../05-project-management/requirements.md) §Platform integration requirements and [`operations/SECURITY.md`](./operations/SECURITY.md) (multi-tenancy and verification matrix).

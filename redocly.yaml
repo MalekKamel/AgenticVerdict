@@ -1,0 +1,7 @@
+# Redocly CLI — https://redocly.com/docs/cli/configuration/
+extends:
+  - recommended
+
+rules:
+  # Health GET handlers currently return 2xx/5xx only; 4xx is not part of the contract.
+  operation-4xx-response: off

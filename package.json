@@ -11,11 +11,13 @@
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,cjs,json}\" \"packages/**/*.{ts,tsx,js,mjs,cjs,json}\" \"vitest.config.ts\" \"*.mjs\" \"package.json\" \"*.yml\" \"*.yaml\" \".github/**/*.yml\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json}\" \"packages/**/*.{ts,tsx,js,mjs,cjs,json}\" \"vitest.config.ts\" \"*.mjs\" \"package.json\" \"*.yml\" \"*.yaml\" \".github/**/*.yml\"",
     "lint": "turbo run lint",
+    "lint:openapi": "redocly lint docs/03-development-phases/phase-01-platform-integration/operations/openapi/platform-adapters-health.yaml",
     "prepare": "husky",
     "test": "turbo run test",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "turbo run test:e2e",
     "test:integration": "turbo run test:integration",
+    "test:phase01-integration": "pnpm --filter @agenticverdict/phase01-platform-integration test",
     "test:unit": "vitest run",
     "typecheck": "turbo run typecheck"
   },
@@ -29,6 +31,7 @@
     ]
   },
   "devDependencies": {
+    "@redocly/cli": "^1.28.0",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/js": "^9.17.0",

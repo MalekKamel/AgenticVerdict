@@ -1,6 +1,6 @@
 import type { PlatformType } from "@agenticverdict/types";
 
-import type { DateRangeIso } from "./date-range";
+import type { DateRangeIso } from "../date-range";
 
 export interface NormalizedMetricRecord {
   metricKey: string;
@@ -9,14 +9,22 @@ export interface NormalizedMetricRecord {
   capturedAt: string;
 }
 
+export interface SnapshotPipelineMetadata {
+  readonly normalizedAt: string;
+  readonly pipelineVersion: string;
+  readonly fxTableVersion?: string;
+}
+
 export interface NormalizedPlatformSnapshot {
   platform: PlatformType;
   dateRange: DateRangeIso;
   records: NormalizedMetricRecord[];
+  /** Present when the snapshot passed through {@link runNormalizationPipeline}. */
+  metadata?: SnapshotPipelineMetadata;
 }
 
 /**
- * Maps vendor payloads into {@link NormalizedPlatformSnapshot}. Implemented per platform in Phase 1.
+ * Maps vendor payloads into {@link NormalizedPlatformSnapshot}. Implemented per platform adapter.
  */
 export interface PlatformDataNormalizer {
   readonly platform: PlatformType;

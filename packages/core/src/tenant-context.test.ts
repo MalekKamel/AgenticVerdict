@@ -37,4 +37,60 @@ describe("tenant context", () => {
   it("requireTenantContext throws outside of a run", () => {
     expect(() => requireTenantContext()).toThrow(/Tenant context is not set/);
   });
+
+  it("requireTenantContext returns the active context inside runWithTenantContext", async () => {
+    const ctx: TenantContext = {
+      tenantId: sampleConfig.companyId,
+      config: sampleConfig,
+      requestId: "req-2",
+    };
+    await runWithTenantContext(ctx, async () => {
+      expect(requireTenantContext().tenantId).toBe(ctx.tenantId);
+      expect(requireTenantContext().requestId).toBe("req-2");
+    });
+  });
+
+  it("restores outer tenant after nested runWithTenantContext", async () => {
+    const outer: TenantContext = {
+      tenantId: sampleConfig.companyId,
+      config: sampleConfig,
+      requestId: "outer",
+    };
+    const innerTenant = "22222222-2222-4222-8222-222222222222";
+    const inner: TenantContext = {
+      tenantId: innerTenant,
+      config: { ...sampleConfig, companyId: innerTenant },
+      requestId: "inner",
+    };
+    await runWithTenantContext(outer, async () => {
+      expect(getTenantContext()?.tenantId).toBe(outer.tenantId);
+      await runWithTenantContext(inner, async () => {
+        expect(getTenantContext()?.tenantId).toBe(innerTenant);
+      });
+      expect(getTenantContext()?.tenantId).toBe(outer.tenantId);
+    });
+    expect(getTenantContext()).toBeUndefined();
+  });
+
+  it("keeps tenant contexts isolated across concurrent async branches", async () => {
+    const makeCtx = (id: string, requestId: string): TenantContext => ({
+      tenantId: id,
+      config: { ...sampleConfig, companyId: id },
+      requestId,
+    });
+    const a = makeCtx("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "ra");
+    const b = makeCtx("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "rb");
+    const [ta, tb] = await Promise.all([
+      runWithTenantContext(a, async () => {
+        await new Promise((r) => setTimeout(r, 15));
+        return getTenantContext()?.tenantId;
+      }),
+      runWithTenantContext(b, async () => {
+        await new Promise((r) => setTimeout(r, 5));
+        return getTenantContext()?.tenantId;
+      }),
+    ]);
+    expect(ta).toBe(a.tenantId);
+    expect(tb).toBe(b.tenantId);
+  });
 });

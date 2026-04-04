@@ -1,0 +1,19 @@
+{
+  "name": "@agenticverdict/phase01-platform-integration",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@agenticverdict/core": "workspace:*",
+    "@agenticverdict/platform-adapters": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
+  }
+}

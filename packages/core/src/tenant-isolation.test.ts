@@ -162,6 +162,15 @@ describe("tenant propagation", () => {
 });
 
 describe("tenant data access", () => {
+  it("assertResourceCompanyId allows matching company id", () => {
+    const ctx: TenantContext = {
+      tenantId: TENANT,
+      config: sampleConfig,
+      requestId: "r",
+    };
+    expect(() => runWithTenantContext(ctx, () => assertResourceCompanyId(TENANT))).not.toThrow();
+  });
+
   it("assertResourceCompanyId throws on mismatch", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,

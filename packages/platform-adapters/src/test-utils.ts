@@ -7,6 +7,9 @@ import type { NormalizedPlatformSnapshot } from "./normalization";
 
 import { MockPlatformAdapter } from "./mock-adapter";
 
+/** Stable tenant id for adapter unit tests and registry mocks. */
+export const testAdapterTenantId = "00000000-0000-4000-8000-000000000001";
+
 export interface SyntheticAdapterOptions {
   fetchImpl?: (dateRange: DateRangeIso) => Promise<unknown>;
   normalizeImpl?: (raw: unknown, dateRange: DateRangeIso) => NormalizedPlatformSnapshot;
@@ -58,5 +61,8 @@ export function useMockAdapter<TContext>(
   platform: PlatformType,
   mockOptions?: ConstructorParameters<typeof MockPlatformAdapter>[1],
 ): void {
-  registry.register(platform, () => new MockPlatformAdapter(platform, mockOptions));
+  registry.register(
+    platform,
+    () => new MockPlatformAdapter(platform, { tenantId: testAdapterTenantId, ...mockOptions }),
+  );
 }

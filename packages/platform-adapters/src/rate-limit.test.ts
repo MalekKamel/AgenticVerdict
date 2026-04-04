@@ -5,9 +5,11 @@ import { withExponentialBackoff } from "./rate-limit";
 describe("withExponentialBackoff", () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("retries when retryOn matches then succeeds", async () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.5);
     vi.useFakeTimers();
     let calls = 0;
     const promise = withExponentialBackoff(

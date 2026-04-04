@@ -538,6 +538,7 @@ The `/docs` directory contains comprehensive project documentation.
 
 | Directory                                                             | Content                                                                 |
 | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [`00-overview/`](./docs/00-overview/)                                 | Documentation structure, repo status snapshot                           |
 | [`01-getting-started/`](./docs/01-getting-started/)                   | Project overview and navigation guide                                   |
 | [`02-planning-and-methodology/`](./docs/02-planning-and-methodology/) | Development methodology and testing strategy                            |
 | [`03-development-phases/`](./docs/03-development-phases/)             | Detailed phase documentation (00-04) with tasks and acceptance criteria |

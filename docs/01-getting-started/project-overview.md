@@ -7,13 +7,14 @@
 **AgenticVerdict** is a configurable, multi-platform marketing analytics agent system that aggregates data from multiple platforms, generates reports with cross-platform insights, and delivers actionable verdicts. The system is architected for reusability across different companies, industries, regions, and languages through dynamic configuration injection.
 
 ### Key Characteristics
+
 - **Multi-Tenant Capable**: Supports multiple company configurations with complete tenant isolation
 - **Language Agnostic**: Report language determined by configuration; supports RTL/LTR rendering
 - **Platform Extensible**: New platforms can be added using plugin architecture
 - **Template Driven**: Report templates are external, customizable files stored in database
 - **Observable**: Comprehensive logging, metrics, and tracing for all operations
 
-**Authoritative Context**: For complete system requirements, architecture specifications, and technical constraints, refer to [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md).
+**Authoritative context:** [`requirements.md`](../05-project-management/requirements.md) (technical requirements, including **mandatory `tenantId`** for platform adapters) and [`project-charter.md`](../05-project-management/project-charter.md).
 
 ---
 
@@ -30,17 +31,18 @@ This project follows a **Hybrid Incremental Approach** that combines:
 
 ### Core Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Don't Reinvent the Wheel** | Use battle-tested, production-proven tools and packages |
-| **Configuration Over Code** | All company-specific logic injected via configuration |
-| **Test-Driven Development** | Comprehensive testing at unit, integration, and E2E levels |
-| **Observability First** | Logging, metrics, and tracing built into every component |
-| **Security by Design** | Authentication, authorization, and data isolation from day one |
+| Principle                    | Implementation                                                 |
+| ---------------------------- | -------------------------------------------------------------- |
+| **Don't Reinvent the Wheel** | Use battle-tested, production-proven tools and packages        |
+| **Configuration Over Code**  | All company-specific logic injected via configuration          |
+| **Test-Driven Development**  | Comprehensive testing at unit, integration, and E2E levels     |
+| **Observability First**      | Logging, metrics, and tracing built into every component       |
+| **Security by Design**       | Authentication, authorization, and data isolation from day one |
 
 ### Technology Research
 
 Comprehensive technology research with justifications and trade-offs is available in the [`Technology Research`](../04-technology-research/README.md) section, covering:
+
 - Monorepo tools
 - API frameworks
 - Database/ORM solutions
@@ -56,13 +58,13 @@ Comprehensive technology research with justifications and trade-offs is availabl
 
 ## Phase Overview Table
 
-| Phase | Duration | Key Objectives | Main Deliverables | Dependencies | Exit Criteria |
-|-------|----------|----------------|-------------------|--------------|---------------|
-| **0: Foundation** | Weeks 1-2 | Project setup, infrastructure, CI/CD | Monorepo, DB schemas, base auth, CI/CD pipelines | None | Local dev environment running, DB migrations working, auth flow complete |
-| **1: Platform Integration** | Weeks 3-5 | Core platform connectors | Google Ads, Meta (Facebook/Instagram), TikTok, LinkedIn integrations | Phase 0 | Can authenticate and fetch basic data from all 4 platforms |
-| **2: Agent Runtime & Intelligence** | Weeks 6-8 | AI agent orchestration | Agent framework, prompt templates, insight generation | Phase 1 | Agent can analyze data and generate basic insights |
-| **3: Report Generation & Delivery** | Weeks 9-11 | Report creation and delivery | PDF/Excel generation, email delivery, template system | Phase 2 | Can generate and deliver complete reports via email |
-| **4: Production Hardening** | Weeks 12-14 | Testing, optimization, deployment | Comprehensive test suite, performance optimization, production deployment | Phase 3 | System production-ready with monitoring and alerting |
+| Phase                               | Duration    | Key Objectives                       | Main Deliverables                                                           | Dependencies | Exit Criteria                                                                     |
+| ----------------------------------- | ----------- | ------------------------------------ | --------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------------------------- |
+| **0: Foundation**                   | Weeks 1-2   | Project setup, infrastructure, CI/CD | Monorepo, DB schemas, base auth, CI/CD pipelines                            | None         | Local dev environment running, DB migrations working, auth flow complete          |
+| **1: Platform Integration**         | Weeks 3-5   | Core platform connectors             | Meta, GA4, GSC, GBP, TikTok adapters; normalization; health/monitoring docs | Phase 0      | Can authenticate and fetch metrics per enabled platform (see Phase 01 acceptance) |
+| **2: Agent Runtime & Intelligence** | Weeks 6-8   | AI agent orchestration               | Agent framework, prompt templates, insight generation                       | Phase 1      | Agent can analyze data and generate basic insights                                |
+| **3: Report Generation & Delivery** | Weeks 9-11  | Report creation and delivery         | PDF/Excel generation, email delivery, template system                       | Phase 2      | Can generate and deliver complete reports via email                               |
+| **4: Production Hardening**         | Weeks 12-14 | Testing, optimization, deployment    | Comprehensive test suite, performance optimization, production deployment   | Phase 3      | System production-ready with monitoring and alerting                              |
 
 ---
 
@@ -73,6 +75,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 **Focus**: Establish project infrastructure and development environment
 
 **Key Activities**:
+
 - Set up monorepo structure with workspaces
 - Configure development tooling (ESLint, Prettier, TypeScript)
 - Implement database schema and migrations
@@ -81,6 +84,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Establish observability baseline (logging, metrics)
 
 **Deliverables**:
+
 - Working monorepo with shared configs
 - PostgreSQL database with migrations
 - JWT-based authentication system
@@ -96,6 +100,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 **Focus**: Build core platform data connectors
 
 **Key Activities**:
+
 - Implement OAuth 2.0 flows for all platforms
 - Build platform-specific API clients
 - Create rate limiting and retry logic
@@ -103,13 +108,16 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Build credential management system
 - Create platform health monitoring
 
-**Platforms**:
-- Google Ads API
-- Meta Graph API (Facebook & Instagram)
-- TikTok Ads API
-- LinkedIn Marketing APIs
+**Platforms** (as implemented in Phase 01):
+
+- Meta Marketing API (Graph)
+- Google Analytics 4 Data API
+- Google Search Console
+- Google Business Profile
+- TikTok Marketing API
 
 **Deliverables**:
+
 - Working OAuth flows for all platforms
 - API clients with error handling
 - Normalized data models
@@ -125,6 +133,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 **Focus**: Implement AI agent orchestration and insight generation
 
 **Key Activities**:
+
 - Design agent architecture and workflow
 - Implement prompt template system
 - Build insight generation pipeline
@@ -133,6 +142,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Add agent observability and debugging
 
 **Deliverables**:
+
 - Working agent framework
 - Prompt templates for various analysis types
 - Insight generation pipeline
@@ -149,6 +159,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 **Focus**: Create report generation and delivery system
 
 **Key Activities**:
+
 - Design report template system
 - Implement PDF generation engine
 - Build Excel export functionality
@@ -158,6 +169,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Create report preview interface
 
 **Deliverables**:
+
 - Template-based report generation
 - PDF and Excel export
 - Email delivery with attachments
@@ -174,6 +186,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 **Focus**: Ensure system is production-ready
 
 **Key Activities**:
+
 - Comprehensive testing suite
 - Performance optimization
 - Security audit and hardening
@@ -183,6 +196,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Load testing and capacity planning
 
 **Deliverables**:
+
 - 80%+ test coverage
 - Performance benchmarks met
 - Security audit passed
@@ -198,6 +212,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 ## Quick Navigation
 
 ### Phase Documentation
+
 - [Phase 0: Foundation](../03-development-phases/phase-00-foundation/README.md)
 - [Phase 1: Platform Integration](../03-development-phases/phase-01-platform-integration/README.md)
 - [Phase 2: Agent Runtime & Intelligence](../03-development-phases/phase-02-agent-intelligence/README.md)
@@ -205,11 +220,12 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - [Phase 4: Production Hardening](../03-development-phases/phase-04-production-hardening/README.md)
 
 ### Supporting Documentation
-- [Project Initialization Context](../05-project-management/PROJECT_INIT_CONTEXT.md) — Authoritative system requirements
+
+- [Requirements](../05-project-management/requirements.md) — Authoritative technical requirements
 - [Technology Research](../04-technology-research/README.md) — Comprehensive technology analysis
-- [Development Best Practices](../02-planning-and-methodology/development-practices.md)
+- [Methodology overview](../02-planning-and-methodology/methodology-overview.md)
 - [Testing Strategy](../02-planning-and-methodology/testing-strategy.md)
-- [Deployment Guide](../02-planning-and-methodology/deployment-guide.md)
+- Phase 01 [Deployment runbook](../03-development-phases/phase-01-platform-integration/operations/RUNBOOK-DEPLOYMENT.md)
 
 ---
 
@@ -220,7 +236,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 The project will be considered successful when:
 
 1. **Functional Requirements Met**
-   - All 4 platforms (Google Ads, Meta, TikTok, LinkedIn) are integrated
+   - Required marketing platforms (Meta, GA4, GSC, GBP, TikTok per product scope) are integrated with tenant-safe adapter usage
    - AI agent generates actionable insights and verdicts
    - Reports are generated and delivered automatically via email
    - System supports multiple companies with different configurations
@@ -249,13 +265,13 @@ The project will be considered successful when:
 
 Each phase must pass the following quality gates before proceeding:
 
-| Gate | Criteria |
-|------|----------|
-| **Code Review** | All code reviewed by at least one other engineer |
-| **Testing** | Unit tests for all new code, integration tests for workflows |
-| **Documentation** | API docs updated, architecture diagrams current |
-| **Performance** | No performance regressions from previous phase |
-| **Security** | No new critical vulnerabilities introduced |
+| Gate              | Criteria                                                     |
+| ----------------- | ------------------------------------------------------------ |
+| **Code Review**   | All code reviewed by at least one other engineer             |
+| **Testing**       | Unit tests for all new code, integration tests for workflows |
+| **Documentation** | API docs updated, architecture diagrams current              |
+| **Performance**   | No performance regressions from previous phase               |
+| **Security**      | No new critical vulnerabilities introduced                   |
 
 ---
 
@@ -272,6 +288,7 @@ Week 12-14:████████████████ Phase 4: Production 
 **Total Duration**: 14 weeks (~3.5 months)
 
 **Milestone Dates**:
+
 - Week 2: Development environment ready
 - Week 5: All platform integrations complete
 - Week 8: AI agent generating insights
@@ -284,14 +301,14 @@ Week 12-14:████████████████ Phase 4: Production 
 
 ### High-Risk Areas
 
-| Risk | Mitigation Strategy | Phase to Address |
-|------|---------------------|------------------|
-| **Platform API Changes** | Build abstraction layer, version contracts | Phase 1 |
-| **AI Agent Accuracy** | Extensive testing, human-in-the-loop validation | Phase 2 |
-| **Rate Limiting** | Implement backoff, queueing, monitoring | Phase 1 |
-| **Multi-language Support** | Template system, externalize strings | Phase 3 |
-| **Report Generation Performance** | Async processing, caching, queueing | Phase 3 |
-| **Data Privacy** | Encryption, access controls, audit logs | Phase 0 & 4 |
+| Risk                              | Mitigation Strategy                             | Phase to Address |
+| --------------------------------- | ----------------------------------------------- | ---------------- |
+| **Platform API Changes**          | Build abstraction layer, version contracts      | Phase 1          |
+| **AI Agent Accuracy**             | Extensive testing, human-in-the-loop validation | Phase 2          |
+| **Rate Limiting**                 | Implement backoff, queueing, monitoring         | Phase 1          |
+| **Multi-language Support**        | Template system, externalize strings            | Phase 3          |
+| **Report Generation Performance** | Async processing, caching, queueing             | Phase 3          |
+| **Data Privacy**                  | Encryption, access controls, audit logs         | Phase 0 & 4      |
 
 ### Contingency Plans
 

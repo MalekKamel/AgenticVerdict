@@ -8,6 +8,7 @@ export type PlatformErrorCode =
   | "not_found"
   | "circuit_open"
   | "not_registered"
+  | "missing_tenant_id"
   | "unknown";
 
 export class PlatformError extends Error {

@@ -10,7 +10,7 @@ This guide helps you navigate and utilize the AgenticVerdict documentation effec
 
 ### For New Team Members
 
-1. **Start Here:** Read [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) — This is the authoritative reference for all architectural decisions
+1. **Start Here:** Read [`requirements.md`](../05-project-management/requirements.md) and [`project-charter.md`](../05-project-management/project-charter.md) — Technical scope and project mission
 2. **Understand the Approach:** Read [`methodology-overview.md`](../02-planning-and-methodology/methodology-overview.md) — Learn why we use a hybrid incremental approach
 3. **Get the Big Picture:** Read [`project-overview.md`](project-overview.md) — Master overview of all phases
 4. **Review Current Phase:** Navigate to the current phase folder for detailed tasks
@@ -34,24 +34,25 @@ This guide helps you navigate and utilize the AgenticVerdict documentation effec
 
 ```
 docs/
+├── README.md                         # Documentation hub
+├── 00-overview/                      # Meta: structure plan, development status snapshot
 ├── 01-getting-started/
-│   ├── project-overview.md           # Master roadmap overview
-│   └── navigation.md                 # This file: How to use the documentation
-│
+│   ├── project-overview.md
+│   └── navigation.md                 # This file
 ├── 02-planning-and-methodology/
-│   ├── methodology-overview.md       # Hybrid incremental approach rationale
-│   ├── testing-strategy.md           # Testing philosophy and requirements
-│   └── phase-transitions.md          # Quality gates and approval process
-│
-├── 03-architecture/                  # System architecture documentation
-│   ├── system-overview.md
-│   ├── data-models.md
-│   └── api-design.md
-│
-└── 04-technology-research/           # Technology research and analysis
-    ├── monorepo-tools.md
-    ├── api-frameworks.md
-    └── ...
+│   ├── methodology-overview.md
+│   ├── testing-strategy.md
+│   └── phase-transitions.md
+├── 03-development-phases/
+│   ├── phase-overview.md             # Cross-phase dependencies
+│   ├── phase-00-foundation/
+│   ├── phase-01-platform-integration/
+│   ├── phase-02-agent-intelligence/
+│   ├── phase-03-report-generation/
+│   └── phase-04-production-hardening/
+├── 04-technology-research/           # By category: backend/, ai-and-automation/, etc.
+├── 05-project-management/
+└── 06-reference/
 ```
 
 ---
@@ -63,6 +64,7 @@ docs/
 **Purpose:** Understand timeline, deliverables, and business value
 
 **Reading Order:**
+
 1. [`project-overview.md`](project-overview.md) — Read Executive Summary and Phase Overview Table
 2. [`project-overview.md`](project-overview.md) — Review Timeline section
 3. [`methodology-overview.md`](../02-planning-and-methodology/methodology-overview.md) — Review Approach Comparison (first 2 sections only)
@@ -77,12 +79,13 @@ docs/
 **Purpose:** Understand architecture, dependencies, and technical decisions
 
 **Reading Order:**
-1. [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) — Complete read (authoritative source)
+
+1. [`requirements.md`](../05-project-management/requirements.md) — Complete read (authoritative source)
 2. [`project-overview.md`](project-overview.md) — Full read for project scope
 3. [`methodology-overview.md`](../02-planning-and-methodology/methodology-overview.md) — Full read for approach rationale
 4. [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) — Full read for quality standards
 5. [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) — Full read for governance
-6. All `PHASE_XX_OVERVIEW.md` files — Understand technical approach per phase
+6. Phase folders under [`../03-development-phases/`](../03-development-phases/) — `README.md`, `tasks.md`, `acceptance-criteria.md`, and phase-specific operations (e.g. Phase 01 [`operations/README.md`](../03-development-phases/phase-01-platform-integration/operations/README.md) including [`SECURITY.md`](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md))
 7. [`../04-technology-research/`](../04-technology-research/) — Review research findings for deeper context
 
 **Time Investment:** 3-4 hours
@@ -94,7 +97,8 @@ docs/
 **Purpose:** Understand implementation tasks and acceptance criteria for current phase
 
 **Reading Order:**
-1. [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) — Read sections relevant to your work
+
+1. [`requirements.md`](../05-project-management/requirements.md) — Read sections relevant to your work
 2. Current Phase `PHASE_XX_OVERVIEW.md` — Understand phase objectives and approach
 3. Current Phase `PHASE_XX_TASKS.md` — Find your assigned tasks
 4. [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) — Understand testing requirements
@@ -109,6 +113,7 @@ docs/
 **Purpose:** Understand testing requirements and quality gates
 
 **Reading Order:**
+
 1. [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) — Complete read (testing philosophy)
 2. [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) — Complete read (quality gates)
 3. Current Phase `PHASE_XX_ACCEPTANCE.md` — Detailed acceptance criteria
@@ -127,11 +132,13 @@ Each phase folder contains three documents with a specific purpose:
 **Purpose:** High-level understanding of the phase
 
 **When to Read:**
+
 - Before starting a new phase
 - When needing context for your work
 - When understanding dependencies
 
 **Key Sections:**
+
 - Executive Summary
 - Primary Objectives
 - Success Criteria
@@ -148,11 +155,13 @@ Each phase folder contains three documents with a specific purpose:
 **Purpose:** Detailed implementation tasks
 
 **When to Read:**
+
 - When assigned specific tasks
 - When planning sprint work
 - When estimating effort
 
 **Key Sections:**
+
 - Work Stream Breakdown
 - Individual Task Details (description, acceptance criteria, estimates, dependencies)
 
@@ -165,11 +174,13 @@ Each phase folder contains three documents with a specific purpose:
 **Purpose:** Phase completion requirements
 
 **When to Read:**
+
 - Before starting a phase (understand success criteria)
 - During phase (track progress toward completion)
 - At phase end (validate completion)
 
 **Key Sections:**
+
 - Functional Acceptance Criteria
 - Performance Requirements
 - Testing Requirements
@@ -212,17 +223,20 @@ Each phase folder contains three documents with a specific purpose:
 ### Phase Transition Process
 
 **Before Transitioning:**
+
 1. Complete all acceptance criteria in current phase
 2. Pass all quality gates in [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md)
 3. Obtain required sign-offs
 4. Create transition summary document
 
 **Go/No-Go Decision:**
+
 - Use the decision framework in [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md)
 - Obtain stakeholder approval
 - Document any conditions for transition
 
 **After Approval:**
+
 1. Archive current phase materials
 2. Kick off next phase with team review
 3. Update master roadmap status
@@ -233,24 +247,25 @@ Each phase folder contains three documents with a specific purpose:
 
 ### Finding Information By Topic
 
-| Topic | Document | Section |
-|-------|----------|---------|
-| Project timeline | [`project-overview.md`](project-overview.md) | Phase Overview Table |
-| Phase dependencies | [`project-overview.md`](project-overview.md) | Phase Sequence |
-| Testing philosophy | [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) | Testing Philosophy |
-| Test coverage requirements | [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) | Coverage Requirements |
-| Phase approval process | [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) | Approval Workflow |
-| Quality gates | [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) | Quality Gates |
-| Current phase tasks | `phases/phase-XX-*/PHASE_XX_TASKS.md` | Work Stream Breakdown |
-| Phase exit criteria | `phases/phase-XX-*/PHASE_XX_ACCEPTANCE.md` | Exit Criteria |
-| Architecture decisions | [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) | All sections |
-| Technology choices | [`../04-technology-research/`](../04-technology-research/) | Research documents |
+| Topic                      | Document                                                                      | Section               |
+| -------------------------- | ----------------------------------------------------------------------------- | --------------------- |
+| Project timeline           | [`project-overview.md`](project-overview.md)                                  | Phase Overview Table  |
+| Phase dependencies         | [`project-overview.md`](project-overview.md)                                  | Phase Sequence        |
+| Testing philosophy         | [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md)   | Testing Philosophy    |
+| Test coverage requirements | [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md)   | Coverage Requirements |
+| Phase approval process     | [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) | Approval Workflow     |
+| Quality gates              | [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) | Quality Gates         |
+| Current phase tasks        | `phases/phase-XX-*/PHASE_XX_TASKS.md`                                         | Work Stream Breakdown |
+| Phase exit criteria        | `phases/phase-XX-*/PHASE_XX_ACCEPTANCE.md`                                    | Exit Criteria         |
+| Architecture decisions     | [`requirements.md`](../05-project-management/requirements.md)                 | All sections          |
+| Technology choices         | [`../04-technology-research/`](../04-technology-research/)                    | Research documents    |
 
 ---
 
 ## Symbols and Conventions
 
 ### Task Status Indicators
+
 - **⏳ Not Started** — Task defined, not assigned
 - **🔄 In Progress** — Work underway
 - **✅ Complete** — Task finished and verified
@@ -258,12 +273,14 @@ Each phase folder contains three documents with a specific purpose:
 - **❌ Failed** — Task failed, requires remediation
 
 ### Priority Levels
+
 - **P0 — Critical** — Blocks phase completion
 - **P1 — High** — Important for phase success
 - **P2 — Medium** — Should complete in phase
 - **P3 — Low** — Nice to have
 
 ### Dependency Symbols
+
 - **↑** — Depends on previous phase
 - **→** — Blocks next task
 - **⚡** — Can run in parallel
@@ -288,7 +305,7 @@ For any significant architectural decision:
 
 1. Create ADR in `docs/adr/` directory
 2. Reference from relevant phase documentation
-3. Update [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) if foundational
+3. Update [`requirements.md`](../05-project-management/requirements.md) if foundational
 
 ### Scope Changes
 
@@ -305,18 +322,21 @@ For any scope modification:
 ## Tips for Effective Documentation Usage
 
 ### For Teams
+
 - **Assign task ownership** — Every task should have a clear owner
 - **Track progress visibly** — Use project management tools linked to documentation
 - **Reference frequently** — Keep documentation open during development
 - **Update as you go** — Don't wait until phase end to update status
 
 ### For Individuals
+
 - **Read before doing** — Always read task details before starting
 - **Ask questions** — Clarify ambiguities before estimating
 - **Document decisions** — Record why you made specific choices
 - **Test against acceptance** — Verify your work meets acceptance criteria
 
 ### For Leaders
+
 - **Review weekly** — Regular documentation reviews keep everyone aligned
 - **Remove blockers** — Act on dependency issues immediately
 - **Celebrate milestones** — Acknowledge phase completions
@@ -327,19 +347,23 @@ For any scope modification:
 ## Getting Help
 
 ### Questions About Documentation Structure
+
 - Refer to this navigation guide
 - Check [`methodology-overview.md`](../02-planning-and-methodology/methodology-overview.md) for approach rationale
 
 ### Questions About Specific Tasks
+
 - Review task details in `PHASE_XX_TASKS.md`
 - Check acceptance criteria in `PHASE_XX_ACCEPTANCE.md`
 - Refer to [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) for testing guidance
 
 ### Questions About Architecture
-- [`PROJECT_INIT_CONTEXT.md`](../05-project-management/PROJECT_INIT_CONTEXT.md) is the authoritative source
+
+- [`requirements.md`](../05-project-management/requirements.md) is the authoritative source
 - Research documents in [`../04-technology-research/`](../04-technology-research/) provide additional context
 
 ### Questions About Process
+
 - [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) for phase transitions
 - [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) for testing processes
 
@@ -347,24 +371,27 @@ For any scope modification:
 
 ## Document Version History
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2026-04-03 | Initial creation | Documentation Team |
+| Version | Date       | Changes          | Author             |
+| ------- | ---------- | ---------------- | ------------------ |
+| 1.0     | 2026-04-03 | Initial creation | Documentation Team |
 
 ---
 
 ## Appendix: Quick Navigation Links
 
 ### Master Documents
+
 - [Project Overview](project-overview.md)
 - [Navigation Guide](navigation.md) — This file
 
 ### Planning and Methodology
+
 - [Methodology Overview](../02-planning-and-methodology/methodology-overview.md)
 - [Testing Strategy](../02-planning-and-methodology/testing-strategy.md)
 - [Phase Transitions](../02-planning-and-methodology/phase-transitions.md)
 
 ### Phase Documentation
+
 - [Phase 0: Foundation](../03-development-phases/phase-00-foundation/PHASE_00_OVERVIEW.md)
 - [Phase 1: Platform Integration](../03-development-phases/phase-01-platform-integration/PHASE_01_OVERVIEW.md)
 - [Phase 2: Agent Intelligence](../03-development-phases/phase-02-agent-intelligence/PHASE_02_OVERVIEW.md)
@@ -372,9 +399,11 @@ For any scope modification:
 - [Phase 4: Production Hardening](../03-development-phases/phase-04-production-hardening/PHASE_04_OVERVIEW.md)
 
 ### Research Documents
+
 - [AI Agent Roadmap Best Practices](../04-technology-research/ai_agent_roadmap_best_practices.md)
 - [Testing & Validation Strategies](../04-technology-research/testing_validation_strategies.md)
 - [Phase 1 Foundation Components](../04-technology-research/phase_1_foundation_components.md)
 
 ### Authoritative Context
-- [Project Init Context](../05-project-management/PROJECT_INIT_CONTEXT.md) — Single source of truth
+
+- [Requirements](../05-project-management/requirements.md) — Technical scope (see also [project charter](../05-project-management/project-charter.md))

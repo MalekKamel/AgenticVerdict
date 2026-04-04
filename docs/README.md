@@ -6,14 +6,15 @@ Welcome to the consolidated documentation hub for the AgenticVerdict project. Th
 
 ## Quick Navigation
 
-| Section | Audience | Description |
-|---------|----------|-------------|
-| [**Getting Started**](01-getting-started/) | New team members, stakeholders | Project overview, quick start, and navigation |
-| [**Planning & Methodology**](02-planning-and-methodology/) | Tech leads, architects | Development approach, testing strategy, quality gates |
-| [**Development Phases**](03-development-phases/) | Developers, implementers | Detailed phase documentation (00-04) |
-| [**Technology Research**](04-technology-research/) | Engineers making tech decisions | Comprehensive technology analysis and recommendations |
-| [**Project Management**](05-project-management/) | PMs, leadership | Project charter, requirements, roadmap |
-| [**Reference**](06-reference/) | All team members | Prompts, templates, and resources |
+| Section                                                    | Audience                        | Description                                                   |
+| ---------------------------------------------------------- | ------------------------------- | ------------------------------------------------------------- |
+| [**Overview & meta**](00-overview/)                        | Maintainers, leads              | Documentation taxonomy, migration notes, repo status snapshot |
+| [**Getting Started**](01-getting-started/)                 | New team members, stakeholders  | Project overview, quick start, and navigation                 |
+| [**Planning & Methodology**](02-planning-and-methodology/) | Tech leads, architects          | Development approach, testing strategy, quality gates         |
+| [**Development Phases**](03-development-phases/)           | Developers, implementers        | Detailed phase documentation (00-04)                          |
+| [**Technology Research**](04-technology-research/)         | Engineers making tech decisions | Comprehensive technology analysis and recommendations         |
+| [**Project Management**](05-project-management/)           | PMs, leadership                 | Project charter, requirements, roadmap                        |
+| [**Reference**](06-reference/)                             | All team members                | Prompts, templates, and resources                             |
 
 ---
 
@@ -21,12 +22,14 @@ Welcome to the consolidated documentation hub for the AgenticVerdict project. Th
 
 ```
 docs/
-├── 01-getting-started/              # Start here for new team members
-├── 02-planning-and-methodology/     # Strategic guidance and methodology
-├── 03-development-phases/           # Phase-by-phase implementation details
-├── 04-technology-research/          # Technology stack research and decisions
-├── 05-project-management/           # Project oversight and requirements
-└── 06-reference/                    # Reference materials and resources
+├── README.md                        # This hub (start here)
+├── 00-overview/                     # Meta: structure plan, development status snapshot
+├── 01-getting-started/              # New team members
+├── 02-planning-and-methodology/     # Methodology, testing, quality gates
+├── 03-development-phases/           # Phases 00–04 (+ phase-overview.md)
+├── 04-technology-research/          # Technology decisions
+├── 05-project-management/         # Charter, requirements, roadmap
+└── 06-reference/                    # Templates and resources
 ```
 
 ---
@@ -34,21 +37,25 @@ docs/
 ## How to Use This Documentation
 
 ### For New Team Members
+
 1. Start with [Getting Started](01-getting-started/project-overview.md)
 2. Review the [Project Charter](05-project-management/project-charter.md)
 3. Explore [Development Phases](03-development-phases/) to understand the implementation roadmap
 
 ### For Developers
+
 1. Review the [Testing Strategy](02-planning-and-methodology/testing-strategy.md)
 2. Navigate to your assigned [Development Phase](03-development-phases/)
 3. Consult [Technology Research](04-technology-research/) for implementation guidance
 
 ### For Architects and Tech Leads
+
 1. Review [Methodology Overview](02-planning-and-methodology/methodology-overview.md)
-2. Study [Architecture Principles](05-project-management/architecture-principles.md)
+2. Study [Project charter](05-project-management/project-charter.md) and [requirements](05-project-management/requirements.md)
 3. Reference [Technology Research](04-technology-research/) for technical decisions
 
 ### For Project Managers
+
 1. Start with [Project Charter](05-project-management/project-charter.md)
 2. Review [Requirements](05-project-management/requirements.md)
 3. Track progress via [Development Phases](03-development-phases/)
@@ -77,13 +84,13 @@ This documentation follows these key principles:
 
 ## Development Phases Overview
 
-| Phase | Name | Focus Area | Status |
-|-------|------|------------|--------|
-| 00 | Foundation | Core domain models, configuration, infrastructure | Planned |
-| 01 | Platform Integration | Multi-platform adapters, data normalization | Planned |
-| 02 | Agent Intelligence | AI orchestration, LangChain integration | Planned |
-| 03 | Report Generation | Template-driven reporting, multi-format output | Planned |
-| 04 | Production Hardening | Performance, security, operational excellence | Planned |
+| Phase | Name                 | Focus Area                                        | Status (snapshot 2026-04-04)                                    |
+| ----- | -------------------- | ------------------------------------------------- | --------------------------------------------------------------- |
+| 00    | Foundation           | Core domain models, configuration, infrastructure | In progress (major pieces landed; see phase acceptance)         |
+| 01    | Platform Integration | Multi-platform adapters, data normalization       | Largely implemented in code + ops docs; exit criteria vs review |
+| 02    | Agent Intelligence   | AI orchestration, LangChain integration           | Planned                                                         |
+| 03    | Report Generation    | Template-driven reporting, multi-format output    | Planned                                                         |
+| 04    | Production Hardening | Performance, security, operational excellence     | Planned (overlaps prior phases)                                 |
 
 See [Development Phases](03-development-phases/) for detailed documentation.
 
@@ -92,12 +99,13 @@ See [Development Phases](03-development-phases/) for detailed documentation.
 ## Technology Stack Highlights
 
 ### Core Technologies
+
 - **Build Tools**: Turborepo, pnpm workspaces
-- **Backend**: tRPC, Drizzle ORM, Hono
-- **AI Frameworks**: LangChain, Vercel AI SDK
-- **Frontend**: Next.js, shadcn/ui, Radix UI
-- **Testing**: Vitest, Playwright, Testing Library
-- **Observability**: OpenTelemetry, Prometheus, Grafana
+- **Backend**: tRPC (internal), Drizzle ORM, Fastify (target for external API), Next.js route handlers where used
+- **AI Frameworks**: LangChain.js / LangGraph.js (target stack per `CLAUDE.md`)
+- **Frontend**: Next.js 15, Mantine (see `apps/web`)
+- **Testing**: Vitest, Playwright (target), Testing Library
+- **Observability**: OpenTelemetry, Prometheus, Grafana (targets per research docs)
 
 See [Technology Research](04-technology-research/) for comprehensive analysis.
 
@@ -125,19 +133,21 @@ See [Technology Research](04-technology-research/) for comprehensive analysis.
 ## Migration Information
 
 This documentation was consolidated from three separate directories:
+
 - `/docs` — Previously empty, now the consolidated documentation hub
 - `/roadmap` — Roadmap, phase documentation, methodology (20 files)
 - `/task` — Project context, requirements, technology research (17 files)
 
 **Migration Date**: April 3, 2026
 **Total Files Migrated**: 37 markdown documents
-**See**: [DOCUMENTATION_STRUCTURE.md](DOCUMENTATION_STRUCTURE.md) for full migration details.
+**See**: [documentation-structure.md](00-overview/documentation-structure.md) for full migration details.
 
 ---
 
 ## Quick Links
 
 ### Essential Documents
+
 - [Project Overview](01-getting-started/project-overview.md) — Executive summary
 - [Project Charter](05-project-management/project-charter.md) — Project mission and scope
 - [Requirements](05-project-management/requirements.md) — Technical requirements
@@ -145,16 +155,19 @@ This documentation was consolidated from three separate directories:
 - [Navigation Guide](01-getting-started/navigation.md) — How to navigate this documentation
 
 ### Key Resources
+
 - [Technology Stack Summary](04-technology-research/research-overview.md)
 - [Testing Strategy](02-planning-and-methodology/testing-strategy.md)
 - [Quality Gates](02-planning-and-methodology/phase-transitions.md)
-- [Phase Overview](03-development-phases/) — All phases overview
+- [Phase overview](03-development-phases/phase-overview.md) — Cross-phase dependencies and sequence
+- [Development status snapshot](00-overview/development-status-summary.md) — Inventory vs plan (update periodically)
 
 ---
 
 ## Support & Questions
 
 For questions about:
+
 - **Documentation structure**: See [Navigation Guide](01-getting-started/navigation.md)
 - **Implementation details**: Consult relevant [Development Phase](03-development-phases/)
 - **Technology choices**: Review [Technology Research](04-technology-research/)
@@ -162,8 +175,8 @@ For questions about:
 
 ---
 
-**Documentation Version**: 1.0
-**Last Updated**: April 3, 2026
+**Documentation Version**: 1.1  
+**Last Updated**: April 4, 2026  
 **Maintained By**: AgenticVerdict Development Team
 
 ---
@@ -172,4 +185,4 @@ For questions about:
 
 **✅ Documentation Consolidation Complete** — All project documentation has been successfully migrated from scattered directories (`/roadmap`, `/task`) into this unified structure.
 
-See [MIGRATION_COMPLETE.md](MIGRATION_COMPLETE.md) for full details on the migration process, including what was moved and how to use the new structure.
+Consolidation history and file-level mapping: [documentation-structure.md](00-overview/documentation-structure.md).

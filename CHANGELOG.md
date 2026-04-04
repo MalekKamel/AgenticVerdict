@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Placeholder.
+- **Documentation:** `docs/05-project-management/requirements.md` v1.1 — platform adapters require explicit `tenantId`; security requirements reference Phase 01 `operations/SECURITY.md`; tenant context examples aligned with `tenantId`; research doc paths point at `docs/04-technology-research/`. Synced hub and status docs (`docs/README.md`, `docs/00-overview/development-status-summary.md`, `docs/01-getting-started/project-overview.md`, `navigation.md`, phase 01 README, `phase-overview.md`, `project-charter.md`, `roadmap-development.md`, implementation review header). See `changelog/2026-04-04-phase-01-*.md` for code-level Phase 01 notes.
 
 ### Fixed
 

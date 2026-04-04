@@ -21,23 +21,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Technology Stack
 
 ### Core Infrastructure
+
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Runtime**: Node.js 20 LTS, TypeScript 5.3+
 - **Frontend**: Next.js 15 with Mantine UI components
 - **API**: tRPC v11 (internal) + Fastify (external)
 
 ### Data Layer
+
 - **Database**: PostgreSQL 16 with Drizzle ORM (NOT Prisma — chosen for 2-10x better performance)
 - **Validation**: Zod for runtime type safety
 - **Cache**: Upstash Redis (distributed) + node-cache (L1 in-memory)
 - **Queue**: BullMQ for background jobs
 
 ### AI/Agent Orchestration
+
 - **Framework**: LangChain.js + LangGraph.js for stateful workflows
 - **Primary LLM**: Claude 3.5 Sonnet (claude-3-5-sonnet-20241022)
 - **Fallback**: GPT-4o
 
 ### Testing & Quality
+
 - **Unit Testing**: Vitest with 70%+ coverage target (80%+ for business logic)
 - **E2E Testing**: Playwright for critical user journeys
 - **Type Safety**: Zero `any` types, strict TypeScript mode
@@ -69,7 +73,7 @@ agenticverdict/
 
 ```typescript
 // Tenant context propagation via AsyncLocalStorage
-import { AsyncLocalStorage } from 'node:async_hooks';
+import { AsyncLocalStorage } from "node:async_hooks";
 
 const tenantContext = new AsyncLocalStorage<TenantContext>();
 
@@ -104,17 +108,17 @@ The `CompanyConfig` interface (defined in `packages/config/src/schemas/`) is the
 interface CompanyConfig {
   companyId: string;
   localization: {
-    language: 'ar' | 'en' | 'fr';  // Determines RTL/LTR
-    region: string;                 // e.g., 'SA', 'US'
+    language: "ar" | "en" | "fr"; // Determines RTL/LTR
+    region: string; // e.g., 'SA', 'US'
     timezone: string;
     currency: string;
   };
   marketing: {
-    channels: PlatformConfig[];     // Enabled platforms
+    channels: PlatformConfig[]; // Enabled platforms
   };
   ai: {
     primaryModel: string;
-    provider: 'anthropic' | 'openai';
+    provider: "anthropic" | "openai";
   };
   features: {
     enableInsights: boolean;
@@ -140,6 +144,7 @@ interface PlatformAdapter {
 ```
 
 Each adapter includes:
+
 - Rate limiting with exponential backoff
 - Circuit breaker for graceful degradation
 - Error handling with platform-specific retry logic
@@ -148,6 +153,7 @@ Each adapter includes:
 ## Development Workflow
 
 ### Building
+
 ```bash
 # Build all packages in dependency order
 turbo run build
@@ -157,6 +163,7 @@ turbo run build --filter=@agenticverdict/web
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 turbo run test
@@ -172,6 +179,7 @@ turbo run test:e2e
 ```
 
 ### Development
+
 ```bash
 # Start all apps in dev mode
 pnpm dev
@@ -181,6 +189,7 @@ pnpm --filter @agenticverdict/web dev
 ```
 
 ### Database
+
 ```bash
 # Generate migration from schema changes
 drizzle-kit generate:pg
@@ -195,12 +204,14 @@ drizzle-kit studio
 ## Testing Requirements
 
 **Coverage Targets** (from `/docs/02-planning-and-methodology/testing-strategy.md`):
+
 - Business logic: 85%+ (90%+ for critical components)
 - Data models: 80%+
 - API controllers: 75%+
 - Utilities: 90%+
 
 **Critical Code** (requires 90%+ coverage):
+
 - Authentication/authorization
 - Tenant isolation logic
 - AI agent decision logic
@@ -208,6 +219,7 @@ drizzle-kit studio
 - Report generation
 
 **Test Types**:
+
 - Unit tests (60%): Fast, isolated business logic
 - Integration tests (25%): API endpoints, database operations
 - System tests (10%): Multi-component workflows
@@ -217,14 +229,15 @@ drizzle-kit studio
 
 The `/docs` directory contains comprehensive project documentation:
 
-| Directory | Content |
-|-----------|---------|
-| `01-getting-started/` | Project overview, navigation |
-| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates |
-| `03-development-phases/` | Detailed phase documentation (00-04) with tasks and acceptance criteria |
-| `04-technology-research/` | Comprehensive technology analysis with justifications |
-| `05-project-management/` | Project charter, requirements, roadmap |
-| `06-reference/` | Prompts, templates, resources |
+| Directory                      | Content                                                                 |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot    |
+| `01-getting-started/`          | Project overview, navigation                                            |
+| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                |
+| `03-development-phases/`       | Detailed phase documentation (00-04) with tasks and acceptance criteria |
+| `04-technology-research/`      | Comprehensive technology analysis with justifications                   |
+| `05-project-management/`       | Project charter, requirements, roadmap                                  |
+| `06-reference/`                | Prompts, templates, resources                                           |
 
 **Before making architectural decisions**, consult the relevant technology research documentation in `/docs/04-technology-research/`.
 
@@ -239,6 +252,7 @@ The project follows a five-phase roadmap (14 weeks total):
 5. **Phase 4: Production Hardening** (Weeks 12-14) — Testing, optimization, deployment
 
 **Phase transitions require**:
+
 - All acceptance criteria met
 - Tests passing with adequate coverage
 - Documentation updated
@@ -248,13 +262,14 @@ The project follows a five-phase roadmap (14 weeks total):
 ## Common Patterns
 
 ### Error Handling
+
 ```typescript
 // Use structured error types
 class PlatformError extends Error {
   constructor(
     public platform: PlatformType,
     public code: string,
-    message: string
+    message: string,
   ) {
     super(message);
   }
@@ -264,24 +279,25 @@ class PlatformError extends Error {
 class CircuitBreaker {
   private failureCount = 0;
   private lastFailureTime = 0;
-  private state: 'closed' | 'open' | 'half-open' = 'closed';
+  private state: "closed" | "open" | "half-open" = "closed";
 }
 ```
 
 ### Observability
+
 ```typescript
 // Structured logging with Pino
 logger.info({
   tenantId: context.tenantId,
   requestId: context.requestId,
-  event: 'platform.fetch',
-  platform: 'meta',
-  duration: ms
+  event: "platform.fetch",
+  platform: "meta",
+  duration: ms,
 });
 
 // Metrics with Prometheus
-counter('platform_requests_total', {
-  labels: { platform: 'meta', status: 'success' }
+counter("platform_requests_total", {
+  labels: { platform: "meta", status: "success" },
 });
 ```
 
@@ -297,6 +313,7 @@ counter('platform_requests_total', {
 ## Language and Internationalization
 
 The system supports multiple languages with RTL/LTR rendering:
+
 - Language determined by `config.localization.language`
 - Arabic ('ar') requires RTL layout; others use RTL/LTR according to the language
 - All user-facing strings must be externalized to translation files
@@ -305,6 +322,7 @@ The system supports multiple languages with RTL/LTR rendering:
 ## Report Generation
 
 Reports are generated from templates stored in the database:
+
 - Templates support variable injection (company info, metrics, insights)
 - PDF generation uses Puppeteer/Playwright
 - Excel export uses ExcelJS

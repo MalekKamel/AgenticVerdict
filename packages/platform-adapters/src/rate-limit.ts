@@ -1,29 +1,32 @@
+import { isRetryablePlatformError } from "./error-classifier";
+
 export interface ExponentialBackoffOptions {
-  /** First delay in milliseconds. */
+  /** First delay in milliseconds (1s per Phase 1 execution plan). */
   initialDelayMs: number;
   /** Multiplier applied after each retryable failure. */
   factor: number;
-  /** Hard cap on delay between attempts. */
+  /** Hard cap on delay between attempts (16s cap in plan). */
   maxDelayMs: number;
-  /** Maximum attempts including the first try. */
+  /** Maximum attempts including the first try (1 + 5 retries → 6 for full 1s…16s ladder). */
   maxAttempts: number;
   /** When true, the final error is rethrown after exhausting attempts. */
   retryOn: (error: unknown) => boolean;
 }
 
-const defaultRetryOn = (error: unknown): boolean => {
-  if (error instanceof Error && /rate|429|throttl/i.test(error.message)) {
-    return true;
-  }
-  return false;
-};
+/**
+ * Jitter ±20% to reduce thundering herd (Task 1.5).
+ */
+export function applyBackoffJitter(baseMs: number): number {
+  const jitterRange = baseMs * 0.2;
+  return Math.max(0, Math.round(baseMs - jitterRange + Math.random() * 2 * jitterRange));
+}
 
 export const defaultBackoffOptions: ExponentialBackoffOptions = {
-  initialDelayMs: 200,
+  initialDelayMs: 1000,
   factor: 2,
-  maxDelayMs: 10_000,
-  maxAttempts: 4,
-  retryOn: defaultRetryOn,
+  maxDelayMs: 16_000,
+  maxAttempts: 6,
+  retryOn: isRetryablePlatformError,
 };
 
 function sleep(ms: number): Promise<void> {
@@ -33,7 +36,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Runs `fn`, retrying with exponential backoff when `retryOn` matches.
+ * Runs `fn`, retrying with exponential backoff (1s, 2s, 4s, 8s, 16s) and jitter when `retryOn` matches.
  */
 export async function withExponentialBackoff<T>(
   options: ExponentialBackoffOptions,
@@ -51,7 +54,8 @@ export async function withExponentialBackoff<T>(
       if (!canRetry) {
         throw error;
       }
-      await sleep(Math.min(delay, options.maxDelayMs));
+      const waitMs = applyBackoffJitter(Math.min(delay, options.maxDelayMs));
+      await sleep(waitMs);
       delay = Math.min(delay * options.factor, options.maxDelayMs);
     }
   }
