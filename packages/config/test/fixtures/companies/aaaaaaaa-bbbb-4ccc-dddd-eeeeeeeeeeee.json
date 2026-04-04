@@ -1,0 +1,21 @@
+{
+  "companyId": "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+  "companyName": "Fixture Co",
+  "localization": {
+    "language": "en",
+    "region": "GB",
+    "timezone": "Europe/London",
+    "currency": "GBP"
+  },
+  "marketing": {
+    "channels": [{ "platform": "ga4", "enabled": true }]
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": false,
+    "enableVerdict": false
+  }
+}

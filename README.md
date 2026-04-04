@@ -1,4 +1,5 @@
 # AgenticVerdict
+
 **Multi-Platform Marketing Analytics with AI-Powered Insights**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue)](https://www.typescriptlang.org/)
@@ -28,30 +29,35 @@ Built as a **multi-tenant SaaS platform**, AgenticVerdict serves multiple compan
 ### Core Capabilities
 
 **Data Aggregation**
+
 - Seamless integration with 5+ marketing platforms (Meta, GA4, GSC, GBP, TikTok)
 - OAuth authentication with credential encryption at rest
 - Intelligent caching (L1 in-memory + L2 Redis) for optimal performance
 - Circuit breakers and graceful degradation for external service failures
 
 **AI-Powered Analytics**
+
 - LangChain.js + LangGraph.js orchestration for complex agent workflows
 - Claude 3.5 Sonnet (primary) with GPT-4o fallback for reliability
 - Cross-platform correlation analysis humans miss when analyzing platforms separately
 - Actionable verdicts with specific metrics and recommendations
 
 **Multi-Tenant Architecture**
+
 - AsyncLocalStorage for tenant context propagation throughout request lifecycle
 - Row-level security enforced at database level for complete data isolation
 - Per-tenant configuration injection (language, region, platforms, KPIs, business context)
 - Resource quotas and rate limiting per tenant
 
 **Report Generation & Delivery**
+
 - PDF and Excel report generation under 60 seconds
 - Multi-language support with proper RTL/LTR rendering (Arabic, English, French)
 - Template-based generation with variable injection
 - Scheduled delivery via email with BullMQ job queue
 
 **Enterprise Features**
+
 - Comprehensive observability (Pino logging, Prometheus metrics, Sentry error tracking)
 - Type-safe APIs with tRPC (internal) and Fastify (external)
 - Plugin architecture for adding new platforms without core changes
@@ -84,6 +90,7 @@ The system not only aggregates data but **generates intelligent verdicts**—spe
 **Masafh** is a Riyadh-based B2B GPS fleet tracking and SaaS fleet management company serving logistics, transport, car rental, and educational institution clients across Saudi Arabia.
 
 **Why AgenticVerdict for Masafh:**
+
 - Arabic language support with proper RTL rendering
 - Regional platform integration (Google Business Profile critical for local SEO)
 - Configurable KPIs aligned with B2B fleet tracking metrics
@@ -98,68 +105,76 @@ The system not only aggregates data but **generates intelligent verdicts**—spe
 AgenticVerdict is built on **proven, production-tested technologies** selected for performance, TypeScript integration, and developer experience.
 
 ### Core Infrastructure
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Monorepo** | Turborepo + pnpm workspaces | Lightning-fast builds with intelligent caching |
-| **Runtime** | Node.js 20 LTS | Long-term support with excellent performance |
-| **Language** | TypeScript 5.3+ (strict mode) | Zero `any` types, compile-time safety |
+
+| Component    | Technology                    | Why                                            |
+| ------------ | ----------------------------- | ---------------------------------------------- |
+| **Monorepo** | Turborepo + pnpm workspaces   | Lightning-fast builds with intelligent caching |
+| **Runtime**  | Node.js 20 LTS                | Long-term support with excellent performance   |
+| **Language** | TypeScript 5.3+ (strict mode) | Zero `any` types, compile-time safety          |
 
 ### Frontend Layer
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Framework** | Next.js 15 (App Router) | Latest React features with server components |
-| **UI Library** | Mantine | 100+ modern components, TypeScript-first, enterprise-ready |
-| **State** | TanStack Query (React Query) | Powerful caching and synchronization |
-| **Validation** | Zod + React Hook Form | Runtime type safety with excellent DX |
+
+| Component      | Technology                   | Why                                                        |
+| -------------- | ---------------------------- | ---------------------------------------------------------- |
+| **Framework**  | Next.js 15 (App Router)      | Latest React features with server components               |
+| **UI Library** | Mantine                      | 100+ modern components, TypeScript-first, enterprise-ready |
+| **State**      | TanStack Query (React Query) | Powerful caching and synchronization                       |
+| **Validation** | Zod + React Hook Form        | Runtime type safety with excellent DX                      |
 
 ### Backend/API Layer
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Internal API** | tRPC v11 | End-to-end type safety, zero generated code |
-| **External API** | Fastify | High performance, plugin architecture |
+
+| Component          | Technology            | Why                                                |
+| ------------------ | --------------------- | -------------------------------------------------- |
+| **Internal API**   | tRPC v11              | End-to-end type safety, zero generated code        |
+| **External API**   | Fastify               | High performance, plugin architecture              |
 | **Authentication** | NextAuth.js / Auth.js | Comprehensive OAuth + credentials provider support |
 
 ### Data Layer
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Database** | PostgreSQL 16 | Advanced RLS, JSONB, excellent performance |
-| **ORM** | Drizzle ORM | **2-10x faster** than Prisma, bundle-size optimized |
-| **Migrations** | Drizzle Kit | Schema migrations with excellent DX |
-| **Primary Cache** | Upstash Redis | Serverless-ready, edge-optimized, low latency |
-| **Local Cache** | node-cache | L1 cache for hot data, sub-millisecond access |
-| **Job Queue** | BullMQ + Redis | Reliable background job processing with retries |
+
+| Component         | Technology     | Why                                                 |
+| ----------------- | -------------- | --------------------------------------------------- |
+| **Database**      | PostgreSQL 16  | Advanced RLS, JSONB, excellent performance          |
+| **ORM**           | Drizzle ORM    | **2-10x faster** than Prisma, bundle-size optimized |
+| **Migrations**    | Drizzle Kit    | Schema migrations with excellent DX                 |
+| **Primary Cache** | Upstash Redis  | Serverless-ready, edge-optimized, low latency       |
+| **Local Cache**   | node-cache     | L1 cache for hot data, sub-millisecond access       |
+| **Job Queue**     | BullMQ + Redis | Reliable background job processing with retries     |
 
 ### AI/Agent Orchestration
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Framework** | LangChain.js + LangGraph.js | Best-in-class for multi-agent workflows |
-| **Primary LLM** | Claude 3.5 Sonnet | Excellent tool use, reliability, cost efficiency |
-| **Fallback LLM** | GPT-4o | Redundancy for high availability |
-| **Observability** | LangSmith | Agent monitoring, debugging, and optimization |
+
+| Component         | Technology                  | Why                                              |
+| ----------------- | --------------------------- | ------------------------------------------------ |
+| **Framework**     | LangChain.js + LangGraph.js | Best-in-class for multi-agent workflows          |
+| **Primary LLM**   | Claude 3.5 Sonnet           | Excellent tool use, reliability, cost efficiency |
+| **Fallback LLM**  | GPT-4o                      | Redundancy for high availability                 |
+| **Observability** | LangSmith                   | Agent monitoring, debugging, and optimization    |
 
 ### Testing & Quality
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Unit Testing** | Vitest | **5-10x faster** than Jest, native TypeScript |
-| **E2E Testing** | Playwright | Cross-browser, TypeScript-first, auto-waiting |
-| **Coverage** | c8 / istanbul | Zero-config coverage reporting |
-| **Mocking** | MSW (Mock Service Worker) | Network layer mocking for realistic tests |
+
+| Component        | Technology                | Why                                           |
+| ---------------- | ------------------------- | --------------------------------------------- |
+| **Unit Testing** | Vitest                    | **5-10x faster** than Jest, native TypeScript |
+| **E2E Testing**  | Playwright                | Cross-browser, TypeScript-first, auto-waiting |
+| **Coverage**     | c8 / istanbul             | Zero-config coverage reporting                |
+| **Mocking**      | MSW (Mock Service Worker) | Network layer mocking for realistic tests     |
 
 ### Observability
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **Logging** | Pino | Fastest Node.js logger, structured JSON output |
-| **Metrics** | Prometheus + Grafana | Industry-standard metrics and visualization |
-| **Error Tracking** | Sentry (or GlitchTip) | Real-time error aggregation and alerting |
-| **Tracing** | OpenTelemetry | Distributed tracing for microservices |
+
+| Component          | Technology            | Why                                            |
+| ------------------ | --------------------- | ---------------------------------------------- |
+| **Logging**        | Pino                  | Fastest Node.js logger, structured JSON output |
+| **Metrics**        | Prometheus + Grafana  | Industry-standard metrics and visualization    |
+| **Error Tracking** | Sentry (or GlitchTip) | Real-time error aggregation and alerting       |
+| **Tracing**        | OpenTelemetry         | Distributed tracing for microservices          |
 
 ### Report Generation
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| **PDF** | PDFKit + Nunjucks | Fast generation with template support |
-| **RTL Support** | Puppeteer | Proper Arabic/Hebrew text rendering |
-| **Excel** | ExcelJS | Comprehensive Excel format support |
-| **Email** | Resend / SendGrid | Transactional email with templates |
+
+| Component       | Technology        | Why                                   |
+| --------------- | ----------------- | ------------------------------------- |
+| **PDF**         | PDFKit + Nunjucks | Fast generation with template support |
+| **RTL Support** | Puppeteer         | Proper Arabic/Hebrew text rendering   |
+| **Excel**       | ExcelJS           | Comprehensive Excel format support    |
+| **Email**       | Resend / SendGrid | Transactional email with templates    |
 
 ---
 
@@ -179,9 +194,10 @@ Every operation in AgenticVerdict is tenant-scoped through a comprehensive isola
 ```
 
 **Key Implementation:**
+
 ```typescript
 // Tenant context propagation
-import { AsyncLocalStorage } from 'node:async_hooks';
+import { AsyncLocalStorage } from "node:async_hooks";
 
 const tenantContext = new AsyncLocalStorage<TenantContext>();
 
@@ -215,6 +231,7 @@ interface PlatformAdapter {
 ```
 
 **Current Platforms:**
+
 - Meta (Facebook & Instagram Ads)
 - Google Analytics 4 (GA4)
 - Google Search Console (GSC)
@@ -229,8 +246,8 @@ No company-specific logic in code. All customization via `CompanyConfig` schema:
 interface CompanyConfig {
   companyId: string;
   localization: {
-    language: 'ar' | 'en' | 'fr';
-    region: string;                 // e.g., 'SA', 'US'
+    language: "ar" | "en" | "fr";
+    region: string; // e.g., 'SA', 'US'
     timezone: string;
     currency: string;
   };
@@ -240,7 +257,7 @@ interface CompanyConfig {
   };
   ai: {
     primaryModel: string;
-    provider: 'anthropic' | 'openai';
+    provider: "anthropic" | "openai";
   };
   features: {
     enableInsights: boolean;
@@ -286,7 +303,7 @@ agenticverdict/
 ### Prerequisites
 
 - **Node.js** 20 LTS or higher
-- **pnpm] 8+ ([Installation guide](https://pnpm.io/installation))
+- **pnpm** 8+ ([Installation guide](https://pnpm.io/installation))
 - **PostgreSQL** 16 (local or managed instance)
 - **Redis** (local or Upstash Redis for production)
 
@@ -304,6 +321,9 @@ pnpm install
 cp .env.example .env.local
 # Edit .env.local with your configuration
 
+# Local PostgreSQL + Redis (optional; matches DATABASE_URL / REDIS_URL in .env.example)
+pnpm run db:up
+
 # Set up databases
 pnpm --filter @agenticverdict/database db:push
 
@@ -317,14 +337,23 @@ pnpm dev
 # Build all packages in dependency order
 turbo run build
 
-# Run all tests
+# Unit tests (Vitest workspace at repo root)
+pnpm run test:unit
+
+# Unit tests with coverage (thresholds in vitest.config.ts)
+pnpm run test:coverage
+
+# Database integration tests (Docker required — Testcontainers)
+pnpm run test:integration
+
+# Browser E2E (Playwright; starts Next.js via webServer when needed)
+pnpm run test:e2e
+
+# Package-scoped test via Turbo (same as CI package tasks)
 turbo run test
 
-# Run tests with coverage
-turbo run test --coverage
-
 # Type-check all packages
-turbo run type-check
+turbo run typecheck
 
 # Lint all packages
 turbo run lint
@@ -365,18 +394,21 @@ AgenticVerdict follows a **Hybrid Incremental** methodology combining phased str
 ### Quality Standards
 
 **Code Quality:**
+
 - Zero TypeScript errors (strict mode)
 - Zero `any` types (use `unknown` or proper types)
 - ESLint and Biome passing
 - Cyclomatic complexity < 15 per function
 
 **Coverage Targets:**
+
 - Overall: **70%+**
 - Business logic: **85%+**
 - Critical code (tenant isolation, auth, agents): **90%+**
 - UI components: 70%+
 
 **Critical Code** (requires 90%+ coverage):
+
 - Authentication/authorization
 - Tenant isolation logic
 - AI agent decision logic
@@ -402,13 +434,13 @@ AgenticVerdict follows a **Hybrid Incremental** methodology combining phased str
 
 ### Test Automation Levels
 
-| Stage | Trigger | Duration | Coverage |
-|-------|---------|----------|----------|
-| **Pre-commit** | Git hook | < 30s | Lint, format, unit tests |
-| **On Push** | Git push | < 10m | Full unit + integration |
-| **On PR** | PR creation | < 30m | Extended + system tests |
-| **Pre-merge** | PR approval | < 2h | Full suite including E2E |
-| **Nightly** | Scheduled | < 6h | Comprehensive + performance |
+| Stage          | Trigger     | Duration | Coverage                    |
+| -------------- | ----------- | -------- | --------------------------- |
+| **Pre-commit** | Git hook    | < 30s    | Lint, format, unit tests    |
+| **On Push**    | Git push    | < 10m    | Full unit + integration     |
+| **On PR**      | PR creation | < 30m    | Extended + system tests     |
+| **Pre-merge**  | PR approval | < 2h     | Full suite including E2E    |
+| **Nightly**    | Scheduled   | < 6h     | Comprehensive + performance |
 
 ### Multi-Tenancy Testing
 
@@ -432,17 +464,18 @@ AgenticVerdict follows a **5-phase development plan** over 14 weeks.
 
 ### Phase Overview
 
-| Phase | Name | Duration | Primary Focus |
-|-------|------|----------|---------------|
-| **Phase 0** | Foundation | Weeks 1-2 | Infrastructure, architecture, core frameworks |
-| **Phase 1** | Platform Integration | Weeks 3-5 | Marketing platform data collection |
-| **Phase 2** | Agent Intelligence | Weeks 6-8 | AI agent runtime and insights |
-| **Phase 3** | Report Generation | Weeks 9-11 | Multi-format reports and delivery |
-| **Phase 4** | Production Hardening | Weeks 12-14 | Testing, optimization, deployment |
+| Phase       | Name                 | Duration    | Primary Focus                                 |
+| ----------- | -------------------- | ----------- | --------------------------------------------- |
+| **Phase 0** | Foundation           | Weeks 1-2   | Infrastructure, architecture, core frameworks |
+| **Phase 1** | Platform Integration | Weeks 3-5   | Marketing platform data collection            |
+| **Phase 2** | Agent Intelligence   | Weeks 6-8   | AI agent runtime and insights                 |
+| **Phase 3** | Report Generation    | Weeks 9-11  | Multi-format reports and delivery             |
+| **Phase 4** | Production Hardening | Weeks 12-14 | Testing, optimization, deployment             |
 
 ### Phase Details
 
 **Phase 0: Foundation (Weeks 1-2)**
+
 - Monorepo setup with Turborepo + pnpm
 - TypeScript domain models and Zod validation
 - Multi-tenancy architecture with row-level security
@@ -452,6 +485,7 @@ AgenticVerdict follows a **5-phase development plan** over 14 weeks.
 - Internationalization framework
 
 **Phase 1: Platform Integration (Weeks 3-5)**
+
 - OAuth 2.0 authentication for all platforms
 - Data normalization to unified schema
 - Caching infrastructure (Redis)
@@ -459,6 +493,7 @@ AgenticVerdict follows a **5-phase development plan** over 14 weeks.
 - Platform adapters: Meta, GA4, GSC, GBP, TikTok
 
 **Phase 2: Agent Intelligence (Weeks 6-8)**
+
 - LangChain.js integration
 - Agent tool ecosystem (8+ tools)
 - Prompt template system
@@ -466,6 +501,7 @@ AgenticVerdict follows a **5-phase development plan** over 14 weeks.
 - Agent telemetry and observability
 
 **Phase 0: Report Generation (Weeks 9-11)**
+
 - PDF/DOCX/HTML generation
 - Internationalization (5+ languages, RTL/LTR)
 - Template management system
@@ -473,6 +509,7 @@ AgenticVerdict follows a **5-phase development plan** over 14 weeks.
 - Report scheduling
 
 **Phase 4: Production Hardening (Weeks 12-14)**
+
 - Performance optimization
 - Security hardening (SOC 2 readiness)
 - Comprehensive testing
@@ -499,29 +536,32 @@ The `/docs` directory contains comprehensive project documentation.
 
 ### Documentation Structure
 
-| Directory | Content |
-|-----------|---------|
-| [`01-getting-started/`](./docs/01-getting-started/) | Project overview and navigation guide |
-| [`02-planning-and-methodology/`](./docs/02-planning-and-methodology/) | Development methodology and testing strategy |
-| [`03-development-phases/`](./docs/03-development-phases/) | Detailed phase documentation (00-04) with tasks and acceptance criteria |
-| [`04-technology-research/`](./docs/04-technology-research/) | Comprehensive technology analysis with justifications |
-| [`05-project-management/`](./docs/05-project-management/) | Requirements, charter, and roadmap |
-| [`06-reference/`](./docs/06-reference/) | Templates, prompts, and resources |
+| Directory                                                             | Content                                                                 |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [`01-getting-started/`](./docs/01-getting-started/)                   | Project overview and navigation guide                                   |
+| [`02-planning-and-methodology/`](./docs/02-planning-and-methodology/) | Development methodology and testing strategy                            |
+| [`03-development-phases/`](./docs/03-development-phases/)             | Detailed phase documentation (00-04) with tasks and acceptance criteria |
+| [`04-technology-research/`](./docs/04-technology-research/)           | Comprehensive technology analysis with justifications                   |
+| [`05-project-management/`](./docs/05-project-management/)             | Requirements, charter, and roadmap                                      |
+| [`06-reference/`](./docs/06-reference/)                               | Templates, prompts, and resources                                       |
 
 ### Quick Navigation
 
 **New Team Members** (30-45 minutes):
+
 1. [Project Overview](./docs/01-getting-started/project-overview.md)
 2. [Methodology Overview](./docs/02-planning-and-methodology/methodology-overview.md)
 3. [Requirements](./docs/05-project-management/requirements.md)
 
 **Technical Leads** (3-4 hours):
+
 1. [Project Charter](./docs/05-project-management/project-charter.md)
 2. [Testing Strategy](./docs/02-planning-and-methodology/testing-strategy.md)
 3. [Technology Research Overview](./docs/04-technology-research/research-overview.md)
 4. All Phase OVERVIEW documents
 
 **Developers** (1-2 hours initially):
+
 1. [CLAUDE.md](./CLAUDE.md) — Development guidelines
 2. [Requirements](./docs/05-project-management/requirements.md)
 3. Current phase documentation (tasks and acceptance criteria)
@@ -581,12 +621,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 **For Masafh Inquiries:**
+
 - Email: info@masafh.net
 - Phone: +966 53 508 6737
 - Website: https://masafh.net
 - Location: Al-Qirawan District, Riyadh, Saudi Arabia
 
 **For Technical Questions:**
+
 - GitHub Issues: [Create an issue](../../issues)
 - Documentation: See the [`/docs`](./docs) directory
 

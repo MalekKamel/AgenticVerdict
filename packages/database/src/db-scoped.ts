@@ -21,9 +21,7 @@ export async function dbScoped<T>(
   }
 
   return db.transaction(async (tx) => {
-    await tx.execute(
-      sql`select set_config('app.current_tenant_id', ${ctx.tenantId}::text, true)`,
-    );
+    await tx.execute(sql`select set_config('app.current_tenant_id', ${ctx.tenantId}, true)`);
     return fn(tx);
   });
 }

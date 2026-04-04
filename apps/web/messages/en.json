@@ -1,9 +1,45 @@
 {
+  "Layout": {
+    "brand": "AgenticVerdict",
+    "navHint": "Use the header to switch language or theme.",
+    "openNav": "Open navigation",
+    "toggleLight": "Switch to light mode",
+    "toggleDark": "Switch to dark mode"
+  },
+  "Common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading"
+  },
+  "Errors": {
+    "generic": "Something went wrong."
+  },
+  "Validation": {
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "required": "This field is required",
+    "invalidEmail": "Enter a valid email address",
+    "submitDemo": "Submit demo",
+    "successTitle": "Thanks",
+    "successBody": "The form passed validation (no backend in Phase 0)."
+  },
   "Home": {
     "title": "AgenticVerdict",
     "subtitle": "Foundation shell — tenant config loaded on the server.",
     "companyLabel": "Loaded company",
     "languageLabel": "Language",
-    "regionLabel": "Region"
+    "regionLabel": "Region",
+    "previewTitle": "UI foundation preview",
+    "formTab": "Form demo",
+    "sampleCurrencyLabel": "Sample currency (tenant config)",
+    "sampleDateLabel": "Sample date (tenant timezone)",
+    "pluralLabel": "Pluralization",
+    "itemCount": "{count, plural, =0 {No samples} one {# sample} other {# samples}}",
+    "breadcrumbHome": "Home",
+    "tableName": "Name",
+    "tableRole": "Role",
+    "badgeNew": "New",
+    "rowAnalyst": "Analyst",
+    "rowAdmin": "Admin"
   }
 }

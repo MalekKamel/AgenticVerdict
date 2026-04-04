@@ -1,1 +1,8 @@
+export { auditLogs } from "./audit-logs";
 export { companies } from "./companies";
+export { i18nStrings } from "./i18n-strings";
+export { marketingMetrics } from "./marketing-metrics";
+export { platformCredentials } from "./platform-credentials";
+export { reportTemplates } from "./report-templates";
+export { reports } from "./reports";
+export { users } from "./users";

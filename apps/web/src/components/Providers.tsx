@@ -10,7 +10,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <DirectionProvider initialDirection={dir}>
-      <MantineProvider defaultColorScheme="light">{children}</MantineProvider>
+      <MantineProvider defaultColorScheme="auto">{children}</MantineProvider>
     </DirectionProvider>
   );
 }

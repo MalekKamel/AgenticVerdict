@@ -35,21 +35,22 @@ Phase 0 establishes the foundational infrastructure for the entire AgenticVerdic
 
 ### Core Phase Documents
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [Overview](./overview.md) | Phase objectives, scope, timeline, and risk assessment | 🟡 In Progress |
-| [Tasks](./tasks.md) | Complete task breakdown with dependencies and estimates | 🟡 In Progress |
-| [Acceptance Criteria](./acceptance-criteria.md) | Quality gates, exit criteria, and phase transition requirements | 🟡 In Progress |
-| [Implementation scope](./implementation-scope.md) | Waves, config source of truth, deferrals vs. `tasks.md` | 🟡 Active |
+| Document                                          | Description                                                     | Status         |
+| ------------------------------------------------- | --------------------------------------------------------------- | -------------- |
+| [Overview](./overview.md)                         | Phase objectives, scope, timeline, and risk assessment          | 🟡 In Progress |
+| [Tasks](./tasks.md)                               | Complete task breakdown with dependencies and estimates         | 🟡 In Progress |
+| [Acceptance Criteria](./acceptance-criteria.md)   | Quality gates, exit criteria, and phase transition requirements | 🟡 In Progress |
+| [Implementation scope](./implementation-scope.md) | Waves, config source of truth, deferrals vs. `tasks.md`         | 🟡 Active      |
+| [Execution plan](./EXECUTION-PLAN.md)             | Phased execution groupings, sequencing, verification            | 🟡 Active      |
 
 ### Related Documentation
 
-| Document | Location |
-|----------|----------|
-| Testing Strategy | `/docs/02-planning-and-methodology/testing-strategy.md` |
-| Technology Research | `/docs/04-technology-research/research-overview.md` |
-| Project Charter | `/docs/05-project-management/project-charter.md` |
-| CLAUDE.md | `/CLAUDE.md` (root directory) |
+| Document            | Location                                                |
+| ------------------- | ------------------------------------------------------- |
+| Testing Strategy    | `/docs/02-planning-and-methodology/testing-strategy.md` |
+| Technology Research | `/docs/04-technology-research/research-overview.md`     |
+| Project Charter     | `/docs/05-project-management/project-charter.md`        |
+| CLAUDE.md           | `/CLAUDE.md` (root directory)                           |
 
 ---
 
@@ -78,6 +79,9 @@ pnpm install
 # Set up environment variables
 cp .env.example .env.local
 # Edit .env.local with your configuration
+
+# Optional: Postgres + Redis via Docker (see repo-root docker-compose.yml)
+pnpm run db:up
 
 # Initialize the database
 pnpm --filter=@agenticverdict/database db:push
@@ -127,22 +131,25 @@ turbo run clean
 ### Testing
 
 ```bash
-# Run all tests
+# Unit tests (root Vitest workspace)
+pnpm run test:unit
+
+# Coverage (thresholds in repo-root vitest.config.ts)
+pnpm run test:coverage
+
+# Package-scoped tests via Turbo
 turbo run test
 
-# Run tests with coverage
-turbo run test --coverage
+# Database integration tests (Docker / Testcontainers)
+pnpm run test:integration
 
-# Run tests in watch mode
-turbo run test --watch
+# E2E (Playwright, web app)
+pnpm run test:e2e
 
-# Run specific test file
-vitest run packages/config/src/schemas/company.test.ts
+# Run a single test file (example)
+pnpm exec vitest run packages/config/src/schemas/company.test.ts
 
-# Run E2E tests
-turbo run test:e2e
-
-# View coverage report
+# Coverage HTML (after pnpm run test:coverage)
 open coverage/index.html
 ```
 
@@ -212,9 +219,7 @@ All database operations in Phase 0 must use the tenant-scoped pattern:
 // Set tenant context (middleware)
 tenantContext.run({ tenantId, config, requestId }, async () => {
   // All operations here have tenant context
-  const data = await dbScoped((db) => 
-    db.query.companies.findFirst()
-  );
+  const data = await dbScoped((db) => db.query.companies.findFirst());
 });
 ```
 
@@ -227,12 +232,14 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 **Symptom**: TypeScript errors during build
 
 **Solutions**:
+
 1. Clear all caches: `rm -rf node_modules .turbo && pnpm install`
 2. Check for circular dependencies between packages
 3. Verify `tsconfig.json` paths are correctly configured
 4. Ensure all exports are properly typed in `package.json`
 
 **Common Error**: "Cannot find module '@agenticverdict/xxx'"
+
 - Run `turbo run build` to build dependencies first
 - Check that the package exists in `packages/` directory
 - Verify workspace configuration in `pnpm-workspace.yaml`
@@ -242,12 +249,14 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 **Symptom**: Installation fails with peer dependency errors
 
 **Solutions**:
+
 1. Update pnpm: `npm install -g pnpm@latest`
 2. Clear pnpm store: `pnpm store prune`
 3. Delete `pnpm-lock.yaml` and reinstall: `rm pnpm-lock.yaml && pnpm install`
 4. Check Node.js version: `node --version` (must be 20 LTS)
 
 **Common Error**: "ENOSPC: no space left on device"
+
 - Free up disk space or change temp directory: `export TMPDIR=/tmp`
 
 ### Database Connection Problems
@@ -255,12 +264,14 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 **Symptom**: "Connection refused" or timeout errors
 
 **Solutions**:
+
 1. Verify PostgreSQL is running: `pg_isready` or `brew services list`
 2. Check connection string in `.env.local`
 3. Ensure database exists: `psql -U postgres -c "CREATE DATABASE agenticverdict;"`
 4. Test connection: `psql postgresql://user:pass@localhost:5432/agenticverdict`
 
 **Common Error**: "relation does not exist"
+
 - Run migrations: `pnpm --filter=@agenticverdict/database db:push`
 - Verify Drizzle schema files exist in `packages/database/src/schema`
 
@@ -269,12 +280,14 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 **Symptom**: Type errors in IDE or during build
 
 **Solutions**:
+
 1. Restart TypeScript server in VS Code: `Cmd+Shift+P` → "TypeScript: Restart TS Server"
 2. Check `tsconfig.json` extends correct base configuration
 3. Verify all workspace packages have `compilerOptions.paths` configured
 4. Look for `any` types (forbidden by project standards)
 
 **Common Error**: "Property 'xxx' does not exist on type 'yyy'"
+
 - Ensure proper type imports from packages
 - Check that types are exported in package `index.ts`
 - Verify Zod schemas are properly typed
@@ -284,11 +297,13 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 **Symptom**: Port already in use errors
 
 **Solutions**:
+
 1. Find process using port: `lsof -i :3000`
 2. Kill process: `kill -9 <PID>`
 3. Or change port in `.env.local`: `PORT=3001`
 
 **Common Error**: "Module not found: Can't resolve '@agenticverdict/xxx'"
+
 - Ensure the package is built: `turbo run build --filter=@agenticverdict/xxx`
 - Check Next.js `experimental.appDir` configuration
 - Verify Turbopack is properly configured for Next.js 15
@@ -335,4 +350,4 @@ To be assigned
 
 **Next Phase**: [Phase 1: Platform Integration](../phase-01-platform-integration/README.md)
 
-*This document is maintained as part of the Phase 0 deliverables. Last updated: 2026-04-03*
+_This document is maintained as part of the Phase 0 deliverables. Last updated: 2026-04-03_

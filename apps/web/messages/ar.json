@@ -1,9 +1,45 @@
 {
+  "Layout": {
+    "brand": "AgenticVerdict",
+    "navHint": "استخدم الشريط العلوي لتغيير اللغة أو السمة.",
+    "openNav": "فتح القائمة",
+    "toggleLight": "الوضع الفاتح",
+    "toggleDark": "الوضع الداكن"
+  },
+  "Common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "loading": "جاري التحميل"
+  },
+  "Errors": {
+    "generic": "حدث خطأ ما."
+  },
+  "Validation": {
+    "nameLabel": "الاسم",
+    "emailLabel": "البريد الإلكتروني",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "أدخل بريداً إلكترونياً صالحاً",
+    "submitDemo": "إرسال تجريبي",
+    "successTitle": "شكراً",
+    "successBody": "نجح التحقق من النموذج (لا خادم خلفي في المرحلة 0)."
+  },
   "Home": {
     "title": "AgenticVerdict",
     "subtitle": "هيكل التأسيس — تم تحميل إعدادات المستأجر على الخادم.",
     "companyLabel": "الشركة المحمّلة",
     "languageLabel": "اللغة",
-    "regionLabel": "المنطقة"
+    "regionLabel": "المنطقة",
+    "previewTitle": "معاينة واجهة المستخدم",
+    "formTab": "نموذج تجريبي",
+    "sampleCurrencyLabel": "عملة نموذجية (إعداد المستأجر)",
+    "sampleDateLabel": "تاريخ نموذجي (منطقة زمنية للمستأجر)",
+    "pluralLabel": "صيغ الجمع",
+    "itemCount": "{count, plural, =0 {لا عينات} one {عينة واحدة} other {# عينة}}",
+    "breadcrumbHome": "الرئيسية",
+    "tableName": "الاسم",
+    "tableRole": "الدور",
+    "badgeNew": "جديد",
+    "rowAnalyst": "محلل",
+    "rowAdmin": "مسؤول"
   }
 }

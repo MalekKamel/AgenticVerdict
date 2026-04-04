@@ -75,6 +75,9 @@ next-env.d.ts
 coverage/
 .coverage/
 .nyc_output/
+playwright-report/
+test-results/
+blob-report/
 .eslintcache
 .stylelintcache
 
@@ -90,9 +93,6 @@ public/sitemap.xml
 public/sitemap-index.xml
 sitemap*.xml
 robots.txt
-
-# Git hooks
-.husky/prepare-commit-msg
 
 # Documents and media
 *.pdf

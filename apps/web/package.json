@@ -8,19 +8,27 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test",
+    "i18n:extract": "node scripts/list-message-keys.mjs",
+    "i18n:validate": "node scripts/validate-translations.mjs"
   },
   "dependencies": {
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/core": "workspace:*",
+    "@agenticverdict/i18n": "workspace:*",
     "@mantine/core": "^7.15.2",
+    "@mantine/form": "^7.15.2",
     "@mantine/hooks": "^7.15.2",
     "next": "15.5.14",
     "next-intl": "^3.26.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -1,0 +1,1 @@
+ALTER TABLE "companies" ADD COLUMN "active" boolean DEFAULT true NOT NULL;
