@@ -7,7 +7,10 @@ import { createRuleBasedEchoAgent } from "./rule-based-agent";
 describe("createRuleBasedEchoAgent", () => {
   it("echoes goal when no tool path is taken", async () => {
     const agent = createRuleBasedEchoAgent();
-    const out = await agent.run({ goal: "hello" }, { runId: "r1" });
+    const out = await agent.run(
+      { goal: "hello" },
+      { runId: "r1", tenantId: "tenant-a", requestId: "req-1" },
+    );
     expect(out.answer).toBe("echo:hello");
     expect(out.steps).toHaveLength(0);
   });
@@ -22,7 +25,10 @@ describe("createRuleBasedEchoAgent", () => {
         }),
       ],
     });
-    const out = await agent.run({ goal: "x", context: { demoTool: "ping" } }, { runId: "r2" });
+    const out = await agent.run(
+      { goal: "x", context: { demoTool: "ping" } },
+      { runId: "r2", tenantId: "tenant-a", requestId: "req-2" },
+    );
     expect(out.answer).toBe("ok:pong");
     expect(out.steps).toHaveLength(1);
   });

@@ -2,10 +2,17 @@
  * Phase 0 contracts for Phase 2 orchestration. No LangChain/LangGraph runtime here.
  */
 
+/**
+ * Optional hints plus an optional high-volume tool/metrics blob (trimmed under assembled prompt budget).
+ */
+export type AgentRunContext = Readonly<Record<string, string>> & {
+  toolContext?: string;
+};
+
 export interface AgentRunInput {
   goal: string;
   /** Optional structured hints (tenant-safe, non-secret). */
-  context?: Readonly<Record<string, string>>;
+  context?: AgentRunContext;
 }
 
 export interface AgentToolCallRecord {
@@ -19,8 +26,15 @@ export interface AgentRunResult {
   steps: readonly AgentToolCallRecord[];
 }
 
+/**
+ * Correlation handles for a single agent run. Built by `runAgentJob` from the active tenant
+ * scope. Tools should use `getTenantContext()` from `@agenticverdict/core` for full config
+ * while executing under the same async continuation as the job.
+ */
 export interface AgentInvocationContext {
   runId: string;
+  tenantId: string;
+  requestId: string;
 }
 
 export interface ITool {
