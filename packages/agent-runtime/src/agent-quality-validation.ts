@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import type { Verdict } from "./verdict-schema";
-import { verdictSchema } from "./verdict-schema";
+import type { MarketingVerdict } from "@agenticverdict/types";
+import { marketingVerdictSchema } from "@agenticverdict/types";
 
 export const validationDatasetCaseSchema = z.object({
   id: z.string().min(1),
@@ -16,7 +16,7 @@ export const validationDatasetCaseSchema = z.object({
 export type ValidationDatasetCase = z.infer<typeof validationDatasetCaseSchema>;
 
 export interface HeuristicQualityScores {
-  /** Structure and readability of summary + next steps. */
+  /** Structure and readability of summary + reasoning lines. */
   clarity: number;
   /** Action items and recommendations depth. */
   actionability: number;
@@ -27,12 +27,12 @@ export interface HeuristicQualityScores {
 /**
  * Deterministic rubric-style scores for CI gates (tasks.md 7.4). Not a substitute for expert review.
  */
-export function assessVerdictHeuristicQuality(verdict: Verdict): HeuristicQualityScores {
+export function assessVerdictHeuristicQuality(verdict: MarketingVerdict): HeuristicQualityScores {
   const summaryLen = verdict.summary.trim().length;
   const clarityBase =
     summaryLen >= 120 ? 5 : summaryLen >= 80 ? 4 : summaryLen >= 40 ? 3 : summaryLen >= 20 ? 2 : 1;
-  const nextStepsBonus = verdict.nextSteps.length >= 3 ? 1 : 0;
-  const clarity = Math.min(5, clarityBase + nextStepsBonus);
+  const reasoningBonus = verdict.reasoning.length >= 3 ? 1 : 0;
+  const clarity = Math.min(5, clarityBase + reasoningBonus);
 
   const recs = verdict.recommendations.length;
   const actions = verdict.actionItems.length;
@@ -68,10 +68,10 @@ export function runVerdictQualityGate(
   verdictJsonText: string,
 ): QualityGateResult {
   const failures: string[] = [];
-  let parsed: Verdict;
+  let parsed: MarketingVerdict;
   try {
     const obj = JSON.parse(verdictJsonText) as unknown;
-    parsed = verdictSchema.parse(obj);
+    parsed = marketingVerdictSchema.parse(obj);
   } catch (e) {
     failures.push(e instanceof Error ? e.message : "schema_validation_failed");
     return { ok: false, caseId: caseRow.id, schemaOk: false, failures };

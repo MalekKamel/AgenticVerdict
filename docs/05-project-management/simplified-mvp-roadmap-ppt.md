@@ -1,0 +1,560 @@
+# AgenticVerdict — Simplified MVP Roadmap
+
+**For PowerPoint Presentation**
+
+---
+
+## SLIDE 1: Title Slide
+
+### MVP Roadmap: Six Steps to Launch
+
+**AgenticVerdict — Marketing Intelligence System**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│    Build ──▶ Demo ──▶ Connect ──▶ Demo ──▶ Improve ──▶ Live  │
+│                                                              │
+│                Six Steps to a Working Product                │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Date:** April 4, 2026
+**Audience:** All Stakeholders
+**Client:** Masafh — Riyadh, Saudi Arabia
+
+---
+
+## SLIDE 2: The Big Picture
+
+### Our Roadmap in One View
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    SIX STEPS TO LAUNCH                         │
+│                                                                │
+│   Step 1        Step 2       Step 3       Step 4               │
+│   ┌──────┐       ┌───────┐      ┌───────┐      ┌─────┐         │
+│   │Build │  ──▶  │Demo   │ ──▶  │Connect│──▶   │Demo │         │
+│   │Core  │       │Static │      │Real   │      │Live │         │
+│   │Engine│       │Data   │      │APIs   │      │Data │         │
+│   └──────┘       └───────┘      └───────┘      └─────┘         │
+│                                                   │            │
+│                                                   ▼            │
+│   Step 5                    Step 6                │            │
+│   ┌───────┐                   ┌───────┐           │            │
+│   │       │        ┌─────────▶│       │◀──────────┘            │
+│   │Improve│◀───────┘          │depploy│                        │
+│   │       │                   │       │                        │
+│   └───────┘                   └───────┘                        │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**The Flow:** Build the engine → Show it works with sample data → Connect real accounts → Show it works with live data → Fix and improve → Launch to production.
+
+---
+
+## SLIDE 3: What We Are Building
+
+### The Core Engine in Simple Terms
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    THE INTELLIGENCE PIPELINE                   │
+│                                                                │
+│                                                                │
+│   ┌──────────┐     ┌──────────┐     ┌──────────┐              │
+│   │ COLLECT  │────▶│  THINK   │────▶│  DELIVER │              │
+│   │          │     │          │     │          │              │
+│   │ 5 Market │     │ AI       │     │ Reports  │              │
+│   │ Platforms│     │ Analyst  │     │ Email+Web│              │
+│   └──────────┘     └──────────┘     └──────────┘              │
+│                                                                │
+│   Platforms: Meta, Google Analytics, Search Console,           │
+│              Google Business Profile, TikTok                   │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**In One Sentence:** The system collects marketing data from five platforms, thinks about it like a senior analyst would, and delivers clear reports with recommendations.
+
+---
+
+## SLIDE 4: Step 1 — Build the Core Engine
+
+### Implement the Full Platform Integration
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    STEP 1: BUILD THE ENGINE                    │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  Build the central system that connects to all five     │    │
+│  │  marketing platforms and processes their data:          │    │
+│  │                                                         │    │
+│  │  ┌────────┐  ┌──────┐  ┌─────┐  ┌─────┐  ┌────────┐   │    │
+│  │  │  Meta  │  │ GA4  │  │ GSC │  │ GBP │  │ TikTok │   │    │
+│  │  │  Ads   │  │      │  │     │  │     │  │  Ads   │   │    │
+│  │  └───┬────┘  └──┬───┘  └──┬──┘  └──┬──┘  └───┬────┘   │    │
+│  │      │          │         │        │         │         │    │
+│  │      └──────────┴─────────┴────────┴─────────┘         │    │
+│  │                         │                               │    │
+│  │                         ▼                               │    │
+│  │              ┌─────────────────────┐                    │    │
+│  │              │  Data Processing    │                    │    │
+│  │              │  (Common Format)    │                    │    │
+│  │              └─────────────────────┘                    │    │
+│  │                         │                               │    │
+│  │                         ▼                               │    │
+│  │              ┌─────────────────────┐                    │    │
+│  │              │  AI Analysis Engine │                    │    │
+│  │              └─────────────────────┘                    │    │
+│  │                         │                               │    │
+│  │                         ▼                               │    │
+│  │              ┌─────────────────────┐                    │    │
+│  │              │  Report Generator   │                    │    │
+│  │              └─────────────────────┘                    │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Outcome: The full system is built and ready to run.           │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Key Point:** We build the complete engine — all five platforms, AI analysis, and report generation — in this first step.
+
+---
+
+## SLIDE 5: Step 2 — Demo with Static Data
+
+### Show the System Works Using Sample Data
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                STEP 2: DEMO WITH STATIC DATA                   │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  Load pre-prepared sample data into the system          │    │
+│  │  (no live platform connections yet)                     │    │
+│  │                                                         │    │
+│  │  ┌──────────────────┐    ┌──────────────────┐          │    │
+│  │  │  Sample Data     │───▶│  System Runs     │          │    │
+│  │  │  (Pre-loaded)    │    │  Normally        │          │    │
+│  │  └──────────────────┘    └──────────────────┘          │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  What Stakeholders See:                                        │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  ✓ The system processes data correctly                 │    │
+│  │  ✓ AI produces insights and recommendations            │    │
+│  │  ✓ Reports generate with proper formatting             │    │
+│  │  ✓ Arabic RTL rendering works                          │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Why This Matters:                                             │
+│  We prove the engine works before connecting real accounts.    │
+│  If something goes wrong, we know it is the engine — not       │
+│  the platform connections.                                     │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Demo Output Example:** _"Meta ad spend up 15%, conversions flat. Organic search grew 22% with 3x better cost. Verdict: Reallocate 20% of Meta budget to SEO."_
+
+---
+
+## SLIDE 6: Step 3 — Connect Real Platform Credentials
+
+### Link the System to Live Marketing Accounts
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│              STEP 3: CONNECT REAL PLATFORMS                    │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  Replace sample data with live connections to           │    │
+│  │  Masafh's actual marketing platform accounts:           │    │
+│  │                                                         │    │
+│  │  ┌─────────────────┐         ┌─────────────────┐       │    │
+│  │  │  Masafh's Real  │         │  Our System     │       │    │
+│  │  │  Platform       │────────▶│  Core Engine    │       │    │
+│  │  │  Credentials    │         │                 │       │    │
+│  │  │                 │         │                 │       │    │
+│  │  │  • Meta Ads     │         │  Ready to       │       │    │
+│  │  │  • Google Analytics│      │  fetch real     │       │    │
+│  │  │  • Search Console│       │  data           │       │    │
+│  │  │  • Business Profile│     │                 │       │    │
+│  │  │  • TikTok Ads   │         │                 │       │    │
+│  │  └─────────────────┘         └─────────────────┘       │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  What Changes:                                                 │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  Before (Step 2):  Sample data ──▶ System              │    │
+│  │  After (Step 3):   Live APIs  ──▶ System               │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Security Note: All credentials are stored encrypted           │
+│  and never exposed in logs or error messages.                  │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Key Point:** The system does not change — only the data source switches from sample files to live platform APIs.
+
+---
+
+## SLIDE 7: Step 4 — Demo with Live Data
+
+### Show the System Working with Real Platform Data
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                 STEP 4: DEMO WITH LIVE DATA                    │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  Run the full system end-to-end with real data          │    │
+│  │  from Masafh's actual marketing accounts:               │    │
+│  │                                                         │    │
+│  │  ┌──────────┐     ┌──────────┐     ┌──────────┐        │    │
+│  │  │  Live    │────▶│  System  │────▶│  Real    │        │    │
+│  │  │  APIs    │     │  Runs    │     │  Reports │        │    │
+│  │  │  Fetch   │     │  Analysis│     │  Output  │        │    │
+│  │  └──────────┘     └──────────┘     └──────────┘        │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  What Stakeholders See:                                        │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  ✓ Real data flowing from all five platforms           │    │
+│  │  ✓ AI analysis based on actual Masafh marketing data   │    │
+│  │  ✓ Reports generated with real numbers and insights    │    │
+│  │  ✓ Email delivery working                              │    │
+│  │  ✓ Web viewer showing live report history              │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  This Is the Moment:                                           │
+│  The product is fully functional. Stakeholders see their       │
+│  own marketing data analyzed and recommendations produced.     │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Demo Flow:** Live APIs → System fetches data → AI analyzes → Reports generate → Email delivers → Web viewer displays.
+
+---
+
+## SLIDE 8: Step 5 — Update and Improve
+
+### Fix Issues and Enhance Based on Feedback
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                  STEP 5: UPDATE & IMPROVE                      │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  After the live demo, we gather feedback and make       │    │
+│  │  improvements before going live:                        │    │
+│  │                                                         │    │
+│  │  ┌──────────────────────────────────────────────────┐   │    │
+│  │  │                                                   │   │    │
+│  │  │   Feedback ──▶ Review ──▶ Fix ──▶ Test ──▶ Ready │   │    │
+│  │  │                                                   │   │    │
+│  │  └──────────────────────────────────────────────────┘   │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Typical Improvements:                                         │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  • Fix any bugs found during live demo                  │    │
+│  │  • Adjust report formatting based on client feedback    │    │
+│  │  • Tune AI prompts for better insight quality           │    │
+│  │  • Improve performance if reports are too slow          │    │
+│  │  • Handle edge cases in platform data                   │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Why This Step Matters:                                        │
+│  The first live run always reveals things to improve.          │
+│  This step ensures we launch a polished product, not           │
+│  a rough prototype.                                            │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Key Point:** This is not a restart — it is refinement. The core system stays the same; we polish what is already working.
+
+---
+
+## SLIDE 9: Step 6 — Deploy to Production
+
+### Launch the System on the Live Server
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                  STEP 6: DEPLOY TO PRODUCTION                  │
+│                                                                │
+│  What We Do:                                                   │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │  Move the tested and improved system to the             │    │
+│  │  production server where Masafh's team will use it:     │    │
+│  │                                                         │    │
+│  │  ┌─────────────┐      ┌─────────────┐                  │    │
+│  │  │  Development│      │  Production │                  │    │
+│  │  │  Server     │─────▶│  Server     │                  │    │
+│  │  │  (Testing)  │      │  (Live)     │                  │    │
+│  │  └─────────────┘      └─────────────┘                  │    │
+│  │                         │                               │    │
+│  │                         ▼                               │    │
+│  │              ┌─────────────────────┐                    │    │
+│  │              │  Masafh Team Uses   │                    │    │
+│  │              │  The System Daily   │                    │    │
+│  │              └─────────────────────┘                    │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  Production Setup:                                             │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  ✓ Database configured and secured                     │    │
+│  │  ✓ Platform credentials loaded                         │    │
+│  │  ✓ Email delivery configured                           │    │
+│  │  ✓ Monitoring and alerts active                        │    │
+│  │  ✓ SSL certificates installed                          │    │
+│  │  ✓ Backup procedures in place                          │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Outcome:** The system is live and Masafh's team can view reports, receive scheduled emails, and access their marketing intelligence daily.
+
+---
+
+## SLIDE 10: The Complete Journey
+
+### From Start to Finish in One View
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    THE FULL JOURNEY                            │
+│                                                                │
+│                                                                │
+│  WHERE WE START                                                │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  No system built yet                                 │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 1: BUILD THE ENGINE                                      │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  All 5 platforms + AI analysis + report generation   │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 2: DEMO WITH STATIC DATA                                 │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  Show it works with sample data                      │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 3: CONNECT REAL PLATFORMS                                │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  Link to Masafh's actual marketing accounts          │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 4: DEMO WITH LIVE DATA                                   │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  Show it works with real data end-to-end             │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 5: UPDATE & IMPROVE                                      │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  Fix issues, polish based on feedback                │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  STEP 6: DEPLOY TO PRODUCTION                                  │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  System goes live on the production server           │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                           │                                    │
+│                           ▼                                    │
+│  WHERE WE END                                                  │
+│  ┌──────────────────────────────────────────────────────┐     │
+│  │  Masafh team uses the system daily for marketing     │     │
+│  │  intelligence and decision-making                    │     │
+│  └──────────────────────────────────────────────────────┘     │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## SLIDE 11: Two Key Demos
+
+### The Milestones Stakeholders Will See
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    TWO KEY DEMOS                               │
+│                                                                │
+│  ┌────────────────────────────┬────────────────────────────┐   │
+│  │   DEMO 1: STATIC DATA      │   DEMO 2: LIVE DATA        │   │
+│  │                            │                            │   │
+│  │  After Step 2              │  After Step 4              │   │
+│  │                            │                            │   │
+│  │  ┌──────────────────────┐  │  ┌──────────────────────┐  │   │
+│  │  │  Sample data loaded  │  │  │  Real APIs connected │  │   │
+│  │  │  into the system     │  │  │  fetching live data  │  │   │
+│  │  └──────────────────────┘  │  └──────────────────────┘  │   │
+│  │           │                │            │                │   │
+│  │           ▼                │            ▼                │   │
+│  │  ┌──────────────────────┐  │  ┌──────────────────────┐  │   │
+│  │  │  System processes    │  │  │  System produces     │  │   │
+│  │  │  and generates       │  │  │  real insights and   │  │   │
+│  │  │  reports             │  │  │  reports             │  │   │
+│  │  └──────────────────────┘  │  └──────────────────────┘  │   │
+│  │                            │                            │   │
+│  │  Proves: The engine works  │  Proves: The full system   │
+│  │                            │  works with real data      │   │
+│  │                            │                            │   │
+│  └────────────────────────────┴────────────────────────────┘   │
+│                                                                │
+│  Between the two demos: We connect real platform credentials   │
+│  After the second demo: We improve and then deploy             │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Why Two Demos:** The first proves the engine. The second proves the engine with real data. Together, they give full confidence before launch.
+
+---
+
+## SLIDE 12: Summary
+
+### Six Steps. One Working Product.
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    SUMMARY                                     │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │   Step 1   Build the Core Engine                       │    │
+│  │            All platforms, AI analysis, report generation│    │
+│  │                                                         │    │
+│  │   Step 2   Demo with Static Data                        │    │
+│  │            Prove the engine works with sample data      │    │
+│  │                                                         │    │
+│  │   Step 3   Connect Real Platform Credentials            │    │
+│  │            Link to live marketing accounts              │    │
+│  │                                                         │    │
+│  │   Step 4   Demo with Live Data                          │    │
+│  │            Prove the full system works end-to-end       │    │
+│  │                                                         │    │
+│  │   Step 5   Update and Improve                           │    │
+│  │            Fix issues, polish based on feedback         │    │
+│  │                                                         │    │
+│  │   Step 6   Deploy to Production                         │    │
+│  │            System goes live for daily use               │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  THE BOTTOM LINE                                       │    │
+│  │                                                        │    │
+│  │  Build it. Show it works. Connect real data.           │    │
+│  │  Show it works again. Improve it. Launch it.           │    │
+│  │                                                        │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## SLIDE 13: Questions & Discussion
+
+### Thank You
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                                                                │
+│                                                                │
+│                   Questions & Discussion                       │
+│                                                                │
+│                                                                │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │                                                         │    │
+│  │   Project: AgenticVerdict MVP                          │    │
+│  │   Client:  Masafh — Riyadh, Saudi Arabia               │    │
+│  │                                                         │    │
+│  │   Email:    info@masafh.net                             │    │
+│  │   Phone:    +966 53 508 6737                            │    │
+│  │   Website:  https://masafh.net                          │    │
+│  │                                                         │    │
+│  └────────────────────────────────────────────────────────┘    │
+│                                                                │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+**Document Version:** 1.0
+**Date:** April 4, 2026
+**Source:** Simplified MVP Roadmap
+**Total Slides:** 13
+
+---
+
+## Presenter Notes
+
+### How to Use This Presentation
+
+**Audience:** This deck is designed for both technical and non-technical stakeholders. The language is intentionally simple and the diagrams are visual, not technical.
+
+**Slide-by-Slide Guidance:**
+
+**Slide 1 (Title):** Open with the six-step flow — this is the story arc for the entire presentation.
+
+**Slide 2 (Big Picture):** Show the visual roadmap. Emphasize that this is a simple, linear flow with two feedback loops (improve can send us back to fix things).
+
+**Slide 3 (What We Are Building):** Explain the three-part pipeline: Collect → Think → Deliver. This is the simplest way to describe the system.
+
+**Slide 4 (Step 1 — Build):** This is the biggest step. Explain that we build the complete engine — all five platforms, AI, and reports — before anything else.
+
+**Slide 5 (Step 2 — Static Demo):** Emphasize why we demo with sample data first: it proves the engine works in isolation. If something breaks, we know it is the engine, not the platform connections.
+
+**Slide 6 (Step 3 — Connect):** The key message here: the system does not change, only the data source switches from files to live APIs.
+
+**Slide 7 (Step 4 — Live Demo):** This is the big moment. Stakeholders see their own real marketing data analyzed. Walk through the flow: APIs → System → Reports → Email → Web.
+
+**Slide 8 (Step 5 — Improve):** Normalize the idea that the first live run will reveal things to fix. This is not a failure — it is good practice.
+
+**Slide 9 (Step 6 — Deploy):** Explain the production setup checklist. The outcome is simple: the team uses the system daily.
+
+**Slide 10 (Full Journey):** Walk through all six steps in sequence. This is the recap slide.
+
+**Slide 11 (Two Demos):** Highlight the difference between Demo 1 (engine proof) and Demo 2 (full system proof). Both are needed for confidence.
+
+**Slide 12 (Summary):** Close with the bottom line: Build it. Show it works. Connect real data. Show it works again. Improve it. Launch it.
+
+**Slide 13 (Q&A):** Open the floor for questions.

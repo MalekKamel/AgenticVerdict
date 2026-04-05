@@ -2,7 +2,7 @@
 
 import { Badge, Breadcrumbs, SimpleGrid, Stack, Table, Tabs, Text, Title } from "@mantine/core";
 import type { CompanyConfig } from "@agenticverdict/config";
-import { createLocalizationFormatters, type AppLocale } from "@agenticverdict/i18n";
+import { createLocalizationFormatters, type AppLocale } from "@agenticverdict/i18n/formatters";
 import { useLocale, useTranslations } from "next-intl";
 
 import { DemoLeadForm } from "@/components/forms/DemoLeadForm";
@@ -28,7 +28,7 @@ export function HomeContentClient({ config }: { config: CompanyConfig }) {
 
       <Stack gap="xs">
         <Title order={1}>{t("title")}</Title>
-        <Text c="dimmed">{t("subtitle")}</Text>
+        <Text c="gray.7">{t("subtitle")}</Text>
         <Text>
           {t("companyLabel")}: {config.companyName}
         </Text>
@@ -87,7 +87,9 @@ export function HomeContentClient({ config }: { config: CompanyConfig }) {
                   <Table.Td>Sara</Table.Td>
                   <Table.Td>{t("rowAnalyst")}</Table.Td>
                   <Table.Td>
-                    <Badge>{t("badgeNew")}</Badge>
+                    <Badge variant="outline" color="blue">
+                      {t("badgeNew")}
+                    </Badge>
                   </Table.Td>
                 </Table.Tr>
                 <Table.Tr>

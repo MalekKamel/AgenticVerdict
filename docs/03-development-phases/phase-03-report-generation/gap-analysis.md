@@ -136,46 +136,16 @@ interface NormalizedPlatformSnapshot {
 
 **Data Structure Available:**
 
-```typescript
-// Available in @agenticverdict/agent-runtime
-interface MarketingVerdict {
-  summary: string;
-  sentiment: "positive" | "neutral" | "negative";
-  score: number; // 0-100
-  keyInsights: Array<{
-    id: string;
-    title: string;
-    detail: string;
-    impact?: "high" | "medium" | "low";
-    confidence?: number; // 0-1
-  }>;
-  recommendations: Array<{
-    title: string;
-    rationale: string;
-    priority?: number; // 1-5
-    estimatedRoasImpact?: number;
-  }>;
-  actionItems: Array<{
-    description: string;
-    ownerRole: string;
-    dueHint?: string;
-  }>;
-  evidence: Array<{
-    label: string;
-    metric?: string;
-    value?: string;
-    source?: string;
-  }>;
-  nextSteps: string[];
-}
-```
+Canonical **`MarketingVerdict`** is defined in **`@agenticverdict/types`** (`packages/types/src/verdict.ts`, validated by **`marketingVerdictSchema`**). It includes tenant and analysis correlation (`tenantId`, `analysisId`), `verdictType`, `score`, `confidence`, `sentiment`, `summary`, `reasoning` (replaces the old LLM-only `nextSteps` array), structured `keyInsights`, `recommendations`, `actionItems`, `evidence`, `dataSources`, `platformsAnalyzed`, `dateRange`, `generatedAt`, `generatedBy`, `modelUsed`, and optional `historicalContext`, `methodology`, `parameters`, `reportMetadata`.
+
+Runtime parsing from LLM text: **`parseMarketingVerdictFromAgentText`** and tenant-safe merge **`applyMarketingVerdictPipelineContext`** in **`@agenticverdict/agent-runtime`** (`src/agent-verdict-json.ts`). _(Older drafts of this document listed a slimmer, legacy-shaped interface; that path was removed in remediation **R-LEGACY-001**, 2026-04-04.)_
 
 **CRITICAL GAPS:**
 
 - ❌ **No REST API endpoints for insight/verdict retrieval**
 - ❌ **No data validation endpoints**
 - ❌ **No provenance/metadata query interface**
-- ❌ **Verdict schema differs from Phase 03 expectations**
+- ⚠️ **Report templates may still expect a slimmer `Phase3Verdict` view** — domain model is unified (`MarketingVerdict`); a **report-generator mapper** (`mapMarketingVerdictToReportModel`) remains to be implemented (tasks PR-2)
 
 ---
 
@@ -222,16 +192,16 @@ POST / api / v1 / verdicts / validate;
 
 ---
 
-#### Gap 2: Verdict Schema Mismatch
+#### Gap 2: Report view vs domain verdict model
 
-**Severity**: 🔴 CRITICAL
-**Impact**: Data transformation layer required
+**Severity**: 🟡 HIGH (narrowed 2026-04-04)
+**Impact**: Report-generator may need a thin mapper from the unified domain model
 **Description**:
 
-- Phase 3 expects a different verdict structure than Phase 2 provides
-- Direct integration will fail without transformation
+- **Agents and API** now standardize on **`MarketingVerdict`** (`@agenticverdict/types`) end-to-end (remediation **R-LEGACY-001**).
+- **PDF/DOCX/template pipelines** may still target a presentation-oriented **`Phase3Verdict`** (snake_case fields, flattened charts inputs) that is not identical to the domain type.
 
-**Phase 3 Expected Schema**:
+**Phase 3 report-oriented schema (target for mapper output)**:
 
 ```typescript
 interface Phase3Verdict {
@@ -247,17 +217,16 @@ interface Phase3Verdict {
 }
 ```
 
-**Phase 2 Actual Schema**:
+**Domain source of truth**:
 
 ```typescript
-// See MarketingVerdict above - different structure
+// @agenticverdict/types — MarketingVerdict / marketingVerdictSchema
 ```
 
 **Resolution Required**:
 
-1. Create transformation layer between schemas
-2. Or update Phase 3 tasks.md to match Phase 2 schema
-3. Document mapping between fields
+1. Implement **`mapMarketingVerdictToReportModel`** in `@agenticverdict/report-generator` (see tasks PR-2).
+2. Keep **`MarketingVerdict`** as the only cross-service contract; do not reintroduce a second LLM-facing legacy schema.
 
 **Estimated Effort**: 2-3 days
 
@@ -491,15 +460,15 @@ Based on gap analysis, the Phase 03 task list requires significant restructuring
 
 #### **PRE-PHASE 03 PREREQUISITES** (Must complete before starting Phase 03)
 
-| Task | Description                                | Effort   | Priority |
-| ---- | ------------------------------------------ | -------- | -------- |
-| PR-1 | Implement Phase 2 API endpoints            | 5-7 days | CRITICAL |
-| PR-2 | Create verdict schema transformation layer | 2-3 days | CRITICAL |
-| PR-3 | Define template configuration schema       | 3-4 days | CRITICAL |
-| PR-4 | Implement data validation interface        | 4-5 days | CRITICAL |
-| PR-5 | Define design system tokens                | 2-3 days | HIGH     |
-| PR-6 | Implement provenance tracking schema       | 3-4 days | HIGH     |
-| PR-7 | Configure email delivery service           | 3 days   | HIGH     |
+| Task | Description                                                                  | Effort   | Priority |
+| ---- | ---------------------------------------------------------------------------- | -------- | -------- |
+| PR-1 | Implement Phase 2 API endpoints                                              | 5-7 days | CRITICAL |
+| PR-2 | Report-generator `mapMarketingVerdictToReportModel` (domain already unified) | 2-3 days | CRITICAL |
+| PR-3 | Define template configuration schema                                         | 3-4 days | CRITICAL |
+| PR-4 | Implement data validation interface                                          | 4-5 days | CRITICAL |
+| PR-5 | Define design system tokens                                                  | 2-3 days | HIGH     |
+| PR-6 | Implement provenance tracking schema                                         | 3-4 days | HIGH     |
+| PR-7 | Configure email delivery service                                             | 3 days   | HIGH     |
 
 **Total Prerequisite Effort**: 22-29 days (4-5 weeks)
 
@@ -559,10 +528,10 @@ Based on gap analysis, the Phase 03 task list requires significant restructuring
 
 **Category 5: Insight/Verdict Integration** (Significantly Modified)
 
-| Original Task | New Task | Changes                      | Effort  |
-| ------------- | -------- | ---------------------------- | ------- |
-| 7.1-7.4       | INS-1    | Use actual API from PR-1     | 22 days |
-| 8.1-8.4       | VRD-1    | Add transformation from PR-2 | 24 days |
+| Original Task | New Task | Changes                                                           | Effort  |
+| ------------- | -------- | ----------------------------------------------------------------- | ------- |
+| 7.1-7.4       | INS-1    | Use actual API from PR-1                                          | 22 days |
+| 8.1-8.4       | VRD-1    | Add report mapping from PR-2 (`mapMarketingVerdictToReportModel`) | 24 days |
 
 **Subtotal**: 46 days
 
@@ -781,8 +750,8 @@ configs/
    - Document data transformation requirements
 
 2. **Schema Alignment** (2 days)
-   - Align verdict schemas between Phase 2 and 3
-   - Create transformation layer specification
+   - Keep **`MarketingVerdict`** as the cross-phase contract; document report-layer mapping only
+   - Finalize **`mapMarketingVerdictToReportModel`** specification (Appendix C + tasks PR-2)
    - Update Phase 3 tasks.md with correct schemas
 
 3. **Technology Selection** (1 day)
@@ -830,15 +799,15 @@ configs/
 
 ### 6.1 Prerequisite Completion Criteria
 
-| Prerequisite | Success Criteria                               |
-| ------------ | ---------------------------------------------- |
-| PR-1         | All API endpoints return 200 with valid data   |
-| PR-2         | Transformation tests pass 100%                 |
-| PR-3         | Template schema validates all test cases       |
-| PR-4         | Validation rejects invalid data, accepts valid |
-| PR-5         | Design tokens defined for all brand elements   |
-| PR-6         | Provenance data captured for all analyses      |
-| PR-7         | Test emails delivered successfully             |
+| Prerequisite | Success Criteria                                                             |
+| ------------ | ---------------------------------------------------------------------------- |
+| PR-1         | All API endpoints return 200 with valid data                                 |
+| PR-2         | Report `mapMarketingVerdictToReportModel` tests pass 100% (once implemented) |
+| PR-3         | Template schema validates all test cases                                     |
+| PR-4         | Validation rejects invalid data, accepts valid                               |
+| PR-5         | Design tokens defined for all brand elements                                 |
+| PR-6         | Provenance data captured for all analyses                                    |
+| PR-7         | Test emails delivered successfully                                           |
 
 ### 6.2 Phase 03 Success Metrics
 
@@ -921,6 +890,7 @@ configs/
 ### Appendix A: API Specifications (to be implemented)
 
 ```typescript
+// Types: import type { MarketingVerdict } from "@agenticverdict/types";
 // Required API endpoints for Phase 3
 
 interface InsightAPI {
@@ -944,13 +914,13 @@ interface VerdictAPI {
     campaignId?: string;
     verdictType?: string;
     dateRange?: DateRange;
-  }): Promise<Verdict[]>;
+  }): Promise<MarketingVerdict[]>;
 
   // GET /api/v1/verdicts/:id
-  getVerdict(id: string): Promise<Verdict>;
+  getVerdict(id: string): Promise<MarketingVerdict>;
 
   // POST /api/v1/verdicts/validate
-  validateVerdict(verdict: Verdict): Promise<ValidationResult>;
+  validateVerdict(verdict: MarketingVerdict): Promise<ValidationResult>;
 }
 
 interface AnalysisAPI {
@@ -987,22 +957,23 @@ interface TemplateSection {
 }
 ```
 
-### Appendix C: Transformation Layer Specification
+### Appendix C: Report-generator mapping (specification)
 
 ```typescript
-// Transform Phase 2 verdict to Phase 3 format
+// Map unified domain verdict → template / export view (report-generator only).
+// Domain type: MarketingVerdict from @agenticverdict/types
 
-function transformVerdict(phase2Verdict: MarketingVerdict): Phase3Verdict {
+function mapMarketingVerdictToReportModel(verdict: MarketingVerdict): Phase3Verdict {
   return {
-    id: generateId(),
-    campaign_id: extractCampaignId(phase2Verdict),
-    verdict_type: classifyVerdictType(phase2Verdict),
-    score: phase2Verdict.score,
-    confidence: calculateConfidence(phase2Verdict),
-    reasoning: extractReasoning(phase2Verdict),
-    recommendations: transformRecommendations(phase2Verdict.recommendations),
-    historical_context: extractHistoricalContext(phase2Verdict),
-    data_sources: extractDataSources(phase2Verdict.evidence),
+    id: verdict.id,
+    campaign_id: verdict.campaignId ?? verdict.analysisId,
+    verdict_type: verdict.verdictType,
+    score: verdict.score,
+    confidence: verdict.confidence,
+    reasoning: verdict.reasoning,
+    recommendations: transformRecommendations(verdict.recommendations),
+    historical_context: verdict.historicalContext ?? [],
+    data_sources: mapDataSourcesForReport(verdict.dataSources),
   };
 }
 ```

@@ -49,13 +49,13 @@ This execution plan provides a structured approach to implementing Phase 03 (Rep
 
 ### Week 3-4: Schema and Configuration (PR-2, PR-3, PR-5)
 
-| Day   | Task                         | Owner          | Deliverable                 |
-| ----- | ---------------------------- | -------------- | --------------------------- |
-| 21-23 | Template schema definition   | Backend        | TemplateConfig Zod schema   |
-| 24-25 | Verdict transformation layer | Fullstack      | transformVerdict() function |
-| 26-27 | Design token definitions     | Designer + Dev | DesignTokens schema         |
-| 28    | Provenance schema            | Backend        | ProvenanceInfo schema       |
-| 29    | Configuration testing        | QA             | All schemas validated       |
+| Day   | Task                              | Owner          | Deliverable                                                                                                   |
+| ----- | --------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------- |
+| 21-23 | Template schema definition        | Backend        | TemplateConfig Zod schema                                                                                     |
+| 24-25 | Verdict contract + report mapping | Fullstack      | Unified `MarketingVerdict` in API/runtime ✅; `mapMarketingVerdictToReportModel()` in report-generator (PR-2) |
+| 26-27 | Design token definitions          | Designer + Dev | DesignTokens schema                                                                                           |
+| 28    | Provenance schema                 | Backend        | ProvenanceInfo schema                                                                                         |
+| 29    | Configuration testing             | QA             | All schemas validated                                                                                         |
 
 ### Week 4-5: Services Setup (PR-4, PR-6, PR-7)
 

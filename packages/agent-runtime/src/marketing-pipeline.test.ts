@@ -5,18 +5,21 @@ import { AgentFactory } from "./agent-factory";
 import { AgentJobError, runAgentJob } from "./agent-job";
 import { AgentMockChatModel } from "./mock-chat-model";
 import { marketingPipelineStateToJson, runMarketingAgentPipeline } from "./marketing-pipeline";
+import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
 import { VerdictParseError } from "./verdict-schema";
 
-const VERDICT_MOCK_JSON = `{
-  "summary": "Net positive with Meta leading.",
-  "sentiment": "positive",
-  "score": 81,
-  "keyInsights": [{ "id": "i1", "title": "Lead efficiency", "detail": "CPC stable week over week." }],
-  "recommendations": [{ "title": "Shift 5% budget to search", "rationale": "Strong assisted conversions" }],
-  "actionItems": [{ "description": "Launch creative variant B", "ownerRole": "creative_lead" }],
-  "evidence": [{ "label": "Blended CPA", "metric": "cpa", "value": "42", "source": "ga4" }],
-  "nextSteps": ["Review search query themes"]
-}`;
+const VERDICT_MOCK_JSON = JSON.stringify(
+  buildMarketingVerdictFixture({
+    tenantId: TEST_TENANT_ALPHA,
+    analysisId: "11111111-1111-4111-8111-111111111111",
+    overrides: {
+      score: 81,
+      sentiment: "positive",
+      summary:
+        "Net positive with Meta leading efficiency across prospecting pools for the review window.",
+    },
+  }),
+);
 
 describe("marketing-pipeline (Phase 7)", () => {
   it("runs analysis → insights → verdict with mock LLM and validates verdict schema", async () => {
@@ -55,7 +58,7 @@ describe("marketing-pipeline (Phase 7)", () => {
         factory,
         ctx: scope.invocation,
         goal: "PIPELINE_E2E_MARKER: Summarize last month.",
-        workflowId: "wf-fixed-1",
+        workflowId: "11111111-1111-4111-8111-111111111111",
         specialization: { companyName: "Pipeline Co" },
         mockModels: {
           analysis: pipelineMock,
@@ -71,6 +74,8 @@ describe("marketing-pipeline (Phase 7)", () => {
 
     expect(state.status).toBe("completed");
     expect(state.verdict?.score).toBe(81);
+    expect(state.provenance?.analysisId).toBe("11111111-1111-4111-8111-111111111111");
+    expect(state.provenance?.transformations).toHaveLength(4);
     expect(state.stages).toHaveLength(3);
     expect(progress).toHaveBeenCalledTimes(3);
     expect(messages).toHaveLength(3);
@@ -79,6 +84,10 @@ describe("marketing-pipeline (Phase 7)", () => {
     const json = marketingPipelineStateToJson(state);
     expect(json.status).toBe("completed");
     expect(json.stages).toHaveLength(3);
+    expect(json.provenance).toMatchObject({
+      analysisId: "11111111-1111-4111-8111-111111111111",
+      transformationCount: 4,
+    });
   });
 
   it("returns failed state when a stage throws", async () => {
@@ -143,6 +152,7 @@ describe("marketing-pipeline (Phase 7)", () => {
     expect(state.status).toBe("degraded");
     expect(state.stages).toHaveLength(3);
     expect(state.verdictRawAnswer).toContain("not-json");
+    expect(state.provenance?.transformations.length).toBeGreaterThanOrEqual(3);
   });
 
   it("rethrows VerdictParseError when tolerateVerdictParseFailure is false", async () => {

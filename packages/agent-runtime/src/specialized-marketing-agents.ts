@@ -10,17 +10,16 @@ import { renderPromptTemplate, resolvePromptTemplate } from "./prompts/index";
 
 const JSON_VERDICT_SUFFIX = `
 
-When the user asks for a structured verdict, reply with a single JSON object only (no markdown fences) matching this shape:
-{
-  "summary": string,
-  "sentiment": "positive" | "neutral" | "negative",
-  "score": number (0-100),
-  "keyInsights": [{ "id": string, "title": string, "detail": string, "impact"?: "high"|"medium"|"low", "confidence"?: number }],
-  "recommendations": [{ "title": string, "rationale": string, "priority"?: number, "estimatedRoasImpact"?: number }],
-  "actionItems": [{ "description": string, "ownerRole": string, "dueHint"?: string }],
-  "evidence": [{ "label": string, "metric"?: string, "value"?: string, "source"?: string }],
-  "nextSteps": string[]
-}`;
+When the user asks for a structured verdict, reply with a single JSON object only (no markdown fences) matching the unified MarketingVerdict contract:
+- Required top-level: "id" (UUID), "tenantId" (UUID), "analysisId" (UUID), "verdictType" ("budget_allocation"|"platform_performance"|"creative_effectiveness"|"overall_health"),
+  "score" (0-100), "confidence" (0-1), "sentiment", "summary" (10-500 chars), "reasoning" (string[], each line ≥10 chars, min 1 line),
+  "keyInsights" (min 1; each needs UUID "id", "title", "detail", "impact", "confidence"),
+  "recommendations" (min 1; each needs UUID "id", "title", "rationale", "priority" 1-5, "effort" "low"|"medium"|"high"; optional "estimatedImpact": { "roas"?, "cost"?, "revenue"? }),
+  "actionItems" (each: UUID "id", "description", "ownerRole", "priority" 1-10; optional "dueDateHint"),
+  "evidence" (each: UUID "id", "label", "source" "meta"|"ga4"|"gsc"|"gbp"|"tiktok"|"internal"|"composite", "capturedAt" ISO-8601; optional "value", "metric", etc.),
+  "dataSources" (min 1; each: "platform" "meta"|"ga4"|"gsc"|"gbp"|"tiktok", "metrics" (non-empty strings), "dateRange" { "start","end" YYYY-MM-DD }, "freshness" ≥0, "qualityScore" 0-100),
+  "platformsAnalyzed" (non-empty strings), "dateRange" { "start","end" }, "generatedAt" ISO-8601, "generatedBy", "modelUsed".
+Use the tenantId and analysisId values supplied in the user message exactly; generate new UUIDs for nested entities.`;
 
 export type SpecializedMarketingAgentKind =
   | "cross_platform_analysis"

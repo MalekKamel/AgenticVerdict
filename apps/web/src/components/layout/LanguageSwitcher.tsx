@@ -20,7 +20,7 @@ export function LanguageSwitcher() {
           href={pathname}
           locale={l}
           size="compact-sm"
-          variant={l === locale ? "filled" : "light"}
+          variant={l === locale ? "filled" : "outline"}
         >
           {l.toUpperCase()}
         </Button>

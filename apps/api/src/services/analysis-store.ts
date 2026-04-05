@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import {
-  legacyVerdictToMarketingVerdict,
-  legacyVerdictSchema,
-} from "@agenticverdict/agent-runtime";
+import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
 import type {
   AnalysisResultResponse,
   GeneratedInsight,
@@ -17,33 +14,6 @@ interface TenantStore {
 }
 
 const byTenant = new Map<string, TenantStore>();
-
-const LEGACY_VERDICT_FIXTURE = `{
-  "summary": "Cross-channel efficiency is stable; Meta prospecting leads blended ROAS with GA4-assisted attribution.",
-  "sentiment": "positive",
-  "score": 78,
-  "keyInsights": [
-    { "id": "k1", "title": "Efficiency", "detail": "Meta ROAS ahead of blended benchmark with room to scale top quartile ad sets.", "impact": "high", "confidence": 0.72 },
-    { "id": "k2", "title": "Creative fatigue", "detail": "Hero creatives show CTR decay week over week across prospecting cohorts.", "impact": "medium", "confidence": 0.61 }
-  ],
-  "recommendations": [
-    { "title": "Reallocate 10% to Meta prospecting", "rationale": "Marginal ROAS remains strongest where audience saturation is lower.", "priority": 2, "estimatedRoasImpact": 0.06 },
-    { "title": "Refresh top 3 creatives", "rationale": "CTR decline suggests fatigue on highest-spend assets.", "priority": 3 }
-  ],
-  "actionItems": [
-    { "description": "Run weekly cross-channel pacing review with finance sign-off", "ownerRole": "performance_marketing", "dueHint": "7d" },
-    { "description": "Ship creative variants for top 3 ad sets", "ownerRole": "creative_lead", "dueHint": "14d" }
-  ],
-  "evidence": [
-    { "label": "Blended ROAS", "metric": "roas", "value": "3.2", "source": "meta" },
-    { "label": "Organic sessions", "metric": "sessions", "value": "18000", "source": "ga4" }
-  ],
-  "nextSteps": [
-    "Validate incrementality readout before shifting more budget",
-    "Monitor CPA for five business days after creative refresh",
-    "Document learnings for the executive QBR narrative"
-  ]
-}`;
 
 function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsight[] {
   const base = (
@@ -99,13 +69,124 @@ function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsig
 }
 
 function buildDemoVerdict(tenantId: string, analysisId: string): MarketingVerdict {
-  const legacy = legacyVerdictSchema.parse(JSON.parse(LEGACY_VERDICT_FIXTURE) as unknown);
-  return legacyVerdictToMarketingVerdict(legacy, {
+  return buildMarketingVerdictFixture({
     tenantId,
     analysisId,
-    verdictType: "overall_health",
-    generatedBy: "agent.media_verdict",
-    modelUsed: "demo-seed",
+    overrides: {
+      verdictType: "overall_health",
+      score: 78,
+      sentiment: "positive",
+      confidence: 0.75,
+      summary:
+        "Cross-channel efficiency is stable; Meta prospecting leads blended ROAS with GA4-assisted attribution for the demo window.",
+      historicalContext: [
+        { period: "2026-01", score: 68, confidence: 0.7, summary: "Baseline quarter" },
+        { period: "2026-02", score: 72, confidence: 0.72 },
+        { period: "2026-03", score: 78, confidence: 0.75, summary: "Current window" },
+      ],
+      methodology: {
+        approach:
+          "Blended cross-channel scoring with platform-native metrics normalized to internal schema",
+        dataPoints: 128_400,
+        confidenceInterval: { lower: 74, upper: 82, level: 0.95 },
+        limitations: ["Demo seed data only", "No incrementality experiment readout in this bundle"],
+      },
+      reasoning: [
+        "Validate incrementality readout before shifting more budget to high-variance prospecting cells.",
+        "Monitor CPA for five business days after creative refresh while holding audience exclusions constant.",
+        "Document learnings for the executive QBR narrative with finance-aligned pacing checkpoints.",
+      ],
+      keyInsights: [
+        {
+          id: randomUUID(),
+          title: "Efficiency",
+          detail:
+            "Meta ROAS ahead of blended benchmark with room to scale top quartile ad sets without breaking guardrails.",
+          impact: "high",
+          confidence: 0.72,
+        },
+        {
+          id: randomUUID(),
+          title: "Creative fatigue",
+          detail:
+            "Hero creatives show CTR decay week over week across prospecting cohorts versus prior baselines.",
+          impact: "medium",
+          confidence: 0.61,
+        },
+      ],
+      recommendations: [
+        {
+          id: randomUUID(),
+          title: "Reallocate 10% to Meta prospecting",
+          rationale: "Marginal ROAS remains strongest where audience saturation is lower.",
+          priority: 2,
+          estimatedImpact: { roas: 0.06 },
+          effort: "medium",
+        },
+        {
+          id: randomUUID(),
+          title: "Refresh top 3 creatives",
+          rationale: "CTR decline suggests fatigue on highest-spend assets.",
+          priority: 3,
+          effort: "medium",
+        },
+      ],
+      actionItems: [
+        {
+          id: randomUUID(),
+          description: "Run weekly cross-channel pacing review with finance sign-off",
+          ownerRole: "performance_marketing",
+          priority: 3,
+          dueDateHint: "7d",
+        },
+        {
+          id: randomUUID(),
+          description: "Ship creative variants for top 3 ad sets",
+          ownerRole: "creative_lead",
+          priority: 4,
+          dueDateHint: "14d",
+        },
+      ],
+      evidence: [
+        {
+          id: randomUUID(),
+          label: "Blended ROAS",
+          metric: "roas",
+          value: "3.2",
+          source: "meta",
+          capturedAt: new Date(),
+        },
+        {
+          id: randomUUID(),
+          label: "Organic sessions",
+          metric: "sessions",
+          value: "18000",
+          source: "ga4",
+          capturedAt: new Date(),
+        },
+      ],
+      dataSources: [
+        {
+          platform: "meta",
+          metrics: ["roas", "spend"],
+          dateRange: { start: "2026-03-01", end: "2026-03-31" },
+          freshness: 0,
+          qualityScore: 88,
+        },
+        {
+          platform: "ga4",
+          metrics: ["sessions", "conversions"],
+          dateRange: { start: "2026-03-01", end: "2026-03-31" },
+          freshness: 0,
+          qualityScore: 84,
+        },
+      ],
+      platformsAnalyzed: ["meta", "ga4", "gsc", "gbp", "tiktok"],
+      dateRange: { start: "2026-03-01", end: "2026-03-31" },
+      generatedAt: new Date(),
+      generatedBy: "agent.media_verdict",
+      modelUsed: "demo-seed",
+    },
   });
 }
 

@@ -85,7 +85,7 @@ For comprehensive analysis, see:
 
 1. ✅ **Delay Phase 03 Start** - Complete prerequisites first (4-5 weeks)
 2. ✅ **API Definition Workshop** - Align Phase 2/3 on API contracts
-3. ✅ **Schema Alignment** - Create transformation layer for verdict schema
+3. ✅ **Schema Alignment** - Unified **`MarketingVerdict`** in runtime/API (**R-LEGACY-001**); add **`mapMarketingVerdictToReportModel`** in report-generator when templates need a slimmer view (PR-2)
 4. ✅ **Technology Selection** - Finalize PDF, DOCX, chart libraries
 
 ### Strategic Decisions
@@ -111,7 +111,7 @@ For comprehensive analysis, see:
 ### Prerequisites (NEW - 4-5 weeks)
 
 - PR-1: Implement Phase 2 API endpoints
-- PR-2: Create verdict schema transformation layer
+- PR-2: Report-layer `mapMarketingVerdictToReportModel` (domain verdict already unified)
 - PR-3: Define template configuration schema
 - PR-4: Implement data validation interface
 - PR-5: Define design system tokens

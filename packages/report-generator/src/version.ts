@@ -1,0 +1,1 @@
+export const REPORT_GENERATOR_PACKAGE_VERSION = "0.5.0";

@@ -244,27 +244,22 @@ export {
   type AgentMessageType,
 } from "./agent-protocol";
 export {
+  applyMarketingVerdictPipelineContext,
   extractJsonObjectText,
-  legacyVerdictSchema,
-  legacyVerdictToMarketingVerdict,
-  marketingInsightSchema,
-  parseVerdictFromAgentText,
-  safeParseVerdictFromAgentText,
-  verdictActionItemSchema,
-  verdictEvidenceSchema,
-  verdictRecommendationSchema,
-  verdictSchema,
-  VerdictParseError,
-  type LegacyAgentVerdict,
-  type LegacyVerdictNormalizationContext,
-  type MarketingInsight,
-  type Verdict,
-  type VerdictActionItem,
-  type VerdictEvidence,
-  type VerdictRecommendation,
-} from "./verdict-schema";
+  parseMarketingVerdictFromAgentText,
+  resolveWorkflowAnalysisUuid,
+  safeParseMarketingVerdictFromAgentText,
+} from "./agent-verdict-json";
+export { VerdictParseError } from "./verdict-schema";
+export {
+  buildMarketingVerdictFixture,
+  buildMinimalMarketingVerdict,
+  deterministicUuid,
+  type BuildMarketingVerdictFixtureOptions,
+} from "./test-utils/marketing-verdict-fixtures";
 export {
   DataQualityService,
+  ValidationService,
   type AnalysisResultValidationInput,
   type DataQualityValidator,
   type ValidationConfig,
@@ -296,4 +291,4 @@ export {
   type RunMarketingPipelineOptions,
 } from "./marketing-pipeline";
 
-export const AGENT_RUNTIME_PACKAGE_VERSION = "0.9.0";
+export { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";

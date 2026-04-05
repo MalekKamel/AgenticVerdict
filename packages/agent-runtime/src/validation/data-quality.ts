@@ -255,3 +255,6 @@ export class DataQualityService implements DataQualityValidator {
     };
   }
 }
+
+/** Phase 03 prerequisite export: same class as {@link DataQualityService}. */
+export { DataQualityService as ValidationService };

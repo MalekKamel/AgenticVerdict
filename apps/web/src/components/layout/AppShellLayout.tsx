@@ -43,7 +43,7 @@ export function AppShellLayout({ children }: { children: ReactNode }) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md" hiddenFrom="sm">
-        <Text size="sm" c="dimmed">
+        <Text size="sm" c="gray.7">
           {t("navHint")}
         </Text>
       </AppShell.Navbar>

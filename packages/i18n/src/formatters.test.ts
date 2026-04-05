@@ -11,6 +11,9 @@ describe("intlLocaleTag", () => {
   it("falls back when region is not two letters", () => {
     expect(intlLocaleTag("en", "")).toBe("en-US");
     expect(intlLocaleTag("ar", "invalid")).toBe("ar-SA");
+    expect(intlLocaleTag("es", "")).toBe("es-ES");
+    expect(intlLocaleTag("fr", "")).toBe("fr-FR");
+    expect(intlLocaleTag("zh", "")).toBe("zh-CN");
   });
 });
 

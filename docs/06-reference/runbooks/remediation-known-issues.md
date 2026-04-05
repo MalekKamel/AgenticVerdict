@@ -15,7 +15,7 @@
 ## Unified verdict schema
 
 - Canonical Zod + types: `packages/types/src/verdict.ts` (`marketingVerdictSchema`).
-- Legacy fixture conversion for demos: `legacyVerdictToMarketingVerdict` in `@agenticverdict/agent-runtime`.
+- Demos and tests build fixtures with `buildMarketingVerdictFixture` from `@agenticverdict/agent-runtime` (no legacy transform layer).
 - API contract tests assert GET `/api/v1/verdicts` payloads parse with `marketingVerdictSchema`.
 
 ## Follow-ups before Phase 03 hardening

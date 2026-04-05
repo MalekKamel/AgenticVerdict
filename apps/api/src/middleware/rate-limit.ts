@@ -12,6 +12,11 @@ type WindowState = { count: number; resetAt: number };
 
 const memoryWindows = new Map<string, WindowState>();
 
+/** Clears in-memory counters (Vitest / single-process tests only). */
+export function __clearRateLimitMemoryForTests(): void {
+  memoryWindows.clear();
+}
+
 function memoryRateLimit(
   key: string,
   windowMs: number,

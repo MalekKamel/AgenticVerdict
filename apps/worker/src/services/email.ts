@@ -12,7 +12,7 @@ export interface SendReportEmailParams {
   to: string[];
   subject: string;
   reportId: string;
-  format: "pdf" | "docx";
+  format: "pdf" | "docx" | "xlsx";
   attachments: EmailAttachment[];
   template?: string;
 }
@@ -116,18 +116,111 @@ export class ResendEmailDeliveryService implements EmailDeliveryService {
   }
 }
 
-export function createEmailDeliveryServiceFromEnv(): EmailDeliveryService | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    return null;
+/**
+ * SendGrid v3 API when Resend is not used. Requires `SENDGRID_API_KEY`.
+ */
+export class SendGridEmailDeliveryService implements EmailDeliveryService {
+  constructor(private readonly apiKey: string) {}
+
+  async sendReport(params: SendReportEmailParams): Promise<DeliveryResult> {
+    const appUrl = process.env.APP_URL ?? "https://app.agenticverdict.local";
+    const fromEmail =
+      process.env.SENDGRID_FROM_EMAIL ??
+      process.env.RESEND_FROM_EMAIL ??
+      "reports@agenticverdict.com";
+    const fromName = process.env.SENDGRID_FROM_NAME ?? "AgenticVerdict Reports";
+    const downloadLink = `${appUrl.replace(/\/$/, "")}/reports/${params.reportId}`;
+
+    let html: string;
+    try {
+      html = await loadReportReadyHtml({
+        reportId: params.reportId,
+        format: params.format,
+        downloadLink,
+      });
+    } catch (e) {
+      return {
+        success: false,
+        error: e instanceof Error ? e.message : "template_load_failed",
+      };
+    }
+
+    const body: Record<string, unknown> = {
+      personalizations: [{ to: params.to.map((email) => ({ email })) }],
+      from: { email: fromEmail, name: fromName },
+      subject: params.subject,
+      content: [
+        {
+          type: "text/plain",
+          value: `Your ${params.format} report is ready. Download: ${downloadLink}`,
+        },
+        { type: "text/html", value: html },
+      ],
+    };
+
+    if (params.attachments.length > 0) {
+      body.attachments = params.attachments.map((a) => ({
+        content: a.content.toString("base64"),
+        filename: a.filename,
+        type: a.contentType,
+        disposition: "attachment",
+      }));
+    }
+
+    try {
+      const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (res.status === 202 || res.ok) {
+        const messageId = res.headers.get("x-message-id") ?? undefined;
+        return { success: true, messageId };
+      }
+
+      let errorText = `sendgrid_http_${res.status}`;
+      try {
+        const parsed = (await res.json()) as { errors?: { message: string }[] };
+        const first = parsed.errors?.[0]?.message;
+        if (typeof first === "string") {
+          errorText = first;
+        }
+      } catch {
+        /* ignore */
+      }
+      return { success: false, error: errorText };
+    } catch (e) {
+      return {
+        success: false,
+        error: e instanceof Error ? e.message : "sendgrid_request_failed",
+      };
+    }
   }
-  return new ResendEmailDeliveryService(key);
+}
+
+export function createEmailDeliveryServiceFromEnv(): EmailDeliveryService | null {
+  const resendKey = process.env.RESEND_API_KEY;
+  if (resendKey) {
+    return new ResendEmailDeliveryService(resendKey);
+  }
+  const sendgridKey = process.env.SENDGRID_API_KEY;
+  if (sendgridKey) {
+    return new SendGridEmailDeliveryService(sendgridKey);
+  }
+  return null;
 }
 
 export async function sendReportEmail(params: SendReportEmailParams): Promise<DeliveryResult> {
   const svc = createEmailDeliveryServiceFromEnv();
   if (!svc) {
-    return { success: false, error: "RESEND_API_KEY not configured" };
+    return {
+      success: false,
+      error: "No email provider configured (set RESEND_API_KEY or SENDGRID_API_KEY)",
+    };
   }
   return svc.sendReport(params);
 }

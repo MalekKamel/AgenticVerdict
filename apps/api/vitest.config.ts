@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     environment: "node",
     passWithNoTests: true,
+    fileParallelism: false,
     env: {
       VITEST: "true",
     },

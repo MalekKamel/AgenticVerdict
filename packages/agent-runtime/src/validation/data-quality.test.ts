@@ -6,8 +6,8 @@ import {
   type GeneratedInsight,
 } from "@agenticverdict/types";
 
-import { legacyVerdictSchema, legacyVerdictToMarketingVerdict } from "../verdict-schema";
-import { DataQualityService } from "./data-quality";
+import { buildMinimalMarketingVerdict } from "../test-utils/marketing-verdict-fixtures";
+import { DataQualityService, ValidationService } from "./data-quality";
 
 const TENANT_ID = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
 const ANALYSIS_ID = "bbbbbbbb-bbbb-4ccc-dddd-eeeeeeeeeeee";
@@ -29,26 +29,17 @@ function parseInsight(overrides: Partial<GeneratedInsight> = {}) {
   });
 }
 
-function marketingVerdictFromLegacy() {
-  const legacyJson = `{
-      "summary": "Channels are balanced with Meta leading efficiency for the quarter under review.",
-      "sentiment": "positive",
-      "score": 78,
-      "keyInsights": [{ "id": "k1", "title": "Efficiency", "detail": "Meta ROAS ahead of GA4-assisted view with sustained spend efficiency." }],
-      "recommendations": [{ "title": "Reallocate 10% to Meta prospecting", "rationale": "Strong marginal ROAS observed across prospecting cohorts." }],
-      "actionItems": [{ "description": "Refresh creative on underperforming ad sets weekly", "ownerRole": "performance_marketing" }],
-      "evidence": [{ "label": "Blended ROAS", "metric": "roas", "value": "3.2", "source": "meta" }],
-      "nextSteps": ["Validate incrementality test readout before scaling further"]
-    }`;
-  const legacy = legacyVerdictSchema.parse(JSON.parse(legacyJson) as unknown);
-  return legacyVerdictToMarketingVerdict(legacy, {
-    tenantId: TENANT_ID,
-    analysisId: ANALYSIS_ID,
+function sampleMarketingVerdict() {
+  return buildMinimalMarketingVerdict(TENANT_ID, ANALYSIS_ID, {
+    summary:
+      "Channels are balanced with Meta leading efficiency for the quarter under review and stable CPA.",
+    sentiment: "positive",
+    score: 78,
   });
 }
 
 function baseAnalysisResult(overrides: Record<string, unknown> = {}) {
-  const verdict = marketingVerdictFromLegacy();
+  const verdict = sampleMarketingVerdict();
   return analysisResultResponseSchema.parse({
     analysisId: ANALYSIS_ID,
     tenantId: TENANT_ID,
@@ -99,7 +90,7 @@ describe("DataQualityService", () => {
   });
 
   it("accepts well-formed verdict payloads from normalization", () => {
-    const verdict = marketingVerdictFromLegacy();
+    const verdict = sampleMarketingVerdict();
     const r = svc.validateVerdict(verdict);
     expect(r.isValid).toBe(true);
     expect(r.score).toBeGreaterThan(50);
@@ -173,24 +164,31 @@ describe("validateInsight — edge cases", () => {
   });
 });
 
+describe("ValidationService (Phase 03 export alias)", () => {
+  it("matches DataQualityService behavior for insights", () => {
+    const v = new ValidationService();
+    expect(v.validateInsight(parseInsight()).isValid).toBe(true);
+  });
+});
+
 describe("validateVerdict — edge cases", () => {
   const svc = new DataQualityService();
 
   it("warns on low confidence verdicts", () => {
-    const verdict = marketingVerdictFromLegacy();
+    const verdict = sampleMarketingVerdict();
     const relaxed = { ...verdict, confidence: 0.1 };
     const r = svc.validateVerdict(relaxed);
     expect(r.warnings.some((w) => w.code === "LOW_CONFIDENCE")).toBe(true);
   });
 
   it("warns when evidence is empty", () => {
-    const verdict = marketingVerdictFromLegacy();
+    const verdict = sampleMarketingVerdict();
     const r = svc.validateVerdict({ ...verdict, evidence: [] });
     expect(r.warnings.some((w) => w.code === "NO_EVIDENCE")).toBe(true);
   });
 
   it("recommends action items when none are present", () => {
-    const verdict = marketingVerdictFromLegacy();
+    const verdict = sampleMarketingVerdict();
     const r = svc.validateVerdict({ ...verdict, actionItems: [] });
     expect(r.recommendations.some((x) => x.includes("action item"))).toBe(true);
   });

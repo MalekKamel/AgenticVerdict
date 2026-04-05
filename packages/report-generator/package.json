@@ -9,10 +9,21 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@agenticverdict/database": "workspace:*",
+    "@agenticverdict/i18n": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
+    "docx": "^9.6.1",
+    "drizzle-orm": "^0.38.3",
+    "node-html-parser": "^7.1.0",
+    "playwright": "^1.59.1",
+    "zod": "^3.24.1"
+  },
   "devDependencies": {
+    "@agenticverdict/agent-runtime": "workspace:*",
     "@types/node": "^20.19.0",
     "eslint": "^9.17.0",
     "typescript": "^5.7.2",

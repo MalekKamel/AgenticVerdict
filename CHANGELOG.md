@@ -11,11 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Placeholder for changes that are merged but not yet released.
+- **Phase 03 Part 9 (testing & hardening):** API contract tests for report rate limits, tenant isolation, share-token and validation edge cases, concurrent read smoke, template preview `lang`/`dir`; report-generator executive-summary perf case; Playwright axe WCAG smoke; i18n `/formatters` export for client-safe imports; Part 9 production-readiness runbook. See [`changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md`](changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md).
+- **Phase 03 Part 8 (history & versioning):** API report byte versioning, compare-metadata endpoint, archival and retention sweep, in-memory audit trail and compliance summary/audit export. See [`changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md`](changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md).
+- **Phase 03 Part 1 (prerequisites):** `docs/03-development-phases/phase-03-report-generation/prerequisites/` — API workshop summary, schema transformation spec, technology selection, environment checklist, kickoff/exit criteria; Phase 03 README links the index.
+- **`@agenticverdict/agent-runtime`:** Unified **`MarketingVerdict`** parsing (`parseMarketingVerdictFromAgentText`, `applyMarketingVerdictPipelineContext`, `resolveWorkflowAnalysisUuid`, `extractJsonObjectText` in `src/agent-verdict-json.ts`); fixture helpers `buildMarketingVerdictFixture` / `buildMinimalMarketingVerdict`; `ValidationService` alias for `DataQualityService`; `AGENT_RUNTIME_PACKAGE_VERSION` **0.10.0**; marketing pipeline attaches `ProvenanceTracker` output to `MarketingPipelineState.provenance`.
+- **`@agenticverdict/worker`:** `SendGridEmailDeliveryService` and provider selection in `createEmailDeliveryServiceFromEnv` (Resend preferred, then SendGrid).
+- **Phase 03 Part 4 (format generation):** `@agenticverdict/report-generator` — Playwright HTML→PDF (`PlaywrightPdfFormatGenerator`, shared Chromium + `closeSharedChromiumBrowser`), print CSS for columns and page-break hints, tagged PDF; HTML→DOCX (`HtmlDocxFormatGenerator`, `docx` + `node-html-parser`, tables/images/TOC marker); `createStubFormatRegistry()` and `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS`; worker `close()` tears down Chromium; package version **0.3.0**. See [`changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md`](changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md).
 
 ### Changed
 
 - **Documentation:** `docs/05-project-management/requirements.md` v1.1 — platform adapters require explicit `tenantId`; security requirements reference Phase 01 `operations/SECURITY.md`; tenant context examples aligned with `tenantId`; research doc paths point at `docs/04-technology-research/`. Synced hub and status docs (`docs/README.md`, `docs/00-overview/development-status-summary.md`, `docs/01-getting-started/project-overview.md`, `navigation.md`, phase 01 README, `phase-overview.md`, `project-charter.md`, `roadmap-development.md`, implementation review header). See `changelog/2026-04-04-phase-01-*.md` for code-level Phase 01 notes.
+- **API validation routes** use `ValidationService` (`apps/api/src/routes/v1/validation.ts`).
+- **Email runbook** and **`.env.example`** describe Resend vs SendGrid precedence.
+- **Detailed notes:** [`changelog/2026-04-04-phase-03-execution-plan-part-1-prerequisites.md`](changelog/2026-04-04-phase-03-execution-plan-part-1-prerequisites.md), [`changelog/2026-04-04-phase-03-execution-plan-part-2-infrastructure.md`](changelog/2026-04-04-phase-03-execution-plan-part-2-infrastructure.md), [`changelog/2026-04-04-phase-03-execution-plan-part-3-template-system.md`](changelog/2026-04-04-phase-03-execution-plan-part-3-template-system.md), [`changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md`](changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md), [`changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md`](changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md).
 
 ### Fixed
 
@@ -23,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Placeholder.
+- **`@agenticverdict/agent-runtime`:** Legacy verdict stack (`legacyVerdictSchema`, `legacyVerdictToMarketingVerdict`, `transformVerdict`, `parseVerdictFromAgentText`, deprecated type/schema aliases). `verdict-schema.ts` now exports **`VerdictParseError`** only.
 
 ### Security
 

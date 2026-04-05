@@ -26,7 +26,7 @@ describe("specialized-marketing-agents", () => {
     });
     expect(verdictCfg.role).toBe("verdict");
     expect(verdictCfg.systemPolicy).toContain("media verdict");
-    expect(verdictCfg.systemPolicy).toContain('"summary"');
+    expect(verdictCfg.systemPolicy).toContain("summary");
   });
 
   it("createSpecializedMarketingTestAgent runs under factory", () => {

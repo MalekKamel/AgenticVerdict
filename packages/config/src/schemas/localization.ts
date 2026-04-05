@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const localizationConfigSchema = z.object({
-  language: z.enum(["ar", "en", "fr"]),
+  language: z.enum(["ar", "en", "fr", "es", "zh"]),
   region: z.string().min(1),
   timezone: z.string().min(1),
   currency: z.string().min(1),

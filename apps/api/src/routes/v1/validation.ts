@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { z } from "zod";
 
-import { DataQualityService } from "@agenticverdict/agent-runtime";
+import { ValidationService } from "@agenticverdict/agent-runtime";
 import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
@@ -22,7 +22,7 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
     rateLimit(redis, { windowMs: 60_000, maxRequests: 30, keyPrefix: "v1:validate" }),
   ];
 
-  const dq = new DataQualityService();
+  const dq = new ValidationService();
 
   app.post(
     "/insights/validate",
@@ -70,7 +70,7 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
         });
       }
 
-      const results: ReturnType<DataQualityService["validateInsight"]>[] = [];
+      const results: ReturnType<ValidationService["validateInsight"]>[] = [];
       for (let i = 0; i < parsed.data.insights.length; i += 1) {
         const row = parsed.data.insights[i];
         const asInsight = generatedInsightSchema.safeParse(row);

@@ -9,7 +9,7 @@ This entry delivers the **three marketing-specialized agents** (cross-platform a
 
 ## Summary
 
-- **`verdict-schema.ts`** — **`verdictSchema`** and nested Zod types; **`parseVerdictFromAgentText`** / **`safeParseVerdictFromAgentText`** with **`extractJsonObjectText`** (fenced or raw JSON); **`VerdictParseError`**.
+- **`verdict-schema.ts`** — historically **`verdictSchema`** and **`parseVerdictFromAgentText`** / **`safeParseVerdictFromAgentText`** with **`extractJsonObjectText`**. _(Superseded 2026-04-04: **`verdict-schema.ts`** exports **`VerdictParseError`** only; parsing lives in **`agent-verdict-json.ts`** — **`parseMarketingVerdictFromAgentText`**, **`extractJsonObjectText`**, **`safeParseMarketingVerdictFromAgentText`**.)_
 - **`agent-protocol.ts`** — **`agentMessageSchema`**, **`agentExecutionContextSchema`**, **`createAgentMessage`**, **`agentMessageToLogFields`** (payload size only, no raw dump), **`AgentMessageLogger`** ring buffer, **`AgentProtocolError`**.
 - **`specialized-marketing-agents.ts`** — **`SpecializedMarketingAgentKind`**, template-backed **`buildSpecializedMarketingFactoryConfig`**, **`createSpecializedMarketingTestAgent`**, **`createSpecializedMarketingProductionAgent`** (roles **analysis** / **insights** / **verdict** + specialization copy + JSON instructions for verdict).
 - **`marketing-pipeline.ts`** — **`runMarketingAgentPipeline`** (sequential workflow, optional **`mockModels`**, **`onProgress`**, **`onMessage`**, **`tolerateVerdictParseFailure`**), **`marketingPipelineStateToJson`**.

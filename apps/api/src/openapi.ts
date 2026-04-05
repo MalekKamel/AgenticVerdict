@@ -9,7 +9,7 @@ const swaggerBaseOptions = {
     info: {
       title: "AgenticVerdict API",
       description:
-        "External REST API for insights, verdicts, analysis bundles, and validation. JWT bearer auth required on `/api/v1/*` except as noted.",
+        "External REST API for insights, verdicts, analysis bundles, reports, and validation. JWT bearer auth required on `/api/v1/*` except as noted.",
       version: "1.0.0",
     },
     tags: [
@@ -18,6 +18,24 @@ const swaggerBaseOptions = {
       { name: "Verdicts", description: "Unified MarketingVerdict payloads" },
       { name: "Analysis", description: "Full analysis results with provenance" },
       { name: "Validation", description: "Data quality validation for insights and verdicts" },
+      {
+        name: "Reports",
+        description:
+          "Report metadata, binary upload/download (each upload creates a new version), email delivery enqueue, share links, delivery metrics, archival, retention, and compliance endpoints (tenant-scoped)",
+      },
+      {
+        name: "Report schedules",
+        description: "Cron-style BullMQ repeatable jobs that fan out report generation per tenant",
+      },
+      {
+        name: "Report templates",
+        description: "Built-in HTML templates, preview, and tenant-scoped versioned overrides",
+      },
+      {
+        name: "Report history",
+        description:
+          "Report byte versioning, comparison metadata, archival, retention sweeps, and audit/compliance exports (tenant-scoped)",
+      },
     ],
     components: {
       securitySchemes: {

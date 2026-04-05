@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import { marketingVerdictSchema } from "@agenticverdict/types";
+
 import {
   assessVerdictHeuristicQuality,
   runVerdictQualityGate,
   verdictConsistencyScore,
 } from "./agent-quality-validation";
-import { verdictSchema } from "./verdict-schema";
 import {
   VALIDATION_DATASET_CASES,
   VALIDATION_DATASET_VERDICT_FIXTURES,
@@ -13,7 +14,7 @@ import {
 
 describe("agent-quality-validation", () => {
   it("scores a rich verdict highly", () => {
-    const v = verdictSchema.parse(
+    const v = marketingVerdictSchema.parse(
       JSON.parse(VALIDATION_DATASET_VERDICT_FIXTURES["val-001"] ?? "{}"),
     );
     const scores = assessVerdictHeuristicQuality(v);

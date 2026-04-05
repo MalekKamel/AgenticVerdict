@@ -9,7 +9,7 @@ This entry records work done to close gaps identified in the Phase 03 gap analys
 
 ## Summary
 
-- **Architecture:** Single **unified verdict schema** in `@agenticverdict/types` (`marketingVerdictSchema` / `MarketingVerdict`) with **legacy agent verdict** parsing and **`legacyVerdictToMarketingVerdict`** normalization in `@agenticverdict/agent-runtime` (no parallel Phase 03–only verdict shape).
+- **Architecture:** Single **unified verdict schema** in `@agenticverdict/types` (`marketingVerdictSchema` / `MarketingVerdict`). _(Updated 2026-04-04: legacy LLM shape and **`legacyVerdictToMarketingVerdict`** removed; runtime uses **`parseMarketingVerdictFromAgentText`** / **`applyMarketingVerdictPipelineContext`** in **`packages/agent-runtime/src/agent-verdict-json.ts`** — remediation **R-LEGACY-001**.)_
 - **API (`@agenticverdict/api`):** Fastify v1 routes for **insights**, **verdicts**, **analysis-results**, and **validation**; **JWT** middleware (`jose`, HS256) with optional **role** checks; **per-tenant rate limiting** (Upstash Redis when configured, otherwise in-memory); **JSON response cache** where implemented; **OpenAPI 3** via `@fastify/swagger` and **Swagger UI** at `/documentation` (spec at `/documentation/json`).
 - **Types:** Shared **`GeneratedInsight`**, **`AnalysisResultResponse`**, **`ProvenanceInfo`**, date/metric helpers, and related Zod schemas in `packages/types/src/` (e.g. `insight.ts`, `analysis.ts`, `verdict.ts`, `common.ts`, `platform.ts`).
 - **Config:** **`templateConfigSchema`** / template types and **`designTokensSchema`** / **`defaultDesignTokens`**, plus **`mantineThemeFromDesignTokens`**, **`designTokensToCssVariables`**, and JSON-schema export helpers in `packages/config/src/schemas/template.ts` and `branding.ts`.

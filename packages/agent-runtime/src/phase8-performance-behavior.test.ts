@@ -7,17 +7,20 @@ import { LlmInvocationCache } from "./llm-invocation-cache";
 import { AgentMockChatModel } from "./mock-chat-model";
 import { runMarketingAgentPipeline } from "./marketing-pipeline";
 import { summarizeLatencyMs } from "./agent-performance-metrics";
+import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
 
-const VERDICT_MOCK_JSON = `{
-  "summary": "Net positive with Meta leading.",
-  "sentiment": "positive",
-  "score": 81,
-  "keyInsights": [{ "id": "i1", "title": "Lead efficiency", "detail": "CPC stable week over week." }],
-  "recommendations": [{ "title": "Shift 5% budget to search", "rationale": "Strong assisted conversions" }],
-  "actionItems": [{ "description": "Launch creative variant B", "ownerRole": "creative_lead" }],
-  "evidence": [{ "label": "Blended CPA", "metric": "cpa", "value": "42", "source": "ga4" }],
-  "nextSteps": ["Review search query themes"]
-}`;
+const VERDICT_MOCK_JSON = JSON.stringify(
+  buildMarketingVerdictFixture({
+    tenantId: TEST_TENANT_ALPHA,
+    analysisId: "22222222-2222-4222-8222-222222222222",
+    overrides: {
+      score: 81,
+      sentiment: "positive",
+      summary:
+        "Net positive with Meta leading efficiency across prospecting pools for the review window.",
+    },
+  }),
+);
 
 describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
   it("reduces mock LLM invocations on repeated pipeline via shared invocation cache", async () => {
@@ -50,6 +53,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
     };
 
     const goal = "CACHE_MARKER: Summarize last month.";
+    const workflowId = "ffffffff-ffff-4fff-8fff-ffffffffffff";
 
     const runOnce = () =>
       runAgentJob({ tenant, runId: `run-${Math.random()}` }, async (scope) =>
@@ -57,6 +61,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
           factory,
           ctx: scope.invocation,
           goal,
+          workflowId,
           specialization: { companyName: "Cache Co" },
           mockModels: {
             analysis: pipelineMock,

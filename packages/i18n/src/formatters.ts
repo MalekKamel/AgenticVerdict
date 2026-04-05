@@ -1,6 +1,6 @@
 import type { LocalizationConfig } from "@agenticverdict/config";
 
-export const APP_LOCALES = ["en", "ar"] as const;
+export const APP_LOCALES = ["en", "ar", "es", "fr", "zh"] as const;
 export type AppLocale = (typeof APP_LOCALES)[number];
 
 export type LocalizationFormatConfig = Pick<LocalizationConfig, "region" | "timezone" | "currency">;
@@ -13,7 +13,18 @@ export function intlLocaleTag(locale: AppLocale, region: string): string {
   if (/^[A-Z]{2}$/.test(r)) {
     return `${locale}-${r}`;
   }
-  return locale === "ar" ? "ar-SA" : "en-US";
+  switch (locale) {
+    case "ar":
+      return "ar-SA";
+    case "es":
+      return "es-ES";
+    case "fr":
+      return "fr-FR";
+    case "zh":
+      return "zh-CN";
+    default:
+      return "en-US";
+  }
 }
 
 /**

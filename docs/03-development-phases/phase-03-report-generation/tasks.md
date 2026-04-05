@@ -57,23 +57,28 @@ This task list reflects the **actual implementation state of Phases 00–02** an
 
 ---
 
-### PR-2: Create Verdict Schema Transformation Layer
+### PR-2: Report-layer verdict mapping (template / PDF shape)
 
 **Priority**: 🔴 CRITICAL
-**Description**: Transform Phase 2 MarketingVerdict schema to Phase 3 expected format.
+**Description**: Map the canonical **`MarketingVerdict`** (already produced by agents and APIs) into the **report-generator** view model (`Phase3Verdict` or equivalent) used by templates, charts, and export pipelines.
+
+**Status (2026-04-04):** Agent/runtime alignment is **complete** (remediation **R-LEGACY-001**): the pipeline emits and parses **`MarketingVerdict`** via **`parseMarketingVerdictFromAgentText`** / **`applyMarketingVerdictPipelineContext`** in `@agenticverdict/agent-runtime` (`src/agent-verdict-json.ts`). This PR is **only** the optional mapper inside **`@agenticverdict/report-generator`** when template code cannot consume `MarketingVerdict` directly.
 
 **Acceptance Criteria**:
 
-- [ ] Transformation function for verdict schema
-- [ ] Type definitions for Phase 3 verdict format
-- [ ] Unit tests for transformation logic
-- [ ] Documentation of field mapping
-- [ ] Error handling for missing fields
+- [ ] `mapMarketingVerdictToReportModel` (or equivalent) in report-generator integration layer
+- [ ] Type definitions for Phase 3 **report** verdict format (distinct from `@agenticverdict/types` domain model)
+- [ ] Unit tests for mapping edge cases (empty optional blocks, date ranges, evidence lists)
+- [x] Documentation of field mapping — **`docs/03-development-phases/phase-03-report-generation/prerequisites/schema-transformation-spec.md`** (runtime path); report mapper TBD beside implementation
+- [ ] Error handling for missing fields when building report rows
 
 **Technical Implementation**:
 
 ```typescript
 // In @agenticverdict/report-generator/src/integration/transform.ts
+// Input type is the unified domain model from @agenticverdict/types
+
+import type { MarketingVerdict } from "@agenticverdict/types";
 
 interface Phase3Verdict {
   id: string;
@@ -87,7 +92,10 @@ interface Phase3Verdict {
   data_sources: PlatformDataSource[];
 }
 
-function transformVerdict(phase2Verdict: MarketingVerdict, campaignId: string): Phase3Verdict;
+function mapMarketingVerdictToReportModel(
+  verdict: MarketingVerdict,
+  campaignId: string,
+): Phase3Verdict;
 ```
 
 **Estimated Effort**: 2-3 days
@@ -697,14 +705,14 @@ export const reportQueue = new Queue("report-generation", {
 
 ### Task VRD-1: Verdict Integration
 
-**Description**: Complete verdict retrieval, transformation, and visualization.
+**Description**: Complete verdict retrieval, optional report-layer mapping, and visualization.
 
-**Changes**: Added transformation from PR-2.
+**Changes**: Uses **`mapMarketingVerdictToReportModel`** from PR-2 when the UI or export pipeline cannot bind `MarketingVerdict` directly.
 
 **Acceptance Criteria**:
 
 - [ ] Verdict retrieval from PR-1 API
-- [ ] Verdict transformation (PR-2)
+- [ ] Report mapping / template binding (PR-2) where needed
 - [ ] Verdict visualization components
 - [ ] Verdict explanation generation
 - [ ] Verdict trend analysis

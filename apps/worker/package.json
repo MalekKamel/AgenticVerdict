@@ -9,8 +9,13 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agenticverdict/report-generator": "workspace:*",
+    "bullmq": "^5.40.0",
+    "ioredis": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

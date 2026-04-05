@@ -1,14 +1,19 @@
 # Email delivery runbook
 
-**Scope**: Report-ready notifications via Resend (`apps/worker/src/services/email.ts`).
+**Scope**: Report-ready notifications via **Resend** (preferred) or **SendGrid** v3 (`apps/worker/src/services/email.ts`).
 
 ## Configuration
 
-| Variable            | Purpose                                                                                                                                        |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `RESEND_API_KEY`    | Required for live sends. If unset, `createEmailDeliveryServiceFromEnv()` returns `null` and `sendReportEmail` fails with a clear error string. |
-| `RESEND_FROM_EMAIL` | Sender address (falls back to `SENDGRID_FROM_EMAIL` for compatibility, then a default).                                                        |
-| `APP_URL`           | Base URL for download links embedded in HTML (`/reports/{reportId}`).                                                                          |
+| Variable              | Purpose                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `RESEND_API_KEY`      | When set, `createEmailDeliveryServiceFromEnv()` uses Resend first.                               |
+| `SENDGRID_API_KEY`    | Used when `RESEND_API_KEY` is unset. POSTs to SendGrid `v3/mail/send` (202 Accepted on success). |
+| `RESEND_FROM_EMAIL`   | Resend `from` (also fallback for SendGrid if `SENDGRID_FROM_EMAIL` is unset).                    |
+| `SENDGRID_FROM_EMAIL` | SendGrid `from.email` when using SendGrid.                                                       |
+| `SENDGRID_FROM_NAME`  | Optional SendGrid `from.name` (default `AgenticVerdict Reports`).                                |
+| `APP_URL`             | Base URL for download links embedded in HTML (`/reports/{reportId}`).                            |
+
+If neither provider key is set, `createEmailDeliveryServiceFromEnv()` returns `null` and `sendReportEmail` returns an error describing missing configuration.
 
 See `.env.example` for the full list of email-related keys.
 
@@ -20,7 +25,7 @@ See `.env.example` for the full list of email-related keys.
 ## Operational flow
 
 1. Worker (or job handler) loads attachments (PDF/DOCX buffers) and calls `sendReport` / `sendReportEmail`.
-2. Service POSTs to `https://api.resend.com/emails` with JSON body (`html`, `text`, `attachments` as base64 content per Resend API).
+2. **Resend:** POST `https://api.resend.com/emails` with JSON body (`html`, `text`, `attachments` as base64). **SendGrid:** POST `https://api.sendgrid.com/v3/mail/send` with `personalizations`, `content`, and optional `attachments`.
 3. Success returns `{ success: true, messageId }`. Failure returns `{ success: false, error }` without throwing (callers decide whether to retry the job).
 
 ## Sandbox and testing
@@ -35,8 +40,8 @@ See `.env.example` for the full list of email-related keys.
 
 ## Troubleshooting
 
-| Symptom                         | Checks                                                                                                          |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `RESEND_API_KEY not configured` | Export key in worker environment or secrets manager.                                                            |
-| 422 / invalid payload           | Confirm `to` addresses are allowed for the domain; attachment base64 is non-empty for real reports.             |
-| Template load failure           | Ensure worker deployment includes `src/templates/email/` next to compiled output (path uses `import.meta.url`). |
+| Symptom                | Checks                                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| No provider configured | Set `RESEND_API_KEY` or `SENDGRID_API_KEY` in the worker environment or secrets manager.                        |
+| 422 / invalid payload  | Confirm `to` addresses are allowed for the domain; attachment base64 is non-empty for real reports.             |
+| Template load failure  | Ensure worker deployment includes `src/templates/email/` next to compiled output (path uses `import.meta.url`). |
