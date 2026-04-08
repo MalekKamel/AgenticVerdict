@@ -2,6 +2,7 @@ import type { Database } from "@agenticverdict/database";
 
 import { ToolRegistry } from "../tools";
 import { createAnalysisTools } from "./analysis-tools";
+import { createB2bKpiTools } from "./b2b-kpi-tools";
 import { createCompanyContextTools, type CompanyContextToolDeps } from "./company-context-tools";
 import { createDatabaseQueryTools } from "./database-query-tools";
 import {
@@ -35,6 +36,9 @@ export function registerPhase4AgentTools(
     registry.register(t);
   }
   for (const t of createAnalysisTools()) {
+    registry.register(t);
+  }
+  for (const t of createB2bKpiTools()) {
     registry.register(t);
   }
   for (const t of createCompanyContextTools(deps.companyContext)) {

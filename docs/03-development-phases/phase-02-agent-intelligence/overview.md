@@ -1,8 +1,10 @@
 # Phase 2: Agent Runtime & Intelligence - Overview
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
-**Status:** Not Started
-**Last Updated:** 2026-04-04
+**Status:** In progress
+**Last Updated:** 2026-04-08
+
+**Enhancement (P2, 2026-04-08):** `CompanyConfig.marketing.b2bKpiProfile` plus `computeB2bMarketingKpis` / `buildB2bFunnelSnapshotFromNormalizedSnapshots` in `@agenticverdict/agent-runtime` provide **configuration-driven** B2B funnel KPIs (CPQL, decision-maker / fleet-quality / regional mix, Arabic vs English engagement share). Optional `funnelMetricMapping` aggregates `NormalizedPlatformSnapshot` rows by metric suffix. Agent tool **`compute_b2b_kpis_from_snapshots`** (Phase 4 registry) reads tenant config from `requireTenantContext()`; analysis agents include it in default auto-tools. There is **no** tenant-specific code path.
 
 ---
 
@@ -25,6 +27,30 @@ A **data quality** layer (see remediation **R-10**) validates insights and verdi
 ### Provenance tracking
 
 Each analysis run carries **`ProvenanceInfo`**: data sources (platform, date range, **freshness** in hours, **qualityScore**), model/agent identifiers, and an ordered list of **transformations** (normalization, merges, etc.). `GET /api/v1/analysis-results/:id` returns a full bundle including provenance, insights, and verdicts for audit and Phase 3 narrative generation.
+
+### Worker workflow contracts
+
+Phase 2 also defines queue-driven workflow contracts consumed by the worker layer via `POST /api/v1/workflows/trigger`:
+
+- **`marketing-analysis`**: collect platform data, normalize snapshots, run agent analysis, and return structured insights.
+- **`verdict-generation`**: execute the analysis pipeline, synthesize a verdict, generate report artifacts, and optionally enqueue delivery.
+
+The workflow trigger config must support: `dateRange`, `platforms`, `analysisDepth`, `verdictDepth`, `outputFormat`, `deliveryEnabled`, and `recipientEmail`. Historical controls (`includeHistorical`, `historicalPeriods`) are optional and tenant-configurable.
+
+Workflow outputs are typed and tenant-scoped, including phase message, summary metadata (`platformsAnalyzed`, durations), structured `GeneratedInsight[]`, unified `MarketingVerdict`, and report artifact metadata (`reportId`, `format`, `byteLength`, `location`) when report generation is requested.
+
+### Workflow observability and error taxonomy
+
+Phase 2 must emit worker-safe, dashboard-ready metrics for both workflows:
+
+- Duration histograms and success/failure counters
+- Platforms analyzed and insights generated totals
+- LLM token usage and fallback counters
+- Verdict score and action item distribution metrics
+- Report artifact size and delivery enqueue metrics
+
+Standard workflow error categories must be stable across API and worker logs:
+`platform_fetch_failed`, `platform_timeout`, `analysis_failed`, `insight_generation_failed`, `verdict_synthesis_failed`, `report_generation_failed`, and `delivery_queue_failed`.
 
 ---
 
@@ -98,6 +124,7 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 - **Average Response Latency:** <5 seconds for single-agent tasks
 - **Error Rate:** <2% for agent execution failures
 - **Prompt Effectiveness:** ≥85% success rate on marketing benchmark tasks
+- **Workflow Latency Targets:** marketing-analysis <30s for 2 platforms, <60s for 5 platforms; verdict-generation <60s quick profile, <90s standard profile
 
 ### Integration Requirements
 
@@ -244,6 +271,7 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 - **Secondary:** GPT-4 Turbo for faster response times on simple tasks
 - **Fallback:** Automatic provider switching on failures
 - **Strategy:** Route based on task complexity (simple queries → GPT-4, complex analysis → Claude)
+- **Optional Provider Route:** GLM-compatible endpoint support may be enabled per tenant configuration when required
 
 **Prompt Engineering Approach**
 
@@ -258,6 +286,7 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 - Circuit breaker for persistent LLM API issues
 - Graceful degradation to rule-based logic
 - Comprehensive error logging for debugging
+- Per-platform isolation in workflow pipelines so one adapter failure does not force full-run failure
 
 ---
 
@@ -276,6 +305,8 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 5. Prompt template library with company context injection
 6. Mock LLM testing framework
 7. Agent telemetry and monitoring integration
+8. Worker workflow processors for `marketing-analysis` and `verdict-generation`
+9. Typed workflow trigger and result contracts shared across API and worker
 
 **Documentation**
 

@@ -17,7 +17,7 @@
 
 - ✅ Agent Runtime Foundation: 100% complete (8 execution phases implemented)
 - ✅ LangChain Integration: 100% complete (multi-provider LLM, LangSmith)
-- ✅ Agent Tool Ecosystem: 100% complete (17 tools across 5 categories)
+- ✅ Agent Tool Ecosystem: 100% complete (18 tools across 5 categories; includes `compute_b2b_kpis_from_snapshots`)
 - ✅ Prompt Template System: 100% complete (13 production templates, A/B testing)
 - ✅ Specialized Marketing Agents: 100% complete (3 agents + orchestration)
 - ✅ Performance & Validation: 100% complete (caching, quality gates, benchmarks)

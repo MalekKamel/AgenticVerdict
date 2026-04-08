@@ -19,6 +19,7 @@ import type {
   IMemory,
   IAgent,
 } from "./interfaces";
+import { executeToolWithResult, type ToolResult, type ToolRegistry } from "./tools";
 
 function messageText(message: BaseMessage): string {
   const { content } = message;
@@ -67,6 +68,8 @@ export interface ConfigurableLlmAgentOptions {
    * Optional LRU+TTL cache for identical assembled turns (tenant-scoped keys; tasks.md 6.6).
    */
   invocationCache?: LlmInvocationCache;
+  toolRegistry?: ToolRegistry;
+  autoToolNames?: readonly string[];
 }
 
 /**
@@ -87,6 +90,8 @@ export class ConfigurableLlmAgent implements IAgent {
   private readonly invocationCache: LlmInvocationCache | undefined;
 
   private readonly factoryFingerprint: string;
+  private readonly toolRegistry: ToolRegistry | undefined;
+  private readonly autoToolNames: readonly string[] | undefined;
 
   constructor(options: ConfigurableLlmAgentOptions) {
     this.factoryConfig = options.factoryConfig;
@@ -96,15 +101,82 @@ export class ConfigurableLlmAgent implements IAgent {
     this.persistTurnInMemory = options.persistTurnInMemory ?? true;
     this.invocationCache = options.invocationCache;
     this.factoryFingerprint = factoryConfigCacheFingerprint(options.factoryConfig);
+    this.toolRegistry = options.toolRegistry;
+    this.autoToolNames = options.autoToolNames;
+  }
+
+  private async runAutoTools(
+    input: AgentRunInput,
+    ctx: AgentInvocationContext,
+  ): Promise<
+    readonly { toolName: string; args: Record<string, unknown>; result: ToolResult<unknown> }[]
+  > {
+    if (!this.toolRegistry || !this.autoToolNames || this.autoToolNames.length === 0) {
+      return [];
+    }
+    const dateRange = this.extractDateRange(input.goal);
+    const calls: Array<{
+      toolName: string;
+      args: Record<string, unknown>;
+      result: ToolResult<unknown>;
+    }> = [];
+    for (const toolName of this.autoToolNames) {
+      const tool = this.toolRegistry.get(toolName);
+      if (!tool) {
+        continue;
+      }
+      const args = this.defaultToolArgs(toolName, dateRange);
+      const result = await executeToolWithResult(tool, args, ctx);
+      calls.push({ toolName, args, result });
+    }
+    return calls;
+  }
+
+  private extractDateRange(goal: string): { startInclusive: string; endInclusive: string } {
+    const now = new Date();
+    const end = now.toISOString().slice(0, 10);
+    const startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - 30);
+    const start = startDate.toISOString().slice(0, 10);
+    const match = goal.match(/(\d{4}-\d{2}-\d{2}).*?(\d{4}-\d{2}-\d{2})/);
+    if (match) {
+      return { startInclusive: match[1], endInclusive: match[2] };
+    }
+    return { startInclusive: start, endInclusive: end };
+  }
+
+  private defaultToolArgs(
+    toolName: string,
+    dateRange: { startInclusive: string; endInclusive: string },
+  ): Record<string, unknown> {
+    if (toolName.startsWith("fetch_") && toolName.endsWith("_metrics")) {
+      return dateRange;
+    }
+    if (toolName === "get_config") {
+      return { section: "marketing" };
+    }
+    return {};
   }
 
   async run(input: AgentRunInput, ctx: AgentInvocationContext): Promise<AgentRunResult> {
     assertInvocationMatchesActiveTenant(ctx);
 
+    const toolCalls = await this.runAutoTools(input, ctx);
+    const toolContextText =
+      toolCalls.length > 0
+        ? JSON.stringify(
+            toolCalls.map((call) => ({
+              tool: call.toolName,
+              success: call.result.success,
+              data: call.result.success ? call.result.data : undefined,
+              error: call.result.success ? undefined : call.result.error,
+            })),
+          )
+        : undefined;
     const toolContext =
       input.context?.toolContext !== undefined && input.context.toolContext.length > 0
-        ? input.context.toolContext
-        : undefined;
+        ? `${input.context.toolContext}\n\n${toolContextText ?? ""}`.trim()
+        : toolContextText;
 
     const layers = buildFactoryTurnPromptLayers({
       factoryConfig: this.factoryConfig,
@@ -155,7 +227,14 @@ export class ConfigurableLlmAgent implements IAgent {
       this.memory.append("assistant", answer);
     }
 
-    const result: AgentRunResult = { answer, steps: [] };
+    const result: AgentRunResult = {
+      answer,
+      steps: toolCalls.map((call) => ({
+        toolName: call.toolName,
+        args: call.args,
+        result: call.result,
+      })),
+    };
     if (cache !== undefined && cacheKey !== undefined) {
       cache.set(cacheKey, result);
     }

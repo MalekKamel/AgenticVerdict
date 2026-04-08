@@ -15,6 +15,7 @@ export {
 export type { TenantSecurityCode } from "./tenant-security-error";
 export { TenantSecurityError } from "./tenant-security-error";
 export {
+  bindTenantContextAsyncContinuation,
   getTenantContext,
   requireTenantContext,
   runWithTenantContext,

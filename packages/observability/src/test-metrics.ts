@@ -1,10 +1,6 @@
-import { Counter, Histogram, Registry } from "prom-client";
+import { Counter, Histogram } from "prom-client";
 
-/**
- * Isolated registry for production-flow test metrics so `/metrics` can expose only this set
- * (or merge later without touching app defaults).
- */
-export const productionFlowTestRegistry = new Registry();
+import { productionFlowTestRegistry } from "./registry";
 
 const scenarioDurationSeconds = new Histogram({
   name: "test_scenario_duration_seconds",

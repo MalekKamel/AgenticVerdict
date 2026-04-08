@@ -1,0 +1,36 @@
+{
+  "workflowId": "verdict-generation",
+  "tenantId": "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+  "testMode": true,
+  "phase": "verdict-generation",
+  "message": "verdict-generation_processed",
+  "analysisId": "aaaaaaaa-1234-4234-8234-aaaaaaaaaaaa",
+  "insights": [
+    {
+      "id": "bbbbbbbb-1234-4234-8234-bbbbbbbbbbbb",
+      "type": "trend",
+      "title": "Cross-platform trend",
+      "description": "Trend narrative",
+      "confidence": 0.84
+    }
+  ],
+  "processingMetadata": {
+    "durationMs": 1875,
+    "stagesCompleted": 3,
+    "pipelineStatus": "degraded",
+    "platformsAnalyzed": ["meta", "ga4"],
+    "verdictDepth": "standard",
+    "outputFormat": "pdf",
+    "errorCode": "verdict_synthesis_failed",
+    "partialFailure": true,
+    "platformFailures": [
+      {
+        "platform": "ga4",
+        "code": "platform_timeout",
+        "message": "Timed out fetching platform data",
+        "retryable": true,
+        "recoveryHint": "Retry with reduced date range."
+      }
+    ]
+  }
+}

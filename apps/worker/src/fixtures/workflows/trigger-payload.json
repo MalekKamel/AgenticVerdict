@@ -1,0 +1,14 @@
+{
+  "workflowId": "marketing-analysis",
+  "testMode": true,
+  "tenantId": "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+  "config": {
+    "dateRange": {
+      "start": "2026-03-01T00:00:00.000Z",
+      "end": "2026-03-31T23:59:59.000Z"
+    },
+    "platforms": ["meta", "ga4", "gsc"],
+    "analysisDepth": "standard"
+  },
+  "requestId": "fixture-trigger-001"
+}

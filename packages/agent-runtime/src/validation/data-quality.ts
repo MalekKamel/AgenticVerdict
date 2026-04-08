@@ -31,6 +31,16 @@ export interface ValidationResult {
   metadata: {
     validatedAt: Date;
     validatorVersion: string;
+    completeness?: {
+      insightsCount: number;
+      verdictsCount: number;
+      hasProvenance: boolean;
+    };
+    lineage?: {
+      hasDataSources: boolean;
+      hasTransformations: boolean;
+      staleSourcesCount: number;
+    };
   };
 }
 
@@ -244,6 +254,35 @@ export class DataQualityService implements DataQualityValidator {
         message: "Analysis result contains no verdicts",
       });
     }
+    const hasDataSources = parsed.data.provenance.dataSources.length > 0;
+    const hasTransformations = parsed.data.provenance.transformations.length > 0;
+    if (!hasDataSources) {
+      errors.push({
+        field: "provenance.dataSources",
+        code: "MISSING_LINEAGE_DATA_SOURCES",
+        message: "Provenance dataSources is required for lineage traceability",
+        severity: "high",
+      });
+    }
+    if (!hasTransformations) {
+      warnings.push({
+        field: "provenance.transformations",
+        code: "MISSING_LINEAGE_TRANSFORMATIONS",
+        message: "No transformations recorded in provenance lineage",
+        suggestion: "Record normalization and aggregation transforms for auditability",
+      });
+    }
+    const staleSourcesCount = parsed.data.provenance.dataSources.filter(
+      (source) => source.freshnessHours > 72,
+    ).length;
+    if (staleSourcesCount > 0) {
+      warnings.push({
+        field: "provenance.dataSources",
+        code: "STALE_LINEAGE_SOURCES",
+        message: `${staleSourcesCount} data source(s) are older than 72 hours`,
+        suggestion: "Refresh platform fetches before report generation",
+      });
+    }
 
     return {
       isValid: !blockingErrors(errors),
@@ -251,7 +290,19 @@ export class DataQualityService implements DataQualityValidator {
       errors,
       warnings,
       recommendations: [],
-      metadata: baseMetadata(),
+      metadata: {
+        ...baseMetadata(),
+        completeness: {
+          insightsCount: parsed.data.insights.length,
+          verdictsCount: parsed.data.verdicts.length,
+          hasProvenance: parsed.data.provenance !== undefined,
+        },
+        lineage: {
+          hasDataSources,
+          hasTransformations,
+          staleSourcesCount,
+        },
+      },
     };
   }
 }

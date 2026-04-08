@@ -1,0 +1,82 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Waiting + active + delayed jobs per queue (`agenticverdict_queue_depth`).",
+      "fieldConfig": { "defaults": { "unit": "none" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "agenticverdict_queue_depth",
+          "legendFormat": "{{queue}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Queue depth by name",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "p90 job handler duration (`agenticverdict_queue_job_duration_seconds`).",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.9, sum by (le, queue, status) (rate(agenticverdict_queue_job_duration_seconds_bucket[15m])))",
+          "legendFormat": "{{queue}} {{status}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p90 job duration (processing)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Time from job creation to worker start (`agenticverdict_queue_job_age_seconds`).",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.9, sum by (le, queue) (rate(agenticverdict_queue_job_age_seconds_bucket[15m])))",
+          "legendFormat": "{{queue}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p90 job wait time (queue latency)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["agenticverdict", "prometheus", "bullmq", "p2"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Queue health (BullMQ)",
+  "uid": "av-queue-health",
+  "version": 1,
+  "weekStart": ""
+}

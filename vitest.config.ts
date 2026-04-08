@@ -2,6 +2,7 @@ import { defineConfig } from "vitest/config";
 
 /** Monorepo packages/apps that expose Vitest unit tests (integration tests stay package-local). */
 const testProjects = [
+  "tests/integration",
   "tests/orchestrator",
   "tests/utils",
   "packages/mock-platform-server",

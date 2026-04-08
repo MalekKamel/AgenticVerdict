@@ -3,48 +3,66 @@ import { randomUUID } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { recordWorkflowTriggerEnqueued } from "@agenticverdict/observability";
+import {
+  workflowTriggerJobDataSchema,
+  workflowTriggerJobResultSchema,
+} from "@agenticverdict/worker";
 import { z } from "zod";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
 import {
   enqueueWorkflowTrigger,
   getWorkflowTriggerJobStatus,
   isBullmqConfigured,
 } from "../../services/report-bullmq";
+import { persistWorkflowArtifactsFromStatus } from "../../services/workflow-status-persistence";
 import { isWorkflowTestTriggerAllowed } from "./workflow-trigger-gate";
 
-const workflowIdSchema = z.enum(["report-generation", "marketing-analysis", "verdict-generation"]);
-
-const triggerBodySchema = z.object({
-  workflowId: workflowIdSchema,
-  testMode: z.literal(true),
-  tenantId: z.string().uuid(),
-  config: z.object({
-    dateRange: z
-      .object({
-        start: z.string().datetime(),
-        end: z.string().datetime(),
-      })
-      .optional(),
-    platforms: z.array(z.string().min(1).max(64)).optional(),
-    mockData: z
-      .object({
-        scenario: z.enum(["normal", "high-volume", "zero-conversions", "error"]),
-        seed: z.number().int(),
-      })
-      .optional(),
-    productionFlowScenarioId: z
-      .enum(["R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R12"])
-      .optional(),
-  }),
-});
+const triggerBodySchema = workflowTriggerJobDataSchema;
+const statusResponseSchema = {
+  type: "object",
+  properties: {
+    executionId: { type: "string" },
+    status: {
+      type: "string",
+      enum: ["completed", "failed", "active", "waiting", "delayed", "paused", "unknown"],
+    },
+    bullmqState: { type: "string" },
+    result: {
+      type: "object",
+      properties: {
+        workflowId: {
+          type: "string",
+          enum: ["report-generation", "marketing-analysis", "verdict-generation"],
+        },
+        tenantId: { type: "string" },
+        testMode: { type: "boolean" },
+        phase: {
+          type: "string",
+          enum: ["foundation", "report-generation", "marketing-analysis", "verdict-generation"],
+        },
+        message: { type: "string" },
+        analysisId: { type: "string" },
+        insights: { type: "array", items: { type: "object", additionalProperties: true } },
+        verdict: { type: "object", additionalProperties: true },
+        processingMetadata: { type: "object", additionalProperties: true },
+      },
+      required: ["workflowId", "tenantId", "testMode", "phase", "message"],
+      additionalProperties: true,
+    },
+    error: { type: "string" },
+  },
+  required: ["executionId", "status", "bullmqState"],
+} as const;
 
 const adminRoles = ["admin"] as const;
 
 export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null): void {
   const chain = [
     jwtAuth({ required: true, roles: [...adminRoles] }),
+    bindJwtTenantAsyncContext(),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 30, keyPrefix: "v1:workflows" }),
   ];
 
@@ -69,6 +87,24 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
             config: { type: "object" },
           },
         },
+        response: {
+          202: {
+            type: "object",
+            properties: {
+              executionId: { type: "string" },
+              status: { type: "string", enum: ["queued"] },
+              startedAt: { type: "string" },
+              estimatedCompletion: { type: "string" },
+            },
+            required: ["executionId", "status", "startedAt", "estimatedCompletion"],
+          },
+          400: { type: "object", additionalProperties: true },
+          401: { type: "object", additionalProperties: true },
+          403: { type: "object", additionalProperties: true },
+          429: { type: "object", additionalProperties: true },
+          500: { type: "object", additionalProperties: true },
+          503: { type: "object", additionalProperties: true },
+        },
       },
     },
     async (request, reply) => {
@@ -79,6 +115,16 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
             code: "validation_error",
             message: "Invalid workflow trigger payload",
             details: parsed.error.flatten(),
+          },
+          requestId: request.id,
+        });
+      }
+      if (parsed.data.testMode !== true) {
+        return reply.status(400).send({
+          error: {
+            code: "validation_error",
+            message: "Invalid workflow trigger payload",
+            details: { testMode: ["testMode must be true"] },
           },
           requestId: request.id,
         });
@@ -167,6 +213,15 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
           required: ["executionId"],
           properties: { executionId: { type: "string" } },
         },
+        response: {
+          200: statusResponseSchema,
+          400: { type: "object", additionalProperties: true },
+          401: { type: "object", additionalProperties: true },
+          403: { type: "object", additionalProperties: true },
+          404: { type: "object", additionalProperties: true },
+          429: { type: "object", additionalProperties: true },
+          503: { type: "object", additionalProperties: true },
+        },
       },
     },
     async (request, reply) => {
@@ -212,6 +267,8 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
         bullmqState: snapshot.bullmqState,
       };
       if (snapshot.result !== undefined) {
+        workflowTriggerJobResultSchema.parse(snapshot.result);
+        await persistWorkflowArtifactsFromStatus(snapshot);
         body.result = snapshot.result;
       }
       if (snapshot.error !== undefined) {

@@ -117,6 +117,11 @@ export const getConfigInputSchema = z.object({
   section: z.enum(["ai", "features", "localization", "marketing"]),
 });
 
+/** Normalized platform snapshots (JSON) validated with {@link parseNormalizedPlatformSnapshot}. */
+export const computeB2bKpisFromSnapshotsInputSchema = z.object({
+  snapshots: z.array(z.unknown()).min(1).max(50),
+});
+
 export function parseToolArgs<T>(
   schema: z.ZodSchema<T>,
   args: Readonly<Record<string, unknown>>,

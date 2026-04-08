@@ -7,26 +7,31 @@ import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
 import { renderProductionFlowTestMetrics } from "@agenticverdict/observability";
 
 import { startHealthServer } from "./health";
+import { getWorkerRootLogger } from "./queues/logger";
 import { createBullmqConnectionFromEnv } from "./queues/redis-connection";
-import { registerReportWorkers } from "./queues/report-queues";
+import { refreshBullmqQueueDepthMetrics, registerReportWorkers } from "./queues/report-queues";
+
+const log = getWorkerRootLogger();
 
 function requireBullmqRedis(): IORedis {
   const connection = createBullmqConnectionFromEnv();
   if (!connection) {
-    console.error("REDIS_URL is required for the worker process");
+    log.fatal("REDIS_URL is required for the worker process");
     process.exit(1);
   }
   return connection;
 }
 
-console.info("worker_startup", {
+log.info({
+  event: "worker_startup",
   environment: BUILD_CONFIG.environment,
   isProduction: BUILD_CONFIG.isProduction,
   mockAdaptersEnabled: BUILD_CONFIG.mockAdaptersEnabled,
 });
 
 if (BUILD_CONFIG.isProduction && process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS === "1") {
-  console.error(
+  log.fatal(
+    { event: "worker_config_invalid" },
     "Mock adapters cannot be enabled in production builds (AGENTICVERDICT_USE_MOCK_ADAPTERS)",
   );
   process.exit(1);
@@ -41,7 +46,7 @@ let metricsServer: http.Server | undefined;
 if (metricsPortRaw) {
   const port = Number(metricsPortRaw);
   if (!Number.isFinite(port) || port <= 0 || port > 65_535) {
-    console.error("WORKER_METRICS_PORT must be a valid TCP port when set");
+    log.fatal("WORKER_METRICS_PORT must be a valid TCP port when set");
     process.exit(1);
   }
   metricsServer = http.createServer((req, res) => {
@@ -52,28 +57,29 @@ if (metricsPortRaw) {
     }
     void (async () => {
       try {
+        await refreshBullmqQueueDepthMetrics(connection);
         const body = await renderProductionFlowTestMetrics();
         res.setHeader("content-type", "text/plain; version=0.0.4; charset=utf-8");
         res.statusCode = 200;
         res.end(body);
       } catch (err) {
-        console.error("metrics_export_failed", err);
+        log.error({ err, event: "metrics_export_failed" }, "metrics_export_failed");
         res.statusCode = 500;
         res.end();
       }
     })();
   });
   metricsServer.listen(port, "0.0.0.0", () => {
-    console.info(`Worker Prometheus metrics on 0.0.0.0:${port}/metrics`);
+    log.info({ event: "metrics_listen", port }, "Worker Prometheus metrics listening");
   });
 }
 
 async function shutdown(signal: string): Promise<void> {
-  console.info(`Received ${signal}, closing workers...`);
+  log.info({ event: "worker_shutdown", signal }, "Closing workers");
   try {
     await promisify(healthServer.close.bind(healthServer))();
   } catch (err) {
-    console.error("health_server_close_failed", err);
+    log.error({ err, event: "health_server_close_failed" }, "health_server_close_failed");
   }
   try {
     await workers.close();

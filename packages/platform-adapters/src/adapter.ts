@@ -64,7 +64,11 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
       );
     }
     this.breaker =
-      options.circuitBreaker ?? new CircuitBreaker(options.circuitBreakerOptions ?? undefined);
+      options.circuitBreaker ??
+      new CircuitBreaker(options.circuitBreakerOptions ?? undefined, {
+        platform,
+        adapter: this.constructor.name,
+      });
     this.backoff = { ...defaultBackoffOptions, ...options.backoff };
     this.tenantId = tenantId;
     this.cache = options.cache ?? null;
@@ -134,7 +138,10 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
       }
 
       const raw = await this.breaker.execute(() =>
-        withExponentialBackoff(this.backoff, () => this.fetchRawMetrics(dateRange)),
+        withExponentialBackoff(this.backoff, () => this.fetchRawMetrics(dateRange), {
+          platform: this.platform,
+          operation: "fetchMetrics",
+        }),
       );
 
       if (this.cache !== null && cacheKey !== null) {

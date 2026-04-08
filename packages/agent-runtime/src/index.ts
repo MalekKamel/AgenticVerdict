@@ -106,6 +106,15 @@ export {
   type PipelineTimingLogFields,
 } from "./agent-performance-metrics";
 export {
+  computeB2bMarketingKpis,
+  type B2bLeadFunnelSnapshot,
+  type B2bMarketingKpiResult,
+} from "./b2b-marketing-kpis";
+export {
+  buildB2bFunnelSnapshotFromNormalizedSnapshots,
+  computeB2bMarketingKpisFromNormalizedSnapshots,
+} from "./b2b-funnel-from-snapshots";
+export {
   assessVerdictHeuristicQuality,
   runVerdictQualityGate,
   validationDatasetCaseSchema,
@@ -135,7 +144,16 @@ export {
   type RetryAttemptInfo,
   type RetryOptions,
 } from "./resilience";
-export { defineTool, ToolRegistry, type ToolDefinition, type ToolHandler } from "./tools";
+export {
+  defineTool,
+  executeToolWithResult,
+  ToolRegistry,
+  type ToolDefinition,
+  type ToolHandler,
+  type ToolResult,
+  type ToolResultError,
+  type ToolResultErrorCode,
+} from "./tools";
 export { AgentToolError, type AgentToolErrorCode } from "./agent-tools/agent-tool-error";
 export {
   analyzeTrendsInputSchema,

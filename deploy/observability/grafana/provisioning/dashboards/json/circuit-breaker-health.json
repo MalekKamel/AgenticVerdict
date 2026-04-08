@@ -1,0 +1,82 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Circuit breaker state: 0=closed, 1=open, 2=half-open (`agenticverdict_circuit_breaker_state`).",
+      "fieldConfig": { "defaults": { "unit": "none", "min": 0, "max": 2 }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "max by (platform, adapter) (agenticverdict_circuit_breaker_state)",
+          "legendFormat": "{{platform}} / {{adapter}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Circuit breaker state by platform",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "State transition rate (`agenticverdict_circuit_breaker_transitions_total`).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (platform, from_state, to_state) (rate(agenticverdict_circuit_breaker_transitions_total[5m]))",
+          "legendFormat": "{{platform}} {{from_state}}→{{to_state}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Circuit breaker transitions / s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Retry attempts histogram (`agenticverdict_retry_attempts`) — observe tails for exhaustion.",
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.9, sum by (le, platform, operation, outcome) (rate(agenticverdict_retry_attempts_bucket[15m])))",
+          "legendFormat": "p90 {{platform}} {{operation}} {{outcome}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p90 retry attempt count (backoff)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["agenticverdict", "prometheus", "circuit-breaker", "p1"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Circuit breaker & retry health",
+  "uid": "av-circuit-breaker-health",
+  "version": 1,
+  "weekStart": ""
+}

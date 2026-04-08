@@ -1,4 +1,10 @@
-export type CircuitState = "closed" | "open" | "half-open";
+import {
+  recordCircuitBreakerTransition,
+  setCircuitBreakerGauge,
+  type CircuitStateMetric,
+} from "@agenticverdict/observability";
+
+export type CircuitState = CircuitStateMetric;
 
 export interface CircuitBreakerOptions {
   /** Failures before opening the circuit (AC-1.7.4: 5 consecutive failures). */
@@ -7,6 +13,11 @@ export interface CircuitBreakerOptions {
   resetTimeoutMs: number;
   /** Successful calls in half-open required before closing (AC-1.7.5: 3). */
   halfOpenSuccessThreshold: number;
+}
+
+export interface CircuitBreakerObservabilityLabels {
+  platform: string;
+  adapter: string;
 }
 
 const defaultOptions: CircuitBreakerOptions = {
@@ -20,18 +31,48 @@ const defaultOptions: CircuitBreakerOptions = {
  */
 export class CircuitBreaker {
   private readonly options: CircuitBreakerOptions;
+  private readonly obs: CircuitBreakerObservabilityLabels | undefined;
   private state: CircuitState = "closed";
   private failures = 0;
   private openedAt = 0;
   private halfOpenSuccesses = 0;
+  private stateEnteredAt = Date.now();
+  /** Skips duration histogram for the first transition (construction → first real state). */
+  private suppressNextDuration = true;
 
-  constructor(options: Partial<CircuitBreakerOptions> = {}) {
+  constructor(
+    options: Partial<CircuitBreakerOptions> = {},
+    observability?: CircuitBreakerObservabilityLabels,
+  ) {
     this.options = { ...defaultOptions, ...options };
+    this.obs = observability;
+    if (this.obs) {
+      setCircuitBreakerGauge(this.obs, this.state);
+    }
+  }
+
+  private emitStateChange(from: CircuitState, to: CircuitState): void {
+    if (from === to) {
+      return;
+    }
+    const durationSec = (Date.now() - this.stateEnteredAt) / 1000;
+    if (this.obs) {
+      recordCircuitBreakerTransition({
+        platform: this.obs.platform,
+        adapter: this.obs.adapter,
+        from,
+        to,
+        durationInFromStateSeconds: this.suppressNextDuration ? undefined : durationSec,
+      });
+    }
+    this.suppressNextDuration = false;
+    this.state = to;
+    this.stateEnteredAt = Date.now();
   }
 
   private transitionToHalfOpenIfDue(): void {
     if (this.state === "open" && Date.now() - this.openedAt >= this.options.resetTimeoutMs) {
-      this.state = "half-open";
+      this.emitStateChange("open", "half-open");
       this.halfOpenSuccesses = 0;
     }
   }
@@ -61,19 +102,21 @@ export class CircuitBreaker {
     if (this.state === "half-open") {
       this.halfOpenSuccesses += 1;
       if (this.halfOpenSuccesses >= this.options.halfOpenSuccessThreshold) {
-        this.state = "closed";
+        this.emitStateChange("half-open", "closed");
         this.failures = 0;
         this.halfOpenSuccesses = 0;
       }
       return;
     }
     this.failures = 0;
-    this.state = "closed";
+    if (this.state !== "closed") {
+      this.emitStateChange(this.state, "closed");
+    }
   }
 
   private onFailure(): void {
     if (this.state === "half-open") {
-      this.state = "open";
+      this.emitStateChange("half-open", "open");
       this.openedAt = Date.now();
       this.halfOpenSuccesses = 0;
       return;
@@ -81,7 +124,9 @@ export class CircuitBreaker {
 
     this.failures += 1;
     if (this.failures >= this.options.failureThreshold) {
-      this.state = "open";
+      if (this.state === "closed") {
+        this.emitStateChange("closed", "open");
+      }
       this.openedAt = Date.now();
     }
   }

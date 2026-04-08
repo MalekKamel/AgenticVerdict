@@ -1,3 +1,5 @@
+import { recordBackoffAttemptOutcome } from "@agenticverdict/observability";
+
 import { isRetryablePlatformError } from "./error-classifier";
 
 export interface ExponentialBackoffOptions {
@@ -29,6 +31,11 @@ export const defaultBackoffOptions: ExponentialBackoffOptions = {
   retryOn: isRetryablePlatformError,
 };
 
+export interface ExponentialBackoffTelemetry {
+  platform: string;
+  operation: string;
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -41,17 +48,35 @@ function sleep(ms: number): Promise<void> {
 export async function withExponentialBackoff<T>(
   options: ExponentialBackoffOptions,
   fn: () => Promise<T>,
+  telemetry?: ExponentialBackoffTelemetry,
 ): Promise<T> {
   let delay = options.initialDelayMs;
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= options.maxAttempts; attempt += 1) {
     try {
-      return await fn();
+      const result = await fn();
+      if (telemetry) {
+        recordBackoffAttemptOutcome({
+          platform: telemetry.platform,
+          operation: telemetry.operation,
+          outcome: "success",
+          attempts: attempt,
+        });
+      }
+      return result;
     } catch (error) {
       lastError = error;
       const canRetry = attempt < options.maxAttempts && options.retryOn(error);
       if (!canRetry) {
+        if (telemetry) {
+          recordBackoffAttemptOutcome({
+            platform: telemetry.platform,
+            operation: telemetry.operation,
+            outcome: "exhausted",
+            attempts: attempt,
+          });
+        }
         throw error;
       }
       const waitMs = applyBackoffJitter(Math.min(delay, options.maxDelayMs));

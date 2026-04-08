@@ -5,12 +5,14 @@
 - **Phase Number**: 3
 - **Phase Name**: Report Generation & Delivery
 - **Duration**: ~17–18 weeks execution (after ~4–5 weeks prerequisites); original estimate was 8–10 weeks
-- **Status**: Planning — baseline revised 2026-04-04 (see [analysis-summary.md](./analysis-summary.md))
+- **Status**: In progress — baseline revised 2026-04-08 (see [analysis-summary.md](./analysis-summary.md))
 - **Dependencies**: Phase 00–02 complete; **prerequisites** in [tasks.md](./tasks.md) before core Phase 03 implementation
+
+**Enhancement (P2, 2026-04-08):** `@agenticverdict/i18n` exposes `analyzeArabicLocaleQuality` and `assertArabicStructuralLocaleQuality` (placeholder parity, Arabic script checks, mean lexical-overlap diagnostic vs English), plus same-language `computeSentenceBleu` for gold-set regression. This **does not replace** native-speaker review or external COMET/sacreBLEU pipelines; see [arabic-native-review-playbook.md](./arabic-native-review-playbook.md). Critical-path **Playwright** coverage includes `e2e/critical-path-smoke.spec.ts`, `e2e/home-journey.spec.ts`, and optional `e2e/api-health.optional.spec.ts` when `E2E_API_BASE_URL` is set. Performance probes are documented in [performance-baselines.md](../../06-reference/performance-baselines.md).
 
 ## Executive Summary
 
-Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 into professional, multi-format reports for stakeholders. It covers the full report lifecycle: template design, generation, formatting, delivery, and history. **Readiness**: a 2026-04-04 review ([gap-analysis.md](./gap-analysis.md)) identified API, schema, and infrastructure gaps; those **prerequisites** must be cleared before treating Phase 3 as unblocked ([tasks.md](./tasks.md), [execution-plan.md](./execution-plan.md)).
+Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 into professional, multi-format reports for stakeholders. It covers the full report lifecycle: template design, generation, formatting, delivery, and history. This phase supports both retrieval-based integration (`GET` insights/verdicts) and workflow-triggered generation paths (`marketing-analysis` and `verdict-generation`) when tenants use queue-orchestrated report flows. **Readiness**: a 2026-04-04 review ([gap-analysis.md](./gap-analysis.md)) identified API, schema, and infrastructure gaps; those **prerequisites** must be cleared before treating Phase 3 as unblocked ([tasks.md](./tasks.md), [execution-plan.md](./execution-plan.md)).
 
 ## Primary Objectives
 
@@ -25,7 +27,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - Implement PDF generation with professional layout and formatting
 - Develop Word/DOCX export functionality for editable reports
 - Create HTML/web-based report formats for online viewing
-- Support JSON/XML exports for API consumers
+- Support JSON/XML exports for API consumers, including structured verdict artifacts when non-PDF output is requested
 
 ### 3. Internationalization Support
 
@@ -40,6 +42,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - Incorporate verdict visualizations and explanations
 - Format data tables, charts, and statistical summaries
 - Maintain narrative flow and readability
+- Render workflow-grade verdict sections with score, trend, key findings, prioritized actions, and platform breakdown
 
 ### 5. Delivery Mechanisms
 
@@ -47,6 +50,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - Create API endpoints for report retrieval
 - Support direct download from web interface
 - Enable report scheduling and automated delivery
+- Support optional delivery queue handoff immediately after generation when delivery is enabled in workflow config
 
 ### 6. Report Management
 
@@ -110,6 +114,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - **Content APIs**: APIs for retrieving insights, verdicts, and visualizations
 - **Validation Hooks**: Data quality validation before report generation
 - **Metadata Access**: Access to analysis metadata for report footnotes and appendices
+- **Workflow Contracts**: queue-trigger payloads/results for `marketing-analysis` and `verdict-generation`, including depth options and delivery flags
 
 ## High-Level Approach
 
@@ -140,6 +145,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - Incorporate verdict visualization components
 - Assemble data tables and statistical summaries
 - Generate executive summaries and detailed sections
+- Support chained pipeline output assembly: analysis result -> verdict synthesis -> report artifact metadata -> optional delivery handoff
 
 ### 5. Delivery Orchestration
 
@@ -147,6 +153,7 @@ Phase 3 focuses on transforming analytical insights and verdicts from Phase 2 in
 - Create API endpoints for report access
 - Develop download management system
 - Enable scheduled and triggered report generation
+- Preserve idempotent queue handoff across generation and delivery processors
 
 ### 6. Version Control & History
 

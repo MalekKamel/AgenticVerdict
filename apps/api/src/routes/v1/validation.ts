@@ -6,6 +6,7 @@ import { ValidationService } from "@agenticverdict/agent-runtime";
 import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
 
 const insightValidateBodySchema = z.object({
@@ -19,6 +20,7 @@ const verdictValidateBodySchema = z.object({
 export function registerValidationRoutes(app: FastifyInstance, redis: Redis | null): void {
   const preHandlers = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 30, keyPrefix: "v1:validate" }),
   ];
 

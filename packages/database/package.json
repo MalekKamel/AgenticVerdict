@@ -24,6 +24,7 @@
   "dependencies": {
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/core": "workspace:*",
+    "@agenticverdict/observability": "workspace:*",
     "@upstash/redis": "^1.37.0",
     "drizzle-orm": "^0.38.3",
     "postgres": "^3.4.5"

@@ -1,5 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
 
+import {
+  __clearMemoryBlobStorageForTests,
+  getReportBlobStorage,
+  resetReportBlobStorageFromEnv,
+} from "./report-blob-storage";
+
 const DEFAULT_RETENTION_DAYS = 365;
 
 export interface ReportVersionSnapshot {
@@ -33,7 +39,6 @@ export interface ReportRecord {
 }
 
 const records = new Map<string, ReportRecord>();
-const blobs = new Map<string, Buffer>();
 
 function sha256Buffer(buf: Buffer): string {
   return createHash("sha256").update(buf).digest("hex");
@@ -157,7 +162,7 @@ export function putReportBlob(
   }
   const nextVersion = row.versionSnapshots.length + 1;
   const key = `${tenantId}/${reportId}/v${nextVersion}`;
-  blobs.set(key, Buffer.from(body));
+  getReportBlobStorage().putObject(key, Buffer.from(body));
   const hash = sha256Buffer(body);
   const now = new Date().toISOString();
   const snap: ReportVersionSnapshot = {
@@ -180,8 +185,7 @@ export function putReportBlob(
 }
 
 export function getReportBlob(objectKey: string): Buffer | null {
-  const b = blobs.get(objectKey);
-  return b ? Buffer.from(b) : null;
+  return getReportBlobStorage().getObject(objectKey);
 }
 
 export function setReportArchived(
@@ -237,9 +241,7 @@ export function sweepReportsPastRetention(tenantId: string, nowIso: string): Ret
       continue;
     }
     const now = new Date().toISOString();
-    for (const snap of row.versionSnapshots) {
-      blobs.delete(snap.objectKey);
-    }
+    getReportBlobStorage().deleteObjects(row.versionSnapshots.map((s) => s.objectKey));
     row.objectKey = null;
     row.contentType = null;
     row.byteLength = null;
@@ -281,5 +283,6 @@ export function __setReportRetainUntilForTests(
 /** Test helper — clears in-memory state. */
 export function __resetReportStoreForTests(): void {
   records.clear();
-  blobs.clear();
+  __clearMemoryBlobStorageForTests();
+  resetReportBlobStorageFromEnv();
 }

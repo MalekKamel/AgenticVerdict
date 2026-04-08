@@ -5,6 +5,7 @@ import type { AgentFactoryConfig } from "./agent-config";
 import { parseAgentFactoryConfig } from "./agent-config";
 import { createPrimaryAndFallbackChatModels, type AgentLlmCredentialEnv } from "./chat-models";
 import { ConfigurableLlmAgent, type ConfigurableLlmAgentOptions } from "./configurable-llm-agent";
+import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { createAgentMemory } from "./memory";
 import type { IAgent, ITool } from "./interfaces";
 import { ToolRegistry } from "./tools";
@@ -114,11 +115,23 @@ export class AgentFactory {
   createAgentWithTools(
     config: unknown,
     tools: readonly ITool[],
-    options?: { testChatModel?: BaseChatModel },
+    options?: { testChatModel?: BaseChatModel; invocationCache?: LlmInvocationCache },
   ): { agent: IAgent; tools: ToolRegistry } {
     const registry = this.createToolRegistry(tools);
     const cfg = parseAgentFactoryConfig(config);
     const memory = this.createMemory(cfg);
+    const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string[]> = {
+      analysis: [
+        "get_company_profile",
+        "get_business_rules",
+        "get_config",
+        "calculate_metrics",
+        "compute_b2b_kpis_from_snapshots",
+      ],
+      insights: ["get_config", "analyze_trends", "statistical_analysis"],
+      verdict: ["get_company_profile", "get_business_rules", "generate_summary", "format_report"],
+    };
+    const autoToolNames = defaultAutoToolsByRole[cfg.role];
     if (cfg.runtimeMode === "test") {
       return {
         tools: registry,
@@ -127,6 +140,9 @@ export class AgentFactory {
           memory,
           primary: options?.testChatModel ?? new AgentMockChatModel({}),
           fallback: undefined,
+          toolRegistry: registry,
+          autoToolNames,
+          invocationCache: options?.invocationCache,
         }),
       };
     }
@@ -137,7 +153,15 @@ export class AgentFactory {
     );
     return {
       tools: registry,
-      agent: new ConfigurableLlmAgent({ factoryConfig: cfg, memory, primary, fallback }),
+      agent: new ConfigurableLlmAgent({
+        factoryConfig: cfg,
+        memory,
+        primary,
+        fallback,
+        toolRegistry: registry,
+        autoToolNames,
+        invocationCache: options?.invocationCache,
+      }),
     };
   }
 }

@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import type { ReportFormat } from "@agenticverdict/report-generator";
+
 export interface EmailAttachment {
   filename: string;
   content: Buffer;
@@ -12,7 +14,7 @@ export interface SendReportEmailParams {
   to: string[];
   subject: string;
   reportId: string;
-  format: "pdf" | "docx" | "xlsx";
+  format: ReportFormat;
   attachments: EmailAttachment[];
   template?: string;
 }

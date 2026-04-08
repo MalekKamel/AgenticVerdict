@@ -7,6 +7,8 @@ import {
   StubFormatGenerator,
 } from "./format-registry";
 import { HtmlDocxFormatGenerator } from "./docx-format-generator";
+import { HtmlFormatGenerator } from "./html-format-generator";
+import { JsonFormatGenerator } from "./json-format-generator";
 import { PlaywrightPdfFormatGenerator } from "./pdf-playwright-generator";
 import type { FormatGeneratorInput } from "./types";
 import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
@@ -14,7 +16,7 @@ import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
 describe("FormatGeneratorRegistry", () => {
   it("resolves stub registry formats", () => {
     const r = createStubFormatRegistry();
-    expect(r.registeredFormats().sort()).toEqual(["docx", "pdf", "xlsx"]);
+    expect(r.registeredFormats().sort()).toEqual(["docx", "html", "json", "pdf", "xlsx"]);
     expect(r.get("pdf").format).toBe("pdf");
   });
 
@@ -26,6 +28,8 @@ describe("FormatGeneratorRegistry", () => {
       expect(r.get("pdf")).toBeInstanceOf(PlaywrightPdfFormatGenerator);
       expect(r.get("docx")).toBeInstanceOf(HtmlDocxFormatGenerator);
       expect(r.get("xlsx")).toBeInstanceOf(ExcelXlsxFormatGenerator);
+      expect(r.get("html")).toBeInstanceOf(HtmlFormatGenerator);
+      expect(r.get("json")).toBeInstanceOf(JsonFormatGenerator);
     } finally {
       if (prev === undefined) {
         delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
@@ -42,6 +46,8 @@ describe("FormatGeneratorRegistry", () => {
       const r = createDefaultFormatRegistry();
       expect(r.get("pdf")).toBeInstanceOf(StubFormatGenerator);
       expect(r.get("docx")).toBeInstanceOf(StubFormatGenerator);
+      expect(r.get("html")).toBeInstanceOf(StubFormatGenerator);
+      expect(r.get("json")).toBeInstanceOf(StubFormatGenerator);
     } finally {
       if (prev === undefined) {
         delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;

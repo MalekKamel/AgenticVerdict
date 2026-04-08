@@ -27,6 +27,7 @@ services:
       - "9090:9090"
     volumes:
       - ./deploy/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/observability/prometheus/alerts:/etc/prometheus/alerts:ro
       - prometheus_tsdb:/prometheus
     networks:
       - agenticverdict

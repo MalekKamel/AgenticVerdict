@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   exportTemplateConfigJsonSchema,
+  templateComponentSpecSchema,
   templateConfigSchema,
+  templateInheritanceSchema,
   templateSectionSchema,
 } from "./template";
 
@@ -95,6 +97,99 @@ describe("templateConfigSchema", () => {
       },
     });
     expect(parsed.sections.map((s) => s.order)).toEqual([0, 1]);
+  });
+
+  it("rejects unsorted section ordering", () => {
+    const s2 = templateSectionSchema.parse({
+      id: "55555555-5555-4555-8555-555555555555",
+      type: "content",
+      order: 1,
+    });
+    const r = templateConfigSchema.safeParse({
+      id: "66666666-6666-4666-8666-666666666666",
+      name: "Unordered",
+      version: "1.0.0",
+      type: "detailed-analysis",
+      sections: [s2, section],
+      styling: {},
+      variables: [],
+      branding: { colors: ["#FFFFFF"], fonts: ["Inter"] },
+      validation: {
+        requiredSections: ["header", "content"],
+        allowedVariables: ["a"],
+      },
+      metadata: {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: "tester",
+      },
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it("validates component spec and inheritance blocks", () => {
+    const component = templateComponentSpecSchema.parse({
+      id: "kpi-overview",
+      type: "kpi-grid",
+      sectionId: "11111111-1111-4111-8111-111111111111",
+      bindings: [{ source: "verdict", path: "score.overall", required: true }],
+      order: 0,
+    });
+    const inheritance = templateInheritanceSchema.parse({
+      extendsTemplateId: "77777777-7777-4777-8777-777777777777",
+      mode: "merge",
+      sectionOverrides: [section],
+    });
+    const parsed = templateConfigSchema.parse({
+      id: "88888888-8888-4888-8888-888888888888",
+      name: "Derived Template",
+      version: "2.1.0",
+      type: "custom",
+      sections: [section],
+      components: [component],
+      inheritance,
+      styling: {},
+      variables: [],
+      branding: { colors: ["#101010"], fonts: ["Inter"] },
+      validation: {
+        requiredSections: ["header"],
+        allowedVariables: ["score"],
+      },
+      metadata: {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: "tester",
+      },
+    });
+    expect(parsed.components?.[0]?.type).toBe("kpi-grid");
+    expect(parsed.inheritance?.mode).toBe("merge");
+  });
+
+  it("rejects inheritance pointing to self", () => {
+    const r = templateConfigSchema.safeParse({
+      id: "99999999-9999-4999-8999-999999999999",
+      name: "Self Derived",
+      version: "1.0.0",
+      type: "custom",
+      sections: [section],
+      inheritance: {
+        extendsTemplateId: "99999999-9999-4999-8999-999999999999",
+        mode: "merge",
+      },
+      styling: {},
+      variables: [],
+      branding: { colors: ["#000000"], fonts: ["Inter"] },
+      validation: {
+        requiredSections: ["header"],
+        allowedVariables: ["x"],
+      },
+      metadata: {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: "tester",
+      },
+    });
+    expect(r.success).toBe(false);
   });
 
   it("exports a JSON schema document", () => {

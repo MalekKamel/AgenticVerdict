@@ -1,0 +1,118 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "p95 report generation duration from production-flow instrumentation (`test_report_generation_duration_seconds`).",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, report_type) (rate(test_report_generation_duration_seconds_bucket[15m])))",
+          "legendFormat": "p95 {{report_type}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p95 report generation duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Verdict parse attempts vs degraded outcomes (`marketing_verdict_parse_*`).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (workflow_id) (rate(marketing_verdict_parse_attempts_total[5m]))",
+          "legendFormat": "attempts {{workflow_id}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (workflow_id, failure_kind) (rate(marketing_verdict_parse_degraded_total[5m]))",
+          "legendFormat": "degraded {{workflow_id}} {{failure_kind}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Verdict parse throughput & degradation",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Workflow trigger enqueue (API) vs completion (worker).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum(rate(test_workflow_trigger_enqueued_total[5m]))",
+          "legendFormat": "enqueue / s",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (status) (rate(test_workflow_trigger_completed_total[5m]))",
+          "legendFormat": "done {{status}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Workflow triggers: enqueue & completion",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "p95 BullMQ workflow-trigger job duration on the worker.",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, workflow_id) (rate(test_workflow_trigger_job_duration_seconds_bucket[15m])))",
+          "legendFormat": "p95 {{workflow_id}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p95 workflow-trigger job duration (worker)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["agenticverdict", "prometheus", "sla", "p1"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Production SLA overview (API & worker)",
+  "uid": "av-production-sla-overview",
+  "version": 1,
+  "weekStart": ""
+}

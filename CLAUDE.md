@@ -246,6 +246,21 @@ The `/docs` directory contains comprehensive project documentation:
 
 **Before making architectural decisions**, consult the relevant technology research documentation in `/docs/04-technology-research/`.
 
+### Phase 02/03 execution, audits, and roadmap follow-ups
+
+When working on agent intelligence, report generation/delivery, or phase closure, consult these (in addition to each phase folder under `03-development-phases/`):
+
+| Artifact                  | Path                                                                               | Purpose                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Execution plan            | `docs/03-development-phases/phases-02-03-execution-plan.md`                        | Original phased execution plan for Phases 02–03                  |
+| Refined execution plan    | `docs/03-development-phases/phases-02-03-execution-plan-refined.md`                | Dependency-safe refinement and sequencing                        |
+| Implementation audit      | `docs/03-development-phases/phases-02-03-implementation-audit.md`                  | Baseline audit vs phase docs and repo evidence                   |
+| Audit delta               | `docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md` | What changed after the baseline; remaining gaps snapshot         |
+| Future roadmap            | `docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`    | Remaining gaps and recommended enhancement tracks                |
+| Changelog (consolidation) | `changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`      | Dated summary of the systematic Phase 02/03 implementation batch |
+
+**Other dated implementation notes** live under `changelog/` (prefix by date).
+
 ## Phase-Based Development
 
 The project follows a five-phase roadmap (14 weeks total):
@@ -347,5 +362,11 @@ Reports are generated from templates stored in the database:
 - **Requirements**: `/docs/05-project-management/requirements.md`
 - **Project Charter**: `/docs/05-project-management/project-charter.md`
 - **Roadmap**: `/docs/05-project-management/roadmap-development.md`
+- **Future roadmap (gaps & enhancements)**: `/docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`
+- **Phase 02/03 execution plan**: `/docs/03-development-phases/phases-02-03-execution-plan.md`
+- **Phase 02/03 execution plan (refined)**: `/docs/03-development-phases/phases-02-03-execution-plan-refined.md`
+- **Phase 02/03 implementation audit**: `/docs/03-development-phases/phases-02-03-implementation-audit.md`
+- **Phase 02/03 audit delta (2026-04-08)**: `/docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md`
+- **Changelog (Phase 02/03 consolidation, 2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
 - **Technology Research**: `/docs/04-technology-research/research-overview.md`

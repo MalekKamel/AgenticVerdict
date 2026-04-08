@@ -71,6 +71,16 @@ export function buildScenarioRecords(options: MockStaticDataOptions): Normalized
     const spend = Number((nextInt(rng, 50, 8000) + rng()).toFixed(2));
     const conversions =
       scenario === "zero-conversions" ? 0 : nextInt(rng, 0, Math.max(1, Math.floor(clicks * 0.08)));
+    const qualifiedConversions =
+      scenario === "zero-conversions" ? 0 : Math.floor(conversions * (0.7 + rng() * 0.25));
+    const dmLeads =
+      scenario === "zero-conversions" ? 0 : Math.floor(conversions * (0.45 + rng() * 0.2));
+    const fleetLeads =
+      scenario === "zero-conversions" ? 0 : Math.floor(conversions * (0.4 + rng() * 0.2));
+    const regionalLeads =
+      scenario === "zero-conversions" ? 0 : Math.floor(conversions * (0.3 + rng() * 0.15));
+    const sessions = scaleForScenario(scenario, nextInt(rng, 200, 8000));
+    const sessionLang = rng() < 0.55 ? "ar" : "en";
 
     records.push(
       {
@@ -95,6 +105,36 @@ export function buildScenarioRecords(options: MockStaticDataOptions): Normalized
         metricKey: `${platform}.mock.conversions`,
         value: conversions,
         dimensions: { series: dimSuffix },
+        capturedAt,
+      },
+      {
+        metricKey: `${platform}.mock.qualified_conversions`,
+        value: qualifiedConversions,
+        dimensions: { series: dimSuffix },
+        capturedAt,
+      },
+      {
+        metricKey: `${platform}.mock.leads_dm`,
+        value: dmLeads,
+        dimensions: { series: dimSuffix },
+        capturedAt,
+      },
+      {
+        metricKey: `${platform}.mock.leads_fleet`,
+        value: fleetLeads,
+        dimensions: { series: dimSuffix },
+        capturedAt,
+      },
+      {
+        metricKey: `${platform}.mock.leads_regional`,
+        value: regionalLeads,
+        dimensions: { series: dimSuffix, region: "SA" },
+        capturedAt,
+      },
+      {
+        metricKey: `${platform}.mock.sessions`,
+        value: sessions,
+        dimensions: { series: dimSuffix, language: sessionLang },
         capturedAt,
       },
     );

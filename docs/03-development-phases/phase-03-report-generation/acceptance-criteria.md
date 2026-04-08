@@ -4,7 +4,7 @@
 
 - **Phase**: 3 - Report Generation & Delivery
 - **Version**: 1.1
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-08
 - **Owner**: Quality Assurance Team
 
 ## Overview
@@ -82,6 +82,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] References and citations section
 - [ ] Appendices for supplementary material
 - [ ] Cover page with required metadata
+- [ ] Verdict reports include score, trend, key findings, prioritized action items, and platform-level breakdown
 
 **Measurement Method**:
 
@@ -135,12 +136,187 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] Appropriate formality level for target culture
 - [ ] No cultural insensitivity or offense
 
+**CRITICAL: Multi-Language Quality Metrics (P1)**
+
+**Objective Quality Scoring:**
+
+To ensure translation quality is measurable and not subjective, the following metrics MUST be tracked:
+
+| Metric                           | Tool                  | Target                  | Frequency          |
+| -------------------------------- | --------------------- | ----------------------- | ------------------ |
+| **BLEU Score**                   | Automated (NLTK)      | ≥0.85 for Arabic        | Per release        |
+| **COMET Score**                  | Automated (Unbabel)   | ≥0.80 for all languages | Per release        |
+| **TER (Translation Error Rate)** | Automated             | ≤0.15 (15% errors)      | Per release        |
+| **Native Speaker Rating**        | Manual review         | ≥4.0/5.0 stars          | Per content update |
+| **Cultural Appropriateness**     | Native speaker review | 100% pass rate          | Per content update |
+| **Terminology Consistency**      | Automated (TermBase)  | ≥95% consistency        | Ongoing monitoring |
+
+**Language-Specific Quality Requirements:**
+
+**Arabic (Masafh Primary Language):**
+
+- [ ] **Native Arabic Speaker Sign-Off:** All Arabic content reviewed and approved by native Saudi Arabian Arabic speaker
+- [ ] **Formal Modern Standard Arabic:** Use MSA appropriate for Saudi business context
+- [ ] **RTL Rendering Validation:** All reports tested for proper RTL layout
+- [ ] **Cultural Terminology:** Use appropriate Islamic calendar references where applicable (Hijri calendar option)
+- [ ] **Business Arabic:** Use formal business Arabic appropriate for B2B contexts
+
+**Quality Assessment Process:**
+
+```typescript
+interface TranslationQualityAssessment {
+  language: string;
+  contentId: string;
+  version: string;
+
+  // Automated metrics
+  automatedScores: {
+    bleu?: number; // 0-1, target ≥0.85
+    comet?: number; // 0-1, target ≥0.80
+    ter?: number; // 0-1, target ≤0.15
+    chrf?: number; // 0-1, target ≥0.85
+  };
+
+  // Human assessment
+  humanAssessment: {
+    reviewerName: string;
+    reviewerCredentials: string; // "Native Arabic speaker", "Professional translator"
+    rating: number; // 1-5 stars, target ≥4.0
+    issues: TranslationIssue[];
+    approved: boolean;
+    approvedAt: Date;
+  };
+
+  // Cultural validation
+  culturalValidation: {
+    appropriate: boolean;
+    concerns: string[];
+    regionalAdaptationRequired: boolean;
+  };
+
+  // Terminology consistency
+  terminologyCheck: {
+    consistencyScore: number; // 0-1, target ≥0.95
+    termViolations: TermViolation[];
+  };
+}
+
+interface TranslationIssue {
+  severity: "critical" | "major" | "minor";
+  category: "grammar" | "terminology" | "cultural" | "typography" | "style";
+  description: string;
+  location: string; // Section/page reference
+  suggestion?: string;
+}
+```
+
+**Native Speaker Review Checklist:**
+
+For Arabic content (Masafh priority language):
+
+```markdown
+## Arabic Content Review Checklist
+
+Reviewer: **********\_\_**********  
+Credentials: Native Saudi Arabian Arabic speaker  
+Date: **********\_\_**********
+
+### Content Quality
+
+- [ ] Grammar and syntax are correct
+- [ ] Vocabulary is appropriate for B2B business context
+- [ ] No awkward phrasing or machine translation artifacts
+- [ ] Technical terms are correctly translated or appropriately transliterated
+
+### Cultural Appropriateness
+
+- [ ] Tone is respectful and appropriate for Saudi business culture
+- [ ] No cultural insensitivity or offense
+- [ ] Examples and references are relevant to Saudi market
+- [ ] Religious considerations handled appropriately (if applicable)
+
+### Business Terminology
+
+- [ ] Fleet tracking terminology is accurate
+- [ ] B2B marketing terms are appropriate
+- [ ] Company names and product names are correctly transliterated
+- [ ] Metrics and KPIs are correctly expressed
+
+### RTL Layout
+
+- [ ] Text direction is correct (RTL)
+- [ ] Numbers and dates are properly formatted
+- [ ] Mixed Arabic/English content flows correctly
+- [ ] Tables and lists display correctly in RTL
+
+### Final Approval
+
+- [ ] Approved for publication: YES / NO
+- [ ] Changes required: YES / NO
+- [ ] Overall rating: \_\_\_ / 5 stars
+
+Comments:
+
+---
+
+---
+
+---
+```
+
+**Automated Quality Testing:**
+
+```typescript
+describe("Translation Quality Automated Tests", () => {
+  const languages = ["ar", "en", "es", "fr", "zh"];
+  const contentSamples = loadTestContent();
+
+  languages.forEach((lang) => {
+    describe(`Language: ${lang}`, () => {
+      it("should meet BLEU score threshold", async () => {
+        const reference = loadReferenceTranslation(lang);
+        const candidate = contentSamples[lang];
+
+        const bleuScore = calculateBLEU(reference, candidate);
+        expect(bleuScore).toBeGreaterThanOrEqual(0.85);
+      });
+
+      it("should meet COMET score threshold", async () => {
+        const reference = loadReferenceTranslation(lang);
+        const candidate = contentSamples[lang];
+
+        const cometScore = await calculateCOMET(reference, candidate, lang);
+        expect(cometScore).toBeGreaterThanOrEqual(0.8);
+      });
+
+      it("should have low Translation Error Rate", async () => {
+        const reference = loadReferenceTranslation(lang);
+        const candidate = contentSamples[lang];
+
+        const terScore = calculateTER(reference, candidate);
+        expect(terScore).toBeLessThanOrEqual(0.15);
+      });
+
+      it("should maintain terminology consistency", async () => {
+        const termBase = loadTermBase(lang);
+        const terminologyCheck = checkTerminologyConsistency(contentSamples[lang], termBase);
+
+        expect(terminologyCheck.consistencyScore).toBeGreaterThanOrEqual(0.95);
+        expect(terminologyCheck.violations).toHaveLength(0);
+      });
+    });
+  });
+});
+```
+
 **Measurement Method**:
 
 - Professional translator review
 - Native speaker user testing
 - Translation quality scoring (minimum 4/5 stars)
 - Back-translation verification for critical content
+- **Automated BLEU/COMET/TER scoring (P1 blocker)**
+- **Native Arabic speaker sign-off for all Arabic content (P1 blocker)**
 
 ### 2.2 Character Encoding and Display
 
@@ -293,6 +469,25 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - Performance testing
 - User testing on various devices
 
+### 3.4 JSON/API Format Requirements
+
+**Criteria**: JSON report artifacts must be stable, schema-valid, and suitable for downstream consumers.
+
+**Acceptance Tests**:
+
+- [ ] JSON export includes verdict payload and report artifact metadata
+- [ ] Payload validates against documented schemas and versioning policy
+- [ ] UTF-8 encoding verified across locales
+- [ ] Required fields always present; optional fields explicitly nullable/optional
+- [ ] No PII leakage in metadata fields
+
+**Measurement Method**:
+
+- Schema contract tests
+- Consumer compatibility tests
+- Encoding and locale fixture tests
+- Security review of serialized payloads
+
 ---
 
 ## 4. Performance Requirements
@@ -313,6 +508,110 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] No memory leaks during generation
 - [ ] Graceful handling of resource constraints
 - [ ] Progress indicators for long-running generations
+- [ ] Queue-triggered `marketing-analysis` + `verdict-generation` + report flow meets staged SLA profiles by platform count and depth
+
+**CRITICAL: Concurrent Load Performance SLAs (P1)**
+
+Report generation MUST meet the following performance targets under concurrent load:
+
+| Concurrent Jobs | Target p95 Latency        | Max Memory | Queue Depth | Timeout | Degradation Allowed    |
+| --------------- | ------------------------- | ---------- | ----------- | ------- | ---------------------- |
+| 1               | 15s (20pg) / 60s (100pg)  | 1GB        | 0           | 90s     | None                   |
+| 5               | 18s (20pg) / 70s (100pg)  | 1.2GB      | <10         | 100s    | <20% latency increase  |
+| 10              | 20s (20pg) / 75s (100pg)  | 1.5GB      | <20         | 110s    | <33% latency increase  |
+| 25              | 25s (20pg) / 85s (100pg)  | 2GB        | <50         | 130s    | <67% latency increase  |
+| 50              | 35s (20pg) / 100s (100pg) | 2.5GB      | <100        | 160s    | <133% latency increase |
+
+**Definitions:**
+
+- **p95 Latency:** 95th percentile response time (5% of requests may exceed)
+- **Queue Depth:** Maximum number of jobs waiting in queue (backpressure indicator)
+- **Timeout:** Maximum acceptable wait time before job fails
+- **Degradation:** Acceptable increase in latency vs. single-job baseline
+
+**Concurrent Load Testing Requirements:**
+
+```typescript
+describe("Concurrent Report Generation Performance", () => {
+  const testCases = [
+    { concurrent: 1, reportType: "standard", expectedP95: 15000 },
+    { concurrent: 5, reportType: "standard", expectedP95: 18000 },
+    { concurrent: 10, reportType: "standard", expectedP95: 20000 },
+    { concurrent: 25, reportType: "large", expectedP95: 85000 },
+    { concurrent: 50, reportType: "large", expectedP95: 100000 },
+  ];
+
+  testCases.forEach(({ concurrent, reportType, expectedP95 }) => {
+    it(`should handle ${concurrent} concurrent ${reportType} reports within SLA`, async () => {
+      const promises = Array.from({ length: concurrent }, (_, i) =>
+        generateReport({
+          reportType,
+          tenantId: `test-tenant-${i}`,
+          requestId: crypto.randomUUID(),
+        }),
+      );
+
+      const results = await Promise.allSettled(promises);
+
+      // Verify all completed
+      const failures = results.filter((r) => r.status === "rejected");
+      expect(failures).toHaveLength(0);
+
+      // Calculate p95 latency
+      const latencies = results.map((r) => {
+        if (r.status === "fulfilled") {
+          return r.value.executionTime;
+        }
+        return 0;
+      });
+      latencies.sort((a, b) => a - b);
+      const p95Index = Math.floor(latencies.length * 0.95);
+      const p95Latency = latencies[p95Index];
+
+      expect(p95Latency).toBeLessThanOrEqual(expectedP95);
+    });
+  });
+
+  it("should maintain queue depth within limits under load", async () => {
+    const initialDepth = await reportQueue.getJobCounts();
+    const concurrent = 50;
+
+    // Submit jobs faster than they can complete
+    const promises = Array.from({ length: concurrent }, () =>
+      reportQueue.add("generate", { reportType: "large" }),
+    );
+
+    // Check queue depth during processing
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const depth = await reportQueue.getJobCounts();
+
+    expect(depth.waiting).toBeLessThan(100);
+
+    // Clean up
+    await Promise.all(promises);
+  });
+});
+```
+
+**Workflow Performance SLAs (Queue-Triggered):**
+
+For the complete workflow chain (`marketing-analysis` → `verdict-generation` → `report-generation`):
+
+| Platform Count | Analysis Depth | Verdict Depth | Target p95 Latency | Notes                  |
+| -------------- | -------------- | ------------- | ------------------ | ---------------------- |
+| 2 platforms    | Standard       | Quick         | 45s                | Meta + GA4 baseline    |
+| 2 platforms    | Standard       | Standard      | 60s                | Full verdict synthesis |
+| 5 platforms    | Standard       | Standard      | 90s                | All platforms          |
+| 5 platforms    | Deep           | Standard      | 120s               | Extended analysis      |
+| 5 platforms    | Deep           | Deep          | 180s               | Maximum depth          |
+
+**Performance Monitoring Requirements:**
+
+- [ ] **Metrics Collection:** p50, p95, p99 latencies tracked for all endpoints
+- [ ] **Queue Metrics:** Depth, wait time, processing time tracked continuously
+- [ ] **Resource Metrics:** CPU, memory, and network usage tracked per job
+- [ ] **Alerting:** Automated alerts when SLAs are at risk of breach
+- [ ] **Dashboards:** Real-time performance visibility for operations team
 
 **Measurement Method**:
 
@@ -321,6 +620,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - Resource monitoring
 - Profiling and optimization
 - Benchmark testing
+- **Concurrent load matrix verification (P1 blocker)**
 
 ### 4.2 Delivery Performance
 
@@ -392,6 +692,137 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] Caching of Phase 2 data for performance
 - [ ] Data lineage information preserved
 - [ ] Provenance tracking maintained
+- [x] Workflow-triggered job payload/result contracts validated for queue-based generation paths
+- [x] Partial platform failure behavior validated without cross-tenant data exposure
+- [ ] LLM fallback behavior validated in integrated workflow runs
+
+**CRITICAL: Contract Testing Requirements (P0)**
+
+- [ ] **Contract Test Suite:** All Phase 2 API contracts validated before Phase 3 Wave E begins
+- [ ] **Consumer-Driven Contracts:** Pact or similar framework defining expected API behaviors
+- [ ] **Contract Freeze:** Phase 2 API schemas frozen before Phase 3 infrastructure implementation
+- [ ] **Regression Tests:** Automated tests preventing breaking changes to Phase 2 contracts
+- [ ] **Schema Validation:** `MarketingVerdict` and `GeneratedInsight` schemas validated end-to-end
+- [ ] **API Response Examples:** Golden fixtures for all Phase 2 endpoints used in Phase 3 testing
+
+**Contract Testing Acceptance Criteria:**
+
+```typescript
+// Contract test example for GET /api/v1/verdicts
+describe("Phase 2 Verdict API Contract", () => {
+  it("should return MarketingVerdict array matching unified schema", async () => {
+    const response = await fetch("/api/v1/verdicts?campaignId=test-campaign");
+    expect(response.status).toBe(200);
+
+    const data = await response.json();
+    expect(data.verdicts).toBeInstanceOf(Array);
+
+    // Validate against unified schema
+    data.verdicts.forEach((verdict) => {
+      expect(() => MarketingVerdictSchema.parse(verdict)).not.toThrow();
+
+      // Verify required Phase 03 fields exist
+      expect(verdict).toHaveProperty("score");
+      expect(verdict).toHaveProperty("confidence");
+      expect(verdict).toHaveProperty("evidence");
+      expect(verdict).toHaveProperty("dataSources");
+    });
+  });
+
+  it("should include provenance in analysis results", async () => {
+    const response = await fetch("/api/v1/analysis-results/test-analysis-id");
+    expect(response.status).toBe(200);
+
+    const data = await response.json();
+    expect(data).toHaveProperty("provenance");
+
+    // Verify provenance structure
+    expect(data.provenance).toMatchObject({
+      analysisId: expect.any(String),
+      tenantId: expect.any(String),
+      dataSources: expect.any(Array),
+      transformations: expect.any(Array),
+    });
+  });
+});
+```
+
+**Workflow-Triggered Generation E2E Tests (P0):**
+
+- [ ] **Queue Trigger Test:** `marketing-analysis` workflow → BullMQ processor → Typed result envelope
+- [ ] **Verdict Workflow Test:** `verdict-generation` workflow → Report generation → Delivery enqueue
+- [ ] **Tenant Isolation Test:** Concurrent workflow execution validates no cross-tenant data exposure
+- [ ] **Partial Failure Test:** Single platform failure isolated without full workflow failure
+- [ ] **Delivery Handoff Test:** Report artifact metadata correctly passed to delivery queue
+
+**E2E Test Example:**
+
+```typescript
+describe("Workflow-Triggered Report Generation", () => {
+  it("should complete marketing-analysis workflow end-to-end", async () => {
+    const triggerPayload = {
+      workflowId: "marketing-analysis",
+      tenantId: testTenantId,
+      config: {
+        dateRange: { start: "2024-01-01", end: "2024-01-31" },
+        platforms: ["meta", "ga4"],
+        analysisDepth: "standard",
+      },
+    };
+
+    // Enqueue workflow
+    const job = await workflowQueue.add("marketing-analysis", triggerPayload);
+
+    // Wait for completion (with timeout)
+    const result = await job.waitUntilFinished(WaitTimeouts.WORKFLOW);
+
+    // Verify typed result envelope
+    expect(result).toMatchObject({
+      phase: "completed",
+      insights: expect.any(Array),
+      processingMetadata: {
+        platformsAnalyzed: ["meta", "ga4"],
+        durationMs: expect.any(Number),
+      },
+    });
+
+    // Verify tenant isolation
+    expect(result.tenantId).toBe(testTenantId);
+  });
+
+  it("should handle verdict-generation with report artifact", async () => {
+    const triggerPayload = {
+      workflowId: "verdict-generation",
+      tenantId: testTenantId,
+      config: {
+        dateRange: { start: "2024-01-01", end: "2024-01-31" },
+        platforms: ["meta", "ga4"],
+        verdictDepth: "standard",
+        outputFormat: "pdf",
+        deliveryEnabled: true,
+        recipientEmail: "test@example.com",
+      },
+    };
+
+    const job = await workflowQueue.add("verdict-generation", triggerPayload);
+    const result = await job.waitUntilFinished(WaitTimeouts.WORKFLOW);
+
+    // Verify verdict generation
+    expect(result.verdict).toMatchSchema(MarketingVerdictSchema);
+
+    // Verify report artifact metadata
+    expect(result.reportArtifact).toMatchObject({
+      reportId: expect.any(String),
+      format: "pdf",
+      byteLength: expect.any(Number),
+      location: expect.any(String),
+    });
+
+    // Verify delivery enqueue
+    expect(result.deliveryEnqueued).toBe(true);
+  });
+});
+```
 
 **Measurement Method**:
 
@@ -400,6 +831,8 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - Error scenario testing
 - Performance testing of integration
 - User acceptance testing
+- **Contract test suite (P0 blocker)**
+- **E2E workflow tests (P0 blocker)**
 
 ### 5.2 System Integration
 
@@ -417,6 +850,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] API gateway integration functional
 - [ ] Database integration working correctly
 - [ ] File storage integration functional
+- [ ] Workflow observability available: durations, insights counts, token usage, error categories, and delivery enqueue outcomes
 
 **Measurement Method**:
 
@@ -683,7 +1117,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] Security requirements met
 - [ ] Deployment to staging successful
 
-**Sign-off**: ************\_\_************ **Date**: **\_\_\_\_**
+**Sign-off**: ****\*\*\*\*****\_\_****\*\*\*\***** **Date**: **\_\_\_\_**
 
 ### 10.2 Quality Assurance Sign-Off
 
@@ -702,7 +1136,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] Accessibility testing passed
 - [ ] Multi-language testing passed
 
-**Sign-off**: ************\_\_************ **Date**: **\_\_\_\_**
+**Sign-off**: ****\*\*\*\*****\_\_****\*\*\*\***** **Date**: **\_\_\_\_**
 
 ### 10.3 Product Owner Sign-Off
 
@@ -721,7 +1155,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] Ready for production deployment
 - [ ] Business value delivered
 
-**Sign-off**: ************\_\_************ **Date**: **\_\_\_\_**
+**Sign-off**: ****\*\*\*\*****\_\_****\*\*\*\***** **Date**: **\_\_\_\_**
 
 ### 10.4 Operations Sign-Off
 
@@ -740,7 +1174,7 @@ Per the 2026-04-04 planning baseline, **prerequisites** (PR-1–PR-7 in [tasks.m
 - [ ] SLA defined
 - [ ] Production deployment successful
 
-**Sign-off**: ************\_\_************ **Date**: **\_\_\_\_**
+**Sign-off**: ****\*\*\*\*****\_\_****\*\*\*\***** **Date**: **\_\_\_\_**
 
 ---
 

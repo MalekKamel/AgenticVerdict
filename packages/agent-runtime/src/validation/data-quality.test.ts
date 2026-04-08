@@ -107,6 +107,8 @@ describe("validateAnalysisResult", () => {
     expect(r.errors).toHaveLength(0);
     expect(r.warnings).toHaveLength(0);
     expect(r.score).toBe(100);
+    expect(r.metadata.completeness?.insightsCount).toBe(1);
+    expect(r.metadata.lineage?.hasDataSources).toBe(true);
   });
 
   it("returns schema errors when required fields are missing", () => {
@@ -135,6 +137,50 @@ describe("validateAnalysisResult", () => {
     const r = svc.validateAnalysisResult(raw as unknown as Record<string, unknown>);
     expect(r.warnings).toHaveLength(2);
     expect(r.score).toBe(96);
+  });
+
+  it("flags missing lineage dataSources as a blocking error", () => {
+    const raw = baseAnalysisResult() as unknown as {
+      provenance: {
+        dataSources: unknown[];
+        transformations: unknown[];
+      };
+    };
+    raw.provenance.dataSources = [];
+    raw.provenance.transformations = [];
+    const r = svc.validateAnalysisResult(raw as unknown as Record<string, unknown>);
+    expect(r.isValid).toBe(false);
+    expect(r.errors.some((e) => e.field.includes("provenance.dataSources"))).toBe(true);
+  });
+
+  it("warns when lineage sources are stale", () => {
+    const raw = baseAnalysisResult({
+      provenance: {
+        analysisId: ANALYSIS_ID,
+        generatedAt: new Date(),
+        agentVersion: "1.0.0",
+        modelUsed: "claude-3-5-sonnet-20241022",
+        dataSources: [
+          {
+            platform: "meta",
+            metrics: ["spend"],
+            dateRange: { start: "2024-01-01", end: "2024-01-31" },
+            freshnessHours: 96,
+            qualityScore: 80,
+          },
+        ],
+        transformations: [
+          {
+            type: "normalize",
+            description: "Normalized",
+            timestamp: new Date(),
+          },
+        ],
+      },
+    });
+    const r = svc.validateAnalysisResult(raw as unknown as Record<string, unknown>);
+    expect(r.warnings.some((w) => w.code === "STALE_LINEAGE_SOURCES")).toBe(true);
+    expect(r.metadata.lineage?.staleSourcesCount).toBe(1);
   });
 });
 

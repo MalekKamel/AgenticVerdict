@@ -1,5 +1,9 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SignJWT } from "jose";
+import {
+  workflowTriggerJobDataSchema,
+  workflowTriggerJobResultSchema,
+} from "@agenticverdict/worker";
 
 import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 import { buildApiServer } from "../../server";
@@ -105,5 +109,107 @@ describe("workflow routes (Phase 1 production-flow foundation)", () => {
       },
     });
     expect(res.statusCode).toBe(400);
+  });
+
+  it("enforces recipientEmail when deliveryEnabled=true", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/workflows/trigger",
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: {
+        workflowId: "verdict-generation",
+        testMode: true,
+        tenantId: TENANT,
+        config: {
+          deliveryEnabled: true,
+        },
+      },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+});
+
+describe("workflow contract compatibility", () => {
+  it("accepts API trigger payload with shared worker schema", () => {
+    const payload = {
+      workflowId: "marketing-analysis",
+      testMode: true,
+      tenantId: TENANT,
+      config: {
+        dateRange: { start: "2026-03-01T00:00:00.000Z", end: "2026-03-31T23:59:59.000Z" },
+        platforms: ["meta", "ga4"],
+        analysisDepth: "standard",
+      },
+      requestId: "req-contract-1",
+    };
+    expect(() => workflowTriggerJobDataSchema.parse(payload)).not.toThrow();
+  });
+
+  it("accepts worker result envelope with shared schema", () => {
+    const result = {
+      workflowId: "verdict-generation",
+      tenantId: TENANT,
+      testMode: true,
+      phase: "verdict-generation",
+      message: "verdict-generation_processed",
+      insights: [
+        {
+          id: "11111111-1111-4111-8111-111111111111",
+          type: "trend",
+          title: "t",
+          description: "d",
+          confidence: 0.8,
+        },
+      ],
+      processingMetadata: {
+        durationMs: 1200,
+        stagesCompleted: 3,
+        pipelineStatus: "degraded",
+        platformsAnalyzed: ["meta"],
+        errorCode: "verdict_synthesis_failed",
+        partialFailure: true,
+        platformFailures: [
+          {
+            platform: "meta",
+            code: "platform_fetch_failed",
+            message: "fetch failed",
+            retryable: true,
+          },
+        ],
+      },
+    };
+    expect(() => workflowTriggerJobResultSchema.parse(result)).not.toThrow();
+  });
+
+  it("accepts worker result envelope when delivery queue failure is reported", () => {
+    const result = {
+      workflowId: "verdict-generation",
+      tenantId: TENANT,
+      testMode: true,
+      phase: "verdict-generation",
+      message: "verdict-generation_processed_with_delivery_issue",
+      processingMetadata: {
+        durationMs: 800,
+        stagesCompleted: 3,
+        pipelineStatus: "completed",
+        platformsAnalyzed: ["meta"],
+        errorCode: "delivery_queue_failed",
+        partialFailure: true,
+      },
+    };
+    expect(() => workflowTriggerJobResultSchema.parse(result)).not.toThrow();
+  });
+
+  it("rejects trigger payload outputFormat values not supported by report generator", () => {
+    const payload = {
+      workflowId: "marketing-analysis",
+      testMode: true,
+      tenantId: TENANT,
+      config: {
+        outputFormat: "xml",
+      },
+      requestId: "req-contract-invalid-format",
+    };
+    expect(() => workflowTriggerJobDataSchema.parse(payload)).toThrow();
   });
 });

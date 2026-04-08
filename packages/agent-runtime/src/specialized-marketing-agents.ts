@@ -2,6 +2,9 @@ import type { BaseChatModel } from "@langchain/core/language_models/chat_models"
 import { AgentMockChatModel } from "@agenticverdict/testing";
 
 import type { AgentFactoryConfig } from "./agent-config";
+import { createAnalysisTools } from "./agent-tools/analysis-tools";
+import { createCompanyContextTools } from "./agent-tools/company-context-tools";
+import { createReportPrepTools } from "./agent-tools/report-prep-tools";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { parseAgentFactoryConfig } from "./agent-config";
 import { AgentFactory } from "./agent-factory";
@@ -147,9 +150,15 @@ export function createSpecializedMarketingTestAgent(
   options: CreateSpecializedMarketingAgentOptions,
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
-  return factory.createTestAgent(cfg, options.mockLlm ?? new AgentMockChatModel({}), {
+  const sharedTools = [
+    ...createCompanyContextTools(),
+    ...createAnalysisTools(),
+    ...createReportPrepTools(),
+  ];
+  return factory.createAgentWithTools({ ...cfg, runtimeMode: "test" }, sharedTools, {
+    testChatModel: options.mockLlm ?? new AgentMockChatModel({}),
     invocationCache: options.invocationCache,
-  });
+  }).agent;
 }
 
 /**
@@ -161,5 +170,12 @@ export function createSpecializedMarketingProductionAgent(
   options: CreateSpecializedMarketingAgentOptions,
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
-  return factory.createAgent(cfg, { invocationCache: options.invocationCache });
+  const sharedTools = [
+    ...createCompanyContextTools(),
+    ...createAnalysisTools(),
+    ...createReportPrepTools(),
+  ];
+  return factory.createAgentWithTools(cfg, sharedTools, {
+    invocationCache: options.invocationCache,
+  }).agent;
 }

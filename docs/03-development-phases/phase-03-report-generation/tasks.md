@@ -1,7 +1,7 @@
 # Phase 3: Report Generation & Delivery — Task List
 
-**Status**: Active planning baseline  
-**Date**: 2026-04-04  
+**Status**: In progress (implementation underway)  
+**Date**: 2026-04-08  
 **Based on**: [Gap analysis](./gap-analysis.md) and implementation review (Phases 00–02)
 
 ---
@@ -38,6 +38,7 @@ This task list reflects the **actual implementation state of Phases 00–02** an
 - [ ] Rate limiting per tenant
 - [ ] Response caching with TTL
 - [ ] OpenAPI/Swagger documentation
+- [x] Workflow trigger contract coverage for `marketing-analysis` and `verdict-generation` payload/response envelopes
 
 **Technical Implementation**:
 
@@ -66,11 +67,11 @@ This task list reflects the **actual implementation state of Phases 00–02** an
 
 **Acceptance Criteria**:
 
-- [ ] `mapMarketingVerdictToReportModel` (or equivalent) in report-generator integration layer
-- [ ] Type definitions for Phase 3 **report** verdict format (distinct from `@agenticverdict/types` domain model)
-- [ ] Unit tests for mapping edge cases (empty optional blocks, date ranges, evidence lists)
+- [x] `mapMarketingVerdictToReportModel` (or equivalent) in report-generator integration layer
+- [x] Type definitions for Phase 3 **report** verdict format (distinct from `@agenticverdict/types` domain model)
+- [x] Unit tests for mapping edge cases (empty optional blocks, date ranges, evidence lists)
 - [x] Documentation of field mapping — **`docs/03-development-phases/phase-03-report-generation/prerequisites/schema-transformation-spec.md`** (runtime path); report mapper TBD beside implementation
-- [ ] Error handling for missing fields when building report rows
+- [x] Error handling for missing fields when building report rows
 
 **Technical Implementation**:
 
@@ -111,12 +112,12 @@ function mapMarketingVerdictToReportModel(
 
 **Acceptance Criteria**:
 
-- [ ] TemplateConfig Zod schema
-- [ ] TemplateSection type definitions
-- [ ] TemplateVariable type definitions
-- [ ] TemplateValidation rules
-- [ ] Template inheritance model
-- [ ] Component specification schema
+- [x] TemplateConfig Zod schema
+- [x] TemplateSection type definitions
+- [x] TemplateVariable type definitions
+- [x] TemplateValidation rules
+- [x] Template inheritance model
+- [x] Component specification schema
 
 **Technical Implementation**:
 
@@ -148,12 +149,12 @@ interface TemplateConfig {
 
 **Acceptance Criteria**:
 
-- [ ] Data quality validation service
-- [ ] Content completeness validation
-- [ ] Confidence threshold validation
-- [ ] Data lineage validation
-- [ ] Validation metrics and scoring
-- [ ] Validation error reporting
+- [x] Data quality validation service
+- [x] Content completeness validation
+- [x] Confidence threshold validation
+- [x] Data lineage validation
+- [x] Validation metrics and scoring
+- [x] Validation error reporting
 
 **Technical Implementation**:
 
@@ -274,11 +275,11 @@ interface ProvenanceInfo {
 **Acceptance Criteria**:
 
 - [ ] SendGrid or Resend account setup
-- [ ] Email templates designed
-- [ ] Delivery service implementation
-- [ ] Attachment handling
-- [ ] Delivery tracking
-- [ ] Bounce and complaint handling
+- [x] Email templates designed
+- [x] Delivery service implementation
+- [x] Attachment handling
+- [x] Delivery tracking
+- [x] Bounce and complaint handling
 
 **Technical Implementation**:
 
@@ -377,6 +378,8 @@ export class I18nManager {
 - [ ] Worker health monitoring
 - [ ] Job scheduling interface
 - [ ] Redis connection management
+- [ ] Workflow processor routing for `marketing-analysis` and `verdict-generation`
+- [ ] Delivery queue handoff after report artifact generation when delivery is enabled
 
 **Technical Implementation**:
 
@@ -481,6 +484,7 @@ export const reportQueue = new Queue("report-generation", {
 - [ ] Header/footer components
 - [ ] Table of contents template
 - [ ] All templates use PR-3 schema
+- [ ] Verdict-focused template sections include score, trend, key findings, action items, and platform breakdown
 
 **Estimated Effort**: 8 days
 **Dependencies**: TMP-1, PR-3
@@ -688,6 +692,7 @@ export const reportQueue = new Queue("report-generation", {
 **Acceptance Criteria**:
 
 - [ ] Insight retrieval from PR-1 API
+- [ ] Insight binding from workflow result envelopes when generation is queue-triggered
 - [ ] Insight formatting and presentation
 - [ ] Insight context and explanation
 - [ ] Insight recommendation engine
@@ -713,6 +718,7 @@ export const reportQueue = new Queue("report-generation", {
 
 - [ ] Verdict retrieval from PR-1 API
 - [ ] Report mapping / template binding (PR-2) where needed
+- [ ] Verdict/result binding from queue-triggered `verdict-generation` payloads
 - [ ] Verdict visualization components
 - [ ] Verdict explanation generation
 - [ ] Verdict trend analysis
@@ -720,6 +726,8 @@ export const reportQueue = new Queue("report-generation", {
 - [ ] Historical verdict tracking
 - [ ] Verdict confidence display
 - [ ] Gauge/meter visualizations
+- [ ] Report artifact metadata handling (`reportId`, `format`, `byteLength`, `location`)
+- [ ] JSON verdict output path supported when configured
 
 **Estimated Effort**: 24 days
 **Dependencies**: PR-1, PR-2
@@ -784,6 +792,7 @@ export const reportQueue = new Queue("report-generation", {
 - [ ] Delivery retry logic
 - [ ] Streaming for large files
 - [ ] Worker queue integration (INF-3)
+- [ ] Workflow-initiated delivery path (delivery flags + recipients from trigger config)
 
 **Estimated Effort**: 30 days
 **Dependencies**: INF-3, PR-7

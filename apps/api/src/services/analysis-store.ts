@@ -1,19 +1,16 @@
 import { randomUUID } from "node:crypto";
 
 import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
+import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
 import type {
   AnalysisResultResponse,
   GeneratedInsight,
   MarketingVerdict,
+  PlatformType,
 } from "@agenticverdict/types";
-import { generatedInsightSchema } from "@agenticverdict/types";
+import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
 
-interface TenantStore {
-  analysisId: string;
-  bundle: AnalysisResultResponse;
-}
-
-const byTenant = new Map<string, TenantStore>();
+const byTenant = new Map<string, Map<string, AnalysisResultResponse>>();
 
 function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsight[] {
   const base = (
@@ -240,32 +237,115 @@ function buildDemoBundle(tenantId: string): AnalysisResultResponse {
   return bundle;
 }
 
-export function ensureTenantAnalysisStore(tenantId: string): TenantStore {
+function ensureTenantMap(tenantId: string): Map<string, AnalysisResultResponse> {
   const existing = byTenant.get(tenantId);
   if (existing) {
     return existing;
   }
+  const next = new Map<string, AnalysisResultResponse>();
+  byTenant.set(tenantId, next);
+  return next;
+}
+
+export function ensureTenantAnalysisStore(tenantId: string): {
+  analysisId: string;
+  bundle: AnalysisResultResponse;
+} {
+  const tenantMap = ensureTenantMap(tenantId);
+  const first = tenantMap.values().next().value as AnalysisResultResponse | undefined;
+  if (first) {
+    return { analysisId: first.analysisId, bundle: first };
+  }
   const bundle = buildDemoBundle(tenantId);
-  const store: TenantStore = { analysisId: bundle.analysisId, bundle };
-  byTenant.set(tenantId, store);
-  return store;
+  tenantMap.set(bundle.analysisId, bundle);
+  return { analysisId: bundle.analysisId, bundle };
 }
 
 export function getAnalysisBundleForTenant(
   tenantId: string,
   analysisId: string,
 ): AnalysisResultResponse | undefined {
-  const store = byTenant.get(tenantId);
-  if (!store || store.analysisId !== analysisId) {
-    return undefined;
-  }
-  return store.bundle;
+  const tenantMap = byTenant.get(tenantId);
+  return tenantMap?.get(analysisId);
 }
 
 export function listAllInsightsForTenant(tenantId: string): GeneratedInsight[] {
-  return ensureTenantAnalysisStore(tenantId).bundle.insights;
+  const tenantMap = ensureTenantMap(tenantId);
+  if (tenantMap.size === 0) {
+    return ensureTenantAnalysisStore(tenantId).bundle.insights;
+  }
+  return [...tenantMap.values()].flatMap((bundle) => bundle.insights);
 }
 
 export function listAllVerdictsForTenant(tenantId: string): MarketingVerdict[] {
-  return ensureTenantAnalysisStore(tenantId).bundle.verdicts;
+  const tenantMap = ensureTenantMap(tenantId);
+  if (tenantMap.size === 0) {
+    return ensureTenantAnalysisStore(tenantId).bundle.verdicts;
+  }
+  return [...tenantMap.values()].flatMap((bundle) => bundle.verdicts);
+}
+
+export function persistWorkflowResultForTenant(
+  tenantId: string,
+  workflowResult: WorkflowTriggerJobResult,
+): AnalysisResultResponse | null {
+  const analysisId = workflowResult.analysisId;
+  if (!analysisId || workflowResult.insights === undefined) {
+    return null;
+  }
+  const generatedAt = new Date();
+  const period = {
+    start: generatedAt.toISOString().slice(0, 10),
+    end: generatedAt.toISOString().slice(0, 10),
+  };
+  const insights = workflowResult.insights.map((insight) =>
+    generatedInsightSchema.parse({
+      id: insight.id,
+      tenantId,
+      analysisId,
+      type: insight.type,
+      title: insight.title,
+      description: insight.description,
+      confidence: insight.confidence,
+      relevanceScore: insight.confidence,
+      platforms: workflowResult.processingMetadata?.platformsAnalyzed ?? ["meta"],
+      createdAt: generatedAt,
+    }),
+  );
+  const maybeVerdict = marketingVerdictSchema.safeParse(workflowResult.verdict);
+  const verdicts = maybeVerdict.success ? [maybeVerdict.data] : [];
+  const bundle: AnalysisResultResponse = {
+    analysisId,
+    tenantId,
+    period,
+    platformsAnalyzed: workflowResult.processingMetadata?.platformsAnalyzed ?? ["meta"],
+    dataQualityScore: maybeVerdict.success ? 80 : 60,
+    generatedAt,
+    provenance: {
+      analysisId,
+      generatedAt,
+      agentVersion: "workflow-trigger",
+      modelUsed: "pipeline-runtime",
+      dataSources: (workflowResult.processingMetadata?.platformsAnalyzed ?? ["meta"]).map(
+        (platform) => ({
+          platform: platform as PlatformType,
+          metrics: ["unknown"],
+          dateRange: period,
+          freshnessHours: 0,
+          qualityScore: 75,
+        }),
+      ),
+      transformations: [
+        {
+          type: "workflow_result_ingestion",
+          description: `Persisted from workflow ${workflowResult.workflowId}`,
+          timestamp: generatedAt,
+        },
+      ],
+    },
+    insights,
+    verdicts,
+  };
+  ensureTenantMap(tenantId).set(analysisId, bundle);
+  return bundle;
 }

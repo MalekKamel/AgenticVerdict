@@ -4,7 +4,10 @@ import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
 import { generatedInsightSchema } from "@agenticverdict/types";
 import { describe, expect, it } from "vitest";
 
-import { mergePhase2IntoReportModel } from "./phase2-report-model";
+import {
+  mapMarketingVerdictToReportModel,
+  mergePhase2IntoReportModel,
+} from "./phase2-report-model";
 
 describe("mergePhase2IntoReportModel", () => {
   const tenantId = randomUUID();
@@ -61,5 +64,21 @@ describe("mergePhase2IntoReportModel", () => {
       expect.arrayContaining(["verdict_validation_failed", "insights_validation_failed"]),
     );
     expect(merged.executiveSummary).toBe("Only base");
+  });
+});
+
+describe("mapMarketingVerdictToReportModel", () => {
+  it("projects unified verdict into report-facing Phase3Verdict", () => {
+    const verdict = buildMarketingVerdictFixture({
+      tenantId: randomUUID(),
+      analysisId: randomUUID(),
+      fixtureSeed: "phase3-map",
+    });
+    const mapped = mapMarketingVerdictToReportModel(verdict);
+    expect(mapped.verdictType).toBe(verdict.verdictType);
+    expect(mapped.score).toBe(verdict.score);
+    expect(mapped.summaryLine).toBe(verdict.summary);
+    expect(mapped.recommendations.length).toBe(verdict.recommendations.length);
+    expect(mapped.dataQuality.sourceCount).toBe(verdict.dataSources.length);
   });
 });

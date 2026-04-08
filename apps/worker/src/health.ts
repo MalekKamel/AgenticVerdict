@@ -2,6 +2,10 @@ import http from "node:http";
 
 import type IORedis from "ioredis";
 
+import { getWorkerRootLogger } from "./queues/logger";
+
+const log = getWorkerRootLogger();
+
 export type StartHealthServerOptions =
   | { redis: IORedis; port?: string | number }
   | { connection: IORedis; port?: string | number };
@@ -92,17 +96,23 @@ export function startHealthServer(options: StartHealthServerOptions): http.Serve
 
   server.on("error", (err: NodeJS.ErrnoException) => {
     if (err.code === "EADDRINUSE") {
-      console.error(`Worker health listen failed: port ${listenPort} is already in use`);
+      log.fatal(
+        { err, event: "health_listen_eaddrinuse", port: listenPort },
+        "Worker health listen failed: port already in use",
+      );
       process.exit(1);
     }
-    console.error("Worker health server error", err);
+    log.fatal({ err, event: "health_server_error" }, "Worker health server error");
     process.exit(1);
   });
 
   server.listen(listenPort, "0.0.0.0", () => {
     const addr = server.address();
     const portLabel = addr && typeof addr === "object" ? String(addr.port) : String(listenPort);
-    console.info(`Worker health server listening on 0.0.0.0:${portLabel} (/healthz, /ready)`);
+    log.info(
+      { event: "health_listen", host: "0.0.0.0", port: portLabel },
+      "Worker health server listening (/healthz, /ready)",
+    );
   });
 
   return server;

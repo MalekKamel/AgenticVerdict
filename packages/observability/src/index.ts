@@ -1,8 +1,21 @@
+export { createPinoLogger, type ObservabilityServiceName } from "./logger";
+export { productionFlowTestRegistry } from "./registry";
+export {
+  recordBackoffAttemptOutcome,
+  recordCircuitBreakerTransition,
+  setCircuitBreakerGauge,
+  type CircuitStateMetric,
+} from "./platform-resilience-metrics";
+export { recordDatabaseQueryCompleted } from "./database-metrics";
+export {
+  recordQueueJobDurationSeconds,
+  recordQueueJobWaitSeconds,
+  setQueueDepthGauge,
+} from "./queue-metrics";
 export {
   recordVerdictParseAttempt,
   recordVerdictParseDegraded,
   recordVerdictParseFailureField,
-  productionFlowTestRegistry,
   recordReportGenerationDurationSeconds,
   recordScenarioAssertion,
   recordScenarioDurationSeconds,

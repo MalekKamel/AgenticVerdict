@@ -1,0 +1,12 @@
+# PostgreSQL client-side query timing (`agenticverdict_db_*` when DB client enables queryMetrics).
+groups:
+  - name: agenticverdict_database
+    rules:
+      - alert: AgenticVerdictElevatedSlowQueries
+        expr: rate(agenticverdict_db_slow_queries_total[5m]) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Sustained slow database queries"
+          description: "Review indexes, N+1 patterns, and pool sizing; correlate with API latency."

@@ -38,6 +38,21 @@ const TENANT: TenantContext = {
         { platform: "ga4", enabled: true },
       ],
       kpis: [{ id: "leads", name: "Leads", unit: "count" }],
+      b2bKpiProfile: {
+        enabled: true,
+        funnelMetricMapping: {
+          totalLeadMetricSuffixes: ["mock.conversions"],
+          qualifiedLeadMetricSuffixes: ["mock.qualified_conversions"],
+          spendMetricSuffixes: ["mock.spend"],
+          decisionMakerLeadMetricSuffixes: ["mock.leads_dm"],
+          fleetQualifiedLeadMetricSuffixes: ["mock.leads_fleet"],
+          regionalQualifiedLeadMetricSuffixes: ["mock.leads_regional"],
+          regionalDimension: { key: "region", value: "SA" },
+          sessionsMetricSuffixes: ["mock.sessions"],
+          sessionLanguageDimensionKey: "language",
+        },
+        targetCpql: { maxAmount: 10_000, currencyCode: "SAR" },
+      },
     },
     ai: { primaryModel: "claude-3-5-sonnet-20241022", provider: "anthropic" },
     features: { enableInsights: true, enableVerdict: true },
@@ -71,7 +86,7 @@ function memoryMetricsStore(rows: MarketingMetricsRow[]): MarketingMetricsStore 
 }
 
 describe("Phase 4 agent tools", () => {
-  it("exposes seventeen registered tools via createPhase4ToolRegistry", () => {
+  it("exposes eighteen registered tools via createPhase4ToolRegistry", () => {
     const store = memoryMetricsStore([]);
     const registry = createPhase4ToolRegistry({
       metricsStore: store,
@@ -92,12 +107,79 @@ describe("Phase 4 agent tools", () => {
         },
       },
     });
-    expect(registry.list()).toHaveLength(17);
+    expect(registry.list()).toHaveLength(18);
     expect(registry.get("fetch_meta_metrics")).toBeDefined();
     expect(registry.get("query_historical_metrics")).toBeDefined();
     expect(registry.get("generate_summary")).toBeDefined();
     expect(registry.get("calculate_metrics")).toBeDefined();
     expect(registry.get("get_company_profile")).toBeDefined();
+    expect(registry.get("compute_b2b_kpis_from_snapshots")).toBeDefined();
+  });
+
+  it("compute_b2b_kpis_from_snapshots uses tenant config and snapshots", async () => {
+    const registry = createPhase4ToolRegistry({
+      metricsStore: memoryMetricsStore([]),
+      platform: {
+        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+      },
+    });
+    const tool = registry.get("compute_b2b_kpis_from_snapshots")!;
+    const snapshot = {
+      platform: "meta",
+      dateRange: { startInclusive: "2026-01-01", endInclusive: "2026-01-07" },
+      records: [
+        {
+          metricKey: "meta.mock.conversions",
+          value: 100,
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.qualified_conversions",
+          value: 80,
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.spend",
+          value: 8000,
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.leads_dm",
+          value: 60,
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.leads_fleet",
+          value: 55,
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.leads_regional",
+          value: 40,
+          dimensions: { region: "SA" },
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.sessions",
+          value: 500,
+          dimensions: { language: "ar" },
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+        {
+          metricKey: "meta.mock.sessions",
+          value: 300,
+          dimensions: { language: "en" },
+          capturedAt: "2026-01-01T00:00:00.000Z",
+        },
+      ],
+    };
+    const out = await runWithTenantContext(TENANT, () =>
+      tool.execute({ snapshots: [snapshot] }, INVOCATION),
+    );
+    expect(out).toMatchObject({
+      kpis: expect.objectContaining({ profileApplied: true }),
+      funnel: expect.objectContaining({ totalLeads: 100, qualifiedLeads: 80 }),
+    });
   });
 
   it("fetch_meta_metrics rejects inverted date ranges", async () => {

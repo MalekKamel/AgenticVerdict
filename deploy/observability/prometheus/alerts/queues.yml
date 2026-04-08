@@ -1,0 +1,25 @@
+# BullMQ queue latency and depth (worker scrapes `WORKER_METRICS_PORT`).
+groups:
+  - name: agenticverdict_queues
+    rules:
+      - alert: AgenticVerdictHighQueueDepth
+        expr: agenticverdict_queue_depth > 500
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elevated BullMQ queue depth"
+          description: "One or more queues has waiting+active+delayed depth above 500 for 15m."
+
+      - alert: AgenticVerdictSlowQueueProcessing
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le, queue) (rate(agenticverdict_queue_job_duration_seconds_bucket[15m]))
+          ) > 300
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Queue job processing p99 above 300s"
+          description: "Check worker health, Redis, and downstream dependencies."

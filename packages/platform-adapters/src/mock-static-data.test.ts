@@ -14,8 +14,8 @@ describe("buildScenarioRecords", () => {
   const range = { startInclusive: "2026-01-01", endInclusive: "2026-01-07" };
 
   it.each<[MockAdapterScenario, number]>([
-    ["normal", 8 * 4],
-    ["high-volume", 36 * 4],
+    ["normal", 8 * 9],
+    ["high-volume", 36 * 9],
   ])("produces scaled row counts for %s", (scenario, expectedLen) => {
     const records = buildScenarioRecords({
       platform: "meta",

@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
+import {
+  generatedInsightSchema,
+  marketingVerdictSchema,
+  type MarketingVerdict,
+} from "@agenticverdict/types";
 
 import type { ChartSpec, ReportTemplateViewModel } from "../templates/view-model";
 import { coerceReportTemplateViewModel } from "../templates/view-model";
@@ -8,6 +12,26 @@ import { coerceReportTemplateViewModel } from "../templates/view-model";
 export interface MergePhase2ReportModelOptions {
   /** Cap rows merged from GeneratedInsight list (default 12). */
   maxInsights?: number;
+}
+
+export interface Phase3Verdict {
+  verdictType: MarketingVerdict["verdictType"];
+  score: number;
+  confidence: number;
+  sentiment: MarketingVerdict["sentiment"];
+  summary: string;
+  summaryLine: string;
+  keyFindings: string[];
+  recommendations: Array<{
+    title: string;
+    rationale: string;
+    priority: MarketingVerdict["recommendations"][number]["priority"];
+    effort: MarketingVerdict["recommendations"][number]["effort"];
+  }>;
+  dataQuality: {
+    blendedScore: number;
+    sourceCount: number;
+  };
 }
 
 function titleCaseVerdictType(verdictType: string): string {
@@ -40,6 +64,33 @@ function buildTrendChart(verdict: z.infer<typeof marketingVerdictSchema>): Chart
     kind: "line",
     title: "Historical verdict score",
     series: hist.map((h) => ({ label: h.period, value: h.score })),
+  };
+}
+
+export function mapMarketingVerdictToReportModel(verdict: MarketingVerdict): Phase3Verdict {
+  const blended =
+    verdict.dataSources.length > 0
+      ? verdict.dataSources.reduce((sum, source) => sum + source.qualityScore, 0) /
+        verdict.dataSources.length
+      : 0;
+  return {
+    verdictType: verdict.verdictType,
+    score: verdict.score,
+    confidence: verdict.confidence,
+    sentiment: verdict.sentiment,
+    summary: verdict.summary,
+    summaryLine: verdict.summary,
+    keyFindings: verdict.keyInsights.map((item) => `${item.title} — ${item.detail}`),
+    recommendations: verdict.recommendations.map((item) => ({
+      title: item.title,
+      rationale: item.rationale,
+      priority: item.priority,
+      effort: item.effort,
+    })),
+    dataQuality: {
+      blendedScore: Math.round(blended),
+      sourceCount: verdict.dataSources.length,
+    },
   };
 }
 
@@ -76,7 +127,8 @@ export function mergePhase2IntoReportModel(
 
   const topInsights = insightsParsed.slice(0, maxInsights);
 
-  const fromVerdictFindings = verdict?.keyInsights.map((k) => `${k.title} — ${k.detail}`) ?? [];
+  const mappedVerdict = verdict ? mapMarketingVerdictToReportModel(verdict) : undefined;
+  const fromVerdictFindings = mappedVerdict?.keyFindings ?? [];
   const fromAgentInsights = topInsights.map((i) => `${i.title} (${i.type}) — ${i.description}`);
   const keyFindings = [...vm.keyFindings, ...fromVerdictFindings, ...fromAgentInsights].slice(
     0,
@@ -116,18 +168,18 @@ export function mergePhase2IntoReportModel(
   const dqMetrics = verdict ? buildDataQualityMetrics(verdict) : null;
   const metrics = vm.metrics.columns.length > 0 ? vm.metrics : (dqMetrics ?? vm.metrics);
 
-  const verdictScorecard = verdict
+  const verdictScorecard = mappedVerdict
     ? {
-        verdictType: verdict.verdictType,
-        score: verdict.score,
-        confidence: verdict.confidence,
-        sentiment: verdict.sentiment,
-        summaryLine: verdict.summary,
+        verdictType: mappedVerdict.verdictType,
+        score: mappedVerdict.score,
+        confidence: mappedVerdict.confidence,
+        sentiment: mappedVerdict.sentiment,
+        summaryLine: mappedVerdict.summaryLine,
       }
     : vm.verdictScorecard;
 
-  const verdictRecommendations = verdict
-    ? verdict.recommendations.map((r) => ({
+  const verdictRecommendations = mappedVerdict
+    ? mappedVerdict.recommendations.map((r) => ({
         title: r.title,
         rationale: r.rationale,
         priority: r.priority,
@@ -146,19 +198,14 @@ export function mergePhase2IntoReportModel(
     });
   }
 
-  const bundleQuality =
-    verdict && verdict.dataSources.length > 0
-      ? verdict.dataSources.reduce((a, d) => a + d.qualityScore, 0) / verdict.dataSources.length
-      : undefined;
-
   const dataQualityIndicators: NonNullable<ReportTemplateViewModel["dataQualityIndicators"]> = [
     ...(vm.dataQualityIndicators ?? []),
   ];
-  if (verdict && bundleQuality !== undefined && Number.isFinite(bundleQuality)) {
+  if (mappedVerdict) {
     dataQualityIndicators.push({
       label: "Blended data-source quality",
-      score: Math.round(bundleQuality),
-      detail: `Across ${verdict.dataSources.length} sources`,
+      score: mappedVerdict.dataQuality.blendedScore,
+      detail: `Across ${mappedVerdict.dataQuality.sourceCount} sources`,
     });
   }
 

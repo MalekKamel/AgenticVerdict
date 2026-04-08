@@ -18,18 +18,22 @@
     "test": "turbo run test",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "turbo run test:e2e",
+    "test:e2e:web:smoke": "pnpm --filter @agenticverdict/web exec playwright test e2e/critical-path-smoke.spec.ts e2e/home-journey.spec.ts e2e/locale-smoke.spec.ts e2e/a11y-home.spec.ts e2e/api-health.optional.spec.ts --project=chromium",
     "test:integration": "turbo run test:integration",
     "test:phase01-integration": "pnpm --filter @agenticverdict/phase01-platform-integration test",
+    "test:p1-report-load-matrix": "pnpm --filter @agenticverdict/api exec vitest run src/routes/v1/reports-concurrent-load-matrix.test.ts",
     "test:scenario": "tests/scripts/run-scenario.sh",
     "test:scenarios:all": "tests/scripts/run-all-scenarios.sh",
     "test:scenarios:group": "tests/scripts/run-scenario-group.sh",
     "test:production-flow": "pnpm exec vitest run tests/orchestrator --config tests/orchestrator/vitest.config.ts",
     "workflow:full": "node scripts/full-production-flow.mjs",
+    "workflow:smoke:roundtrip": "node scripts/workflow-status-roundtrip-smoke.mjs",
     "test:unit": "vitest run",
     "typecheck": "turbo run typecheck",
     "verify:build-config": "pnpm exec vitest run packages/config/src/build-constants.test.ts",
     "verify:production-bundle": "NODE_ENV=production pnpm --filter @agenticverdict/api build:esbuild && NODE_ENV=production pnpm --filter @agenticverdict/worker build:esbuild && node tools/build/bundle-adapter-factory-smoke.mjs && node tools/build/analyze-bundles.mjs apps/api/dist apps/worker/dist packages/platform-adapters/dist",
-    "benchmark:esbuild": "node tools/build/benchmark-builds.mjs"
+    "benchmark:esbuild": "node tools/build/benchmark-builds.mjs",
+    "benchmark:performance-baseline": "node scripts/performance-baseline.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js}": [
@@ -42,6 +46,7 @@
   },
   "devDependencies": {
     "@agenticverdict/agent-runtime": "workspace:*",
+    "@agenticverdict/config": "workspace:*",
     "@agenticverdict/platform-adapters": "workspace:*",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",

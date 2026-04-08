@@ -39,6 +39,15 @@ export {
   type PlatformConfig,
 } from "./schemas/platform";
 export {
+  b2bFunnelMetricMappingSchema,
+  b2bKpiProfileSchema,
+  b2bKpiTargetCpqlSchema,
+  b2bKpiWeightsSchema,
+  type B2bFunnelMetricMapping,
+  type B2bKpiProfile,
+  type B2bKpiWeights,
+} from "./schemas/marketing-b2b";
+export {
   defaultDesignTokens,
   designTokensSchema,
   designTokensToCssVariables,
@@ -48,11 +57,15 @@ export {
 } from "./schemas/branding";
 export {
   exportTemplateConfigJsonSchema,
+  templateComponentSpecSchema,
   templateConfigSchema,
+  templateInheritanceSchema,
   templateSectionSchema,
   templateVariableSchema,
   type TemplateBranding,
+  type TemplateComponentSpec,
   type TemplateConfig,
+  type TemplateInheritance,
   type TemplateSection,
   type TemplateStyling,
   type TemplateValidation,
@@ -64,3 +77,10 @@ export {
   type MockAdapterEnv,
   type MockAdapterScenarioEnv,
 } from "./schemas/mock-adapters";
+export {
+  logLevelSchema,
+  observabilityEnvSchema,
+  resolveLogLevel,
+  type LogLevel,
+  type ObservabilityEnv,
+} from "./schemas/observability";

@@ -1,8 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
+import { suppressRecipientForTenant } from "@agenticverdict/worker";
 import { z } from "zod";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { requireAnyRole } from "../../middleware/report-rbac";
 import { rateLimit } from "../../middleware/rate-limit";
 import {
@@ -29,7 +31,7 @@ import {
   recordDeliveryEvent,
   summarizeDeliveryEvents,
 } from "../../services/delivery-analytics-store";
-import { enqueueReportDelivery } from "../../services/report-bullmq";
+import { enqueueReportDelivery, getBullmqRedisConnection } from "../../services/report-bullmq";
 import { createShareGrant, resolveShareGrant } from "../../services/share-store";
 
 const createBodySchema = z.object({
@@ -42,6 +44,102 @@ const deliveryBodySchema = z.object({
   subject: z.string().min(1).max(512).optional(),
   completionWebhookUrl: z.string().url().max(2048).optional(),
 });
+
+const deliveryWebhookBodySchema = z.object({
+  tenantId: z.string().min(1).max(128),
+  reportId: z.string().uuid().optional(),
+  provider: z.enum(["resend", "sendgrid", "unknown"]).default("unknown"),
+  event: z.enum(["delivered", "failed", "bounced", "complaint"]),
+  recipientEmail: z.string().email().max(320).optional(),
+  messageId: z.string().min(1).max(512).optional(),
+  reason: z.string().min(1).max(2048).optional(),
+  metadata: z.record(z.union([z.string(), z.number(), z.boolean()])).optional(),
+});
+
+const resendWebhookBodySchema = z.object({
+  type: z.enum(["email.delivered", "email.bounced", "email.complained", "email.delivery_delayed"]),
+  data: z.object({
+    email_id: z.string().min(1).optional(),
+    to: z.array(z.string().email()).optional(),
+    created_at: z.string().optional(),
+    reason: z.string().optional(),
+    tags: z.record(z.string()).optional(),
+  }),
+});
+
+const sendgridWebhookBodySchema = z.object({
+  event: z.enum(["delivered", "bounce", "dropped", "spamreport"]),
+  sg_message_id: z.string().optional(),
+  email: z.string().email().optional(),
+  reason: z.string().optional(),
+  tenant_id: z.string().optional(),
+  report_id: z.string().optional(),
+});
+
+type CanonicalDeliveryWebhookInput = z.infer<typeof deliveryWebhookBodySchema>;
+
+function parseCanonicalDeliveryWebhookBody(
+  body: unknown,
+): CanonicalDeliveryWebhookInput | undefined {
+  const canonical = deliveryWebhookBodySchema.safeParse(body);
+  if (canonical.success) {
+    return canonical.data;
+  }
+
+  const resend = resendWebhookBodySchema.safeParse(body);
+  if (resend.success) {
+    const tenantId = resend.data.data.tags?.tenantId;
+    if (!tenantId) {
+      return undefined;
+    }
+    const firstRecipient = resend.data.data.to?.[0];
+    const event =
+      resend.data.type === "email.delivered"
+        ? "delivered"
+        : resend.data.type === "email.bounced"
+          ? "bounced"
+          : resend.data.type === "email.complained"
+            ? "complaint"
+            : "failed";
+    return {
+      tenantId,
+      reportId: resend.data.data.tags?.reportId,
+      provider: "resend",
+      event,
+      recipientEmail: firstRecipient,
+      messageId: resend.data.data.email_id,
+      reason: resend.data.data.reason,
+      metadata: resend.data.data.tags,
+    };
+  }
+
+  const sendgrid = z.array(sendgridWebhookBodySchema).safeParse(body);
+  if (sendgrid.success && sendgrid.data.length > 0) {
+    const evt = sendgrid.data[0]!;
+    if (!evt.tenant_id) {
+      return undefined;
+    }
+    const event =
+      evt.event === "delivered"
+        ? "delivered"
+        : evt.event === "bounce"
+          ? "bounced"
+          : evt.event === "spamreport"
+            ? "complaint"
+            : "failed";
+    return {
+      tenantId: evt.tenant_id,
+      reportId: evt.report_id,
+      provider: "sendgrid",
+      event,
+      recipientEmail: evt.email,
+      messageId: evt.sg_message_id,
+      reason: evt.reason,
+    };
+  }
+
+  return undefined;
+}
 
 const shareBodySchema = z.object({
   expiresInHours: z.number().int().min(1).max(720).optional().default(168),
@@ -63,18 +161,21 @@ const shareRoles = ["admin", "reports:share", "reports:write"] as const;
 export function registerReportRoutes(app: FastifyInstance, redis: Redis | null): void {
   const readChain = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     requireAnyRole(...readRoles),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 120, keyPrefix: "v1:reports:read" }),
   ];
 
   const writeChain = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     requireAnyRole(...writeRoles),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:reports:write" }),
   ];
 
   const shareChain = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     requireAnyRole(...shareRoles),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:reports:share" }),
   ];
@@ -121,6 +222,98 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
         summary: summarizeDeliveryEvents(tenantId),
         recentEvents: listDeliveryEventsForTenant(tenantId, 50),
       };
+    },
+  );
+
+  app.post(
+    "/reports/delivery-events/webhook",
+    {
+      schema: {
+        tags: ["Reports"],
+        summary: "Ingest provider delivery outcomes (sent/failed/bounced/complaint)",
+        body: {
+          oneOf: [
+            { type: "object", additionalProperties: true },
+            { type: "array", items: { type: "object", additionalProperties: true } },
+          ],
+        },
+        response: {
+          202: {
+            type: "object",
+            properties: {
+              status: { type: "string", enum: ["accepted"] },
+              recordedEventId: { type: "string" },
+            },
+            required: ["status", "recordedEventId"],
+          },
+          400: { type: "object", additionalProperties: true },
+          401: { type: "object", additionalProperties: true },
+        },
+      },
+    },
+    async (request, reply) => {
+      const configuredToken = process.env.REPORT_DELIVERY_WEBHOOK_TOKEN?.trim();
+      const presentedToken = request.headers["x-delivery-webhook-token"];
+      const token =
+        typeof presentedToken === "string"
+          ? presentedToken
+          : Array.isArray(presentedToken)
+            ? presentedToken[0]
+            : undefined;
+      if (!configuredToken || token !== configuredToken) {
+        return reply.status(401).send({
+          error: { code: "unauthorized", message: "Invalid webhook token", details: {} },
+          requestId: request.id,
+        });
+      }
+
+      const parsed = parseCanonicalDeliveryWebhookBody(request.body);
+      if (!parsed) {
+        return reply.status(400).send({
+          error: {
+            code: "validation_error",
+            message: "Invalid body",
+            details: {},
+          },
+          requestId: request.id,
+        });
+      }
+
+      const eventType =
+        parsed.event === "delivered"
+          ? "email_sent"
+          : parsed.event === "failed"
+            ? "email_failed"
+            : parsed.event === "bounced"
+              ? "email_bounced"
+              : "email_complaint";
+
+      const recorded = recordDeliveryEvent({
+        tenantId: parsed.tenantId,
+        type: eventType,
+        reportId: parsed.reportId,
+        meta: {
+          provider: parsed.provider,
+          ...(parsed.recipientEmail ? { recipientEmail: parsed.recipientEmail } : {}),
+          ...(parsed.messageId ? { messageId: parsed.messageId } : {}),
+          ...(parsed.reason ? { reason: parsed.reason } : {}),
+          ...(parsed.metadata ?? {}),
+        },
+      });
+
+      const redis = getBullmqRedisConnection();
+      if (
+        redis &&
+        parsed.recipientEmail &&
+        (parsed.event === "bounced" || parsed.event === "complaint")
+      ) {
+        await suppressRecipientForTenant(redis, parsed.tenantId, parsed.recipientEmail);
+      }
+
+      return reply.status(202).send({
+        status: "accepted",
+        recordedEventId: recorded.id,
+      });
     },
   );
 
@@ -614,7 +807,8 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       preHandler: writeChain,
       schema: {
         tags: ["Reports"],
-        summary: "Upload report bytes (object storage placeholder backed by in-memory store)",
+        summary:
+          "Upload report bytes (memory by default; set REPORT_BLOB_STORAGE_DIR for filesystem-backed blobs)",
         security: [{ bearerAuth: [] }],
         consumes: ["application/octet-stream", "application/pdf"],
         params: {

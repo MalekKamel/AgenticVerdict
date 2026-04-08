@@ -5,8 +5,9 @@ import { z } from "zod";
 import type { MarketingVerdict } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
-import { ensureTenantAnalysisStore, listAllVerdictsForTenant } from "../../services/analysis-store";
+import { listTenantVerdicts } from "../../services/analysis-repository";
 import { readJsonCache, stableQueryKey, writeJsonCache } from "../../services/response-cache";
 
 const verdictQuerySchema = z.object({
@@ -32,6 +33,7 @@ function rangesOverlap(
 export function registerVerdictRoutes(app: FastifyInstance, redis: Redis | null): void {
   const preHandlers = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 100, keyPrefix: "v1:verdicts" }),
   ];
 
@@ -106,8 +108,7 @@ export function registerVerdictRoutes(app: FastifyInstance, redis: Redis | null)
         return reply.send(cached);
       }
 
-      ensureTenantAnalysisStore(tenantId);
-      let rows = listAllVerdictsForTenant(tenantId);
+      let rows = listTenantVerdicts(tenantId);
 
       if (q.campaignId) {
         rows = rows.filter((v) => v.campaignId === q.campaignId);

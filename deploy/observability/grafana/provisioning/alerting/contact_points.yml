@@ -1,0 +1,8 @@
+# Grafana unified alerting — contact points (Grafana 11).
+# Extend this file with real Slack, email, or webhook receivers before production alerting.
+# Documentation: https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting/contact-points/
+#
+# Remediation plan reference: alert channels are provisioned here (Grafana expects
+# provisioning/alerting/*.yml), not a loose file at the provisioning root.
+apiVersion: 1
+contactPoints: []

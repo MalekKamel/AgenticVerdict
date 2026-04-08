@@ -1,3 +1,4 @@
+import { recordDatabaseQueryCompleted } from "@agenticverdict/observability";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -17,6 +18,52 @@ export interface DatabaseClientOptions {
   debugSql?: boolean;
   /** Application name sent to PostgreSQL. */
   applicationName?: string;
+  /**
+   * Wrap postgres `unsafe` to record `agenticverdict_db_query_duration_seconds` and
+   * `agenticverdict_db_slow_queries_total` (Prometheus).
+   */
+  queryMetrics?: {
+    enabled: boolean;
+    /** Milliseconds; default 100. */
+    slowThresholdMs?: number;
+    onSlowQuery?: (info: { durationMs: number; sqlPreview: string }) => void;
+  };
+}
+
+type PostgresSql = ReturnType<typeof postgres>;
+
+function attachPostgresQueryMetrics(
+  sql: PostgresSql,
+  slowThresholdMs: number,
+  onSlowQuery?: (info: { durationMs: number; sqlPreview: string }) => void,
+): void {
+  const originalUnsafe = sql.unsafe.bind(sql) as PostgresSql["unsafe"];
+  const patched: PostgresSql["unsafe"] = ((
+    query: string,
+    parameters?: unknown[],
+    queryOptions?: unknown,
+  ) => {
+    const start = performance.now();
+    const pending = originalUnsafe(query, parameters as never, queryOptions as never);
+    const finalize = () => {
+      const durationMs = performance.now() - start;
+      const slow = recordDatabaseQueryCompleted(durationMs / 1000, slowThresholdMs);
+      if (slow && onSlowQuery) {
+        onSlowQuery({ durationMs, sqlPreview: query.slice(0, 500) });
+      }
+    };
+    if (
+      pending !== null &&
+      pending !== undefined &&
+      typeof (pending as PromiseLike<unknown>).then === "function"
+    ) {
+      void Promise.resolve(pending as PromiseLike<unknown>).then(finalize, finalize);
+    } else {
+      finalize();
+    }
+    return pending;
+  }) as PostgresSql["unsafe"];
+  (sql as { unsafe: PostgresSql["unsafe"] }).unsafe = patched;
 }
 
 function buildPostgresOptions(
@@ -51,6 +98,14 @@ export function createDatabaseClient(
         },
       }
     : undefined;
+
+  if (options.queryMetrics?.enabled) {
+    attachPostgresQueryMetrics(
+      client,
+      options.queryMetrics.slowThresholdMs ?? 100,
+      options.queryMetrics.onSlowQuery,
+    );
+  }
 
   return drizzle(client, { schema, logger });
 }

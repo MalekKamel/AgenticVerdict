@@ -1,4 +1,4 @@
-export const REPORT_FORMATS = ["pdf", "docx", "xlsx"] as const;
+export const REPORT_FORMATS = ["pdf", "docx", "xlsx", "html", "json"] as const;
 export type ReportFormat = (typeof REPORT_FORMATS)[number];
 
 import type { ReportTextDirection } from "@agenticverdict/i18n";

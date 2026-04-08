@@ -14,10 +14,14 @@ export { renderDataTable, type DataTableInput } from "./components/data-table";
 export { renderFigure, renderFigurePlaceholder, type FigureInput } from "./components/figure";
 export { renderSectionDivider } from "./components/section-divider";
 export { HtmlDocxFormatGenerator } from "./docx-format-generator";
+export { HtmlFormatGenerator } from "./html-format-generator";
 export { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
+export { JsonFormatGenerator } from "./json-format-generator";
 export {
+  mapMarketingVerdictToReportModel,
   mergePhase2IntoReportModel,
   type MergePhase2ReportModelOptions,
+  type Phase3Verdict,
 } from "./integration/phase2-report-model";
 export {
   createDefaultFormatRegistry,

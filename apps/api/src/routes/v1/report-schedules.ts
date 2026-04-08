@@ -3,6 +3,7 @@ import type { Redis } from "@upstash/redis";
 import { z } from "zod";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { requireAnyRole } from "../../middleware/report-rbac";
 import { rateLimit } from "../../middleware/rate-limit";
 import { recordDeliveryEvent } from "../../services/delivery-analytics-store";
@@ -64,12 +65,14 @@ async function refreshRepeatableForRow(row: ReportScheduleRecord): Promise<void>
 export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis | null): void {
   const readChain = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     requireAnyRole(...readRoles),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 120, keyPrefix: "v1:report-schedules:read" }),
   ];
 
   const writeChain = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     requireAnyRole(...writeRoles),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:report-schedules:write" }),
   ];

@@ -17,7 +17,12 @@ export {
   createDefaultAdapterInfrastructure,
   type AdapterInfrastructureBundle,
 } from "./adapter-infrastructure";
-export { CircuitBreaker, type CircuitBreakerOptions, type CircuitState } from "./circuit-breaker";
+export {
+  CircuitBreaker,
+  type CircuitBreakerObservabilityLabels,
+  type CircuitBreakerOptions,
+  type CircuitState,
+} from "./circuit-breaker";
 export { buildAdapterCacheKey, type AdapterCacheKeyInput } from "./cache/cache-keys";
 export { MemoryPlatformCache } from "./cache/memory-cache";
 export { defaultAdapterCacheTtlSeconds } from "./cache/ttl";
@@ -211,6 +216,7 @@ export {
   applyBackoffJitter,
   defaultBackoffOptions,
   type ExponentialBackoffOptions,
+  type ExponentialBackoffTelemetry,
   withExponentialBackoff,
 } from "./rate-limit";
 export { createOptionalUpstashRedis } from "./redis-env";

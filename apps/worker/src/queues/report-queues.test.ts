@@ -62,6 +62,62 @@ describe("defaultWorkflowTriggerProcessor", () => {
     await expect(defaultWorkflowTriggerProcessor(payload)).resolves.toEqual(pdfResult);
     expect(runProductionFlowScenario).toHaveBeenCalledWith(payload);
   });
+
+  it("runs marketing-analysis through pipeline workflow processor", async () => {
+    const result = await defaultWorkflowTriggerProcessor({
+      workflowId: "marketing-analysis",
+      testMode: true,
+      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      config: {
+        dateRange: { start: "2026-03-01T00:00:00.000Z", end: "2026-03-31T23:59:59.000Z" },
+        platforms: ["meta", "ga4"],
+        analysisDepth: "standard",
+      },
+      requestId: "req-mkt-1",
+    });
+
+    expect(result.phase).toBe("marketing-analysis");
+    expect(result.message).toBe("marketing-analysis_processed");
+    expect(result.insights?.length).toBeGreaterThan(0);
+    expect(result.processingMetadata?.platformsAnalyzed).toEqual(["meta", "ga4"]);
+  });
+
+  it("runs verdict-generation through pipeline workflow processor", async () => {
+    const result = await defaultWorkflowTriggerProcessor({
+      workflowId: "verdict-generation",
+      testMode: true,
+      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      config: {
+        dateRange: { start: "2026-03-01T00:00:00.000Z", end: "2026-03-31T23:59:59.000Z" },
+        platforms: ["meta", "ga4", "gsc"],
+        verdictDepth: "quick",
+        outputFormat: "pdf",
+      },
+      requestId: "req-vrd-1",
+    });
+
+    expect(result.phase).toBe("verdict-generation");
+    expect(result.message).toBe("verdict-generation_processed");
+    expect(result.processingMetadata?.verdictDepth).toBe("quick");
+    expect(result.processingMetadata?.outputFormat).toBe("pdf");
+  });
+
+  it("marks delivery_queue_failed when workflow delivery is enabled but send fails", async () => {
+    const result = await defaultWorkflowTriggerProcessor({
+      workflowId: "verdict-generation",
+      testMode: true,
+      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      config: {
+        deliveryEnabled: true,
+        recipientEmail: "ops@example.test",
+        outputFormat: "pdf",
+      },
+      requestId: "req-vrd-delivery-1",
+    });
+    expect(result.message).toContain("delivery_issue");
+    expect(result.processingMetadata?.errorCode).toBe("delivery_queue_failed");
+    expect(result.processingMetadata?.partialFailure).toBe(true);
+  });
 });
 
 describe("defaultReportGenerationProcessor", () => {

@@ -1,8 +1,8 @@
 # Phase 2: Agent Runtime & Intelligence - Acceptance Criteria
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
-**Status:** Not Started
-**Last Updated:** 2026-04-04
+**Status:** In progress
+**Last Updated:** 2026-04-08
 
 ---
 
@@ -157,10 +157,10 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 **Criteria:**
 
-- [ ] **1.7.1** `GET /api/v1/insights` implemented per [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) (filters, sort, pagination, response envelope)
-- [ ] **1.7.2** `GET /api/v1/verdicts` implemented; each item conforms to unified **`MarketingVerdict`** (no parallel DTO)
-- [ ] **1.7.3** `GET /api/v1/analysis-results/:id` returns insights, verdicts, and **`ProvenanceInfo`** for the same tenant
-- [ ] **1.7.4** `POST /api/v1/insights/validate` and `POST /api/v1/verdicts/validate` return `ValidationResult` (score, errors, warnings, recommendations)
+- [x] **1.7.1** `GET /api/v1/insights` implemented per [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) (filters, sort, pagination, response envelope)
+- [x] **1.7.2** `GET /api/v1/verdicts` implemented; each item conforms to unified **`MarketingVerdict`** (no parallel DTO)
+- [x] **1.7.3** `GET /api/v1/analysis-results/:id` returns insights, verdicts, and **`ProvenanceInfo`** for the same tenant
+- [x] **1.7.4** `POST /api/v1/insights/validate` and `POST /api/v1/verdicts/validate` return `ValidationResult` (score, errors, warnings, recommendations)
 - [ ] **1.7.5** **JWT authentication** on all routes; **401** invalid/missing token; **403** wrong tenant or role
 - [ ] **1.7.6** **Rate limiting** per tenant (e.g. insights list **100/min**; configurable per route); **429** with `Retry-After` when exceeded
 - [ ] **1.7.7** Error responses follow a **stable JSON error envelope** (code, message, optional `details`) as documented in API specifications
@@ -180,14 +180,33 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 - [ ] **1.8.1** **`MarketingVerdict`** is the **only** verdict shape used from agent output through Phase 3 reports (see [Remediation Plan](/docs/03-development-phases/REMEDIATION_PLAN.md) **R-7**)
 - [ ] **1.8.2** **`GeneratedInsight`** schema documented and enforced (Zod + TypeScript) with type, confidence, relevance, evidence, platform attribution
-- [ ] **1.8.3** Data-quality **`ValidationResult`** contract implemented for insights and verdicts (shared between API and agent-runtime per **R-10**)
-- [ ] **1.8.4** **Provenance** captured for each analysis (`dataSources`, transformations, model/agent ids, quality scores) and returned on analysis-result API (**R-11**)
+- [x] **1.8.3** Data-quality **`ValidationResult`** contract implemented for insights and verdicts (shared between API and agent-runtime per **R-10**)
+- [x] **1.8.4** **Provenance** captured for each analysis (`dataSources`, transformations, model/agent ids, quality scores) and returned on analysis-result API (**R-11**)
 - [ ] **1.8.5** No **transformation layer** between “agent verdict” and “report verdict” — only optional **enrichment** fields (e.g. `reportMetadata`)
 
 **Validation Method:**
 
 - Schema snapshot tests on golden JSON fixtures
 - E2E test: run analysis → fetch `analysis-results/:id` → assert provenance + schema parity with stored verdicts
+
+---
+
+### 1.9 Queue workflows and worker routing
+
+**Criteria:**
+
+- [x] **1.9.1** `marketing-analysis` workflow executes end-to-end through workflow trigger queue and returns a typed result envelope
+- [ ] **1.9.2** `verdict-generation` workflow executes analysis reuse, verdict synthesis, report generation, and optional delivery enqueue
+- [x] **1.9.3** Trigger payload validation covers `dateRange`, `platforms`, `analysisDepth`, `verdictDepth`, `outputFormat`, `deliveryEnabled`, and `recipientEmail` where applicable
+- [ ] **1.9.4** Partial platform failures are isolated and surfaced without cross-tenant leakage
+- [x] **1.9.5** Workflow errors use stable codes (`platform_fetch_failed`, `platform_timeout`, `analysis_failed`, `insight_generation_failed`, `verdict_synthesis_failed`, `report_generation_failed`, `delivery_queue_failed`)
+- [x] **1.9.6** Worker routing does not fall back to foundation acknowledgment for these workflow IDs once enabled
+
+**Validation Method:**
+
+- Queue-trigger integration tests (`enqueue -> process -> typed result`)
+- Failure-injection tests for single-platform and multi-platform runs
+- Tenant-isolation checks under concurrent workflow execution
 
 ---
 
@@ -234,17 +253,51 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 ---
 
-### 2.3 Performance Requirements
+### 2.3 Business Outcome Quality (NEW - Masafh Alignment)
 
 **Criteria:**
 
-- [ ] **2.3.1** Single agent response time <5 seconds (p95)
-- [ ] **2.3.2** Full workflow response time <15 seconds (p95)
-- [ ] **2.3.3** Tool execution time <500ms (p95) for database tools
-- [ ] **2.3.4** Platform data fetch time <2 seconds (p95) per platform
-- [ ] **2.3.5** Token usage optimization: ≤2000 tokens for simple queries
-- [ ] **2.3.6** Caching reducing redundant LLM calls by ≥50%
-- [ ] **2.3.7** Memory usage stable (no leaks) over 100 consecutive executions
+- [ ] **2.3.1** B2B lead quality score tracked in all marketing analyses
+- [ ] **2.3.2** Cost-per-qualified-lead (CPQL) calculated by platform
+- [ ] **2.3.3** Lead-to-opportunity conversion rate tracked
+- [ ] **2.3.4** Estimated deal value attributed to marketing campaigns
+- [ ] **2.3.5** B2B decision-maker targeting effectiveness measured
+- [ ] **2.3.6** Saudi Arabian market performance indicators tracked
+- [ ] **2.3.7** Fleet size distribution in leads analyzed (10+ vehicles priority)
+- [ ] **2.3.8** Arabic vs. English engagement patterns compared
+
+**Measurement Method:**
+
+- Business KPI dashboard integration
+- Lead quality scoring framework implemented
+- CRM integration for conversion tracking
+- Regional performance reporting
+
+**Quality Targets for Masafh:**
+
+| Business KPI           | Target   | Measurement                                  |
+| ---------------------- | -------- | -------------------------------------------- |
+| Lead Quality Score     | ≥70/100  | Based on job title, company size, fleet size |
+| CPQL                   | ≤SAR 500 | Cost per qualified B2B lead                  |
+| Decision-Maker Rate    | ≥60%     | Leads from fleet managers, ops directors     |
+| Saudi Market Relevance | ≥80%     | Leads from Saudi Arabian companies           |
+| Fleet Size Quality     | ≥50%     | Leads from fleets with 10+ vehicles          |
+
+---
+
+### 2.4 Performance Requirements
+
+**Criteria:**
+
+- [ ] **2.4.1** Single agent response time <5 seconds (p95)
+- [ ] **2.4.2** Full workflow response time <15 seconds (p95)
+- [ ] **2.4.3** Tool execution time <500ms (p95) for database tools
+- [ ] **2.4.4** Platform data fetch time <2 seconds (p95) per platform
+- [ ] **2.4.5** Token usage optimization: ≤2000 tokens for simple queries
+- [ ] **2.4.6** Caching reducing redundant LLM calls by ≥50%
+- [ ] **2.4.7** Memory usage stable (no leaks) over 100 consecutive executions
+- [ ] **2.4.8** `marketing-analysis` completes <30s for 2 platforms and <60s for 5 platforms under staging baseline
+- [ ] **2.4.9** `verdict-generation` completes <60s for quick depth and <90s for standard depth under staging baseline
 
 **Validation Method:**
 
@@ -255,16 +308,16 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 
 ---
 
-### 2.4 Error Rate Requirements
+### 2.5 Error Rate Requirements
 
 **Criteria:**
 
-- [ ] **2.4.1** Agent execution error rate <2% for production load
-- [ ] **2.4.2** Tool execution error rate <1% for healthy dependencies
-- [ ] **2.4.3** LLM API error rate <1% (after retry/fallback)
-- [ ] **2.4.4** Graceful degradation rate 100% for total provider failures
-- [ ] **2.4.5** Error logging capture rate 100% for all failures
-- [ ] **2.4.6** Error recovery success rate ≥95% for transient failures
+- [ ] **2.5.1** Agent execution error rate <2% for production load
+- [ ] **2.5.2** Tool execution error rate <1% for healthy dependencies
+- [ ] **2.5.3** LLM API error rate <1% (after retry/fallback)
+- [ ] **2.5.4** Graceful degradation rate 100% for total provider failures
+- [ ] **2.5.5** Error logging capture rate 100% for all failures
+- [ ] **2.5.6** Error recovery success rate ≥95% for transient failures
 
 **Validation Method:**
 
@@ -325,6 +378,7 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 - [ ] **3.3.4** Tool execution tracking with timing data
 - [ ] **3.3.5** Performance metrics available in dashboards
 - [ ] **3.3.6** Error alerts configured for critical failures
+- [ ] **3.3.7** Workflow metrics emitted for duration, platforms analyzed, insights count, token usage, verdict score distribution, report artifact size, and delivery enqueue outcomes
 
 **Validation Method:**
 
@@ -701,7 +755,7 @@ This document defines the comprehensive acceptance criteria for Phase 2 (Agent R
 ---
 
 **Document Version:** 1.1
-**Last Updated:** 2026-04-04
+**Last Updated:** 2026-04-08
 **Next Review:** End of Week 1, Phase 2
 **Owner:** Development Lead
 **Approvers:** Technical Lead, QA Lead, Product Owner

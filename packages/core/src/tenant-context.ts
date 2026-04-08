@@ -31,3 +31,15 @@ export function runWithTenantContext<T>(
 ): T | Promise<T> {
   return tenantStorage.run(context, fn);
 }
+
+/**
+ * Binds {@link TenantContext} for the remainder of the current synchronous execution and any
+ * asynchronous continuations scheduled from it (Node.js `AsyncLocalStorage.prototype.enterWith`).
+ *
+ * Prefer {@link runWithTenantContext} when the full operation can be wrapped in one function.
+ * HTTP frameworks often need this after auth middleware so route handlers and downstream `await`s
+ * still see tenant context without wrapping every handler manually.
+ */
+export function bindTenantContextAsyncContinuation(context: TenantContext): void {
+  tenantStorage.enterWith(context);
+}

@@ -2,6 +2,10 @@ import { randomUUID } from "node:crypto";
 
 export type DeliveryEventType =
   | "email_queued"
+  | "email_sent"
+  | "email_failed"
+  | "email_bounced"
+  | "email_complaint"
   | "share_issued"
   | "schedule_registered"
   | "schedule_removed";
@@ -13,7 +17,7 @@ export interface DeliveryEvent {
   reportId?: string | undefined;
   scheduleId?: string | undefined;
   at: string;
-  meta?: Record<string, string> | undefined;
+  meta?: Record<string, string | number | boolean> | undefined;
 }
 
 const events: DeliveryEvent[] = [];
@@ -44,6 +48,10 @@ export function listDeliveryEventsForTenant(tenantId: string, limit = 100): Deli
 
 export interface DeliveryMetricsSummary {
   emailQueued: number;
+  emailSent: number;
+  emailFailed: number;
+  emailBounced: number;
+  emailComplaints: number;
   shareIssued: number;
   scheduleRegistered: number;
   scheduleRemoved: number;
@@ -53,6 +61,10 @@ export function summarizeDeliveryEvents(tenantId: string): DeliveryMetricsSummar
   const mine = events.filter((e) => e.tenantId === tenantId);
   return {
     emailQueued: mine.filter((e) => e.type === "email_queued").length,
+    emailSent: mine.filter((e) => e.type === "email_sent").length,
+    emailFailed: mine.filter((e) => e.type === "email_failed").length,
+    emailBounced: mine.filter((e) => e.type === "email_bounced").length,
+    emailComplaints: mine.filter((e) => e.type === "email_complaint").length,
     shareIssued: mine.filter((e) => e.type === "share_issued").length,
     scheduleRegistered: mine.filter((e) => e.type === "schedule_registered").length,
     scheduleRemoved: mine.filter((e) => e.type === "schedule_removed").length,

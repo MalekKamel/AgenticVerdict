@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { productionFlowTestRegistry } from "./registry";
 import {
-  productionFlowTestRegistry,
   recordVerdictParseAttempt,
   recordVerdictParseDegraded,
   recordVerdictParseFailureField,

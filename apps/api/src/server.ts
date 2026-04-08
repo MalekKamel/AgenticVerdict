@@ -3,7 +3,9 @@ import { randomUUID } from "node:crypto";
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { createUpstashRedisFromEnv } from "@agenticverdict/database";
-import { renderProductionFlowTestMetrics } from "@agenticverdict/observability";
+import { createPinoLogger, renderProductionFlowTestMetrics } from "@agenticverdict/observability";
+
+import { registerRequestAccessLogging } from "./middleware/request-logging";
 
 import { registerSwagger, registerSwaggerUi } from "./openapi";
 import { registerAnalysisResultRoutes } from "./routes/v1/analysis-results";
@@ -16,11 +18,14 @@ import { registerTestFlowRoutes } from "./routes/v1/test-flow";
 import { registerValidationRoutes } from "./routes/v1/validation";
 import { registerVerdictRoutes } from "./routes/v1/verdicts";
 import { registerWorkflowRoutes } from "./routes/v1/workflows";
+import "./middleware/jwt-tenant-context";
+import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
 
 export async function buildApiServer(): Promise<FastifyInstance> {
   const redis = createUpstashRedisFromEnv();
+  const logger = process.env.VITEST === "true" ? false : createPinoLogger("api");
   const app = Fastify({
-    logger: process.env.VITEST === "true" ? false : true,
+    logger,
     genReqId: () => randomUUID(),
   });
 
@@ -79,6 +84,9 @@ export async function buildApiServer(): Promise<FastifyInstance> {
 
   await app.register(
     async (scope) => {
+      registerRequestAccessLogging(scope);
+      registerTenantAlsRouteWrapping(scope);
+
       registerInsightRoutes(scope, redis);
       registerVerdictRoutes(scope, redis);
       registerAnalysisResultRoutes(scope, redis);

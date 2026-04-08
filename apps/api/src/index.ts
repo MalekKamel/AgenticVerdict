@@ -10,4 +10,5 @@ export {
   type AuthMiddlewareOptions,
   type AuthPayload,
 } from "./middleware/auth";
+export { bindJwtTenantAsyncContext } from "./middleware/jwt-tenant-context";
 export { rateLimit, type RateLimitOptions } from "./middleware/rate-limit";

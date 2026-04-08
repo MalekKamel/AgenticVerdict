@@ -1,0 +1,30 @@
+# Recording + alerting rules for platform adapter circuit breakers.
+# Mount alongside prometheus.yml (see docker-compose.observability.yml).
+
+groups:
+  - name: agenticverdict_circuit_breaker
+    rules:
+      - alert: PlatformCircuitBreakerOpen
+        expr: |
+          max_over_time(agenticverdict_circuit_breaker_state{platform=~".+"}[5m]) >= 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Platform circuit breaker is open"
+          description: |
+            At least one circuit breaker has been in an open state (metric >= 1) for five minutes.
+            Inspect `agenticverdict_circuit_breaker_transitions_total` and platform health dashboards.
+
+      - alert: HighPlatformRetryExhaustionRate
+        expr: |
+          sum by (platform, operation) (
+            rate(agenticverdict_retry_attempts_count{outcome="exhausted"}[10m])
+          ) > 0.05
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elevated retry exhaustion for platform operations"
+          description: |
+            Retry backoff exhausted frequently for platform={{ $labels.platform }} operation={{ $labels.operation }}.

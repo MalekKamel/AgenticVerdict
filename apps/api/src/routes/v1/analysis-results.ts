@@ -2,15 +2,18 @@ import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
 import {
-  ensureTenantAnalysisStore,
-  getAnalysisBundleForTenant,
-} from "../../services/analysis-store";
+  getTenantAnalysisBundle,
+  getTenantAnalysisProvenanceWithFallback,
+  listTenantInsights,
+} from "../../services/analysis-repository";
 
 export function registerAnalysisResultRoutes(app: FastifyInstance, redis: Redis | null): void {
   const preHandlers = [
     jwtAuth({ required: true }),
+    bindJwtTenantAsyncContext(),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:analysis-results" }),
   ];
 
@@ -55,16 +58,27 @@ export function registerAnalysisResultRoutes(app: FastifyInstance, redis: Redis 
       }
 
       const { id } = request.params;
-      ensureTenantAnalysisStore(tenantId);
-      const bundle = getAnalysisBundleForTenant(tenantId, id);
+      const bundle = getTenantAnalysisBundle(tenantId, id);
       if (!bundle) {
+        // Keep fallback behavior for fresh tenants without persisted workflow runs yet.
+        const seeded = listTenantInsights(tenantId);
+        if (seeded.length > 0) {
+          return reply.status(404).send({
+            error: { code: "not_found", message: "Analysis result not found", details: {} },
+            requestId: request.id,
+          });
+        }
         return reply.status(404).send({
           error: { code: "not_found", message: "Analysis result not found", details: {} },
           requestId: request.id,
         });
       }
 
-      return reply.send(bundle);
+      const provenance = await getTenantAnalysisProvenanceWithFallback(tenantId, id);
+      return reply.send({
+        ...bundle,
+        provenance: provenance ?? bundle.provenance,
+      });
     },
   );
 }

@@ -12,6 +12,10 @@ export {
   type EmailDeliveryService,
   type SendReportEmailParams,
 } from "./services/email";
+export {
+  isRecipientSuppressed,
+  suppressRecipientForTenant,
+} from "./services/delivery-suppression-redis";
 
 export type {
   ProductionFlowPdfScenarioId,
@@ -28,6 +32,11 @@ export type {
 } from "./queues/job-types";
 export { isProductionFlowScenarioId, PRODUCTION_FLOW_SCENARIO_IDS } from "./queues/job-types";
 export {
+  workflowTriggerJobConfigSchema,
+  workflowTriggerJobDataSchema,
+  workflowTriggerJobResultSchema,
+} from "./queues/job-types";
+export {
   REPORT_DELIVERY_QUEUE,
   REPORT_GENERATION_QUEUE,
   REPORT_SCHEDULE_QUEUE,
@@ -43,8 +52,10 @@ export {
   defaultReportDeliveryProcessor,
   defaultReportGenerationProcessor,
   defaultWorkflowTriggerProcessor,
+  refreshBullmqQueueDepthMetrics,
   registerReportWorkers,
   type RegisteredReportWorkers,
+  type ReportDeliveryProcessorOptions,
   type ReportDeliveryWebhookPayload,
   type ReportWorkersOptions,
 } from "./queues/report-queues";

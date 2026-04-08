@@ -8,6 +8,7 @@ import {
 } from "@agenticverdict/observability";
 
 import { jwtAuth } from "../../middleware/auth";
+import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
 import {
   getWorkflowTriggerJobStatus,
@@ -51,6 +52,7 @@ function mapAggregateStatus(state: WorkflowTriggerJobState): "completed" | "fail
 export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null): void {
   const adminChain = [
     jwtAuth({ required: true, roles: [...adminRoles] }),
+    bindJwtTenantAsyncContext(),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 120, keyPrefix: "v1:test-flow" }),
   ];
 

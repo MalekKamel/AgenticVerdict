@@ -27,4 +27,17 @@ export {
   messageKeysForLocale,
   missingKeysComparedTo,
 } from "./translation-parity";
+export {
+  analyzeArabicLocaleQuality,
+  assertArabicStructuralLocaleQuality,
+  computeLexicalOverlapDiagnostic,
+  type ArabicLocaleQualityIssue,
+  type ArabicLocaleQualityReport,
+} from "./arabic-locale-quality";
+export {
+  computeSentenceBleu,
+  meanSentenceBleu,
+  tokenizeBleu,
+  type ParallelStringPair,
+} from "./bleu-score";
 export { reportBodyFontStack } from "./typography";

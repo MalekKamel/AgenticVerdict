@@ -28,6 +28,11 @@ export function isBullmqConfigured(): boolean {
   return Boolean(process.env.REDIS_URL?.trim());
 }
 
+/** Shared TCP Redis client for BullMQ and delivery suppression (null when `REDIS_URL` unset). */
+export function getBullmqRedisConnection(): ReturnType<typeof createBullmqConnectionFromEnv> {
+  return getConnection();
+}
+
 function repeatKeyForSchedule(scheduleId: string): string {
   return `report-schedule:${scheduleId}`;
 }

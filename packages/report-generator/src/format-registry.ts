@@ -1,4 +1,6 @@
 import { HtmlDocxFormatGenerator } from "./docx-format-generator";
+import { HtmlFormatGenerator } from "./html-format-generator";
+import { JsonFormatGenerator } from "./json-format-generator";
 import { PlaywrightPdfFormatGenerator } from "./pdf-playwright-generator";
 import type { FormatGeneratorInput, IFormatGenerator, ReportFormat } from "./types";
 import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
@@ -45,6 +47,8 @@ export function createStubFormatRegistry(): FormatGeneratorRegistry {
   r.register(new StubFormatGenerator("pdf"));
   r.register(new StubFormatGenerator("docx"));
   r.register(new StubFormatGenerator("xlsx"));
+  r.register(new StubFormatGenerator("html"));
+  r.register(new StubFormatGenerator("json"));
   return r;
 }
 
@@ -60,5 +64,7 @@ export function createDefaultFormatRegistry(): FormatGeneratorRegistry {
   r.register(new PlaywrightPdfFormatGenerator());
   r.register(new HtmlDocxFormatGenerator());
   r.register(new ExcelXlsxFormatGenerator());
+  r.register(new HtmlFormatGenerator());
+  r.register(new JsonFormatGenerator());
   return r;
 }
