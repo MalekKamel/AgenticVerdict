@@ -8,7 +8,7 @@ import {
 } from "./chat-models";
 import { parseAgentLlmEnv } from "./llm-env";
 import { buildSafeLlmRunnableConfig } from "./langsmith-tracing";
-import { AgentMockChatModel } from "./mock-chat-model";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 import { invokeMinimalMessageGraph } from "./minimal-agent-graph";
 
 describe("LangChain + LangGraph integration (mock LLM)", () => {

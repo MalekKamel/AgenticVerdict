@@ -2,6 +2,10 @@ import { defineConfig } from "vitest/config";
 
 /** Monorepo packages/apps that expose Vitest unit tests (integration tests stay package-local). */
 const testProjects = [
+  "tests/orchestrator",
+  "tests/utils",
+  "packages/mock-platform-server",
+  "packages/observability",
   "packages/config",
   "packages/core",
   "packages/database",
@@ -42,7 +46,7 @@ export default defineConfig({
         "packages/report-generator/**",
         "packages/types/**",
         "packages/ui/**",
-        // DB runtime wiring — exercised via Testcontainers integration tests, not unit coverage.
+        // DB runtime wiring — integration tests excluded from unit coverage.
         "packages/database/src/client.ts",
         "packages/database/src/db-scoped.ts",
         "packages/database/src/migrate.ts",

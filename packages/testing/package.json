@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@agenticverdict/config": "workspace:*",
-    "@agenticverdict/core": "workspace:*"
+    "@agenticverdict/core": "workspace:*",
+    "@langchain/core": "^1.1.39"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

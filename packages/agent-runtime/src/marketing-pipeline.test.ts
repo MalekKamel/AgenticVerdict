@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
 import { AgentJobError, runAgentJob } from "./agent-job";
-import { AgentMockChatModel } from "./mock-chat-model";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 import { marketingPipelineStateToJson, runMarketingAgentPipeline } from "./marketing-pipeline";
 import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
 import { VerdictParseError } from "./verdict-schema";
@@ -27,7 +27,7 @@ describe("marketing-pipeline (Phase 7)", () => {
       customEntries: [
         {
           id: "v",
-          matchSubstring: "Respond with a single JSON object only",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
           response: VERDICT_MOCK_JSON,
         },
         {
@@ -121,7 +121,11 @@ describe("marketing-pipeline (Phase 7)", () => {
   it("supports degraded status when verdict JSON is invalid", async () => {
     const badVerdictMock = new AgentMockChatModel({
       customEntries: [
-        { id: "v", matchSubstring: "Respond with a single JSON object only", response: "not-json" },
+        {
+          id: "v",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
+          response: "not-json",
+        },
         { id: "ins", matchSubstring: "Use the cross-platform analysis below", response: "ok" },
         { id: "an", matchSubstring: "DEGRADED_MARKER", response: "analysis text" },
       ],
@@ -158,7 +162,11 @@ describe("marketing-pipeline (Phase 7)", () => {
   it("rethrows VerdictParseError when tolerateVerdictParseFailure is false", async () => {
     const badVerdictMock = new AgentMockChatModel({
       customEntries: [
-        { id: "v", matchSubstring: "Respond with a single JSON object only", response: "not-json" },
+        {
+          id: "v",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
+          response: "not-json",
+        },
         { id: "ins", matchSubstring: "Use the cross-platform analysis below", response: "ok" },
         { id: "an", matchSubstring: "THROW_MARKER", response: "analysis text" },
       ],

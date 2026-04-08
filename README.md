@@ -343,8 +343,8 @@ pnpm run test:unit
 # Unit tests with coverage (thresholds in vitest.config.ts)
 pnpm run test:coverage
 
-# Database integration tests (Docker required — Testcontainers)
-pnpm run test:integration
+# Production flow scenarios (R01-R12)
+pnpm run test:production-flow
 
 # Browser E2E (Playwright; starts Next.js via webServer when needed)
 pnpm run test:e2e
@@ -358,6 +358,39 @@ turbo run typecheck
 # Lint all packages
 turbo run lint
 ```
+
+### Mock Adapter Mode (Local Development)
+
+For deterministic, network-free adapter runs during local development and tests:
+
+```bash
+cp .env.example .env.local
+```
+
+Set these flags in `.env.local`:
+
+```bash
+NODE_ENV=development
+AGENTICVERDICT_USE_MOCK_ADAPTERS=1
+AGENTICVERDICT_MOCK_SEED=42001
+AGENTICVERDICT_MOCK_SCENARIO=normal
+```
+
+Optional per-platform overrides:
+
+```bash
+AGENTICVERDICT_MOCK_META=1
+AGENTICVERDICT_MOCK_GA4=0
+```
+
+Then start the app and verify:
+
+```bash
+pnpm dev
+curl http://localhost:3000/api/health/adapters
+```
+
+The health response includes `mockMode` and `mockPlatforms` when mock adapters are active.
 
 ### Database Management
 

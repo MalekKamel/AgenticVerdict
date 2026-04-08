@@ -15,7 +15,19 @@ describe("parseAgentLlmEnv / loadLlmEnvFromProcess", () => {
     const env = parseAgentLlmEnv(process.env);
     expect(env.anthropicApiKey).toBe("k1");
     expect(env.openAiApiKey).toBeUndefined();
+    expect(env.glmApiKey).toBeUndefined();
     expect(env.langsmithTracingEnabled).toBe(false);
+  });
+
+  it("parses GLM settings and strips trailing slash on base URL", () => {
+    vi.stubEnv("GLM_API_KEY", "gk");
+    vi.stubEnv("GLM_API_BASE_URL", "https://example.com/v4/");
+    vi.stubEnv("GLM_MODEL", "glm-4-flash");
+    vi.stubEnv("LANGCHAIN_TRACING_V2", "false");
+    const env = parseAgentLlmEnv(process.env);
+    expect(env.glmApiKey).toBe("gk");
+    expect(env.glmApiBaseUrl).toBe("https://example.com/v4");
+    expect(env.glmModel).toBe("glm-4-flash");
   });
 
   it("defaults tracing on when LangSmith key is set", () => {

@@ -3,6 +3,11 @@ import { randomUUID } from "node:crypto";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { MarketingVerdict, ProvenanceInfo } from "@agenticverdict/types";
 import { requireTenantContext } from "@agenticverdict/core";
+import {
+  recordVerdictParseAttempt,
+  recordVerdictParseDegraded,
+  recordVerdictParseFailureField,
+} from "@agenticverdict/observability";
 
 import type { AgentFactory } from "./agent-factory";
 import {
@@ -22,6 +27,7 @@ import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { ProvenanceTracker } from "./provenance/tracker";
 import {
   applyMarketingVerdictPipelineContext,
+  getVerdictParseFailureDetails,
   parseMarketingVerdictFromAgentText,
   resolveWorkflowAnalysisUuid,
 } from "./agent-verdict-json";
@@ -242,7 +248,7 @@ export async function runMarketingAgentPipeline(
 
 Tenant context (must appear exactly in your JSON): tenantId="${options.ctx.tenantId}", analysisId="${analysisUuid}".
 
-Respond with a single JSON object only (no markdown) for the unified MarketingVerdict schema, incorporating:
+Incorporate the following analysis into your verdict:
 1) Cross-platform analysis:
 ${truncateForContext(analysisTimed.result.answer, 12_000)}
 2) Insights:
@@ -266,6 +272,8 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
       context: execCtx("verdict"),
     });
 
+    recordVerdictParseAttempt(workflowId, options.ctx.tenantId);
+
     try {
       const parsedVerdict = parseMarketingVerdictFromAgentText(verdictTimed.result.answer);
       const verdict = applyMarketingVerdictPipelineContext(parsedVerdict, {
@@ -288,12 +296,34 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
       return completed;
     } catch (e) {
       if (options.tolerateVerdictParseFailure) {
+        const parseFailure = getVerdictParseFailureDetails(e);
+        const fieldSummary = parseFailure.fields.slice(0, 5).join(",");
+        recordVerdictParseDegraded({
+          workflowId,
+          tenantId: options.ctx.tenantId,
+          failureKind: parseFailure.kind,
+        });
+        for (const field of parseFailure.fields.slice(0, 20)) {
+          recordVerdictParseFailureField({
+            workflowId,
+            tenantId: options.ctx.tenantId,
+            failureKind: parseFailure.kind,
+            field,
+          });
+        }
         const degraded: MarketingPipelineState = {
           workflowId,
           status: "degraded",
           stages,
           verdictRawAnswer: verdictTimed.result.answer,
-          error: { stage: "verdict", message: "Verdict JSON parse failed", cause: e },
+          error: {
+            stage: "verdict",
+            message:
+              fieldSummary.length > 0
+                ? `Verdict JSON parse failed (${parseFailure.kind}) fields=${fieldSummary}`
+                : `Verdict JSON parse failed (${parseFailure.kind})`,
+            cause: e,
+          },
           provenance: provenanceTracker.getCurrentProvenance(),
         };
         options.onPipelineTiming?.(marketingPipelineTimingToLogFields(degraded));

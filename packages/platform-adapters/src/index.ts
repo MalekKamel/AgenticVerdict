@@ -150,7 +150,20 @@ export type {
 } from "./tiktok/models";
 export { tiktokOauth2AccessToken, validateTikTokAccessToken } from "./tiktok/oauth";
 export type { TikTokOAuthAccessTokenInput, TikTokOAuthAccessTokenResult } from "./tiktok/oauth";
+export { MockAdapterFactory, type MockAdapterFactoryConfig } from "./mock-adapter-factory";
 export { MockPlatformAdapter, type MockPlatformAdapterOptions } from "./mock-adapter";
+export {
+  createPlatformAdapter,
+  isMockEnabledForPlatform,
+  platformAdapterTypes,
+  type AdapterFactoryConfig,
+} from "./adapter-factory";
+export {
+  type MockAdapterScenario,
+  type MockStaticDataOptions,
+  buildScenarioRecords,
+  mulberry32,
+} from "./mock-static-data";
 export {
   DEFAULT_FX_RATES_TO_USD,
   applySpendCurrencyConversion,

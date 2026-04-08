@@ -1,5 +1,87 @@
 import type { ReportFormat } from "@agenticverdict/report-generator";
 
+export type WorkflowTriggerWorkflowId =
+  | "report-generation"
+  | "marketing-analysis"
+  | "verdict-generation";
+
+/** Production-flow scenario ids (R01–R12). PDF-heavy paths are R01/R02; R03–R12 run in the extended worker module. */
+export const PRODUCTION_FLOW_SCENARIO_IDS = [
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+] as const;
+
+export type ProductionFlowScenarioId = (typeof PRODUCTION_FLOW_SCENARIO_IDS)[number];
+
+export function isProductionFlowScenarioId(id: string | undefined): id is ProductionFlowScenarioId {
+  return id !== undefined && (PRODUCTION_FLOW_SCENARIO_IDS as readonly string[]).includes(id);
+}
+
+/** @deprecated Use {@link ProductionFlowScenarioId} — kept for older imports. */
+export type ProductionFlowPdfScenarioId = Extract<ProductionFlowScenarioId, "R01" | "R02">;
+
+export type WorkflowTriggerPhase = "foundation" | "report-generation";
+
+export interface WorkflowTriggerJobConfig {
+  dateRange?: { start: string; end: string };
+  platforms?: string[];
+  mockData?: {
+    scenario: "normal" | "high-volume" | "zero-conversions" | "error";
+    seed: number;
+  };
+  /**
+   * When set with `workflowId: report-generation` and `testMode: true`, the worker runs the
+   * production-flow scenario implementation for the given id (R01–R12).
+   */
+  productionFlowScenarioId?: ProductionFlowScenarioId;
+}
+
+/**
+ * BullMQ return value for `workflow-trigger` jobs (surfaced by `GET /api/v1/workflows/status` and test-results).
+ */
+export interface WorkflowTriggerJobResult {
+  workflowId: WorkflowTriggerWorkflowId;
+  tenantId: string;
+  testMode: boolean;
+  phase: WorkflowTriggerPhase;
+  message: string;
+  productionFlowScenarioId?: ProductionFlowScenarioId;
+  reportGenerationDurationMs?: number;
+  pdfByteLength?: number;
+  pdfValidation?: WorkflowTriggerPdfValidation;
+  /** Structured checks for R03–R12 (metrics for Grafana/assertions). */
+  productionFlowEvidence?: Readonly<Record<string, boolean | number | string>>;
+}
+
+export interface WorkflowTriggerPdfValidation {
+  readonly minBytesOk: boolean;
+  readonly shellDir?: "ltr" | "rtl";
+  readonly shellLang?: string;
+  readonly mustContainPhrasesOk: boolean;
+  readonly arabicScriptOk?: boolean;
+}
+
+/**
+ * Payload for `POST /api/v1/workflows/trigger` jobs.
+ */
+export interface WorkflowTriggerJobData {
+  workflowId: WorkflowTriggerWorkflowId;
+  testMode: boolean;
+  tenantId: string;
+  config: WorkflowTriggerJobConfig;
+  requestId?: string;
+}
+
 export interface ReportGenerationJobData {
   tenantId: string;
   reportId: string;

@@ -36,4 +36,17 @@ describe("specialized-marketing-agents", () => {
     });
     expect(agent.run).toBeTypeOf("function");
   });
+
+  it("media verdict policy encodes strict schema constraints", () => {
+    const verdictCfg = buildSpecializedMarketingFactoryConfig("media_verdict", {
+      companyName: "Demo Co",
+    });
+    expect(verdictCfg.systemPolicy).toContain('"sentiment" ("positive"|"neutral"|"negative")');
+    expect(verdictCfg.systemPolicy).toContain('"impact" ("high"|"medium"|"low" lowercase only)');
+    expect(verdictCfg.systemPolicy).toContain('Do NOT use string patterns like "insight-001"');
+    expect(verdictCfg.systemPolicy).toContain('not "+40%"');
+    expect(verdictCfg.systemPolicy).toContain(
+      '"capturedAt" ISO-8601 e.g. "2024-10-24T00:00:00.000Z"',
+    );
+  });
 });

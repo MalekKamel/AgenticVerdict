@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { isPlaywrightChromiumAvailable } from "./playwright-chromium-path";
 import {
   closeSharedChromiumBrowser,
   ensureHtmlDocument,
@@ -19,7 +20,8 @@ describe("ensureHtmlDocument", () => {
   });
 });
 
-const skipPlaywrightPdf = process.env.SKIP_PLAYWRIGHT_PDF_TESTS === "1";
+const skipPlaywrightPdf =
+  process.env.SKIP_PLAYWRIGHT_PDF_TESTS === "1" || !isPlaywrightChromiumAvailable();
 
 describe.skipIf(skipPlaywrightPdf)("PlaywrightPdfFormatGenerator", () => {
   it("emits a PDF with %PDF header and reasonable size", async () => {
@@ -37,5 +39,5 @@ describe.skipIf(skipPlaywrightPdf)("PlaywrightPdfFormatGenerator", () => {
     expect(new TextDecoder("latin1").decode(bytes.subarray(0, 4))).toBe("%PDF");
     expect(bytes.length).toBeGreaterThan(500);
     await closeSharedChromiumBrowser();
-  });
+  }, 120_000);
 });

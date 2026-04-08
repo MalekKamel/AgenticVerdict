@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Playwright Chromium (report-generator PDF unit tests)
+        run: pnpm --filter @agenticverdict/report-generator exec playwright install chromium
+
       - name: Format (Prettier check)
         run: pnpm run format:check
 
@@ -45,6 +48,27 @@ jobs:
 
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
+
+      - name: Verify build constants
+        run: pnpm run verify:build-config
+
+      - name: Production esbuild bundles (mock-code scan)
+        env:
+          NODE_ENV: production
+        run: pnpm run verify:production-bundle
+
+      - name: Scenario orchestration tests (R01–R12)
+        env:
+          SCENARIO_ARTIFACTS_DIR: ${{ github.workspace }}/scenario-artifacts
+        run: pnpm run test:scenarios:all
+
+      - name: Upload scenario document artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scenario-documents
+          path: scenario-artifacts/
+          if-no-files-found: ignore
 
       - name: Phase 01 integration — mock APIs, load, chaos, performance
         run: pnpm run test:phase01-integration

@@ -1,0 +1,20 @@
+# Optional overlay for hosts with AppArmor and profile `agenticverdict-app` loaded, e.g.:
+#   sudo install -m 0644 deploy/security/apparmor-profile /etc/apparmor.d/agenticverdict-app
+#   sudo apparmor_parser -r /etc/apparmor.d/agenticverdict-app
+#   docker compose -f deploy/docker-compose.production.example.yml -f deploy/docker-compose.security-linux.override.yml up -d
+#
+# Compose merges `security_opt` by appending; base compose already sets no-new-privileges + seccomp.
+# Postgres/Redis are omitted (entrypoints need /bin/sh; profile targets Node app containers).
+
+services:
+  web:
+    security_opt:
+      - apparmor=agenticverdict-app
+
+  api:
+    security_opt:
+      - apparmor=agenticverdict-app
+
+  worker:
+    security_opt:
+      - apparmor=agenticverdict-app

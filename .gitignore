@@ -54,9 +54,10 @@ bun.lockb
 dist/
 public/spa/
 es/
-lib/
 .next/
 logs/
+# Host-side SQL dumps from scripts/backup-postgres.sh
+backups/
 test-output/
 *.tsbuildinfo
 next-env.d.ts
@@ -78,6 +79,7 @@ coverage/
 playwright-report/
 test-results/
 blob-report/
+scenario-artifacts/
 .eslintcache
 .stylelintcache
 
@@ -115,6 +117,10 @@ CLAUDE.local.md
 
 # Docker development data
 docker-compose/dev/data/
+secrets/
+
+# Local TLS material (see scripts/setup-tls.sh)
+deploy/tls/*.pem
 
 # Migration scripts data
 scripts/clerk-to-betterauth/test/*.csv

@@ -1,5 +1,6 @@
 import { chromium, type Browser } from "playwright";
 
+import { getPlaywrightChromiumLaunchOptions } from "./playwright-chromium-path";
 import { DEFAULT_REPORT_PRINT_CSS } from "./pdf-print-styles";
 import type { FormatGeneratorInput, IFormatGenerator, ReportGenerationContext } from "./types";
 
@@ -22,10 +23,7 @@ export async function closeSharedChromiumBrowser(): Promise<void> {
 
 function getSharedChromiumBrowser(): Promise<Browser> {
   if (!sharedBrowserPromise) {
-    sharedBrowserPromise = chromium.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    sharedBrowserPromise = chromium.launch(getPlaywrightChromiumLaunchOptions());
   }
   return sharedBrowserPromise;
 }

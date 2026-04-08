@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { createUpstashRedisFromEnv } from "@agenticverdict/database";
+import { renderProductionFlowTestMetrics } from "@agenticverdict/observability";
 
 import { registerSwagger, registerSwaggerUi } from "./openapi";
 import { registerAnalysisResultRoutes } from "./routes/v1/analysis-results";
@@ -11,8 +12,10 @@ import { registerReportRoutes } from "./routes/v1/reports";
 import { registerReportScheduleRoutes } from "./routes/v1/report-schedules";
 import { registerReportTemplateRoutes } from "./routes/v1/report-templates";
 import { registerTranslationRoutes } from "./routes/v1/translations";
+import { registerTestFlowRoutes } from "./routes/v1/test-flow";
 import { registerValidationRoutes } from "./routes/v1/validation";
 import { registerVerdictRoutes } from "./routes/v1/verdicts";
+import { registerWorkflowRoutes } from "./routes/v1/workflows";
 
 export async function buildApiServer(): Promise<FastifyInstance> {
   const redis = createUpstashRedisFromEnv();
@@ -37,6 +40,21 @@ export async function buildApiServer(): Promise<FastifyInstance> {
   }
 
   await registerSwagger(app);
+
+  app.get(
+    "/metrics",
+    {
+      schema: {
+        tags: ["Metrics"],
+        summary: "Prometheus metrics (production-flow test instrumentation)",
+        response: { 200: { type: "string" } },
+      },
+    },
+    async (_request, reply) => {
+      const body = await renderProductionFlowTestMetrics();
+      return reply.type("text/plain; version=0.0.4; charset=utf-8").send(body);
+    },
+  );
 
   app.get(
     "/health",
@@ -69,6 +87,8 @@ export async function buildApiServer(): Promise<FastifyInstance> {
       registerReportTemplateRoutes(scope, redis);
       registerTranslationRoutes(scope, redis);
       registerValidationRoutes(scope, redis);
+      registerWorkflowRoutes(scope, redis);
+      registerTestFlowRoutes(scope, redis);
     },
     { prefix: "/api/v1" },
   );

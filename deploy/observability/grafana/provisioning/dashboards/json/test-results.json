@@ -1,0 +1,154 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Workflow triggers accepted by the API (`test_workflow_trigger_enqueued_total`).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum(rate(test_workflow_trigger_enqueued_total[5m]))",
+          "legendFormat": "enqueue / s",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Workflow trigger enqueue rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "BullMQ workflow-trigger jobs finished on the worker (`test_workflow_trigger_completed_total`).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (status) (rate(test_workflow_trigger_completed_total[5m]))",
+          "legendFormat": "{{status}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Workflow trigger completion rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Worker-side job latency for `workflow-trigger` queue.",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, workflow_id) (rate(test_workflow_trigger_job_duration_seconds_bucket[5m])))",
+          "legendFormat": "p95 {{workflow_id}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p95 workflow-trigger job duration (worker)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Orchestrator-reported scenario duration (`test_scenario_duration_seconds`).",
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, scenario_id) (rate(test_scenario_duration_seconds_bucket[15m])))",
+          "legendFormat": "p95 {{scenario_id}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "p95 scenario duration (telemetry API)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Share of assertion outcomes recorded via `POST /api/v1/test/telemetry/assertion`.",
+      "fieldConfig": {
+        "defaults": { "max": 100, "min": 0, "unit": "percent" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 5,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdMarkers": true },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "100 * sum(rate(test_scenario_assertions_total{result=\"passed\"}[15m])) / clamp_min(sum(rate(test_scenario_assertions_total[15m])), 0.000001)",
+          "instant": true,
+          "legendFormat": "pass %",
+          "refId": "A"
+        }
+      ],
+      "title": "Assertion pass rate (15m)",
+      "type": "gauge"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "description": "Reserved for LLM / platform instrumentation (Phase 3+).",
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "id": 6,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (workflow_id) (rate(test_workflow_llm_calls_total[5m]))",
+          "legendFormat": "LLM {{workflow_id}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (platform) (rate(test_workflow_platform_fetches_total[5m]))",
+          "legendFormat": "fetch {{platform}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "LLM calls & platform fetches (test counters)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["agenticverdict", "prometheus", "testing", "production-flow"],
+  "templating": { "list": [] },
+  "time": { "from": "now-30m", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Production-flow test results",
+  "uid": "av-test-results",
+  "version": 1,
+  "weekStart": ""
+}

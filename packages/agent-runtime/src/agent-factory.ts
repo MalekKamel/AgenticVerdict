@@ -1,18 +1,11 @@
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 
 import type { AgentFactoryConfig } from "./agent-config";
 import { parseAgentFactoryConfig } from "./agent-config";
-import type { AgentLlmEnv } from "./llm-env";
-import {
-  createChatModelForPreference,
-  DEFAULT_AGENT_MODEL_PRESETS,
-  resolveProviderWithAvailableKeys,
-  type AgentLlmRole,
-  type LlmPrimaryPreference,
-} from "./chat-models";
+import { createPrimaryAndFallbackChatModels, type AgentLlmCredentialEnv } from "./chat-models";
 import { ConfigurableLlmAgent, type ConfigurableLlmAgentOptions } from "./configurable-llm-agent";
 import { createAgentMemory } from "./memory";
-import { AgentMockChatModel, type AgentMockChatModelFields } from "./mock-chat-model";
 import type { IAgent, ITool } from "./interfaces";
 import { ToolRegistry } from "./tools";
 
@@ -20,39 +13,7 @@ export interface AgentFactoryDeps {
   /**
    * Used when {@link AgentFactoryConfig.runtimeMode} is `production` to build primary/fallback models.
    */
-  llmEnv: Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">;
-}
-
-function createChatModelsForRole(
-  role: AgentLlmRole,
-  env: Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">,
-  temperature?: number,
-): { primary: BaseChatModel; fallback?: BaseChatModel } {
-  const preset = DEFAULT_AGENT_MODEL_PRESETS[role];
-  const primaryPref = resolveProviderWithAvailableKeys(preset.primary, env);
-  const secondaryPref: LlmPrimaryPreference = primaryPref === "anthropic" ? "openai" : "anthropic";
-  const temp = temperature ?? preset.temperature;
-  const opts = {
-    anthropicApiKey: env.anthropicApiKey,
-    openAiApiKey: env.openAiApiKey,
-    anthropicModel: preset.anthropicModel,
-    openAiModel: preset.openAiModel,
-    temperature: temp,
-  };
-
-  const primary = createChatModelForPreference(primaryPref, opts);
-
-  const secondaryKeyOk =
-    secondaryPref === "anthropic"
-      ? env.anthropicApiKey !== undefined
-      : env.openAiApiKey !== undefined;
-
-  const fallback =
-    secondaryKeyOk && secondaryPref !== primaryPref
-      ? createChatModelForPreference(secondaryPref, opts)
-      : undefined;
-
-  return { primary, fallback };
+  llmEnv: AgentLlmCredentialEnv;
 }
 
 /**
@@ -88,45 +49,15 @@ export class AgentFactory {
     fallback?: BaseChatModel;
   } {
     if (config.runtimeMode === "test") {
-      throw new Error('Use createTestChatModel() or createTestAgent() when runtimeMode is "test".');
-    }
-    return createChatModelsForRole(config.role, this.deps.llmEnv, config.temperature);
-  }
-
-  createTestChatModel(overrides?: AgentMockChatModelFields): AgentMockChatModel {
-    return new AgentMockChatModel(overrides ?? {});
-  }
-
-  /**
-   * Production agent: real providers from {@link AgentFactoryDeps.llmEnv} (or throws from LangChain if keys missing).
-   */
-  createAgent(
-    config: unknown,
-    agentOptions?: Pick<ConfigurableLlmAgentOptions, "invocationCache">,
-  ): IAgent {
-    const cfg = parseAgentFactoryConfig(config);
-    if (cfg.runtimeMode === "test") {
       throw new Error(
-        'createAgent() requires runtimeMode "production"; use createTestAgent() for tests.',
+        'Use createTestAgent() with a mock BaseChatModel from `@agenticverdict/testing` when runtimeMode is "test".',
       );
     }
-    const { primary, fallback } = createChatModelsForRole(
-      cfg.role,
-      this.deps.llmEnv,
-      cfg.temperature,
-    );
-    const memory = this.createMemory(cfg);
-    return new ConfigurableLlmAgent({
-      factoryConfig: cfg,
-      memory,
-      primary,
-      fallback,
-      invocationCache: agentOptions?.invocationCache,
-    });
+    return createPrimaryAndFallbackChatModels(config.role, this.deps.llmEnv, config.temperature);
   }
 
   /**
-   * Deterministic agent for CI: uses {@link AgentMockChatModel} unless a mock is supplied.
+   * Deterministic agent for CI: pass a mock {@link BaseChatModel} (for example `AgentMockChatModel` from `@agenticverdict/testing`) or omit to use that package default.
    */
   createTestAgent(
     config: unknown,
@@ -149,12 +80,41 @@ export class AgentFactory {
   }
 
   /**
-   * Builds a tool registry plus an {@link IAgent}. When `runtimeMode` is `test`, uses {@link AgentMockChatModel}
-   * like {@link createTestAgent}; otherwise uses production chat models (requires provider keys).
+   * Production agent: real providers from {@link AgentFactoryDeps.llmEnv} (or throws from LangChain if keys missing).
+   */
+  createAgent(
+    config: unknown,
+    agentOptions?: Pick<ConfigurableLlmAgentOptions, "invocationCache">,
+  ): IAgent {
+    const cfg = parseAgentFactoryConfig(config);
+    if (cfg.runtimeMode === "test") {
+      throw new Error(
+        'createAgent() requires runtimeMode "production"; use createTestAgent() for tests.',
+      );
+    }
+    const { primary, fallback } = createPrimaryAndFallbackChatModels(
+      cfg.role,
+      this.deps.llmEnv,
+      cfg.temperature,
+    );
+    const memory = this.createMemory(cfg);
+    return new ConfigurableLlmAgent({
+      factoryConfig: cfg,
+      memory,
+      primary,
+      fallback,
+      invocationCache: agentOptions?.invocationCache,
+    });
+  }
+
+  /**
+   * Builds a tool registry plus an {@link IAgent}. When `runtimeMode` is `test`, uses the default mock chat model
+   * from `@agenticverdict/testing` unless you pass `testChatModel`.
    */
   createAgentWithTools(
     config: unknown,
     tools: readonly ITool[],
+    options?: { testChatModel?: BaseChatModel },
   ): { agent: IAgent; tools: ToolRegistry } {
     const registry = this.createToolRegistry(tools);
     const cfg = parseAgentFactoryConfig(config);
@@ -165,12 +125,12 @@ export class AgentFactory {
         agent: new ConfigurableLlmAgent({
           factoryConfig: cfg,
           memory,
-          primary: new AgentMockChatModel({}),
+          primary: options?.testChatModel ?? new AgentMockChatModel({}),
           fallback: undefined,
         }),
       };
     }
-    const { primary, fallback } = createChatModelsForRole(
+    const { primary, fallback } = createPrimaryAndFallbackChatModels(
       cfg.role,
       this.deps.llmEnv,
       cfg.temperature,

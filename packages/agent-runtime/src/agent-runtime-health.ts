@@ -35,14 +35,20 @@ export function checkAgentRuntimeHealth(
 
   const hasAnthropic = Boolean(parsed?.anthropicApiKey);
   const hasOpenAi = Boolean(parsed?.openAiApiKey);
-  const llmInvocationPossible = hasAnthropic || hasOpenAi;
+  const hasGlm =
+    Boolean(parsed?.glmApiKey) &&
+    parsed?.glmApiBaseUrl !== undefined &&
+    parsed.glmApiBaseUrl.length > 0;
+  const llmInvocationPossible = hasAnthropic || hasOpenAi || hasGlm;
 
   const checks: AgentRuntimeHealthCheck[] = [
     { id: "llm_env_valid", ok: llmEnvOk, detail: llmEnvDetail },
     {
       id: "llm_provider_configured",
       ok: llmInvocationPossible,
-      detail: llmInvocationPossible ? undefined : "No ANTHROPIC_API_KEY or OPENAI_API_KEY set",
+      detail: llmInvocationPossible
+        ? undefined
+        : "No ANTHROPIC_API_KEY, OPENAI_API_KEY, or GLM_API_KEY + GLM_API_BASE_URL set",
     },
   ];
 

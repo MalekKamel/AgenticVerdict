@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AgentFactory } from "./agent-factory";
 import { runAgentJob } from "./agent-job";
 import { LlmInvocationCache } from "./llm-invocation-cache";
-import { AgentMockChatModel } from "./mock-chat-model";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 import { runMarketingAgentPipeline } from "./marketing-pipeline";
 import { summarizeLatencyMs } from "./agent-performance-metrics";
 import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
@@ -28,7 +28,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
       customEntries: [
         {
           id: "v",
-          matchSubstring: "Respond with a single JSON object only",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
           response: VERDICT_MOCK_JSON,
         },
         {
@@ -90,7 +90,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
       customEntries: [
         {
           id: "v",
-          matchSubstring: "Respond with a single JSON object only",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
           response: VERDICT_MOCK_JSON,
         },
         {
@@ -138,7 +138,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
       customEntries: [
         {
           id: "v",
-          matchSubstring: "Respond with a single JSON object only",
+          matchSubstring: "Tenant context (must appear exactly in your JSON)",
           response: VERDICT_MOCK_JSON,
         },
         {

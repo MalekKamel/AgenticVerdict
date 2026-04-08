@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { PlatformAuthError, PlatformCircuitOpenError } from "./errors";
+import { PlatformAuthError, PlatformCircuitOpenError, PlatformError } from "./errors";
 import { MockPlatformAdapter } from "./mock-adapter";
 import { testAdapterTenantId } from "./test-utils";
 
@@ -54,6 +54,20 @@ describe("MockPlatformAdapter", () => {
     await adapter.authenticate({});
     const raw = await adapter.fetchMetrics(range);
     expect(adapter.normalizeData(raw, range).records).toEqual([]);
+  });
+
+  it("honors fetchFailureMessage after authenticate", async () => {
+    const adapter = new MockPlatformAdapter("meta", {
+      tenantId: testAdapterTenantId,
+      fetchFailureMessage: "boom",
+      fetchFailureCode: "invalid_request",
+    });
+    await adapter.authenticate({ token: "x" });
+    await expect(adapter.fetchMetrics(range)).rejects.toMatchObject({
+      name: "PlatformError",
+      code: "invalid_request",
+    });
+    await expect(adapter.fetchMetrics(range)).rejects.toBeInstanceOf(PlatformError);
   });
 
   it("maps circuit breaker open state to PlatformCircuitOpenError", async () => {

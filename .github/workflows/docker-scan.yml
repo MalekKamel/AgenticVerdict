@@ -1,0 +1,60 @@
+name: Docker security scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: docker-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  trivy:
+    name: Trivy — ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [web, api, worker]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t "agenticverdict/${{ matrix.service }}:scan" -f "apps/${{ matrix.service }}/Dockerfile" .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "agenticverdict/${{ matrix.service }}:scan"
+          format: sarif
+          output: "trivy-${{ matrix.service }}.sarif"
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+
+      - name: Upload Trivy SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-${{ matrix.service }}.sarif"
+          category: "trivy-${{ matrix.service }}"
+
+      - name: Generate SBOM (SPDX JSON)
+        uses: anchore/sbom-action@v0
+        with:
+          image: "agenticverdict/${{ matrix.service }}:scan"
+          format: spdx-json
+          output-file: "sbom-${{ matrix.service }}.spdx.json"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.service }}
+          path: "sbom-${{ matrix.service }}.spdx.json"

@@ -7,6 +7,10 @@ import { z } from "zod";
 const agentLlmEnvSchema = z.object({
   anthropicApiKey: z.string().min(1).optional(),
   openAiApiKey: z.string().min(1).optional(),
+  glmApiKey: z.string().min(1).optional(),
+  /** OpenAI-compatible GLM base URL (no trailing slash required). */
+  glmApiBaseUrl: z.string().url().optional(),
+  glmModel: z.string().min(1).optional(),
   langsmithApiKey: z.string().min(1).optional(),
   langsmithProject: z.string().min(1).optional(),
   /**
@@ -19,7 +23,10 @@ const agentLlmEnvSchema = z.object({
 export type AgentLlmEnv = z.infer<typeof agentLlmEnvSchema>;
 
 /** @deprecated Use {@link AgentLlmEnv} — kept for older imports that only need keys. */
-export type LlmProviderEnv = Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">;
+export type LlmProviderEnv = Pick<
+  AgentLlmEnv,
+  "anthropicApiKey" | "openAiApiKey" | "glmApiKey" | "glmApiBaseUrl" | "glmModel"
+>;
 
 function emptyToUndefined(value: string | undefined): string | undefined {
   if (value === undefined || value === "") {
@@ -50,6 +57,11 @@ function parseTracingFlag(value: string | undefined): boolean | undefined {
 export function parseAgentLlmEnv(env: NodeJS.ProcessEnv): AgentLlmEnv {
   const anthropicApiKey = emptyToUndefined(env.ANTHROPIC_API_KEY);
   const openAiApiKey = emptyToUndefined(env.OPENAI_API_KEY);
+  const glmApiKey = emptyToUndefined(env.GLM_API_KEY);
+  const glmApiBaseUrlRaw = emptyToUndefined(env.GLM_API_BASE_URL);
+  const glmApiBaseUrl =
+    glmApiBaseUrlRaw !== undefined ? glmApiBaseUrlRaw.replace(/\/$/, "") : undefined;
+  const glmModel = emptyToUndefined(env.GLM_MODEL);
   const langsmithApiKey = emptyToUndefined(env.LANGSMITH_API_KEY ?? env.LANGCHAIN_API_KEY);
   const langsmithProject = emptyToUndefined(env.LANGCHAIN_PROJECT);
   const explicitTracing = parseTracingFlag(env.LANGCHAIN_TRACING_V2);
@@ -58,6 +70,9 @@ export function parseAgentLlmEnv(env: NodeJS.ProcessEnv): AgentLlmEnv {
   return agentLlmEnvSchema.parse({
     anthropicApiKey,
     openAiApiKey,
+    glmApiKey,
+    glmApiBaseUrl,
+    glmModel,
     langsmithApiKey,
     langsmithProject,
     langsmithTracingEnabled,

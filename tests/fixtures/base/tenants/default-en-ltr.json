@@ -1,0 +1,10 @@
+{
+  "companyId": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  "companyName": "Base EN Tenant",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  }
+}

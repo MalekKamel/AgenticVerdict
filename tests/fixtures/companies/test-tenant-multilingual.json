@@ -1,0 +1,10 @@
+{
+  "companyId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  "companyName": "Multilingual Scenario Co.",
+  "localization": {
+    "language": "en",
+    "region": "SA",
+    "timezone": "Asia/Riyadh",
+    "currency": "SAR"
+  }
+}

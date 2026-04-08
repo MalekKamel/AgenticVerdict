@@ -1,7 +1,7 @@
 /**
  * BullMQ job processor entry — Phase 0 scaffold extended with email delivery (remediation R-12).
  */
-export const WORKER_PACKAGE_VERSION = "0.3.0";
+export const WORKER_PACKAGE_VERSION = "0.4.3";
 
 export {
   createEmailDeliveryServiceFromEnv,
@@ -14,14 +14,24 @@ export {
 } from "./services/email";
 
 export type {
+  ProductionFlowPdfScenarioId,
+  ProductionFlowScenarioId,
   ReportDeliveryJobData,
   ReportGenerationJobData,
   ReportScheduleJobData,
+  WorkflowTriggerJobConfig,
+  WorkflowTriggerJobData,
+  WorkflowTriggerJobResult,
+  WorkflowTriggerPdfValidation,
+  WorkflowTriggerPhase,
+  WorkflowTriggerWorkflowId,
 } from "./queues/job-types";
+export { isProductionFlowScenarioId, PRODUCTION_FLOW_SCENARIO_IDS } from "./queues/job-types";
 export {
   REPORT_DELIVERY_QUEUE,
   REPORT_GENERATION_QUEUE,
   REPORT_SCHEDULE_QUEUE,
+  WORKFLOW_TRIGGER_QUEUE,
 } from "./queues/queue-names";
 export { createBullmqConnectionFromEnv } from "./queues/redis-connection";
 export {
@@ -29,8 +39,10 @@ export {
   createReportDeliveryQueue,
   createReportGenerationQueue,
   createReportScheduleQueue,
+  createWorkflowTriggerQueue,
   defaultReportDeliveryProcessor,
   defaultReportGenerationProcessor,
+  defaultWorkflowTriggerProcessor,
   registerReportWorkers,
   type RegisteredReportWorkers,
   type ReportDeliveryWebhookPayload,

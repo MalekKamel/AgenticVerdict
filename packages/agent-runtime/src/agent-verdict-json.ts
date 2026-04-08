@@ -66,6 +66,30 @@ export function safeParseMarketingVerdictFromAgentText(
   }
 }
 
+export type VerdictParseFailureKind = "json" | "schema" | "unknown";
+
+export interface VerdictParseFailureDetails {
+  kind: VerdictParseFailureKind;
+  fields: string[];
+}
+
+export function getVerdictParseFailureDetails(error: unknown): VerdictParseFailureDetails {
+  if (!(error instanceof VerdictParseError)) {
+    return { kind: "unknown", fields: [] };
+  }
+  const cause = error.cause;
+  if (cause instanceof z.ZodError) {
+    const fields = cause.issues
+      .map((issue) => issue.path.join("."))
+      .filter((field) => field.length > 0);
+    return { kind: "schema", fields };
+  }
+  if (cause instanceof SyntaxError) {
+    return { kind: "json", fields: [] };
+  }
+  return { kind: "unknown", fields: [] };
+}
+
 /**
  * Applies server-side tenant and analysis identifiers after LLM parse (tenant isolation).
  */

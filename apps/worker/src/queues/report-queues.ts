@@ -1,5 +1,4 @@
-import { randomUUID } from "node:crypto";
-
+import { recordWorkflowTriggerJobFinished } from "@agenticverdict/observability";
 import { Queue, Worker, type JobsOptions } from "bullmq";
 import type IORedis from "ioredis";
 
@@ -12,15 +11,21 @@ import {
 } from "@agenticverdict/report-generator";
 
 import { sendReportEmail } from "../services/email";
-import type {
-  ReportDeliveryJobData,
-  ReportGenerationJobData,
-  ReportScheduleJobData,
+import {
+  isProductionFlowScenarioId,
+  type ReportDeliveryJobData,
+  type ReportGenerationJobData,
+  type ReportScheduleJobData,
+  type WorkflowTriggerJobData,
+  type WorkflowTriggerJobResult,
 } from "./job-types";
+import { enqueueScheduledReportGeneration } from "./report-schedule-enqueue";
+import { runProductionFlowScenario } from "./workflow-trigger-production-flow";
 import {
   REPORT_DELIVERY_QUEUE,
   REPORT_GENERATION_QUEUE,
   REPORT_SCHEDULE_QUEUE,
+  WORKFLOW_TRIGGER_QUEUE,
 } from "./queue-names";
 
 const defaultJobOptions: JobsOptions = {
@@ -35,6 +40,28 @@ function createPipelineGenerator(): DefaultReportGenerator {
     createDefaultFormatRegistry(),
     createDefaultCompositeTemplateEngine(),
   );
+}
+
+export type { WorkflowTriggerJobResult } from "./job-types";
+
+function foundationWorkflowResult(data: WorkflowTriggerJobData): WorkflowTriggerJobResult {
+  return {
+    workflowId: data.workflowId,
+    tenantId: data.tenantId,
+    testMode: data.testMode,
+    phase: "foundation",
+    message: "workflow_trigger_acknowledged",
+  };
+}
+
+export async function defaultWorkflowTriggerProcessor(
+  data: WorkflowTriggerJobData,
+): Promise<WorkflowTriggerJobResult> {
+  const sid = data.config.productionFlowScenarioId;
+  if (data.workflowId === "report-generation" && data.testMode && isProductionFlowScenarioId(sid)) {
+    return runProductionFlowScenario(data);
+  }
+  return foundationWorkflowResult(data);
 }
 
 export async function defaultReportGenerationProcessor(
@@ -120,19 +147,7 @@ export function createDefaultReportScheduleProcessor(
   generationQueue: Queue<ReportGenerationJobData>,
 ): (data: ReportScheduleJobData) => Promise<void> {
   return async (data: ReportScheduleJobData) => {
-    const reportId = randomUUID();
-    await generationQueue.add(
-      `scheduled-${data.scheduleId}`,
-      {
-        tenantId: data.tenantId,
-        reportId,
-        format: data.format,
-        templateId: data.templateId,
-        locale: data.locale,
-        textDirection: data.textDirection,
-      },
-      { removeOnComplete: 1000 },
-    );
+    await enqueueScheduledReportGeneration(generationQueue, data);
   };
 }
 
@@ -157,19 +172,29 @@ export function createReportScheduleQueue(connection: IORedis): Queue<ReportSche
   });
 }
 
+export function createWorkflowTriggerQueue(connection: IORedis): Queue<WorkflowTriggerJobData> {
+  return new Queue<WorkflowTriggerJobData>(WORKFLOW_TRIGGER_QUEUE, {
+    connection,
+    defaultJobOptions,
+  });
+}
+
 export interface ReportWorkersOptions {
   /** Override default generation (e.g. wire PDF engine later). */
   processGeneration?: (data: ReportGenerationJobData) => Promise<void>;
   processDelivery?: (data: ReportDeliveryJobData) => Promise<void>;
   processSchedule?: (data: ReportScheduleJobData) => Promise<void>;
+  processWorkflowTrigger?: (data: WorkflowTriggerJobData) => Promise<WorkflowTriggerJobResult>;
   generationConcurrency?: number;
   deliveryConcurrency?: number;
+  workflowTriggerConcurrency?: number;
 }
 
 export interface RegisteredReportWorkers {
   generation: Worker<ReportGenerationJobData>;
   delivery: Worker<ReportDeliveryJobData>;
   schedule: Worker<ReportScheduleJobData>;
+  workflowTrigger: Worker<WorkflowTriggerJobData, WorkflowTriggerJobResult>;
   close: () => Promise<void>;
 }
 
@@ -181,10 +206,12 @@ export function registerReportWorkers(
   options: ReportWorkersOptions = {},
 ): RegisteredReportWorkers {
   const generationQueue = createReportGenerationQueue(connection);
+  const workflowTriggerQueue = createWorkflowTriggerQueue(connection);
   const runGeneration = options.processGeneration ?? defaultReportGenerationProcessor;
   const runDelivery = options.processDelivery ?? defaultReportDeliveryProcessor;
   const runSchedule =
     options.processSchedule ?? createDefaultReportScheduleProcessor(generationQueue);
+  const runWorkflowTrigger = options.processWorkflowTrigger ?? defaultWorkflowTriggerProcessor;
 
   const generation = new Worker<ReportGenerationJobData>(
     REPORT_GENERATION_QUEUE,
@@ -210,13 +237,67 @@ export function registerReportWorkers(
     { connection, concurrency: 1 },
   );
 
+  const workflowTrigger = new Worker<WorkflowTriggerJobData, WorkflowTriggerJobResult>(
+    WORKFLOW_TRIGGER_QUEUE,
+    async (job) => {
+      return runWorkflowTrigger(job.data);
+    },
+    { connection, concurrency: options.workflowTriggerConcurrency ?? 2 },
+  );
+
+  workflowTrigger.on("completed", (job) => {
+    const data = job.data;
+    const processedOn =
+      typeof job.processedOn === "number"
+        ? job.processedOn
+        : typeof job.timestamp === "number"
+          ? job.timestamp
+          : Date.now();
+    const finishedOn = typeof job.finishedOn === "number" ? job.finishedOn : Date.now();
+    const durationSeconds = Math.max(0, (finishedOn - processedOn) / 1000);
+    recordWorkflowTriggerJobFinished({
+      workflowId: data.workflowId,
+      tenantId: data.tenantId,
+      status: "completed",
+      durationSeconds,
+    });
+  });
+
+  workflowTrigger.on("failed", (job) => {
+    if (!job) {
+      return;
+    }
+    const data = job.data;
+    const processedOn =
+      typeof job.processedOn === "number"
+        ? job.processedOn
+        : typeof job.timestamp === "number"
+          ? job.timestamp
+          : Date.now();
+    const finishedOn = typeof job.finishedOn === "number" ? job.finishedOn : Date.now();
+    const durationSeconds = Math.max(0, (finishedOn - processedOn) / 1000);
+    recordWorkflowTriggerJobFinished({
+      workflowId: data.workflowId,
+      tenantId: data.tenantId,
+      status: "failed",
+      durationSeconds,
+    });
+  });
+
   return {
     generation,
     delivery,
     schedule,
+    workflowTrigger,
     close: async () => {
-      await Promise.all([generation.close(), delivery.close(), schedule.close()]);
+      await Promise.all([
+        generation.close(),
+        delivery.close(),
+        schedule.close(),
+        workflowTrigger.close(),
+      ]);
       await generationQueue.close().catch(() => undefined);
+      await workflowTriggerQueue.close().catch(() => undefined);
       await closeSharedChromiumBrowser().catch(() => undefined);
     },
   };

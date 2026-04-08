@@ -1,6 +1,7 @@
 import { HtmlDocxFormatGenerator } from "./docx-format-generator";
 import { PlaywrightPdfFormatGenerator } from "./pdf-playwright-generator";
 import type { FormatGeneratorInput, IFormatGenerator, ReportFormat } from "./types";
+import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
 
 /** Deterministic stub output for fast tests and environments without Chromium. */
 export class StubFormatGenerator implements IFormatGenerator {
@@ -48,7 +49,7 @@ export function createStubFormatRegistry(): FormatGeneratorRegistry {
 }
 
 /**
- * Production registry: PDF (Playwright/Chromium), DOCX (html → docx), XLSX stub.
+ * Production registry: PDF (Playwright/Chromium), DOCX (html → docx), XLSX (ExcelJS).
  * Set `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1` to use {@link createStubFormatRegistry} instead.
  */
 export function createDefaultFormatRegistry(): FormatGeneratorRegistry {
@@ -58,6 +59,6 @@ export function createDefaultFormatRegistry(): FormatGeneratorRegistry {
   const r = new FormatGeneratorRegistry();
   r.register(new PlaywrightPdfFormatGenerator());
   r.register(new HtmlDocxFormatGenerator());
-  r.register(new StubFormatGenerator("xlsx"));
+  r.register(new ExcelXlsxFormatGenerator());
   return r;
 }

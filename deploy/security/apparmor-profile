@@ -1,0 +1,26 @@
+#include <tunables/global>
+
+profile agenticverdict-app flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  capability net_bind_service,
+  capability chown,
+
+  /app/** mr,
+  /tmp/** rw,
+  /proc/sys/kernel/ngroups_max r,
+  /etc/ssl/certs/** r,
+  /etc/passwd r,
+  /etc/group r,
+
+  # Block shells under /bin; allow /usr/bin for image utilities (e.g. wget healthchecks).
+  deny /bin/** ix,
+  deny /etc/shadow r,
+  deny /var/log/** w,
+
+  network inet stream,
+  network inet6 stream,
+  deny network packet,
+  deny /sys/** w,
+}

@@ -1,0 +1,147 @@
+# Optional observability: Prometheus, Grafana, Loki, Promtail; Falco under profile `security`.
+#
+# Baseline (metrics + logs + dashboards):
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
+#     -f docker-compose.observability.yml up -d
+#
+# Grafana: http://localhost:3001 (web app stays on :3000). Prometheus: :9090. Loki: :3100.
+#
+# Linux hosts only — add Falco (privileged, kernel driver / eBPF):
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
+#     -f docker-compose.observability.yml --profile security up -d
+#
+# Promtail uses Docker service discovery; on Docker Desktop (Mac/Win) ensure the socket
+# mount matches your engine (often still /var/run/docker.sock from the host).
+
+include:
+  - docker-compose.networks.yml
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_tsdb:/prometheus
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  loki:
+    image: grafana/loki:3.3.2
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ./deploy/observability/loki/local-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    networks:
+      - agenticverdict
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=64m
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  promtail:
+    image: grafana/promtail:3.3.2
+    user: root
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./deploy/observability/promtail/config.yml:/etc/promtail/config.yml:ro
+    networks:
+      - agenticverdict
+    depends_on:
+      loki:
+        condition: service_started
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=64m
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports:
+      - "3001:3000"
+    environment:
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_HTTP_PORT: "3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./deploy/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - agenticverdict
+    depends_on:
+      prometheus:
+        condition: service_started
+      loki:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+  falco:
+    profiles:
+      - security
+    image: falcosecurity/falco:0.39.2
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock:ro
+      - /proc:/host/proc:ro
+      - /etc:/host/etc:ro
+      - ./deploy/observability/falco/rules.d/agenticverdict-custom.yaml:/etc/falco/rules.d/agenticverdict-custom.yaml:ro
+    environment:
+      - FALCO_JSON_OUTPUT=true
+      - FALCO_LOG_LEVEL=info
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+volumes:
+  prometheus_tsdb:
+  grafana_data:
+  loki_data:

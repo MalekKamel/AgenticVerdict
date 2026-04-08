@@ -1,0 +1,7 @@
+# Shared bridge network for AgenticVerdict stacks — see docs/docker/compose-and-networking.md.
+networks:
+  agenticverdict:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

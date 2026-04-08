@@ -18,6 +18,30 @@ The **`media_verdict`** specialized agent is instructed to emit **`MarketingVerd
 
 Legacy **`legacyVerdictSchema`** / **`legacyVerdictToMarketingVerdict`** have been removed.
 
+### Prompt schema guardrails (2026-04-07 remediation)
+
+To keep live LLM outputs aligned with `marketingVerdictSchema`, `JSON_VERDICT_SUFFIX` now explicitly defines:
+
+- strict enums for `sentiment` (`positive|neutral|negative`) and `keyInsights[].impact` (`high|medium|low`, lowercase only)
+- UUID v4 requirements for all id fields, with explicit prohibition of string patterns like `insight-001`
+- numeric-only constraints for `recommendations[].estimatedImpact` fields (`roas`, `cost`, `revenue`)
+- `confidence` ranges as `0-1` decimals (not percentages)
+- explicit ISO-8601 example for `evidence[].capturedAt`
+
+Minimal valid shape example:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "analysisId": "22222222-2222-4222-8222-222222222222",
+  "verdictType": "overall_health",
+  "score": 72,
+  "confidence": 0.86,
+  "sentiment": "neutral"
+}
+```
+
 ## Insights and analysis bundles
 
 - **`GeneratedInsight`** — `packages/types/src/insight.ts` (`generatedInsightSchema`).

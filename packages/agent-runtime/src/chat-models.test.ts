@@ -20,6 +20,9 @@ describe("resolveProviderWithAvailableKeys", () => {
       resolveProviderWithAvailableKeys("anthropic", {
         anthropicApiKey: undefined,
         openAiApiKey: "x",
+        glmApiKey: undefined,
+        glmApiBaseUrl: undefined,
+        glmModel: undefined,
       }),
     ).toBe("openai");
   });
@@ -29,23 +32,44 @@ describe("resolveProviderWithAvailableKeys", () => {
       resolveProviderWithAvailableKeys("openai", {
         anthropicApiKey: "x",
         openAiApiKey: undefined,
+        glmApiKey: undefined,
+        glmApiBaseUrl: undefined,
+        glmModel: undefined,
       }),
     ).toBe("anthropic");
+  });
+
+  it("falls back to glm when anthropic and openai are missing", () => {
+    expect(
+      resolveProviderWithAvailableKeys("anthropic", {
+        anthropicApiKey: undefined,
+        openAiApiKey: undefined,
+        glmApiKey: "g",
+        glmApiBaseUrl: "https://open.bigmodel.cn/api/paas/v4",
+        glmModel: undefined,
+      }),
+    ).toBe("glm");
   });
 });
 
 describe("createPrimaryAndFallbackChatModels", () => {
+  const emptyEnv = {
+    anthropicApiKey: undefined,
+    openAiApiKey: undefined,
+    glmApiKey: undefined,
+    glmApiBaseUrl: undefined,
+    glmModel: undefined,
+  } as const;
+
   it("throws when no keys exist", () => {
-    expect(() =>
-      createPrimaryAndFallbackChatModels("verdict", {
-        anthropicApiKey: undefined,
-        openAiApiKey: undefined,
-      }),
-    ).toThrow(LlmConfigurationError);
+    expect(() => createPrimaryAndFallbackChatModels("verdict", { ...emptyEnv })).toThrow(
+      LlmConfigurationError,
+    );
   });
 
   it("returns primary and fallback when both keys exist for verdict (Claude primary)", () => {
     const { primary, fallback } = createPrimaryAndFallbackChatModels("verdict", {
+      ...emptyEnv,
       anthropicApiKey: "a",
       openAiApiKey: "o",
     });
@@ -55,10 +79,21 @@ describe("createPrimaryAndFallbackChatModels", () => {
 
   it("uses analysis preset primary (OpenAI) when keys allow", () => {
     const { primary } = createPrimaryAndFallbackChatModels("analysis", {
+      ...emptyEnv,
       anthropicApiKey: "a",
       openAiApiKey: "o",
     });
     expect(primary._llmType()).toBe("openai");
+  });
+
+  it("uses GLM when it is the only configured provider", () => {
+    const { primary, fallback } = createPrimaryAndFallbackChatModels("verdict", {
+      ...emptyEnv,
+      glmApiKey: "g",
+      glmApiBaseUrl: "https://open.bigmodel.cn/api/paas/v4",
+    });
+    expect(primary._llmType()).toBe("zhipu-glm");
+    expect(fallback).toBeUndefined();
   });
 });
 

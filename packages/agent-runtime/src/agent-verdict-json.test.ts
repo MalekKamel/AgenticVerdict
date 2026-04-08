@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   applyMarketingVerdictPipelineContext,
   extractJsonObjectText,
+  getVerdictParseFailureDetails,
   parseMarketingVerdictFromAgentText,
   safeParseMarketingVerdictFromAgentText,
 } from "./agent-verdict-json";
@@ -49,6 +50,53 @@ describe("agent-verdict-json", () => {
   it("parseMarketingVerdictFromAgentText rejects out-of-range score", () => {
     const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
     const bad = JSON.stringify({ ...v, score: 101 });
+    expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
+  });
+
+  it("rejects non-uuid nested IDs and reports failing fields", () => {
+    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const bad = JSON.stringify({
+      ...v,
+      keyInsights: [{ ...v.keyInsights[0], id: "insight-001" }],
+      recommendations: [{ ...v.recommendations[0], id: "rec-001" }],
+      actionItems: [{ ...v.actionItems[0], id: "action-001" }],
+      evidence: [{ ...v.evidence[0], id: "evi-001" }],
+    });
+    try {
+      parseMarketingVerdictFromAgentText(bad);
+      expect.unreachable("expected VerdictParseError");
+    } catch (error) {
+      expect(error).toBeInstanceOf(VerdictParseError);
+      const details = getVerdictParseFailureDetails(error);
+      expect(details.kind).toBe("schema");
+      expect(details.fields).toContain("keyInsights.0.id");
+      expect(details.fields).toContain("recommendations.0.id");
+      expect(details.fields).toContain("actionItems.0.id");
+      expect(details.fields).toContain("evidence.0.id");
+    }
+  });
+
+  it("rejects enum case mismatches for sentiment and impact", () => {
+    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const bad = JSON.stringify({
+      ...v,
+      sentiment: "Caution",
+      keyInsights: [{ ...v.keyInsights[0], impact: "High" }],
+    });
+    expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
+  });
+
+  it("rejects estimatedImpact string values", () => {
+    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const bad = JSON.stringify({
+      ...v,
+      recommendations: [
+        {
+          ...v.recommendations[0],
+          estimatedImpact: { roas: "+40%", cost: "5000 SAR" },
+        },
+      ],
+    });
     expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
   });
 

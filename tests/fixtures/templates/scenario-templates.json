@@ -1,0 +1,14 @@
+{
+  "templates": [
+    {
+      "id": "executive-summary",
+      "kind": "built-in",
+      "description": "Executive summary layout used in PDF/DOCX scenarios."
+    },
+    {
+      "id": "detailed-analysis",
+      "kind": "built-in",
+      "description": "Detailed analysis layout for multi-section reports."
+    }
+  ]
+}

@@ -31,19 +31,31 @@ export {
   type AgentLifecycleState,
 } from "./lifecycle";
 export {
+  glmConfigToCredentialEnv,
+  isGlmConfiguredInEnv,
+  parseGlmConfigFromEnv,
+  type GLMConfig,
+  type GlmConfig,
+} from "./glm-config";
+export {
   buildRuleBasedDegradedAiMessage,
+  ChatGlm,
   createAnthropicChatModel,
   createChatModelForPreference,
+  createGlmChatModel,
   createOpenAiChatModel,
   createPrimaryAndFallbackChatModels,
   DEFAULT_AGENT_MODEL_PRESETS,
   DEFAULT_CLAUDE_3_5_SONNET_MODEL,
+  DEFAULT_GLM_MODEL,
   DEFAULT_GPT_4_TURBO_MODEL,
   DEFAULT_PRODUCTION_LLM_RETRY_OPTIONS,
   invokeChatModelWithProviderFallback,
+  isLlmProviderConfigured,
   isTransientLlmError,
   LlmConfigurationError,
   resolveProviderWithAvailableKeys,
+  type AgentLlmCredentialEnv,
   type AgentLlmRole,
   type AgentTypeModelPreset,
   type CreateChatModelOptions,
@@ -59,16 +71,6 @@ export {
   type AgentLlmEnv,
   type LlmProviderEnv,
 } from "./llm-env";
-export {
-  MOCK_LLM_LIBRARY,
-  MOCK_LLM_LIBRARY_ENTRY_COUNT,
-  type MockLlmLibraryEntry,
-} from "./mock-llm-library";
-export {
-  AgentMockChatModel,
-  type AgentMockChatModelFailureKind,
-  type AgentMockChatModelFields,
-} from "./mock-chat-model";
 export { invokeMinimalMessageGraph } from "./minimal-agent-graph";
 export { AgentFactory, type AgentFactoryDeps } from "./agent-factory";
 export {
@@ -246,9 +248,12 @@ export {
 export {
   applyMarketingVerdictPipelineContext,
   extractJsonObjectText,
+  getVerdictParseFailureDetails,
   parseMarketingVerdictFromAgentText,
   resolveWorkflowAnalysisUuid,
   safeParseMarketingVerdictFromAgentText,
+  type VerdictParseFailureDetails,
+  type VerdictParseFailureKind,
 } from "./agent-verdict-json";
 export { VerdictParseError } from "./verdict-schema";
 export {

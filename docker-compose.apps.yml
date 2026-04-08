@@ -1,0 +1,140 @@
+# Optional application stack on top of Postgres + Redis.
+# Run `scripts/generate-secrets.sh` before first `up` (creates ./secrets/jwt_secret.txt).
+# Usage (from repo root):
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml up --build
+#
+# See docs/docker/testing.md.
+
+secrets:
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=512m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=deploy/security/seccomp-profile.json
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agenticverdict
+      REDIS_URL: redis://redis:6379
+      COMPANY_CONFIG_DIR: /app/configs/companies
+      TMPDIR: /tmp
+      XDG_CACHE_HOME: /tmp/.cache
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "1"
+          memory: 1G
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "4000:4000"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=512m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=deploy/security/seccomp-profile.json
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      API_HOST: "0.0.0.0"
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agenticverdict
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      COMPANY_CONFIG_DIR: /app/configs/companies
+      TMPDIR: /tmp
+      XDG_CACHE_HOME: /tmp/.cache
+    secrets:
+      - jwt_secret
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1.5G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=512m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=deploy/security/seccomp-profile.json
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agenticverdict
+      REDIS_URL: redis://redis:6379
+      COMPANY_CONFIG_DIR: /app/configs/companies
+      TMPDIR: /tmp
+      XDG_CACHE_HOME: /tmp/.cache
+      WORKER_HEALTH_PORT: "9465"
+      # Prometheus scrape target (Phase 2 production-flow observability)
+      WORKER_METRICS_PORT: "9464"
+      PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH: /usr/bin/chromium
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      # Stub keeps default BullMQ `report-generation` jobs lightweight; production-flow PDF uses Playwright + system Chromium.
+      AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS: "1"
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9465/healthz"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3

@@ -1,14 +1,35 @@
+include:
+  - docker-compose.networks.yml
+
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     ports:
       - "5432:5432"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=256m
+      - /run:noexec,nosuid,size=256m
+    # Official entrypoint chown/chmods the data dir; cap_drop: ALL breaks that (EPERM).
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=deploy/security/seccomp-profile.json
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: agenticverdict
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d agenticverdict"]
       interval: 5s
@@ -17,9 +38,31 @@ services:
       start_period: 10s
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - "6379:6379"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=128m
+    # cap_drop: ALL + hardened seccomp can block the entrypoint’s privilege drop to the redis user.
+    security_opt:
+      - seccomp=deploy/security/seccomp-profile.json
+    # Run as redis (uid 999 in official image) so we don’t rely on setuid in docker-entrypoint.sh.
+    user: "999:999"
+    entrypoint: ["redis-server"]
+    command: ["--dir", "/data", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -28,3 +71,4 @@ services:
 
 volumes:
   pgdata:
+  redis_data:

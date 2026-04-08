@@ -9,16 +9,31 @@ import { type RetryOptions, withPrimaryFallback, withRetries } from "./resilienc
 /** Default chat models aligned with project stack docs (CLAUDE.md / Phase 2 tasks). */
 export const DEFAULT_CLAUDE_3_5_SONNET_MODEL = "claude-3-5-sonnet-20241022";
 export const DEFAULT_GPT_4_TURBO_MODEL = "gpt-4-turbo";
+export const DEFAULT_GLM_MODEL = "glm-4.7";
 
 export type AgentLlmRole = "verdict" | "insights" | "analysis";
 
-export type LlmPrimaryPreference = "anthropic" | "openai";
+export type LlmPrimaryPreference = "anthropic" | "openai" | "glm";
 
 export interface AgentTypeModelPreset {
   primary: LlmPrimaryPreference;
   anthropicModel: string;
   openAiModel: string;
+  glmModel: string;
   temperature: number;
+}
+
+/** Credential slice used when constructing chat models (includes optional GLM base URL). */
+export type AgentLlmCredentialEnv = Pick<
+  AgentLlmEnv,
+  "anthropicApiKey" | "openAiApiKey" | "glmApiKey" | "glmApiBaseUrl" | "glmModel"
+>;
+
+/** OpenAI-compatible GLM client; distinct {@link BaseChatModel._llmType} for observability. */
+export class ChatGlm extends ChatOpenAI {
+  override _llmType(): string {
+    return "zhipu-glm";
+  }
 }
 
 /**
@@ -29,18 +44,21 @@ export const DEFAULT_AGENT_MODEL_PRESETS: Record<AgentLlmRole, AgentTypeModelPre
     primary: "anthropic",
     anthropicModel: DEFAULT_CLAUDE_3_5_SONNET_MODEL,
     openAiModel: DEFAULT_GPT_4_TURBO_MODEL,
+    glmModel: DEFAULT_GLM_MODEL,
     temperature: 0.1,
   },
   insights: {
     primary: "anthropic",
     anthropicModel: DEFAULT_CLAUDE_3_5_SONNET_MODEL,
     openAiModel: DEFAULT_GPT_4_TURBO_MODEL,
+    glmModel: DEFAULT_GLM_MODEL,
     temperature: 0.2,
   },
   analysis: {
     primary: "openai",
     anthropicModel: DEFAULT_CLAUDE_3_5_SONNET_MODEL,
     openAiModel: DEFAULT_GPT_4_TURBO_MODEL,
+    glmModel: DEFAULT_GLM_MODEL,
     temperature: 0.2,
   },
 };
@@ -55,8 +73,11 @@ export class LlmConfigurationError extends Error {
 export interface CreateChatModelOptions {
   anthropicApiKey?: string;
   openAiApiKey?: string;
+  glmApiKey?: string;
+  glmApiBaseUrl?: string;
   anthropicModel?: string;
   openAiModel?: string;
+  glmModel?: string;
   temperature?: number;
 }
 
@@ -86,76 +107,138 @@ export function createOpenAiChatModel(options: CreateChatModelOptions): ChatOpen
   });
 }
 
+export function createGlmChatModel(options: CreateChatModelOptions): BaseChatModel {
+  const apiKey = options.glmApiKey;
+  const baseUrl = options.glmApiBaseUrl;
+  if (apiKey === undefined || baseUrl === undefined) {
+    throw new LlmConfigurationError(
+      "GLM chat model requires glmApiKey (GLM_API_KEY) and glmApiBaseUrl (GLM_API_BASE_URL).",
+    );
+  }
+
+  // Detect if this is an Anthropic-compatible endpoint (e.g., z.ai's /api/anthropic)
+  const isAnthropicFormat = baseUrl.includes("/anthropic") || baseUrl.endsWith("/api/anthropic");
+
+  const model = options.glmModel ?? DEFAULT_GLM_MODEL;
+  const temperature = options.temperature ?? 0;
+
+  if (isAnthropicFormat) {
+    // Anthropic-compatible proxy (e.g. z.ai `/api/anthropic`): use LangChain-supported client options.
+    return new ChatAnthropic({
+      apiKey,
+      model,
+      temperature,
+      anthropicApiUrl: baseUrl,
+      clientOptions: {
+        defaultHeaders: {
+          "anthropic-version": "2023-06-01",
+        },
+      },
+    });
+  }
+
+  // Use OpenAI-compatible format
+  return new ChatGlm({
+    apiKey,
+    model,
+    temperature,
+    configuration: {
+      baseURL: baseUrl,
+    },
+  });
+}
+
 export function createChatModelForPreference(
   preference: LlmPrimaryPreference,
   options: CreateChatModelOptions,
 ): BaseChatModel {
-  return preference === "anthropic"
-    ? createAnthropicChatModel(options)
-    : createOpenAiChatModel(options);
+  if (preference === "anthropic") {
+    return createAnthropicChatModel(options);
+  }
+  if (preference === "openai") {
+    return createOpenAiChatModel(options);
+  }
+  return createGlmChatModel(options);
+}
+
+function providerCandidates(preference: LlmPrimaryPreference): LlmPrimaryPreference[] {
+  const order: Record<LlmPrimaryPreference, LlmPrimaryPreference[]> = {
+    anthropic: ["anthropic", "openai", "glm"],
+    openai: ["openai", "anthropic", "glm"],
+    glm: ["glm", "anthropic", "openai"],
+  };
+  return order[preference];
+}
+
+export function isLlmProviderConfigured(
+  provider: LlmPrimaryPreference,
+  env: AgentLlmCredentialEnv,
+): boolean {
+  if (provider === "anthropic") {
+    return env.anthropicApiKey !== undefined;
+  }
+  if (provider === "openai") {
+    return env.openAiApiKey !== undefined;
+  }
+  return env.glmApiKey !== undefined && env.glmApiBaseUrl !== undefined;
 }
 
 /**
- * If the preferred provider has no API key, use the other provider when available.
+ * Picks the first provider in the preset order that has usable credentials (GLM needs key + base URL).
  */
 export function resolveProviderWithAvailableKeys(
   preference: LlmPrimaryPreference,
-  env: Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">,
+  env: AgentLlmCredentialEnv,
 ): LlmPrimaryPreference {
-  if (
-    preference === "anthropic" &&
-    env.anthropicApiKey === undefined &&
-    env.openAiApiKey !== undefined
-  ) {
-    return "openai";
-  }
-  if (
-    preference === "openai" &&
-    env.openAiApiKey === undefined &&
-    env.anthropicApiKey !== undefined
-  ) {
-    return "anthropic";
+  for (const p of providerCandidates(preference)) {
+    if (isLlmProviderConfigured(p, env)) {
+      return p;
+    }
   }
   return preference;
 }
 
-function buildOptionsFromPreset(
+function buildCreateChatModelOptionsFromPreset(
   preset: AgentTypeModelPreset,
-  env: Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">,
+  env: AgentLlmCredentialEnv,
+  temperature: number,
 ): CreateChatModelOptions {
+  const glmModel = env.glmModel ?? preset.glmModel;
   return {
     anthropicApiKey: env.anthropicApiKey,
     openAiApiKey: env.openAiApiKey,
+    glmApiKey: env.glmApiKey,
+    glmApiBaseUrl: env.glmApiBaseUrl,
     anthropicModel: preset.anthropicModel,
     openAiModel: preset.openAiModel,
-    temperature: preset.temperature,
+    glmModel,
+    temperature,
   };
 }
 
 /**
- * Primary model follows the preset; optional fallback is the other provider when its key exists.
+ * Primary model follows the preset order; optional fallback is the next configured provider.
  */
 export function createPrimaryAndFallbackChatModels(
   role: AgentLlmRole,
-  env: Pick<AgentLlmEnv, "anthropicApiKey" | "openAiApiKey">,
+  env: AgentLlmCredentialEnv,
+  temperatureOverride?: number,
 ): { primary: BaseChatModel; fallback?: BaseChatModel } {
   const preset = DEFAULT_AGENT_MODEL_PRESETS[role];
-  const primaryPref = resolveProviderWithAvailableKeys(preset.primary, env);
-  const secondaryPref: LlmPrimaryPreference = primaryPref === "anthropic" ? "openai" : "anthropic";
-  const opts = buildOptionsFromPreset(preset, env);
-
-  const primary = createChatModelForPreference(primaryPref, opts);
-
-  const secondaryKeyOk =
-    secondaryPref === "anthropic"
-      ? env.anthropicApiKey !== undefined
-      : env.openAiApiKey !== undefined;
-
+  const temperature = temperatureOverride ?? preset.temperature;
+  const configured = providerCandidates(preset.primary).filter((p) =>
+    isLlmProviderConfigured(p, env),
+  );
+  if (configured.length === 0) {
+    throw new LlmConfigurationError(
+      "No LLM credentials configured (set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GLM_API_KEY + GLM_API_BASE_URL).",
+    );
+  }
+  const opts = buildCreateChatModelOptionsFromPreset(preset, env, temperature);
+  const primary = createChatModelForPreference(configured[0]!, opts);
+  const secondary = configured[1];
   const fallback =
-    secondaryKeyOk && secondaryPref !== primaryPref
-      ? createChatModelForPreference(secondaryPref, opts)
-      : undefined;
-
+    secondary !== undefined ? createChatModelForPreference(secondary, opts) : undefined;
   return { primary, fallback };
 }
 

@@ -9,7 +9,7 @@ import { AgentFactory } from "./agent-factory";
 import { parseAgentFactoryConfig, safeParseAgentFactoryConfig } from "./agent-config";
 import { AgentTenantContextError } from "./agent-context-integration";
 import { AgentJobError, runAgentJob } from "./agent-job";
-import { AgentMockChatModel } from "./mock-chat-model";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 import { createRuleBasedEchoAgent } from "./rule-based-agent";
 import { defineTool } from "./tools";
 

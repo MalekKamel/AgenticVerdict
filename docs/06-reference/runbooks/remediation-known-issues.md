@@ -23,3 +23,24 @@
 1. Persist analysis, insights, and verdicts; replace in-memory store with tenant-scoped DB reads.
 2. Align rate-limit budgets per environment (dev vs. prod) and document in infra config.
 3. Add Redoc static bundle or CI-published OpenAPI artifact if Swagger UI is insufficient for external partners.
+
+## Troubleshooting: MarketingVerdict schema validation failures
+
+Symptoms:
+
+- Pipeline stage completion reaches verdict, then status returns `degraded`.
+- Error message includes `Verdict JSON parse failed` and may include `fields=...`.
+
+Typical failing fields:
+
+- `sentiment` (must be `positive|neutral|negative`)
+- `keyInsights.*.impact` (must be lowercase `high|medium|low`)
+- `*.id` fields (must be UUID v4)
+- `recommendations.*.estimatedImpact.*` (must be numbers)
+
+Investigation checklist:
+
+1. Inspect `packages/agent-runtime/src/specialized-marketing-agents.ts` (`JSON_VERDICT_SUFFIX`) for drift from `marketingVerdictSchema`.
+2. Inspect `packages/types/src/verdict.ts` for schema changes that require prompt updates.
+3. Reproduce with `packages/agent-runtime/src/agent-verdict-json.test.ts` focused tests.
+4. Review `marketing_verdict_parse_failures_by_field_total` and `marketing_verdict_parse_degraded_total` metrics for spike patterns.

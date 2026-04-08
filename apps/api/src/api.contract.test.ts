@@ -91,6 +91,12 @@ describe("api v1 integration (remediation R-13)", () => {
     expect(doc.paths?.["/api/v1/analysis-results/{id}"]).toBeDefined();
     expect(doc.paths?.["/api/v1/insights/validate"]).toBeDefined();
     expect(doc.paths?.["/api/v1/verdicts/validate"]).toBeDefined();
+    expect(doc.paths?.["/api/v1/workflows/trigger"]).toBeDefined();
+    expect(doc.paths?.["/api/v1/workflows/status/{executionId}"]).toBeDefined();
+    expect(doc.paths?.["/api/v1/test/results/{executionId}"]).toBeDefined();
+    expect(doc.paths?.["/api/v1/test/telemetry/scenario"]).toBeDefined();
+    expect(doc.paths?.["/api/v1/test/telemetry/assertion"]).toBeDefined();
+    expect(doc.paths?.["/metrics"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/delivery-metrics"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/shared/{token}/content"]).toBeDefined();

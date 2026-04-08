@@ -201,6 +201,10 @@ drizzle-kit push:pg
 drizzle-kit studio
 ```
 
+### Docker
+
+Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational commands are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
+
 ## Testing Requirements
 
 **Coverage Targets** (from `/docs/02-planning-and-methodology/testing-strategy.md`):
@@ -238,6 +242,7 @@ The `/docs` directory contains comprehensive project documentation:
 | `04-technology-research/`      | Comprehensive technology analysis with justifications                   |
 | `05-project-management/`       | Project charter, requirements, roadmap                                  |
 | `06-reference/`                | Prompts, templates, resources                                           |
+| `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops   |
 
 **Before making architectural decisions**, consult the relevant technology research documentation in `/docs/04-technology-research/`.
 

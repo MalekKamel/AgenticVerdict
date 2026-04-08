@@ -4,20 +4,38 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./services/email": "./src/services/email.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
+    "build:esbuild": "node esbuild.config.mjs",
     "lint": "eslint .",
+    "start": "node --import tsx src/cli.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@agenticverdict/config": "workspace:*",
+    "@agenticverdict/agent-runtime": "workspace:*",
+    "@agenticverdict/database": "workspace:*",
+    "@agenticverdict/observability": "workspace:*",
     "@agenticverdict/report-generator": "workspace:*",
+    "@agenticverdict/testing": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
+    "@langchain/core": "^1.1.39",
     "bullmq": "^5.40.0",
-    "ioredis": "^5.5.0"
+    "exceljs": "^4.4.0",
+    "ioredis": "^5.5.0",
+    "jszip": "^3.10.1",
+    "pdf-parse": "^1.1.1",
+    "pg": "^8.20.0",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
+    "esbuild": "^0.25.0",
+    "@types/pg": "^8.15.5",
+    "@types/pdf-parse": "^1.1.4",
     "@types/node": "^20.19.0",
     "eslint": "^9.17.0",
     "typescript": "^5.7.2",

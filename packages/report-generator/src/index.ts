@@ -14,6 +14,7 @@ export { renderDataTable, type DataTableInput } from "./components/data-table";
 export { renderFigure, renderFigurePlaceholder, type FigureInput } from "./components/figure";
 export { renderSectionDivider } from "./components/section-divider";
 export { HtmlDocxFormatGenerator } from "./docx-format-generator";
+export { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
 export {
   mergePhase2IntoReportModel,
   type MergePhase2ReportModelOptions,
@@ -31,6 +32,11 @@ export {
   PlaywrightPdfFormatGenerator,
   type PlaywrightPdfFormatGeneratorOptions,
 } from "./pdf-playwright-generator";
+export {
+  getPlaywrightChromiumLaunchOptions,
+  isPlaywrightChromiumAvailable,
+  resolvePlaywrightChromiumExecutablePath,
+} from "./playwright-chromium-path";
 export { DEFAULT_REPORT_PRINT_CSS } from "./pdf-print-styles";
 export { escapeAttr, escapeHtml, sanitizeDomId } from "./html-utils";
 export {

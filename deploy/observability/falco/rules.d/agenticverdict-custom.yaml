@@ -1,0 +1,3 @@
+# Append custom `- rule:` documents here. Base rules and macros load from the Falco image.
+# Empty list keeps the mount valid when no org-specific rules are defined yet.
+[]

@@ -1,0 +1,40 @@
+# Development override for mock adapter testing (NODE_ENV=development).
+# Adapter aggregate health is served by the Web app (Next.js); include `web` when using mocks.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
+#     -f deploy/docker-compose.dev.override.yml up
+#
+# NOTE: Mock adapters require NODE_ENV=development at BUILD TIME (not just runtime).
+# Web service cannot use mock adapters in Docker due to Next.js build limitations.
+# For production-flow scenarios (R01/R02), mock adapters are not needed as they use fixed HTML.
+
+services:
+  api:
+    build:
+      args:
+        NODE_ENV: "development"
+    environment:
+      NODE_ENV: "development"
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      # GLM/ZhipuAI LLM Configuration (for AI agent workflows)
+      # GLM_API_KEY: "your-glm-api-key-here"
+      # GLM_API_BASE_URL: "https://api.z.ai/api/anthropic"
+      # GLM_MODEL: "glm-4.5"
+      # GLM_TIMEOUT: "30000"
+
+  worker:
+    build:
+      args:
+        NODE_ENV: "development"
+    environment:
+      NODE_ENV: "development"
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      # GLM/ZhipuAI LLM Configuration (for AI agent workflows)
+      # GLM_API_KEY: "your-glm-api-key-here"
+      # GLM_API_BASE_URL: "https://api.z.ai/api/anthropic"
+      # GLM_MODEL: "glm-4.5"
+      # GLM_TIMEOUT: "30000"
+
+  # Web service uses production build (mock adapters not supported in Docker)
+  # For mock adapter testing, use local `pnpm dev` instead

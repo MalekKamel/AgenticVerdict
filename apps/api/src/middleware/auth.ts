@@ -1,7 +1,48 @@
+import { readFileSync } from "node:fs";
+
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { jwtVerify } from "jose";
 
 import { TenantSecurityError } from "@agenticverdict/core";
+
+const JWT_SECRET_MIN_LENGTH = 8;
+
+let jwtSecretFileContentLoaded = false;
+let jwtSecretFromFile: string | undefined;
+
+/**
+ * Clears the lazy cache used when `JWT_SECRET_FILE` is set. Call between tests that
+ * change the file path or replace the secret file contents.
+ */
+export function resetJwtSecretCacheForTests(): void {
+  jwtSecretFileContentLoaded = false;
+  jwtSecretFromFile = undefined;
+}
+
+function resolveJwtSecret(): string | undefined {
+  const secretFilePath = process.env.JWT_SECRET_FILE?.trim();
+  if (secretFilePath) {
+    if (!jwtSecretFileContentLoaded) {
+      jwtSecretFileContentLoaded = true;
+      try {
+        jwtSecretFromFile = readFileSync(secretFilePath, "utf8").trim();
+      } catch {
+        jwtSecretFromFile = undefined;
+      }
+    }
+    const fromFile = jwtSecretFromFile;
+    if (fromFile && fromFile.length >= JWT_SECRET_MIN_LENGTH) {
+      return fromFile;
+    }
+    return undefined;
+  }
+
+  const fromEnv = process.env.JWT_SECRET;
+  if (!fromEnv || fromEnv.length < JWT_SECRET_MIN_LENGTH) {
+    return undefined;
+  }
+  return fromEnv;
+}
 
 export interface AuthPayload {
   userId: string;
@@ -51,12 +92,13 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       return;
     }
 
-    const secret = process.env.JWT_SECRET;
-    if (!secret || secret.length < 8) {
+    const secret = resolveJwtSecret();
+    if (!secret) {
       await reply.status(500).send({
         error: {
           code: "internal_error",
-          message: "JWT_SECRET is not configured",
+          message:
+            "JWT secret is not configured (set JWT_SECRET or JWT_SECRET_FILE with value length ≥ 8)",
           details: {},
         },
         requestId: request.id,

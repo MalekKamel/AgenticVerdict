@@ -9,6 +9,7 @@ import {
 import { HtmlDocxFormatGenerator } from "./docx-format-generator";
 import { PlaywrightPdfFormatGenerator } from "./pdf-playwright-generator";
 import type { FormatGeneratorInput } from "./types";
+import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
 
 describe("FormatGeneratorRegistry", () => {
   it("resolves stub registry formats", () => {
@@ -24,7 +25,7 @@ describe("FormatGeneratorRegistry", () => {
       const r = createDefaultFormatRegistry();
       expect(r.get("pdf")).toBeInstanceOf(PlaywrightPdfFormatGenerator);
       expect(r.get("docx")).toBeInstanceOf(HtmlDocxFormatGenerator);
-      expect(r.get("xlsx")).toBeInstanceOf(StubFormatGenerator);
+      expect(r.get("xlsx")).toBeInstanceOf(ExcelXlsxFormatGenerator);
     } finally {
       if (prev === undefined) {
         delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;

@@ -215,6 +215,9 @@ export function createEmailDeliveryServiceFromEnv(): EmailDeliveryService | null
 }
 
 export async function sendReportEmail(params: SendReportEmailParams): Promise<DeliveryResult> {
+  if (process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL === "1") {
+    return { success: true, messageId: "production_flow_email_mock" };
+  }
   const svc = createEmailDeliveryServiceFromEnv();
   if (!svc) {
     return {

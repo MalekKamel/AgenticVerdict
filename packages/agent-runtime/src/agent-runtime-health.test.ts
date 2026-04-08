@@ -24,4 +24,14 @@ describe("checkAgentRuntimeHealth", () => {
     expect(report.llmInvocationPossible).toBe(false);
     expect(report.checks.find((c) => c.id === "llm_provider_configured")?.ok).toBe(false);
   });
+
+  it("reports healthy when only GLM credentials are set", () => {
+    const report = checkAgentRuntimeHealth({
+      GLM_API_KEY: "glm-key",
+      GLM_API_BASE_URL: "https://open.bigmodel.cn/api/paas/v4",
+      LANGCHAIN_TRACING_V2: "false",
+    });
+    expect(report.llmInvocationPossible).toBe(true);
+    expect(report.checks.find((c) => c.id === "llm_provider_configured")?.ok).toBe(true);
+  });
 });

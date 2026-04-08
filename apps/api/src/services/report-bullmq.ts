@@ -3,8 +3,11 @@ import {
   createBullmqConnectionFromEnv,
   createReportDeliveryQueue,
   createReportScheduleQueue,
+  createWorkflowTriggerQueue,
   type ReportDeliveryJobData,
   type ReportScheduleJobData,
+  type WorkflowTriggerJobData,
+  type WorkflowTriggerJobResult,
 } from "@agenticverdict/worker";
 
 let cachedConnection: ReturnType<typeof createBullmqConnectionFromEnv> | undefined;
@@ -85,6 +88,106 @@ export async function unregisterScheduleRepeatableJob(scheduleId: string): Promi
     await q.removeRepeatableByKey(repeatKeyForSchedule(scheduleId));
   } catch {
     /* idempotent */
+  } finally {
+    await q.close();
+  }
+}
+
+export async function enqueueWorkflowTrigger(
+  data: WorkflowTriggerJobData,
+  jobId?: string,
+): Promise<string> {
+  const conn = getConnection();
+  if (!conn) {
+    throw new Error("queue_unavailable");
+  }
+  const q = createWorkflowTriggerQueue(conn);
+  try {
+    const job = await q.add(
+      "workflow-trigger",
+      data,
+      jobId ? { jobId, removeOnComplete: 1000 } : { removeOnComplete: 1000 },
+    );
+    return typeof job.id === "string" ? job.id : String(job.id);
+  } finally {
+    await q.close();
+  }
+}
+
+export type WorkflowTriggerJobState =
+  | "completed"
+  | "failed"
+  | "active"
+  | "waiting"
+  | "delayed"
+  | "paused"
+  | "unknown";
+
+export interface WorkflowTriggerStatusPayload {
+  executionId: string;
+  status: WorkflowTriggerJobState;
+  bullmqState: string;
+  /** BullMQ `job.timestamp` (ms) when the job was created */
+  queuedAtMs?: number;
+  /** BullMQ `job.processedOn` (ms) when processing started */
+  startedAtMs?: number;
+  /** BullMQ `job.finishedOn` (ms) when the job finished */
+  finishedAtMs?: number;
+  /** `finishedOn - processedOn` when both are set */
+  durationMs?: number;
+  result?: WorkflowTriggerJobResult;
+  error?: string;
+}
+
+export async function getWorkflowTriggerJobStatus(
+  executionId: string,
+): Promise<WorkflowTriggerStatusPayload | null> {
+  const conn = getConnection();
+  if (!conn) {
+    return null;
+  }
+  const q = createWorkflowTriggerQueue(conn);
+  try {
+    const job = await q.getJob(executionId);
+    if (!job) {
+      return null;
+    }
+    const state = await job.getState();
+    const stateStr = state as string;
+    const failedReason = typeof job.failedReason === "string" ? job.failedReason : undefined;
+    const returnvalue = job.returnvalue as WorkflowTriggerJobResult | undefined;
+    const status: WorkflowTriggerJobState =
+      stateStr === "completed"
+        ? "completed"
+        : stateStr === "failed"
+          ? "failed"
+          : stateStr === "active"
+            ? "active"
+            : stateStr === "waiting"
+              ? "waiting"
+              : stateStr === "delayed"
+                ? "delayed"
+                : stateStr === "paused"
+                  ? "paused"
+                  : "unknown";
+    const queuedAtMs = typeof job.timestamp === "number" ? job.timestamp : undefined;
+    const startedAtMs = typeof job.processedOn === "number" ? job.processedOn : undefined;
+    const finishedAtMs = typeof job.finishedOn === "number" ? job.finishedOn : undefined;
+    const durationMs =
+      startedAtMs !== undefined && finishedAtMs !== undefined
+        ? finishedAtMs - startedAtMs
+        : undefined;
+    return {
+      executionId,
+      status,
+      bullmqState: stateStr,
+      queuedAtMs,
+      startedAtMs,
+      finishedAtMs,
+      durationMs,
+      result: returnvalue,
+      error: failedReason,
+    };
   } finally {
     await q.close();
   }

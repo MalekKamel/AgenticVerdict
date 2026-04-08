@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit",
+    "build:esbuild": "node esbuild.config.mjs",
     "dev": "node --import tsx src/cli.ts",
     "lint": "eslint .",
     "start": "node --import tsx src/cli.ts",
@@ -15,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@agenticverdict/observability": "workspace:*",
     "@agenticverdict/worker": "workspace:*",
     "@agenticverdict/agent-runtime": "workspace:*",
     "@agenticverdict/config": "workspace:*",
@@ -30,12 +32,13 @@
     "ioredis": "^5.5.0",
     "fastify": "^5.2.1",
     "jose": "^5.10.0",
+    "tsx": "^4.21.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
+    "esbuild": "^0.25.0",
     "eslint": "^9.17.0",
-    "tsx": "^4.21.0",
     "typescript": "^5.7.2",
     "vitest": "^3.0.0"
   }

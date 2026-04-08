@@ -1,4 +1,5 @@
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { AgentMockChatModel } from "@agenticverdict/testing";
 
 import type { AgentFactoryConfig } from "./agent-config";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
@@ -11,15 +12,20 @@ import { renderPromptTemplate, resolvePromptTemplate } from "./prompts/index";
 const JSON_VERDICT_SUFFIX = `
 
 When the user asks for a structured verdict, reply with a single JSON object only (no markdown fences) matching the unified MarketingVerdict contract:
-- Required top-level: "id" (UUID), "tenantId" (UUID), "analysisId" (UUID), "verdictType" ("budget_allocation"|"platform_performance"|"creative_effectiveness"|"overall_health"),
-  "score" (0-100), "confidence" (0-1), "sentiment", "summary" (10-500 chars), "reasoning" (string[], each line ≥10 chars, min 1 line),
-  "keyInsights" (min 1; each needs UUID "id", "title", "detail", "impact", "confidence"),
-  "recommendations" (min 1; each needs UUID "id", "title", "rationale", "priority" 1-5, "effort" "low"|"medium"|"high"; optional "estimatedImpact": { "roas"?, "cost"?, "revenue"? }),
-  "actionItems" (each: UUID "id", "description", "ownerRole", "priority" 1-10; optional "dueDateHint"),
-  "evidence" (each: UUID "id", "label", "source" "meta"|"ga4"|"gsc"|"gbp"|"tiktok"|"internal"|"composite", "capturedAt" ISO-8601; optional "value", "metric", etc.),
+- Required top-level: "id" (UUID v4), "tenantId" (UUID v4), "analysisId" (UUID v4), "verdictType" ("budget_allocation"|"platform_performance"|"creative_effectiveness"|"overall_health"),
+  "score" (0-100), "confidence" (number 0-1, not percentage), "sentiment" ("positive"|"neutral"|"negative"),
+  score-sentiment mapping guidance: 0-49->"negative", 50-74->"neutral", 75-100->"positive",
+  "summary" (10-500 chars), "reasoning" (string[], each line >=10 chars, min 1 line; e.g. "Meta CPC increased due to audience fatigue in KSA market"),
+  "keyInsights" (min 1; each needs UUID v4 "id", "title", "detail", "impact" ("high"|"medium"|"low" lowercase only), "confidence" (number 0-1, not percentage)),
+  "recommendations" (min 1; each needs UUID v4 "id", "title", "rationale", "priority" 1-5, "effort" "low"|"medium"|"high";
+  optional "estimatedImpact": { "roas"?: number decimal multiplier (e.g. 1.4 for +40%, not "+40%"), "cost"?: number base currency value, "revenue"?: number }),
+  "actionItems" (each: UUID v4 "id", "description", "ownerRole", "priority" 1-10; optional "dueDateHint"),
+  "evidence" (each: UUID v4 "id", "label", "source" "meta"|"ga4"|"gsc"|"gbp"|"tiktok"|"internal"|"composite", "capturedAt" ISO-8601 e.g. "2024-10-24T00:00:00.000Z"; optional "value", "metric", etc.),
   "dataSources" (min 1; each: "platform" "meta"|"ga4"|"gsc"|"gbp"|"tiktok", "metrics" (non-empty strings), "dateRange" { "start","end" YYYY-MM-DD }, "freshness" ≥0, "qualityScore" 0-100),
-  "platformsAnalyzed" (non-empty strings), "dateRange" { "start","end" }, "generatedAt" ISO-8601, "generatedBy", "modelUsed".
-Use the tenantId and analysisId values supplied in the user message exactly; generate new UUIDs for nested entities.`;
+  "platformsAnalyzed" (array of non-empty platform display names, e.g. ["Meta Ads","GA4"]), "dateRange" { "start","end" }, "generatedAt" ISO-8601, "generatedBy", "modelUsed".
+Use the tenantId and analysisId values supplied in the user message exactly.
+Generate new UUID v4 values for nested entities (keyInsights, recommendations, actionItems, evidence).
+Do NOT use string patterns like "insight-001" or "rec-001".`;
 
 export type SpecializedMarketingAgentKind =
   | "cross_platform_analysis"
@@ -141,7 +147,7 @@ export function createSpecializedMarketingTestAgent(
   options: CreateSpecializedMarketingAgentOptions,
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
-  return factory.createTestAgent(cfg, options.mockLlm, {
+  return factory.createTestAgent(cfg, options.mockLlm ?? new AgentMockChatModel({}), {
     invocationCache: options.invocationCache,
   });
 }

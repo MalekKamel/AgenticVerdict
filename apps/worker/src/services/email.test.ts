@@ -4,6 +4,7 @@ import {
   createEmailDeliveryServiceFromEnv,
   ResendEmailDeliveryService,
   SendGridEmailDeliveryService,
+  sendReportEmail,
 } from "./email";
 
 describe("ResendEmailDeliveryService (sandbox / mocked HTTP)", () => {
@@ -120,6 +121,31 @@ describe("SendGridEmailDeliveryService (mocked HTTP)", () => {
       "https://api.sendgrid.com/v3/mail/send",
       expect.objectContaining({ method: "POST" }),
     );
+  });
+});
+
+describe("sendReportEmail (production-flow mock)", () => {
+  const originalMock = process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL;
+
+  afterEach(() => {
+    if (originalMock === undefined) {
+      delete process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL;
+    } else {
+      process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL = originalMock;
+    }
+  });
+
+  it("returns success when AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL=1", async () => {
+    process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL = "1";
+    const result = await sendReportEmail({
+      to: ["ops@example.test"],
+      subject: "Your PDF report is ready",
+      reportId: "rep_pf",
+      format: "pdf",
+      attachments: [],
+    });
+    expect(result.success).toBe(true);
+    expect(result.messageId).toBe("production_flow_email_mock");
   });
 });
 

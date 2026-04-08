@@ -1,6 +1,6 @@
 /**
  * Paired A/B harness for prompt variants on the same fixtures. Supply a deterministic `invoke` (for example
- * `AgentMockChatModel`) in CI; real providers stay opt-in per Phase 2 governance.
+ * `AgentMockChatModel` from `@agenticverdict/testing`) in CI; real providers stay opt-in per Phase 2 governance.
  */
 
 import { estimateApproximateTokenCount } from "./render";
