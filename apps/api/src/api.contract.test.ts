@@ -97,6 +97,8 @@ describe("api v1 integration (remediation R-13)", () => {
     expect(doc.paths?.["/api/v1/test/telemetry/scenario"]).toBeDefined();
     expect(doc.paths?.["/api/v1/test/telemetry/assertion"]).toBeDefined();
     expect(doc.paths?.["/metrics"]).toBeDefined();
+    expect(doc.paths?.["/health"]).toBeDefined();
+    expect(doc.paths?.["/api/health"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/delivery-metrics"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/shared/{token}/content"]).toBeDefined();
@@ -121,6 +123,13 @@ describe("api v1 integration (remediation R-13)", () => {
 
   it("GET /health is public", async () => {
     const res = await app.inject({ method: "GET", url: "/health" });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { ok: boolean };
+    expect(body.ok).toBe(true);
+  });
+
+  it("GET /api/health is public", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/health" });
     expect(res.statusCode).toBe(200);
     const body = res.json() as { ok: boolean };
     expect(body.ok).toBe(true);

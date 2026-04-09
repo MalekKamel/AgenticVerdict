@@ -1,0 +1,18 @@
+# Build shared image layers before api / worker / web (pnpm deps + Chromium for worker).
+# Usage (repo root):
+#   docker compose -f docker-compose.base-images.yml build
+#
+# Then build app images (see docker-compose.apps.yml build args DEPS_IMAGE / CHROMIUM_IMAGE).
+
+services:
+  deps-base:
+    image: agenticverdict/deps:local
+    build:
+      context: .
+      dockerfile: packages/docker/base/Dockerfile.deps
+
+  chromium-base:
+    image: agenticverdict/chromium-base:local
+    build:
+      context: .
+      dockerfile: packages/docker/base/Dockerfile.chromium

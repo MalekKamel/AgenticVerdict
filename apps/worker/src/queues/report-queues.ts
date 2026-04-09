@@ -9,9 +9,12 @@ import {
   type MarketingPipelineState,
   type PlatformFetchToolDeps,
 } from "@agenticverdict/agent-runtime";
-import { createTestTenantContext } from "@agenticverdict/testing";
+import { ConfigManager, type CompanyConfig } from "@agenticverdict/config";
+import { parseNormalizedPlatformSnapshot } from "@agenticverdict/platform-adapters";
+import { createTestCompanyConfig, createTestTenantContext } from "@agenticverdict/testing";
 import {
   generatedInsightSchema,
+  type DataSourceProvenance,
   type GeneratedInsight,
   type PlatformType,
 } from "@agenticverdict/types";
@@ -50,7 +53,7 @@ import {
   workflowTriggerJobResultSchema,
   type WorkflowJobErrorCode,
 } from "./job-types";
-import { createJobLogger } from "./logger";
+import { createJobLogger, getWorkerRootLogger } from "./logger";
 import { enqueueScheduledReportGeneration } from "./report-schedule-enqueue";
 import { runProductionFlowScenario } from "./workflow-trigger-production-flow";
 import {
@@ -66,6 +69,80 @@ const defaultJobOptions: JobsOptions = {
   removeOnComplete: 1000,
   removeOnFail: 5000,
 };
+
+const workflowTenantConfigManager = new ConfigManager();
+
+async function loadCompanyConfigForWorkflowTenant(tenantId: string): Promise<CompanyConfig> {
+  try {
+    return await workflowTenantConfigManager.loadCompanyConfig(tenantId);
+  } catch {
+    return createTestCompanyConfig({
+      companyId: tenantId,
+      marketing: {
+        channels: [
+          { platform: "meta", enabled: true },
+          { platform: "ga4", enabled: true },
+          { platform: "gsc", enabled: true },
+          { platform: "gbp", enabled: true },
+          { platform: "tiktok", enabled: true },
+        ],
+      },
+    });
+  }
+}
+
+function periodFromWorkflowJobConfig(
+  config: WorkflowTriggerJobData["config"],
+): { start: string; end: string } | undefined {
+  if (!config.dateRange) {
+    return undefined;
+  }
+  return {
+    start: config.dateRange.start.slice(0, 10),
+    end: config.dateRange.end.slice(0, 10),
+  };
+}
+
+function extractAnalysisDataSourcesFromPipeline(
+  pipelineState: MarketingPipelineState,
+  platformsAnalyzed: readonly PlatformType[],
+  dateRange: { start: string; end: string },
+): DataSourceProvenance[] {
+  const analysisStage = pipelineState.stages.find((s) => s.stage === "analysis");
+  const metricsByPlatform = new Map<PlatformType, Set<string>>();
+
+  if (analysisStage) {
+    for (const step of analysisStage.result.steps) {
+      const checked = parseNormalizedPlatformSnapshot(step.result);
+      if (!checked.success) {
+        continue;
+      }
+      const snap = checked.data;
+      const platform = snap.platform as PlatformType;
+      let set = metricsByPlatform.get(platform);
+      if (!set) {
+        set = new Set();
+        metricsByPlatform.set(platform, set);
+      }
+      for (const rec of snap.records) {
+        set.add(rec.metricKey);
+      }
+    }
+  }
+
+  return platformsAnalyzed.map((platform) => {
+    const keys = metricsByPlatform.get(platform);
+    const hasKeys = keys !== undefined && keys.size > 0;
+    const metrics = hasKeys ? [...keys].sort() : ["unavailable"];
+    return {
+      platform,
+      metrics,
+      dateRange,
+      freshnessHours: 0,
+      qualityScore: hasKeys ? 82 : 65,
+    };
+  });
+}
 
 function createPipelineGenerator(): DefaultReportGenerator {
   return new DefaultReportGenerator(
@@ -129,20 +206,11 @@ async function runPipelineWorkflow(
   }
   const llmEnv = loadLlmEnvFromProcess();
   const factory = new AgentFactory({ llmEnv });
+  const companyConfig = await loadCompanyConfigForWorkflowTenant(validatedData.tenantId);
   const tenant = createTestTenantContext({
     tenantId: validatedData.tenantId,
     requestId: validatedData.requestId,
-    companyConfig: {
-      marketing: {
-        channels: [
-          { platform: "meta", enabled: true },
-          { platform: "ga4", enabled: true },
-          { platform: "gsc", enabled: true },
-          { platform: "gbp", enabled: true },
-          { platform: "tiktok", enabled: true },
-        ],
-      },
-    },
+    companyConfig,
   });
   const enabledPlatforms = getEnabledTenantPlatforms(tenant);
   const effectivePlatforms =
@@ -218,6 +286,31 @@ async function runPipelineWorkflow(
     }),
   );
 
+  if (
+    pipelineState.verdict === undefined &&
+    (pipelineState.status === "degraded" || pipelineState.error?.stage === "verdict")
+  ) {
+    getWorkerRootLogger().warn({
+      event: "marketing_verdict_unavailable",
+      tenantId: validatedData.tenantId,
+      workflowId: validatedData.workflowId,
+      pipelineStatus: pipelineState.status,
+      reason: pipelineState.error?.message ?? "verdict_not_parsed",
+    });
+  }
+
+  const snapshotPeriod =
+    periodFromWorkflowJobConfig(validatedData.config) ??
+    (() => {
+      const day = new Date().toISOString().slice(0, 10);
+      return { start: day, end: day };
+    })();
+  const analysisDataSources = extractAnalysisDataSourcesFromPipeline(
+    pipelineState,
+    effectivePlatforms,
+    snapshotPeriod,
+  );
+
   const insights = toGeneratedInsights(validatedData, pipelineState, effectivePlatforms);
   const durationMs = pipelineState.stages.reduce((sum, stage) => sum + stage.durationMs, 0);
   const platformsAnalyzed = effectivePlatforms;
@@ -285,6 +378,7 @@ async function runPipelineWorkflow(
       errorCode,
       partialFailure: pipelineState.status !== "completed",
       platformFailures,
+      analysisDataSources,
     },
   };
   if (deliveryMessage) {
@@ -299,6 +393,7 @@ async function runPipelineWorkflow(
       errorCode,
       partialFailure: true,
       platformFailures,
+      analysisDataSources,
     };
   }
   return workflowTriggerJobResultSchema.parse(result);

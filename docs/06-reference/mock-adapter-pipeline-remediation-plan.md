@@ -65,7 +65,7 @@ Observed timings in this pass:
 ### Notes
 
 - The recommended unified `AgentSystem` architecture (Approach B) remains a future consolidation path and is not required for this remediation to function.
-- End-to-end manual execution in Docker should be run as a post-closure operational validation (see `docs/06-reference/manual-testing-guide.md`).
+- End-to-end manual execution in Docker should be run as a post-closure operational validation (see `tests/docs/manual-testing-guide.md`).
 
 ---
 
@@ -1026,7 +1026,7 @@ describe("runPipelineWorkflow with mock adapters", () => {
 
 ### Manual Testing Scenarios
 
-**Update to:** `docs/06-reference/manual-testing-guide.md`
+**Update to:** `tests/docs/manual-testing-guide.md`
 
 **New Section:** §4.4 Marketing Analysis with Mock Adapters
 
@@ -1159,7 +1159,7 @@ curl -X POST http://localhost:4000/api/v1/workflows/trigger \
 
 ### Testing Documentation
 
-- `docs/06-reference/manual-testing-guide.md`
+- `tests/docs/manual-testing-guide.md`
 - `test-output/manual-testing-execution-report-2026-04-09.md`
 
 ---

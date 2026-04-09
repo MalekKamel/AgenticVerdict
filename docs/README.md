@@ -29,7 +29,8 @@ docs/
 ├── 03-development-phases/           # Phases 00–04 (+ phase-overview.md)
 ├── 04-technology-research/          # Technology decisions
 ├── 05-project-management/         # Charter, requirements, roadmap
-└── 06-reference/                    # Templates and resources
+├── 06-reference/                    # Templates and resources
+└── docker/                          # Container SSOT; prefer repo-root `make` for Compose
 ```
 
 ---
@@ -47,6 +48,7 @@ docs/
 1. Review the [Testing Strategy](02-planning-and-methodology/testing-strategy.md)
 2. Navigate to your assigned [Development Phase](03-development-phases/)
 3. Consult [Technology Research](04-technology-research/) for implementation guidance
+4. For container workflows, use **[docker/](docker/README.md)**; prefer repo-root **`make`** targets (`make help`, `make dev`) as documented there
 
 ### For Architects and Tech Leads
 

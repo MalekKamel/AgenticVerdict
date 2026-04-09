@@ -2,8 +2,9 @@
 # Adapter aggregate health is served by the Web app (Next.js); include `web` when using mocks.
 #
 # Usage:
+#   docker compose -f docker-compose.base-images.yml build
 #   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
-#     -f deploy/docker-compose.dev.override.yml up
+#     -f deploy/docker-compose.dev.override.yml up --build
 #
 # NOTE: API/worker images should be built with TARGET_STAGE=development (see apps/*/Dockerfile)
 # so the copied tree matches a non-production NODE_ENV. This file sets the same via build args.

@@ -37,6 +37,7 @@ tmp/
 
 # Environment files
 .env
+.env.docker
 .env.local
 .env*.local
 .env.development
@@ -52,13 +53,21 @@ bun.lockb
 
 # Build outputs
 dist/
+apps/web/.next/
+apps/api/dist/
+apps/worker/dist/
 public/spa/
 es/
 .next/
 logs/
 # Host-side SQL dumps from scripts/backup-postgres.sh
 backups/
-test-output/
+# Local SBOM output from make sbom
+sboms/
+# Ignore test-output contents but keep README tracked (Git cannot re-include
+# files inside an ignored directory; use /* + negation instead).
+/tests/test-output/*
+!tests/test-output/README.md
 *.tsbuildinfo
 next-env.d.ts
 

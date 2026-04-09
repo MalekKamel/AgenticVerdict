@@ -5,18 +5,51 @@ All application images build from the **monorepo root** so workspace packages, l
 ## Shared build conventions
 
 - **Node:** `ARG NODE_VERSION=20` (bookworm-slim build stages).
-- **Package manager:** Corepack + `pnpm@10.28.1`, `COREPACK_ENABLE_DOWNLOAD_PROMPT=0` in build stages.
-- **Install:** `pnpm install --frozen-lockfile` after copying workspace manifests and sources required for dependency resolution.
+- **Package manager:** Corepack + `pnpm@10.28.1`, `COREPACK_ENABLE_DOWNLOAD_PROMPT=0` in the **deps base image** and in API **runner** `base` (API still ships its own slim runtime stage).
+- **Install:** `pnpm install --frozen-lockfile` with a BuildKit pnpm store cache mount lives in **`packages/docker/base/Dockerfile.deps`**; app Dockerfiles use **`FROM ${DEPS_IMAGE}`** so the install layer is built once and reused.
 - **Pre-build gate:** `node scripts/dockerPrebuild.mjs` enforces Node 20+ before app builds.
+
+### Shared base images (local / CI)
+
+Build and tag these **before** app images unless CI passes explicit tags (see `.github/workflows/docker-build.yml`).
+
+| Image                                 | Dockerfile                                 | Default tag (local Compose)          |
+| ------------------------------------- | ------------------------------------------ | ------------------------------------ |
+| Workspace `node_modules`              | `packages/docker/base/Dockerfile.deps`     | `agenticverdict/deps:local`          |
+| Chromium + PDF fonts (worker runtime) | `packages/docker/base/Dockerfile.chromium` | `agenticverdict/chromium-base:local` |
+
+```bash
+docker compose -f docker-compose.base-images.yml build
+```
+
+**Build args on app images:**
+
+- **`DEPS_IMAGE`** — image containing `/app` after `pnpm install` (default `agenticverdict/deps:local`).
+- **`CHROMIUM_IMAGE`** — worker only (default `agenticverdict/chromium-base:local`).
+- **`USE_TURBOPACK`** — web `builder` only; `true` runs `next build --turbopack` (default `false` for reproducible standalone output).
+
+**Layer size checks (troubleshooting slow export/push):**
+
+```bash
+docker history <image> --no-trunc
+docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+```
+
+### Build performance (summary)
+
+- Copy monorepo/package manifests before source code so dependency install layers stay cacheable across source edits.
+- **Deps image:** BuildKit cache mount at **`/pnpm-cache`** with **`id=pnpm-appuser`** (see `packages/docker/base/Dockerfile.deps`).
+- Keep multi-stage `TARGET_STAGE` pattern for API/worker to preserve environment-specific runner content.
+- **API** runner extends **`${DEPS_IMAGE}`** so **`node_modules`** is inherited as **`appuser`** (no giant **`COPY`**). **Worker** copies **`node_modules`** from **deps** without **`--chown`** (root-owned, readable **`appuser`**).
+- For the full implemented architecture, see [Build optimization (implemented)](./build-optimization-implemented.md) and [Build best practices](./build-best-practices.md).
 
 ## Web (`apps/web/Dockerfile`)
 
-| Stage     | Purpose                                                                                                |
-| --------- | ------------------------------------------------------------------------------------------------------ |
-| `base`    | Node bookworm-slim, openssl/ca-certificates, pnpm                                                      |
-| `deps`    | Copy workspace roots + `pnpm install --frozen-lockfile`                                                |
-| `builder` | Full copy, `dockerPrebuild`, `next build --no-lint` (webpack build for reproducible standalone output) |
-| `runner`  | `gcr.io/distroless/nodejs20-debian12`                                                                  |
+| Stage     | Purpose                                                                                                                                             |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `deps`    | **`FROM ${DEPS_IMAGE}`** — shared workspace install (see [Shared base images](#shared-base-images-local--ci))                                       |
+| `builder` | Copy **`packages`** → **`tests`** → **`apps`** (cache-friendly order), `dockerPrebuild`, `next build --no-lint` (optional **`USE_TURBOPACK=true`**) |
+| `runner`  | `gcr.io/distroless/nodejs20-debian12`                                                                                                               |
 
 **Runtime:**
 
@@ -29,20 +62,24 @@ All application images build from the **monorepo root** so workspace packages, l
 
 **Lint:** Image build skips ESLint (`--no-lint`); lint remains for local dev and CI.
 
+**Build args:** **`DEPS_IMAGE`** (see [Shared base images](#shared-base-images-local--ci)); **`USE_TURBOPACK`** (`true` \| `false`, default `false`).
+
 ## API (`apps/api/Dockerfile`)
 
-| Stage         | Purpose                                                                                                                                                               |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `base`        | bookworm-slim + openssl, ca-certificates, **wget** (healthcheck)                                                                                                      |
-| `deps`        | install workspace (manifests + sources needed for lockfile)                                                                                                           |
-| `development` | `NODE_ENV=development`, full copy, `dockerPrebuild`                                                                                                                   |
-| `test`        | `NODE_ENV=test`, full copy, `dockerPrebuild`                                                                                                                          |
-| `production`  | `NODE_ENV=production`, full copy, `dockerPrebuild`                                                                                                                    |
-| `runner`      | **`COPY --from=${TARGET_STAGE}`** `/app` → `/app`; **`ARG TARGET_STAGE`** (default `production`), **`ARG NODE_ENV`**; non-root **`appuser`**, `WORKDIR /app/apps/api` |
+| Stage                                 | Purpose                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`                                | bookworm-slim + openssl, ca-certificates, **wget** (used by **`source`** toolchain / parity; **runner** extends **deps**, not this stage)                                                                                                                                                                |
+| `source`                              | Selective **`COPY --chown=appuser:appuser`**, then **`USER appuser`** + **`dockerPrebuild.mjs`**                                                                                                                                                                                                         |
+| `deps`                                | **`FROM ${DEPS_IMAGE}`** — shared workspace install                                                                                                                                                                                                                                                      |
+| `buildenv`                            | **`FROM deps`** + **`COPY --from=source /app /app`** (no **`COPY . .`** on top of **`node_modules`**)                                                                                                                                                                                                    |
+| `development` / `test` / `production` | **`NODE_ENV`** variants **`FROM buildenv`**                                                                                                                                                                                                                                                              |
+| `app_build`                           | **`FROM ${TARGET_STAGE}`** — filesystem selected for the runner overlay                                                                                                                                                                                                                                  |
+| `runner`                              | **`FROM ${DEPS_IMAGE}`** — inherits **`/app/node_modules`** as **`appuser`**; **`COPY`** only manifests, **`packages/`**, **`apps/api/`**, **`configs/`**, **`scripts/`**, toolchain files from **`app_build`**; **`ARG TARGET_STAGE`**, **`ARG NODE_ENV`**; **`USER appuser`**; `WORKDIR /app/apps/api` |
 
 **Build args (runner / merge):**
 
-- **`TARGET_STAGE`:** `development` \| `test` \| `production` — selects which stage’s filesystem is copied into the final image.
+- **`DEPS_IMAGE`:** tag for the shared workspace install image (default `agenticverdict/deps:local`).
+- **`TARGET_STAGE`:** `development` \| `test` \| `production` — selects which **`buildenv`** variant becomes **`app_build`**; the **runner** copies **only** manifests and app paths from **`app_build`** ( **`node_modules`** is inherited from **`${DEPS_IMAGE}`**).
 - **`NODE_ENV`:** should match the intended runtime (Compose overlays set both when using dev/test stacks).
 
 **Runtime:**
@@ -55,11 +92,15 @@ All application images build from the **monorepo root** so workspace packages, l
 
 ## Worker (`apps/worker/Dockerfile`)
 
-Same **multi-stage** pattern as API: `development`, `test`, `production`, then **`runner`** with **`COPY --from=${TARGET_STAGE}`** and the same **`TARGET_STAGE` / `NODE_ENV`** build args. Runtime: bookworm-slim, `appuser`, `WORKDIR /app/apps/worker`.
+**Build args:** **`DEPS_IMAGE`**, **`CHROMIUM_IMAGE`** (defaults `agenticverdict/deps:local`, `agenticverdict/chromium-base:local`), plus **`TARGET_STAGE`** and **`NODE_ENV`** like API.
 
+Same **multi-stage** pattern as API: **`source`** on **`${CHROMIUM_IMAGE}`**, **`buildenv`** on **`${DEPS_IMAGE}`**, then **`development` / `test` / `production`**, **`app_build`**, and **`runner`** with the same **`TARGET_STAGE` / `NODE_ENV`** build args.
+
+- **`deps`:** **`FROM ${DEPS_IMAGE}`** (shared install).
+- **`runner`:** **`FROM ${CHROMIUM_IMAGE}`**; **`COPY --from=deps`** for **`node_modules`** and root manifests **without `--chown`**; **`COPY --from=app_build`** for **`packages/`**, **`apps/worker/`**, **`configs/`**, **`scripts/`**, toolchain files; **`USER appuser`**; `WORKDIR /app/apps/worker`.
 - **CMD:** `node --import tsx src/cli.ts`
 - **No exposed ports** in the Dockerfile; worker consumes Redis from the network.
-- **PDF/Chromium:** not included; for real generators extend the image (e.g. Playwright/OS deps) or keep `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1` in Compose.
+- **PDF/Chromium:** system Chromium and fonts live in the **chromium base image** (apt cache mounts apply when rebuilding that image locally).
 
 ## API authentication and JWT (runtime)
 

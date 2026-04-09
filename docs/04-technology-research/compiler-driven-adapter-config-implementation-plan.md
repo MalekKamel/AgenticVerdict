@@ -1092,7 +1092,7 @@ const adapter = createPlatformAdapter({
 
 #### 4.2 Update Manual Testing Guide
 
-**File:** `docs/06-reference/manual-testing-guide.md`
+**File:** `tests/docs/manual-testing-guide.md`
 
 **Updates:**
 
@@ -1271,6 +1271,9 @@ apps/worker/
 docs/
   06-reference/
     migration-guide-compiler-driven-config.md  [NEW]
+
+tests/
+  docs/
     manual-testing-guide.md            [MODIFIED]
 ```
 

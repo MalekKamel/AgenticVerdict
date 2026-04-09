@@ -1,6 +1,6 @@
-# Test Reports Directory Structure
+# Test Output Directory Structure
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Last Updated:** 2026-04-09
 **Purpose:** Define the standard structure and conventions for organizing test reports generated during manual and automated testing.
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-The `test-reports/` directory provides a centralized, structured location for archiving all reports generated during testing. This organization enables:
+The `test-output/` directory provides a centralized, structured location for archiving all reports generated during testing. This organization enables:
 
 - Systematic validation of report generation across all formats
 - Historical tracking of report output changes over time
@@ -21,8 +21,8 @@ The `test-reports/` directory provides a centralized, structured location for ar
 ## Directory Structure
 
 ```
-test-reports/
-├── README.md                                    # This file
+test-output/
+├── README.md                                    # Optional local notes
 ├── archive/                                     # Historical test runs (organized by date)
 │   ├── 2026-04-09_full-pipeline-baseline/      # Example: Baseline full pipeline test
 │   │   ├── scenarios/                           # Scenario-based reports
@@ -220,7 +220,7 @@ jq -S '.' archive/2026-04-09_*/metadata/test-manifest.json
 
 ## Integration with Manual Testing Guide
 
-The `test-reports/` directory is the standard output location for all manual testing procedures documented in `manual-testing-guide.md`. Each test scenario should:
+The `test-output/` directory is the standard output location for all manual testing procedures documented in [`manual-testing-guide.md`](./manual-testing-guide.md). Each test scenario should:
 
 1. Generate reports in all supported formats
 2. Save reports to the appropriate scenario subdirectory

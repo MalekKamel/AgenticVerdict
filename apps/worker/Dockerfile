@@ -1,65 +1,57 @@
 # syntax=docker/dockerfile:1
 # BullMQ worker — TypeScript via tsx. Chromium + fonts included for production-flow PDF jobs (R01/R02) and real report PDF output.
 # Multi-stage `TARGET_STAGE`: development | test | production
-ARG NODE_VERSION=20
-# Declared before any FROM so `FROM ${TARGET_STAGE}` below resolves at build time (BuildKit requirement).
+# Source is layered separately from deps. Runner copies node_modules without --chown (faster than V2); files stay root-owned but remain readable to UID 1001 via default modes.
+ARG DEPS_IMAGE=agenticverdict/deps:local
+ARG CHROMIUM_IMAGE=agenticverdict/chromium-base:local
 ARG TARGET_STAGE=production
 
-FROM node:${NODE_VERSION}-bookworm-slim AS base
+FROM ${CHROMIUM_IMAGE} AS source
 WORKDIR /app
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+COPY --chown=appuser:appuser packages ./packages
+COPY --chown=appuser:appuser apps/worker ./apps/worker
+COPY --chown=appuser:appuser apps/api/package.json ./apps/api/
+COPY --chown=appuser:appuser configs ./configs
+COPY --chown=appuser:appuser scripts ./scripts
+COPY --chown=appuser:appuser eslint.config.mjs ./
+COPY --chown=appuser:appuser tsconfig.json ./
+COPY --chown=appuser:appuser turbo.json ./
+USER appuser
+RUN node scripts/dockerPrebuild.mjs
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="${PNPM_HOME}:${PATH}"
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
+FROM ${DEPS_IMAGE} AS deps
 
-FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
-COPY apps ./apps
-COPY packages ./packages
-COPY tests ./tests
-COPY configs ./configs
-COPY scripts ./scripts
-COPY eslint.config.mjs ./
-RUN pnpm install --frozen-lockfile
+FROM deps AS buildenv
+COPY --from=source /app /app
 
-FROM deps AS development
+FROM buildenv AS development
 ENV NODE_ENV=development
-COPY . .
-RUN node scripts/dockerPrebuild.mjs
 
-FROM deps AS test
+FROM buildenv AS test
 ENV NODE_ENV=test
-COPY . .
-RUN node scripts/dockerPrebuild.mjs
 
-FROM deps AS production
+FROM buildenv AS production
 ENV NODE_ENV=production
-COPY . .
-RUN node scripts/dockerPrebuild.mjs
 
-# `COPY --from=${VAR}` is invalid in BuildKit; alias the selected stage, then copy from a fixed name.
 FROM ${TARGET_STAGE} AS app_build
 
-FROM base AS runner
+FROM ${CHROMIUM_IMAGE} AS runner
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 ENV NODE_OPTIONS="--dns-result-order=ipv4first --tls-min-v1.2"
-COPY --from=app_build /app /app
-USER root
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    chromium \
-    fonts-liberation \
-    fonts-noto-core \
-    wget \
-  && rm -rf /var/lib/apt/lists/* \
-  && groupadd --gid 1001 appuser \
-  && useradd --uid 1001 --gid appuser --shell /bin/bash --create-home appuser \
-  && chown -R appuser:appuser /app
+
+COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=deps /app/package.json /app/
+COPY --from=deps /app/pnpm-workspace.yaml /app/
+COPY --from=deps /app/pnpm-lock.yaml /app/
+COPY --from=app_build /app/packages /app/packages
+COPY --from=app_build /app/apps/worker /app/apps/worker
+COPY --from=app_build /app/configs /app/configs
+COPY --from=app_build /app/scripts /app/scripts
+COPY --from=app_build /app/eslint.config.mjs /app/
+COPY --from=app_build /app/tsconfig.json /app/
+COPY --from=app_build /app/turbo.json /app/
+
 USER appuser
 WORKDIR /app/apps/worker
 

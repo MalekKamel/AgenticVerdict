@@ -407,7 +407,7 @@ validate_rtl_report() {
 }
 
 # Usage
-# validate_rtl_report "test-reports/.../report_R02_*.pdf"
+# validate_rtl_report "test-output/.../report_R02_*.pdf"
 ```
 
 ### Visual RTL Inspection
@@ -465,7 +465,7 @@ visual_rtl_verification() {
 }
 
 # Usage
-# visual_rtl_verification "test-reports/.../report_R02_*.pdf"
+# visual_rtl_verification "test-output/.../report_R02_*.pdf"
 ```
 
 ---
@@ -678,7 +678,7 @@ test_number_formatting() {
 # test_all_languages.sh
 
 test_all_languages() {
-  local TEST_RUN_DIR="test-reports/archive/$(date +%Y-%m-%d)_localization-test"
+  local TEST_RUN_DIR="test-output/archive/$(date +%Y-%m-%d)_localization-test"
   mkdir -p "$TEST_RUN_DIR"/{en_ltr,ar_rtl,fr_ltr}
 
   echo "=========================================="
@@ -729,16 +729,16 @@ test_all_languages() {
 
 ```bash
 # Check for RTL attributes in HTML
-grep -r 'dir="rtl"' test-reports/
+grep -r 'dir="rtl"' test-output/
 
 # Find Arabic characters in files
-grep -rP "\p{Arabic}" test-reports/
+grep -rP "\p{Arabic}" test-output/
 
 # Extract and display PDF text for inspection
 pdftotext report.pdf | less
 
 # Check font usage in HTML
-grep -r "font-family" test-reports/ | grep -i arabic
+grep -r "font-family" test-output/ | grep -i arabic
 ```
 
 ---

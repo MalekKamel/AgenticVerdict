@@ -113,7 +113,7 @@ Commands run after this cleanup:
 - `docs/06-reference/mock-adapter-integration.md` (§2.4 validation / `RuntimeConfig` pointer; examples use **`AGENTICVERDICT_*`** names)
 - `docs/06-reference/migration-guide-compiler-driven-config.md` (barrel imports; **`canEnableMocksViaEnv`** vs **`BUILD_CONFIG.mockAdaptersEnabled`**)
 - `CLAUDE.md` (Layer 2 runtime configuration wording)
-- `docs/06-reference/manual-testing-guide.md` (Layer 2 — **`config`** only)
+- `tests/docs/manual-testing-guide.md` (Layer 2 — **`config`** only)
 - `docs/04-technology-research/docker-mock-adapter-solution-summary.md` (snippet: re-export **`config`**)
 
 ---

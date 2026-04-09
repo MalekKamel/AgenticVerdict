@@ -20,6 +20,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Clean local build artifacts (Docker context)
+        run: bash scripts/docker-prep.sh
       - name: GHCR image base (lowercase)
         id: ghcr
         run: echo "base=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
@@ -29,6 +31,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build workspace deps layer
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/docker/base/Dockerfile.deps
+          load: true
+          tags: agenticverdict/deps:ci
+          cache-from: type=gha,scope=monorepo-deps
+          cache-to: type=gha,mode=max,scope=monorepo-deps
       - uses: docker/metadata-action@v5
         id: meta
         with:
@@ -52,6 +63,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+            DEPS_IMAGE=agenticverdict/deps:ci
+          cache-from: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web
+            type=gha,scope=web
+          cache-to: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web,mode=max
+            type=gha,mode=max,scope=web
       - uses: sigstore/cosign-installer@v3.8.0
         with:
           cosign-release: v2.4.1
@@ -66,6 +86,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Clean local build artifacts (Docker context)
+        run: bash scripts/docker-prep.sh
       - name: GHCR image base (lowercase)
         id: ghcr
         run: echo "base=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
@@ -75,6 +97,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build workspace deps layer
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/docker/base/Dockerfile.deps
+          load: true
+          tags: agenticverdict/deps:ci
+          cache-from: type=gha,scope=monorepo-deps
+          cache-to: type=gha,mode=max,scope=monorepo-deps
       - uses: docker/metadata-action@v5
         id: meta
         with:
@@ -98,6 +129,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+            DEPS_IMAGE=agenticverdict/deps:ci
+          cache-from: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:api
+            type=gha,scope=api
+          cache-to: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:api,mode=max
+            type=gha,mode=max,scope=api
       - uses: sigstore/cosign-installer@v3.8.0
         with:
           cosign-release: v2.4.1
@@ -112,6 +152,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Clean local build artifacts (Docker context)
+        run: bash scripts/docker-prep.sh
       - name: GHCR image base (lowercase)
         id: ghcr
         run: echo "base=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
@@ -121,6 +163,24 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build workspace deps layer
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/docker/base/Dockerfile.deps
+          load: true
+          tags: agenticverdict/deps:ci
+          cache-from: type=gha,scope=monorepo-deps
+          cache-to: type=gha,mode=max,scope=monorepo-deps
+      - name: Build Chromium base
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/docker/base/Dockerfile.chromium
+          load: true
+          tags: agenticverdict/chromium-base:ci
+          cache-from: type=gha,scope=chromium-base
+          cache-to: type=gha,mode=max,scope=chromium-base
       - uses: docker/metadata-action@v5
         id: meta
         with:
@@ -144,6 +204,16 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+            DEPS_IMAGE=agenticverdict/deps:ci
+            CHROMIUM_IMAGE=agenticverdict/chromium-base:ci
+          cache-from: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:worker
+            type=gha,scope=worker
+          cache-to: |
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:worker,mode=max
+            type=gha,mode=max,scope=worker
       - uses: sigstore/cosign-installer@v3.8.0
         with:
           cosign-release: v2.4.1

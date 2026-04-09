@@ -1,4 +1,5 @@
 import { REPORT_FORMATS, type ReportFormat } from "@agenticverdict/report-generator";
+import type { DataSourceProvenance } from "@agenticverdict/types";
 import { z } from "zod";
 
 export type WorkflowTriggerWorkflowId =
@@ -69,6 +70,18 @@ const workflowErrorCodeSchema = z.enum([
 ]);
 
 export type WorkflowJobErrorCode = z.infer<typeof workflowErrorCodeSchema>;
+
+/** Zod v4 — keep local; `@agenticverdict/types` schemas are Zod v3 and must not nest here. */
+const workflowAnalysisDataSourceSchema = z.object({
+  platform: z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]),
+  metrics: z.array(z.string()).min(1),
+  dateRange: z.object({
+    start: z.string().min(10),
+    end: z.string().min(10),
+  }),
+  freshnessHours: z.number().nonnegative(),
+  qualityScore: z.number().min(0).max(100),
+});
 
 export const workflowTriggerJobConfigSchema = z
   .object({
@@ -150,6 +163,8 @@ export interface WorkflowTriggerJobResult {
       retryable: boolean;
       recoveryHint?: string;
     }>;
+    /** Normalized metric keys per platform (worker); used by analysis persistence provenance. */
+    analysisDataSources?: DataSourceProvenance[];
   };
 }
 
@@ -209,6 +224,7 @@ export const workflowTriggerJobResultSchema = z.object({
           }),
         )
         .optional(),
+      analysisDataSources: z.array(workflowAnalysisDataSourceSchema).optional(),
     })
     .optional(),
 });

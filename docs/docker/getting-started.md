@@ -3,8 +3,26 @@
 ## Prerequisites
 
 - **Docker Engine** and **Docker Compose v2** (`docker compose version`).
+- **GNU Make** (recommended): the repo root **`Makefile`** is the preferred way to run multi-file stacks (`make help`). Install Make via Xcode CLT on macOS or your package manager on Linux.
 - **Node.js 20** and **pnpm** (for monorepo builds on the host and for `pnpm db:up`, which only starts the base stack).
 - Repository cloned; commands below assume the **repository root** as the working directory.
+
+## Recommended workflow (Makefile)
+
+For day-to-day Docker work, use **`make`** so the same `-f` file lists are used as in [Common operations](./common-operations.md) and CI:
+
+| Goal                                                             | Command                                                                          |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| First-time bootstrap (secrets, dirs, optional `.env.docker`)     | `make setup`                                                                     |
+| Host / port checks before `up`                                   | `make preflight`                                                                 |
+| Validate compose after editing YAML                              | `make validate`                                                                  |
+| Postgres + Redis only                                            | `make infra-up` / `make infra-down`                                              |
+| Full stack, production-like app images                           | `make apps-up` / `make apps-down`                                                |
+| Full stack, api/worker **development** stage + mock-friendly env | `make dev` / `make dev-stop`                                                     |
+| Logs                                                             | `make dev-logs`, `make apps-logs`, or `make infra-logs`                          |
+| Health probes                                                    | `make health` (and `make health-web` / `make health-api` / `make health-worker`) |
+
+The sections below document the underlying **`docker compose`** invocations for custom merges (observability, backup sidecar, production example) and for operators who prefer the CLI directly.
 
 ## Environment modes and manual testing
 
@@ -18,7 +36,7 @@ To run **API** and **worker** with **`NODE_ENV=development`** and mock adapters 
 
 For **integration-style runs** with **`NODE_ENV=test`** on API/worker, see [`docker-compose.test.yml`](../../docker-compose.test.yml).
 
-**Web (Next.js)** in Docker stays a **production standalone** image: it does **not** load mock adapter code at runtime. Use **`pnpm dev`** on the host for web flows that need mocks, or rely on **API/worker** mocks for pipeline testing. See [Container images](./container-images.md) and [Manual testing guide](../06-reference/manual-testing-guide.md) (§2.1.1, §2.6).
+**Web (Next.js)** in Docker stays a **production standalone** image: it does **not** load mock adapter code at runtime. Use **`pnpm dev`** on the host for web flows that need mocks, or rely on **API/worker** mocks for pipeline testing. See [Container images](./container-images.md) and [Manual testing guide](../../tests/docs/manual-testing-guide.md) (§2.1.1, §2.6).
 
 **Configuration layers:** Runtime mock toggles and validated env-derived settings live in `@agenticverdict/config` (`configuration` export / `ConfigurationService`); build-time boundaries remain in `build-constants`. See `changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`.
 
@@ -36,7 +54,13 @@ This also generates `db_password.txt`, `redis_password.txt`, and `encryption_key
 
 ## Common stacks
 
+Application images (**web**, **api**, **worker**) expect pre-built **workspace deps** and (for **worker**) **Chromium** layers. **`make dev`** and **`make apps-up`** run **`make build-base`** first; **`make build`** builds bases plus app images without starting containers.
+
+`docker-compose.apps.yml` sets **`DEPS_IMAGE=agenticverdict/deps:local`** and **`CHROMIUM_IMAGE=agenticverdict/chromium-base:local`** for you.
+
 ### Infrastructure only (Postgres + Redis)
+
+**Recommended:** `make infra-up`, then `docker compose ps` (default project), and `make infra-down` when finished.
 
 Equivalent to `pnpm run db:up` / `pnpm run db:down`:
 
@@ -48,7 +72,12 @@ docker compose down
 
 ### Full application stack (web + API + worker + Postgres + Redis)
 
+**Recommended:** `make apps-up` (stops with `make apps-down`).
+
+Raw Compose:
+
 ```bash
+docker compose -f docker-compose.base-images.yml build
 docker compose \
       -f docker-compose.yml \
       -f docker-compose.apps.yml \
@@ -57,9 +86,12 @@ docker compose \
 
 ### Application stack with API/worker mocks (dev)
 
-Same as above, plus a fourth file so **api** and **worker** build from the **`development`** image stage and run with mock-friendly env:
+**Recommended:** `make dev` / `make dev-stop`.
+
+Raw Compose (same as above, plus dev overlay):
 
 ```bash
+docker compose -f docker-compose.base-images.yml build
 docker compose \
       -f docker-compose.yml \
       -f docker-compose.apps.yml \
@@ -119,13 +151,49 @@ Override URLs if you publish services elsewhere:
 
 ## Optional local image builds (without Compose)
 
+Build shared layers first (same tags as Compose defaults), then pass **`DEPS_IMAGE`** (and **`CHROMIUM_IMAGE`** for worker):
+
 ```bash
-docker build -f apps/web/Dockerfile -t agenticverdict/web:local .
-docker build -f apps/api/Dockerfile -t agenticverdict/api:local .
-docker build -f apps/worker/Dockerfile -t agenticverdict/worker:local .
+docker build -f packages/docker/base/Dockerfile.deps -t agenticverdict/deps:local .
+docker build -f packages/docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
+
+docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/web/Dockerfile -t agenticverdict/web:local .
+docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/api/Dockerfile -t agenticverdict/api:local .
+docker build \
+  --build-arg DEPS_IMAGE=agenticverdict/deps:local \
+  --build-arg CHROMIUM_IMAGE=agenticverdict/chromium-base:local \
+  -f apps/worker/Dockerfile \
+  -t agenticverdict/worker:local \
+  .
 ```
 
 **API / worker multi-stage builds:** pass **`--build-arg TARGET_STAGE=development|test|production`** and matching **`NODE_ENV`** when you need a non-default stage (defaults: `TARGET_STAGE=production`, `NODE_ENV=production`). See [Container images](./container-images.md).
+
+## BuildKit and local build cache
+
+Use BuildKit for cache mounts and better layer reuse:
+
+```bash
+export DOCKER_BUILDKIT=1
+docker buildx version
+```
+
+For local performance tracking:
+
+```bash
+chmod +x scripts/measure-build-performance.sh
+scripts/measure-build-performance.sh web
+scripts/measure-build-performance.sh api
+scripts/measure-build-performance.sh worker
+```
+
+For local cache cleanup when troubleshooting:
+
+```bash
+docker builder prune -f
+```
+
+`buildkitd.toml` tuning (GC policy, parallelism) applies to dedicated BuildKit daemons and CI runners, not typical Docker Desktop usage. See [Build optimization (implemented)](./build-optimization-implemented.md#23-configure-buildkit-daemon-settings), [Build best practices](./build-best-practices.md), and the sample config at `docs/docker/buildkitd.toml.example`.
 
 ## Production-shaped example (advanced)
 

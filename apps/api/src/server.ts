@@ -62,26 +62,36 @@ export async function buildApiServer(): Promise<FastifyInstance> {
     },
   );
 
-  app.get(
-    "/health",
-    {
-      schema: {
-        tags: ["Health"],
-        summary: "Liveness probe",
-        response: {
-          200: {
-            type: "object",
-            properties: {
-              ok: { type: "boolean" },
-              service: { type: "string" },
-            },
-            required: ["ok", "service"],
-          },
+  const healthResponseSchema = {
+    200: {
+      type: "object",
+      properties: {
+        ok: { type: "boolean" },
+        service: { type: "string" },
+      },
+      required: ["ok", "service"],
+    },
+  } as const;
+
+  const healthHandler = async () => ({ ok: true as const, service: "@agenticverdict/api" });
+
+  for (const path of ["/health", "/api/health"] as const) {
+    app.get(
+      path,
+      {
+        schema: {
+          tags: ["Health"],
+          summary: "Liveness probe",
+          description:
+            path === "/health"
+              ? "Kubernetes/Docker-style liveness check (no authentication). Same response as GET /api/health."
+              : "Same as GET /health; for load balancers or scripts that probe under /api.",
+          response: healthResponseSchema,
         },
       },
-    },
-    async () => ({ ok: true as const, service: "@agenticverdict/api" }),
-  );
+      healthHandler,
+    );
+  }
 
   await app.register(
     async (scope) => {

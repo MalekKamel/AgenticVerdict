@@ -17,7 +17,7 @@ Each test scenario must meet:
 - **Tenant Isolation**: No cross-tenant data leakage
 - **Error Handling**: Graceful degradation on failures
 - **Report Quality**: Generated reports match specifications
-- **Archive Completeness**: All reports saved in all formats to `test-reports/`
+- **Archive Completeness**: All reports saved in all formats to `test-output/`
 
 ### 7.2 Performance Thresholds
 
@@ -86,7 +86,7 @@ Each test scenario must meet:
 
 #### Archive Structure
 
-- [ ] Directory structure follows `test-reports/` specification
+- [ ] Directory structure follows `test-output/` specification
 - [ ] Each scenario has subdirectories for all formats
 - [ ] Production flow scenarios (R01-R12) organized separately
 - [ ] Template-specific reports organized
@@ -342,11 +342,13 @@ A test run is considered complete when:
 
 ## Quick Reference: Archive Validation Command
 
-```bash
-# Validate entire archive
-validate_archive "test-reports/archive/$(date +%Y-%m-%d)_manual-test"
+When `scripts/test-archive/validate_archive.sh` exists, a full-archive check should look like:
 
-# Expected output:
+```bash
+# Validate entire archive (script not yet in repo — see manual-testing-guide-integration.md)
+# validate_archive "test-output/archive/$(date +%Y-%m-%d)_manual-test"
+
+# Expected output (once implemented):
 # ✅ All files validated successfully
 # Total files: 60
 # Valid: 60

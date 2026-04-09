@@ -11,7 +11,9 @@
     "channels": [
       { "platform": "meta", "enabled": true, "label": "Paid social" },
       { "platform": "ga4", "enabled": true },
-      { "platform": "tiktok", "enabled": false }
+      { "platform": "gsc", "enabled": true },
+      { "platform": "gbp", "enabled": true },
+      { "platform": "tiktok", "enabled": true }
     ],
     "kpis": [
       {
@@ -28,7 +30,7 @@
   },
   "features": {
     "enableInsights": true,
-    "enableVerdict": false
+    "enableVerdict": true
   },
   "business": {
     "products": ["Marketing analytics workspace"],

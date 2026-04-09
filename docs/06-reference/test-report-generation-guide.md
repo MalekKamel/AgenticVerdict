@@ -830,7 +830,7 @@ jobs:
 
 ## References
 
-- **Manual Testing Guide:** `/docs/06-reference/manual-testing-guide.md`
+- **Manual Testing Guide:** `/tests/docs/manual-testing-guide.md`
 - **Docker Documentation:** `/docs/docker/README.md`
 - **LLM Configuration:** `/changelog/2026-04-09-llm-credential-loading-root-cause-analysis.md`
 

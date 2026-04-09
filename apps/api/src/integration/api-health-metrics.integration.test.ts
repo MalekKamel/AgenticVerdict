@@ -28,6 +28,14 @@ describe("API integration — health & metrics", () => {
     expect(body.service).toBe("@agenticverdict/api");
   });
 
+  it("GET /api/health returns 200 with the same payload as /health", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/health" });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { ok: boolean; service: string };
+    expect(body.ok).toBe(true);
+    expect(body.service).toBe("@agenticverdict/api");
+  });
+
   it("GET /metrics returns Prometheus exposition", async () => {
     const res = await app.inject({ method: "GET", url: "/metrics" });
     expect(res.statusCode).toBe(200);

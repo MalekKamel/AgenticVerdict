@@ -4,7 +4,7 @@
 
 ## Scope
 
-Re-executed `docs/06-reference/manual-testing-guide.md` against the rebuilt Docker dev stack and validated core scenarios:
+Re-executed `tests/docs/manual-testing-guide.md` against the rebuilt Docker dev stack and validated core scenarios:
 
 - S1 (`report-generation`, `R01`)
 - S4 (`marketing-analysis`)
@@ -147,7 +147,7 @@ All targeted tests passed. Live reruns confirmed stable status polling behavior 
 
 ## Related Files
 
-- `docs/06-reference/manual-testing-guide.md`
+- `tests/docs/manual-testing-guide.md`
 - `apps/api/src/routes/v1/workflows.ts`
 - `apps/api/src/routes/v1/workflow-status-contract.test.ts`
 - `changelog/2026-04-09-manual-testing-execution-summary.md`

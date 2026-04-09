@@ -1,5 +1,7 @@
 # Operations
 
+**Prefer `make`:** the root **Makefile** is the recommended way to start/stop stacks and run health, backup, and validation targets (`make help`). For a short guided path, see [Quick start](./quick-start.md) and [Common operations](./common-operations.md).
+
 ## Lifecycle
 
 ```bash

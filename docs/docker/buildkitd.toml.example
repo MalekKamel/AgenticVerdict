@@ -1,0 +1,17 @@
+[worker.oci]
+  rootless = true
+  max-parallelism = 4
+
+[[worker.oci.gcpolicy]]
+  keepBytes = 512000000
+  keepDuration = 172800
+  filters = ["type==source.local", "type==exec.cachemount"]
+
+[[worker.oci.gcpolicy]]
+  keepBytes = 1073741824
+  keepDuration = 604800
+  filters = ["type==source.git.checkout"]
+
+[[worker.oci.gcpolicy]]
+  keepBytes = 5368709120
+  keepDuration = 2592000

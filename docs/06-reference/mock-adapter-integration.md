@@ -80,7 +80,7 @@ const adapter = MockAdapterFactory.create({
 Per-platform flag > Master flag > Default (production adapters)
 ```
 
-**Implementation note:** Enablement is evaluated by **`isMockEnabledForPlatform`** in **`@agenticverdict/config/configuration`** (re-exported from **`@agenticverdict/platform-adapters`**). **`createPlatformAdapter`** uses **`IS_PRODUCTION`** from **`build-constants`** so **production processes** never select mocks from env; **`useMock: true`** is ignored in production processes (production adapters only). See [Manual testing guide](./manual-testing-guide.md) §2.6–2.7 and **`docs/docker/getting-started.md`**.
+**Implementation note:** Enablement is evaluated by **`isMockEnabledForPlatform`** in **`@agenticverdict/config/configuration`** (re-exported from **`@agenticverdict/platform-adapters`**). **`createPlatformAdapter`** uses **`IS_PRODUCTION`** from **`build-constants`** so **production processes** never select mocks from env; **`useMock: true`** is ignored in production processes (production adapters only). See [Manual testing guide](../../tests/docs/manual-testing-guide.md) §2.6–2.7 and **`docs/docker/getting-started.md`**.
 
 Example:
 

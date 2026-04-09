@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0
 **Last Updated:** 2026-04-09
-**Purpose:** Comprehensive procedures for generating, validating, and archiving all report formats to the `test-reports/` directory during manual testing.
+**Purpose:** Comprehensive procedures for generating, validating, and archiving all report formats to the `test-output/` directory during manual testing.
 
 ---
 
@@ -45,7 +45,7 @@ The report archiving system ensures all test outputs are systematically saved, o
 
 ```bash
 # Create base directory structure
-TEST_RUN_BASE="test-reports/archive/$(date +%Y-%m-%d)_manual-test"
+TEST_RUN_BASE="test-output/archive/$(date +%Y-%m-%d)_manual-test"
 mkdir -p "$TEST_RUN_BASE"/{scenarios,metadata,templates,localization}
 
 # Create format subdirectories for each scenario
@@ -73,9 +73,9 @@ echo "Archive structure created at: $TEST_RUN_BASE"
 
 ```bash
 # Set archiving environment variables
-export TEST_REPORTS_DIR="$PWD/test-reports"
+export TEST_OUTPUT_DIR="$PWD/test-output"
 export TEST_RUN_ID="$(date +%Y-%m-%d)_manual-test"
-export ARCHIVE_DIR="$TEST_REPORTS_DIR/archive/$TEST_RUN_ID"
+export ARCHIVE_DIR="$TEST_OUTPUT_DIR/archive/$TEST_RUN_ID"
 
 # Create manifest file
 cat > "$ARCHIVE_DIR/metadata/test-manifest.json" << EOF
@@ -660,7 +660,7 @@ archive_scenario_all_formats() {
 # archive_test_run.sh - Archive complete test run
 
 archive_complete_test_run() {
-  local BASE_DIR=${1:-"test-reports/archive/$(date +%Y-%m-%d)_manual-test"}
+  local BASE_DIR=${1:-"test-output/archive/$(date +%Y-%m-%d)_manual-test"}
   local SCENARIOS=${2:-"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12"}
 
   echo "========================================"
@@ -764,7 +764,7 @@ EOF
 }
 
 # Usage:
-# archive_complete_test_run "test-reports/archive/2026-04-09_full-pipeline-test"
+# archive_complete_test_run "test-output/archive/2026-04-09_full-pipeline-test"
 ```
 
 ---
@@ -892,7 +892,7 @@ EOF
 }
 
 # Usage:
-# validate_archive "test-reports/archive/2026-04-09_full-pipeline-test"
+# validate_archive "test-output/archive/2026-04-09_full-pipeline-test"
 ```
 
 ---
@@ -942,7 +942,7 @@ generate_complete_manifest() {
 }
 
 # Usage:
-# generate_complete_manifest "test-reports/archive/2026-04-09_full-pipeline-test"
+# generate_complete_manifest "test-output/archive/2026-04-09_full-pipeline-test"
 ```
 
 ---
@@ -953,7 +953,7 @@ generate_complete_manifest() {
 
 ```bash
 # Initialize test run archive
-archive_complete_test_run "test-reports/archive/$(date +%Y-%m-%d)_manual-test"
+archive_complete_test_run "test-output/archive/$(date +%Y-%m-%d)_manual-test"
 
 # Archive single scenario (all formats)
 archive_scenario_all_formats "S1" "22222222-2222-4222-8222-222222222222" "$EXEC_ID" "$REPORT_ID" "$ARCHIVE_DIR"
@@ -965,7 +965,7 @@ validate_archive "$ARCHIVE_DIR"
 generate_complete_manifest "$ARCHIVE_DIR"
 
 # Update latest symlink
-ln -sfn "$ARCHIVE_DIR" test-reports/latest
+ln -sfn "$ARCHIVE_DIR" test-output/latest
 ```
 
 ---

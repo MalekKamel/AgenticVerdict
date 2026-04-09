@@ -27,9 +27,42 @@ jobs:
         service: [web, api, worker]
     steps:
       - uses: actions/checkout@v4
+      - name: Clean local build artifacts (Docker context)
+        run: bash scripts/docker-prep.sh
+
+      - name: Build workspace deps layer
+        run: docker build -f packages/docker/base/Dockerfile.deps -t agenticverdict/deps:local .
+
+      - name: Build Chromium base (worker only)
+        if: matrix.service == 'worker'
+        run: docker build -f packages/docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
 
       - name: Build image
-        run: docker build -t "agenticverdict/${{ matrix.service }}:scan" -f "apps/${{ matrix.service }}/Dockerfile" .
+        run: |
+          case "${{ matrix.service }}" in
+            web)
+              docker build \
+                --build-arg DEPS_IMAGE=agenticverdict/deps:local \
+                -t "agenticverdict/web:scan" \
+                -f apps/web/Dockerfile \
+                .
+              ;;
+            api)
+              docker build \
+                --build-arg DEPS_IMAGE=agenticverdict/deps:local \
+                -t "agenticverdict/api:scan" \
+                -f apps/api/Dockerfile \
+                .
+              ;;
+            worker)
+              docker build \
+                --build-arg DEPS_IMAGE=agenticverdict/deps:local \
+                --build-arg CHROMIUM_IMAGE=agenticverdict/chromium-base:local \
+                -t "agenticverdict/worker:scan" \
+                -f apps/worker/Dockerfile \
+                .
+              ;;
+          esac
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.28.0

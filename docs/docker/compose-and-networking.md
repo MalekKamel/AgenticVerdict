@@ -30,7 +30,7 @@ Includes `docker-compose.networks.yml`.
 
 ## Application overlay (`docker-compose.apps.yml`)
 
-Build context is the **repository root**; Dockerfiles `apps/web/Dockerfile`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`.
+Build context is the **repository root**; Dockerfiles `apps/web/Dockerfile`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, plus shared bases under `packages/docker/base/` (`Dockerfile.deps`, `Dockerfile.chromium`). See [Container images](./container-images.md#shared-base-images-local--ci).
 
 | Service  | Host ports  | Depends on               | Notes                                                                                                          |
 | -------- | ----------- | ------------------------ | -------------------------------------------------------------------------------------------------------------- |
@@ -41,6 +41,17 @@ Build context is the **repository root**; Dockerfiles `apps/web/Dockerfile`, `ap
 **Connection strings (in-container):** `DATABASE_URL=postgresql://postgres:postgres@postgres:5432/agenticverdict`, `REDIS_URL=redis://redis:6379`.
 
 **Hardening:** Same pattern as base (read-only root, `tmpfs` `/tmp`, `cap_drop`, seccomp, limits).
+
+## Build cache and faster Compose builds
+
+- Enable BuildKit so Dockerfile cache mounts are active:
+  - `export DOCKER_BUILDKIT=1`
+- Build only changed services when possible:
+  - `docker compose -f docker-compose.yml -f docker-compose.apps.yml build api`
+- For API/worker, use build args from overlays (`TARGET_STAGE`, `NODE_ENV`) to match intended runtime behavior.
+- Avoid routine `--no-cache`; reserve it for debugging cache corruption or dependency resolver edge cases.
+
+For advanced local cache export/import workflows and troubleshooting, see [Build best practices](./build-best-practices.md) and [Getting started](./getting-started.md#buildkit-and-local-build-cache).
 
 ## Observability (`docker-compose.observability.yml`)
 

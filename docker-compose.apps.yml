@@ -1,9 +1,13 @@
 # Optional application stack on top of Postgres + Redis.
 # Run `scripts/generate-secrets.sh` before first `up` (creates ./secrets/jwt_secret.txt).
 # Usage (from repo root):
+#   docker compose -f docker-compose.base-images.yml build
 #   docker compose -f docker-compose.yml -f docker-compose.apps.yml up --build
 #
 # See docs/docker/testing.md.
+
+x-deps-image: &deps-image
+  DEPS_IMAGE: agenticverdict/deps:local
 
 secrets:
   jwt_secret:
@@ -14,6 +18,9 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        <<: *deps-image
+        USE_TURBOPACK: "true"
     ports:
       - "3000:3000"
     read_only: true
@@ -52,6 +59,8 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+      args:
+        <<: *deps-image
     ports:
       - "4000:4000"
     read_only: true
@@ -94,6 +103,9 @@ services:
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
+      args:
+        <<: *deps-image
+        CHROMIUM_IMAGE: agenticverdict/chromium-base:local
     read_only: true
     tmpfs:
       - /tmp:noexec,nosuid,size=512m

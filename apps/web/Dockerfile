@@ -1,34 +1,24 @@
 # syntax=docker/dockerfile:1
 # Next.js 15 standalone (monorepo). See docs/docker/container-images.md
-ARG NODE_VERSION=20
+ARG DEPS_IMAGE=agenticverdict/deps:local
 
-FROM node:${NODE_VERSION}-bookworm-slim AS base
-WORKDIR /app
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="${PNPM_HOME}:${PATH}"
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
-
-FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
-COPY apps ./apps
-COPY packages ./packages
-COPY tests ./tests
-COPY configs ./configs
-COPY scripts ./scripts
-COPY eslint.config.mjs ./
-RUN pnpm install --frozen-lockfile
+FROM ${DEPS_IMAGE} AS deps
 
 FROM deps AS builder
-COPY . .
+COPY packages ./packages
+COPY tests ./tests
+COPY apps ./apps
 RUN node scripts/dockerPrebuild.mjs
 ENV NEXT_TELEMETRY_DISABLED=1
-# Use webpack build (not --turbopack) for reproducible standalone traces in CI/images
-RUN pnpm --filter @agenticverdict/web exec next build --no-lint
+ARG USE_TURBOPACK=false
+# Default webpack for reproducible standalone traces; set USE_TURBOPACK=true for faster experimental builds.
+RUN --mount=type=cache,target=/root/.cache/turbo \
+    --mount=type=cache,target=/root/.cache/npm \
+    if [ "$USE_TURBOPACK" = "true" ]; then \
+      pnpm --filter @agenticverdict/web exec next build --no-lint --turbopack; \
+    else \
+      pnpm --filter @agenticverdict/web exec next build --no-lint; \
+    fi
 
 # Distroless runtime for Next.js standalone (no shell; Node fetch healthcheck).
 FROM gcr.io/distroless/nodejs20-debian12 AS runner

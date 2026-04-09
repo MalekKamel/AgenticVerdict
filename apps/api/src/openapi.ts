@@ -9,7 +9,7 @@ const swaggerBaseOptions = {
     info: {
       title: "AgenticVerdict API",
       description:
-        "External REST API for insights, verdicts, analysis bundles, reports, and validation. JWT bearer auth required on `/api/v1/*` except as noted.",
+        "External REST API for insights, verdicts, analysis bundles, reports, and validation. JWT bearer auth required on `/api/v1/*` except as noted. Liveness: `GET /health` and `GET /api/health` (identical, no auth).",
       version: "1.0.0",
     },
     tags: [

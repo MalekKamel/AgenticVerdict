@@ -331,6 +331,10 @@ pnpm --filter @agenticverdict/database db:push
 pnpm dev
 ```
 
+### Docker (full stack in containers)
+
+To run **Postgres, Redis, web, api, and worker** in Docker, use the root **`Makefile`** (recommended) and **`docs/docker/quick-start.md`**: `make setup`, then `make dev` (api/worker dev stage + mock-friendly env) or `make apps-up` (production-like app images). Run **`make help`** for all targets (`validate`, `backup`, `health`, …). **`pnpm run db:up`** remains a lightweight option when you only need Postgres + Redis on the host.
+
 ### Development Workflow
 
 ```bash

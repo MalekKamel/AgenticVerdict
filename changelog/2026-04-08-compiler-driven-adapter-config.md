@@ -102,7 +102,7 @@ This entry documents the shift toward **shared build constants** (`NODE_ENV`-der
 - **`docs/06-reference/migration-guide-compiler-driven-config.md`**
   - migration patterns, explicit note that **company JSON / `CompanyConfig` are unchanged**
 
-- **`docs/06-reference/manual-testing-guide.md`**
+- **`tests/docs/manual-testing-guide.md`**
   - **§2.7 Compiler-driven adapter configuration** — build constants, blocked workflow test trigger in production, worker startup check
 
 - **`docs/04-technology-research/README.md`**

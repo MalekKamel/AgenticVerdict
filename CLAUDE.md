@@ -50,6 +50,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 agenticverdict/
+├── Makefile                  # Docker Compose workflows (recommended entry point; `make help`)
+├── .env.docker.example       # Local compose env template → `.env.docker` (gitignored)
 ├── apps/
 │   ├── web/          # Next.js web application
 │   ├── api/          # Standalone API service (Fastify)
@@ -138,7 +140,7 @@ Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wid
 3. **Postgres feature flags** — tables `feature_flags` / `tenant_feature_flags`; evaluate with **`createFeatureFlagService(db)`** from **`@agenticverdict/database`** (kept out of `packages/config` to avoid **`config` ↔ `database`** cycles).
 4. **Observability** — `agenticverdict_*` config/flag metrics in `@agenticverdict/observability`; **`auditConfigChange`** in `@agenticverdict/database` for config audit rows.
 
-**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images remain Next standalone (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. See **`docs/docker/getting-started.md`** and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
+**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images remain Next standalone (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
 
 ## Platform Adapter Pattern
 
@@ -214,7 +216,9 @@ drizzle-kit studio
 
 ### Docker
 
-Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational commands are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** merge **`docker-compose.dev.yml`** or **`deploy/docker-compose.dev.override.yml`** with the base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
+**Recommended:** from the repository root, use **`make`** for everyday Compose workflows so multi-file `-f` lists stay correct. Run **`make help`**; typical flow is **`make setup`** (first machine), **`make preflight`**, **`make dev`** (dev-stage api/worker + mock-friendly env; runs base image build first), or **`make apps-up`** for production-like app images. **`make validate`** runs **`scripts/docker-validate.sh`** (same checks as **`.github/workflows/docker-compose-validate.yml`**). **`make backup`** / **`make restore-latest`** wrap **`scripts/docker-backup.sh`** / **`scripts/docker-restore.sh`**. Raw `docker compose -f …` commands remain in **`docs/docker/`** for advanced overlays (observability, backup sidecar, security) and for transparency.
+
+Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational detail are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** the **`make dev`** target merges **`docker-compose.dev.yml`**; equivalently merge **`deploy/docker-compose.dev.override.yml`** with base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
 
 ## Testing Requirements
 

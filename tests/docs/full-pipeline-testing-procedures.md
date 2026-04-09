@@ -90,8 +90,8 @@ The AgenticVerdict marketing analytics pipeline consists of five sequential stag
 
 4. **Test Reports Directory**:
    ```bash
-   mkdir -p test-reports/archive/$(date +%Y-%m-%d)_full-pipeline-test
-   cd test-reports/archive/$(date +%Y-%m-%d)_full-pipeline-test
+   mkdir -p test-output/archive/$(date +%Y-%m-%d)_full-pipeline-test
+   cd test-output/archive/$(date +%Y-%m-%d)_full-pipeline-test
    mkdir -p scenarios metadata templates localization
    ```
 
@@ -480,7 +480,7 @@ export TOKEN=$(
     --tenant 22222222-2222-4222-8222-222222222222
 )
 
-TEST_DIR="test-reports/archive/$(date +%Y-%m-%d)_full-pipeline-test"
+TEST_DIR="test-output/archive/$(date +%Y-%m-%d)_full-pipeline-test"
 mkdir -p "$TEST_DIR"/{scenarios,metadata,templates,localization}
 
 # 1. Trigger verdict-generation workflow (full pipeline)
@@ -559,13 +559,13 @@ echo "E2E test complete. Results saved to $TEST_DIR"
 
 ## Report Generation & Archiving
 
-### Saving Reports to test-reports/
+### Saving Reports to test-output/
 
 ```bash
 #!/bin/bash
 # Archive all generated reports
 
-TEST_RUN_DIR="test-reports/archive/$(date +%Y-%m-%d)_full-pipeline-test"
+TEST_RUN_DIR="test-output/archive/$(date +%Y-%m-%d)_full-pipeline-test"
 mkdir -p "$TEST_RUN_DIR"/scenarios
 
 # Function to save report with proper naming

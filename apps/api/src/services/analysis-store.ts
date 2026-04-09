@@ -4,6 +4,7 @@ import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
 import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
 import type {
   AnalysisResultResponse,
+  DataSourceProvenance,
   GeneratedInsight,
   MarketingVerdict,
   PlatformType,
@@ -11,6 +12,37 @@ import type {
 import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
 
 const byTenant = new Map<string, Map<string, AnalysisResultResponse>>();
+
+const EXPECTED_PLATFORM_COVERAGE = 5;
+
+function calculateWorkflowDataQualityScore(
+  workflowResult: WorkflowTriggerJobResult,
+  hasVerdict: boolean,
+): number {
+  let score = 100;
+  if (!hasVerdict) {
+    score -= 20;
+  }
+  const platforms = workflowResult.processingMetadata?.platformsAnalyzed ?? [];
+  const shortfall = Math.max(0, EXPECTED_PLATFORM_COVERAGE - platforms.length);
+  score -= shortfall * 5;
+  const insights = workflowResult.insights ?? [];
+  if (insights.length === 0) {
+    score -= 10;
+  } else {
+    const avgConfidence = insights.reduce((acc, row) => acc + row.confidence, 0) / insights.length;
+    if (avgConfidence < 0.6) {
+      score -= 10;
+    }
+  }
+  if (workflowResult.processingMetadata?.pipelineStatus !== "completed") {
+    score -= 15;
+  }
+  if (workflowResult.processingMetadata?.partialFailure === true) {
+    score -= 10;
+  }
+  return Math.max(0, Math.min(100, score));
+}
 
 function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsight[] {
   const base = (
@@ -314,27 +346,33 @@ export function persistWorkflowResultForTenant(
   );
   const maybeVerdict = marketingVerdictSchema.safeParse(workflowResult.verdict);
   const verdicts = maybeVerdict.success ? [maybeVerdict.data] : [];
+  const platformsAnalyzed = (workflowResult.processingMetadata?.platformsAnalyzed ?? [
+    "meta",
+  ]) as PlatformType[];
+  const fromWorker = workflowResult.processingMetadata?.analysisDataSources;
+  const dataSources: DataSourceProvenance[] =
+    fromWorker !== undefined && fromWorker.length > 0
+      ? fromWorker
+      : platformsAnalyzed.map((platform) => ({
+          platform: platform as DataSourceProvenance["platform"],
+          metrics: ["unavailable"],
+          dateRange: period,
+          freshnessHours: 0,
+          qualityScore: 60,
+        }));
   const bundle: AnalysisResultResponse = {
     analysisId,
     tenantId,
     period,
-    platformsAnalyzed: workflowResult.processingMetadata?.platformsAnalyzed ?? ["meta"],
-    dataQualityScore: maybeVerdict.success ? 80 : 60,
+    platformsAnalyzed,
+    dataQualityScore: calculateWorkflowDataQualityScore(workflowResult, maybeVerdict.success),
     generatedAt,
     provenance: {
       analysisId,
       generatedAt,
       agentVersion: "workflow-trigger",
       modelUsed: "pipeline-runtime",
-      dataSources: (workflowResult.processingMetadata?.platformsAnalyzed ?? ["meta"]).map(
-        (platform) => ({
-          platform: platform as PlatformType,
-          metrics: ["unknown"],
-          dateRange: period,
-          freshnessHours: 0,
-          qualityScore: 75,
-        }),
-      ),
+      dataSources,
       transformations: [
         {
           type: "workflow_result_ingestion",

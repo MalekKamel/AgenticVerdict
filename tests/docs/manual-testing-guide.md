@@ -172,7 +172,7 @@ See [Appendix D](#appendix-d-additional-testing-documentation) for complete arch
 - Use for: manual procedures in this document, **api/worker** mock adapter flows, and production-flow harness scenarios (R01/R02) alongside a dev-like stack.
 - Commands: `docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker-compose.dev.override.yml up` (and the same **three** `-f` flags for `ps`, `down`, `restart`, etc., unless noted otherwise). Shorthand: swap the last file for `-f docker-compose.dev.yml`.
 - **Test-stage images:** `docker-compose.test.yml` sets **`TARGET_STAGE=test`** and **`NODE_ENV=test`** on **api** / **worker** for deterministic integration-style runs.
-- More detail: [`docs/docker/getting-started.md`](../docker/getting-started.md#environment-modes-and-manual-testing).
+- More detail: [`docs/docker/getting-started.md`](../../docs/docker/getting-started.md#environment-modes-and-manual-testing).
 
 **Docker Compose (production-style apps only)**:
 
@@ -337,7 +337,7 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
 Access points:
 
 - **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3001 (UI mapped from container `3000`; default login often `admin`/`admin` — see [Observability](../docker/observability.md))
+- **Grafana**: http://localhost:3001 (UI mapped from container `3000`; default login often `admin`/`admin` — see [Observability](../../docs/docker/observability.md))
 - **Loki**: http://127.0.0.1:3100
 
 ### 2.4 Environment Variables Reference
@@ -414,7 +414,7 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
 
 ### 2.7 Compiler-driven and layered runtime configuration
 
-**Layer 1 — build constants:** `@agenticverdict/config` exports **`BUILD_CONFIG`**, **`IS_PRODUCTION`**, and related symbols from **`build-constants`** (see [migration guide: compiler-driven config](./migration-guide-compiler-driven-config.md)).
+**Layer 1 — build constants:** `@agenticverdict/config` exports **`BUILD_CONFIG`**, **`IS_PRODUCTION`**, and related symbols from **`build-constants`** (see [migration guide: compiler-driven config](../../docs/06-reference/migration-guide-compiler-driven-config.md)).
 
 **Layer 2 — runtime config:** **`@agenticverdict/config/configuration`** (also exported from the package root) provides **`ConfigurationService`**, validated **`RuntimeConfig`**, **`canEnableMocksViaEnv`**, centralized **`isMockEnabledForPlatform`**, and the **`config`** accessor object. **`createPlatformAdapter`** imports mock enablement from this layer; production **esbuild** bundles still drop mock symbols (**`pnpm run verify:production-bundle`**).
 
@@ -593,6 +593,8 @@ Copy `executionId` from the response for the next steps and assign it to `EXECUT
 
 ```bash
 # Poll job status (set EXECUTION from Step 2 response)
+# Note: Use `jq -r '.status'` (raw output, single field) to avoid parsing errors
+# when the response contains LLM-generated content with control characters.
 EXECUTION="<paste-execution-id-here>"
 
 while true; do
@@ -1531,6 +1533,24 @@ curl http://localhost:3000/api/health/adapters | jq '.mockMode'
 
 ---
 
+#### Issue: `jq` parse error with control characters
+
+**Symptoms**: `jq` reports "Invalid string: control characters from U+0000 through U+001F must be escaped" when polling workflow status for `marketing-analysis` or `verdict-generation`.
+
+**Diagnosis**: LLM-generated insights in the response contain newlines, tabs, or other control characters that `jq` cannot parse in its default mode.
+
+**Solutions**:
+
+1. Use `jq -r '.field'` (raw output mode) when extracting individual fields like `status` or `message`.
+2. For full JSON display, pipe to `jq '.'` only after confirming the job is complete, or use `cat` without jq.
+3. Example polling pattern that avoids the issue:
+   ```bash
+   STATUS=$(curl -s "http://localhost:4000/api/v1/workflows/status/$EXECUTION" \
+     -H "Authorization: Bearer $TOKEN" | jq -r '.status')
+   ```
+
+---
+
 #### Issue: Workflow trigger returns HTTP 400 (production build gate)
 
 **Symptoms**: `POST /api/v1/workflows/trigger` responds with **`validation_error`** and a message like **Workflow test triggers are not available in production builds** (HTTP **400**), even though the JSON body looks valid.
@@ -1592,6 +1612,29 @@ docker exec agenticverdict-redis-1 redis-cli CLIENT LIST | grep 'bull:d29ya2Zsb3
 1. Stop extra worker processes on the host (or point them at a different **`REDIS_URL`** / isolated stack). Verify **`docker exec agenticverdict-redis-1 redis-cli CLIENT LIST | grep 'bull:d29ya2Zsb3ctdHJpZ2dlcg=='`** shows **at most one** blocking consumer while you expect only Docker to run workers.
 2. Recreate the **Docker** worker after code changes, then re-trigger **`marketing-analysis`** or **`verdict-generation`** (see S12 notes on rebuilding **`worker`**).
 3. Confirm **`docker logs agenticverdict-worker-1`** shows **`job_start`** with **`workflowId":"marketing-analysis"`** or **`workflowId":"verdict-generation"`** for the **`executionId`** you care about. If Docker never logs that line, another consumer processed the job.
+
+---
+
+#### Issue: HTTP 403 `tenant_config_not_found` on workflow trigger
+
+**Symptoms**: `POST /api/v1/workflows/trigger` responds with HTTP **403** and **`tenant_config_not_found`** even when the JSON body contains a valid UUID.
+
+**Diagnosis**: The JWT's `tenant_id` claim must match the `tenantId` in the JSON body, AND that tenant must have a valid company configuration file (e.g., `configs/companies/22222222-2222-4222-8222-222222222222.json` for the demo EN tenant).
+
+```bash
+# Verify JWT includes correct tenant_id claim
+# The --tenant argument to generate-dev-jwt.mjs sets both sub and tenant_id
+node scripts/generate-dev-jwt.mjs --tenant 22222222-2222-4222-8222-222222222222
+
+# Check if company config exists for the tenant
+ls configs/companies/*.json
+```
+
+**Solutions**:
+
+1. Ensure the JWT `tenant_id` claim matches the `tenantId` in the workflow trigger JSON body.
+2. Verify the tenant has a company configuration file in `configs/companies/`.
+3. Use the demo tenants included in the repo (e.g., `22222222-2222-4222-8222-222222222222` for EN, `11111111-1111-4111-8111-111111111111` for AR).
 
 ---
 
