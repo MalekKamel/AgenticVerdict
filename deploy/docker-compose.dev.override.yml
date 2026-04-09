@@ -5,36 +5,39 @@
 #   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
 #     -f deploy/docker-compose.dev.override.yml up
 #
-# NOTE: Mock adapters require NODE_ENV=development at BUILD TIME (not just runtime).
-# Web service cannot use mock adapters in Docker due to Next.js build limitations.
+# NOTE: API/worker images should be built with TARGET_STAGE=development (see apps/*/Dockerfile)
+# so the copied tree matches a non-production NODE_ENV. This file sets the same via build args.
+# Web service cannot use mock adapters in Docker due to Next.js standalone limitations.
 # For production-flow scenarios (R01/R02), mock adapters are not needed as they use fixed HTML.
 
 services:
   api:
     build:
       args:
+        TARGET_STAGE: development
         NODE_ENV: "development"
     environment:
       NODE_ENV: "development"
       AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
-      # GLM/ZhipuAI LLM Configuration (for AI agent workflows)
-      # GLM_API_KEY: "your-glm-api-key-here"
-      # GLM_API_BASE_URL: "https://api.z.ai/api/anthropic"
-      # GLM_MODEL: "glm-4.5"
-      # GLM_TIMEOUT: "30000"
+      # Optional LLM: set in a gitignored `.env` at repo root or `export` before `docker compose up`
+      # (Compose substitutes ${VAR}; never commit real keys).
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}
 
   worker:
     build:
       args:
+        TARGET_STAGE: development
         NODE_ENV: "development"
     environment:
       NODE_ENV: "development"
       AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
-      # GLM/ZhipuAI LLM Configuration (for AI agent workflows)
-      # GLM_API_KEY: "your-glm-api-key-here"
-      # GLM_API_BASE_URL: "https://api.z.ai/api/anthropic"
-      # GLM_MODEL: "glm-4.5"
-      # GLM_TIMEOUT: "30000"
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}
 
   # Web service uses production build (mock adapters not supported in Docker)
   # For mock adapter testing, use local `pnpm dev` instead

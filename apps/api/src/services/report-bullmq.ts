@@ -153,7 +153,13 @@ export async function getWorkflowTriggerJobStatus(
   }
   const q = createWorkflowTriggerQueue(conn);
   try {
-    const job = await q.getJob(executionId);
+    // BullMQ may not return the job from `getJob` for a few milliseconds right after `add`
+    // (observed as 404 on the first status poll). Brief retries avoid flaky manual/automation polls.
+    let job = await q.getJob(executionId);
+    for (let attempt = 0; attempt < 5 && !job; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      job = await q.getJob(executionId);
+    }
     if (!job) {
       return null;
     }

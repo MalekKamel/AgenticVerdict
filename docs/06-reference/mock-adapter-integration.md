@@ -80,50 +80,17 @@ const adapter = MockAdapterFactory.create({
 Per-platform flag > Master flag > Default (production adapters)
 ```
 
+**Implementation note:** Enablement is evaluated by **`isMockEnabledForPlatform`** in **`@agenticverdict/config/configuration`** (re-exported from **`@agenticverdict/platform-adapters`**). **`createPlatformAdapter`** uses **`IS_PRODUCTION`** from **`build-constants`** so **production processes** never select mocks from env; **`useMock: true`** is ignored in production processes (production adapters only). See [Manual testing guide](./manual-testing-guide.md) §2.6–2.7 and **`docs/docker/getting-started.md`**.
+
 Example:
 
-- `USE_MOCK_ADAPTERS=1` → All platforms use mocks
-- `USE_MOCK_ADAPTERS=1, MOCK_META=0` → All platforms except Meta use mocks
-- No flags set → Production adapters for all platforms
+- `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` → All platforms use mocks (unless a per-platform var overrides)
+- `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` and `AGENTICVERDICT_MOCK_META=0` → All platforms except Meta use mocks
+- No flags set → Production adapters for all platforms (in non-production processes)
 
-### 2.4 Validation Schema
+### 2.4 Validation and typed runtime view
 
-```typescript
-// packages/config/src/schemas/mock-adapters.ts
-import { z } from "zod";
-
-export const MockAdapterEnvSchema = z.object({
-  AGENTICVERDICT_USE_MOCK_ADAPTERS: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_META: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_GA4: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_GSC: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_GBP: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_TIKTOK: z
-    .enum(["0", "1"])
-    .optional()
-    .transform((v) => v === "1"),
-  AGENTICVERDICT_MOCK_SEED: z
-    .string()
-    .optional()
-    .transform((v) => (v ? Number.parseInt(v, 10) : undefined)),
-  AGENTICVERDICT_MOCK_SCENARIO: z.enum(["normal", "error", "empty"]).optional(),
-});
-```
+Binary mock env vars are parsed and validated in **`packages/config/src/configuration.ts`** (`parseBinaryFlag`, `isMockEnabledForPlatform`, `ConfigurationService.load`). The aggregated, Zod-validated shape is **`RuntimeConfig`** in **`packages/config/src/schemas/runtime-config.ts`** (`adapters.mocks.enabled`, `adapters.mocks.platforms`, optional `scenarios`). Use `ConfigurationService` / `config.runtime()` rather than a separate env-only Zod object.
 
 ---
 
@@ -455,12 +422,12 @@ AGENTICVERDICT_USE_MOCK_ADAPTERS=1 pnpm dev
 
 ### Phase 1: Core Implementation (Priority 1)
 
-| Task | File                                                | Description                              |
-| ---- | --------------------------------------------------- | ---------------------------------------- |
-| 1.1  | `packages/platform-adapters/src/adapter-factory.ts` | Create environment-aware adapter factory |
-| 1.2  | `packages/config/src/schemas/mock-adapters.ts`      | Add environment validation schema        |
-| 1.3  | `packages/config/src/index.ts`                      | Export mock adapter configuration        |
-| 1.4  | `packages/platform-adapters/src/index.ts`           | Export `createPlatformAdapter`           |
+| Task | File                                                | Description                               |
+| ---- | --------------------------------------------------- | ----------------------------------------- |
+| 1.1  | `packages/platform-adapters/src/adapter-factory.ts` | Create environment-aware adapter factory  |
+| 1.2  | `packages/config/src/configuration.ts`              | Env parsing + `RuntimeConfig` aggregation |
+| 1.3  | `packages/config/src/index.ts`                      | Export mock adapter configuration         |
+| 1.4  | `packages/platform-adapters/src/index.ts`           | Export `createPlatformAdapter`            |
 
 ### Phase 2: Application Integration (Priority 1)
 

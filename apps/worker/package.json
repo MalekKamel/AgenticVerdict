@@ -20,6 +20,7 @@
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/database": "workspace:*",
     "@agenticverdict/observability": "workspace:*",
+    "@agenticverdict/platform-adapters": "workspace:*",
     "@agenticverdict/report-generator": "workspace:*",
     "@agenticverdict/testing": "workspace:*",
     "@agenticverdict/types": "workspace:*",

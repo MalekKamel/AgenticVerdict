@@ -38,4 +38,18 @@ describe("MockAdapterFactory", () => {
     await adapter.authenticate({ token: "t" });
     await expect(adapter.fetchMetrics(range)).rejects.toBeInstanceOf(PlatformError);
   });
+
+  it("realistic scenario provides platform-native records", async () => {
+    const adapter = MockAdapterFactory.create({
+      platform: "ga4",
+      tenantId: testAdapterTenantId,
+      scenario: "realistic",
+      seed: 11,
+      dateRange: range,
+    });
+    await adapter.authenticate({ token: "t" });
+    const normalized = adapter.normalizeData(await adapter.fetchMetrics(range), range);
+    expect(normalized.records.some((r) => r.metricKey === "ga4.event.sessions")).toBe(true);
+    expect(normalized.records.some((r) => r.metricKey.includes(".mock."))).toBe(false);
+  });
 });

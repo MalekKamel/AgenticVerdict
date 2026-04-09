@@ -158,6 +158,7 @@ export type { TikTokOAuthAccessTokenInput, TikTokOAuthAccessTokenResult } from "
 export { MockAdapterFactory, type MockAdapterFactoryConfig } from "./mock-adapter-factory";
 export { MockPlatformAdapter, type MockPlatformAdapterOptions } from "./mock-adapter";
 export {
+  config,
   createPlatformAdapter,
   isMockEnabledForPlatform,
   platformAdapterTypes,

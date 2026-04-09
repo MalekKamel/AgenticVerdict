@@ -2,12 +2,19 @@ import { randomUUID } from "node:crypto";
 
 import {
   AgentFactory,
+  loadLlmEnvFromProcess,
   runAgentJob,
   runMarketingAgentPipeline,
+  type CompanyContextToolDeps,
   type MarketingPipelineState,
+  type PlatformFetchToolDeps,
 } from "@agenticverdict/agent-runtime";
 import { createTestTenantContext } from "@agenticverdict/testing";
-import { generatedInsightSchema, type GeneratedInsight } from "@agenticverdict/types";
+import {
+  generatedInsightSchema,
+  type GeneratedInsight,
+  type PlatformType,
+} from "@agenticverdict/types";
 import {
   recordQueueJobDurationSeconds,
   recordQueueJobWaitSeconds,
@@ -26,6 +33,11 @@ import {
 } from "@agenticverdict/report-generator";
 
 import { sendReportEmail } from "../services/email";
+import {
+  createWorkerPlatformFetchToolDeps,
+  getEnabledTenantPlatforms,
+  toPlatformType,
+} from "../platform-adapter-factory";
 import { isRecipientSuppressed } from "../services/delivery-suppression-redis";
 import {
   isProductionFlowScenarioId,
@@ -77,6 +89,7 @@ function foundationWorkflowResult(data: WorkflowTriggerJobData): WorkflowTrigger
 function toGeneratedInsights(
   data: WorkflowTriggerJobData,
   state: MarketingPipelineState,
+  platforms: PlatformType[],
 ): GeneratedInsight[] {
   const analysisId = state.workflowId;
   const stageMap = new Map(state.stages.map((s) => [s.stage, s]));
@@ -92,7 +105,7 @@ function toGeneratedInsights(
       description: summary.slice(0, 4000),
       confidence: 0.7,
       relevanceScore: 0.7,
-      platforms: data.config.platforms ?? ["meta", "ga4"],
+      platforms,
       relatedMetricKeys: ["roas", "cpa"],
       createdAt: new Date(),
     }),
@@ -103,32 +116,111 @@ async function runPipelineWorkflow(
   data: WorkflowTriggerJobData,
 ): Promise<WorkflowTriggerJobResult> {
   const validatedData = workflowTriggerJobDataSchema.parse(data);
-  const factory = new AgentFactory({ llmEnv: {} });
+  const requestedPlatformsRaw = validatedData.config.platforms ?? [];
+  const requestedPlatforms: PlatformType[] = [];
+  const invalidPlatforms: string[] = [];
+  for (const requested of requestedPlatformsRaw) {
+    const platform = toPlatformType(requested);
+    if (platform) {
+      requestedPlatforms.push(platform);
+    } else {
+      invalidPlatforms.push(requested);
+    }
+  }
+  const llmEnv = loadLlmEnvFromProcess();
+  const factory = new AgentFactory({ llmEnv });
   const tenant = createTestTenantContext({
     tenantId: validatedData.tenantId,
     requestId: validatedData.requestId,
+    companyConfig: {
+      marketing: {
+        channels: [
+          { platform: "meta", enabled: true },
+          { platform: "ga4", enabled: true },
+          { platform: "gsc", enabled: true },
+          { platform: "gbp", enabled: true },
+          { platform: "tiktok", enabled: true },
+        ],
+      },
+    },
   });
+  const enabledPlatforms = getEnabledTenantPlatforms(tenant);
+  const effectivePlatforms =
+    requestedPlatforms.length > 0 ? requestedPlatforms : [...enabledPlatforms];
+  const disabledRequestedPlatforms = effectivePlatforms.filter(
+    (platform) => !enabledPlatforms.includes(platform),
+  );
+
+  if (invalidPlatforms.length > 0 || disabledRequestedPlatforms.length > 0) {
+    return workflowTriggerJobResultSchema.parse({
+      workflowId: validatedData.workflowId,
+      tenantId: validatedData.tenantId,
+      testMode: validatedData.testMode,
+      phase:
+        validatedData.workflowId === "marketing-analysis"
+          ? "marketing-analysis"
+          : "verdict-generation",
+      message: `${validatedData.workflowId}_platform_validation_failed`,
+      processingMetadata: {
+        durationMs: 0,
+        stagesCompleted: 0,
+        pipelineStatus: "failed",
+        platformsAnalyzed: requestedPlatformsRaw,
+        errorCode: "platform_fetch_failed",
+        partialFailure: true,
+        platformFailures: [
+          ...invalidPlatforms.map((platform) => ({
+            platform,
+            code: "platform_fetch_failed" as const,
+            message: `Unsupported platform "${platform}"`,
+            retryable: false,
+            recoveryHint: "Use one of: meta, ga4, gsc, gbp, tiktok.",
+          })),
+          ...disabledRequestedPlatforms.map((platform) => ({
+            platform,
+            code: "platform_fetch_failed" as const,
+            message: `Platform "${platform}" is not enabled for this tenant`,
+            retryable: false,
+            recoveryHint: "Enable the platform in tenant marketing channels and retry.",
+          })),
+        ],
+      },
+    });
+  }
+
+  const platformDeps: PlatformFetchToolDeps = createWorkerPlatformFetchToolDeps({
+    tenant,
+    mockScenario: validatedData.config.mockData?.scenario,
+    mockSeed: validatedData.config.mockData?.seed,
+  });
+  const companyContextDeps: CompanyContextToolDeps = {};
   const workflowId = randomUUID();
+  // Enable production models when LLM credentials are available
+  const useProductionModels = Boolean(
+    llmEnv.anthropicApiKey || llmEnv.openAiApiKey || llmEnv.glmApiKey,
+  );
   const pipelineState = await runAgentJob({ tenant, runId: `run-${workflowId}` }, async (scope) =>
     runMarketingAgentPipeline({
       factory,
       ctx: scope.invocation,
       workflowId,
       goal: `Workflow ${validatedData.workflowId} for tenant ${validatedData.tenantId}`,
-      specialization: { companyName: tenant.config.companyName },
+      specialization: {
+        companyName: tenant.config.companyName,
+        promptVars: {
+          platforms: effectivePlatforms.map((platform) => platform.toUpperCase()).join(", "),
+        },
+        platformDeps,
+        companyContextDeps,
+      },
       tolerateVerdictParseFailure: true,
+      useProductionModels,
     }),
   );
 
-  const insights = toGeneratedInsights(validatedData, pipelineState);
+  const insights = toGeneratedInsights(validatedData, pipelineState, effectivePlatforms);
   const durationMs = pipelineState.stages.reduce((sum, stage) => sum + stage.durationMs, 0);
-  const platformsAnalyzed = validatedData.config.platforms ?? [
-    "meta",
-    "ga4",
-    "gsc",
-    "gbp",
-    "tiktok",
-  ];
+  const platformsAnalyzed = effectivePlatforms;
   const workflowPhase =
     validatedData.workflowId === "marketing-analysis" ? "marketing-analysis" : "verdict-generation";
   let errorCode: WorkflowJobErrorCode | undefined =

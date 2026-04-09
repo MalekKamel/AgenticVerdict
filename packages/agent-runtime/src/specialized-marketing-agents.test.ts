@@ -1,6 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { createSyntheticAdapter } from "@agenticverdict/platform-adapters";
+import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
+import { TenantScopedTtlCache } from "./agent-tools/company-context-tools";
 import {
   buildSpecializedMarketingFactoryConfig,
   createSpecializedMarketingTestAgent,
@@ -35,6 +37,51 @@ describe("specialized-marketing-agents", () => {
       companyName: "Acme",
     });
     expect(agent.run).toBeTypeOf("function");
+  });
+
+  it("adds platform fetch tools when platform deps are provided", () => {
+    const factory = new AgentFactory({ llmEnv: {} });
+    const createSpy = vi.spyOn(factory, "createAgentWithTools");
+    createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
+      companyName: "Acme",
+      platformDeps: {
+        getAdapter: (platform) => createSyntheticAdapter(platform),
+      },
+    });
+    const calledTools = createSpy.mock.calls.at(0)?.[1] ?? [];
+    const toolNames = calledTools.map((tool) => tool.name);
+    expect(toolNames).toContain("fetch_meta_metrics");
+    expect(toolNames).toContain("fetch_ga4_metrics");
+    expect(toolNames).toContain("fetch_gsc_metrics");
+    expect(toolNames).toContain("fetch_gbp_metrics");
+    expect(toolNames).toContain("fetch_tiktok_metrics");
+  });
+
+  it("does not add platform fetch tools when platform deps are omitted", () => {
+    const factory = new AgentFactory({ llmEnv: {} });
+    const createSpy = vi.spyOn(factory, "createAgentWithTools");
+    createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
+      companyName: "Acme",
+    });
+    const calledTools = createSpy.mock.calls.at(0)?.[1] ?? [];
+    const toolNames = calledTools.map((tool) => tool.name);
+    expect(toolNames).not.toContain("fetch_meta_metrics");
+    expect(toolNames).not.toContain("fetch_ga4_metrics");
+  });
+
+  it("passes company context deps to company context tools", () => {
+    const factory = new AgentFactory({ llmEnv: {} });
+    const createSpy = vi.spyOn(factory, "createAgentWithTools");
+    const configCache = new TenantScopedTtlCache<unknown>({ ttlMs: 5_000, maxEntries: 10 });
+    createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
+      companyName: "Acme",
+      companyContextDeps: { configCache },
+    });
+    const calledTools = createSpy.mock.calls.at(0)?.[1] ?? [];
+    const toolNames = calledTools.map((tool) => tool.name);
+    expect(toolNames).toContain("get_company_profile");
+    expect(toolNames).toContain("get_business_rules");
+    expect(toolNames).toContain("get_config");
   });
 
   it("media verdict policy encodes strict schema constraints", () => {

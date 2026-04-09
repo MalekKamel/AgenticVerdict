@@ -3,7 +3,7 @@
 **Project:** AgenticVerdict  
 **Phase:** 2 — Agent Runtime & Intelligence  
 **Document type:** Execution plan (sequencing, grouping, verification)  
-**Last updated:** 2026-04-04
+**Last updated:** 2026-04-09
 
 ---
 
@@ -13,12 +13,13 @@ This document translates Phase 2 documentation into an **ordered, execution-read
 
 **Authoritative sources (read in this order for detail):**
 
-| Document                                           | Role                                                 |
-| -------------------------------------------------- | ---------------------------------------------------- |
-| [README.md](./README.md)                           | Index, objectives, platform scope, dependencies      |
-| [tasks.md](./tasks.md)                             | Task IDs (1.x–7.x), estimates, category dependencies |
-| [acceptance-criteria.md](./acceptance-criteria.md) | Quality gates, performance, security, exit criteria  |
-| [overview.md](./overview.md)                       | Risks, architecture layers, week-by-week narrative   |
+| Document                                                                                                    | Role                                                                                      |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [README.md](./README.md)                                                                                    | Index, objectives, platform scope, dependencies                                           |
+| [tasks.md](./tasks.md)                                                                                      | Task IDs (1.x–7.x), estimates, category dependencies                                      |
+| [acceptance-criteria.md](./acceptance-criteria.md)                                                          | Quality gates, performance, security, exit criteria                                       |
+| [overview.md](./overview.md)                                                                                | Risks, architecture layers, week-by-week narrative                                        |
+| [`mock-adapter-pipeline-remediation-plan.md`](/docs/06-reference/mock-adapter-pipeline-remediation-plan.md) | Worker/platform dependency wiring, mock data fidelity, and non-degraded pipeline criteria |
 
 **Path note:** This folder is canonical: `docs/03-development-phases/phase-02-agent-intelligence/`. Phase duration in `overview.md` is described as **Weeks 5–6**; if the master roadmap uses different week indices, treat the **task order and exit criteria** here as authoritative for sequencing, not the calendar label.
 
@@ -31,6 +32,8 @@ This document translates Phase 2 documentation into an **ordered, execution-read
 1. **Tenant isolation:** Every tool, agent, and prompt path must respect **tenant context** from Phase 0. No cross-tenant reads, no co-mingled context in system messages, and **no sensitive data in LangSmith traces or logs** beyond what policy allows (see [acceptance-criteria.md](./acceptance-criteria.md) §5).
 
 2. **Platform data boundary:** Live marketing data flows **only** through Phase 1 `PlatformAdapter` and normalization utilities. Agent tools are **wrappers and orchestration**—they do not reimplement OAuth, rate limits, or raw vendor APIs inside agent packages.
+
+2a. **Tool registration parity:** If platform fetch tools are implemented in the runtime, specialized marketing agents and worker-driven pipelines must receive the same dependency injection contract (for example `platformDeps` or unified `AgentSystem` config). Avoid states where tools exist globally but are omitted from production workflow execution paths.
 
 3. **Phase boundary with Phase 3:** Phase 2 delivers **structured agent outputs** (e.g. verdict and insight schemas), prompts, and tests. **Final PDF/Excel report assembly, email delivery, and template-driven document layout** are Phase 3. Report-oriented tools in `tasks.md` (e.g. summary, format, chart prep) should output **data shapes and markdown-friendly fragments** that Phase 3 can consume without locking in a specific renderer.
 
@@ -127,6 +130,7 @@ Each execution phase lists **intent**, **primary `tasks.md` mapping**, **depende
 
 - All tools listed in `tasks.md` Category 2 are registered and callable from a dev agent with validated inputs/outputs.
 - Platform tools use normalization and caching from Phase 1 where applicable; DB tools enforce tenant scope and meet **<500ms p95** where acceptance criteria require it.
+- Specialized marketing agents include platform fetch tools when platform dependencies are provided, and integration tests verify that worker/pipeline execution paths actually invoke adapter-backed fetch tools.
 - No raw string SQL from LLM input; parameterized queries or repository APIs only.
 
 **Verification:**
@@ -172,6 +176,7 @@ Each execution phase lists **intent**, **primary `tasks.md` mapping**, **depende
 **Completion definition (done when):**
 
 - Factory produces agents with explicit config (model, temperature, tools, memory mode).
+- Factory/pipeline contracts expose explicit dependency injection for platform and company context data (`platformDeps` / `companyContextDeps`, or equivalent unified `AgentSystem` configuration).
 - Multi-tenant tests prove agents cannot retrieve sibling-tenant context via tools or memory.
 - Memory eviction / size limits enforced and tested.
 
@@ -196,6 +201,7 @@ Each execution phase lists **intent**, **primary `tasks.md` mapping**, **depende
 - Each agent meets its `tasks.md` acceptance bullets and **≥85%** unit coverage target where specified.
 - **Verdict** output conforms to agreed schema (see `tasks.md` **6.3** interface) and is validated in tests.
 - Orchestration runs end-to-end with mock LLM in CI; optional gated run with real providers.
+- Workflow orchestrators (for example worker queue handlers) construct tenant-scoped platform adapters and pass platform/company dependency contracts into marketing pipeline execution so runs are not LLM-only.
 - **6.4** protocol supports correlation IDs aligned with Phase 0 request IDs.
 
 **Verification:**
@@ -227,6 +233,18 @@ Each execution phase lists **intent**, **primary `tasks.md` mapping**, **depende
 - LangSmith + logs show timing breakdowns for bottleneck triage (**§3.3**).
 
 **Parallelism:** Benchmarking (**7.3**) and quality framework (**7.4**) can split; optimization (**6.6**) should follow first stable orchestration.
+
+---
+
+### Phase 2 hardening: mock adapters, dynamic platforms, and workflow validation
+
+**Intent:** Ensure local/CI workflow behavior mirrors production data-flow semantics and avoids silent degraded analysis.
+
+- **Mock data fidelity:** Mock adapters should provide realistic, non-empty normalized metric records for enabled platforms so analysis logic is exercised end-to-end.
+- **Dynamic platform discovery:** Analysis prompt inputs should reflect enabled tenant channels from `CompanyConfig.marketing.channels` rather than static defaults.
+- **Platform availability checks:** Workflow execution should validate requested platforms against enabled tenant channels and surface explicit workflow errors when misconfigured.
+
+**Verification:** Align with `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md` success criteria and test strategy for non-degraded marketing-analysis behavior.
 
 ---
 

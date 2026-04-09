@@ -119,6 +119,17 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     );
   });
 
+  describe("admin report list (manual testing / superuser)", () => {
+    it("GET /api/v1/reports succeeds for tenant A admin (default dev JWT includes admin)", async () => {
+      const res = await app.inject({
+        method: "GET",
+        url: "/api/v1/reports",
+        headers: { authorization: `Bearer ${tokenAdminA}` },
+      });
+      expect(res.statusCode).toBe(200);
+    });
+  });
+
   describe("JWT claim validation (middleware unit surface)", () => {
     let unit: Awaited<ReturnType<typeof buildUnit>>;
 

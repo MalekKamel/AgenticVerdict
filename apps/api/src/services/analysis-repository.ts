@@ -50,6 +50,19 @@ async function persistProvenanceRecord(bundle: AnalysisResultResponse): Promise<
     return;
   }
   try {
+    const existing = await db
+      .select({ id: provenanceRecords.id })
+      .from(provenanceRecords)
+      .where(
+        and(
+          eq(provenanceRecords.tenantId, bundle.tenantId),
+          eq(provenanceRecords.analysisId, bundle.analysisId),
+        ),
+      )
+      .limit(1);
+    if (existing.length > 0) {
+      return;
+    }
     await db.insert(provenanceRecords).values({
       analysisId: bundle.analysisId,
       tenantId: bundle.tenantId,

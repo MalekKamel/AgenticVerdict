@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * HS256 JWT for local API testing. Matches `apps/api` auth (`jose` verify, claims: `sub`, `tenant_id`, `roles`).
+ * Default `roles: ["admin"]` satisfies workflow triggers and (with current report RBAC) `GET /api/v1/reports`.
  *
  * Usage:
  *   export TOKEN=$(node scripts/generate-dev-jwt.mjs --tenant <uuid>)

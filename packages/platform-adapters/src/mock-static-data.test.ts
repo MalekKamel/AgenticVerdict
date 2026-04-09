@@ -15,6 +15,7 @@ describe("buildScenarioRecords", () => {
 
   it.each<[MockAdapterScenario, number]>([
     ["normal", 8 * 9],
+    ["realistic", 14 * 7],
     ["high-volume", 36 * 9],
   ])("produces scaled row counts for %s", (scenario, expectedLen) => {
     const records = buildScenarioRecords({
@@ -24,6 +25,18 @@ describe("buildScenarioRecords", () => {
       dateRange: range,
     });
     expect(records).toHaveLength(expectedLen);
+  });
+
+  it("realistic scenario emits platform-native metric keys", () => {
+    const records = buildScenarioRecords({
+      platform: "meta",
+      scenario: "realistic",
+      seed: 9,
+      dateRange: range,
+    });
+    expect(records.some((r) => r.metricKey === "meta.impressions")).toBe(true);
+    expect(records.some((r) => r.metricKey === "meta.spend")).toBe(true);
+    expect(records.every((r) => !r.metricKey.includes(".mock."))).toBe(true);
   });
 
   it("zero-conversions forces conversion metrics to 0", () => {

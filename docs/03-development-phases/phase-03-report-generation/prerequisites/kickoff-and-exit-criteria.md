@@ -26,5 +26,6 @@ The following mirror [Part 1 of the execution plan](../execution-plan.md):
 4. **Provenance** — `ProvenanceTracker` integrated into the **marketing pipeline** state; persistence to Postgres is available via schema/migration for workers to adopt incrementally.
 5. **Email** — Resend and SendGrid paths implemented in the worker service; **at least one** provider verified in a non-production environment using real API keys.
 6. **API documentation** — OpenAPI/Swagger published from the running server (`/documentation`).
+7. **Phase 2 mock-pipeline health** — In the same dev/test environments used for Phase 03 integration, `marketing-analysis` workflow execution must be non-degraded: specialized marketing agents have platform fetch tools available, worker path injects platform adapter dependencies, and mock adapters provide non-empty metric data when configured for analysis scenarios (reference `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`).
 
 When all items are checked, mark Part 1 **complete** in project tracking and begin **Part 2: Infrastructure Phase** per the execution plan.

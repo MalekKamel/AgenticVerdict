@@ -53,7 +53,8 @@ export function startHealthServer(options: StartHealthServerOptions): http.Serve
   const listenPort = resolveListenPort(portOption(options));
 
   const server = http.createServer((req, res) => {
-    if (req.method !== "GET") {
+    const method = req.method ?? "GET";
+    if (method !== "GET" && method !== "HEAD") {
       res.statusCode = 404;
       res.end();
       return;
@@ -64,6 +65,10 @@ export function startHealthServer(options: StartHealthServerOptions): http.Serve
     if (path === "/ready") {
       res.statusCode = 200;
       res.setHeader("content-type", "text/plain; charset=utf-8");
+      if (method === "HEAD") {
+        res.end();
+        return;
+      }
       res.end("Ready");
       return;
     }
@@ -75,15 +80,27 @@ export function startHealthServer(options: StartHealthServerOptions): http.Serve
           if (pong !== "PONG") {
             res.statusCode = 503;
             res.setHeader("content-type", "text/plain; charset=utf-8");
+            if (method === "HEAD") {
+              res.end();
+              return;
+            }
             res.end("Redis ping did not return PONG");
             return;
           }
           res.statusCode = 200;
           res.setHeader("content-type", "text/plain; charset=utf-8");
+          if (method === "HEAD") {
+            res.end();
+            return;
+          }
           res.end("ok");
         } catch {
           res.statusCode = 503;
           res.setHeader("content-type", "text/plain; charset=utf-8");
+          if (method === "HEAD") {
+            res.end();
+            return;
+          }
           res.end("Redis unavailable");
         }
       })();

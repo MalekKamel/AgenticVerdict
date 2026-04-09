@@ -23,9 +23,10 @@ import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
 
 export async function buildApiServer(): Promise<FastifyInstance> {
   const redis = createUpstashRedisFromEnv();
-  const logger = process.env.VITEST === "true" ? false : createPinoLogger("api");
   const app = Fastify({
-    logger,
+    ...(process.env.VITEST === "true"
+      ? { logger: false }
+      : { loggerInstance: createPinoLogger("api") }),
     genReqId: () => randomUUID(),
   });
 

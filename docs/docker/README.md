@@ -1,6 +1,6 @@
 # Docker — single source of truth
 
-This directory is the **authoritative** documentation for container images, Compose stacks, security overlays, observability, CI/CD, and day-to-day commands for AgenticVerdict. It reflects the implementation described in `changelog/2026-04-05-docker-implementation-containerization.md` and the **current** files in the repository (Compose, Dockerfiles, workflows, `deploy/`, `scripts/`).
+This directory is the **authoritative** documentation for container images, Compose stacks, security overlays, observability, CI/CD, and day-to-day commands for AgenticVerdict. It reflects the implementation described in `changelog/2026-04-05-docker-implementation-containerization.md`, **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`** (API/worker **TARGET_STAGE** compose overlays and layered config), and the **current** files in the repository (Compose, Dockerfiles, workflows, `deploy/`, `scripts/`).
 
 For Docker-related operations, use this directory. Non-Docker operational notes (for example API troubleshooting, email, phase handoffs) live under `docs/06-reference/runbooks/`.
 
@@ -30,6 +30,8 @@ curl -fsS http://127.0.0.1:3000/api/health
 curl -fsS http://127.0.0.1:4000/health
 ./scripts/health-check.sh
 ```
+
+**API/worker with mock-friendly dev images** (optional): add `-f docker-compose.dev.yml` or `-f deploy/docker-compose.dev.override.yml` to the compose command (see [Getting started](./getting-started.md#environment-modes-and-manual-testing)).
 
 ## Historical and supplementary material
 

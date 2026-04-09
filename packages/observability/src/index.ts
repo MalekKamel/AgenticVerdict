@@ -1,3 +1,8 @@
+export {
+  configAccessTotal,
+  configLoadDurationSeconds,
+  featureFlagEvaluationTotal,
+} from "./config-access-metrics";
 export { createPinoLogger, type ObservabilityServiceName } from "./logger";
 export { productionFlowTestRegistry } from "./registry";
 export {

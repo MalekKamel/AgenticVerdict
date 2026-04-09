@@ -15,6 +15,19 @@
 | `JWT_SECRET_FILE`                           | api                        | Path to secret file (`/run/secrets/jwt_secret`)             |
 | `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS` | worker                     | `1` avoids Chromium-backed generators in slim image         |
 
+### Dev / test overlays (`docker-compose.dev.yml`, `docker-compose.test.yml`, `deploy/docker-compose.dev.override.yml`)
+
+Merged **on top of** `docker-compose.apps.yml` for **api** and **worker** only (web keeps the apps overlay unless you add a custom service block).
+
+| Variable / build arg               | Services    | Purpose                                                                |
+| ---------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `TARGET_STAGE` (Docker build arg)  | api, worker | `development`, `test`, or `production` — selects Dockerfile copy stage |
+| `NODE_ENV` (build arg + env)       | api, worker | Runtime classification; must be non-`production` for mock adapter use  |
+| `AGENTICVERDICT_USE_MOCK_ADAPTERS` | api, worker | `1` enables master mock toggle (with non-production `NODE_ENV`)        |
+| `AGENTICVERDICT_MOCK_SCENARIO`     | api, worker | Optional; `docker-compose.test.yml` sets `normal` by default           |
+
+Optional feature-style env vars consumed by `@agenticverdict/config` **`ConfigurationService`** (not required for Compose): `ENABLE_NEW_REPORT_GENERATOR`, `ENABLE_ADVANCED_ANALYTICS` (`"true"` / unset).
+
 ## File-backed secrets (development overlay)
 
 Compose declares:

@@ -1,0 +1,36 @@
+# Development-oriented API/worker images: non-production NODE_ENV + mock adapter env.
+# Usage (repo root):
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.dev.yml up --build
+#
+# Web remains a production Next.js standalone image; use `pnpm dev` for mock-backed web locally.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      args:
+        TARGET_STAGE: development
+        NODE_ENV: development
+    environment:
+      NODE_ENV: development
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+      args:
+        TARGET_STAGE: development
+        NODE_ENV: development
+    environment:
+      NODE_ENV: development
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}

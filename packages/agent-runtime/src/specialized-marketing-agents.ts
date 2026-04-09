@@ -3,7 +3,14 @@ import { AgentMockChatModel } from "@agenticverdict/testing";
 
 import type { AgentFactoryConfig } from "./agent-config";
 import { createAnalysisTools } from "./agent-tools/analysis-tools";
-import { createCompanyContextTools } from "./agent-tools/company-context-tools";
+import {
+  createCompanyContextTools,
+  type CompanyContextToolDeps,
+} from "./agent-tools/company-context-tools";
+import {
+  createPlatformFetchTools,
+  type PlatformFetchToolDeps,
+} from "./agent-tools/platform-fetch-tools";
 import { createReportPrepTools } from "./agent-tools/report-prep-tools";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { parseAgentFactoryConfig } from "./agent-config";
@@ -71,6 +78,10 @@ export interface CreateSpecializedMarketingAgentOptions {
   mockLlm?: BaseChatModel;
   /** Shared across pipeline stages to dedupe identical LLM turns (tasks.md 6.6). */
   invocationCache?: LlmInvocationCache;
+  /** Optional platform adapter dependency contract for fetch_* tools. */
+  platformDeps?: PlatformFetchToolDeps;
+  /** Optional cache/dependency controls for company context tools. */
+  companyContextDeps?: CompanyContextToolDeps;
 }
 
 function renderBasePolicy(
@@ -151,7 +162,8 @@ export function createSpecializedMarketingTestAgent(
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
   const sharedTools = [
-    ...createCompanyContextTools(),
+    ...createCompanyContextTools(options.companyContextDeps),
+    ...(options.platformDeps ? createPlatformFetchTools(options.platformDeps) : []),
     ...createAnalysisTools(),
     ...createReportPrepTools(),
   ];
@@ -171,7 +183,8 @@ export function createSpecializedMarketingProductionAgent(
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
   const sharedTools = [
-    ...createCompanyContextTools(),
+    ...createCompanyContextTools(options.companyContextDeps),
+    ...(options.platformDeps ? createPlatformFetchTools(options.platformDeps) : []),
     ...createAnalysisTools(),
     ...createReportPrepTools(),
   ];

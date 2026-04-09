@@ -24,6 +24,29 @@ function httpGet(url: string): Promise<{ statusCode: number; body: string }> {
   });
 }
 
+function httpHead(url: string): Promise<{ statusCode: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const req = http.request(
+      { hostname: u.hostname, port: u.port, path: u.pathname, method: "HEAD" },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on("data", (c) => {
+          chunks.push(c as Buffer);
+        });
+        res.on("end", () => {
+          resolve({
+            statusCode: res.statusCode ?? 0,
+            body: Buffer.concat(chunks).toString("utf-8"),
+          });
+        });
+      },
+    );
+    req.on("error", reject);
+    req.end();
+  });
+}
+
 function waitListening(server: http.Server): Promise<void> {
   return new Promise((resolve, reject) => {
     server.once("listening", () => resolve());
@@ -68,6 +91,20 @@ describe("startHealthServer", () => {
     const res = await httpGet(`http://127.0.0.1:${addr.port}/healthz`);
     expect(res.statusCode).toBe(200);
     expect(res.body).toBe("ok");
+    expect(redis.ping).toHaveBeenCalledOnce();
+  });
+
+  it("HEAD /healthz returns 200 when redis ping is PONG (Docker wget --spider)", async () => {
+    const redis = { ping: vi.fn().mockResolvedValue("PONG") } as unknown as IORedis;
+    server = startHealthServer({ connection: redis, port: 0 });
+    await waitListening(server);
+    const addr = server.address();
+    if (addr === null || typeof addr === "string") {
+      throw new Error("expected TCP listen address");
+    }
+    const res = await httpHead(`http://127.0.0.1:${addr.port}/healthz`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBe("");
     expect(redis.ping).toHaveBeenCalledOnce();
   });
 

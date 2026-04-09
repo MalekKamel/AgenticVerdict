@@ -7,12 +7,14 @@ describe("database schema exports", () => {
     expect(Object.keys(schema).sort()).toEqual([
       "auditLogs",
       "companies",
+      "featureFlags",
       "i18nStrings",
       "marketingMetrics",
       "platformCredentials",
       "provenanceRecords",
       "reportTemplates",
       "reports",
+      "tenantFeatureFlags",
       "users",
     ]);
   });

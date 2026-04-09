@@ -3,13 +3,19 @@ export {
   API_VERSION,
   BUILD_TIMESTAMP,
   IS_PRODUCTION,
-  MOCK_ADAPTERS_ENABLED,
   NODE_ENV,
   type BuildConfig,
   isDevelopmentBuild,
   isProductionBuild,
   isTestBuild,
 } from "./build-constants";
+export {
+  ConfigurationService,
+  canEnableMocksViaEnv,
+  config,
+  isMockEnabledForPlatform,
+} from "./configuration";
+export { runtimeConfigSchema, type RuntimeConfig } from "./schemas/runtime-config";
 export {
   clearCompanyConfigCache,
   ConfigManager,
@@ -71,12 +77,6 @@ export {
   type TemplateValidation,
   type TemplateVariable,
 } from "./schemas/template";
-export {
-  mockAdapterEnvSchema,
-  parseMockAdapterEnv,
-  type MockAdapterEnv,
-  type MockAdapterScenarioEnv,
-} from "./schemas/mock-adapters";
 export {
   logLevelSchema,
   observabilityEnvSchema,

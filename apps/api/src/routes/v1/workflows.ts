@@ -59,6 +59,44 @@ const statusResponseSchema = {
 
 const adminRoles = ["admin"] as const;
 
+function replaceAsciiControlChars(value: string): string {
+  let sanitized = "";
+  for (const character of value) {
+    const codePoint = character.codePointAt(0);
+    if (codePoint === undefined) {
+      sanitized += character;
+      continue;
+    }
+
+    // Replace ASCII C0 controls except tab/newline/carriage return.
+    if (codePoint <= 0x1f && codePoint !== 0x09 && codePoint !== 0x0a && codePoint !== 0x0d) {
+      sanitized += " ";
+      continue;
+    }
+
+    sanitized += character;
+  }
+  return sanitized;
+}
+
+function sanitizeControlChars(value: unknown): unknown {
+  if (typeof value === "string") {
+    return replaceAsciiControlChars(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeControlChars(item));
+  }
+  if (value !== null && typeof value === "object") {
+    const input = value as Record<string, unknown>;
+    const output: Record<string, unknown> = {};
+    for (const [key, nested] of Object.entries(input)) {
+      output[key] = sanitizeControlChars(nested);
+    }
+    return output;
+  }
+  return value;
+}
+
 export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null): void {
   const chain = [
     jwtAuth({ required: true, roles: [...adminRoles] }),
@@ -266,10 +304,20 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
         status: snapshot.status,
         bullmqState: snapshot.bullmqState,
       };
-      if (snapshot.result !== undefined) {
-        workflowTriggerJobResultSchema.parse(snapshot.result);
-        await persistWorkflowArtifactsFromStatus(snapshot);
-        body.result = snapshot.result;
+      if (snapshot.result !== undefined && snapshot.result !== null) {
+        const parsedResult = workflowTriggerJobResultSchema.safeParse(snapshot.result);
+        if (parsedResult.success) {
+          await persistWorkflowArtifactsFromStatus(snapshot);
+          body.result = sanitizeControlChars(parsedResult.data);
+        } else {
+          request.log.warn(
+            {
+              executionId: snapshot.executionId,
+              issues: parsedResult.error.issues,
+            },
+            "workflow_status_result_validation_skipped",
+          );
+        }
       }
       if (snapshot.error !== undefined) {
         body.error = snapshot.error;

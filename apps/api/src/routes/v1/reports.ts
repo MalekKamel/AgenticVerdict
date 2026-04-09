@@ -154,7 +154,7 @@ const retentionBodySchema = z.object({
   retentionDays: z.number().int().min(1).max(3650),
 });
 
-const readRoles = ["analyst", "reports:read"] as const;
+const readRoles = ["analyst", "reports:read", "admin"] as const;
 const writeRoles = ["reports:write", "admin"] as const;
 const shareRoles = ["admin", "reports:share", "reports:write"] as const;
 

@@ -8,21 +8,18 @@ describe("BUILD_CONFIG", () => {
 
   it("infers environment and flags after dynamic import with stubbed NODE_ENV", async () => {
     vi.stubEnv("NODE_ENV", "test");
-    const { BUILD_CONFIG, MOCK_ADAPTERS_ENABLED, IS_PRODUCTION } =
-      await import("./build-constants");
+    const { BUILD_CONFIG, IS_PRODUCTION } = await import("./build-constants");
     expect(BUILD_CONFIG.environment).toBe("test");
     expect(typeof BUILD_CONFIG.isProduction).toBe("boolean");
-    expect(typeof BUILD_CONFIG.mockAdaptersEnabled).toBe("boolean");
-    expect(MOCK_ADAPTERS_ENABLED).toBe(true);
+    expect(BUILD_CONFIG.mockAdaptersEnabled).toBe(true);
     expect(IS_PRODUCTION).toBe(false);
   });
 
   it("marks production when NODE_ENV is production", async () => {
     vi.stubEnv("NODE_ENV", "production");
-    const { BUILD_CONFIG, MOCK_ADAPTERS_ENABLED, IS_PRODUCTION } =
-      await import("./build-constants");
+    const { BUILD_CONFIG, IS_PRODUCTION } = await import("./build-constants");
     expect(BUILD_CONFIG.isProduction).toBe(true);
-    expect(MOCK_ADAPTERS_ENABLED).toBe(false);
+    expect(BUILD_CONFIG.mockAdaptersEnabled).toBe(false);
     expect(IS_PRODUCTION).toBe(true);
   });
 

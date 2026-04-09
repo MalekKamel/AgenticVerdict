@@ -1,5 +1,6 @@
 export { auditLogs } from "./audit-logs";
 export { companies } from "./companies";
+export { featureFlags, tenantFeatureFlags } from "./feature-flags";
 export { i18nStrings } from "./i18n-strings";
 export { marketingMetrics } from "./marketing-metrics";
 export { platformCredentials } from "./platform-credentials";

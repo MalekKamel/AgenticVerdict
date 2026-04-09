@@ -84,7 +84,12 @@ export interface RunMarketingPipelineOptions {
   workflowId?: string;
   specialization: Pick<
     CreateSpecializedMarketingAgentOptions,
-    "companyName" | "promptVars" | "templateVersion" | "factoryConfig"
+    | "companyName"
+    | "promptVars"
+    | "templateVersion"
+    | "factoryConfig"
+    | "platformDeps"
+    | "companyContextDeps"
   >;
   /** When true, uses production chat models (requires keys). */
   useProductionModels?: boolean;
@@ -156,10 +161,17 @@ export async function runMarketingAgentPipeline(
   );
 
   const tenant = requireTenantContext();
+  const enabledPlatformLabels = tenant.config.marketing.channels
+    .filter((channel) => channel.enabled)
+    .map((channel) => channel.label?.trim() || channel.platform.toUpperCase())
+    .join(", ");
   const specialization: RunMarketingPipelineOptions["specialization"] = {
     ...options.specialization,
     promptVars: {
       currency: tenant.config.localization.currency,
+      platforms:
+        options.specialization.promptVars?.platforms ??
+        (enabledPlatformLabels.length > 0 ? enabledPlatformLabels : "Meta, GA4, GSC, GBP, TikTok"),
       ...options.specialization.promptVars,
     },
   };

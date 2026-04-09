@@ -1,4 +1,5 @@
 import { IS_PRODUCTION } from "@agenticverdict/config/build-constants";
+import { isMockEnabledForPlatform } from "@agenticverdict/config/configuration";
 import type { PlatformType } from "@agenticverdict/types";
 
 import type { BasePlatformAdapterOptions, PlatformAdapter } from "./adapter";
@@ -19,19 +20,6 @@ export interface AdapterFactoryConfig extends BasePlatformAdapterOptions {
   readonly mockScenario?: MockAdapterScenario;
 }
 
-function parseBinaryFlag(value: string | undefined, flagName: string): boolean | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === "0") {
-    return false;
-  }
-  if (value === "1") {
-    return true;
-  }
-  throw new Error(`[CONFIG] ${flagName} must be "0" or "1", received "${value}"`);
-}
-
 function baseOptions(config: AdapterFactoryConfig): BasePlatformAdapterOptions {
   return {
     tenantId: config.tenantId,
@@ -46,64 +34,58 @@ function baseOptions(config: AdapterFactoryConfig): BasePlatformAdapterOptions {
   };
 }
 
-export function isMockEnabledForPlatform(
-  platform: PlatformType,
-  env: NodeJS.ProcessEnv = process.env,
-): boolean {
-  const nodeEnv = String(env.NODE_ENV ?? "");
-  const masterRaw = env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
-  const platformKey = `AGENTICVERDICT_MOCK_${platform.toUpperCase()}`;
-  const platformRaw = env[platformKey];
-
-  const master = parseBinaryFlag(masterRaw, "AGENTICVERDICT_USE_MOCK_ADAPTERS");
-  const platformOverride = parseBinaryFlag(platformRaw, platformKey);
-
-  if (nodeEnv === "production" || nodeEnv === "staging") {
-    if (master === true || platformOverride === true) {
-      throw new Error(
-        `[SECURITY] Mock adapters cannot be enabled in ${nodeEnv} environment for platform "${platform}"`,
-      );
+function shouldUseMockAdapter(platform: PlatformType, explicitUseMock?: boolean): boolean {
+  if (explicitUseMock === true) {
+    if (IS_PRODUCTION) {
+      return false;
     }
+    return true;
+  }
+  if (explicitUseMock === false) {
     return false;
   }
-
-  if (Object.prototype.hasOwnProperty.call(env, platformKey)) {
-    return platformOverride ?? false;
+  if (IS_PRODUCTION) {
+    return false;
   }
-  return master ?? false;
+  return isMockEnabledForPlatform(platform);
 }
 
-export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
-  const shared = baseOptions(config);
-
-  if (!IS_PRODUCTION) {
-    const allowMock =
-      config.useMock === true ||
-      (config.useMock !== false && isMockEnabledForPlatform(config.platform));
-    if (allowMock) {
-      return MockAdapterFactory.create({
-        platform: config.platform,
-        seed: config.mockSeed,
-        scenario: config.mockScenario ?? "normal",
-        ...shared,
-      });
-    }
-  }
-
-  switch (config.platform) {
+function createProductionAdapter(
+  platform: PlatformType,
+  options: BasePlatformAdapterOptions,
+): PlatformAdapter {
+  switch (platform) {
     case "meta":
-      return new MetaPlatformAdapter(shared);
+      return new MetaPlatformAdapter(options);
     case "ga4":
-      return new Ga4PlatformAdapter(shared);
+      return new Ga4PlatformAdapter(options);
     case "gsc":
-      return new GscPlatformAdapter(shared);
+      return new GscPlatformAdapter(options);
     case "gbp":
-      return new GbpPlatformAdapter(shared);
+      return new GbpPlatformAdapter(options);
     case "tiktok":
-      return new TikTokPlatformAdapter(shared);
+      return new TikTokPlatformAdapter(options);
     default: {
-      const exhaustive: never = config.platform;
+      const exhaustive: never = platform;
       throw new Error(`Unsupported platform: ${String(exhaustive)}`);
     }
   }
 }
+
+export function createPlatformAdapter(factoryConfig: AdapterFactoryConfig): PlatformAdapter {
+  const { platform, useMock, ...rest } = factoryConfig;
+  const shared = baseOptions({ platform, useMock, ...rest });
+
+  if (shouldUseMockAdapter(platform, useMock)) {
+    return MockAdapterFactory.create({
+      platform,
+      seed: factoryConfig.mockSeed,
+      scenario: factoryConfig.mockScenario ?? "normal",
+      ...shared,
+    });
+  }
+
+  return createProductionAdapter(platform, shared);
+}
+
+export { config, isMockEnabledForPlatform } from "@agenticverdict/config/configuration";

@@ -142,3 +142,5 @@ i18n-unused-keys-report.json
 spaHtmlTemplates.ts
 
 /ignored
+
+/test-reports

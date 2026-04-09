@@ -32,3 +32,9 @@ Start with [analysis-summary.md](./analysis-summary.md) for the one-page view; u
 
 - **Requires**: Phase 00 (Foundation), Phase 01 (Platform Integration), Phase 02 (Agent Intelligence), plus the **prerequisites** listed in [tasks.md](./tasks.md).
 - **Enables**: Phase 04 (Production Hardening).
+
+## Phase 2 mock-pipeline readiness (2026-04-09)
+
+Phase 03 consumes Phase 2 insights/verdicts through API and worker-triggered workflows. For reliable Phase 03 integration tests in local/dev/test environments, mock-adapter pipeline runs must be non-degraded and platform-grounded.
+
+If specialized marketing agents are missing platform fetch tools, worker workflows omit platform dependency injection, or mock adapters return empty records, workflows may still "complete" with generic no-data analysis. Treat this as a readiness gap for Phase 03 and track remediation through [`/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`](/docs/06-reference/mock-adapter-pipeline-remediation-plan.md).

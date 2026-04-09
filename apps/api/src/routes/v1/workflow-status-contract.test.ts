@@ -27,7 +27,7 @@ const completedSnapshot: WorkflowTriggerStatusPayload = {
         id: "bbbbbbbb-6666-4666-8666-bbbbbbbbbbbb",
         type: "trend",
         title: "Status contract trend",
-        description: "Trend text",
+        description: "Trend text\u0007",
         confidence: 0.8,
       },
     ],
@@ -53,6 +53,14 @@ vi.mock("../../services/report-bullmq", async () => {
       }
       if (executionId === "missing-exec") {
         return null;
+      }
+      if (executionId === "pending-with-null-result") {
+        return {
+          executionId,
+          status: "waiting" as const,
+          bullmqState: "waiting",
+          result: null,
+        };
       }
       return {
         executionId,
@@ -102,6 +110,8 @@ describe("workflow status endpoint contract", () => {
     expect(body.status).toBe("completed");
     expect(body.bullmqState).toBe("completed");
     expect(typeof body.result).toBe("object");
+    const result = body.result as { insights?: Array<{ description?: string }> };
+    expect(result.insights?.[0]?.description).toBe("Trend text ");
   });
 
   it("returns stable error envelope for not found execution", async () => {
@@ -114,5 +124,18 @@ describe("workflow status endpoint contract", () => {
     const body = res.json() as { error: { code: string; message: string } };
     expect(body.error.code).toBe("not_found");
     expect(body.error.message).toBe("Execution not found");
+  });
+
+  it("returns 200 when result is temporarily null", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/workflows/status/pending-with-null-result",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as Record<string, unknown>;
+    expect(body.status).toBe("waiting");
+    expect(body.bullmqState).toBe("waiting");
+    expect(body.result).toBeUndefined();
   });
 });

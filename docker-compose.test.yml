@@ -1,0 +1,40 @@
+# Test-oriented API/worker images (NODE_ENV=test) with mock adapters for deterministic integration runs.
+# Usage (repo root):
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.test.yml up --build
+#
+# Optional: mount fixtures when you add files under tests/fixtures/
+# volumes:
+#   - ./tests/fixtures:/app/tests/fixtures:ro
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      args:
+        TARGET_STAGE: test
+        NODE_ENV: test
+    environment:
+      NODE_ENV: test
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      AGENTICVERDICT_MOCK_SCENARIO: normal
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+      args:
+        TARGET_STAGE: test
+        NODE_ENV: test
+    environment:
+      NODE_ENV: test
+      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1"
+      AGENTICVERDICT_MOCK_SCENARIO: normal
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_BASE_URL: ${GLM_API_BASE_URL:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.5}
+      GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}

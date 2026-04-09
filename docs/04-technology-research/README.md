@@ -57,6 +57,16 @@ Research is organized by technology domain:
 - **[compiler-driven-adapter-config-research.md](./compiler-driven-adapter-config-research.md)** - Research: compile-time adapter selection, security, and bundle shape
 - **[compiler-driven-adapter-config-implementation-plan.md](./compiler-driven-adapter-config-implementation-plan.md)** - Phased implementation plan (build constants, API/worker integration, migration guide)
 
+### Docker and Containerization (2026-04-08 Analysis - Greenfield Implementation)
+
+- **Implementation changelog:** [`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`](../../changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md) (what landed in the repo: `configuration` module, `TARGET_STAGE` Dockerfiles, compose overlays, DB feature flags)
+- **[docker-mock-adapter-greenfield-quick-reference.md](./docker-mock-adapter-greenfield-quick-reference.md)** - **START HERE:** Quick reference for greenfield implementation
+- **[docker-mock-adapter-solution-summary.md](./docker-mock-adapter-solution-summary.md)** - Comprehensive greenfield solution with implementation roadmap (9-10 weeks)
+- **[docker-incompatibility-root-cause-analysis.md](./docker-incompatibility-root-cause-analysis.md)** - Root cause analysis of mock adapter and compiler-driven configuration limitations
+- **[container-agnostic-config-research.md](./container-agnostic-config-research.md)** - Research on production-grade container-agnostic configuration management patterns
+- **[deterministic-testing-research.md](./deterministic-testing-research.md)** - Research on deterministic testing with mock data in containerized environments
+- **[feature-flag-runtime-config-research.md](./feature-flag-runtime-config-research.md)** - Research on battle-tested feature flag and runtime configuration systems
+
 ## Usage
 
 Engineers and architects should reference these documents when:

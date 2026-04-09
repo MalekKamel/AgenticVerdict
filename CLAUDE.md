@@ -129,6 +129,17 @@ interface CompanyConfig {
 
 **Never hardcode company-specific logic.** All customization must flow through configuration.
 
+### Layered runtime and infrastructure configuration
+
+Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wide behavior:
+
+1. **Build constants** — `@agenticverdict/config/build-constants` (`IS_PRODUCTION`, `BUILD_CONFIG`, …). Used for production-only guards and bundler-friendly branching.
+2. **Runtime configuration** — `@agenticverdict/config/configuration` (`ConfigurationService`, `RuntimeConfig` via Zod, `isMockEnabledForPlatform`, `config`). Env-derived; safe to import from server/worker code; does **not** pull in the database package.
+3. **Postgres feature flags** — tables `feature_flags` / `tenant_feature_flags`; evaluate with **`createFeatureFlagService(db)`** from **`@agenticverdict/database`** (kept out of `packages/config` to avoid **`config` ↔ `database`** cycles).
+4. **Observability** — `agenticverdict_*` config/flag metrics in `@agenticverdict/observability`; **`auditConfigChange`** in `@agenticverdict/database` for config audit rows.
+
+**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images remain Next standalone (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. See **`docs/docker/getting-started.md`** and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
+
 ## Platform Adapter Pattern
 
 All platform integrations must implement the `PlatformAdapter` interface:
@@ -203,7 +214,7 @@ drizzle-kit studio
 
 ### Docker
 
-Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational commands are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
+Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational commands are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** merge **`docker-compose.dev.yml`** or **`deploy/docker-compose.dev.override.yml`** with the base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
 
 ## Testing Requirements
 

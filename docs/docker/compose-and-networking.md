@@ -4,15 +4,18 @@ Compose is split into **layers** you combine with multiple `-f` files. All appli
 
 ## File roles
 
-| File                                                | Role                                                                                    |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `docker-compose.networks.yml`                       | Declares `agenticverdict` bridge + subnet; included by the base stack and observability |
-| `docker-compose.yml`                                | **Base infrastructure:** Postgres 16, Redis 7, volumes, hardening                       |
-| `docker-compose.apps.yml`                           | **Optional apps:** build/run `web`, `api`, `worker`                                     |
-| `docker-compose.observability.yml`                  | **Optional:** Prometheus, Loki, Promtail, Grafana; Falco under profile `security`       |
-| `deploy/docker-compose.backup.yml`                  | **Optional:** scheduled `postgres-backup` sidecar                                       |
-| `deploy/docker-compose.production.example.yml`      | **Example** production-style stack (image refs, stricter env)                           |
-| `deploy/docker-compose.security-linux.override.yml` | **Optional:** AppArmor profile for app containers                                       |
+| File                                                | Role                                                                                           |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `docker-compose.networks.yml`                       | Declares `agenticverdict` bridge + subnet; included by the base stack and observability        |
+| `docker-compose.yml`                                | **Base infrastructure:** Postgres 16, Redis 7, volumes, hardening                              |
+| `docker-compose.apps.yml`                           | **Optional apps:** build/run `web`, `api`, `worker`                                            |
+| `docker-compose.dev.yml`                            | **Optional:** `api` / `worker` **development** image stage + mock env (merge with base + apps) |
+| `docker-compose.test.yml`                           | **Optional:** `api` / `worker` **test** image stage + mock env (CI / deterministic runs)       |
+| `docker-compose.observability.yml`                  | **Optional:** Prometheus, Loki, Promtail, Grafana; Falco under profile `security`              |
+| `deploy/docker-compose.dev.override.yml`            | **Optional:** same role as `docker-compose.dev.yml` (deploy-prefixed path for overrides)       |
+| `deploy/docker-compose.backup.yml`                  | **Optional:** scheduled `postgres-backup` sidecar                                              |
+| `deploy/docker-compose.production.example.yml`      | **Example** production-style stack (image refs, stricter env)                                  |
+| `deploy/docker-compose.security-linux.override.yml` | **Optional:** AppArmor profile for app containers                                              |
 
 ## Base stack (`docker-compose.yml`)
 

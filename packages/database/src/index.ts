@@ -21,3 +21,9 @@ export {
   seedCompaniesFromJsonDir,
   upsertCompanyFromConfigPayload,
 } from "./seeds/company-config-seed";
+export { auditConfigChange, type AuditConfigChangeParams } from "./audit-config-change";
+export {
+  FeatureFlagService,
+  createFeatureFlagService,
+  type FeatureFlagContext,
+} from "./feature-flag-service";

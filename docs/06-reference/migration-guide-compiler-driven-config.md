@@ -61,8 +61,10 @@ import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
 **Preferred (barrel):**
 
 ```typescript
-import { BUILD_CONFIG, IS_PRODUCTION, MOCK_ADAPTERS_ENABLED } from "@agenticverdict/config";
+import { BUILD_CONFIG, IS_PRODUCTION, canEnableMocksViaEnv } from "@agenticverdict/config";
 ```
+
+**`canEnableMocksViaEnv`** gates whether mock env toggles are allowed for the current process (production/staging are blocked). **`BUILD_CONFIG.mockAdaptersEnabled`** is only `NODE_ENV !== "production"` on the build artifact—use it for logging or coarse build-time branching; pair with **`canEnableMocksViaEnv`** when enforcing mock policy at runtime.
 
 **Optional subpath** (only after `packages/config/package.json` includes a `./build-constants` export):
 
@@ -163,3 +165,5 @@ const adapter = createPlatformAdapter({
 - [Compiler-driven adapter configuration: research](../04-technology-research/compiler-driven-adapter-config-research.md)
 - [Compiler-driven adapter configuration: implementation plan](../04-technology-research/compiler-driven-adapter-config-implementation-plan.md)
 - [Mock adapter integration](./mock-adapter-integration.md) (env vars and behavior)
+- **Layered runtime config + Docker mock stages:** `changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`, `@agenticverdict/config/configuration`, [Docker getting started](../docker/getting-started.md#environment-modes-and-manual-testing)
+- [Docker mock adapter solution summary](../04-technology-research/docker-mock-adapter-solution-summary.md) (research roadmap; implementation status per changelog)

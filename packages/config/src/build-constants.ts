@@ -15,21 +15,18 @@ export const NODE_ENV: "development" | "production" | "test" =
 /** Whether this process is running with `NODE_ENV === "production"`. */
 export const IS_PRODUCTION = NODE_ENV === "production";
 
-/**
- * Whether mock adapters are permitted by default for this process.
- * Production deployments use real adapters; dev/test may use mocks via env flags.
- */
-export const MOCK_ADAPTERS_ENABLED = NODE_ENV !== "production";
-
 /** Recorded when this module is first evaluated (use for diagnostics only). */
 export const BUILD_TIMESTAMP = Date.now();
 
 export const API_VERSION = "v1" as const;
 
+/** `NODE_ENV !== "production"`. Actual mock usage still requires env toggles; see `ConfigurationService`. */
+const mockAdaptersPermittedByBuild = NODE_ENV !== "production";
+
 const buildConfigInner = {
   environment: NODE_ENV,
   isProduction: IS_PRODUCTION,
-  mockAdaptersEnabled: MOCK_ADAPTERS_ENABLED,
+  mockAdaptersEnabled: mockAdaptersPermittedByBuild,
   timestamp: BUILD_TIMESTAMP,
   version: API_VERSION,
 } as const;

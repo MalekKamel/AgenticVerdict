@@ -2,9 +2,11 @@
 
 **Phase Duration:** Weeks 5-6 (2 weeks)
 **Status:** In progress
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-04-09
 
 **Enhancement (P2, 2026-04-08):** `CompanyConfig.marketing.b2bKpiProfile` plus `computeB2bMarketingKpis` / `buildB2bFunnelSnapshotFromNormalizedSnapshots` in `@agenticverdict/agent-runtime` provide **configuration-driven** B2B funnel KPIs (CPQL, decision-maker / fleet-quality / regional mix, Arabic vs English engagement share). Optional `funnelMetricMapping` aggregates `NormalizedPlatformSnapshot` rows by metric suffix. Agent tool **`compute_b2b_kpis_from_snapshots`** (Phase 4 registry) reads tenant config from `requireTenantContext()`; analysis agents include it in default auto-tools. There is **no** tenant-specific code path.
+
+**Pipeline integration note (P0, 2026-04-09):** End-to-end marketing workflows require platform fetch tools on specialized agents and worker-supplied platform adapter dependencies (`PlatformFetchToolDeps`) into pipeline execution. Mock-adapter workflow paths should produce non-empty metric snapshots to avoid degraded "no data sources available" outputs. See `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`.
 
 ---
 
@@ -24,6 +26,8 @@ Insights are **typed, scored artifacts** (e.g. anomaly, trend, opportunity, warn
 
 A **data quality** layer (see remediation **R-10**) validates insights and verdicts before persistence or handoff to reports: `validateInsight`, `validateVerdict`, structured **`ValidationResult`** (`isValid`, `score` 0–100, `errors`, `warnings`, `recommendations`, metadata). **`POST /api/v1/insights/validate`** and **`POST /api/v1/verdicts/validate`** expose this for tooling, CI, and admin review.
 
+Platform enablement validation is a separate concern: workflow requests should validate requested platforms against tenant-enabled channels to prevent silent empty-data runs.
+
 ### Provenance tracking
 
 Each analysis run carries **`ProvenanceInfo`**: data sources (platform, date range, **freshness** in hours, **qualityScore**), model/agent identifiers, and an ordered list of **transformations** (normalization, merges, etc.). `GET /api/v1/analysis-results/:id` returns a full bundle including provenance, insights, and verdicts for audit and Phase 3 narrative generation.
@@ -34,6 +38,8 @@ Phase 2 also defines queue-driven workflow contracts consumed by the worker laye
 
 - **`marketing-analysis`**: collect platform data, normalize snapshots, run agent analysis, and return structured insights.
 - **`verdict-generation`**: execute the analysis pipeline, synthesize a verdict, generate report artifacts, and optionally enqueue delivery.
+
+Worker integration must construct tenant-scoped adapters and provide platform fetch dependencies to the marketing pipeline so specialized agents can execute `fetch_meta_metrics`, `fetch_ga4_metrics`, `fetch_gsc_metrics`, `fetch_gbp_metrics`, and `fetch_tiktok_metrics`.
 
 The workflow trigger config must support: `dateRange`, `platforms`, `analysisDepth`, `verdictDepth`, `outputFormat`, `deliveryEnabled`, and `recipientEmail`. Historical controls (`includeHistorical`, `historicalPeriods`) are optional and tenant-configurable.
 
@@ -74,6 +80,7 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 
 2. **Build Agent Tool Ecosystem**
    - Develop platform data access tools for **Meta Ads, GA4, GSC, GBP, TikTok**
+   - Ensure specialized marketing agents register platform fetch tools when platform dependencies are configured
    - Create database query tools for historical marketing metrics retrieval
    - Implement insight generation tools for formatted output
    - Build tool validation and testing framework
@@ -129,6 +136,10 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 ### Integration Requirements
 
 - [ ] All agents successfully access Phase 1 platform adapters (Meta, GA4, GSC, GBP, TikTok)
+- [ ] Worker queue handlers pass platform adapter dependencies into marketing pipeline execution paths
+- [ ] Mock-adapter workflow runs produce non-empty normalized metrics and non-generic analysis output
+- [ ] Analysis prompt platform lists are derived from enabled tenant channels (`CompanyConfig.marketing.channels`)
+- [ ] Workflow validation enforces requested platforms are enabled for the tenant
 - [ ] Database queries retrieve normalized marketing metrics correctly
 - [ ] Company context propagates through agent workflows (tenant ID, industry, region, goals)
 - [ ] Agent telemetry integrates with Phase 0 logging system
@@ -147,6 +158,8 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 - **Purpose:** Agent tools fetch platform-specific marketing metrics
 - **Integration Point:** `PlatformAdapter` interface from `@agenticverdict/platform-adapters`
 - **Status:** All 5 adapters production-ready with OAuth, caching, rate limiting, normalization
+
+**Execution caveat:** Adapter completeness alone does not guarantee pipeline completeness. Worker and specialized agent wiring must include platform dependency injection for end-to-end analysis to use adapter-backed data.
 
 **Data Normalization Layer (Phase 1) - ✅ COMPLETE**
 

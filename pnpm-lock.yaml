@@ -271,6 +271,9 @@ importers:
       '@agenticverdict/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@agenticverdict/platform-adapters':
+        specifier: workspace:*
+        version: link:../../packages/platform-adapters
       '@agenticverdict/report-generator':
         specifier: workspace:*
         version: link:../../packages/report-generator

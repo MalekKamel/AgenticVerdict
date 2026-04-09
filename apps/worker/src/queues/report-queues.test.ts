@@ -102,6 +102,22 @@ describe("defaultWorkflowTriggerProcessor", () => {
     expect(result.processingMetadata?.outputFormat).toBe("pdf");
   });
 
+  it("fails early when requested platform is invalid", async () => {
+    const result = await defaultWorkflowTriggerProcessor({
+      workflowId: "marketing-analysis",
+      testMode: true,
+      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      config: {
+        platforms: ["linkedin"],
+      },
+      requestId: "req-mkt-disabled-platform",
+    });
+    expect(result.message).toBe("marketing-analysis_platform_validation_failed");
+    expect(result.processingMetadata?.pipelineStatus).toBe("failed");
+    expect(result.processingMetadata?.errorCode).toBe("platform_fetch_failed");
+    expect(result.processingMetadata?.stagesCompleted).toBe(0);
+  });
+
   it("marks delivery_queue_failed when workflow delivery is enabled but send fails", async () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "verdict-generation",

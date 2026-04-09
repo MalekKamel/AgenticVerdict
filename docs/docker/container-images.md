@@ -31,11 +31,19 @@ All application images build from the **monorepo root** so workspace packages, l
 
 ## API (`apps/api/Dockerfile`)
 
-| Stage            | Purpose                                                                     |
-| ---------------- | --------------------------------------------------------------------------- |
-| `base`           | bookworm-slim + openssl, ca-certificates, **wget** (healthcheck)            |
-| `deps` / `build` | install + full tree + `dockerPrebuild`                                      |
-| `runner`         | Copy `/app`, non-root **`appuser`** (uid/gid 1001), `WORKDIR /app/apps/api` |
+| Stage         | Purpose                                                                                                                                                               |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`        | bookworm-slim + openssl, ca-certificates, **wget** (healthcheck)                                                                                                      |
+| `deps`        | install workspace (manifests + sources needed for lockfile)                                                                                                           |
+| `development` | `NODE_ENV=development`, full copy, `dockerPrebuild`                                                                                                                   |
+| `test`        | `NODE_ENV=test`, full copy, `dockerPrebuild`                                                                                                                          |
+| `production`  | `NODE_ENV=production`, full copy, `dockerPrebuild`                                                                                                                    |
+| `runner`      | **`COPY --from=${TARGET_STAGE}`** `/app` → `/app`; **`ARG TARGET_STAGE`** (default `production`), **`ARG NODE_ENV`**; non-root **`appuser`**, `WORKDIR /app/apps/api` |
+
+**Build args (runner / merge):**
+
+- **`TARGET_STAGE`:** `development` \| `test` \| `production` — selects which stage’s filesystem is copied into the final image.
+- **`NODE_ENV`:** should match the intended runtime (Compose overlays set both when using dev/test stacks).
 
 **Runtime:**
 
@@ -47,7 +55,7 @@ All application images build from the **monorepo root** so workspace packages, l
 
 ## Worker (`apps/worker/Dockerfile`)
 
-Same runtime pattern as API (bookworm-slim, `appuser`, `WORKDIR /app/apps/worker`).
+Same **multi-stage** pattern as API: `development`, `test`, `production`, then **`runner`** with **`COPY --from=${TARGET_STAGE}`** and the same **`TARGET_STAGE` / `NODE_ENV`** build args. Runtime: bookworm-slim, `appuser`, `WORKDIR /app/apps/worker`.
 
 - **CMD:** `node --import tsx src/cli.ts`
 - **No exposed ports** in the Dockerfile; worker consumes Redis from the network.

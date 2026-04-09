@@ -14,14 +14,15 @@
 
 ### Key Findings
 
-| Category             | Status     | Score  | Critical Issues                        |
-| -------------------- | ---------- | ------ | -------------------------------------- |
-| Foundation Readiness | ✅ Strong  | 90/100 | None                                   |
-| Data Availability    | ✅ Ready   | 85/100 | Verdict API needs definition           |
-| API Integration      | ⚠️ Partial | 60/100 | Insight/Verdict APIs not fully defined |
-| Template System      | ❌ Missing | 0/100  | Must be built from scratch             |
-| Multi-Language       | ⚠️ Partial | 40/100 | i18n package exists but empty          |
-| Report Generation    | ❌ Missing | 0/100  | Core functionality not implemented     |
+| Category             | Status     | Score  | Critical Issues                                                                                                |
+| -------------------- | ---------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| Foundation Readiness | ✅ Strong  | 90/100 | None                                                                                                           |
+| Data Availability    | ✅ Ready   | 85/100 | Verdict API needs definition                                                                                   |
+| API Integration      | ⚠️ Partial | 60/100 | Insight/Verdict APIs not fully defined                                                                         |
+| Template System      | ❌ Missing | 0/100  | Must be built from scratch                                                                                     |
+| Multi-Language       | ⚠️ Partial | 40/100 | i18n package exists but empty                                                                                  |
+| Report Generation    | ❌ Missing | 0/100  | Core functionality not implemented                                                                             |
+| Mock pipeline health | ⚠️ At risk | N/A    | Worker + specialized-agent mock path can complete in degraded mode without meaningful platform-backed analysis |
 
 ### Risk Level: **MEDIUM-HIGH**
 
@@ -134,6 +135,8 @@ interface NormalizedPlatformSnapshot {
 - ✅ Prompt template system
 - ✅ Verdict schema definition
 
+**Operational caveat (2026-04-09):** Phase 2 mock-adapter workflow execution can still be degraded if specialized agents are created without platform fetch tools, worker workflows omit platform dependency wiring, or mock adapters normalize to empty metric records. Phase 3 should treat this as a prerequisite integration gap for non-production E2E. See `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`.
+
 **Data Structure Available:**
 
 Canonical **`MarketingVerdict`** is defined in **`@agenticverdict/types`** (`packages/types/src/verdict.ts`, validated by **`marketingVerdictSchema`**). It includes tenant and analysis correlation (`tenantId`, `analysisId`), `verdictType`, `score`, `confidence`, `sentiment`, `summary`, `reasoning` (replaces the old LLM-only `nextSteps` array), structured `keyInsights`, `recommendations`, `actionItems`, `evidence`, `dataSources`, `platformsAnalyzed`, `dateRange`, `generatedAt`, `generatedBy`, `modelUsed`, and optional `historicalContext`, `methodology`, `parameters`, `reportMetadata`.
@@ -189,6 +192,28 @@ POST / api / v1 / verdicts / validate;
 5. Add response caching
 
 **Estimated Effort**: 5-7 days
+
+---
+
+#### Gap 1b: Degraded Phase 2 mock-adapter workflow path
+
+**Severity**: 🔴 CRITICAL  
+**Impact**: Phase 03 integration tests may report workflow completion while receiving generic "no data" outputs, blocking reliable report-content validation without production credentials.
+
+**Description**:
+
+- Specialized marketing agents may run without platform fetch tools.
+- Worker workflow paths may not inject platform adapter dependencies into marketing pipeline execution.
+- Default mock adapter scenarios may normalize into empty records unless enriched.
+
+**Resolution Required**:
+
+1. Ensure specialized marketing agents include platform fetch tools when platform dependencies are provided.
+2. Ensure worker workflows build tenant-scoped adapters and pass platform dependencies into pipeline execution.
+3. Ensure mock scenarios used for integration return realistic, non-empty metric records.
+4. Add verification for non-degraded status and non-generic insight output in mock-path testing.
+
+**Estimated Effort**: 3-5 days (aligned with remediation plan estimate)
 
 ---
 
@@ -799,15 +824,16 @@ configs/
 
 ### 6.1 Prerequisite Completion Criteria
 
-| Prerequisite | Success Criteria                                                             |
-| ------------ | ---------------------------------------------------------------------------- |
-| PR-1         | All API endpoints return 200 with valid data                                 |
-| PR-2         | Report `mapMarketingVerdictToReportModel` tests pass 100% (once implemented) |
-| PR-3         | Template schema validates all test cases                                     |
-| PR-4         | Validation rejects invalid data, accepts valid                               |
-| PR-5         | Design tokens defined for all brand elements                                 |
-| PR-6         | Provenance data captured for all analyses                                    |
-| PR-7         | Test emails delivered successfully                                           |
+| Prerequisite | Success Criteria                                                                                                                                          |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PR-1         | All API endpoints return 200 with valid data                                                                                                              |
+| PR-2         | Report `mapMarketingVerdictToReportModel` tests pass 100% (once implemented)                                                                              |
+| PR-3         | Template schema validates all test cases                                                                                                                  |
+| PR-4         | Validation rejects invalid data, accepts valid                                                                                                            |
+| PR-5         | Design tokens defined for all brand elements                                                                                                              |
+| PR-6         | Provenance data captured for all analyses                                                                                                                 |
+| PR-7         | Test emails delivered successfully                                                                                                                        |
+| PR-MOCK      | Marketing workflow with mock adapters runs in non-degraded mode with platform-backed metrics and agent tool/dependency wiring aligned to remediation plan |
 
 ### 6.2 Phase 03 Success Metrics
 
