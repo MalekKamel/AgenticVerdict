@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 2 (Agent runtime: context, errors, lifecycle)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 2 — Agent runtime: context, errors, lifecycle](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **1.4**.
+**Scope:** Phase 2 — [Execution Phase 2 — Agent runtime: context, errors, lifecycle](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **1.4**.
 
 This entry implements the agent runtime envelope: a single execution path with Phase 0 tenant scope, tool-visible correlation fields, timeouts and abort, cleanup, lifecycle/drain semantics for workers, structured job errors, and a lightweight health probe. It supports acceptance criteria **§1.1.6–1.1.8** (runtime, tenant propagation, cleanup) and aligns with **§3.2** (tenant isolation for agent executions; logging/telemetry hooks remain at the app layer when wiring `runAgentJob`).
 
@@ -69,6 +69,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 2 definition and verification.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — task **1.4**.
-- [`docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md`](docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md) — **§1.1.6–1.1.8**, **§3.2** (partially addressed at runtime-package level).
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 2 definition and verification.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — task **1.4**.
+- [`specs/00-core/02-intelligence/acceptance-criteria.md`](specs/00-core/02-intelligence/acceptance-criteria.md) — **§1.1.6–1.1.8**, **§3.2** (partially addressed at runtime-package level).

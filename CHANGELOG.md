@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker testing removal and local testing migration:** Complete removal of Docker E2E testing infrastructure in favor of local Vitest execution. See [`changelog/2026-04-07-docker-testing-removal-local-testing-migration.md`](changelog/2026-04-07-docker-testing-removal-local-testing-migration.md) and implementation plan [`docs/02-planning-and-methodology/docker-testing-removal-plan.md`](docs/02-planning-and-methodology/docker-testing-removal-plan.md).
 - **Phase 03 Part 9 (testing & hardening):** API contract tests for report rate limits, tenant isolation, share-token and validation edge cases, concurrent read smoke, template preview `lang`/`dir`; report-generator executive-summary perf case; Playwright axe WCAG smoke; i18n `/formatters` export for client-safe imports; Part 9 production-readiness runbook. See [`changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md`](changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md).
 - **Phase 03 Part 8 (history & versioning):** API report byte versioning, compare-metadata endpoint, archival and retention sweep, in-memory audit trail and compliance summary/audit export. See [`changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md`](changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md).
-- **Phase 03 Part 1 (prerequisites):** `docs/03-development-phases/phase-03-report-generation/prerequisites/` — API workshop summary, schema transformation spec, technology selection, environment checklist, kickoff/exit criteria; Phase 03 README links the index.
+- **Phase 03 Part 1 (prerequisites):** `specs/00-core/03-insights/prerequisites/` — API workshop summary, schema transformation spec, technology selection, environment checklist, kickoff/exit criteria; Phase 03 README links the index.
 - **`@agenticverdict/agent-runtime`:** Unified **`MarketingVerdict`** parsing (`parseMarketingVerdictFromAgentText`, `applyMarketingVerdictPipelineContext`, `resolveWorkflowAnalysisUuid`, `extractJsonObjectText` in `src/agent-verdict-json.ts`); fixture helpers `buildMarketingVerdictFixture` / `buildMinimalMarketingVerdict`; `ValidationService` alias for `DataQualityService`; `AGENT_RUNTIME_PACKAGE_VERSION` **0.10.0**; marketing pipeline attaches `ProvenanceTracker` output to `MarketingPipelineState.provenance`.
 - **`@agenticverdict/worker`:** `SendGridEmailDeliveryService` and provider selection in `createEmailDeliveryServiceFromEnv` (Resend preferred, then SendGrid).
 - **Phase 03 Part 4 (format generation):** `@agenticverdict/report-generator` — Playwright HTML→PDF (`PlaywrightPdfFormatGenerator`, shared Chromium + `closeSharedChromiumBrowser`), print CSS for columns and page-break hints, tagged PDF; HTML→DOCX (`HtmlDocxFormatGenerator`, `docx` + `node-html-parser`, tables/images/TOC marker); `createStubFormatRegistry()` and `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS`; worker `close()` tears down Chromium; package version **0.3.0**. See [`changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md`](changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md).
@@ -64,13 +64,13 @@ Phase 0 foundation: monorepo scaffold, core packages, web shell, and phase docum
 - Application `@agenticverdict/web` (Next.js 15, App Router): Mantine with `DirectionProvider` for RTL/LTR, `next-intl` with `/en` and `/ar`, demo home page loading validated company config from disk.
 - Sample company configuration at `configs/companies/11111111-1111-4111-8111-111111111111.json`.
 - Environment template at `.env.example` (`DATABASE_URL`, `COMPANY_CONFIG_DIR`).
-- Phase 0 developer scope document `docs/03-development-phases/phase-00-foundation/implementation-scope.md` (waves, deferred work vs `tasks.md`, config source of truth).
+- Phase 0 developer scope document `specs/00-core/00-foundation/implementation-scope.md` (waves, deferred work vs `tasks.md`, config source of truth).
 
 ### Changed
 
-- Phase 0 index `docs/03-development-phases/phase-00-foundation/README.md`: status to in progress, architecture/package list aligned with the target monorepo layout, link to implementation scope.
-- `docs/03-development-phases/phase-00-foundation/tasks.md`: sequencing note pointing to implementation scope; task 0.46 clarified as Mantine-first styling.
-- `docs/03-development-phases/phase-00-foundation/acceptance-criteria.md`: ConfigManager primary loading from versioned files; optional database-backed config deferred.
+- Phase 0 index `specs/00-core/00-foundation/README.md`: status to in progress, architecture/package list aligned with the target monorepo layout, link to implementation scope.
+- `specs/00-core/00-foundation/tasks.md`: sequencing note pointing to implementation scope; task 0.46 clarified as Mantine-first styling.
+- `specs/00-core/00-foundation/acceptance-criteria.md`: ConfigManager primary loading from versioned files; optional database-backed config deferred.
 - `.gitignore`: stop ignoring `pnpm-lock.yaml` so the workspace lockfile can be committed.
 
 ### Fixed

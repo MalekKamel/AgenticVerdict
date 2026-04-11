@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 5 (Prompt templates, company injection, A/B framework)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 5 — Prompt templates, company injection, and A/B framework](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **3.1**, **3.2**, and **3.3**.
+**Scope:** Phase 2 — [Execution Phase 5 — Prompt templates, company injection, and A/B framework](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **3.1**, **3.2**, and **3.3**.
 
 This entry adds a **versioned, Zod-validated** prompt catalog (≥10 production templates), a **company context** builder with **approximate token budgeting** and **layered assembly** (documented precedence: system policy → company context → user task → tool context), and a **paired A/B harness** with aggregate metrics, paired **Student _t_** significance, winner selection, and an audit-friendly **decision record** helper. All templates are covered by **golden** and **registry** tests; injection and A/B paths are unit-tested without live LLMs.
 
@@ -70,5 +70,5 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 5 definition and verification.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **3.1–3.3**.
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 5 definition and verification.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **3.1–3.3**.

@@ -1,7 +1,7 @@
 # Changelog entry: Execution Phase 1 (monorepo & toolchain)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 1 — Monorepo and engineering toolchain](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §1: 0.1–0.13, plus early §10 items 0.94–0.96 and 0.99).
+**Scope:** Phase 0 — [Execution Phase 1 — Monorepo and engineering toolchain](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §1: 0.1–0.13, plus early §10 items 0.94–0.96 and 0.99).
 
 This entry summarizes repository changes that complete the monorepo layout, Git hooks, formatting scope, and verification scripts. It does **not** cover roadmap Phase 01 (platform integration).
 
@@ -107,5 +107,5 @@ Commands that were run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
-- [`docs/03-development-phases/phase-00-foundation/tasks.md`](docs/03-development-phases/phase-00-foundation/tasks.md) — task IDs 0.1–0.13, 0.94–0.96, 0.99.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
+- [`specs/00-core/00-foundation/tasks.md`](specs/00-core/00-foundation/tasks.md) — task IDs 0.1–0.13, 0.94–0.96, 0.99.

@@ -599,7 +599,7 @@ interface CompanyConfig {
 
 - **Business Architecture:** `/docs/architecture/business-architecture.md`
 - **Implementation Guide:** `/docs/architecture/implementation-guide.md`
-- **Multi-Tenancy Details:** `/docs/03-development-phases/phase-00-foundation/multi-tenancy-architecture.md`
+- **Multi-Tenancy Details:** `/specs/00-core/00-foundation/multi-tenancy-architecture.md`
 - **Connector Patterns:** `/docs/architecture/research/connector-integration-patterns.md`
 - **Docker Documentation:** `/docs/docker/README.md`
 

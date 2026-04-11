@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 3 (Resilience spine and mock LLM)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 3 — Resilience spine and mock LLM](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **5.1**, **5.2**, and **7.1**.
+**Scope:** Phase 2 — [Execution Phase 3 — Resilience spine and mock LLM](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **5.1**, **5.2**, and **7.1**.
 
 This entry adds exponential backoff with jitter and observability hooks around LLM calls, documents and tests the Claude → GPT-4 → rule-based degradation path, and ships a LangChain-native mock chat model plus a large canned-response library for deterministic CI.
 
@@ -70,6 +70,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 3 definition and verification.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **5.1**, **5.2**, **7.1**.
-- [`docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md`](docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md) — **§1.5**, **§2.1.7**, **§6.1.3** (addressed at the agent-runtime package level where applicable).
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 3 definition and verification.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **5.1**, **5.2**, **7.1**.
+- [`specs/00-core/02-intelligence/acceptance-criteria.md`](specs/00-core/02-intelligence/acceptance-criteria.md) — **§1.5**, **§2.1.7**, **§6.1.3** (addressed at the agent-runtime package level where applicable).

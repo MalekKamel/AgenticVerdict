@@ -23,9 +23,9 @@ This guide helps you navigate and utilize the AgenticVerdict documentation effec
 
 ### For Developers
 
-1. **Current Phase:** Go directly to your phase folder (e.g., `phases/phase-00-foundation/`)
-2. **Task Details:** Review `PHASE_XX_TASKS.md` for specific implementation tasks
-3. **Acceptance Criteria:** Check `PHASE_XX_ACCEPTANCE.md` for completion requirements
+1. **Current Phase:** Go directly to your phase folder (e.g., `specs/00-core/00-foundation/`)
+2. **Task Details:** Review `tasks.md` for specific implementation tasks
+3. **Acceptance Criteria:** Check `acceptance-criteria.md` for completion requirements
 4. **Testing Standards:** Review [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) for testing requirements
 
 ---
@@ -43,13 +43,7 @@ docs/
 │   ├── methodology-overview.md
 │   ├── testing-strategy.md
 │   └── phase-transitions.md
-├── 03-development-phases/
-│   ├── phase-overview.md             # Cross-phase dependencies
-│   ├── phase-00-foundation/
-│   ├── phase-01-platform-integration/
-│   ├── phase-02-agent-intelligence/
-│   ├── phase-03-report-generation/
-│   └── phase-04-production-hardening/
+├── (see /specs/ at repo root)        # Phase specs: specs/00-core/, future domains
 ├── 04-technology-research/           # By category: backend/, ai-and-automation/, etc.
 ├── 05-project-management/
 └── 06-reference/
@@ -85,7 +79,7 @@ docs/
 3. [`methodology-overview.md`](../02-planning-and-methodology/methodology-overview.md) — Full read for approach rationale
 4. [`testing-strategy.md`](../02-planning-and-methodology/testing-strategy.md) — Full read for quality standards
 5. [`phase-transitions.md`](../02-planning-and-methodology/phase-transitions.md) — Full read for governance
-6. Phase folders under [`../03-development-phases/`](../03-development-phases/) — `README.md`, `tasks.md`, `acceptance-criteria.md`, and phase-specific operations (e.g. Phase 01 [`operations/README.md`](../03-development-phases/phase-01-platform-integration/operations/README.md) including [`SECURITY.md`](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md))
+6. Specs under [`../../specs/00-core/`](../../specs/00-core/) — `README.md`, `PLAN.md`, `TASKS.md`, and phase-specific operations (e.g. Connectors [`operations/README.md`](/specs/00-core/01-connectors/operations/README.md) including [`SECURITY.md`](/specs/00-core/01-connectors/operations/SECURITY.md))
 7. [`../04-technology-research/`](../04-technology-research/) — Review research findings for deeper context
 
 **Time Investment:** 3-4 hours
@@ -392,11 +386,11 @@ For any scope modification:
 
 ### Phase Documentation
 
-- [Phase 0: Foundation](../03-development-phases/phase-00-foundation/PHASE_00_OVERVIEW.md)
-- [Phase 1: Platform Integration](../03-development-phases/phase-01-platform-integration/PHASE_01_OVERVIEW.md)
-- [Phase 2: Agent Intelligence](../03-development-phases/phase-02-agent-intelligence/PHASE_02_OVERVIEW.md)
-- [Phase 3: Report Generation](../03-development-phases/phase-03-report-generation/overview.md)
-- [Phase 4: Production Hardening](../03-development-phases/phase-04-production-hardening/PHASE_04_OVERVIEW.md)
+- [Phase 0: Foundation](/specs/00-core/00-foundation/PHASE_00_OVERVIEW.md)
+- [Phase 1: Platform Integration](/specs/00-core/01-connectors/PHASE_01_OVERVIEW.md)
+- [Phase 2: Agent Intelligence](/specs/00-core/02-intelligence/PHASE_02_OVERVIEW.md)
+- [Phase 3: Report Generation](../../specs/00-core/03-insights/overview.md)
+- [Phase 4: Production Hardening](/specs/00-core/04-production-hardening/PHASE_04_OVERVIEW.md)
 
 ### Research Documents
 

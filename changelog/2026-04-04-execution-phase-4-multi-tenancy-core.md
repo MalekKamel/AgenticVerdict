@@ -1,13 +1,13 @@
 # Changelog entry: Execution Phase 4 (multi-tenancy core, application layer)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 4 — Multi-tenancy core](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §4: 0.34–0.43).
+**Scope:** Phase 0 — [Execution Phase 4 — Multi-tenancy core](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §4: 0.34–0.43).
 
 ---
 
 ## Summary
 
-- Authored **[multi-tenancy-architecture.md](docs/03-development-phases/phase-00-foundation/multi-tenancy-architecture.md)** describing AsyncLocalStorage + RLS defense in depth, resolution order (headers → JWT → subdomain), cache key namespacing, and threat notes.
+- Authored **[multi-tenancy-architecture.md](specs/00-core/00-foundation/multi-tenancy-architecture.md)** describing AsyncLocalStorage + RLS defense in depth, resolution order (headers → JWT → subdomain), cache key namespacing, and threat notes.
 - Extended **`@agenticverdict/core`** with **`TenantSecurityError`**, **`resolveTenantIdentity`** / **`extractTenantSlugFromHost`**, **`resolveTenantContextFromHttp`** (config load + optional active check via injected `isTenantActive`), **`continueWithTenantContext`** / **`bindTenantContext`** / **`runWithCapturedTenantContext`**, and **`assertResourceCompanyId`** / **`tenantContextMatches`** for application-layer routing checks.
 - Extended **`@agenticverdict/database`** with migration **`0001_companies_active`** (`companies.active` default true), **`provisionTenantCompany`** + **`suggestSlugFromCompanyName`**, **`setTenantCompanyActive`**, and **`tenantScopedCacheKey`** for Redis-style isolation.
 - Added **unit tests** in `packages/core` (`tenant-isolation.test.ts`) and `packages/database` (`tenant-helpers.unit.test.ts`).
@@ -32,6 +32,6 @@
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 4 definition.
-- [`docs/03-development-phases/phase-00-foundation/tasks.md`](docs/03-development-phases/phase-00-foundation/tasks.md) — tasks 0.34–0.43.
-- [`docs/03-development-phases/phase-00-foundation/acceptance-criteria.md`](docs/03-development-phases/phase-00-foundation/acceptance-criteria.md) — §4 Multi-Tenancy Implementation.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 4 definition.
+- [`specs/00-core/00-foundation/tasks.md`](specs/00-core/00-foundation/tasks.md) — tasks 0.34–0.43.
+- [`specs/00-core/00-foundation/acceptance-criteria.md`](specs/00-core/00-foundation/acceptance-criteria.md) — §4 Multi-Tenancy Implementation.

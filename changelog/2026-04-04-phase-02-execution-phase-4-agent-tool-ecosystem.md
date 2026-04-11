@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 4 (Agent tool ecosystem)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 4 — Agent tool ecosystem (platform, DB, analysis, context)](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **2.1** through **2.5**.
+**Scope:** Phase 2 — [Execution Phase 4 — Agent tool ecosystem (platform, DB, analysis, context)](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **2.1** through **2.5**.
 
 This entry implements the Category 2 tool surface in `@agenticverdict/agent-runtime`: five platform fetch tools backed by Phase 1 `PlatformAdapter` + normalization validation, three tenant-scoped database tools over `marketing_metrics` via `dbScoped`, report-prep and analysis utilities, and company context tools with optional TTL caching. Inputs are validated with Zod; there is no string SQL composed from LLM arguments.
 
@@ -78,5 +78,5 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 4 definition and verification.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **2.1–2.5**.
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 4 definition and verification.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **2.1–2.5**.

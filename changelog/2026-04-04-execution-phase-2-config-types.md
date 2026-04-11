@@ -1,7 +1,7 @@
 # Changelog entry: Execution Phase 2 (configuration system and shared types)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 2 — Configuration system and shared types](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §2: 0.14–0.22).
+**Scope:** Phase 0 — [Execution Phase 2 — Configuration system and shared types](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §2: 0.14–0.22).
 
 This entry records the configuration package work that satisfies Phase 0 acceptance for file-backed tenant config, Zod validation, env merge patches, caching, and schema documentation generation.
 
@@ -62,5 +62,5 @@ This entry records the configuration package work that satisfies Phase 0 accepta
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 2 definition.
-- [`docs/03-development-phases/phase-00-foundation/tasks.md`](docs/03-development-phases/phase-00-foundation/tasks.md) — tasks 0.14–0.22.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 2 definition.
+- [`specs/00-core/00-foundation/tasks.md`](specs/00-core/00-foundation/tasks.md) — tasks 0.14–0.22.

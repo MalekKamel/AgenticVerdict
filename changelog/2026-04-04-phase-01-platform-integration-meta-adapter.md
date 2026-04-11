@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — Meta (Facebook/Instagram) adapter
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 2 — Meta adapter implementation](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.1).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 2 — Meta adapter implementation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.1).
 
 This entry summarizes the first vendor-specific adapter: Marketing API reads, OAuth-style token handling (validation + long-lived exchange), cursor pagination, per-request throttling aligned with Meta’s hourly budget, and normalization into the shared snapshot shape. It does **not** cover GA4, GSC, GBP, or TikTok adapters, browser OAuth UI in `apps/web`, automated load/performance gates (Execution Phase 7), or the cross-platform normalization framework beyond Meta’s transformer (Work Stream 3 remains separate).
 
@@ -66,6 +66,6 @@ Commands that were run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 2 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Task 2.1 (Meta).
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.1 Meta (AC-1.1.1–AC-1.1.5), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 2 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Task 2.1 (Meta).
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.1 Meta (AC-1.1.1–AC-1.1.5), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).

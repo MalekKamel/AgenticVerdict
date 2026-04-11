@@ -33,7 +33,7 @@
 - **`e2e/home-journey.spec.ts`** — Localized home + demo form path.
 - **`e2e/api-health.optional.spec.ts`** — Optional API `/health` check.
 
-### `docs/03-development-phases/phase-03-report-generation`
+### `specs/00-core/03-insights`
 
 - **`arabic-native-review-playbook.md`** — Native review checklist + external MT metrics guidance.
 
@@ -68,7 +68,7 @@
 ### Docs
 
 - **`p2-phase-00-03-enhancement-execution-plan-2026-04-08.md`** — Section 6 follow-through table.
-- **`phase-03-report-generation/overview.md`** — Links playbook, E2E files, and new i18n APIs.
+- **`03-insights/overview.md`** — Links playbook, E2E files, and new i18n APIs.
 
 ---
 
@@ -84,4 +84,4 @@
 ## References
 
 - `changelog/2026-04-08-p2-enhancement-b2b-kpis-i18n-e2e-perf-docs.md` — Initial P2 execution.
-- `docs/03-development-phases/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md` — Full checklist including §6.
+- `specs/00-core/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md` — Full checklist including §6.

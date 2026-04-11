@@ -24,7 +24,7 @@
 
 - **`production-sla-overview.json`** — SLA-oriented panels over existing Prometheus scrape targets (`api:4000`, `worker:9464`).
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
 - **`p1-phase-00-03-production-readiness-execution-plan-2026-04-08.md`** — Step-by-step P1 plan, verification commands, and sign-off checklist.
 
@@ -79,4 +79,4 @@
 ## References
 
 - `PHASE_00-03_CORE_AUDIT_REPORT.md` — P1 table (isolation tests, load testing, dashboards, storage, live validation, delivery hardening).
-- `docs/03-development-phases/p1-phase-00-03-production-readiness-execution-plan-2026-04-08.md` — Detailed execution checklist for this slice.
+- `specs/00-core/p1-phase-00-03-production-readiness-execution-plan-2026-04-08.md` — Detailed execution checklist for this slice.

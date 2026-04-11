@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 5 multi-language (Weeks 18–23)
 
 **Date:** 2026-04-04  
-**Scope:** [Execution plan Part 5](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **i18n-1** (five core locales, detection, translation management API), **RTL-1** (direction override, bidi helpers, report font stacks), **Week 23 QA** (parity tests, locale formatting coverage in Vitest). Full **translation admin UI**, **PostgreSQL-backed overrides** (existing `i18n_strings` table), and **native translator review** remain follow-ups.
+**Scope:** [Execution plan Part 5](specs/00-core/03-insights/execution-plan.md) — **i18n-1** (five core locales, detection, translation management API), **RTL-1** (direction override, bidi helpers, report font stacks), **Week 23 QA** (parity tests, locale formatting coverage in Vitest). Full **translation admin UI**, **PostgreSQL-backed overrides** (existing `i18n_strings` table), and **native translator review** remain follow-ups.
 
 ---
 
@@ -45,5 +45,5 @@ pnpm --filter @agenticverdict/report-generator exec playwright install chromium
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/execution-plan.md`](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — Part 5 (Weeks 18–23)
+- [`specs/00-core/03-insights/execution-plan.md`](specs/00-core/03-insights/execution-plan.md) — Part 5 (Weeks 18–23)
 - [`changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md`](changelog/2026-04-04-phase-03-execution-plan-part-4-format-generation.md)

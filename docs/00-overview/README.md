@@ -12,13 +12,13 @@ This section holds **meta** documentation: how the `docs/` tree is organized, mi
 
 ## Where everything else lives
 
-| Directory                                                          | Role                                                       |
-| ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| [../01-getting-started/](../01-getting-started/)                   | Onboarding, project overview, navigation                   |
-| [../02-planning-and-methodology/](../02-planning-and-methodology/) | Methodology, testing, phase transitions                    |
-| [../03-development-phases/](../03-development-phases/)             | Phases 00–04 (tasks, acceptance criteria, execution plans) |
-| [../04-technology-research/](../04-technology-research/)           | Technology decisions and comparisons                       |
-| [../05-project-management/](../05-project-management/)             | Charter, requirements, roadmap                             |
-| [../06-reference/](../06-reference/)                               | Prompts, templates, resources                              |
+| Directory                                                          | Role                                                           |
+| ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| [../01-getting-started/](../01-getting-started/)                   | Onboarding, project overview, navigation                       |
+| [../02-planning-and-methodology/](../02-planning-and-methodology/) | Methodology, testing, phase transitions                        |
+| [`../../specs/`](../../specs/README.md)                            | Authoritative phase specifications (`00-core`, future domains) |
+| [../04-technology-research/](../04-technology-research/)           | Technology decisions and comparisons                           |
+| [../05-project-management/](../05-project-management/)             | Charter, requirements, roadmap                                 |
+| [../06-reference/](../06-reference/)                               | Prompts, templates, resources                                  |
 
 The hub entry point is [../README.md](../README.md).

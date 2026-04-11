@@ -31,7 +31,7 @@
 - **`src/middleware/auth-security-matrix.test.ts`** — **25** scenarios (count = `grep -c "it("` on this file): unauthenticated / bad JWT sweeps over key GET routes, role-based 403 (reports write, translations write, admin workflows), optional JWT, JWT garbage, admin-only mini-app, missing company config.
 - **`test-fixtures/company-configs/*.json`** — company configs for JWT tenants used in API tests (including Masafh and demo UUIDs aligned with `api.contract.test.ts`).
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
 - **`p0-phase-00-03-security-blocking-execution-plan-2026-04-08.md`** — step-by-step execution plan and verification commands tied to this P0 slice.
 
@@ -81,4 +81,4 @@ Source: `coverage/coverage-summary.json` → `total`.
 ## References
 
 - `PHASE_00-03_CORE_AUDIT_REPORT.md` — P0 table (tenant middleware, auth tests, JWT, coverage).
-- `docs/03-development-phases/p0-phase-00-03-security-blocking-execution-plan-2026-04-08.md` — detailed execution checklist for this slice.
+- `specs/00-core/p0-phase-00-03-security-blocking-execution-plan-2026-04-08.md` — detailed execution checklist for this slice.

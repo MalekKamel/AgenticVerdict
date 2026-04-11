@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 6 integration (Weeks 23–28)
 
 **Date:** 2026-04-04  
-**Scope:** [Execution plan Part 6](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **INS-1** (insight retrieval/formatting/context/recommendations + resilient merge), **VRD-1** (verdict retrieval/transformation, score gauge, confidence, trend chart, methodology narrative), **FMT-1** (dynamic metrics table for data-source quality, statistical summary rows, data-quality chips, chart integration). Full **HTTP client fetch** from worker to live insight/verdict APIs, **Redis-backed report-model cache**, and **rich frontend-only gauges** beyond SVG remain follow-ups.
+**Scope:** [Execution plan Part 6](specs/00-core/03-insights/execution-plan.md) — **INS-1** (insight retrieval/formatting/context/recommendations + resilient merge), **VRD-1** (verdict retrieval/transformation, score gauge, confidence, trend chart, methodology narrative), **FMT-1** (dynamic metrics table for data-source quality, statistical summary rows, data-quality chips, chart integration). Full **HTTP client fetch** from worker to live insight/verdict APIs, **Redis-backed report-model cache**, and **rich frontend-only gauges** beyond SVG remain follow-ups.
 
 ---
 
@@ -41,5 +41,5 @@ pnpm --filter @agenticverdict/report-generator exec playwright install chromium
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/execution-plan.md`](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — Part 6 (Weeks 23–28)
+- [`specs/00-core/03-insights/execution-plan.md`](specs/00-core/03-insights/execution-plan.md) — Part 6 (Weeks 23–28)
 - [`changelog/2026-04-04-phase-03-execution-plan-part-5-multi-language.md`](changelog/2026-04-04-phase-03-execution-plan-part-5-multi-language.md)

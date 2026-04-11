@@ -305,5 +305,5 @@ pnpm --filter @agenticverdict/agent-runtime test -- --coverage src/validation/
 ## References
 
 - Main Verification Report: `changelog/2026-04-04-phase-03-readiness-verification-report.md`
-- Original Remediation Plan: `docs/03-development-phases/REMEDIATION_PLAN.md`
-- Phase 03 Planning: `docs/03-development-phases/phase-03-report-generation/`
+- Original Remediation Plan: `specs/00-core/REMEDIATION_PLAN.md`
+- Phase 03 Planning: `specs/00-core/03-insights/`

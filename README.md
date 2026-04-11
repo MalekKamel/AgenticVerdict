@@ -573,15 +573,15 @@ The `/docs` directory contains comprehensive project documentation.
 
 ### Documentation Structure
 
-| Directory                                                             | Content                                                                 |
-| --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [`00-overview/`](./docs/00-overview/)                                 | Documentation structure, repo status snapshot                           |
-| [`01-getting-started/`](./docs/01-getting-started/)                   | Project overview and navigation guide                                   |
-| [`02-planning-and-methodology/`](./docs/02-planning-and-methodology/) | Development methodology and testing strategy                            |
-| [`03-development-phases/`](./docs/03-development-phases/)             | Detailed phase documentation (00-04) with tasks and acceptance criteria |
-| [`04-technology-research/`](./docs/04-technology-research/)           | Comprehensive technology analysis with justifications                   |
-| [`05-project-management/`](./docs/05-project-management/)             | Requirements, charter, and roadmap                                      |
-| [`06-reference/`](./docs/06-reference/)                               | Templates, prompts, and resources                                       |
+| Directory                                                             | Content                                                        |
+| --------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [`00-overview/`](./docs/00-overview/)                                 | Documentation structure, repo status snapshot                  |
+| [`01-getting-started/`](./docs/01-getting-started/)                   | Project overview and navigation guide                          |
+| [`02-planning-and-methodology/`](./docs/02-planning-and-methodology/) | Development methodology and testing strategy                   |
+| [`specs/`](./specs/README.md)                                         | Authoritative phase specifications (`00-core`, future domains) |
+| [`04-technology-research/`](./docs/04-technology-research/)           | Comprehensive technology analysis with justifications          |
+| [`05-project-management/`](./docs/05-project-management/)             | Requirements, charter, and roadmap                             |
+| [`06-reference/`](./docs/06-reference/)                               | Templates, prompts, and resources                              |
 
 ### Quick Navigation
 

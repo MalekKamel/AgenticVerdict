@@ -44,7 +44,7 @@ grep -c "it(" apps/api/src/middleware/tenant-isolation-matrix.test.ts
 - **`2026-04-08-p0-security-blocking-tenant-context-auth-coverage.md`** — **51 → 25** for auth matrix; methodology note on `it()` / grep counts; matrix file bullet uses **25** and references `grep -c "it("`.
 - **`2026-04-08-p1-production-readiness-execution.md`** — Isolation count disclaimer; tenant matrix line clarifies **21** `it()` cases via grep.
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
 - **`p0-phase-00-03-security-blocking-execution-plan-2026-04-08.md`** — Step 6 test count **51 → 25** with grep note.
 

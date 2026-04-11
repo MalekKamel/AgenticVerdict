@@ -253,7 +253,7 @@ The `/docs` directory contains comprehensive project documentation:
 | `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot                                              |
 | `01-getting-started/`          | Project overview, navigation                                                                                      |
 | `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                                                          |
-| `03-development-phases/`       | Detailed phase documentation (00-04) with tasks and acceptance criteria                                           |
+| `/specs/`                      | Authoritative phase specifications (`00-core` and future domains) with tasks and acceptance criteria              |
 | `04-technology-research/`      | Comprehensive technology analysis with justifications                                                             |
 | `05-project-management/`       | Project charter, requirements, roadmap                                                                            |
 | `06-reference/`                | Prompts, templates, resources                                                                                     |
@@ -266,28 +266,26 @@ The `/docs` directory contains comprehensive project documentation:
 
 ### Phase 02/03 execution, audits, and roadmap follow-ups
 
-When working on agent intelligence, report generation/delivery, or phase closure, consult these (in addition to each phase folder under `03-development-phases/`):
+When working on agent intelligence, report generation/delivery, or phase closure, consult these (in addition to [`specs/00-core/02-intelligence/`](./specs/00-core/02-intelligence/README.md) and [`specs/00-core/03-insights/`](./specs/00-core/03-insights/README.md)):
 
-| Artifact                  | Path                                                                               | Purpose                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Execution plan            | `docs/03-development-phases/phases-02-03-execution-plan.md`                        | Original phased execution plan for Phases 02–03                  |
-| Refined execution plan    | `docs/03-development-phases/phases-02-03-execution-plan-refined.md`                | Dependency-safe refinement and sequencing                        |
-| Implementation audit      | `docs/03-development-phases/phases-02-03-implementation-audit.md`                  | Baseline audit vs phase docs and repo evidence                   |
-| Audit delta               | `docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md` | What changed after the baseline; remaining gaps snapshot         |
-| Future roadmap            | `docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`    | Remaining gaps and recommended enhancement tracks                |
-| Changelog (consolidation) | `changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`      | Dated summary of the systematic Phase 02/03 implementation batch |
+| Artifact                  | Path                                                                            | Purpose                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Core intelligence spec    | `specs/00-core/02-intelligence/README.md`                                       | Tasks, acceptance criteria, execution plans for intelligence            |
+| Core insights spec        | `specs/00-core/03-insights/README.md`                                           | Report generation, templates, prerequisites                             |
+| Phase 02/03 consolidation | `changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`   | Dated summary (standalone execution-plan markdown was never checked in) |
+| Future roadmap            | `docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md` | Remaining gaps and recommended enhancement tracks                       |
 
 **Other dated implementation notes** live under `changelog/` (prefix by date).
 
 ## Phase-Based Development
 
-The project follows a five-phase roadmap (14 weeks total):
+The project follows a five-segment roadmap (14 weeks total), documented under `/specs/00-core/`:
 
-1. **Phase 0: Foundation** (Weeks 1-2) — Infrastructure, monorepo setup, core domain models
-2. **Phase 1: Platform Integration** (Weeks 3-5) — Connector adapters, OAuth, data normalization
-3. **Phase 2: Agent Intelligence** (Weeks 6-8) — AI agent orchestration, LangChain integration
-4. **Phase 3: Report Generation** (Weeks 9-11) — PDF/Excel generation, multi-language support
-5. **Phase 4: Production Hardening** (Weeks 12-14) — Testing, optimization, deployment
+1. **Core platform: Foundation** (Weeks 1-2) — Infrastructure, monorepo setup, core domain models
+2. **Core platform: Connectors** (Weeks 3-5) — Connector adapters, OAuth, data normalization
+3. **Core platform: Intelligence** (Weeks 6-8) — AI agent orchestration, LangChain integration
+4. **Core platform: Insights** (Weeks 9-11) — PDF/Excel generation, multi-language support
+5. **Core platform: Production hardening** (Weeks 12-14) — Testing, optimization, deployment
 
 **Phase transitions require**:
 
@@ -390,10 +388,9 @@ Reports are generated from templates stored in the database:
 - **Project Charter**: `/docs/05-project-management/project-charter.md`
 - **Roadmap**: `/docs/05-project-management/roadmap-development.md`
 - **Future roadmap (gaps & enhancements)**: `/docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`
-- **Phase 02/03 execution plan**: `/docs/03-development-phases/phases-02-03-execution-plan.md`
-- **Phase 02/03 execution plan (refined)**: `/docs/03-development-phases/phases-02-03-execution-plan-refined.md`
-- **Phase 02/03 implementation audit**: `/docs/03-development-phases/phases-02-03-implementation-audit.md`
-- **Phase 02/03 audit delta (2026-04-08)**: `/docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md`
+- **Core platform: Intelligence**: `/specs/00-core/02-intelligence/README.md`
+- **Core platform: Insights**: `/specs/00-core/03-insights/README.md`
+- **Phase 02/03 consolidation (2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Changelog (Phase 02/03 consolidation, 2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
 - **Technology Research**: `/docs/04-technology-research/research-overview.md`

@@ -34,13 +34,13 @@
 
 ### Status: ✅ COMPLETE
 
-| Deliverable        | Status      | Location                                                                       | Notes                                            |
-| ------------------ | ----------- | ------------------------------------------------------------------------------ | ------------------------------------------------ |
-| D-1: Phase 00 docs | ✅ Complete | `docs/03-development-phases/phase-00-foundation/`                              | Overview, tasks, acceptance criteria all updated |
-| D-2: Phase 01 docs | ✅ Complete | `docs/03-development-phases/phase-01-platform-integration/`                    | Cache, performance, adapters documented          |
-| D-3: Phase 02 docs | ✅ Complete | `docs/03-development-phases/phase-02-agent-intelligence/`                      | API, verdict, insights, validation, provenance   |
-| D-4: REST contract | ✅ Complete | `docs/03-development-phases/phase-02-agent-intelligence/API_SPECIFICATIONS.md` | Full OpenAPI specification                       |
-| Phase 03 artifacts | ✅ Complete | `docs/03-development-phases/phase-03-report-generation/`                       | Gap analysis, execution plan, tasks updated      |
+| Deliverable        | Status      | Location                                              | Notes                                            |
+| ------------------ | ----------- | ----------------------------------------------------- | ------------------------------------------------ |
+| D-1: Phase 00 docs | ✅ Complete | `specs/00-core/00-foundation/`                        | Overview, tasks, acceptance criteria all updated |
+| D-2: Phase 01 docs | ✅ Complete | `specs/00-core/01-connectors/`                        | Cache, performance, adapters documented          |
+| D-3: Phase 02 docs | ✅ Complete | `specs/00-core/02-intelligence/`                      | API, verdict, insights, validation, provenance   |
+| D-4: REST contract | ✅ Complete | `specs/00-core/02-intelligence/API_SPECIFICATIONS.md` | Full OpenAPI specification                       |
+| Phase 03 artifacts | ✅ Complete | `specs/00-core/03-insights/`                          | Gap analysis, execution plan, tasks updated      |
 
 ---
 

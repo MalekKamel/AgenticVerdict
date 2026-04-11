@@ -91,7 +91,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - GitHub Actions CI/CD pipeline
 - Basic monitoring dashboard
 
-**Documentation**: [`Phase 0 Details`](../03-development-phases/phase-00-foundation/README.md)
+**Documentation**: [`Phase 0 Details`](/specs/00-core/00-foundation/README.md)
 
 ---
 
@@ -124,7 +124,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Credential storage in database
 - Platform status dashboard
 
-**Documentation**: [`Phase 1 Details`](../03-development-phases/phase-01-platform-integration/README.md)
+**Documentation**: [`Phase 1 Details`](/specs/00-core/01-connectors/README.md)
 
 ---
 
@@ -150,7 +150,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Verdict generation system
 - Agent execution logs
 
-**Documentation**: [`Phase 2 Details`](../03-development-phases/phase-02-agent-intelligence/README.md)
+**Documentation**: [`Phase 2 Details`](/specs/00-core/02-intelligence/README.md)
 
 ---
 
@@ -177,7 +177,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Multi-language report support
 - Admin UI for report management
 
-**Documentation**: [`Phase 3 Details`](../03-development-phases/phase-03-report-generation/README.md)
+**Documentation**: [`Phase 3 Details`](../../specs/00-core/03-insights/README.md)
 
 ---
 
@@ -205,7 +205,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - Complete API documentation
 - Operations runbook
 
-**Documentation**: [`Phase 4 Details`](../03-development-phases/phase-04-production-hardening/README.md)
+**Documentation**: [`Phase 4 Details`](/specs/00-core/04-production-hardening/README.md)
 
 ---
 
@@ -213,11 +213,11 @@ Comprehensive technology research with justifications and trade-offs is availabl
 
 ### Phase Documentation
 
-- [Phase 0: Foundation](../03-development-phases/phase-00-foundation/README.md)
-- [Phase 1: Platform Integration](../03-development-phases/phase-01-platform-integration/README.md)
-- [Phase 2: Agent Runtime & Intelligence](../03-development-phases/phase-02-agent-intelligence/README.md)
-- [Phase 3: Report Generation & Delivery](../03-development-phases/phase-03-report-generation/README.md)
-- [Phase 4: Production Hardening](../03-development-phases/phase-04-production-hardening/README.md)
+- [Phase 0: Foundation](/specs/00-core/00-foundation/README.md)
+- [Phase 1: Platform Integration](/specs/00-core/01-connectors/README.md)
+- [Phase 2: Agent Runtime & Intelligence](/specs/00-core/02-intelligence/README.md)
+- [Phase 3: Report Generation & Delivery](../../specs/00-core/03-insights/README.md)
+- [Phase 4: Production Hardening](/specs/00-core/04-production-hardening/README.md)
 
 ### Supporting Documentation
 
@@ -225,7 +225,7 @@ Comprehensive technology research with justifications and trade-offs is availabl
 - [Technology Research](../04-technology-research/README.md) — Comprehensive technology analysis
 - [Methodology overview](../02-planning-and-methodology/methodology-overview.md)
 - [Testing Strategy](../02-planning-and-methodology/testing-strategy.md)
-- Phase 01 [Deployment runbook](../03-development-phases/phase-01-platform-integration/operations/RUNBOOK-DEPLOYMENT.md)
+- Phase 01 [Deployment runbook](/specs/00-core/01-connectors/operations/RUNBOOK-DEPLOYMENT.md)
 
 ---
 

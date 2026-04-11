@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 3 template system (Weeks 11–15)
 
 **Date:** 2026-04-04  
-**Scope:** [Execution plan Part 3](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **TMP-1** architecture, **TMP-2** base HTML templates, **TMP-3** component library, **TMP-4** preview + versioning API (in-memory), **TMP-5** automated rendering and performance tests. Drag-and-drop editor UI and Playwright visual regression remain follow-ups.
+**Scope:** [Execution plan Part 3](specs/00-core/03-insights/execution-plan.md) — **TMP-1** architecture, **TMP-2** base HTML templates, **TMP-3** component library, **TMP-4** preview + versioning API (in-memory), **TMP-5** automated rendering and performance tests. Drag-and-drop editor UI and Playwright visual regression remain follow-ups.
 
 ---
 
@@ -38,5 +38,5 @@ pnpm --filter @agenticverdict/worker test
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/template-system-spec.md`](docs/03-development-phases/phase-03-report-generation/template-system-spec.md)
+- [`specs/00-core/03-insights/template-system-spec.md`](specs/00-core/03-insights/template-system-spec.md)
 - [`changelog/2026-04-04-phase-03-execution-plan-part-2-infrastructure.md`](changelog/2026-04-04-phase-03-execution-plan-part-2-infrastructure.md)

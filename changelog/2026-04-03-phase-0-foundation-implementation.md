@@ -107,7 +107,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 - **Multi-tenancy hook**
   - `dbScoped(db, fn)` runs `fn` inside a transaction after executing:
     - `select set_config('app.current_tenant_id', <tenantId>::text, true)`  
-    so PostgreSQL session state is ready for future RLS policies.
+      so PostgreSQL session state is ready for future RLS policies.
   - Requires active tenant context from `@agenticverdict/core` (`getTenantContext()`); throws if missing.
   - Transaction callback typing derived from `Database["transaction"]` (no unsafe casts to full `Database`).
 
@@ -156,7 +156,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - `configs/companies/11111111-1111-4111-8111-111111111111.json` — Masafh-oriented sample (Arabic localization, representative channels and business fields).
 
 - **Phase 0 documentation alignment**
-  - New `docs/03-development-phases/phase-00-foundation/implementation-scope.md`:
+  - New `specs/00-core/00-foundation/implementation-scope.md`:
     - Implementation waves (W0–W4).
     - Relationship between full `tasks.md` backlog and roadmap deferrals (platform adapters, agent runtime depth).
     - Canonical configuration source: versioned JSON files + env; database-backed config optional later.
@@ -176,7 +176,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - Replaced default single-locale `src/app/page.tsx` with locale-prefixed routes under `src/app/[locale]/`.
   - Removed nested `apps/web/pnpm-lock.yaml` to avoid conflicting lockfiles with the workspace root.
 
-#### Phase 0 docs (`docs/03-development-phases/phase-00-foundation/`)
+#### Phase 0 docs (`specs/00-core/00-foundation/`)
 
 - **README.md**
   - Phase status set to in progress; architecture package list expanded (`platform-adapters`, `agent-runtime`, `report-generator`, etc.); link to `implementation-scope.md`.
@@ -241,12 +241,12 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 - `@agenticverdict/config` — Zod contracts and disk loading consumed by `@agenticverdict/core` and `@agenticverdict/web`.
 - `@agenticverdict/core` — tenant context primitives intended for API, worker, and database layers.
 - `@agenticverdict/database` — persistence layer foundation for Phase 0 database tasks and Phase 1+ data access.
-- `docs/03-development-phases/phase-00-foundation/*` — planning and acceptance criteria maintained alongside code.
+- `specs/00-core/00-foundation/*` — planning and acceptance criteria maintained alongside code.
 
 ---
 
 ## Version History
 
-| Version | Date       | Notes                                                                 |
-| ------- | ---------- | --------------------------------------------------------------------- |
+| Version | Date       | Notes                                                                  |
+| ------- | ---------- | ---------------------------------------------------------------------- |
 | 0.1.0   | 2026-04-03 | Phase 0 foundation: monorepo, config/core/database packages, web shell |

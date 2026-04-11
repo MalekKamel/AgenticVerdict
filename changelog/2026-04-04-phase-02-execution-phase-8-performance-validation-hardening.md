@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 8 (Performance optimization and validation hardening)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 8 — Performance optimization and validation hardening](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **6.6** and **7.2–7.4**.
+**Scope:** Phase 2 — [Execution Phase 8 — Performance optimization and validation hardening](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **6.6** and **7.2–7.4**.
 
 This entry adds a **tenant-scoped LRU + TTL LLM invocation cache** wired through **`ConfigurableLlmAgent`**, **`AgentFactory.createAgent` / `createTestAgent`**, specialized marketing agents, and **`runMarketingAgentPipeline`** (`invocationCache` option) so repeated identical assembled turns skip provider calls (measured in CI with **≥50% cache hit rate** on a second pipeline run). It introduces **aggregate pipeline timing hooks** (`onPipelineTiming` + **`marketingPipelineTimingToLogFields`**) for logs and LangSmith-style metadata without prompt bodies. **Parallel multi-platform fetch** is available via **`fetchNormalizedSnapshotsForPlatformsParallel`**. A **validation dataset** of **100** cases with synthetic verdict JSON drives automated **schema + heuristic quality gates** (`runVerdictQualityGate`, **`assessVerdictHeuristicQuality`**). **`AgentMockChatModel`** exposes **`getCallCount` / `resetCallCount`** for behavior and benchmark tests. **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.9.0**.
 
@@ -72,6 +72,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 8 definition.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **6.6**, **7.2–7.4**.
-- [`docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md`](docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md) — **§2.1–2.4**, **§2.3** performance, **§6** testing.
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 8 definition.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **6.6**, **7.2–7.4**.
+- [`specs/00-core/02-intelligence/acceptance-criteria.md`](specs/00-core/02-intelligence/acceptance-criteria.md) — **§2.1–2.4**, **§2.3** performance, **§6** testing.

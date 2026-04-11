@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — TikTok adapter (Execution Phase 5)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 5 — TikTok adapter implementation (conditional)](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2: Task 2.5).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 5 — TikTok adapter implementation (conditional)](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2: Task 2.5).
 
 This entry adds the optional TikTok Marketing API (`open_api/v1.3`) read path: OAuth token exchange and validation, advertiser scoping, cursor-style list pagination for campaigns / ad groups / ads, integrated report pulls with automatic **30-day** date windows (aligned with TikTok stat-time reporting limits), per-request token-bucket throttling, normalization into the shared snapshot shape, and opt-in **sandbox** hosts. It does **not** add TikTok Pixel ingestion (called out separately in `tasks.md`), browser OAuth UI in `apps/web`, the cross-cutting normalization framework beyond TikTok’s transformer (Work Stream 3), or automated load/performance CI gates (Execution Phase 7).
 
@@ -65,6 +65,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 5 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Task 2.5 (conditional TikTok adapter).
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.5 TikTok (AC-1.5.1–AC-1.5.4), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 5 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Task 2.5 (conditional TikTok adapter).
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.5 TikTok (AC-1.5.1–AC-1.5.4), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).

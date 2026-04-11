@@ -1,7 +1,7 @@
 # Changelog entry: Remediation plan (Phases 00–02 alignment and Phase 03 prerequisites)
 
 **Date:** 2026-04-04  
-**Scope:** [Comprehensive Remediation Plan](docs/03-development-phases/REMEDIATION_PLAN.md) — Part 1 (documentation), Part 2 (critical gap implementation R-1 through R-12), Part 3 (integration testing and handoff documentation R-13 through R-14).
+**Scope:** [Comprehensive Remediation Plan](specs/00-core/REMEDIATION_PLAN.md) — Part 1 (documentation), Part 2 (critical gap implementation R-1 through R-12), Part 3 (integration testing and handoff documentation R-13 through R-14).
 
 This entry records work done to close gaps identified in the Phase 03 gap analysis: unified `MarketingVerdict` as the cross-phase verdict model, external REST API surface, validation and provenance foundations, template and design-token configuration schemas, worker email delivery, OpenAPI/Swagger exposure, and operational runbooks.
 
@@ -23,14 +23,14 @@ This entry records work done to close gaps identified in the Phase 03 gap analys
 
 ## Part 1: Documentation updates (tasks D-1 through D-4)
 
-| Task    | Intent                                                                              | Primary locations                                                                                            |
-| ------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **D-1** | Phase 00 docs: template foundation, design tokens, i18n status, acceptance criteria | `docs/03-development-phases/phase-00-foundation/overview.md`, `tasks.md`, `acceptance-criteria.md`           |
-| **D-2** | Phase 01 docs: cache, freshness, performance baselines, adapters                    | `docs/03-development-phases/phase-01-platform-integration/overview.md`, `tasks.md`, `acceptance-criteria.md` |
-| **D-3** | Phase 02 docs: API layer, unified verdict, insights, validation, provenance         | `docs/03-development-phases/phase-02-agent-intelligence/overview.md`, `tasks.md`, `acceptance-criteria.md`   |
-| **D-4** | REST contract reference                                                             | `docs/03-development-phases/phase-02-agent-intelligence/API_SPECIFICATIONS.md`                               |
+| Task    | Intent                                                                              | Primary locations                                                                 |
+| ------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **D-1** | Phase 00 docs: template foundation, design tokens, i18n status, acceptance criteria | `specs/00-core/00-foundation/overview.md`, `tasks.md`, `acceptance-criteria.md`   |
+| **D-2** | Phase 01 docs: cache, freshness, performance baselines, adapters                    | `specs/00-core/01-connectors/overview.md`, `tasks.md`, `acceptance-criteria.md`   |
+| **D-3** | Phase 02 docs: API layer, unified verdict, insights, validation, provenance         | `specs/00-core/02-intelligence/overview.md`, `tasks.md`, `acceptance-criteria.md` |
+| **D-4** | REST contract reference                                                             | `specs/00-core/02-intelligence/API_SPECIFICATIONS.md`                             |
 
-**Phase 03 documentation alignment** (supporting R-7 acceptance): analytic and planning artifacts under `docs/03-development-phases/phase-03-report-generation/` (e.g. `gap-analysis.md`, `execution-plan.md`, `tasks.md`, `analysis-summary.md`, `README.md`).
+**Phase 03 documentation alignment** (supporting R-7 acceptance): analytic and planning artifacts under `specs/00-core/03-insights/` (e.g. `gap-analysis.md`, `execution-plan.md`, `tasks.md`, `analysis-summary.md`, `README.md`).
 
 ---
 
@@ -136,7 +136,7 @@ With server running: browse `/documentation` and `GET /documentation/json` on th
 
 ## Related documentation
 
-- [`docs/03-development-phases/REMEDIATION_PLAN.md`](docs/03-development-phases/REMEDIATION_PLAN.md) — full task breakdown and architecture decision (unified verdict).
-- [`docs/03-development-phases/phase-02-agent-intelligence/API_SPECIFICATIONS.md`](docs/03-development-phases/phase-02-agent-intelligence/API_SPECIFICATIONS.md) — endpoint contracts.
+- [`specs/00-core/REMEDIATION_PLAN.md`](specs/00-core/REMEDIATION_PLAN.md) — full task breakdown and architecture decision (unified verdict).
+- [`specs/00-core/02-intelligence/API_SPECIFICATIONS.md`](specs/00-core/02-intelligence/API_SPECIFICATIONS.md) — endpoint contracts.
 - [`docs/06-reference/runbooks/`](docs/06-reference/runbooks/) — API, email, known issues, Phase 03 handoff checklist.
-- Phase 03 planning: [`docs/03-development-phases/phase-03-report-generation/README.md`](docs/03-development-phases/phase-03-report-generation/README.md) and companion files in that directory.
+- Phase 03 planning: [`specs/00-core/03-insights/README.md`](specs/00-core/03-insights/README.md) and companion files in that directory.

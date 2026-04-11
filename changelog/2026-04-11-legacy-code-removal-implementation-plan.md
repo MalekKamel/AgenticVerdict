@@ -234,11 +234,11 @@ turbo run test
 
 **Priority 1 - Breaking Documentation**
 
-| File                                                                                    | Lines            | Changes                                                                                                                           |
-| --------------------------------------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/03-development-phases/phase-01-platform-integration/operations/API-REFERENCE.md`  | Multiple         | Replace all `@agenticverdict/platform-adapters` → `@agenticverdict/data-connectors`, `PlatformAdapter` → `ConnectorAdapter`, etc. |
-| `docs/03-development-phases/phase-01-platform-integration/operations/USAGE-EXAMPLES.md` | 9, 13, 48-49, 67 | Update code examples to use current API                                                                                           |
-| `docs/06-reference/migration-guide-compiler-driven-config.md`                           | 36, 56           | Update migration guide examples                                                                                                   |
+| File                                                          | Lines            | Changes                                                                                                                           |
+| ------------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `specs/00-core/01-connectors/operations/API-REFERENCE.md`     | Multiple         | Replace all `@agenticverdict/platform-adapters` → `@agenticverdict/data-connectors`, `PlatformAdapter` → `ConnectorAdapter`, etc. |
+| `specs/00-core/01-connectors/operations/USAGE-EXAMPLES.md`    | 9, 13, 48-49, 67 | Update code examples to use current API                                                                                           |
+| `docs/06-reference/migration-guide-compiler-driven-config.md` | 36, 56           | Update migration guide examples                                                                                                   |
 
 **Search and replace pattern:**
 
@@ -306,7 +306,7 @@ grep -r "platform-adapters" docs/ --include="*.md" | grep -v "historical"
 grep -r "PlatformAdapter\|PlatformType" docs/ --include="*.md" | grep -v "historical"
 
 # Verify critical docs have been updated
-grep "@agenticverdict/data-connectors" docs/03-development-phases/phase-01-platform-integration/operations/*.md
+grep "@agenticverdict/data-connectors" specs/00-core/01-connectors/operations/*.md
 ```
 
 **Success Criteria:**

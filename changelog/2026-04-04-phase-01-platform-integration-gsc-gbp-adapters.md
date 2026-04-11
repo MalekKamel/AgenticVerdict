@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — Google Search Console + Business Profile adapters
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 4 — Google platform adapters (GSC + GBP)](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Tasks 2.3 and 2.4).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 4 — Google platform adapters (GSC + GBP)](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Tasks 2.3 and 2.4).
 
 This entry implements Search Console and Google Business Profile reads on top of the shared adapter infrastructure, with Google OAuth aligned to GA4’s token refresh and validation pattern. It does **not** cover browser OAuth UI, TikTok, the cross-cutting normalization framework (Work Stream 3 beyond per-adapter transformers), or automated load/performance CI gates (Execution Phase 7).
 
@@ -66,6 +66,6 @@ Commands that were run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 4 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Tasks 2.3 (GSC) and 2.4 (GBP).
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.3 GSC (AC-1.3.1–AC-1.3.5), §1.4 GBP (AC-1.4.1–AC-1.4.5), §1.2 normalization (AC-1.6.x).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 4 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Tasks 2.3 (GSC) and 2.4 (GBP).
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.3 GSC (AC-1.3.1–AC-1.3.5), §1.4 GBP (AC-1.4.1–AC-1.4.5), §1.2 normalization (AC-1.6.x).

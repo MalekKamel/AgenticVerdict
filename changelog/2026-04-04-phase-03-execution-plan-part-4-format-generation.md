@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 4 format generation (Weeks 15–19)
 
 **Date:** 2026-04-04  
-**Scope:** [Execution plan Part 4](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **PDF-1** (Playwright/Chromium HTML → PDF) and **DOCX-1** (HTML → DOCX via `docx` + `node-html-parser`). **PDF/A** archival, aggressive PDF byte-size tuning, and cross-suite visual/editability QA remain follow-ups.
+**Scope:** [Execution plan Part 4](specs/00-core/03-insights/execution-plan.md) — **PDF-1** (Playwright/Chromium HTML → PDF) and **DOCX-1** (HTML → DOCX via `docx` + `node-html-parser`). **PDF/A** archival, aggressive PDF byte-size tuning, and cross-suite visual/editability QA remain follow-ups.
 
 ---
 
@@ -46,5 +46,5 @@ SKIP_PLAYWRIGHT_PDF_TESTS=1 pnpm --filter @agenticverdict/report-generator test
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/execution-plan.md`](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — Part 4 (Weeks 15–19)
+- [`specs/00-core/03-insights/execution-plan.md`](specs/00-core/03-insights/execution-plan.md) — Part 4 (Weeks 15–19)
 - [`changelog/2026-04-04-phase-03-execution-plan-part-3-template-system.md`](changelog/2026-04-04-phase-03-execution-plan-part-3-template-system.md)

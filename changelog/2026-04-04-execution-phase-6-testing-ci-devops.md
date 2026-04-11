@@ -1,7 +1,7 @@
 # Changelog entry: Execution Phase 6 (testing hardening, CI/CD, DevOps)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 6 — Testing hardening and CI/CD](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §9: 0.84–0.93, §10: 0.97–0.102 and related).
+**Scope:** Phase 0 — [Execution Phase 6 — Testing hardening and CI/CD](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §9: 0.84–0.93, §10: 0.97–0.102 and related).
 
 ---
 
@@ -53,5 +53,5 @@ pnpm run test:e2e
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 6.
-- [`docs/03-development-phases/phase-00-foundation/acceptance-criteria.md`](docs/03-development-phases/phase-00-foundation/acceptance-criteria.md) — §7 Testing Infrastructure.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 6.
+- [`specs/00-core/00-foundation/acceptance-criteria.md`](specs/00-core/00-foundation/acceptance-criteria.md) — §7 Testing Infrastructure.

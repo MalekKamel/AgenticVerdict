@@ -173,13 +173,13 @@ See **[Research README](./research/README.md)** for complete research documentat
 
 ### Development Phases
 
-| Phase                             | Location                                                     | Status         |
-| --------------------------------- | ------------------------------------------------------------ | -------------- |
-| **Phase 0: Foundation**           | `/docs/03-development-phases/phase-00-foundation/`           | ✅ Complete    |
-| **Phase 1: Platform Integration** | `/docs/03-development-phases/phase-01-platform-integration/` | 🟡 In Progress |
-| **Phase 2: Agent Intelligence**   | `/docs/03-development-phases/phase-02-agent-intelligence/`   | 📋 Planned     |
-| **Phase 3: Report Generation**    | `/docs/03-development-phases/phase-03-report-generation/`    | 📋 Planned     |
-| **Phase 4: Production Hardening** | `/docs/03-development-phases/phase-04-production-hardening/` | 📋 Planned     |
+| Phase                                   | Location                                  | Status         |
+| --------------------------------------- | ----------------------------------------- | -------------- |
+| **Core platform: Foundation**           | `/specs/00-core/00-foundation/`           | ✅ Complete    |
+| **Core platform: Connectors**           | `/specs/00-core/01-connectors/`           | 🟡 In Progress |
+| **Core platform: Intelligence**         | `/specs/00-core/02-intelligence/`         | 📋 Planned     |
+| **Core platform: Insights**             | `/specs/00-core/03-insights/`             | 📋 Planned     |
+| **Core platform: Production hardening** | `/specs/00-core/04-production-hardening/` | 📋 Planned     |
 
 ### Technology Research
 

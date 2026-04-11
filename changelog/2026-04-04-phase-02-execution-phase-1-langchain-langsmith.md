@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 1 (LangChain, multi-provider LLM, LangSmith)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 1 — LangChain stack, multi-provider LLM, and LangSmith](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **1.1**, **1.2**, and **1.3**.
+**Scope:** Phase 2 — [Execution Phase 1 — LangChain stack, multi-provider LLM, and LangSmith](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **1.1**, **1.2**, and **1.3**.
 
 This entry records the first executable LangChain.js / LangGraph wiring in `@agenticverdict/agent-runtime`, aligned with acceptance criteria **§1.1.1–1.1.5** (through provider switching and LangSmith enablement at the factory/graph level).
 
@@ -70,6 +70,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **1.1–1.3**.
-- [`docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md`](docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md) — **§1.1** (partially addressed through **1.1.5**).
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **1.1–1.3**.
+- [`specs/00-core/02-intelligence/acceptance-criteria.md`](specs/00-core/02-intelligence/acceptance-criteria.md) — **§1.1** (partially addressed through **1.1.5**).

@@ -59,7 +59,7 @@
 ### `docs`
 
 - **`06-reference/localization/arabic-glossary.md`** — P2-2 review package.
-- **`03-development-phases/phase-03-report-generation/arabic-native-review-playbook.md`** — Glossary link (terminology checklist).
+- **`specs/00-core/03-insights/arabic-native-review-playbook.md`** — Glossary link (terminology checklist).
 
 ---
 

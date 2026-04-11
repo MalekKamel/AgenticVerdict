@@ -13,7 +13,7 @@
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json}\" \"packages/**/*.{ts,tsx,js,mjs,cjs,json}\" \"vitest.config.ts\" \"*.mjs\" \"package.json\" \"*.yml\" \"*.yaml\" \".github/**/*.yml\"",
     "observability:up": "docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d",
     "lint": "turbo run lint",
-    "lint:openapi": "redocly lint docs/03-development-phases/phase-01-platform-integration/operations/openapi/platform-adapters-health.yaml",
+    "lint:openapi": "redocly lint specs/00-core/01-connectors/operations/openapi/platform-adapters-health.yaml",
     "prepare": "husky",
     "test": "turbo run test",
     "test:coverage": "vitest run --coverage",

@@ -60,7 +60,7 @@ This entry reflects **all staged changes in this session** as a single comprehen
 - **`src/json-format-generator.ts`**
   - introduces `JsonFormatGenerator` (`format: "json"`) that serializes context/model/rendered template into formatted JSON bytes.
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
 - **Execution planning/audit docs**
   - `phases-02-03-execution-plan.md`
@@ -213,15 +213,15 @@ This entry reflects **all staged changes in this session** as a single comprehen
 ### Phase documentation consolidation
 
 - **Phase 02 docs**
-  - `docs/03-development-phases/phase-02-agent-intelligence/overview.md`
-  - `docs/03-development-phases/phase-02-agent-intelligence/tasks.md`
-  - `docs/03-development-phases/phase-02-agent-intelligence/acceptance-criteria.md`
+  - `specs/00-core/02-intelligence/overview.md`
+  - `specs/00-core/02-intelligence/tasks.md`
+  - `specs/00-core/02-intelligence/acceptance-criteria.md`
   - status/date fields updated; applicable tasks/acceptance checkboxes marked complete based on implementation evidence.
 
 - **Phase 03 docs**
-  - `docs/03-development-phases/phase-03-report-generation/overview.md`
-  - `docs/03-development-phases/phase-03-report-generation/tasks.md`
-  - `docs/03-development-phases/phase-03-report-generation/acceptance-criteria.md`
+  - `specs/00-core/03-insights/overview.md`
+  - `specs/00-core/03-insights/tasks.md`
+  - `specs/00-core/03-insights/acceptance-criteria.md`
   - status/date fields updated; applicable tasks/acceptance checkboxes marked complete based on implementation evidence.
 
 ### Dependency and workspace metadata
@@ -260,6 +260,6 @@ Targeted test coverage was updated/executed in the implementation batches for:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phases-02-03-execution-plan.md`](../docs/03-development-phases/phases-02-03-execution-plan.md)
-- [`docs/03-development-phases/phases-02-03-execution-plan-refined.md`](../docs/03-development-phases/phases-02-03-execution-plan-refined.md)
-- [`docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md`](../docs/03-development-phases/phases-02-03-implementation-audit-delta-2026-04-08.md)
+- [`changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`](../changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md)
+- [`changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`](../changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md)
+- [`changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`](../changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md)

@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 7 delivery (Weeks 28–33)
 
 **Date:** 2026-04-05  
-**Scope:** [Execution plan Part 7](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **DEL-1** (email pipeline via BullMQ, delivery API, share links + unauthenticated download, completion webhooks as push-style hooks, in-memory delivery analytics), **SCH-1** (tenant schedule CRUD, five-field cron validation, enabled-schedule conflict detection, BullMQ repeatable jobs when `REDIS_URL` is set, schedule worker fan-out to `report-generation`), **Week 33 QA** (Vitest coverage for queue-unavailable paths, share flow, schedule conflicts, invalid cron). A full **Next.js download UI**, **mobile push (APNs/FCM)**, **provider delivery analytics from webhooks**, and **multi-tenant schedule UI** remain follow-ups.
+**Scope:** [Execution plan Part 7](specs/00-core/03-insights/execution-plan.md) — **DEL-1** (email pipeline via BullMQ, delivery API, share links + unauthenticated download, completion webhooks as push-style hooks, in-memory delivery analytics), **SCH-1** (tenant schedule CRUD, five-field cron validation, enabled-schedule conflict detection, BullMQ repeatable jobs when `REDIS_URL` is set, schedule worker fan-out to `report-generation`), **Week 33 QA** (Vitest coverage for queue-unavailable paths, share flow, schedule conflicts, invalid cron). A full **Next.js download UI**, **mobile push (APNs/FCM)**, **provider delivery analytics from webhooks**, and **multi-tenant schedule UI** remain follow-ups.
 
 ---
 
@@ -41,5 +41,5 @@ export REDIS_URL=redis://localhost:6379
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/execution-plan.md`](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — Part 7 (Weeks 28–33)
+- [`specs/00-core/03-insights/execution-plan.md`](specs/00-core/03-insights/execution-plan.md) — Part 7 (Weeks 28–33)
 - [`changelog/2026-04-04-phase-03-execution-plan-part-6-integration.md`](changelog/2026-04-04-phase-03-execution-plan-part-6-integration.md)

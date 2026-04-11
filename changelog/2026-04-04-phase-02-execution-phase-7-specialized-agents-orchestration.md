@@ -1,7 +1,7 @@
 # Changelog entry: Phase 2 — Execution Phase 7 (Specialized agents, communication protocol, orchestration)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 7 — Specialized agents, communication protocol, and orchestration](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **6.1** through **6.5**.
+**Scope:** Phase 2 — [Execution Phase 7 — Specialized agents, communication protocol, and orchestration](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **6.1** through **6.5**.
 
 This entry delivers the **three marketing-specialized agents** (cross-platform analysis, insight generation, media verdict) on top of the Phase 6 factory and Phase 5 prompt catalog, a **Zod-validated agent-to-agent message envelope** with **correlation IDs aligned to Phase 0 `requestId`**, and a **sequential orchestration pipeline** (analysis → insights → verdict) with **handoff notifications**, **progress callbacks**, **JSON snapshot helper** for persistence, and **verdict schema validation** matching `tasks.md` **6.3**. The pipeline merges **tenant `localization.currency`** into prompt variables when rendering `analysis.cross_platform_overview@1.1.0`. **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.8.0**.
 
@@ -67,5 +67,5 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`](docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md) — Execution Phase 7 definition (**§1.6**).
-- [`docs/03-development-phases/phase-02-agent-intelligence/tasks.md`](docs/03-development-phases/phase-02-agent-intelligence/tasks.md) — tasks **6.1–6.5**.
+- [`specs/00-core/02-intelligence/EXECUTION-PLAN.md`](specs/00-core/02-intelligence/EXECUTION-PLAN.md) — Execution Phase 7 definition (**§1.6**).
+- [`specs/00-core/02-intelligence/tasks.md`](specs/00-core/02-intelligence/tasks.md) — tasks **6.1–6.5**.

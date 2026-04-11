@@ -1,7 +1,7 @@
 # Changelog entry: Phase 03 execution plan — Part 8 history and versioning (Weeks 33–35)
 
 **Date:** 2026-04-05  
-**Scope:** [Execution plan Part 8](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — **HIST-1** (per-report byte **versioning** on each `PUT …/content` with SHA-256 snapshots, **version list** and **per-version download**, **compare-versions** JSON for side-by-side UIs), **archival** (`PATCH …/archive` | `unarchive`, default list hides archived; `GET /reports?includeArchived=true`), **retention** (`PATCH …/retention` with 1–3650 days, `POST /reports/retention/sweep` purges blobs past `retainUntil` while keeping snapshot metadata). **Compliance / audit** — append-only **`report-audit-store`** (create, upload, archive, retention, compare, sweep, compliance views), **`GET /reports/compliance/audit`** (`since`, `limit`), **`GET /reports/compliance/summary`** (report stats + audit count last 30 days). **QA:** Vitest contract flow + `report-store-history.test.ts`. A **Next.js history UI**, **binary/text diff** of PDFs, **WORM database audit**, and **legal-hold** workflows remain follow-ups.
+**Scope:** [Execution plan Part 8](specs/00-core/03-insights/execution-plan.md) — **HIST-1** (per-report byte **versioning** on each `PUT …/content` with SHA-256 snapshots, **version list** and **per-version download**, **compare-versions** JSON for side-by-side UIs), **archival** (`PATCH …/archive` | `unarchive`, default list hides archived; `GET /reports?includeArchived=true`), **retention** (`PATCH …/retention` with 1–3650 days, `POST /reports/retention/sweep` purges blobs past `retainUntil` while keeping snapshot metadata). **Compliance / audit** — append-only **`report-audit-store`** (create, upload, archive, retention, compare, sweep, compliance views), **`GET /reports/compliance/audit`** (`since`, `limit`), **`GET /reports/compliance/summary`** (report stats + audit count last 30 days). **QA:** Vitest contract flow + `report-store-history.test.ts`. A **Next.js history UI**, **binary/text diff** of PDFs, **WORM database audit**, and **legal-hold** workflows remain follow-ups.
 
 ---
 
@@ -35,5 +35,5 @@ pnpm --filter @agenticverdict/api exec tsc --noEmit
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-03-report-generation/execution-plan.md`](docs/03-development-phases/phase-03-report-generation/execution-plan.md) — Part 8 (Weeks 33–35)
+- [`specs/00-core/03-insights/execution-plan.md`](specs/00-core/03-insights/execution-plan.md) — Part 8 (Weeks 33–35)
 - [`changelog/2026-04-05-phase-03-execution-plan-part-7-delivery.md`](changelog/2026-04-05-phase-03-execution-plan-part-7-delivery.md)

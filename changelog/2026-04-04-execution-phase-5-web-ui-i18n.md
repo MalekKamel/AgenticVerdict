@@ -1,7 +1,7 @@
 # Changelog entry: Execution Phase 5 (web shell, UI foundation, i18n)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 5 — Web application shell, UI foundation, and i18n](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §5: 0.44–0.53, §6: 0.54–0.63).
+**Scope:** Phase 0 — [Execution Phase 5 — Web application shell, UI foundation, and i18n](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §5: 0.44–0.53, §6: 0.54–0.63).
 
 ---
 
@@ -40,6 +40,6 @@
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 5 definition.
-- [`docs/03-development-phases/phase-00-foundation/tasks.md`](docs/03-development-phases/phase-00-foundation/tasks.md) — tasks 0.44–0.63.
-- [`docs/03-development-phases/phase-00-foundation/acceptance-criteria.md`](docs/03-development-phases/phase-00-foundation/acceptance-criteria.md) — §5 UI Foundation, §6 i18n System.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 5 definition.
+- [`specs/00-core/00-foundation/tasks.md`](specs/00-core/00-foundation/tasks.md) — tasks 0.44–0.63.
+- [`specs/00-core/00-foundation/acceptance-criteria.md`](specs/00-core/00-foundation/acceptance-criteria.md) — §5 UI Foundation, §6 i18n System.

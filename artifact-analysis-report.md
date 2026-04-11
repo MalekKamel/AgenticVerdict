@@ -473,7 +473,7 @@ tests/test-output/archive/latest/
 **Related Documentation**:
 
 - `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`
-- `/docs/03-development-phases/phase-02-agent-intelligence/EXECUTION-PLAN.md`
+- `/specs/00-core/02-intelligence/EXECUTION-PLAN.md`
 - `/changelog/2026-04-09-mock-adapter-pipeline-remediation-closure.md`
 
 ---

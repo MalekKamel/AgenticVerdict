@@ -1,6 +1,6 @@
 # Phase 01 Platform Integration - Implementation Review & Remediation Plan
 
-**Documentation update (2026-04-04):** Project-wide requirements now mandate **non-empty `tenantId`** on all `BaseConnectorAdapter` constructions; centralized **SECURITY.md** and related operations docs are in `docs/03-development-phases/phase-01-platform-integration/operations/`. See [`requirements.md`](../../05-project-management/requirements.md) §Platform integration requirements. Some review metrics (e.g. coverage percentages) are a snapshot — re-run coverage for current numbers.
+**Documentation update (2026-04-04):** Project-wide requirements now mandate **non-empty `tenantId`** on all `BaseConnectorAdapter` constructions; centralized **SECURITY.md** and related operations docs are in `specs/00-core/01-connectors/operations/`. See [`requirements.md`](../../05-project-management/requirements.md) §Platform integration requirements. Some review metrics (e.g. coverage percentages) are a snapshot — re-run coverage for current numbers.
 
 **Review Date**: 2026-04-04
 **Reviewers**: Multi-Agent Analysis Team
@@ -50,7 +50,7 @@ Phase 01 Platform Integration has been **substantially completed** with strong i
 
 ### 1.1 Acceptance Criteria Status
 
-Based on original requirements in `/docs/03-development-phases/phase-01-platform-integration/README.md`:
+Based on original requirements in `/specs/00-core/01-connectors/README.md`:
 
 | Criterion Category            | Total | Complete | Partial | Deferred | Status      |
 | ----------------------------- | ----- | -------- | ------- | -------- | ----------- |
@@ -422,7 +422,7 @@ constructor(options: BaseConnectorAdapterOptions) {
 
 **P1: Create Security Documentation**
 
-- `/docs/03-development-phases/phase-01-platform-integration/operations/SECURITY.md`
+- `/specs/00-core/01-connectors/operations/SECURITY.md`
 - Include: security model, threat analysis, credential management
 - **Effort**: 1-2 days
 
@@ -581,9 +581,9 @@ The project is in a strong position to proceed to Phase 02 while completing the 
 
 ### Documentation Files to Create
 
-1. `docs/03-development-phases/phase-01-platform-integration/operations/SECURITY.md`
+1. `specs/00-core/01-connectors/operations/SECURITY.md`
 2. `docs/testing/phase-01-testing-strategy.md`
-3. `docs/03-development-phases/phase-01-platform-integration/operations/CONFIGURATION-REFERENCE.md`
+3. `specs/00-core/01-connectors/operations/CONFIGURATION-REFERENCE.md`
 
 ---
 

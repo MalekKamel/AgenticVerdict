@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — Integration testing and performance validation (Execution Phase 7)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 7 — Integration testing and performance validation](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 3 Task 3.3; Work Stream 4 Task 4.3).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 7 — Integration testing and performance validation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 3 Task 3.3; Work Stream 4 Task 4.3).
 
 This entry adds a dedicated workspace package that runs **mock HTTP gateways** for Meta, Google (OAuth, GA4, GSC, GBP), and TikTok, **end-to-end adapter tests** (authenticate → `fetchMetrics` → `normalizeData` → `runNormalizationPipeline`), **load-style** scenarios (100 concurrent fetches, 1000 cached reads, burst stress, iteration endurance proxies), **chaos** cases (injected Meta Graph 500s + circuit breaker open/half-open recovery with retry disabled for determinism, simulated network failure, cache `set` throwing while fetch still succeeds), and **performance regression-style** assertions (p95 cached &lt;200ms, uncached &lt;2s, auth p95 &lt;5s) against the local lab. CI runs this suite after the monorepo Vitest coverage job. It does **not** replace live credential integration tests, run multi-hour endurance in CI, provision Prometheus dashboards, or implement real external mock servers per vendor beyond this single multiplexed Node listener.
 
@@ -64,6 +64,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 7 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Tasks 3.3 and 4.3.
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §2 Performance, §3 Integration / chaos.
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 7 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Tasks 3.3 and 4.3.
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §2 Performance, §3 Integration / chaos.

@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — Normalization and validation framework (Execution Phase 6)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 6 — Data normalization and validation framework](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 3: Tasks 3.1 and 3.2).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 6 — Data normalization and validation framework](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 3: Tasks 3.1 and 3.2).
 
 This entry adds a cross-platform normalization pipeline and validation layer on top of existing per-adapter transformers: Zod-backed structural schema for `NormalizedPlatformSnapshot`, dimension standardization, optional static FX conversion of spend-like metrics to USD, cardinality rounding for count-like keys, semantic and cross-field checks, IQR outlier tagging, a 0–100 data quality score, and reporting helpers for metrics/logging. It does **not** replace per-platform `normalize*RawMetrics` implementations, add browser OAuth, wire automated load/chaos CI (Execution Phase 7), or publish standalone schema documentation outside this changelog.
 
@@ -73,6 +73,6 @@ Commands run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 6 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Tasks 3.1–3.2.
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.2 Data normalization and validation (AC-1.6.1–AC-1.6.6).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 6 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Tasks 3.1–3.2.
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.2 Data normalization and validation (AC-1.6.1–AC-1.6.6).

@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — Adapter infrastructure foundation
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 1 — Adapter infrastructure foundation](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 1: Tasks 1.1–1.6).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 1 — Adapter infrastructure foundation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 1: Tasks 1.1–1.6).
 
 This entry summarizes changes that implement shared adapter resilience, caching, rate shaping, dead-letter capture, metrics, and health reporting. It does **not** cover vendor-specific adapters (Meta, GA4, GSC, GBP, TikTok), the normalization framework (Work Stream 3), or load/chaos automation (Execution Phase 7).
 
@@ -87,6 +87,6 @@ Commands that were run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Tasks 1.1–1.6 (Work Stream 1).
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.3 Infrastructure (AC-1.7.1–AC-1.7.8).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 1 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Tasks 1.1–1.6 (Work Stream 1).
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.3 Infrastructure (AC-1.7.1–AC-1.7.8).

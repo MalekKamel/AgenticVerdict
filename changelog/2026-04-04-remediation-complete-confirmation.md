@@ -192,7 +192,7 @@ The following files have been created/modified as part of remediation:
 
 All identified gaps from the Phase 03 readiness verification have been addressed. The codebase is in excellent condition for starting Phase 03 (Report Generation) development.
 
-**Next Step:** Proceed with Phase 03 execution as planned in `docs/03-development-phases/phase-03-report-generation/execution-plan.md`.
+**Next Step:** Proceed with Phase 03 execution as planned in `specs/00-core/03-insights/execution-plan.md`.
 
 ---
 

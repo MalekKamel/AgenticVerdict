@@ -11,14 +11,14 @@
 - **Arabic validation:** Added `analyzeArabicLocaleQuality` and `computeLexicalOverlapDiagnostic` in `@agenticverdict/i18n` for placeholder parity, Arabic script presence, and a mean token-overlap diagnostic (not a BLEU substitute).
 - **E2E:** Added `apps/web/e2e/critical-path-smoke.spec.ts` (English home then Arabic RTL) alongside existing locale and a11y specs.
 - **Performance baselines:** Added `scripts/performance-baseline.mjs`, root script `pnpm benchmark:performance-baseline`, and `docs/06-reference/performance-baselines.md` (instructions plus optional dated append via `PERFBASELINE_WRITE=1`).
-- **Documentation:** Added `docs/03-development-phases/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md`; Phase 02/03 overviews note P2 deliverables.
+- **Documentation:** Added `specs/00-core/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md`; Phase 02/03 overviews note P2 deliverables.
 - **Agent factory:** Removed invalid `fallback` key from `defaultAutoToolsByRole` (roles are only `analysis` | `insights` | `verdict`), restoring `tsc --noEmit` for `@agenticverdict/agent-runtime`.
 
 ---
 
 ## Added
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
 - **`p2-phase-00-03-enhancement-execution-plan-2026-04-08.md`** — Step-by-step P2 plan, verification commands, and sign-off checklist.
 
@@ -70,10 +70,10 @@
 
 - **Masafh `11111111-…` JSON** — Sample `b2bKpiProfile` with SAR CPQL target and default weights.
 
-### `docs/03-development-phases`
+### `specs/00-core`
 
-- **`phase-02-agent-intelligence/overview.md`** — P2 B2B KPI note.
-- **`phase-03-report-generation/overview.md`** — P2 Arabic automation + E2E + baselines note.
+- **`02-intelligence/overview.md`** — P2 B2B KPI note.
+- **`03-insights/overview.md`** — P2 Arabic automation + E2E + baselines note.
 
 ---
 
@@ -89,4 +89,4 @@
 ## References
 
 - `PHASE_00-03_CORE_AUDIT_REPORT.md` — P2 table (B2B KPIs, Arabic validation, E2E, performance benchmarking, documentation alignment).
-- `docs/03-development-phases/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md` — Detailed execution checklist for this slice.
+- `specs/00-core/p2-phase-00-03-enhancement-execution-plan-2026-04-08.md` — Detailed execution checklist for this slice.

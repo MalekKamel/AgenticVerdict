@@ -31,23 +31,23 @@ docs/
 │   ├── phase-transitions.md                     # From PHASE_TRANSITION_CRITERIA.md
 │   └── quality-gates.md                         # NEW: Consolidated quality standards
 │
-├── 03-development-phases/
-│   ├── phase-00-foundation/
+├── (see /specs/ at repo root)             # Phase specs: specs/00-core/, future domains
+│   ├── 00-foundation/
 │   │   ├── overview.md                          # From PHASE_00_OVERVIEW.md
 │   │   ├── tasks.md                             # From PHASE_00_TASKS.md
 │   │   └── acceptance-criteria.md               # From PHASE_00_ACCEPTANCE.md
 │   │
-│   ├── phase-01-platform-integration/
+│   ├── 01-connectors/
 │   │   ├── overview.md                          # From PHASE_01_OVERVIEW.md
 │   │   ├── tasks.md                             # From PHASE_01_TASKS.md
 │   │   └── acceptance-criteria.md               # From PHASE_01_ACCEPTANCE.md
 │   │
-│   ├── phase-02-agent-intelligence/
+│   ├── 02-intelligence/
 │   │   ├── overview.md                          # From PHASE_02_OVERVIEW.md
 │   │   ├── tasks.md                             # From PHASE_02_TASKS.md
 │   │   └── acceptance-criteria.md               # From PHASE_02_ACCEPTANCE.md
 │   │
-│   ├── phase-03-report-generation/
+│   ├── 03-insights/
 │   │   ├── README.md
 │   │   ├── overview.md
 │   │   ├── analysis-summary.md
@@ -56,7 +56,7 @@ docs/
 │   │   ├── tasks.md
 │   │   └── acceptance-criteria.md
 │   │
-│   ├── phase-04-production-hardening/
+│   ├── 04-production-hardening/
 │   │   ├── overview.md                          # From PHASE_04_OVERVIEW.md
 │   │   ├── tasks.md                             # From PHASE_04_TASKS.md
 │   │   └── acceptance-criteria.md               # From PHASE_04_ACCEPTANCE.md
@@ -122,7 +122,7 @@ docs/
 | ----------------------------- | ------------------------------- | ------------------------ |
 | `01-getting-started`          | New team members, stakeholders  | High-level orientation   |
 | `02-planning-and-methodology` | Tech leads, architects          | Strategic guidance       |
-| `03-development-phases`       | Developers, implementers        | Execution details        |
+| `/specs/00-core/`             | Developers, implementers        | Execution details        |
 | `04-technology-research`      | Engineers making tech decisions | Research and comparisons |
 | `05-project-management`       | PMs, leadership                 | Project oversight        |
 | `06-reference`                | All team members                | Look-up materials        |
@@ -161,11 +161,11 @@ Each directory is self-contained with:
 | `roadmap/docs/METHODOLOGY_RECOMMENDATION.md`       | `02-planning-and-methodology/methodology-overview.md`               | Split if needed         |
 | `roadmap/docs/TESTING_STRATEGY.md`                 | `02-planning-and-methodology/testing-strategy.md`                   | Move                    |
 | `roadmap/docs/PHASE_TRANSITION_CRITERIA.md`        | `02-planning-and-methodology/phase-transitions.md`                  | Move                    |
-| `roadmap/phases/phase-00-*/*.md`                   | `03-development-phases/phase-00-foundation/*.md`                    | Move & rename           |
-| `roadmap/phases/phase-01-*/*.md`                   | `03-development-phases/phase-01-platform-integration/*.md`          | Move & rename           |
-| `roadmap/phases/phase-02-*/*.md`                   | `03-development-phases/phase-02-agent-intelligence/*.md`            | Move & rename           |
-| `roadmap/phases/phase-03-*/*.md`                   | `03-development-phases/phase-03-report-generation/*.md`             | Move & rename           |
-| `roadmap/phases/phase-04-*/*.md`                   | `03-development-phases/phase-04-production-hardening/*.md`          | Move & rename           |
+| `roadmap/phases/phase-00-*/*.md`                   | `specs/00-core/00-foundation/*.md`                                  | Move & rename           |
+| `roadmap/phases/phase-01-*/*.md`                   | `specs/00-core/01-connectors/*.md`                                  | Move & rename           |
+| `roadmap/phases/phase-02-*/*.md`                   | `specs/00-core/02-intelligence/*.md`                                | Move & rename           |
+| `roadmap/phases/phase-03-*/*.md`                   | `specs/00-core/03-insights/*.md`                                    | Move & rename           |
+| `roadmap/phases/phase-04-*/*.md`                   | `specs/00-core/04-production-hardening/*.md`                        | Move & rename           |
 | `task/research/README.md`                          | `04-technology-research/research-overview.md`                       | Move                    |
 | `task/research/01-monorepo-tools.md`               | `04-technology-research/build-tools/monorepo-solutions.md`          | Move & rename           |
 | `task/research/02-api-frameworks.md`               | `04-technology-research/backend/api-frameworks.md`                  | Move                    |
@@ -197,8 +197,8 @@ Each directory is self-contained with:
 | `01-getting-started/glossary.md`                   | Terminology definitions        | NEW (extracted from content)      |
 | `02-planning-and-methodology/README.md`            | Directory guide                | NEW                               |
 | `02-planning-and-methodology/quality-gates.md`     | Consolidated quality standards | NEW (synthesized)                 |
-| `03-development-phases/phase-overview.md`          | Cross-phase summary            | NEW (synthesized)                 |
-| `03-development-phases/README.md`                  | Directory guide                | NEW                               |
+| `specs/00-core/phase-overview.md`                  | Cross-phase summary            | NEW (synthesized)                 |
+| `specs/00-core/README.md`                          | Directory guide                | NEW                               |
 | `04-technology-research/README.md`                 | Directory guide                | NEW                               |
 | `05-project-management/README.md`                  | Directory guide                | NEW                               |
 | `05-project-management/project-charter.md`         | Project charter document       | Synthesized from ANALYSIS_SUMMARY |

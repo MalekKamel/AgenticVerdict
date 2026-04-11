@@ -98,7 +98,7 @@ Executed and passing:
 ## Related documentation
 
 - `docs/02-planning-and-methodology/llm-prompt-schema-validation-remediation-plan.md`
-- `docs/03-development-phases/phase-03-report-generation/prerequisites/schema-transformation-spec.md`
+- `specs/00-core/03-insights/prerequisites/schema-transformation-spec.md`
 - `docs/02-planning-and-methodology/testing-strategy.md`
 - `docs/06-reference/runbooks/remediation-known-issues.md`
 - `CHANGELOG.md`

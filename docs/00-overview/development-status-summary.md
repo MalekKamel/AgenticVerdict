@@ -8,9 +8,9 @@
 - Root changelog (concise): [`CHANGELOG.md`](../../CHANGELOG.md)
 - Phase 0 detailed notes: [`changelog/2026-04-03-phase-0-foundation-implementation.md`](../../changelog/2026-04-03-phase-0-foundation-implementation.md)
 - Phase 1 implementation notes (dated 2026-04-04): [`changelog/`](../../changelog/) (files matching `2026-04-04-phase-01-*.md`)
-- Phase 0 index: [`phase-00-foundation/README.md`](../03-development-phases/phase-00-foundation/README.md)
-- Phase 0 scope and waves: [`implementation-scope.md`](../03-development-phases/phase-00-foundation/implementation-scope.md)
-- Phase 1 operations docs: [`phase-01-platform-integration/operations/README.md`](../03-development-phases/phase-01-platform-integration/operations/README.md)
+- Phase 0 index: [`00-foundation/README.md`](../../specs/00-core/00-foundation/README.md)
+- Phase 0 scope and waves: [`implementation-scope.md`](../../specs/00-core/00-foundation/implementation-scope.md)
+- Phase 1 operations docs: [`01-connectors/operations/README.md`](../../specs/00-core/01-connectors/operations/README.md)
 - Phase 1 implementation review: [`reviews/phase-01-implementation-review-2026-04-04.md`](./reviews/phase-01-implementation-review-2026-04-04.md)
 
 ---
@@ -19,7 +19,7 @@
 
 The repository is a **working Turborepo + pnpm monorepo** with foundational packages (`types`, `config`, `core`, `database`), a **Next.js 15 web app** (Mantine, next-intl, `/en` and `/ar`), **sample company JSON**, **GitHub Actions CI**, and expanded **Drizzle schema / migrations** (including RLS-oriented work — verify against phase acceptance checklists).
 
-**Phase 01 (platform integration)** is largely implemented in code: `@agenticverdict/data-connectors` ships Meta, GA4, GSC, GBP, and TikTok adapters with shared normalization, caching (memory + optional Upstash), rate limiting, circuit breaking, health helpers, and **Next.js `/api/health*` routes**. Operational documentation lives under [`phase-01-platform-integration/operations/`](../03-development-phases/phase-01-platform-integration/operations/README.md), including **[SECURITY.md](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md)**. Cross-package integration tests run from `tests/phase01-platform-integration/`.
+**Phase 01 (platform integration)** is largely implemented in code: `@agenticverdict/data-connectors` ships Meta, GA4, GSC, GBP, and TikTok adapters with shared normalization, caching (memory + optional Upstash), rate limiting, circuit breaking, health helpers, and **Next.js `/api/health*` routes**. Operational documentation lives under [`01-connectors/operations/`](../../specs/00-core/01-connectors/operations/README.md), including **[SECURITY.md](../../specs/00-core/01-connectors/operations/SECURITY.md)**. Cross-package integration tests run from `tests/phase01-platform-integration/`.
 
 **Requirements alignment (2026-04-04):** [`requirements.md`](../05-project-management/requirements.md) now explicitly requires a **non-empty `tenantId`** for every `BaseConnectorAdapter` construction (`missing_tenant_id` error if violated) and states **security expectations** for DB access and secrets handling, with pointers to Phase 01 operations docs.
 
@@ -82,7 +82,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 | Item                                                                                    | Status               |
 | --------------------------------------------------------------------------------------- | -------------------- |
-| `phase-00-foundation/implementation-scope.md`                                           | Present              |
+| `specs/00-core/00-foundation/implementation-scope.md`                                   | Present              |
 | Phase 0 README / tasks / acceptance-criteria                                            | Present (evolving)   |
 | Phase 01 `operations/` (API reference, auth, runbooks, **SECURITY.md**, OpenAPI health) | Present              |
 | `requirements.md` (v1.1+): mandatory adapter `tenantId`, security requirements          | Updated 2026-04-04   |
@@ -93,7 +93,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ## 3. Gaps
 
-Severity is **blocking** for formal phase exit vs **important** vs **later**. Line items below must be reconciled against the authoritative `acceptance-criteria.md` files per phase (this summary is not a sign-off).
+Severity is **blocking** for formal phase exit vs **important** vs **later**. Line items below must be reconciled against the authoritative `acceptance-criteria.md` files under [`specs/00-core/`](../../specs/00-core/README.md) (this summary is not a sign-off).
 
 ### 3.1 Relative to Phase 0 acceptance criteria (`acceptance-criteria.md`)
 
@@ -162,7 +162,7 @@ See [`reviews/phase-01-implementation-review-2026-04-04.md`](./reviews/phase-01-
 ### 4.3 Continuous
 
 9. **Observability** — Structured logging and metrics (Pino/Prometheus) per `CLAUDE.md`.
-10. **Security** — Operational follow-through from [`SECURITY.md`](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md) verification matrix (secrets management, TLS at edge, audit logging when implemented).
+10. **Security** — Operational follow-through from [`SECURITY.md`](../../specs/00-core/01-connectors/operations/SECURITY.md) verification matrix (secrets management, TLS at edge, audit logging when implemented).
 
 ---
 
@@ -170,8 +170,8 @@ See [`reviews/phase-01-implementation-review-2026-04-04.md`](./reviews/phase-01-
 
 - After each meaningful merge, update **§2** (inventory), **§3** (gaps), and **§4** (next steps).
 - On version tags, add a line to **§1** or reference the dated entry under `changelog/`.
-- Prefer linking to `tasks.md` / `acceptance-criteria.md` rather than duplicating long checklists here.
+- Prefer linking to `specs/00-core/*/tasks.md` / `acceptance-criteria.md` rather than duplicating long checklists here.
 
 ---
 
-_This document is maintained for developers and leads; it is not a substitute for signed phase exit checklists in `acceptance-criteria.md`._
+_This document is maintained for developers and leads; it is not a substitute for signed phase exit checklists in the specs tree (`specs/00-core/*/acceptance-criteria.md`)._

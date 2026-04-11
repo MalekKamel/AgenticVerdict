@@ -127,4 +127,4 @@ The following commands were executed successfully after implementation:
 ## Related documentation
 
 - [`docs/06-reference/mock-adapter-integration.md`](docs/06-reference/mock-adapter-integration.md)
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md)
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md)

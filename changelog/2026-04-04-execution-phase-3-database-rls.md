@@ -1,7 +1,7 @@
 # Changelog entry: Execution Phase 3 (database layer and tenant-scoped access)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 0 — [Execution Phase 3 — Database layer and tenant-scoped data access](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) (`tasks.md` §3: 0.23–0.33).
+**Scope:** Phase 0 — [Execution Phase 3 — Database layer and tenant-scoped data access](specs/00-core/00-foundation/EXECUTION-PLAN.md) (`tasks.md` §3: 0.23–0.33).
 
 This entry records Drizzle/PostgreSQL schema, initial migration with row-level security, connection helpers, optional Upstash Redis, seeds, and RLS-focused integration tests.
 
@@ -84,6 +84,6 @@ erDiagram
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md`](docs/03-development-phases/phase-00-foundation/EXECUTION-PLAN.md) — Execution Phase 3 definition.
-- [`docs/03-development-phases/phase-00-foundation/tasks.md`](docs/03-development-phases/phase-00-foundation/tasks.md) — tasks 0.23–0.33 (marked Done).
-- [`docs/03-development-phases/phase-00-foundation/acceptance-criteria.md`](docs/03-development-phases/phase-00-foundation/acceptance-criteria.md) — §3 Database Layer.
+- [`specs/00-core/00-foundation/EXECUTION-PLAN.md`](specs/00-core/00-foundation/EXECUTION-PLAN.md) — Execution Phase 3 definition.
+- [`specs/00-core/00-foundation/tasks.md`](specs/00-core/00-foundation/tasks.md) — tasks 0.23–0.33 (marked Done).
+- [`specs/00-core/00-foundation/acceptance-criteria.md`](specs/00-core/00-foundation/acceptance-criteria.md) — §3 Database Layer.

@@ -1,7 +1,7 @@
 # Changelog entry: Phase 01 — GA4 (Google Analytics 4) adapter
 
 **Date:** 2026-04-04  
-**Scope:** Phase 1 (Platform Integration) — [Execution Phase 3 — GA4 adapter implementation](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.2).
+**Scope:** Phase 1 (Platform Integration) — [Execution Phase 3 — GA4 adapter implementation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.2).
 
 This entry adds the second vendor adapter: Google Analytics Data API v1 (REST) reads with OAuth bearer validation and refresh-token exchange, automatic splitting of inclusive ranges longer than 365 days, per-UTC-day request budgeting aligned with the ~50k calls/day project quota, sampling detection on standard and realtime responses, optional funnel exploration via v1alpha, and normalization into the shared snapshot shape. It does **not** add browser OAuth routes in `apps/web`, GSC/GBP/TikTok adapters, load/performance automation (Execution Phase 7), or the cross-cutting normalization framework beyond GA4’s transformer (Work Stream 3 remains separate).
 
@@ -70,6 +70,6 @@ Commands that were run successfully after the changes:
 
 ## Related documentation
 
-- [`docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md`](docs/03-development-phases/phase-01-platform-integration/EXECUTION-PLAN.md) — Execution Phase 3 definition and verification.
-- [`docs/03-development-phases/phase-01-platform-integration/tasks.md`](docs/03-development-phases/phase-01-platform-integration/tasks.md) — Task 2.2 (GA4).
-- [`docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md`](docs/03-development-phases/phase-01-platform-integration/acceptance-criteria.md) — §1.2 GA4 (AC-1.2.1–AC-1.2.5), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).
+- [`specs/00-core/01-connectors/EXECUTION-PLAN.md`](specs/00-core/01-connectors/EXECUTION-PLAN.md) — Execution Phase 3 definition and verification.
+- [`specs/00-core/01-connectors/tasks.md`](specs/00-core/01-connectors/tasks.md) — Task 2.2 (GA4).
+- [`specs/00-core/01-connectors/acceptance-criteria.md`](specs/00-core/01-connectors/acceptance-criteria.md) — §1.2 GA4 (AC-1.2.1–AC-1.2.5), §1.2 normalization (AC-1.6.x), §5.1 authentication (AC-5.1.x).
