@@ -1,73 +1,198 @@
-# [PROJECT_NAME] Constitution
+<!--
+Sync Impact Report
+==================
+Version change: None → 1.0.0
 
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+Modified principles: N/A (initial version)
+Added sections:
+  - Core Principles (5 principles)
+  - Technology Standards
+  - Development Standards
+  - Governance
+
+Templates requiring updates:
+  - .specify/templates/plan-template.md — Constitution Check section aligns with principles
+  - .specify/templates/spec-template.md — Scope/requirements align with architectural principles
+  - .specify/templates/tasks-template.md — Task categorization reflects principle-driven types
+
+Follow-up TODOs: None
+-->
+
+# AgenticVerdict Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
+### I. Multi-Tenancy First
 
-<!-- Example: I. Library-First -->
+All code MUST support multiple companies with complete tenant isolation. Tenant context MUST be propagated via AsyncLocalStorage and enforced at the database level through row-level security policies.
 
-[PRINCIPLE_1_DESCRIPTION]
+**Rationale**: As a multi-tenant SaaS platform, tenant isolation is a security-critical requirement that prevents data leakage between companies. Without strict isolation, a single bug could expose one customer's data to another.
 
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+**Requirements**:
 
-### [PRINCIPLE_2_NAME]
+- All database operations MUST use `dbScoped()` wrapper
+- Row-level security MUST be enabled on all multi-tenant tables
+- Tenant context MUST be present in all async operations
+- No hardcoded company-specific logic in code
 
-<!-- Example: II. CLI Interface -->
+### II. Configuration-Driven Architecture
 
-[PRINCIPLE_2_DESCRIPTION]
+All company-specific behavior MUST be injected through the `CompanyConfig` schema. No business rules or platform-specific logic MAY be hardcoded.
 
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Configuration-driven architecture enables rapid onboarding of new customers without code changes. It also ensures the system remains maintainable as the customer base grows.
 
-### [PRINCIPLE_3_NAME]
+**Requirements**:
 
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+- All customization flows through `CompanyConfig` interface
+- Use layered configuration: build constants, runtime config, feature flags, and tenant config
+- No if-statements checking for specific companies
+- Feature flags stored in PostgreSQL, evaluated via `createFeatureFlagService(db)`
 
-[PRINCIPLE_3_DESCRIPTION]
+### III. Plugin Architecture
 
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+Data connectors MUST implement the `ConnectorAdapter` interface from `@agenticverdict/data-connectors`. New platforms MUST be addable without core package changes.
 
-### [PRINCIPLE_4_NAME]
+**Rationale**: The plugin architecture allows the system to scale to new marketing platforms without requiring changes to core business logic. Each connector encapsulates its own authentication, rate limiting, and data normalization.
 
-<!-- Example: IV. Integration Testing -->
+**Requirements**:
 
-[PRINCIPLE_4_DESCRIPTION]
+- All external integrations implement `ConnectorAdapter` interface
+- Adapters include rate limiting with exponential backoff
+- Circuit breaker pattern for graceful degradation
+- Data normalization to shared `NormalizedConnectorSnapshot` schema
+- No platform-specific code in core packages
 
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Type Safety & Quality Standards
 
-### [PRINCIPLE_5_NAME]
+Zero `any` types permitted. Strict TypeScript mode enforced. All inputs validated via Zod schemas.
 
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+**Rationale**: Type safety prevents entire classes of runtime errors. As a data processing system dealing with external APIs, strong typing is essential for reliability.
 
-[PRINCIPLE_5_DESCRIPTION]
+**Requirements**:
 
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- Zero `any` types in codebase
+- Use `unknown` for dynamically-typed data
+- All public APIs have Zod validation schemas
+- Strict TypeScript compiler configuration
 
-## [SECTION_2_NAME]
+### V. Battle-Tested Technology Only
 
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Use production-proven tools documented in `/docs/04-technology-research/`. No reinventing the wheel.
 
-[SECTION_2_CONTENT]
+**Rationale**: The project is building a business system, not a technology research project. Using battle-tested tools reduces risk and speeds development.
 
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**Technology Choices**:
 
-## [SECTION_3_NAME]
+- ORM: Drizzle (NOT Prisma) — 2-10x better performance
+- Monorepo: Turborepo + pnpm workspaces
+- Testing: Vitest (unit), Playwright (E2E)
+- AI: LangChain.js + LangGraph.js, Claude 3.5 Sonnet primary
 
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Technology Standards
 
-[SECTION_3_CONTENT]
+### Database Layer
 
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- **ORM**: Drizzle ORM — Chosen for superior performance over Prisma
+- **Validation**: Zod for runtime type safety
+- **Migrations**: Drizzle Kit for schema generation and application
+
+### Testing Requirements
+
+**Coverage Targets** (from `/docs/02-planning-and-methodology/testing-strategy.md`):
+
+- Business logic: 85%+ (90%+ for critical components)
+- Data models: 80%+
+- API controllers: 75%+
+- Utilities: 90%+
+
+**Critical Code** (requires 90%+ coverage):
+
+- Authentication/authorization
+- Tenant isolation logic
+- AI agent decision logic
+- Financial transactions
+- Report generation
+
+**Test Distribution**:
+
+- Unit tests (60%): Fast, isolated business logic
+- Integration tests (25%): API endpoints, database operations
+- System tests (10%): Multi-component workflows
+- E2E tests (5%): Critical business paths
+
+### Docker & Infrastructure
+
+**Preferred**: Use the repo root `Makefile` for Compose operations:
+
+- `make setup` — First machine setup
+- `make preflight` — Pre-flight checks
+- `make dev` — Dev-stage API/worker with mock-friendly env
+- `make validate` — Validate Compose configuration
+- `make backup` / `make restore-latest` — Database backup/restore
+
+See `docs/docker/README.md` as the single source of truth for Docker.
+
+## Development Standards
+
+### Code Organization
+
+**Monorepo Structure**:
+
+```
+agenticverdict/
+├── apps/          # web (Next.js), api (Fastify), worker (BullMQ)
+├── packages/      # core, config, database, data-connectors, agent-runtime, report-generator, i18n, types
+└── docs/          # Comprehensive documentation
+```
+
+### Error Handling
+
+- Use structured error types (e.g., `PlatformError`)
+- Circuit breaker pattern for external services
+- No sensitive data in logs (credentials, PII)
+- Structured logging with Pino
+- Metrics with Prometheus
+
+### Security Requirements
+
+1. **Credentials**: Platform API credentials encrypted at rest, never logged
+2. **Tenant Isolation**: Row-level security enforced at database level
+3. **API Authentication**: JWT tokens with short expiry, refresh token rotation
+4. **Rate Limiting**: Per-tenant rate limits on all public APIs
+5. **Input Validation**: All inputs validated via Zod schemas
+
+### Language & Internationalization
+
+- Language determined by `config.localization.language`
+- Arabic ('ar') requires RTL layout
+- All user-facing strings externalized to translation files
+- Date/currency formatting uses locale-specific formatters
 
 ## Governance
 
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+### Amendment Procedure
 
-[GOVERNANCE_RULES]
+1. **Proposal**: Document proposed change with rationale in `.specify/memory/constitution-amendment-*.md`
+2. **Review**: Team reviews impact on existing code and templates
+3. **Approval**: Requires explicit approval from project lead
+4. **Migration**: Create migration plan for existing code if backward-incompatible
+5. **Version Bump**: Update constitution version following semantic versioning:
+   - MAJOR: Backward-incompatible governance/principle removals or redefinitions
+   - MINOR: New principle/section added or materially expanded guidance
+   - PATCH: Clarifications, wording, typo fixes, non-semantic refinements
 
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Compliance Review
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+- All PRs MUST verify compliance with core principles
+- Complexity that violates principles MUST be explicitly justified
+- Use `CLAUDE.md` for runtime development guidance (constitution is governance, not implementation)
+- Phase transitions require all acceptance criteria met, tests passing, documentation updated, no critical bugs
 
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### Architecture Authority
+
+Before making architectural decisions, consult:
+
+- `/docs/architecture/` — Authoritative architecture documentation
+- `/docs/04-technology-research/` — Technology research with justifications
+
+**Version**: 1.0.0 | **Ratified**: 2026-04-11 | **Last Amended**: 2026-04-11
