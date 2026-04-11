@@ -31,7 +31,7 @@ This document translates Phase 2 documentation into an **ordered, execution-read
 
 1. **Tenant isolation:** Every tool, agent, and prompt path must respect **tenant context** from Phase 0. No cross-tenant reads, no co-mingled context in system messages, and **no sensitive data in LangSmith traces or logs** beyond what policy allows (see [acceptance-criteria.md](./acceptance-criteria.md) §5).
 
-2. **Platform data boundary:** Live marketing data flows **only** through Phase 1 `PlatformAdapter` and normalization utilities. Agent tools are **wrappers and orchestration**—they do not reimplement OAuth, rate limits, or raw vendor APIs inside agent packages.
+2. **Platform data boundary:** Live marketing data flows **only** through Phase 1 `ConnectorAdapter` and normalization utilities. Agent tools are **wrappers and orchestration**—they do not reimplement OAuth, rate limits, or raw vendor APIs inside agent packages.
 
 2a. **Tool registration parity:** If platform fetch tools are implemented in the runtime, specialized marketing agents and worker-driven pipelines must receive the same dependency injection contract (for example `platformDeps` or unified `AgentSystem` config). Avoid states where tools exist globally but are omitted from production workflow execution paths.
 

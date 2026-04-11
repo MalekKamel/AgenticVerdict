@@ -30,7 +30,7 @@ Includes `docker-compose.networks.yml`.
 
 ## Application overlay (`docker-compose.apps.yml`)
 
-Build context is the **repository root**; Dockerfiles `apps/web/Dockerfile`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, plus shared bases under `packages/docker/base/` (`Dockerfile.deps`, `Dockerfile.chromium`). See [Container images](./container-images.md#shared-base-images-local--ci).
+Build context is the **repository root**; Dockerfiles `apps/web/Dockerfile`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, plus shared bases under `docker/base/` (`Dockerfile.deps`, `Dockerfile.chromium`). See [Container images](./container-images.md#shared-base-images-local--ci).
 
 | Service  | Host ports  | Depends on               | Notes                                                                                                          |
 | -------- | ----------- | ------------------------ | -------------------------------------------------------------------------------------------------------------- |

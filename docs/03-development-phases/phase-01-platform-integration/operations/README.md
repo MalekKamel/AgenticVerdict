@@ -2,13 +2,13 @@
 
 **Execution Phase 8** of the [execution plan](../EXECUTION-PLAN.md): API reference, authentication guides, error catalog, OpenAPI for health endpoints, and runbooks for deploy, monitoring, incidents, troubleshooting, disaster recovery, plus architecture and performance baselines.
 
-**Primary audience:** backend engineers, SREs, and on-call responders working with `@agenticverdict/platform-adapters` and the Next.js health routes in `apps/web`.
+**Primary audience:** backend engineers, SREs, and on-call responders working with `@agenticverdict/data-connectors` and the Next.js health routes in `apps/web`.
 
 ## Document map
 
 | Document                                                                         | Purpose                                                                                                            |
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [API-REFERENCE.md](./API-REFERENCE.md)                                           | `PlatformAdapter`, `BasePlatformAdapter`, registry, infrastructure bundle, per-platform adapter public surface     |
+| [API-REFERENCE.md](./API-REFERENCE.md)                                           | `ConnectorAdapter`, `BaseConnectorAdapter`, registry, infrastructure bundle, per-platform adapter public surface   |
 | [USAGE-EXAMPLES.md](./USAGE-EXAMPLES.md)                                         | TypeScript usage patterns; Python examples for HTTP health checks and future service boundaries                    |
 | [ERROR-CODES.md](./ERROR-CODES.md)                                               | Typed `PlatformErrorCode` values, HTTP health errors, resolutions                                                  |
 | [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md)                           | Step-by-step OAuth and credential keys per vendor (Meta, Google GA4/GSC/GBP, TikTok)                               |
@@ -24,7 +24,7 @@
 
 ## Source of truth
 
-- **Types and behavior:** `packages/platform-adapters/src/`
+- **Types and behavior:** `packages/data-connectors/src/`
 - **Health HTTP surface:** `apps/web/src/app/api/health/`
 - **Synthetic lab tests:** `tests/phase01-platform-integration/`
 

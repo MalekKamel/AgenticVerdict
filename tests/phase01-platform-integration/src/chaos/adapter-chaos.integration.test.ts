@@ -3,11 +3,11 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   defaultBackoffOptions,
   MemoryPlatformCache,
-  MetaPlatformAdapter,
+  MetaConnectorAdapter,
   PlatformCircuitOpenError,
   metaCredentialKeys,
   type PlatformCache,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 import { createDefaultChaosState } from "../mock-servers/chaos";
 import { startPlatformMockGateway } from "../mock-servers/gateway";
@@ -41,7 +41,7 @@ describe("Phase 01 chaos — network, upstream, cache degradation (mock APIs)", 
       halfOpenSuccessThreshold: 3,
     };
 
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "chaos-breaker",
@@ -79,7 +79,7 @@ describe("Phase 01 chaos — network, upstream, cache degradation (mock APIs)", 
   it("network failure surfaces as rejected fetch (AC-3.4.1)", async () => {
     const boom: typeof fetch = () =>
       Promise.reject(new Error("ECONNRESET: simulated network failure"));
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl: boom,
       requestTokenBucket: null,
       tenantId: "chaos-net",
@@ -110,7 +110,7 @@ describe("Phase 01 chaos — network, upstream, cache degradation (mock APIs)", 
       isDistributed: () => baseCache.isDistributed(),
     };
 
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "chaos-cache",

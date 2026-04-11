@@ -13,7 +13,7 @@ export {
   ConfigurationService,
   canEnableMocksViaEnv,
   config,
-  isMockEnabledForPlatform,
+  isMockEnabledForConnector,
 } from "./configuration";
 export { runtimeConfigSchema, type RuntimeConfig } from "./schemas/runtime-config";
 export {

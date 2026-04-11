@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
 
 import {
-  Ga4PlatformAdapter,
+  Ga4ConnectorAdapter,
   MemoryPlatformCache,
-  MetaPlatformAdapter,
+  MetaConnectorAdapter,
   ga4CredentialKeys,
   metaCredentialKeys,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 const live = process.env.LIVE_ADAPTER_VALIDATION === "1";
 
@@ -29,7 +29,7 @@ describe.skipIf(!live)("Phase 01 optional live adapter smoke (operator credentia
   });
 
   it.skipIf(!metaToken || !metaAdAccount)("Meta live: authenticate + fetchMetrics", async () => {
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       tenantId: "live-smoke-meta",
       cache: new MemoryPlatformCache(),
       requestTokenBucket: null,
@@ -41,11 +41,11 @@ describe.skipIf(!live)("Phase 01 optional live adapter smoke (operator credentia
     const raw = await adapter.fetchMetrics(range);
     expect(raw).toBeDefined();
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("meta");
+    expect(norm.connector).toBe("meta");
   });
 
   it.skipIf(!ga4Token || !ga4Property)("GA4 live: authenticate + fetchMetrics", async () => {
-    const adapter = new Ga4PlatformAdapter({
+    const adapter = new Ga4ConnectorAdapter({
       tenantId: "live-smoke-ga4",
       cache: new MemoryPlatformCache(),
       requestTokenBucket: null,
@@ -58,6 +58,6 @@ describe.skipIf(!live)("Phase 01 optional live adapter smoke (operator credentia
     const raw = await adapter.fetchMetrics(range);
     expect(raw).toBeDefined();
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("ga4");
+    expect(norm.connector).toBe("ga4");
   });
 });

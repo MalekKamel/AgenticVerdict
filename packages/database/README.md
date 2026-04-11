@@ -1,24 +1,22 @@
 # @agenticverdict/database
 
-## Schema and migrations
+## Schema apply (no checked-in SQL migrations)
 
-- **`pnpm db:push`** — Applies the Drizzle schema to the database only (no seed data, no SQL migration journal). Typical for local iteration when you want the ORM schema without running numbered migration files.
+Versioned **`packages/database/migrations/*.sql`** files are not used. Apply schema with Drizzle Kit against a **fresh or disposable** database:
+
+- **`pnpm db:push`** — Syncs the live database to `src/schema` (use `--force` when the CLI prompts for destructive changes). Run this before seeds when standing up a new database.
+
+- **`pnpm db:generate`** — Optional: emit SQL into **`.drizzle-out/`** (gitignored) if you want migration-like artifacts locally; the repo does not commit them.
 
 ## Seeding (idempotent)
 
-- **`pnpm db:seed`** — Runs `runMigrationsSafe` then upserts company JSON from `COMPANY_CONFIG_DIR` (default: repo `configs/companies`). Safe to run after `db:push`: if `public.companies` exists but there is no `drizzle.__drizzle_migrations` journal, journal migrations are skipped with a clear log line; seed upserts remain idempotent.
+- **`pnpm db:seed`** — Upserts the connector registry, then company JSON from `COMPANY_CONFIG_DIR` (default: repo `configs/companies`). Requires tables to exist (run **`db:push`** first on an empty database).
 
-- **`pnpm db:seed:unsafe`** — Same as `db:seed` but always runs full journal migrations (`runMigrations`). Use when you intentionally want Drizzle SQL migrations applied (e.g. fresh journal-driven DB). Can fail if tables already exist from `db:push`.
-
-- **Skip migrations, seed only** — When the schema is already applied and you only need reference data:
-
-  ```bash
-  AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1 pnpm db:seed
-  ```
+- **`pnpm db:seed:test`** — Same pattern using `tests/fixtures/companies` by default (for Docker / E2E fixtures).
 
 ## Destructive reset
 
-- **`pnpm db:reset`** — Drops the `drizzle` schema (Drizzle migration journal) and `public` (`CASCADE`), recreates `public`, grants on `public` to `postgres` and `public`, runs `runMigrations`, then runs the same company seed as `db:seed`. **This deletes all application data in `public` and clears migration history in `drizzle`.** Intended for local development recovery.
+- **`pnpm db:reset`** — Drops the `drizzle` schema (if present from older workflows) and `public` (`CASCADE`), recreates `public`, runs **`drizzle-kit push --force`**, then seeds the connector registry and companies like **`db:seed`**. **Deletes all application data in `public`.** Intended for local development recovery.
 
 ## Environment
 

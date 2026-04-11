@@ -561,7 +561,7 @@ CMD ["node", "--import", "tsx", "src/cli.ts"]
 
 ### 2.5 Shared Dependencies Base Image
 
-**File:** `packages/docker/base/Dockerfile.deps`
+**File:** `docker/base/Dockerfile.deps`
 
 ```dockerfile
 # syntax=docker/dockerfile:1.7
@@ -616,11 +616,10 @@ COPY packages/database/package.json ./packages/database/
 COPY packages/i18n/package.json ./packages/i18n/
 COPY packages/mock-platform-server/package.json ./packages/mock-platform-server/
 COPY packages/observability/package.json ./packages/observability/
-COPY packages/platform-adapters/package.json ./packages/platform-adapters/
+COPY packages/data-connectors/package.json ./packages/data-connectors/
 COPY packages/report-generator/package.json ./packages/report-generator/
 COPY packages/testing/package.json ./packages/testing/
 COPY packages/types/package.json ./packages/types/
-COPY packages/ui/package.json ./packages/ui/
 COPY tests/phase01-platform-integration/package.json ./tests/phase01-platform-integration/
 COPY configs ./configs
 COPY scripts ./scripts
@@ -2382,6 +2381,7 @@ process.on("SIGTERM", () => {
    ```
 
 3. **Create Runbooks**
+
    ```markdown
    # docs/docker/runbooks/
 

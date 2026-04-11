@@ -10,7 +10,7 @@ import {
   ga4CredentialKeys,
   createDefaultAdapterInfrastructure,
   runNormalizationPipeline,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 async function ga4SnapshotForTenant() {
   const infra = createDefaultAdapterInfrastructure();
@@ -46,15 +46,15 @@ async function ga4SnapshotForTenant() {
 import {
   createAdapterRegistry,
   MetaPlatformAdapter,
-  type PlatformAdapter,
-} from "@agenticverdict/platform-adapters";
+  type ConnectorAdapter,
+} from "@agenticverdict/data-connectors";
 
 type Ctx = { tenantId: string };
 
 const registry = createAdapterRegistry<Ctx>();
 registry.register("meta", (ctx) => new MetaPlatformAdapter({ tenantId: ctx.tenantId }));
 
-function loadAdapter(platform: Parameters<typeof registry.resolve>[0], ctx: Ctx): PlatformAdapter {
+function loadAdapter(platform: Parameters<typeof registry.resolve>[0], ctx: Ctx): ConnectorAdapter {
   return registry.resolve(platform, ctx);
 }
 ```
@@ -64,7 +64,7 @@ function loadAdapter(platform: Parameters<typeof registry.resolve>[0], ctx: Ctx)
 The web app uses a process singleton:
 
 ```typescript
-import { createDefaultAdapterInfrastructure } from "@agenticverdict/platform-adapters";
+import { createDefaultAdapterInfrastructure } from "@agenticverdict/data-connectors";
 
 const infra = createDefaultAdapterInfrastructure();
 const report = await infra.getHealth();

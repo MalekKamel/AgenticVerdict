@@ -1,9 +1,9 @@
 import { runWithTenantContext, type TenantContext } from "@agenticverdict/core";
 import {
   createSyntheticAdapter,
-  MockPlatformAdapter,
+  MockConnectorAdapter,
   testAdapterTenantId,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 import { describe, expect, it } from "vitest";
 
 import type { AgentInvocationContext } from "../interfaces";
@@ -92,7 +92,7 @@ describe("Phase 4 agent tools", () => {
       metricsStore: store,
       platform: {
         getAdapter: (platform) =>
-          new MockPlatformAdapter(platform, {
+          new MockConnectorAdapter(platform, {
             tenantId: testAdapterTenantId,
             records: [
               {
@@ -120,12 +120,12 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const tool = registry.get("compute_b2b_kpis_from_snapshots")!;
     const snapshot = {
-      platform: "meta",
+      connector: "meta",
       dateRange: { startInclusive: "2026-01-01", endInclusive: "2026-01-07" },
       records: [
         {
@@ -186,7 +186,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -203,7 +203,7 @@ describe("Phase 4 agent tools", () => {
         getAdapter: () =>
           createSyntheticAdapter("meta", {
             normalizeImpl: () => ({
-              platform: "meta",
+              connector: "meta",
               dateRange: { startInclusive: "2026-01-01", endInclusive: "2026-01-02" },
               records: [{ metricKey: "x", value: Number.NaN, capturedAt: "2026-01-01T00:00:00Z" }],
             }),
@@ -225,7 +225,7 @@ describe("Phase 4 agent tools", () => {
       metricsStore: memoryMetricsStore([]),
       platform: {
         getAdapter: (platform) =>
-          new MockPlatformAdapter(platform, {
+          new MockConnectorAdapter(platform, {
             tenantId: testAdapterTenantId,
             records: [
               {
@@ -247,7 +247,7 @@ describe("Phase 4 agent tools", () => {
       INVOCATION,
     );
     expect(out).toMatchObject({
-      platform: "ga4",
+      connector: "ga4",
       records: [{ metricKey: "sessions", value: 120 }],
     });
   });
@@ -261,7 +261,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: failingStore,
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -275,7 +275,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -289,7 +289,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const tool = registry.get("query_historical_metrics");
@@ -342,7 +342,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const summary = await registry
@@ -365,7 +365,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const chart = await registry.get("prepare_chart_data")!.execute(
@@ -394,7 +394,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const out = await registry
@@ -410,7 +410,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -424,7 +424,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const xs = [1, 1, 1, 1, 100];
@@ -446,7 +446,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const out = await registry
@@ -460,7 +460,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const out = await registry
@@ -473,7 +473,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await runWithTenantContext(TENANT, async () => {
@@ -493,7 +493,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
       companyContext: { configCache: cache },
     });
@@ -518,7 +518,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -533,14 +533,14 @@ describe("Phase 4 agent tools", () => {
     registerPhase4AgentTools(registry, {
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     expect(() =>
       registerPhase4AgentTools(registry, {
         metricsStore: memoryMetricsStore([]),
         platform: {
-          getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+          getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
         },
       }),
     ).toThrow(/already registered/);
@@ -556,7 +556,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     await expect(
@@ -574,7 +574,7 @@ describe("Phase 4 agent tools", () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
-        getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+        getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
     const out = await registry
@@ -596,7 +596,7 @@ describe("Phase 4 agent tools", () => {
     const range = { startInclusive: "2026-01-01", endInclusive: "2026-01-07" };
     const out = await fetchNormalizedSnapshotsForPlatformsParallel(["meta", "ga4"], range, {
       getAdapter: (platform) =>
-        new MockPlatformAdapter(platform, {
+        new MockConnectorAdapter(platform, {
           tenantId: testAdapterTenantId,
           records: [
             {

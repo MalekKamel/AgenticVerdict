@@ -21,7 +21,7 @@ Credential **key names** below match the exported `*CredentialKeys` constants in
 3. Optionally pass `appId`, `appSecret`, and `refreshToken` **or** `tokenToExchange` into `authenticate()` so the adapter can call `exchangeMetaLongLivedToken` (see `meta/oauth.ts`).
 4. Store the resulting **access token** securely; refresh per Meta’s rotation rules before expiry.
 
-### `PlatformCredentials` keys (`metaCredentialKeys`)
+### `ConnectorCredentials` keys (`metaCredentialKeys`)
 
 | Key                                 | Required     | Purpose                                                   |
 | ----------------------------------- | ------------ | --------------------------------------------------------- |

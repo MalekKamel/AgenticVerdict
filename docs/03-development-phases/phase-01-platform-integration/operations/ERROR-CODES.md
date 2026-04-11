@@ -2,7 +2,7 @@
 
 ## Typed platform errors (`PlatformErrorCode`)
 
-Defined on `PlatformError` in `packages/platform-adapters/src/errors.ts`. Specialized subclasses set `code` implicitly.
+Defined on `PlatformError` in `packages/data-connectors/src/errors.ts`. Specialized subclasses set `code` implicitly.
 
 | Code                | Error class (typical)      | Meaning                                                                           | What to do                                                                          |
 | ------------------- | -------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -12,8 +12,8 @@ Defined on `PlatformError` in `packages/platform-adapters/src/errors.ts`. Specia
 | `upstream_error`    | `PlatformError`            | Vendor 5xx or unexpected failure after classification.                            | Retry may already have run; check vendor status; open incident if persistent.       |
 | `not_found`         | `PlatformError`            | Resource missing at vendor (404-class).                                           | Confirm resource IDs and tenant linkage.                                            |
 | `circuit_open`      | `PlatformCircuitOpenError` | Circuit breaker is open; calls are short-circuited to protect the system.         | Wait for half-open recovery; fix upstream root cause; inspect consecutive failures. |
-| `not_registered`    | `PlatformError`            | Registry has no factory for the requested `PlatformType`.                         | Register adapter for that platform in app bootstrap.                                |
-| `missing_tenant_id` | `PlatformError`            | `BasePlatformAdapter` constructed without a non-empty `tenantId`.                 | Pass a real tenant id from request/job context before creating adapters.            |
+| `not_registered`    | `PlatformError`            | Registry has no factory for the requested `ConnectorType`.                        | Register adapter for that platform in app bootstrap.                                |
+| `missing_tenant_id` | `PlatformError`            | `BaseConnectorAdapter` constructed without a non-empty `tenantId`.                | Pass a real tenant id from request/job context before creating adapters.            |
 | `unknown`           | `PlatformError`            | Unclassified failure.                                                             | Inspect `cause` and logs; extend `error-classifier` if pattern repeats.             |
 
 ### Logging guidance

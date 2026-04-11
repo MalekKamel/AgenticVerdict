@@ -1,19 +1,19 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
-  Ga4PlatformAdapter,
-  GbpPlatformAdapter,
-  GscPlatformAdapter,
+  Ga4ConnectorAdapter,
+  GbpConnectorAdapter,
+  GscConnectorAdapter,
   MemoryPlatformCache,
-  MetaPlatformAdapter,
-  TikTokPlatformAdapter,
+  MetaConnectorAdapter,
+  TikTokConnectorAdapter,
   ga4CredentialKeys,
   gbpCredentialKeys,
   gscCredentialKeys,
   metaCredentialKeys,
   runNormalizationPipeline,
   tiktokCredentialKeys,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 import { createDefaultChaosState } from "../mock-servers/chaos";
 import { startPlatformMockGateway } from "../mock-servers/gateway";
@@ -39,7 +39,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
   it("Meta: authenticate, fetchMetrics, normalize, pipeline", async () => {
     const fetchImpl = createRewritingFetch(port);
     const cache = new MemoryPlatformCache();
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "t1",
@@ -51,7 +51,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
     });
     const raw = await adapter.fetchMetrics(range);
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("meta");
+    expect(norm.connector).toBe("meta");
     expect(norm.records.length).toBeGreaterThan(0);
     const piped = runNormalizationPipeline(norm);
     expect(piped.qualityScore).toBeGreaterThanOrEqual(0);
@@ -60,7 +60,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
 
   it("GA4: authenticate, fetchMetrics, normalize, pipeline", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new Ga4PlatformAdapter({
+    const adapter = new Ga4ConnectorAdapter({
       tenantId: "t-ga4-e2e",
       fetchImpl,
       requestTokenBucket: null,
@@ -72,14 +72,14 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
     });
     const raw = await adapter.fetchMetrics(range);
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("ga4");
+    expect(norm.connector).toBe("ga4");
     const piped = runNormalizationPipeline(norm);
     expect(piped.snapshot.records.length).toBeGreaterThanOrEqual(0);
   });
 
   it("GSC: authenticate, fetchMetrics, normalize, pipeline", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new GscPlatformAdapter({
+    const adapter = new GscConnectorAdapter({
       tenantId: "t-gsc-e2e",
       fetchImpl,
       requestTokenBucket: null,
@@ -91,7 +91,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
     });
     const raw = await adapter.fetchMetrics(range);
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("gsc");
+    expect(norm.connector).toBe("gsc");
     expect(norm.records.some((r) => r.metricKey === "gsc.search.clicks")).toBe(true);
     const piped = runNormalizationPipeline(norm);
     expect(piped.issues.length).toBeGreaterThanOrEqual(0);
@@ -99,7 +99,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
 
   it("GBP: authenticate, fetchMetrics, normalize, pipeline", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new GbpPlatformAdapter({
+    const adapter = new GbpConnectorAdapter({
       tenantId: "t-gbp-e2e",
       fetchImpl,
       requestTokenBucket: null,
@@ -110,14 +110,14 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
     });
     const raw = await adapter.fetchMetrics(range);
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("gbp");
+    expect(norm.connector).toBe("gbp");
     expect(norm.records.length).toBeGreaterThan(0);
     runNormalizationPipeline(norm);
   });
 
   it("TikTok (sandbox): authenticate, fetchMetrics, normalize, pipeline", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new TikTokPlatformAdapter({
+    const adapter = new TikTokConnectorAdapter({
       tenantId: "t-tiktok-e2e",
       fetchImpl,
       requestTokenBucket: null,
@@ -129,7 +129,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
     });
     const raw = await adapter.fetchMetrics(range);
     const norm = adapter.normalizeData(raw, range);
-    expect(norm.platform).toBe("tiktok");
+    expect(norm.connector).toBe("tiktok");
     expect(norm.records.length).toBeGreaterThan(0);
     runNormalizationPipeline(norm);
   });
@@ -146,7 +146,7 @@ describe("Phase 01 mock API — adapter E2E (auth → fetch → normalize → pi
       }
       return fetchImpl(input as RequestInfo, init);
     };
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl: countingFetch,
       requestTokenBucket: null,
       tenantId: "tenant-cache",

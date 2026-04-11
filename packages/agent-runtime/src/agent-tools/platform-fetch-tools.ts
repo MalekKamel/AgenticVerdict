@@ -1,10 +1,10 @@
 import type {
   DateRangeIso,
-  NormalizedPlatformSnapshot,
-  PlatformAdapter,
-} from "@agenticverdict/platform-adapters";
-import { parseNormalizedPlatformSnapshot } from "@agenticverdict/platform-adapters";
-import type { PlatformType } from "@agenticverdict/types";
+  NormalizedConnectorSnapshot,
+  ConnectorAdapter,
+} from "@agenticverdict/data-connectors";
+import { parseNormalizedConnectorSnapshot } from "@agenticverdict/data-connectors";
+import type { ConnectorType } from "@agenticverdict/types";
 
 import type { AgentInvocationContext, ITool } from "../interfaces";
 import { defineTool } from "../tools";
@@ -12,13 +12,13 @@ import { AgentToolError } from "./agent-tool-error";
 import { dateRangeToolInputSchema, parseToolArgs } from "./agent-tool-schemas";
 
 export interface PlatformFetchToolDeps {
-  getAdapter(platform: PlatformType): PlatformAdapter;
+  getAdapter(platform: ConnectorType): ConnectorAdapter;
   /** Optional hook to attach credentials before fetch (required for adapters that gate on authenticate). */
-  authenticateAdapter?: (adapter: PlatformAdapter) => Promise<void>;
+  authenticateAdapter?: (adapter: ConnectorAdapter) => Promise<void>;
 }
 
 function createSinglePlatformTool(
-  platform: PlatformType,
+  platform: ConnectorType,
   name: string,
   description: string,
   deps: PlatformFetchToolDeps,
@@ -42,7 +42,7 @@ function createSinglePlatformTool(
         }
         const raw = await adapter.fetchMetrics(range);
         const normalized = adapter.normalizeData(raw, range);
-        const checked = parseNormalizedPlatformSnapshot(normalized);
+        const checked = parseNormalizedConnectorSnapshot(normalized);
         if (!checked.success) {
           throw new AgentToolError(
             "execution_failed",
@@ -66,8 +66,8 @@ function createSinglePlatformTool(
 }
 
 export interface ParallelNormalizedPlatformFetchResult {
-  platform: PlatformType;
-  snapshot: NormalizedPlatformSnapshot;
+  platform: ConnectorType;
+  snapshot: NormalizedConnectorSnapshot;
 }
 
 /**
@@ -75,7 +75,7 @@ export interface ParallelNormalizedPlatformFetchResult {
  * Each adapter errors independently; the first rejection fails the aggregate promise.
  */
 export async function fetchNormalizedSnapshotsForPlatformsParallel(
-  platforms: readonly PlatformType[],
+  platforms: readonly ConnectorType[],
   range: DateRangeIso,
   deps: PlatformFetchToolDeps,
 ): Promise<ParallelNormalizedPlatformFetchResult[]> {
@@ -88,7 +88,7 @@ export async function fetchNormalizedSnapshotsForPlatformsParallel(
         }
         const raw = await adapter.fetchMetrics(range);
         const normalized = adapter.normalizeData(raw, range);
-        const checked = parseNormalizedPlatformSnapshot(normalized);
+        const checked = parseNormalizedConnectorSnapshot(normalized);
         if (!checked.success) {
           throw new AgentToolError(
             "execution_failed",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildScenarioRecords } from "@agenticverdict/platform-adapters";
+import { buildScenarioRecords } from "@agenticverdict/data-connectors";
 
 import {
   buildB2bFunnelSnapshotFromNormalizedSnapshots,
@@ -12,13 +12,13 @@ const dateRange = { startInclusive: "2026-01-01", endInclusive: "2026-01-07" };
 
 function metaSnapshotFromMock() {
   const records = buildScenarioRecords({
-    platform: "meta",
+    connector: "meta",
     scenario: "normal",
     seed: 42,
     dateRange,
   });
   return {
-    platform: "meta" as const,
+    connector: "meta" as const,
     dateRange,
     records,
     metadata: { normalizedAt: "2026-01-01T00:00:00.000Z", pipelineVersion: "test" },

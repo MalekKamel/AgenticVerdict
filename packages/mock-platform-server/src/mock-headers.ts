@@ -1,4 +1,4 @@
-import type { MockAdapterScenario } from "@agenticverdict/platform-adapters";
+import type { MockAdapterScenario } from "@agenticverdict/data-connectors";
 import type { FastifyRequest } from "fastify";
 
 const SCENARIOS: readonly MockAdapterScenario[] = [

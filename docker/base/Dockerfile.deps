@@ -1,0 +1,48 @@
+# syntax=docker/dockerfile:1
+# Shared pnpm install layer for api, worker, and web. Tag as agenticverdict/deps:local (see docs/docker/container-images.md).
+ARG NODE_VERSION=20
+
+FROM node:${NODE_VERSION}-bookworm-slim AS base
+WORKDIR /app
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates wget \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
+
+# Match API/worker runners (UID/GID 1001) so COPY from this image avoids --chown on node_modules.
+RUN groupadd --gid 1001 appuser \
+  && useradd --uid 1001 --gid appuser --shell=/bin/bash --create-home appuser
+
+FROM base AS deps
+ARG LOCKFILE_HASH=
+LABEL org.agenticverdict.deps.lockfile-hash="${LOCKFILE_HASH}"
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
+COPY apps/web/package.json ./apps/web/
+COPY apps/api/package.json ./apps/api/
+COPY apps/worker/package.json ./apps/worker/
+COPY packages/agent-runtime/package.json ./packages/agent-runtime/
+COPY packages/config/package.json ./packages/config/
+COPY packages/core/package.json ./packages/core/
+COPY packages/database/package.json ./packages/database/
+COPY packages/i18n/package.json ./packages/i18n/
+COPY packages/mock-platform-server/package.json ./packages/mock-platform-server/
+COPY packages/observability/package.json ./packages/observability/
+COPY packages/data-connectors/package.json ./packages/data-connectors/
+COPY packages/report-generator/package.json ./packages/report-generator/
+COPY packages/testing/package.json ./packages/testing/
+COPY packages/types/package.json ./packages/types/
+COPY tests/phase01-platform-integration/package.json ./tests/phase01-platform-integration/
+COPY configs ./configs
+COPY scripts ./scripts
+COPY eslint.config.mjs ./
+# Install as appuser so node_modules is 1001:1001 (see docs/docker/build-optimization-implemented.md).
+# Store cache uses a dedicated id so existing root-populated pnpm caches are not mass-chowned.
+RUN --mount=type=cache,target=/pnpm-cache,id=pnpm-appuser,sharing=shared \
+    chown -R appuser:appuser /app \
+    && chmod 777 /pnpm-cache \
+    && runuser -u appuser -- pnpm install --frozen-lockfile --store-dir /pnpm-cache

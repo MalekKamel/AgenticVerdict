@@ -116,7 +116,7 @@ interface CompanyConfig {
 }
 
 interface PlatformConfig {
-  platform: PlatformType;
+  platform: ConnectorType;
   enabled: boolean;
   credentials?: Record<string, string>; // From secure storage
   kpis: KPIConfig[]; // Platform-specific KPIs to track
@@ -131,7 +131,7 @@ interface PlatformConfig {
   };
 }
 
-type PlatformType = "meta" | "ga4" | "gsc" | "gbp" | "tiktok" | "custom";
+type ConnectorType = "meta" | "ga4" | "gsc" | "gbp" | "tiktok" | "custom";
 
 interface KPIConfig {
   id: string;
@@ -203,9 +203,9 @@ agenticverdict/
 │   │   │   └── seed/                 # Seed data
 │   │   └── package.json
 │   │
-│   ├── platform-adapters/            # Platform API adapters (@agenticverdict/platform-adapters)
+│   ├── platform-adapters/            # Platform API adapters (@agenticverdict/data-connectors)
 │   │   ├── src/
-│   │   │   ├── adapter.ts            # PlatformAdapter + BasePlatformAdapter
+│   │   │   ├── adapter.ts            # ConnectorAdapter + BaseConnectorAdapter
 │   │   │   ├── meta/                 # Meta Marketing API
 │   │   │   ├── ga4/                  # GA4 Data API
 │   │   │   ├── gsc/                  # Google Search Console
@@ -362,14 +362,14 @@ export function getTenantContext(): TenantContext | undefined {
 
 ## Platform Integration Requirements
 
-These rules apply to `@agenticverdict/platform-adapters` and any service that constructs adapters.
+These rules apply to `@agenticverdict/data-connectors` and any service that constructs adapters.
 
-| Requirement                   | Detail                                                                                                                                                                                                                                                                                                                               |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Mandatory `tenantId`**      | Every adapter that extends `BasePlatformAdapter` (Meta, GA4, GSC, GBP, TikTok, `MockPlatformAdapter`, and future platforms) MUST be constructed with a **non-empty** `tenantId` string in options (after trim). Empty or whitespace-only values are rejected at construction time via `PlatformError` with code `missing_tenant_id`. |
-| **No shared default segment** | Adapters must not silently fall back to a placeholder tenant segment for cache keys, metrics, or dead-letter correlation — that would risk cross-tenant cache hits and ambiguous operations data.                                                                                                                                    |
-| **Registry factories**        | Adapter registry factories SHOULD receive a context object that includes `tenantId` (or equivalent) and pass it into every adapter instance they create.                                                                                                                                                                             |
-| **Documentation**             | API surface and error semantics: [`docs/03-development-phases/phase-01-platform-integration/operations/API-REFERENCE.md`](../03-development-phases/phase-01-platform-integration/operations/API-REFERENCE.md) and [`ERROR-CODES.md`](../03-development-phases/phase-01-platform-integration/operations/ERROR-CODES.md).              |
+| Requirement                   | Detail                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mandatory `tenantId`**      | Every adapter that extends `BaseConnectorAdapter` (Meta, GA4, GSC, GBP, TikTok, `MockConnectorAdapter`, and future platforms) MUST be constructed with a **non-empty** `tenantId` string in options (after trim). Empty or whitespace-only values are rejected at construction time via `PlatformError` with code `missing_tenant_id`. |
+| **No shared default segment** | Adapters must not silently fall back to a placeholder tenant segment for cache keys, metrics, or dead-letter correlation — that would risk cross-tenant cache hits and ambiguous operations data.                                                                                                                                      |
+| **Registry factories**        | Adapter registry factories SHOULD receive a context object that includes `tenantId` (or equivalent) and pass it into every adapter instance they create.                                                                                                                                                                               |
+| **Documentation**             | API surface and error semantics: [`docs/03-development-phases/phase-01-platform-integration/operations/API-REFERENCE.md`](../03-development-phases/phase-01-platform-integration/operations/API-REFERENCE.md) and [`ERROR-CODES.md`](../03-development-phases/phase-01-platform-integration/operations/ERROR-CODES.md).                |
 
 ---
 

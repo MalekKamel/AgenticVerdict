@@ -10,13 +10,13 @@ import {
   type PlatformFetchToolDeps,
 } from "@agenticverdict/agent-runtime";
 import { ConfigManager, type CompanyConfig } from "@agenticverdict/config";
-import { parseNormalizedPlatformSnapshot } from "@agenticverdict/platform-adapters";
+import { parseNormalizedConnectorSnapshot } from "@agenticverdict/data-connectors";
 import { createTestCompanyConfig, createTestTenantContext } from "@agenticverdict/testing";
 import {
   generatedInsightSchema,
   type DataSourceProvenance,
   type GeneratedInsight,
-  type PlatformType,
+  type ConnectorType,
 } from "@agenticverdict/types";
 import {
   recordQueueJobDurationSeconds,
@@ -38,9 +38,9 @@ import {
 import { sendReportEmail } from "../services/email";
 import {
   createWorkerPlatformFetchToolDeps,
-  getEnabledTenantPlatforms,
-  toPlatformType,
-} from "../platform-adapter-factory";
+  getEnabledTenantConnectors,
+  toConnectorType,
+} from "../connector-factory";
 import { isRecipientSuppressed } from "../services/delivery-suppression-redis";
 import {
   isProductionFlowScenarioId,
@@ -105,20 +105,20 @@ function periodFromWorkflowJobConfig(
 
 function extractAnalysisDataSourcesFromPipeline(
   pipelineState: MarketingPipelineState,
-  platformsAnalyzed: readonly PlatformType[],
+  platformsAnalyzed: readonly ConnectorType[],
   dateRange: { start: string; end: string },
 ): DataSourceProvenance[] {
   const analysisStage = pipelineState.stages.find((s) => s.stage === "analysis");
-  const metricsByPlatform = new Map<PlatformType, Set<string>>();
+  const metricsByPlatform = new Map<ConnectorType, Set<string>>();
 
   if (analysisStage) {
     for (const step of analysisStage.result.steps) {
-      const checked = parseNormalizedPlatformSnapshot(step.result);
+      const checked = parseNormalizedConnectorSnapshot(step.result);
       if (!checked.success) {
         continue;
       }
       const snap = checked.data;
-      const platform = snap.platform as PlatformType;
+      const platform = snap.connector as ConnectorType;
       let set = metricsByPlatform.get(platform);
       if (!set) {
         set = new Set();
@@ -166,7 +166,7 @@ function foundationWorkflowResult(data: WorkflowTriggerJobData): WorkflowTrigger
 function toGeneratedInsights(
   data: WorkflowTriggerJobData,
   state: MarketingPipelineState,
-  platforms: PlatformType[],
+  platforms: ConnectorType[],
 ): GeneratedInsight[] {
   const analysisId = state.workflowId;
   const stageMap = new Map(state.stages.map((s) => [s.stage, s]));
@@ -194,10 +194,10 @@ async function runPipelineWorkflow(
 ): Promise<WorkflowTriggerJobResult> {
   const validatedData = workflowTriggerJobDataSchema.parse(data);
   const requestedPlatformsRaw = validatedData.config.platforms ?? [];
-  const requestedPlatforms: PlatformType[] = [];
+  const requestedPlatforms: ConnectorType[] = [];
   const invalidPlatforms: string[] = [];
   for (const requested of requestedPlatformsRaw) {
-    const platform = toPlatformType(requested);
+    const platform = toConnectorType(requested);
     if (platform) {
       requestedPlatforms.push(platform);
     } else {
@@ -212,7 +212,7 @@ async function runPipelineWorkflow(
     requestId: validatedData.requestId,
     companyConfig,
   });
-  const enabledPlatforms = getEnabledTenantPlatforms(tenant);
+  const enabledPlatforms = getEnabledTenantConnectors(tenant);
   const effectivePlatforms =
     requestedPlatforms.length > 0 ? requestedPlatforms : [...enabledPlatforms];
   const disabledRequestedPlatforms = effectivePlatforms.filter(

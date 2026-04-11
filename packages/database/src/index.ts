@@ -7,7 +7,6 @@ export {
   type RetryOptions,
 } from "./client";
 export { dbScoped } from "./db-scoped";
-export { migrationsFolder, runMigrations, runMigrationsSafe } from "./migrate";
 export { createUpstashRedisFromEnv } from "./redis";
 export * from "./schema/index";
 export { tenantScopedCacheKey } from "./tenant-cache-keys";
@@ -27,3 +26,4 @@ export {
   createFeatureFlagService,
   type FeatureFlagContext,
 } from "./feature-flag-service";
+export { seedConnectorRegistry } from "./seed-connectors";

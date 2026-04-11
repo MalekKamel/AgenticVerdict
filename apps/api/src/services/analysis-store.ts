@@ -7,7 +7,7 @@ import type {
   DataSourceProvenance,
   GeneratedInsight,
   MarketingVerdict,
-  PlatformType,
+  ConnectorType,
 } from "@agenticverdict/types";
 import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
 
@@ -348,7 +348,7 @@ export function persistWorkflowResultForTenant(
   const verdicts = maybeVerdict.success ? [maybeVerdict.data] : [];
   const platformsAnalyzed = (workflowResult.processingMetadata?.platformsAnalyzed ?? [
     "meta",
-  ]) as PlatformType[];
+  ]) as ConnectorType[];
   const fromWorker = workflowResult.processingMetadata?.analysisDataSources;
   const dataSources: DataSourceProvenance[] =
     fromWorker !== undefined && fromWorker.length > 0

@@ -1,4 +1,4 @@
-import { createSyntheticAdapter } from "@agenticverdict/platform-adapters";
+import { createSyntheticAdapter } from "@agenticverdict/data-connectors";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";

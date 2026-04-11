@@ -11,6 +11,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 1. Core Domain Models and Types
 
 **What It Is:**
+
 - CompanyConfig interface with all nested types
 - PlatformConfig interface
 - KPIConfig interface
@@ -18,6 +19,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - Report domain models
 
 **Why Phase 1:**
+
 - Every phase depends on these types
 - Changing them later requires cascading changes
 - Type safety foundation
@@ -27,12 +29,14 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 2. Configuration Schema and Validation System
 
 **What It Is:**
+
 - Zod schemas for all configuration types
 - Configuration versioning system with migrations
 - ConfigManager class
 - Environment-specific configuration handling
 
 **Why Phase 1:**
+
 - Core mechanism for multi-tenancy
 - Configuration schema changes require complex migrations
 - Multi-tenancy foundation
@@ -42,12 +46,14 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 3. Multi-Tenancy Architecture Core
 
 **What It Is:**
+
 - AsyncLocalStorage-based tenant context propagation
 - Tenant context middleware
 - Tenant-scoped database access
 - Row-Level Security (RLS) policies
 
 **Why Phase 1:**
+
 - Adding multi-tenancy later requires rewriting every query
 - Security foundation
 - Cannot be retrofitted safely
@@ -57,6 +63,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 4. Database Schema Foundations
 
 **What It Is:**
+
 - Core tables: companies, platform_data, reports
 - JSONB columns for flexible configuration
 - Row-Level Security policies
@@ -64,6 +71,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - Drizzle ORM schema definitions
 
 **Why Phase 1:**
+
 - Database schema changes are most expensive to migrate
 - RLS must be established from start
 - Tenant isolation strategy depends on this
@@ -73,12 +81,14 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 5. Platform Adapter Interface and Base Classes
 
 **What It Is:**
-- PlatformAdapter interface defining the contract
+
+- ConnectorAdapter interface defining the contract
 - AdapterFactory for registering and creating adapters
 - Base adapter class with common functionality
 - Rate limiting and circuit breaker patterns
 
 **Why Phase 1:**
+
 - Interface contract referenced by all consumers
 - Plugin architecture depends on this
 - Changing interface breaks all implementations
@@ -88,6 +98,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 6. Agent Runtime Foundation
 
 **What It Is:**
+
 - LangChain integration
 - Tool interface definitions
 - Agent creation pattern with company context injection
@@ -95,6 +106,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - Retry and fallback strategies
 
 **Why Phase 1:**
+
 - Tightly coupled with platform adapters and configuration
 - All AI-powered features depend on this
 - Changing context injection requires rewriting workflows
@@ -104,6 +116,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 7. Security and Authentication Foundations
 
 **What It Is:**
+
 - JWT token generation and verification
 - Authentication middleware
 - Encrypted credential storage
@@ -111,6 +124,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - CORS configuration
 
 **Why Phase 1:**
+
 - Adding authentication later requires securing every endpoint
 - Credential encryption cannot be added later safely
 - Multi-tenancy security depends on this
@@ -120,6 +134,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 8. Observability and Monitoring Base Infrastructure
 
 **What It Is:**
+
 - Structured logging with Pino
 - Prometheus metrics
 - Error tracking with Sentry
@@ -127,6 +142,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - Correlation ID propagation
 
 **Why Phase 1:**
+
 - Adding observability later requires instrumenting everything
 - Debugging multi-tenant issues requires proper tracing
 - Production readiness foundation
@@ -136,12 +152,14 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 9. Internationalization (i18n) Infrastructure
 
 **What It Is:**
+
 - i18next configuration
 - Locale formatters (currency, date, number)
 - RTL/LTR text direction support
 - Translation file structure
 
 **Why Phase 1:**
+
 - Adding i18n later requires replacing every hardcoded string
 - RTL support affects CSS/layout
 - Multi-region support requirement
@@ -151,6 +169,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 ### 10. Monorepo and Build Infrastructure
 
 **What It Is:**
+
 - Turborepo configuration
 - pnpm workspace configuration
 - TypeScript configuration with project references
@@ -158,6 +177,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 - Build pipeline
 
 **Why Phase 1:**
+
 - Migrating to monorepo later is extremely complex
 - Must be established before any code is written
 

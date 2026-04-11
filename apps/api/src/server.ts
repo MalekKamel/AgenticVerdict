@@ -21,6 +21,10 @@ import { registerWorkflowRoutes } from "./routes/v1/workflows";
 import "./middleware/jwt-tenant-context";
 import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
 
+/**
+ * Swagger plugins use Fastify's default `FastifyBaseLogger` generic; this server uses Pino's `Logger`
+ * for `loggerInstance`. Cast at the Swagger boundary only (see `@fastify/swagger` typings).
+ */
 export async function buildApiServer(): Promise<FastifyInstance> {
   const redis = createUpstashRedisFromEnv();
   const app = Fastify({
@@ -45,7 +49,7 @@ export async function buildApiServer(): Promise<FastifyInstance> {
     app.addContentTypeParser(mime, { parseAs: "buffer" }, binaryBodyParser);
   }
 
-  await registerSwagger(app);
+  await registerSwagger(app as unknown as FastifyInstance);
 
   app.get(
     "/metrics",
@@ -112,7 +116,7 @@ export async function buildApiServer(): Promise<FastifyInstance> {
     { prefix: "/api/v1" },
   );
 
-  await registerSwaggerUi(app);
+  await registerSwaggerUi(app as unknown as FastifyInstance);
 
-  return app;
+  return app as unknown as FastifyInstance;
 }

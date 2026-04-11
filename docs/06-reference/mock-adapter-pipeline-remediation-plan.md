@@ -31,8 +31,8 @@ The incremental remediation plan (Approach A) has been implemented across Phases
 ### Completed by Phase
 
 - **Phase 1 - Platform Tool Integration:** Completed in `agent-runtime` (specialized agent options, platform tool wiring, auto-tool registration updates, and targeted tests).
-- **Phase 2 - Worker Adapter Factory:** Completed in `worker` (`platform-adapter-factory`, tenant platform gating, pipeline dependency injection).
-- **Phase 3 - Mock Adapter Data Enhancement:** Completed in `platform-adapters` with deterministic `realistic` scenario and platform-native metric keys (`meta.*`, `ga4.*`, `gsc.*`, `gbp.*`, `tiktok.*`).
+- **Phase 2 - Worker Adapter Factory:** Completed in `worker` (`connector-factory.ts`, tenant connector gating, pipeline dependency injection).
+- **Phase 3 - Mock Adapter Data Enhancement:** Completed in `packages/data-connectors` with deterministic `realistic` scenario and platform-native metric keys (`meta.*`, `ga4.*`, `gsc.*`, `gbp.*`, `tiktok.*`).
 - **Phase 4 - Dynamic Platform Discovery:** Completed via runtime platform derivation from tenant channels and propagation to pipeline prompt variables.
 - **Phase 5 - Error Handling and Validation:** Completed via platform request validation (invalid/disabled platform handling with early failure metadata).
 
@@ -41,8 +41,8 @@ The incremental remediation plan (Approach A) has been implemented across Phases
 The following targeted validations were executed successfully during implementation:
 
 ```bash
-pnpm --filter @agenticverdict/platform-adapters test -- mock-static-data.test.ts mock-adapter-factory.test.ts mock-adapter-metrics.integration.test.ts
-pnpm --filter @agenticverdict/platform-adapters typecheck
+pnpm --filter @agenticverdict/data-connectors test -- mock-static-data.test.ts mock-adapter-factory.test.ts mock-adapter-metrics.integration.test.ts
+pnpm --filter @agenticverdict/data-connectors typecheck
 pnpm --filter @agenticverdict/worker typecheck
 pnpm --filter @agenticverdict/worker test -- src/queues/report-queues.test.ts
 pnpm --filter @agenticverdict/agent-runtime test -- src/specialized-marketing-agents.test.ts src/marketing-pipeline.test.ts
@@ -156,12 +156,12 @@ platforms: vars.platforms ?? "Meta, GA4, GSC, GBP, TikTok",
 
 ### Quaternary Issue: Mock Adapter Data Limitations
 
-**Location:** `packages/platform-adapters/src/mock-adapter.ts`
+**Location:** `packages/data-connectors/src/mock-adapter.ts`
 
 **Current Mock Implementation:**
 
 ```typescript
-normalizeData(rawData: unknown, dateRange: DateRangeIso): NormalizedPlatformSnapshot {
+normalizeData(rawData: unknown, dateRange: DateRangeIso): NormalizedConnectorSnapshot {
   if (this.records) {
     return { platform: this.platform, dateRange, records: [...this.records] };
   }
@@ -213,7 +213,7 @@ Worker (report-queues.ts)
 Platform Adapter Factory (needs tenant config + cache + circuit breaker)
   ↓ provides
 PlatformFetchToolDeps {
-  getAdapter: (platform) => PlatformAdapter,
+  getAdapter: (platform) => ConnectorAdapter,
   authenticateAdapter?: (adapter) => Promise<void>
 }
   ↓ passed to
@@ -231,7 +231,7 @@ Marketing Agents (analysis, insights, verdict)
 ### Finding 3: Mock Adapter Data Structure Gaps
 
 **Severity:** Medium  
-**Location:** `packages/platform-adapters/src/mock-adapter.ts`
+**Location:** `packages/data-connectors/src/mock-adapter.ts`
 
 **What Real Adapters Return:**
 
@@ -307,7 +307,7 @@ export interface AgentSystemConfig {
 
   // Tool Dependencies (unified)
   metricsStore?: MarketingMetricsStore;
-  platformAdapterGetter?: (platform: PlatformType) => PlatformAdapter;
+  platformAdapterGetter?: (platform: ConnectorType) => ConnectorAdapter;
   configCache?: TenantScopedTtlCache<unknown>;
 
   // Tool Selection (feature flags)
@@ -393,7 +393,7 @@ export function getAgentSystem(): AgentSystem {
       enableB2bKpiTools: true,
       platformAdapterGetter: (platform) => {
         const tenant = requireTenantContext();
-        return createPlatformAdapter({ platform, tenantId: tenant.tenantId });
+        return createConnectorAdapter({ platform, tenantId: tenant.tenantId });
       },
       metricsStore: createDrizzleMarketingMetricsStore(getDb()),
     });
@@ -563,79 +563,11 @@ const createAgent = (
 
 **Estimated Effort:** 1-2 days
 
-#### Step 2.1: Create Platform Adapter Factory Helper
+#### Step 2.1: Worker connector factory (canonical implementation)
 
-**File:** `apps/worker/src/platform-adapter-factory.ts` (NEW FILE)
+**File:** `apps/worker/src/connector-factory.ts`
 
-```typescript
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
-import type { PlatformAdapter, PlatformType } from "@agenticverdict/platform-adapters";
-import type { TenantContext } from "@agenticverdict/core";
-import { createTenantScopedTtlCache } from "@agenticverdict/observability";
-import type { PlatformFetchToolDeps } from "@agenticverdict/agent-runtime";
-
-interface WorkerPlatformAdapterDeps {
-  tenant: TenantContext;
-  cache?: unknown; // Cache implementation
-  circuitBreaker?: unknown; // Circuit breaker implementation
-}
-
-/**
- * Creates platform adapters for a tenant's enabled marketing channels.
- */
-export function createPlatformAdapterFactory(deps: WorkerPlatformAdapterDeps) {
-  const { tenant } = deps;
-  const enabledPlatforms = tenant.config.marketing.channels
-    .filter((ch) => ch.enabled)
-    .map((ch) => ch.platform);
-
-  const adapterCache = new Map<PlatformType, PlatformAdapter>();
-
-  const getAdapter = (platform: PlatformType): PlatformAdapter => {
-    if (!enabledPlatforms.includes(platform)) {
-      throw new Error(`Platform ${platform} is not enabled for tenant ${tenant.tenantId}`);
-    }
-
-    if (adapterCache.has(platform)) {
-      return adapterCache.get(platform)!;
-    }
-
-    const adapter = createPlatformAdapter({
-      platform,
-      tenantId: tenant.tenantId,
-      cache: deps.cache ?? createTenantScopedTtlCache(tenant.tenantId),
-      circuitBreaker: deps.circuitBreaker,
-    });
-
-    adapterCache.set(platform, adapter);
-    return adapter;
-  };
-
-  /**
-   * Authenticates an adapter with tenant credentials (placeholder for credential loading).
-   */
-  const authenticateAdapter = async (adapter: PlatformAdapter): Promise<void> => {
-    // TODO: Load credentials from secure store based on platform and tenant
-    // For mock mode, empty credentials work
-    await adapter.authenticate({});
-  };
-
-  return { getAdapter, authenticateAdapter };
-}
-
-/**
- * Creates Phase 4 platform dependencies for the marketing pipeline.
- */
-export function createPlatformFetchToolDeps(
-  deps: WorkerPlatformAdapterDeps,
-): PlatformFetchToolDeps {
-  const factory = createPlatformAdapterFactory(deps);
-  return {
-    getAdapter: factory.getAdapter,
-    authenticateAdapter: factory.authenticateAdapter,
-  };
-}
-```
+The worker exposes **`createWorkerPlatformFetchToolDeps`**, which builds **`PlatformFetchToolDeps`** for `runMarketingAgentPipeline` by delegating to **`createConnectorAdapter`** (`@agenticverdict/data-connectors`) for each tenant-enabled channel. Refer to the source file for the exact constructor options (mock scenario, seed, tenant gating).
 
 #### Step 2.2: Integrate Platform Adapter Factory into Worker
 
@@ -643,7 +575,7 @@ export function createPlatformFetchToolDeps(
 
 ```typescript
 // Add import
-import { createPlatformFetchToolDeps } from "../platform-adapter-factory";
+import { createWorkerPlatformFetchToolDeps } from "../connector-factory";
 import { requireTenantContext } from "@agenticverdict/core";
 
 async function runPipelineWorkflow(
@@ -662,7 +594,7 @@ async function runPipelineWorkflow(
   );
 
   // ✅ Create platform adapter dependencies
-  const platformDeps = createPlatformFetchToolDeps({ tenant });
+  const platformDeps = createWorkerPlatformFetchToolDeps({ tenant });
 
   // ✅ Create company context dependencies
   const companyContextDeps = {
@@ -696,7 +628,7 @@ async function runPipelineWorkflow(
 
 #### Step 3.1: Create Realistic Mock Data Scenarios
 
-**File:** `packages/platform-adapters/src/mock-static-data.ts` (ENHANCE)
+**File:** `packages/data-connectors/src/mock-static-data.ts` (ENHANCE)
 
 ```typescript
 export interface MockAdapterScenario {
@@ -708,7 +640,7 @@ export interface MockAdapterScenario {
  * Builds realistic mock metric records for a platform.
  */
 export function buildRealisticMockRecords(
-  platform: PlatformType,
+  platform: ConnectorType,
   dateRange: DateRangeIso,
 ): NormalizedMetricRecord[] {
   const records: NormalizedMetricRecord[] = [];
@@ -788,13 +720,13 @@ export function buildRealisticMockRecords(
 
 #### Step 3.2: Update Mock Adapter Factory
 
-**File:** `packages/platform-adapters/src/mock-adapter-factory.ts`
+**File:** `packages/data-connectors/src/mock-adapter-factory.ts`
 
 ```typescript
 import { buildRealisticMockRecords } from "./mock-static-data";
 
 export class MockAdapterFactory {
-  static create(options: MockPlatformAdapterOptions): MockPlatformAdapter {
+  static create(options: MockConnectorAdapterOptions): MockConnectorAdapter {
     const { platform, scenario = "normal", ...rest } = options;
 
     // ✅ Use realistic records by default
@@ -802,7 +734,7 @@ export class MockAdapterFactory {
       options.records ??
       (scenario === "realistic" ? buildRealisticMockRecords(platform, defaultDateRange) : []);
 
-    return new MockPlatformAdapter(platform, {
+    return new MockConnectorAdapter(platform, {
       ...rest,
       records,
       // ... other options
@@ -960,7 +892,7 @@ describe("Specialized Marketing Agents with Platform Tools", () => {
   it("production agent includes platform fetch tools when platformDeps provided", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const platformDeps = {
-      getAdapter: (p) => new MockPlatformAdapter(p, { tenantId: testAdapterTenantId }),
+      getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       authenticateAdapter: async (a) => await a.authenticate({}),
     };
 
@@ -1172,9 +1104,9 @@ curl -X POST http://localhost:4000/api/v1/workflows/trigger \
 | ------------------------------------------------------------ | ---------------------------- | ----- |
 | `packages/agent-runtime/src/specialized-marketing-agents.ts` | Add platform tools to agents | 1     |
 | `packages/agent-runtime/src/marketing-pipeline.ts`           | Pass deps to agents          | 1     |
-| `apps/worker/src/platform-adapter-factory.ts`                | NEW: Platform factory        | 2     |
+| `apps/worker/src/connector-factory.ts`                       | Worker connector wiring      | 2     |
 | `apps/worker/src/queues/report-queues.ts`                    | Use platform factory         | 2     |
-| `packages/platform-adapters/src/mock-static-data.ts`         | Enhance mock data            | 3     |
+| `packages/data-connectors/src/mock-static-data.ts`           | Enhance mock data            | 3     |
 | `packages/agent-runtime/src/specialized-marketing-agents.ts` | Dynamic platform list        | 4     |
 
 ### Key Interfaces
@@ -1182,8 +1114,8 @@ curl -X POST http://localhost:4000/api/v1/workflows/trigger \
 ```typescript
 // Platform fetch tool dependencies
 interface PlatformFetchToolDeps {
-  getAdapter(platform: PlatformType): PlatformAdapter;
-  authenticateAdapter?: (adapter: PlatformAdapter) => Promise<void>;
+  getAdapter(platform: ConnectorType): ConnectorAdapter;
+  authenticateAdapter?: (adapter: ConnectorAdapter) => Promise<void>;
 }
 
 // Marketing pipeline options (updated)

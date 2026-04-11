@@ -270,14 +270,14 @@ The Phase 0 Foundation implementation has been **successfully completed** with a
 
 #### ✅ Implemented
 
-**Platform Adapters (`@agenticverdict/platform-adapters`):**
+**Platform Adapters (`@agenticverdict/data-connectors`):**
 
-- `PlatformAdapter` interface defined
-- `BasePlatformAdapter` abstract class with exponential backoff + circuit breaker
+- `ConnectorAdapter` interface defined
+- `BaseConnectorAdapter` abstract class with exponential backoff + circuit breaker
 - `createAdapterRegistry` for adapter management
 - `PlatformError` hierarchy
-- `NormalizedPlatformSnapshot` / `PlatformDataNormalizer` types
-- `MockPlatformAdapter`, `createSyntheticAdapter`, `useMockAdapter`
+- `NormalizedConnectorSnapshot` / `ConnectorDataNormalizer` types
+- `MockConnectorAdapter`, `createSyntheticAdapter`, `useMockAdapter`
 - Unit tests: breaker, backoff, registry, mock
 - Package `README.md` with integration guide and Phase 1 deferrals
 
@@ -364,7 +364,7 @@ _No critical gaps identified._
 
 ✅ **PASSED** — Platform adapter pattern established
 
-- `PlatformAdapter` interface defined
+- `ConnectorAdapter` interface defined
 - Adapter registry for dynamic loading
 - Mock adapters for testing
 

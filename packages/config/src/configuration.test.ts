@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   ConfigurationService,
   canEnableMocksViaEnv,
-  isMockEnabledForPlatform,
+  isMockEnabledForConnector,
 } from "./configuration";
 
 describe("ConfigurationService", () => {
@@ -33,7 +33,7 @@ describe("ConfigurationService", () => {
     process.env.AGENTICVERDICT_MOCK_GA4 = "1";
     const cfg = ConfigurationService.load();
     expect(cfg.adapters.mocks.enabled).toBe(true);
-    expect(cfg.adapters.mocks.platforms).toEqual(["ga4"]);
+    expect(cfg.adapters.mocks.connectors).toEqual(["ga4"]);
   });
 });
 
@@ -47,14 +47,14 @@ describe("canEnableMocksViaEnv", () => {
   });
 });
 
-describe("isMockEnabledForPlatform (config package)", () => {
+describe("isMockEnabledForConnector (config package)", () => {
   it("matches platform-specific override semantics", () => {
     const env = {
       NODE_ENV: "development",
       AGENTICVERDICT_USE_MOCK_ADAPTERS: "1",
       AGENTICVERDICT_MOCK_META: "0",
     } as NodeJS.ProcessEnv;
-    expect(isMockEnabledForPlatform("meta", env)).toBe(false);
-    expect(isMockEnabledForPlatform("ga4", env)).toBe(true);
+    expect(isMockEnabledForConnector("meta", env)).toBe(false);
+    expect(isMockEnabledForConnector("ga4", env)).toBe(true);
   });
 });

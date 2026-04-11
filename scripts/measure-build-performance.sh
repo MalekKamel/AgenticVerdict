@@ -34,7 +34,7 @@ echo "Building shared deps layer -> ${DEPS_TAG}"
 docker buildx build \
   --progress=plain \
   --load \
-  -f "${ROOT_DIR}/packages/docker/base/Dockerfile.deps" \
+  -f "${ROOT_DIR}/docker/base/Dockerfile.deps" \
   -t "${DEPS_TAG}" \
   "${ROOT_DIR}"
 
@@ -45,7 +45,7 @@ if [ "$SERVICE" = "worker" ]; then
   docker buildx build \
     --progress=plain \
     --load \
-    -f "${ROOT_DIR}/packages/docker/base/Dockerfile.chromium" \
+    -f "${ROOT_DIR}/docker/base/Dockerfile.chromium" \
     -t "${CHROMIUM_TAG}" \
     "${ROOT_DIR}"
   build_args+=(--build-arg "CHROMIUM_IMAGE=${CHROMIUM_TAG}")

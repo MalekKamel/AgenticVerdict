@@ -4,7 +4,7 @@ This document describes how to run the AgenticVerdict API and worker with **mock
 
 ## Enable mock adapters globally
 
-When mock mode is on, platform fetches use `@agenticverdict/platform-adapters` mock factories instead of live vendor APIs.
+When mock mode is on, connector fetches use **`@agenticverdict/data-connectors`** mock factories instead of live vendor APIs.
 
 ```bash
 export AGENTICVERDICT_USE_MOCK_ADAPTERS=1

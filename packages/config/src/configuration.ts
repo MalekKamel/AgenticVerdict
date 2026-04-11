@@ -1,13 +1,13 @@
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 
 import { IS_PRODUCTION, NODE_ENV } from "./build-constants";
 import {
-  mockAdapterPlatformSchema,
+  mockAdapterConnectorSchema,
   runtimeConfigSchema,
   type RuntimeConfig,
 } from "./schemas/runtime-config";
 
-const ALL_MOCK_PLATFORMS = mockAdapterPlatformSchema.options as readonly PlatformType[];
+const ALL_MOCK_CONNECTORS = mockAdapterConnectorSchema.options as readonly ConnectorType[];
 
 function parseBinaryFlag(value: string | undefined, flagName: string): boolean | undefined {
   if (value === undefined) {
@@ -42,38 +42,38 @@ export function canEnableMocksViaEnv(env: NodeJS.ProcessEnv = process.env): bool
  * Per-platform mock enablement from environment (Layer 2).
  * Preserves precedence: production/staging guardrails, then per-platform override, then master flag.
  */
-export function isMockEnabledForPlatform(
-  platform: PlatformType,
+export function isMockEnabledForConnector(
+  connector: ConnectorType,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   const nodeEnv = String(env.NODE_ENV ?? "");
   const masterRaw = env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
-  const platformKey = `AGENTICVERDICT_MOCK_${platform.toUpperCase()}`;
-  const platformRaw = env[platformKey];
+  const connectorKey = `AGENTICVERDICT_MOCK_${connector.toUpperCase()}`;
+  const connectorRaw = env[connectorKey];
 
   const master = parseBinaryFlag(masterRaw, "AGENTICVERDICT_USE_MOCK_ADAPTERS");
-  const platformOverride = parseBinaryFlag(platformRaw, platformKey);
+  const connectorOverride = parseBinaryFlag(connectorRaw, connectorKey);
 
   if (nodeEnv === "production" || nodeEnv === "staging") {
-    if (master === true || platformOverride === true) {
+    if (master === true || connectorOverride === true) {
       throw new Error(
-        `[SECURITY] Mock adapters cannot be enabled in ${nodeEnv} environment for platform "${platform}"`,
+        `[SECURITY] Mock adapters cannot be enabled in ${nodeEnv} environment for connector "${connector}"`,
       );
     }
     return false;
   }
 
-  if (Object.prototype.hasOwnProperty.call(env, platformKey)) {
-    return platformOverride ?? false;
+  if (Object.prototype.hasOwnProperty.call(env, connectorKey)) {
+    return connectorOverride ?? false;
   }
   return master ?? false;
 }
 
-function mockEnabledPlatformsFromEnv(env: NodeJS.ProcessEnv): PlatformType[] {
+function mockEnabledConnectorsFromEnv(env: NodeJS.ProcessEnv): ConnectorType[] {
   if (!canEnableMocksViaEnv(env)) {
     return [];
   }
-  return ALL_MOCK_PLATFORMS.filter((p) => isMockEnabledForPlatform(p, env));
+  return ALL_MOCK_CONNECTORS.filter((c) => isMockEnabledForConnector(c, env));
 }
 
 function readMockScenarioMap(env: NodeJS.ProcessEnv): Record<string, string> | undefined {
@@ -85,12 +85,12 @@ function readMockScenarioMap(env: NodeJS.ProcessEnv): Record<string, string> | u
 }
 
 function buildRuntimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
-  const mockPlatforms = mockEnabledPlatformsFromEnv(env);
+  const mockConnectors = mockEnabledConnectorsFromEnv(env);
   const config: RuntimeConfig = {
     adapters: {
       mocks: {
-        enabled: mockPlatforms.length > 0,
-        platforms: [...mockPlatforms],
+        enabled: mockConnectors.length > 0,
+        connectors: [...mockConnectors],
         scenarios: readMockScenarioMap(env),
       },
     },
@@ -127,6 +127,6 @@ export const config = {
   },
   runtime: (env?: NodeJS.ProcessEnv) => ConfigurationService.load(env),
   mocksEnabled: (env?: NodeJS.ProcessEnv) => ConfigurationService.areMockAdaptersEnabled(env),
-  isMockEnabledForPlatform: (platform: PlatformType, env?: NodeJS.ProcessEnv) =>
-    isMockEnabledForPlatform(platform, env),
+  isMockEnabledForConnector: (connector: ConnectorType, env?: NodeJS.ProcessEnv) =>
+    isMockEnabledForConnector(connector, env),
 };

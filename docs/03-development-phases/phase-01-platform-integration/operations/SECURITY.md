@@ -1,6 +1,6 @@
 # Security — Phase 01 platform integration
 
-Centralized security model for `@agenticverdict/platform-adapters`, vendor HTTP clients, and how they fit with tenancy and operations. Use this with [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md), [ARCHITECTURE-AND-DATA-FLOW.md](./ARCHITECTURE-AND-DATA-FLOW.md), and [DISASTER-RECOVERY.md](./DISASTER-RECOVERY.md).
+Centralized security model for `@agenticverdict/data-connectors`, vendor HTTP clients, and how they fit with tenancy and operations. Use this with [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md), [ARCHITECTURE-AND-DATA-FLOW.md](./ARCHITECTURE-AND-DATA-FLOW.md), and [DISASTER-RECOVERY.md](./DISASTER-RECOVERY.md).
 
 ---
 
@@ -38,7 +38,7 @@ This is not a formal STRIDE write-up; expand in a dedicated security review befo
 
 **dbScoped:** All tenant-scoped database work should run inside `dbScoped` from `@agenticverdict/database`, which opens a transaction and sets `app.current_tenant_id` to match the active tenant context. Missing context throws; this blocks accidental unscoped access.
 
-**Platform adapters:** When using the shared cache, always pass a real `tenantId` in `BasePlatformAdapterOptions` so cache keys cannot collide across tenants (see architecture doc).
+**Platform adapters:** When using the shared cache, always pass a real `tenantId` in `BaseConnectorAdapterOptions` so cache keys cannot collide across tenants (see architecture doc).
 
 **References:** `packages/core/src/tenant-context.ts`, `packages/database/src/db-scoped.ts`, `packages/database/migrations/0000_initial_schema.sql`, `packages/database/test/rls.integration.test.ts`, [multi-tenancy-architecture.md](../../phase-00-foundation/multi-tenancy-architecture.md).
 
@@ -46,7 +46,7 @@ This is not a formal STRIDE write-up; expand in a dedicated security review befo
 
 ## Credentials and token handling
 
-**OAuth and refresh:** Vendor-specific OAuth helpers live under `packages/platform-adapters/src` (for example `meta/oauth.ts`, `google/oauth.ts`, `ga4/oauth.ts`, `tiktok/oauth.ts`). Implementations exchange authorization codes and refresh tokens per vendor docs; treat refresh tokens as highly sensitive.
+**OAuth and refresh:** Vendor-specific OAuth helpers live under `packages/data-connectors/src` (for example `meta/oauth.ts`, `google/oauth.ts`, `ga4/oauth.ts`, `tiktok/oauth.ts`). Implementations exchange authorization codes and refresh tokens per vendor docs; treat refresh tokens as highly sensitive.
 
 **Never log secrets:** Do not log credential objects, query strings containing secrets, or full `Authorization` headers. Adapter code should assume upstream decryption already occurred and plaintext is only in memory for the request.
 
@@ -110,7 +110,7 @@ Maps [acceptance-criteria.md](../acceptance-criteria.md) Section 5 items to repo
 
 | ID           | Criterion (short)             | Evidence in repo / next step                                                                                                                                                                                                                                                    |
 | ------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AC-5.1.1** | OAuth 2.0 flows               | `packages/platform-adapters/src/meta/oauth.ts`, `google/oauth.ts`, `ga4/oauth.ts`, `tiktok/oauth.ts`; [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md)                                                                                                                    |
+| **AC-5.1.1** | OAuth 2.0 flows               | `packages/data-connectors/src/meta/oauth.ts`, `google/oauth.ts`, `ga4/oauth.ts`, `tiktok/oauth.ts`; [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md)                                                                                                                      |
 | **AC-5.1.2** | Tokens stored securely        | **Verify in deployment** (encryption at rest, secret manager). Design direction: `CLAUDE.md`, [ARCHITECTURE-AND-DATA-FLOW.md](./ARCHITECTURE-AND-DATA-FLOW.md) (“Future `@agenticverdict/database`”)                                                                            |
 | **AC-5.1.3** | Token refresh                 | Refresh paths in `tiktok/oauth.ts`, Meta/Google GA4 modules; tests e.g. `tiktok/oauth.test.ts`, `meta/oauth.test.ts`, `ga4/oauth.test.ts`                                                                                                                                       |
 | **AC-5.1.4** | API credentials secured       | **Verify in deployment** (secret injection, KMS). Code assumes decrypted strings only at boundary; see [DISASTER-RECOVERY.md](./DISASTER-RECOVERY.md)                                                                                                                           |

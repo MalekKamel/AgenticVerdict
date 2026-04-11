@@ -17,10 +17,10 @@ Background research and older assessments remain in [Build performance analysis]
 
 ## Shared base images
 
-| Image             | Dockerfile                                 | Default tag (local)                  |
-| ----------------- | ------------------------------------------ | ------------------------------------ |
-| Workspace install | `packages/docker/base/Dockerfile.deps`     | `agenticverdict/deps:local`          |
-| Chromium runtime  | `packages/docker/base/Dockerfile.chromium` | `agenticverdict/chromium-base:local` |
+| Image             | Dockerfile                        | Default tag (local)                  |
+| ----------------- | --------------------------------- | ------------------------------------ |
+| Workspace install | `docker/base/Dockerfile.deps`     | `agenticverdict/deps:local`          |
+| Chromium runtime  | `docker/base/Dockerfile.chromium` | `agenticverdict/chromium-base:local` |
 
 ```bash
 docker compose -f docker-compose.base-images.yml build

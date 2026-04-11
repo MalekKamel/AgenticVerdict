@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
   MemoryPlatformCache,
-  MetaPlatformAdapter,
+  MetaConnectorAdapter,
   metaCredentialKeys,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 import { createDefaultChaosState } from "../mock-servers/chaos";
 import { startPlatformMockGateway } from "../mock-servers/gateway";
@@ -41,7 +41,7 @@ describe("Phase 01 performance — latency baselines (mock APIs)", () => {
   it("cached fetchMetrics p95 stays within AC-2.1.1 budget (mock lab)", async () => {
     const fetchImpl = createRewritingFetch(port);
     const cache = new MemoryPlatformCache();
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "perf-cache",
@@ -66,7 +66,7 @@ describe("Phase 01 performance — latency baselines (mock APIs)", () => {
     const fetchImpl = createRewritingFetch(port);
     const durations: number[] = [];
     for (let i = 0; i < 8; i += 1) {
-      const adapter = new MetaPlatformAdapter({
+      const adapter = new MetaConnectorAdapter({
         fetchImpl,
         requestTokenBucket: null,
         tenantId: `perf-uncached-${i}`,
@@ -85,7 +85,7 @@ describe("Phase 01 performance — latency baselines (mock APIs)", () => {
 
   it("authentication completes within AC-2.1.3 budget (mock lab)", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "perf-auth",

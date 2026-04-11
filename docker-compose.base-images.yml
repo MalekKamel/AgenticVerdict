@@ -9,10 +9,10 @@ services:
     image: agenticverdict/deps:local
     build:
       context: .
-      dockerfile: packages/docker/base/Dockerfile.deps
+      dockerfile: docker/base/Dockerfile.deps
 
   chromium-base:
     image: agenticverdict/chromium-base:local
     build:
       context: .
-      dockerfile: packages/docker/base/Dockerfile.chromium
+      dockerfile: docker/base/Dockerfile.chromium

@@ -1,4 +1,4 @@
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 import { z } from "zod";
 
 import { AgentToolError } from "./agent-tool-error";
@@ -14,30 +14,30 @@ export const dateRangeToolInputSchema = z.object({
 
 export type DateRangeToolInput = z.infer<typeof dateRangeToolInputSchema>;
 
-const platformTypeSchema = z.enum([
+const connectorTypeSchema = z.enum([
   "meta",
   "ga4",
   "gsc",
   "gbp",
   "tiktok",
-]) as z.ZodType<PlatformType>;
+]) as z.ZodType<ConnectorType>;
 
 export const queryHistoricalMetricsInputSchema = z.object({
   startDate: isoDateSchema,
   endDate: isoDateSchema,
-  platform: platformTypeSchema.optional(),
+  platform: connectorTypeSchema.optional(),
   limit: z.number().int().positive().max(5000).optional(),
 });
 
 export const analyzeTrendsInputSchema = z.object({
   startDate: isoDateSchema,
   endDate: isoDateSchema,
-  platform: platformTypeSchema.optional(),
+  platform: connectorTypeSchema.optional(),
   mode: z.enum(["row_volume", "payload_sum"]).default("row_volume"),
 });
 
 export const comparePeriodsInputSchema = z.object({
-  platform: platformTypeSchema.optional(),
+  platform: connectorTypeSchema.optional(),
   periodA: z.object({
     startDate: isoDateSchema,
     endDate: isoDateSchema,
@@ -117,7 +117,7 @@ export const getConfigInputSchema = z.object({
   section: z.enum(["ai", "features", "localization", "marketing"]),
 });
 
-/** Normalized platform snapshots (JSON) validated with {@link parseNormalizedPlatformSnapshot}. */
+/** Normalized platform snapshots (JSON) validated with {@link parseNormalizedConnectorSnapshot}. */
 export const computeB2bKpisFromSnapshotsInputSchema = z.object({
   snapshots: z.array(z.unknown()).min(1).max(50),
 });

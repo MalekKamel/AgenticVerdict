@@ -6,17 +6,17 @@ All application images build from the **monorepo root** so workspace packages, l
 
 - **Node:** `ARG NODE_VERSION=20` (bookworm-slim build stages).
 - **Package manager:** Corepack + `pnpm@10.28.1`, `COREPACK_ENABLE_DOWNLOAD_PROMPT=0` in the **deps base image** and in API **runner** `base` (API still ships its own slim runtime stage).
-- **Install:** `pnpm install --frozen-lockfile` with a BuildKit pnpm store cache mount lives in **`packages/docker/base/Dockerfile.deps`**; app Dockerfiles use **`FROM ${DEPS_IMAGE}`** so the install layer is built once and reused.
+- **Install:** `pnpm install --frozen-lockfile` with a BuildKit pnpm store cache mount lives in **`docker/base/Dockerfile.deps`**; app Dockerfiles use **`FROM ${DEPS_IMAGE}`** so the install layer is built once and reused.
 - **Pre-build gate:** `node scripts/dockerPrebuild.mjs` enforces Node 20+ before app builds.
 
 ### Shared base images (local / CI)
 
 Build and tag these **before** app images unless CI passes explicit tags (see `.github/workflows/docker-build.yml`).
 
-| Image                                 | Dockerfile                                 | Default tag (local Compose)          |
-| ------------------------------------- | ------------------------------------------ | ------------------------------------ |
-| Workspace `node_modules`              | `packages/docker/base/Dockerfile.deps`     | `agenticverdict/deps:local`          |
-| Chromium + PDF fonts (worker runtime) | `packages/docker/base/Dockerfile.chromium` | `agenticverdict/chromium-base:local` |
+| Image                                 | Dockerfile                        | Default tag (local Compose)          |
+| ------------------------------------- | --------------------------------- | ------------------------------------ |
+| Workspace `node_modules`              | `docker/base/Dockerfile.deps`     | `agenticverdict/deps:local`          |
+| Chromium + PDF fonts (worker runtime) | `docker/base/Dockerfile.chromium` | `agenticverdict/chromium-base:local` |
 
 ```bash
 docker compose -f docker-compose.base-images.yml build
@@ -38,7 +38,7 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 ### Build performance (summary)
 
 - Copy monorepo/package manifests before source code so dependency install layers stay cacheable across source edits.
-- **Deps image:** BuildKit cache mount at **`/pnpm-cache`** with **`id=pnpm-appuser`** (see `packages/docker/base/Dockerfile.deps`).
+- **Deps image:** BuildKit cache mount at **`/pnpm-cache`** with **`id=pnpm-appuser`** (see `docker/base/Dockerfile.deps`).
 - Keep multi-stage `TARGET_STAGE` pattern for API/worker to preserve environment-specific runner content.
 - **API** runner extends **`${DEPS_IMAGE}`** so **`node_modules`** is inherited as **`appuser`** (no giant **`COPY`**). **Worker** copies **`node_modules`** from **deps** without **`--chown`** (root-owned, readable **`appuser`**).
 - For the full implemented architecture, see [Build optimization (implemented)](./build-optimization-implemented.md) and [Build best practices](./build-best-practices.md).

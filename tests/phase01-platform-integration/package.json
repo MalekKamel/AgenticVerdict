@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@agenticverdict/core": "workspace:*",
-    "@agenticverdict/platform-adapters": "workspace:*"
+    "@agenticverdict/data-connectors": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

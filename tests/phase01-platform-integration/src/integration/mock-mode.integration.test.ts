@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { MockPlatformAdapter, createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { MockConnectorAdapter, createConnectorAdapter } from "@agenticverdict/data-connectors";
 
 describe("mock mode integration", () => {
   afterEach(() => {
@@ -12,21 +12,21 @@ describe("mock mode integration", () => {
     process.env.NODE_ENV = "test";
     process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS = "1";
 
-    const adapter = createPlatformAdapter({
-      platform: "meta",
+    const adapter = createConnectorAdapter({
+      connector: "meta",
       tenantId: "tenant-integration",
       mockScenario: "normal",
       mockSeed: 42001,
     });
 
-    expect(adapter).toBeInstanceOf(MockPlatformAdapter);
+    expect(adapter).toBeInstanceOf(MockConnectorAdapter);
 
     await adapter.authenticate({ accessToken: "dummy-token" });
     const range = { startInclusive: "2026-01-01", endInclusive: "2026-01-07" };
     const raw = await adapter.fetchMetrics(range);
     const normalized = adapter.normalizeData(raw, range);
 
-    expect(normalized.platform).toBe("meta");
+    expect(normalized.connector).toBe("meta");
     expect(normalized.records.length).toBeGreaterThan(0);
   });
 });

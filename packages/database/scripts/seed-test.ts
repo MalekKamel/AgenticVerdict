@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import * as schema from "../src/schema/index";
-import { runMigrations, runMigrationsSafe } from "../src/migrate";
+import { seedConnectorRegistry } from "../src/seed-connectors";
 import { seedCompaniesFromJsonDir } from "../src/seeds/company-config-seed";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -24,20 +24,13 @@ async function main(): Promise<void> {
 
   const configDir = process.env.COMPANY_CONFIG_DIR ?? defaultTestFixturesDir;
 
-  const forceMigrations = process.argv.includes("--force-migrations");
-
-  if (process.env.AGENTICVERDICT_SKIP_SEED_MIGRATIONS !== "1") {
-    if (forceMigrations) {
-      await runMigrations(connectionString);
-    } else {
-      await runMigrationsSafe(connectionString);
-    }
-  }
-
   const client = postgres(connectionString, { max: 2 });
   const db = drizzle(client, { schema });
 
   try {
+    await seedConnectorRegistry(db);
+    console.info("test seed: connector registry upserted");
+
     const count = await seedCompaniesFromJsonDir(db, configDir);
     if (count === 0) {
       console.warn(`no json files in ${configDir}`);

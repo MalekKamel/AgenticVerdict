@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive integration strategy for enabling `MockPlatformAdapter` in development mode. The mock adapter provides deterministic, network-free testing of the marketing pipeline by simulating platform responses without requiring live API connections to external services (Meta, GA4, GSC, GBP, TikTok).
+This document outlines the comprehensive integration strategy for enabling `MockConnectorAdapter` in development mode. The mock adapter provides deterministic, network-free testing of the marketing pipeline by simulating platform responses without requiring live API connections to external services (Meta, GA4, GSC, GBP, TikTok).
 
 **Status**: Implementation ready — design complete, awaiting execution.
 
@@ -12,7 +12,7 @@ This document outlines the comprehensive integration strategy for enabling `Mock
 
 ### 1.1 Current Implementation
 
-The `MockPlatformAdapter` class (`packages/platform-adapters/src/mock-adapter.ts`) is a full-featured implementation of the `PlatformAdapter` interface that extends `BasePlatformAdapter` with the following capabilities:
+The `MockConnectorAdapter` class (`packages/data-connectors/src/mock-adapter.ts`) is a full-featured implementation of the `ConnectorAdapter` interface that extends `BaseConnectorAdapter` with the following capabilities:
 
 | Feature                    | Description                                                     |
 | -------------------------- | --------------------------------------------------------------- |
@@ -27,7 +27,7 @@ The `MockPlatformAdapter` class (`packages/platform-adapters/src/mock-adapter.ts
 
 ```typescript
 // Direct instantiation
-const adapter = new MockPlatformAdapter("meta", {
+const adapter = new MockConnectorAdapter("meta", {
   tenantId: "tenant-123",
   records: [...],           // Optional: override normalized records
   rawResponse: {...},        // Optional: custom raw payload
@@ -37,7 +37,7 @@ const adapter = new MockPlatformAdapter("meta", {
 
 // Factory pattern (recommended)
 const adapter = MockAdapterFactory.create({
-  platform: "meta",
+  connector: "meta",
   tenantId: "tenant-123",
   scenario: "normal",         // or "error" for failure simulation
   seed: 42001,                // For deterministic output
@@ -80,7 +80,7 @@ const adapter = MockAdapterFactory.create({
 Per-platform flag > Master flag > Default (production adapters)
 ```
 
-**Implementation note:** Enablement is evaluated by **`isMockEnabledForPlatform`** in **`@agenticverdict/config/configuration`** (re-exported from **`@agenticverdict/platform-adapters`**). **`createPlatformAdapter`** uses **`IS_PRODUCTION`** from **`build-constants`** so **production processes** never select mocks from env; **`useMock: true`** is ignored in production processes (production adapters only). See [Manual testing guide](../../tests/docs/manual-testing-guide.md) §2.6–2.7 and **`docs/docker/getting-started.md`**.
+**Implementation note:** Enablement is evaluated by **`isMockEnabledForConnector`** in **`@agenticverdict/config/configuration`** (also exported from **`@agenticverdict/data-connectors`**). **`createConnectorAdapter`** uses **`IS_PRODUCTION`** from **`build-constants`** so **production processes** never select mocks from env; **`useMock: true`** is ignored in production processes (production adapters only). See [Manual testing guide](../../tests/docs/manual-testing-guide.md) §2.6–2.7 and **`docs/docker/getting-started.md`**.
 
 Example:
 
@@ -90,7 +90,7 @@ Example:
 
 ### 2.4 Validation and typed runtime view
 
-Binary mock env vars are parsed and validated in **`packages/config/src/configuration.ts`** (`parseBinaryFlag`, `isMockEnabledForPlatform`, `ConfigurationService.load`). The aggregated, Zod-validated shape is **`RuntimeConfig`** in **`packages/config/src/schemas/runtime-config.ts`** (`adapters.mocks.enabled`, `adapters.mocks.platforms`, optional `scenarios`). Use `ConfigurationService` / `config.runtime()` rather than a separate env-only Zod object.
+Binary mock env vars are parsed and validated in **`packages/config/src/configuration.ts`** (`parseBinaryFlag`, `isMockEnabledForConnector`, `ConfigurationService.load`). The aggregated, Zod-validated shape is **`RuntimeConfig`** in **`packages/config/src/schemas/runtime-config.ts`** (`adapters.mocks.enabled`, `adapters.mocks.connectors`, optional `scenarios`). Use `ConfigurationService` / `config.runtime()` rather than a separate env-only Zod object.
 
 ---
 
@@ -98,92 +98,34 @@ Binary mock env vars are parsed and validated in **`packages/config/src/configur
 
 ### 3.1 Factory Pattern
 
-Create a unified adapter factory that respects environment configuration:
+Canonical implementation: **`packages/data-connectors/src/adapter-factory.ts`**. Public entry **`createConnectorAdapter({ connector, tenantId, useMock?, mockSeed?, mockScenario?, ... })`** chooses **`MockAdapterFactory`** vs production **`MetaConnectorAdapter`**, **`Ga4ConnectorAdapter`**, etc., using **`isMockEnabledForConnector(connector)`** from **`@agenticverdict/config/configuration`**.
 
 ```typescript
-// packages/platform-adapters/src/adapter-factory.ts
-import type { PlatformType } from "@agenticverdict/types";
-import { MockAdapterFactory } from "./mock-adapter-factory";
-import { MetaAdapter } from "./meta/meta-adapter";
-import { Ga4Adapter } from "./ga4/ga4-adapter";
-import { GscAdapter } from "./gsc/gsc-adapter";
-import { GbpAdapter } from "./gbp/gbp-adapter";
-import { TikTokAdapter } from "./tiktok/tiktok-adapter";
-import type { BasePlatformAdapterOptions } from "./adapter";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 
-export interface AdapterFactoryConfig {
-  tenantId: string;
-  platform: PlatformType;
-  useMock?: boolean;
-  mockSeed?: number;
-  mockScenario?: "normal" | "error" | "empty";
-}
-
-export function createPlatformAdapter(
-  config: AdapterFactoryConfig & BasePlatformAdapterOptions,
-): PlatformAdapter {
-  const shouldUseMock = config.useMock ?? isMockEnabledForPlatform(config.platform);
-
-  if (shouldUseMock) {
-    return MockAdapterFactory.create({
-      platform: config.platform,
-      tenantId: config.tenantId,
-      seed: config.mockSeed,
-      scenario: config.mockScenario ?? "normal",
-    });
-  }
-
-  // Production adapters
-  switch (config.platform) {
-    case "meta":
-      return new MetaAdapter(config);
-    case "ga4":
-      return new Ga4Adapter(config);
-    case "gsc":
-      return new GscAdapter(config);
-    case "gbp":
-      return new GbpAdapter(config);
-    case "tiktok":
-      return new TikTokAdapter(config);
-    default:
-      throw new Error(`Unsupported platform: ${config.platform}`);
-  }
-}
-
-function isMockEnabledForPlatform(platform: PlatformType): boolean {
-  const masterFlag = process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS === "1";
-  const platformFlag = process.env[`AGENTICVERDICT_MOCK_${platform.toUpperCase()}`] === "1";
-
-  // Platform-specific flag overrides master flag
-  if (platformFlag !== undefined) return platformFlag;
-  return masterFlag;
-}
+const adapter = createConnectorAdapter({
+  connector: "meta",
+  tenantId: "tenant-123",
+  mockScenario: "normal",
+  mockSeed: 42_001,
+});
 ```
 
 ### 3.2 Registry Integration
 
-Leverage the existing registry pattern for adapter resolution:
+Use **`createAdapterRegistry`** from **`packages/data-connectors/src/registry.ts`** (per-connector factories; no global singleton required in production code).
 
 ```typescript
-// packages/platform-adapters/src/registry.ts (enhanced)
-import { createAdapterRegistry } from "./registry";
-import { createPlatformAdapter } from "./adapter-factory";
+import { createAdapterRegistry, createConnectorAdapter } from "@agenticverdict/data-connectors";
 
-export interface AdapterContext {
-  tenantId: string;
-}
+type AdapterContext = { tenantId: string };
 
-export const globalAdapterRegistry = createAdapterRegistry<AdapterContext>();
+const registry = createAdapterRegistry<AdapterContext>();
 
-// Register factories that respect environment configuration
-globalAdapterRegistry.register("meta", (ctx) =>
-  createPlatformAdapter({ ...ctx, platform: "meta" }),
-);
-globalAdapterRegistry.register("ga4", (ctx) => createPlatformAdapter({ ...ctx, platform: "ga4" }));
-// ... other platforms
+registry.register("meta", (ctx) => createConnectorAdapter({ ...ctx, connector: "meta" }));
+registry.register("ga4", (ctx) => createConnectorAdapter({ ...ctx, connector: "ga4" }));
 
-// Usage
-const adapter = globalAdapterRegistry.resolve("meta", { tenantId: "tenant-123" });
+const adapter = registry.resolve("meta", { tenantId: "tenant-123" });
 ```
 
 ---
@@ -201,9 +143,12 @@ const adapter = globalAdapterRegistry.resolve("meta", { tenantId: "tenant-123" }
 ### 4.2 Example: Web App Integration
 
 ```typescript
-// apps/web/src/lib/adapter-infrastructure.ts (updated)
-import { createDefaultAdapterInfrastructure } from "@agenticverdict/platform-adapters";
-import { globalAdapterRegistry } from "@agenticverdict/platform-adapters/src/registry";
+// Illustrative: real wiring is in apps/web/src/lib/adapter-infrastructure.ts
+import {
+  connectorAdapterTypes,
+  createDefaultAdapterInfrastructure,
+  isMockEnabledForConnector,
+} from "@agenticverdict/data-connectors";
 
 const globalKey = "__agenticverdict_adapterInfrastructure__" as const;
 
@@ -212,36 +157,20 @@ export function getSharedAdapterInfrastructure(): AdapterInfrastructureBundle {
   if (!g[globalKey]) {
     g[globalKey] = createDefaultAdapterInfrastructure();
 
-    // Log mock mode status
     if (process.env.NODE_ENV === "development") {
-      const mockPlatforms = globalAdapterRegistry
-        .platforms()
-        .filter((p) => isMockEnabledForPlatform(p as PlatformType));
-      if (mockPlatforms.length > 0) {
-        console.warn(`[Mock Adapters] Enabled for: ${mockPlatforms.join(", ")}`);
+      const mockConnectors = connectorAdapterTypes.filter((c) => isMockEnabledForConnector(c));
+      if (mockConnectors.length > 0) {
+        console.warn(`[Mock adapters] Enabled for: ${mockConnectors.join(", ")}`);
       }
     }
   }
-  return g[globalKey];
+  return g[globalKey]!;
 }
 ```
 
 ### 4.3 Health Check Indicators
 
-The existing health endpoint (`apps/web/src/app/api/health/adapters/route.ts`) should indicate mock mode:
-
-```typescript
-// Response when mock adapters are enabled
-{
-  "status": "ok",
-  "mockMode": true,
-  "mockPlatforms": ["meta", "ga4", "gsc", "gbp", "tiktok"],
-  "platforms": {
-    "meta": { "healthy": true, "adapter": "mock" },
-    "ga4": { "healthy": true, "adapter": "mock" }
-  }
-}
-```
+The health endpoint **`apps/web/src/app/api/health/adapters/route.ts`** merges infrastructure health with mock metadata (`mockMode`, `mockConnectors`, per-row `adapterType`). Shape follows **`getSharedAdapterInfrastructure().getHealth()`** plus those fields.
 
 ---
 
@@ -251,31 +180,7 @@ The existing health endpoint (`apps/web/src/app/api/health/adapters/route.ts`) s
 
 **CRITICAL**: Mock adapters must NEVER be activatable in production or staging environments.
 
-```typescript
-// packages/platform-adapters/src/adapter-factory.ts
-function isMockEnabledForPlatform(platform: PlatformType): boolean {
-  // Hard block in production/staging
-  const nodeEnv = process.env.NODE_ENV;
-  if (nodeEnv === "production" || nodeEnv === "staging") {
-    if (
-      process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS === "1" ||
-      process.env[`AGENTICVERDICT_MOCK_${platform.toUpperCase()}`] === "1"
-    ) {
-      throw new Error(
-        `[SECURITY] Mock adapters cannot be enabled in ${nodeEnv} environment. ` +
-          `This is a critical security violation.`,
-      );
-    }
-    return false;
-  }
-
-  // Only allow in development/test
-  const masterFlag = process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS === "1";
-  const platformFlag = process.env[`AGENTICVERDICT_MOCK_${platform.toUpperCase()}`] === "1";
-
-  return platformFlag ?? masterFlag ?? false;
-}
-```
+Authoritative logic: **`isMockEnabledForConnector`** in **`packages/config/src/configuration.ts`** (throws when mock flags are set under **`production`** / **`staging`**; see error text **`Mock adapters cannot be enabled`**).
 
 ### 5.2 Runtime Validation
 
@@ -309,8 +214,8 @@ Distinct logging/metrics for mock vs. real data:
 logger.info({
   tenantId: context.tenantId,
   requestId: context.requestId,
-  event: "platform.fetch",
-  platform: "meta",
+  event: "connector.fetch",
+  connector: "meta",
   adapterType: "mock", // "mock" | "production"
   duration: ms,
   mockSeed: 42001,
@@ -323,28 +228,34 @@ logger.info({
 
 ### 6.1 Unit Tests
 
-Existing unit tests already use `MockPlatformAdapter`. No changes required.
+Existing unit tests already use `MockConnectorAdapter`. No changes required.
 
 ### 6.2 Integration Tests
 
 Integration tests should explicitly enable mock mode:
 
 ```typescript
-// tests/phase01-platform-integration/mock-mode.test.ts
-import { describe, it, expect } from "vitest";
+// tests/phase01-platform-integration/src/integration/mock-mode.integration.test.ts (pattern)
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
+import { describe, expect, it } from "vitest";
 
-describe("Mock Adapter Integration", () => {
-  it("should use mock adapters when enabled", async () => {
+describe("mock mode", () => {
+  it("uses mock adapters when env flag is enabled", async () => {
+    process.env.NODE_ENV = "test";
     process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS = "1";
-    const adapter = createPlatformAdapter({
+
+    const adapter = createConnectorAdapter({
+      connector: "meta",
       tenantId: "test-tenant",
-      platform: "meta",
+      mockScenario: "normal",
+      mockSeed: 42_001,
     });
 
     await adapter.authenticate({ accessToken: "dummy" });
-    const data = await adapter.fetchMetrics({ start: "2024-01-01", end: "2024-01-07" });
+    const range = { startInclusive: "2024-01-01", endInclusive: "2024-01-07" };
+    const data = await adapter.fetchMetrics(range);
 
-    expect(data).toEqual({ mock: true, platform: "meta" });
+    expect(data).toEqual({ mock: true, connector: "meta" });
   });
 });
 ```
@@ -367,7 +278,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
       - run: pnpm install
-      - run: pnpm test --workspace=@agenticverdict/platform-adapters
+      - run: pnpm test --workspace=@agenticverdict/data-connectors
 ```
 
 ---
@@ -422,12 +333,12 @@ AGENTICVERDICT_USE_MOCK_ADAPTERS=1 pnpm dev
 
 ### Phase 1: Core Implementation (Priority 1)
 
-| Task | File                                                | Description                               |
-| ---- | --------------------------------------------------- | ----------------------------------------- |
-| 1.1  | `packages/platform-adapters/src/adapter-factory.ts` | Create environment-aware adapter factory  |
-| 1.2  | `packages/config/src/configuration.ts`              | Env parsing + `RuntimeConfig` aggregation |
-| 1.3  | `packages/config/src/index.ts`                      | Export mock adapter configuration         |
-| 1.4  | `packages/platform-adapters/src/index.ts`           | Export `createPlatformAdapter`            |
+| Task | File                                              | Description                               |
+| ---- | ------------------------------------------------- | ----------------------------------------- |
+| 1.1  | `packages/data-connectors/src/adapter-factory.ts` | Create environment-aware adapter factory  |
+| 1.2  | `packages/config/src/configuration.ts`            | Env parsing + `RuntimeConfig` aggregation |
+| 1.3  | `packages/config/src/index.ts`                    | Export mock adapter configuration         |
+| 1.4  | `packages/data-connectors/src/index.ts`           | Export `createConnectorAdapter`           |
 
 ### Phase 2: Application Integration (Priority 1)
 
@@ -450,8 +361,8 @@ AGENTICVERDICT_USE_MOCK_ADAPTERS=1 pnpm dev
 
 | Task | File                                                               | Description            |
 | ---- | ------------------------------------------------------------------ | ---------------------- |
-| 4.1  | `packages/platform-adapters/src/adapter-factory.test.ts`           | Unit tests for factory |
-| 4.2  | `packages/platform-adapters/src/security.test.ts`                  | Production guard tests |
+| 4.1  | `packages/data-connectors/src/adapter-factory.test.ts`             | Unit tests for factory |
+| 4.2  | `packages/data-connectors/src/security.test.ts`                    | Production guard tests |
 | 4.3  | `tests/phase01-platform-integration/mock-mode.integration.test.ts` | Integration tests      |
 
 ---
@@ -513,11 +424,11 @@ echo $NODE_ENV  # Should be "development" or "test"
 
 ## 11. References
 
-- Mock adapter implementation: `packages/platform-adapters/src/mock-adapter.ts`
-- Mock factory: `packages/platform-adapters/src/mock-adapter-factory.ts`
-- Test utilities: `packages/platform-adapters/src/test-utils.ts`
-- Base adapter: `packages/platform-adapters/src/adapter.ts`
-- Registry pattern: `packages/platform-adapters/src/registry.ts`
+- Mock adapter implementation: `packages/data-connectors/src/mock-adapter.ts`
+- Mock factory: `packages/data-connectors/src/mock-adapter-factory.ts`
+- Test utilities: `packages/data-connectors/src/test-utils.ts`
+- Base adapter: `packages/data-connectors/src/adapter.ts`
+- Registry pattern: `packages/data-connectors/src/registry.ts`
 - Environment configuration: `.env.example`
 
 ---

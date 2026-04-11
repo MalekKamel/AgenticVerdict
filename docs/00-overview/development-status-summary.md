@@ -19,9 +19,9 @@
 
 The repository is a **working Turborepo + pnpm monorepo** with foundational packages (`types`, `config`, `core`, `database`), a **Next.js 15 web app** (Mantine, next-intl, `/en` and `/ar`), **sample company JSON**, **GitHub Actions CI**, and expanded **Drizzle schema / migrations** (including RLS-oriented work — verify against phase acceptance checklists).
 
-**Phase 01 (platform integration)** is largely implemented in code: `@agenticverdict/platform-adapters` ships Meta, GA4, GSC, GBP, and TikTok adapters with shared normalization, caching (memory + optional Upstash), rate limiting, circuit breaking, health helpers, and **Next.js `/api/health*` routes**. Operational documentation lives under [`phase-01-platform-integration/operations/`](../03-development-phases/phase-01-platform-integration/operations/README.md), including **[SECURITY.md](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md)**. Cross-package integration tests run from `tests/phase01-platform-integration/`.
+**Phase 01 (platform integration)** is largely implemented in code: `@agenticverdict/data-connectors` ships Meta, GA4, GSC, GBP, and TikTok adapters with shared normalization, caching (memory + optional Upstash), rate limiting, circuit breaking, health helpers, and **Next.js `/api/health*` routes**. Operational documentation lives under [`phase-01-platform-integration/operations/`](../03-development-phases/phase-01-platform-integration/operations/README.md), including **[SECURITY.md](../03-development-phases/phase-01-platform-integration/operations/SECURITY.md)**. Cross-package integration tests run from `tests/phase01-platform-integration/`.
 
-**Requirements alignment (2026-04-04):** [`requirements.md`](../05-project-management/requirements.md) now explicitly requires a **non-empty `tenantId`** for every `BasePlatformAdapter` construction (`missing_tenant_id` error if violated) and states **security expectations** for DB access and secrets handling, with pointers to Phase 01 operations docs.
+**Requirements alignment (2026-04-04):** [`requirements.md`](../05-project-management/requirements.md) now explicitly requires a **non-empty `tenantId`** for every `BaseConnectorAdapter` construction (`missing_tenant_id` error if violated) and states **security expectations** for DB access and secrets handling, with pointers to Phase 01 operations docs.
 
 Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` / `apps/worker`, Playwright, production verification — see §3 and the [implementation review](./reviews/phase-01-implementation-review-2026-04-04.md)).
 
@@ -45,13 +45,13 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ### 2.2 Packages
 
-| Package                             | Status | Highlights                                                                                                                                       |
-| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@agenticverdict/types`             | In use | `PlatformType` union                                                                                                                             |
-| `@agenticverdict/config`            | In use | Zod `CompanyConfig`, `loadCompanyConfig`, cache, directory resolution, tests                                                                     |
-| `@agenticverdict/core`              | In use | `AsyncLocalStorage` tenant context API; expanded unit tests (propagation, isolation)                                                             |
-| `@agenticverdict/database`          | In use | Drizzle + `postgres`, expanded schema, migrations, `dbScoped`, `createDatabaseClient`, unit tests + RLS integration tests (Docker-backed)        |
-| `@agenticverdict/platform-adapters` | In use | Five vendor adapters, normalization pipeline, cache, resilience, metrics/DLQ; **requires `tenantId` on adapter options** (see `requirements.md`) |
+| Package                           | Status | Highlights                                                                                                                                       |
+| --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@agenticverdict/types`           | In use | `ConnectorType` union                                                                                                                            |
+| `@agenticverdict/config`          | In use | Zod `CompanyConfig`, `loadCompanyConfig`, cache, directory resolution, tests                                                                     |
+| `@agenticverdict/core`            | In use | `AsyncLocalStorage` tenant context API; expanded unit tests (propagation, isolation)                                                             |
+| `@agenticverdict/database`        | In use | Drizzle + `postgres`, expanded schema, migrations, `dbScoped`, `createDatabaseClient`, unit tests + RLS integration tests (Docker-backed)        |
+| `@agenticverdict/data-connectors` | In use | Five vendor adapters, normalization pipeline, cache, resilience, metrics/DLQ; **requires `tenantId` on adapter options** (see `requirements.md`) |
 
 ### 2.3 Applications
 
@@ -69,7 +69,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ### 2.5 Other packages (from target architecture)
 
-**Not created (yet):** `packages/agent-runtime`, `packages/report-generator`, shared `packages/ui`, shared `packages/i18n` beyond what ships in `apps/web`.
+**Not created (yet):** Shared component library beyond what ships in `apps/web` (the former `packages/ui` stub was removed 2026-04-11).
 
 ### 2.6 Data and samples
 
@@ -104,7 +104,7 @@ Severity is **blocking** for formal phase exit vs **important** vs **later**. Li
 | Database          | Compare live Drizzle schema + migrations to the full table list in acceptance criteria; close any remaining tables/policies                       | Important  |
 | RLS               | Policies and `dbScoped` exist; **prove** end-to-end tenant isolation for every tenant-owned table per acceptance criteria                         | Important  |
 | Multi-tenancy     | Production-style resolution (JWT, host, headers) and `runWithTenantContext` on all server paths that touch `dbScoped` still need product wiring   | Blocking\* |
-| UI foundation     | No Storybook; shared `packages/ui` not extracted                                                                                                  | Important  |
+| UI foundation     | No Storybook; no shared `packages/ui` workspace package (stub removed 2026-04-11)                                                                 | Important  |
 | i18n              | Required locales **`ar`/`en`** are in routing; translation depth beyond minimal coverage remains a quality follow-up ( **`fr` is not required** ) | Important  |
 | Testing           | Global coverage targets (e.g. 85%+ business logic) and Playwright E2E not yet met per methodology docs                                            | Important  |
 | CI/CD             | CI present (`.github/workflows/ci.yml`); extend with Postgres services / coverage gates as needed                                                 | Later      |
@@ -115,7 +115,7 @@ Severity is **blocking** for formal phase exit vs **important** vs **later**. Li
 ### 3.2 Relative to `tasks.md` (102 tasks)
 
 - **Sections 1–6, 9–10**: many granular tasks still open (Husky, Docker Compose, etc.) — treat `implementation-scope.md` as the deferral guide.
-- **Section 7 (platform adapters)**: **largely implemented** in `@agenticverdict/platform-adapters` (see `changelog/2026-04-04-phase-01-*.md`).
+- **Section 7 (platform adapters)**: **largely implemented** in `@agenticverdict/data-connectors` (see `changelog/2026-04-04-phase-01-*.md`).
 - **Section 8 (agent runtime)**: still **deferred** until Phase 02 focus.
 - **Task 0.20** (second sample company): optional gap.
 - **Upstash Redis**: optional path for distributed cache in adapters when env vars are set; not required for all dev flows.
@@ -156,7 +156,7 @@ See [`reviews/phase-01-implementation-review-2026-04-04.md`](./reviews/phase-01-
 
 5. **`apps/api` + `apps/worker`** — Standalone API and BullMQ worker per target architecture.
 6. **Playwright** — Locale redirect + critical journeys.
-7. **Shared UI / i18n** — `packages/ui`, broader message keys; **additional locales beyond required `ar`/`en` only if product scope explicitly expands** ( **`fr` is not required** ).
+7. **Shared UI / i18n** — extract shared UI when needed; broader message keys; **additional locales beyond required `ar`/`en` only if product scope explicitly expands** ( **`fr` is not required** ).
 8. **Dev environment** — `docker-compose.yml` (Postgres 16; optional Redis) if not already adopted team-wide.
 
 ### 4.3 Continuous

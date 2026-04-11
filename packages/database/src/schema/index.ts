@@ -1,5 +1,9 @@
 export { auditLogs } from "./audit-logs";
 export { companies } from "./companies";
+export { connectorTagMappings, connectorTags, dataConnectors } from "./core/connectors";
+export { insights, insightConnectors } from "./core/insights";
+export { agencyPartners } from "./core/tenants";
+export { usageTracking } from "./core/usage";
 export { featureFlags, tenantFeatureFlags } from "./feature-flags";
 export { i18nStrings } from "./i18n-strings";
 export { marketingMetrics } from "./marketing-metrics";

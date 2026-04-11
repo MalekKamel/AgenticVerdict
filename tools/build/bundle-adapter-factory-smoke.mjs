@@ -9,7 +9,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const pkgDir = join(root, "packages/platform-adapters");
+const pkgDir = join(root, "packages/data-connectors");
 const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
 /** Keep @agenticverdict/config inlined so `process.env.NODE_ENV` define folds `IS_PRODUCTION`. */
 const external = Object.keys(pkg.dependencies).filter((name) => name !== "@agenticverdict/config");

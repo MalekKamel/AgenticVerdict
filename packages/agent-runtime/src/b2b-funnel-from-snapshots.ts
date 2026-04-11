@@ -1,8 +1,8 @@
 import type { B2bFunnelMetricMapping, CompanyConfig } from "@agenticverdict/config";
 import type {
   NormalizedMetricRecord,
-  NormalizedPlatformSnapshot,
-} from "@agenticverdict/platform-adapters";
+  NormalizedConnectorSnapshot,
+} from "@agenticverdict/data-connectors";
 
 import {
   computeB2bMarketingKpis,
@@ -11,7 +11,7 @@ import {
 } from "./b2b-marketing-kpis";
 
 function flattenRecords(
-  snapshots: readonly NormalizedPlatformSnapshot[],
+  snapshots: readonly NormalizedConnectorSnapshot[],
 ): NormalizedMetricRecord[] {
   return snapshots.flatMap((s) => [...s.records]);
 }
@@ -97,7 +97,7 @@ function resolvedMapping(m?: B2bFunnelMetricMapping | null): {
  * using configurable metric suffix rules (defaults favor `*.conversions`, `*.spend`, `*.sessions`).
  */
 export function buildB2bFunnelSnapshotFromNormalizedSnapshots(
-  snapshots: readonly NormalizedPlatformSnapshot[],
+  snapshots: readonly NormalizedConnectorSnapshot[],
   options: {
     spendCurrencyCode: string;
     funnelMetricMapping?: B2bFunnelMetricMapping | null;
@@ -151,7 +151,7 @@ export function buildB2bFunnelSnapshotFromNormalizedSnapshots(
 }
 
 export function computeB2bMarketingKpisFromNormalizedSnapshots(
-  snapshots: readonly NormalizedPlatformSnapshot[],
+  snapshots: readonly NormalizedConnectorSnapshot[],
   config: CompanyConfig,
 ): { funnel: B2bLeadFunnelSnapshot; kpis: B2bMarketingKpiResult } {
   const funnel = buildB2bFunnelSnapshotFromNormalizedSnapshots(snapshots, {

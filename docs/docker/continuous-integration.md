@@ -15,8 +15,8 @@ Workflows live under `.github/workflows/`. Runners are `ubuntu-latest` (amd64); 
 
 - `docker/setup-buildx-action`
 - `docker/login-action` (GHCR auth for registry-backed cache)
-- **`packages/docker/base/Dockerfile.deps`** built first, **`load: true`**, tagged **`agenticverdict/deps:ci`**, with GHA cache scope **`monorepo-deps`** (shared across the three jobs).
-- **Worker** job also builds **`packages/docker/base/Dockerfile.chromium`** → **`agenticverdict/chromium-base:ci`** with scope **`chromium-base`**.
+- **`docker/base/Dockerfile.deps`** built first, **`load: true`**, tagged **`agenticverdict/deps:ci`**, with GHA cache scope **`monorepo-deps`** (shared across the three jobs).
+- **Worker** job also builds **`docker/base/Dockerfile.chromium`** → **`agenticverdict/chromium-base:ci`** with scope **`chromium-base`**.
 - `docker/metadata-action` → tags (branch, PR ref, `sha-*`)
 - `docker/build-push-action` with **`push: false`**, **`load: true`**, `BUILDKIT_INLINE_CACHE=1`, **`DEPS_IMAGE=agenticverdict/deps:ci`** (and **`CHROMIUM_IMAGE`** for worker), and cache backends:
   - Registry cache: `ghcr.io/<owner>/<repo>/build-cache:{web|api|worker}`

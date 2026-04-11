@@ -2,7 +2,7 @@
 
 ## Scope
 
-Rolling out changes to `@agenticverdict/platform-adapters`, health routes under `apps/web/src/app/api/health/`, and Redis-backed cache configuration.
+Rolling out changes to `@agenticverdict/data-connectors`, health routes under `apps/web/src/app/api/health/`, and Redis-backed cache configuration.
 
 ## Preconditions
 

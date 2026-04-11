@@ -1141,12 +1141,12 @@ export async function loadCompleteConfig(): Promise<{
 **Step 2: Update Adapter Factory**
 
 ```typescript
-// packages/platform-adapters/src/adapter-factory.ts
+// packages/data-connectors/src/adapter-factory.ts
 import { BUILD_SECURITY, loadFeatureFlags } from '@agenticverdict/config/layered-config';
 
-export async function createPlatformAdapter(
+export async function createConnectorAdapter(
   config: AdapterFactoryConfig
-): Promise<PlatformAdapter> {
+): Promise<ConnectorAdapter> {
   const featureFlags = await loadFeatureFlags();
 
   // Build-time security check (compiler eliminates in production)

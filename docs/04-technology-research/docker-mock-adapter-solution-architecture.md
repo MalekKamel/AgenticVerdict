@@ -23,13 +23,13 @@ This document outlines a greenfield implementation for AgenticVerdict's configur
 
 ### Primary Technical Issues
 
-| #   | Issue                                     | Location                                            | Impact                                |
-| --- | ----------------------------------------- | --------------------------------------------------- | ------------------------------------- |
-| 1   | Module evaluation time configuration lock | `packages/config/src/build-constants.ts`            | Constants fixed at startup            |
-| 2   | Compiler-driven adapter selection         | `packages/platform-adapters/src/adapter-factory.ts` | Mock branch unreachable in production |
-| 3   | Docker build-time environment locking     | `apps/*/Dockerfile`                                 | Default `NODE_ENV=production`         |
-| 4   | Runtime without bundling                  | Docker `CMD` with `tsx`                             | No build-time define injection        |
-| 5   | Next.js dead code elimination             | `apps/web/next.config.ts`                           | Mocks eliminated at build time        |
+| #   | Issue                                     | Location                                          | Impact                                |
+| --- | ----------------------------------------- | ------------------------------------------------- | ------------------------------------- |
+| 1   | Module evaluation time configuration lock | `packages/config/src/build-constants.ts`          | Constants fixed at startup            |
+| 2   | Compiler-driven adapter selection         | `packages/data-connectors/src/adapter-factory.ts` | Mock branch unreachable in production |
+| 3   | Docker build-time environment locking     | `apps/*/Dockerfile`                               | Default `NODE_ENV=production`         |
+| 4   | Runtime without bundling                  | Docker `CMD` with `tsx`                           | No build-time define injection        |
+| 5   | Next.js dead code elimination             | `apps/web/next.config.ts`                         | Mocks eliminated at build time        |
 
 ### The Core Problem
 
@@ -225,7 +225,7 @@ export class ConfigurationService {
     return this.load().adapters.mocks.enabled;
   }
 
-  static isMockEnabledForPlatform(platform: string): boolean {
+  static isMockEnabledForConnector(platform: string): boolean {
     const config = this.load();
     return (
       config.adapters.mocks.enabled && config.adapters.mocks.platforms.includes(platform as any)
@@ -252,9 +252,9 @@ export const config = {
 **Goal:** Clean adapter selection with configuration service
 
 ```typescript
-// packages/platform-adapters/src/adapter-factory.ts
+// packages/data-connectors/src/adapter-factory.ts
 import { config } from "@agenticverdict/config/configuration";
-import { BasePlatformAdapterOptions, PlatformAdapter } from "./adapter";
+import { BaseConnectorAdapterOptions, ConnectorAdapter } from "./adapter";
 import { Ga4PlatformAdapter } from "./ga4/ga4-adapter";
 import { GbpPlatformAdapter } from "./gbp/gbp-adapter";
 import { GscPlatformAdapter } from "./gsc/gsc-adapter";
@@ -262,8 +262,8 @@ import { MetaPlatformAdapter } from "./meta/meta-adapter";
 import { MockAdapterFactory } from "./mock-adapter-factory";
 import { TikTokPlatformAdapter } from "./tiktok/tiktok-adapter";
 
-export interface AdapterFactoryConfig extends BasePlatformAdapterOptions {
-  readonly platform: PlatformType;
+export interface AdapterFactoryConfig extends BaseConnectorAdapterOptions {
+  readonly platform: ConnectorType;
   readonly useMock?: boolean;
   readonly mockSeed?: number;
   readonly mockScenario?: MockAdapterScenario;
@@ -279,7 +279,7 @@ export interface AdapterFactoryConfig extends BasePlatformAdapterOptions {
  * 4. Platform-specific runtime override
  * 5. Default: production adapter
  */
-export function createPlatformAdapter(factoryConfig: AdapterFactoryConfig): PlatformAdapter {
+export function createConnectorAdapter(factoryConfig: AdapterFactoryConfig): ConnectorAdapter {
   const { platform, useMock, ...adapterOptions } = factoryConfig;
   const baseOptions = normalizeBaseOptions(adapterOptions);
 
@@ -297,7 +297,7 @@ export function createPlatformAdapter(factoryConfig: AdapterFactoryConfig): Plat
   return createProductionAdapter(platform, baseOptions);
 }
 
-function shouldUseMockAdapter(platform: PlatformType, explicitUseMock?: boolean): boolean {
+function shouldUseMockAdapter(platform: ConnectorType, explicitUseMock?: boolean): boolean {
   // Explicit override takes precedence
   if (explicitUseMock === true) {
     // Security check
@@ -312,13 +312,13 @@ function shouldUseMockAdapter(platform: PlatformType, explicitUseMock?: boolean)
   }
 
   // Runtime configuration decision
-  return config.isMockEnabledForPlatform(platform);
+  return config.isMockEnabledForConnector(platform);
 }
 
 function createProductionAdapter(
-  platform: PlatformType,
-  options: BasePlatformAdapterOptions,
-): PlatformAdapter {
+  platform: ConnectorType,
+  options: BaseConnectorAdapterOptions,
+): ConnectorAdapter {
   switch (platform) {
     case "meta":
       return new MetaPlatformAdapter(options);
@@ -674,7 +674,7 @@ export async function auditConfigChange(change: {
 | Week | Phase             | Deliverables                              | Dependencies |
 | ---- | ----------------- | ----------------------------------------- | ------------ |
 | 1    | Config Service    | `ConfigurationService`, schema validation | None         |
-| 2    | Adapter Factory   | Redesigned `createPlatformAdapter`        | Week 1       |
+| 2    | Adapter Factory   | Redesigned `createConnectorAdapter`       | Week 1       |
 | 3    | Docker Stages     | Multi-stage Dockerfiles                   | Week 1       |
 | 4    | Docker Compose    | Environment-specific compose files        | Week 3       |
 | 5    | Feature Flags DB  | Schema, migrations                        | Week 1       |
@@ -778,7 +778,7 @@ packages/config/src/
 │   └── runtime-config.ts     # New: Runtime config schema
 └── build-constants.ts        # Keep: Build-time constants
 
-packages/platform-adapters/src/
+packages/data-connectors/src/
 ├── adapter-factory.ts        # Rewrite: Clean implementation
 └── mock-adapter-factory.ts   # Keep: Mock creation
 

@@ -50,7 +50,7 @@
 
 **Changes in v1.5:**
 
-- Documented **layered runtime configuration** (`@agenticverdict/config/configuration`, `ConfigurationService`, centralized `isMockEnabledForPlatform`) and **Docker `TARGET_STAGE`** builds for **api** / **worker**
+- Documented **layered runtime configuration** (`@agenticverdict/config/configuration`, `ConfigurationService`, centralized `isMockEnabledForConnector`) and **Docker `TARGET_STAGE`** builds for **api** / **worker**
 - Corrected **web** vs **api/worker**: dev override and root **`docker-compose.dev.yml`** affect **api** and **worker** only; **web** stays **production** `NODE_ENV` in Docker (Next standalone — no mock adapters in-container)
 - Clarified **`/api/health/adapters`** mock metadata reflects the **web** process env; added **`docker-compose.test.yml`** pointer
 - Optional env: **`ENABLE_NEW_REPORT_GENERATOR`**, **`ENABLE_ADVANCED_ANALYTICS`** (runtime config layer)
@@ -108,13 +108,13 @@ This guide provides comprehensive, step-by-step procedures for manually testing 
 
 ### 1.3 Key Components
 
-| Component         | Purpose                            | Location                      |
-| ----------------- | ---------------------------------- | ----------------------------- |
-| Platform Adapters | Fetch/normalize marketing data     | `packages/platform-adapters/` |
-| Agent Runtime     | AI-powered analysis & insights     | `packages/agent-runtime/`     |
-| Report Generator  | Multi-format report creation       | `packages/report-generator/`  |
-| Worker Service    | Background job processing          | `apps/worker/`                |
-| API Service       | HTTP endpoints & workflow triggers | `apps/api/`                   |
+| Component        | Purpose                            | Location                     |
+| ---------------- | ---------------------------------- | ---------------------------- |
+| Data connectors  | Fetch/normalize marketing data     | `packages/data-connectors/`  |
+| Agent Runtime    | AI-powered analysis & insights     | `packages/agent-runtime/`    |
+| Report Generator | Multi-format report creation       | `packages/report-generator/` |
+| Worker Service   | Background job processing          | `apps/worker/`               |
+| API Service      | HTTP endpoints & workflow triggers | `apps/api/`                  |
 
 ### 1.4 Testing Scope
 
@@ -295,8 +295,8 @@ Expected response shape (adapters):
 
 - Top-level `status` of `"ok"` or `"degraded"` (HTTP 503 when not ok)
 - `components` — cache, Redis, DLQ, circuit breaker / retry policy summaries
-- `platforms` — array of `{ "platform", "healthScore", "adapter", "status" }` entries
-- When mock adapters are enabled via env **for that Node process**, the route also returns `mockMode` and `mockPlatforms`, and each platform includes `adapterType` (`"mock"` or `"production"`).
+- `connectors` — array of `{ "connector", "healthScore", "adapter", "status" }` entries
+- When mock adapters are enabled via env **for that Node process**, the route also returns `mockMode` and `mockConnectors`, and each row includes `adapterType` (`"mock"` or `"production"`).
 - **Docker + dev stack:** the **web** container is usually **`NODE_ENV=production`**, so expect **`mockMode: false`** here even when **api** and **worker** use mocks. The example below matches **`pnpm dev`** (or any web process with `NODE_ENV=development` and mock env flags).
 
 Example (illustrative — host `pnpm dev` with mocks, not default Docker web):
@@ -311,9 +311,9 @@ Example (illustrative — host `pnpm dev` with mocks, not default Docker web):
     "circuitBreaker": { "status": "ok", "note": "..." },
     "retryPolicy": { "status": "ok", "note": "..." }
   },
-  "platforms": [
+  "connectors": [
     {
-      "platform": "meta",
+      "connector": "meta",
       "healthScore": 100,
       "adapter": {},
       "status": "unknown",
@@ -321,7 +321,7 @@ Example (illustrative — host `pnpm dev` with mocks, not default Docker web):
     }
   ],
   "mockMode": true,
-  "mockPlatforms": ["meta", "ga4", "gsc", "gbp", "tiktok"]
+  "mockConnectors": ["meta", "ga4", "gsc", "gbp", "tiktok"]
 }
 ```
 
@@ -393,11 +393,11 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
 
 ### 2.6 Mock Adapter Notes
 
-**Important — process `NODE_ENV` (runtime):** `createPlatformAdapter` uses **`IS_PRODUCTION`** from `@agenticverdict/config/build-constants` (from the process `NODE_ENV` at module load). In a **production** process it **never** selects mock adapters from env, even if `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` is set. Use **`NODE_ENV=development`** (or **`test`**) on the **API** and **worker** when you need mock-backed data fetches. The dev Compose stack ([`deploy/docker-compose.dev.override.yml`](../../deploy/docker-compose.dev.override.yml) or [`docker-compose.dev.yml`](../../docker-compose.dev.yml)) does this for **those services** and sets **`TARGET_STAGE`** on image build.
+**Important — process `NODE_ENV` (runtime):** `createConnectorAdapter` uses **`IS_PRODUCTION`** from `@agenticverdict/config/build-constants` (from the process `NODE_ENV` at module load). In a **production** process it **never** selects mock adapters from env, even if `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` is set. Use **`NODE_ENV=development`** (or **`test`**) on the **API** and **worker** when you need mock-backed data fetches. The dev Compose stack ([`deploy/docker-compose.dev.override.yml`](../../deploy/docker-compose.dev.override.yml) or [`docker-compose.dev.yml`](../../docker-compose.dev.yml)) does this for **those services** and sets **`TARGET_STAGE`** on image build.
 
 **Web in Docker:** the **web** service keeps **`NODE_ENV=production`** in default Compose overlays; **mock adapters are not available** in that Next.js standalone runtime. Use **`pnpm dev`** for mock-capable web code paths.
 
-**Separate concern — enabling mocks via env (non-production only):** When `NODE_ENV` is **`development`** or **`test`**, mock selection follows the master and per-platform flags in [Section 2.4](#24-environment-variables-reference). Logic lives in **`@agenticverdict/config/configuration`** (`isMockEnabledForPlatform`) and is used by **`createPlatformAdapter`**. If `NODE_ENV` is **`production`** or **`staging`**, `isMockEnabledForPlatform` **throws** if a flag tries to **turn mock mode on** (defense in depth). The web adapter health route uses that helper with **the web process** env.
+**Separate concern — enabling mocks via env (non-production only):** When `NODE_ENV` is **`development`** or **`test`**, mock selection follows the master and per-connector flags in [Section 2.4](#24-environment-variables-reference). Logic lives in **`@agenticverdict/config/configuration`** (`isMockEnabledForConnector`) and is used by **`createConnectorAdapter`**. If `NODE_ENV` is **`production`** or **`staging`**, `isMockEnabledForConnector` **throws** if a flag tries to **turn mock mode on** (defense in depth). The web adapter health route uses that helper with **the web process** env.
 
 **Docker images:** Pass **`TARGET_STAGE`** and matching **`NODE_ENV`** build args (see dev override). Runtime **`NODE_ENV`** must stay non-`production` on **api** and **worker** when mocks are required.
 
@@ -416,15 +416,15 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
 
 **Layer 1 — build constants:** `@agenticverdict/config` exports **`BUILD_CONFIG`**, **`IS_PRODUCTION`**, and related symbols from **`build-constants`** (see [migration guide: compiler-driven config](../../docs/06-reference/migration-guide-compiler-driven-config.md)).
 
-**Layer 2 — runtime config:** **`@agenticverdict/config/configuration`** (also exported from the package root) provides **`ConfigurationService`**, validated **`RuntimeConfig`**, **`canEnableMocksViaEnv`**, centralized **`isMockEnabledForPlatform`**, and the **`config`** accessor object. **`createPlatformAdapter`** imports mock enablement from this layer; production **esbuild** bundles still drop mock symbols (**`pnpm run verify:production-bundle`**).
+**Layer 2 — runtime config:** **`@agenticverdict/config/configuration`** (also exported from the package root) provides **`ConfigurationService`**, validated **`RuntimeConfig`**, **`canEnableMocksViaEnv`**, centralized **`isMockEnabledForConnector`**, and the **`config`** accessor object. **`createConnectorAdapter`** imports mock enablement from this layer; production **esbuild** bundles still drop mock symbols (**`pnpm run verify:production-bundle`**).
 
 **What manual testers should know:**
 
 - **Production-shaped processes (`NODE_ENV=production` when the Node process starts):**
-  - **`createPlatformAdapter` always uses real (production) adapter implementations** for fetch paths; mock env flags do not switch it to mocks.
+  - **`createConnectorAdapter` always uses real (production) adapter implementations** for fetch paths; mock env flags do not switch it to mocks.
   - **`POST /api/v1/workflows/trigger`** with `testMode: true` returns **HTTP 400** (`Workflow test triggers are not available in production builds`) so test harness jobs are not enqueued.
   - **Worker:** On startup, if `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` is set, the process **logs an error and exits** (misconfiguration guard).
-  - **Do not** set `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` on **production** **api** / **worker** services; if you intentionally enable mock flags while `NODE_ENV` is `production` or `staging`, `isMockEnabledForPlatform` **throws** when evaluating enablement (for example from the web health route).
+  - **Do not** set `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` on **production** **api** / **worker** services; if you intentionally enable mock flags while `NODE_ENV` is `production` or `staging`, `isMockEnabledForConnector` **throws** when evaluating enablement (for example from the web health route).
 
 - **Development / test processes (`NODE_ENV` is `development` or `test`):** Mock adapters remain available per [Section 2.4](#24-environment-variables-reference) and [Section 2.6](#26-mock-adapter-notes). CI also runs **`pnpm run verify:production-bundle`** on production-oriented esbuild outputs and the **minified adapter-factory smoke** artifact (see root `package.json`).
 
@@ -1195,7 +1195,7 @@ agenticverdict_circuit_breaker_transitions_total
 When [`docker-compose.observability.yml`](../../docker-compose.observability.yml) is up, Grafana is on **host port 3001** (see [§2.3](#23-optional-observability-stack)). Pre-configured dashboards (paths are unchanged; only the origin port differs from the web app):
 
 - **Workflow Overview**: `http://localhost:3001/d/workflow-overview`
-- **Platform Adapters**: `http://localhost:3001/d/platform-adapters`
+- **Data connectors** (Grafana dashboard UID may still be `platform-adapters`): `http://localhost:3001/d/platform-adapters`
 - **Report Generation**: `http://localhost:3001/d/report-generation`
 
 ---
@@ -1715,7 +1715,7 @@ docker exec agenticverdict-worker-1 printenv GLM_API_KEY
 
 #### Issue: Mock Adapter Security Guard
 
-**Symptoms**: Error text containing **`Mock adapters cannot be enabled`** (for example from `isMockEnabledForPlatform` when `NODE_ENV` is `production` or `staging` and a mock flag is set to **on**), **or** worker exits on startup with **`Mock adapters cannot be enabled in production builds`**
+**Symptoms**: Error text containing **`Mock adapters cannot be enabled`** (for example from `isMockEnabledForConnector` when `NODE_ENV` is `production` or `staging` and a mock flag is set to **on**), **or** worker exits on startup with **`Mock adapters cannot be enabled in production builds`**
 
 **Diagnosis**:
 
@@ -1726,7 +1726,7 @@ docker exec agenticverdict-worker-1 printenv NODE_ENV
 docker exec agenticverdict-worker-1 printenv AGENTICVERDICT_USE_MOCK_ADAPTERS
 
 # Check adapter health endpoint / web logs
-curl -s http://localhost:3000/api/health/adapters | jq '.mockMode, .mockPlatforms'
+curl -s http://localhost:3000/api/health/adapters | jq '.mockMode, .mockConnectors'
 docker logs agenticverdict-web-1 --tail=50 | grep -i "security\|mock"
 ```
 

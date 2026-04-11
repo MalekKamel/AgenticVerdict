@@ -1,5 +1,5 @@
 import { requireTenantContext } from "@agenticverdict/core";
-import { parseNormalizedPlatformSnapshot } from "@agenticverdict/platform-adapters";
+import { parseNormalizedConnectorSnapshot } from "@agenticverdict/data-connectors";
 
 import type { AgentInvocationContext, ITool } from "../interfaces";
 import { computeB2bMarketingKpisFromNormalizedSnapshots } from "../b2b-funnel-from-snapshots";
@@ -20,7 +20,7 @@ export function createB2bKpiTools(): ITool[] {
         const snapshots = [];
         for (let i = 0; i < input.snapshots.length; i++) {
           const raw = input.snapshots[i];
-          const parsed = parseNormalizedPlatformSnapshot(raw);
+          const parsed = parseNormalizedConnectorSnapshot(raw);
           if (!parsed.success) {
             const msg = parsed.error.issues.map((issue) => issue.message).join("; ");
             throw new AgentToolError(

@@ -1,9 +1,6 @@
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 
-import {
-  MockPlatformAdapter,
-  type NormalizedMetricRecord,
-} from "@agenticverdict/platform-adapters";
+import { MockConnectorAdapter, type NormalizedMetricRecord } from "@agenticverdict/data-connectors";
 
 import {
   PlatformDataFactory,
@@ -146,12 +143,12 @@ export interface FakerBackedMockAdapterOptions {
 }
 
 /**
- * Builds a {@link MockPlatformAdapter} whose normalized rows are derived from {@link PlatformDataFactory} output.
+ * Builds a {@link MockConnectorAdapter} whose normalized rows are derived from {@link PlatformDataFactory} output.
  */
 export function createFakerBackedMockAdapter(
-  platform: PlatformType,
+  platform: ConnectorType,
   options: FakerBackedMockAdapterOptions,
-): MockPlatformAdapter {
+): MockConnectorAdapter {
   const seed = options.seed ?? 10_321;
   const tenantId = options.tenantId;
 
@@ -160,7 +157,7 @@ export function createFakerBackedMockAdapter(
       const count = options.campaignCount ?? 4;
       const campaigns = PlatformDataFactory.generateMetaCampaigns(count, seed);
       const records = metaCampaignsToRecords(campaigns);
-      return new MockPlatformAdapter("meta", {
+      return new MockConnectorAdapter("meta", {
         tenantId,
         rawResponse: { campaigns },
         records,
@@ -170,7 +167,7 @@ export function createFakerBackedMockAdapter(
       const count = options.sessionCount ?? 20;
       const sessions = PlatformDataFactory.generateGA4Sessions(count, seed);
       const records = ga4SessionsToRecords(sessions);
-      return new MockPlatformAdapter("ga4", {
+      return new MockConnectorAdapter("ga4", {
         tenantId,
         rawResponse: { sessions },
         records,
@@ -180,7 +177,7 @@ export function createFakerBackedMockAdapter(
       const count = options.queryCount ?? 12;
       const queries = PlatformDataFactory.generateGSCQueries(count, seed);
       const records = gscQueriesToRecords(queries);
-      return new MockPlatformAdapter("gsc", {
+      return new MockConnectorAdapter("gsc", {
         tenantId,
         rawResponse: { queries },
         records,
@@ -190,7 +187,7 @@ export function createFakerBackedMockAdapter(
       const days = options.gbpDays ?? 5;
       const metrics = PlatformDataFactory.generateGBPMetrics(days, seed);
       const records = gbpMetricsToRecords(metrics);
-      return new MockPlatformAdapter("gbp", {
+      return new MockConnectorAdapter("gbp", {
         tenantId,
         rawResponse: { metrics },
         records,
@@ -200,7 +197,7 @@ export function createFakerBackedMockAdapter(
       const count = options.tiktokAdCount ?? 3;
       const ads = PlatformDataFactory.generateTikTokAds(count, seed);
       const records = tiktokAdsToRecords(ads);
-      return new MockPlatformAdapter("tiktok", {
+      return new MockConnectorAdapter("tiktok", {
         tenantId,
         rawResponse: { ads },
         records,

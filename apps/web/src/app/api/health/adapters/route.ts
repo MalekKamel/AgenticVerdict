@@ -1,4 +1,4 @@
-import { isMockEnabledForPlatform, platformAdapterTypes } from "@agenticverdict/platform-adapters";
+import { isMockEnabledForConnector, connectorAdapterTypes } from "@agenticverdict/data-connectors";
 import { NextResponse } from "next/server";
 
 import { getSharedAdapterInfrastructure } from "@/lib/adapter-infrastructure";
@@ -9,16 +9,16 @@ import { getSharedAdapterInfrastructure } from "@/lib/adapter-infrastructure";
 export async function GET() {
   const infra = getSharedAdapterInfrastructure();
   const body = await infra.getHealth();
-  const mockPlatforms = platformAdapterTypes.filter((platform) =>
-    isMockEnabledForPlatform(platform),
+  const mockConnectors = connectorAdapterTypes.filter((connector) =>
+    isMockEnabledForConnector(connector),
   );
   const withMockMetadata = {
     ...body,
-    mockMode: mockPlatforms.length > 0,
-    mockPlatforms,
-    platforms: body.platforms.map((platform) => ({
-      ...platform,
-      adapterType: mockPlatforms.includes(platform.platform) ? "mock" : "production",
+    mockMode: mockConnectors.length > 0,
+    mockConnectors,
+    connectors: body.connectors.map((row) => ({
+      ...row,
+      adapterType: mockConnectors.includes(row.connector) ? "mock" : "production",
     })),
   };
   const status = body.status === "ok" ? 200 : 503;

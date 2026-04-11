@@ -1,4 +1,4 @@
-export type { PlatformType } from "./platform";
+export type { ConnectorType } from "./connector-types";
 
 export type { DateRange, MetricReference } from "./common";
 export { dateRangeSchema, metricReferenceSchema } from "./common";

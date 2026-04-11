@@ -109,8 +109,8 @@ Client Request
 │                    Platform Adapter Interface                   │
 └─────────────────────────────────────────────────────────────────┘
 
-interface PlatformAdapter {
-  platform: PlatformType;           // 'meta' | 'ga4' | 'gsc' | 'gbp' | 'tiktok'
+interface ConnectorAdapter {
+  platform: ConnectorType;           // 'meta' | 'ga4' | 'gsc' | 'gbp' | 'tiktok'
 
   authenticate(credentials): Promise<void>;
   fetchMetrics(dateRange): Promise<PlatformData>;
@@ -181,18 +181,18 @@ Input Data
 
 ### 3.2 Packages
 
-| Package               | Purpose                 | Key Exports                       |
-| --------------------- | ----------------------- | --------------------------------- |
-| **core**              | Domain logic, entities  | `Tenant`, `Report`, `Company`     |
-| **config**            | Configuration schemas   | `CompanyConfig`, Zod schemas      |
-| **database**          | Drizzle ORM, migrations | `db`, schema exports              |
-| **platform-adapters** | Platform integrations   | `PlatformAdapter` implementations |
-| **agent-runtime**     | AI orchestration        | `AgentFactory`, `ChatModel`       |
-| **report-generator**  | Report generation       | `generateReport()`, formatters    |
-| **ui**                | Shared UI components    | Mantine-based components          |
-| **i18n**              | Internationalization    | `useLocale()`, RTL utilities      |
-| **types**             | TypeScript types        | Shared type definitions           |
-| **testing**           | Test utilities          | Mock factories, test helpers      |
+| Package               | Purpose                 | Key Exports                        |
+| --------------------- | ----------------------- | ---------------------------------- |
+| **core**              | Domain logic, entities  | `Tenant`, `Report`, `Company`      |
+| **config**            | Configuration schemas   | `CompanyConfig`, Zod schemas       |
+| **database**          | Drizzle ORM, migrations | `db`, schema exports               |
+| **platform-adapters** | Platform integrations   | `ConnectorAdapter` implementations |
+| **agent-runtime**     | AI orchestration        | `AgentFactory`, `ChatModel`        |
+| **report-generator**  | Report generation       | `generateReport()`, formatters     |
+| **ui**                | Shared UI components    | Mantine-based components           |
+| **i18n**              | Internationalization    | `useLocale()`, RTL utilities       |
+| **types**             | TypeScript types        | Shared type definitions            |
+| **testing**           | Test utilities          | Mock factories, test helpers       |
 
 ### 3.3 Directory Structure
 
@@ -312,12 +312,12 @@ agenticverdict/
    │ Load CompanyConfig from database
    │
    ▼
-3. Fetch Platform Data (Parallel)
-   ├── Meta Ads → PlatformAdapter
-   ├── GA4 → PlatformAdapter
-   ├── GSC → PlatformAdapter
-   ├── GBP → PlatformAdapter
-   └── TikTok → PlatformAdapter
+3. Fetch connector data (parallel)
+   ├── Meta Ads
+   ├── GA4
+   ├── GSC
+   ├── GBP
+   └── TikTok
    │
    ▼
 4. Normalize Data
@@ -376,7 +376,7 @@ Client Request (JWT)
          │    await cache.get(`${tenantId}:key`)
          │
          ├──▶ External API Call
-         │    PlatformAdapter.fetchMetrics(...)
+         │    ConnectorAdapter.fetchMetrics(...)
          │
          └──▶ Log Entry
               logger.info({ tenantId, ... })
@@ -648,7 +648,7 @@ SELECT * FROM companies;  -- Only returns tenant's row
 // Credentials stored encrypted
 interface EncryptedCredentials {
   tenantId: string;
-  platform: PlatformType;
+  platform: ConnectorType;
   accessToken: string; // Encrypted at rest
   refreshToken: string; // Encrypted at rest
   expiresAt: Date;

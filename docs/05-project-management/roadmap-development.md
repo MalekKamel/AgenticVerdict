@@ -110,7 +110,7 @@ Ensure consistency and integration across all phases by:
 
 ## Implementation status note (2026-04-04)
 
-Much of **Phase 2 below (Platform Integration)** is implemented in the repository as **Phase 01** in `docs/03-development-phases/phase-01-platform-integration/` (`@agenticverdict/platform-adapters`, health routes, operations docs). The checklist items in this file are **historical planning**; use phase `acceptance-criteria.md` and [`requirements.md`](./requirements.md) (v1.1+) for current mandatory behavior (e.g. **required `tenantId`** on adapters). Dated implementation notes: [`changelog/`](../../changelog/) files prefixed `2026-04-04-phase-01-`.
+Much of **Phase 2 below (Platform Integration)** is implemented in the repository as **Phase 01** in `docs/03-development-phases/phase-01-platform-integration/` (`@agenticverdict/data-connectors`, health routes, operations docs). The checklist items in this file are **historical planning**; use phase `acceptance-criteria.md` and [`requirements.md`](./requirements.md) (v1.1+) for current mandatory behavior (e.g. **required `tenantId`** on adapters). Dated implementation notes: [`changelog/`](../../changelog/) files prefixed `2026-04-04-phase-01-`.
 
 ## Phases Overview
 
@@ -153,7 +153,7 @@ Based on the project charter and requirements analysis, the following phases are
 
 **Tasks:**
 
-- [ ] Define PlatformAdapter interface
+- [ ] Define ConnectorAdapter interface
 - [ ] Implement Meta adapter
 - [ ] Implement GA4 adapter
 - [ ] Implement GSC adapter

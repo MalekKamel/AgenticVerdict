@@ -20,7 +20,7 @@ Adapter selection leans on **runtime** environment state:
 
 ```typescript
 // Typical pattern: mock when env says so
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   useMock: process.env.NODE_ENV === "development",
 });
@@ -33,16 +33,16 @@ Guards such as “no mocks in production” are enforced at runtime via `NODE_EN
 Call sites rely on **shared build constants** (and the adapter factory implements production vs non-production paths using those constants). You stop scattering raw `process.env.NODE_ENV === ...` checks for adapter mode; tests and apps import the same `BUILD_CONFIG` (or related symbols) the factory uses.
 
 ```typescript
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 import { BUILD_CONFIG } from "@agenticverdict/config";
 
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   // Mock vs production follows build constants + existing mock env rules in non-production
 });
 ```
 
-Exact factory behavior is defined in `packages/platform-adapters` as the implementation lands; the intent is compile-time separation of production vs development/test paths.
+Exact factory behavior is defined in `packages/data-connectors` as the implementation lands; the intent is compile-time separation of production vs development/test paths.
 
 ---
 
@@ -53,7 +53,7 @@ Exact factory behavior is defined in `packages/platform-adapters` as the impleme
 **Adapter factory (unchanged package):**
 
 ```typescript
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 ```
 
 **Build constants** come from `@agenticverdict/config` once `build-constants` is implemented and re-exported from the package entry.
@@ -138,7 +138,7 @@ Continue to set `AGENTICVERDICT_USE_MOCK_ADAPTERS` and per-platform mock vars wh
 
 ## Breaking changes
 
-For most consumers, **none**: `createPlatformAdapter` keeps a compatible surface; company JSON and `CompanyConfig` types stay the same (no discriminated union).
+For most consumers, **none**: `createConnectorAdapter` keeps a compatible surface; company JSON and `CompanyConfig` types stay the same (no discriminated union).
 
 Call sites that depended on **overriding** behavior purely by toggling `NODE_ENV` at runtime **after** a production build may need to use a non-production build or pass explicit options where the API allows it (for example `useMock: false` for forcing production adapters in a dev build).
 
@@ -152,7 +152,7 @@ Call sites that depended on **overriding** behavior purely by toggling `NODE_ENV
 To force a production adapter in development without changing global env:
 
 ```typescript
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   useMock: false,
 });

@@ -1,4 +1,4 @@
-import type { DateRangeIso } from "@agenticverdict/platform-adapters";
+import type { DateRangeIso } from "@agenticverdict/data-connectors";
 
 const DEFAULT_RANGE: DateRangeIso = {
   startInclusive: "2026-01-01",

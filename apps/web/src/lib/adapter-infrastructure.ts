@@ -1,9 +1,9 @@
 import {
   createDefaultAdapterInfrastructure,
-  isMockEnabledForPlatform,
-  platformAdapterTypes,
+  isMockEnabledForConnector,
+  connectorAdapterTypes,
   type AdapterInfrastructureBundle,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 const globalKey = "__agenticverdict_adapterInfrastructure__" as const;
 
@@ -15,7 +15,9 @@ export function getSharedAdapterInfrastructure(): AdapterInfrastructureBundle {
   if (!g[globalKey]) {
     g[globalKey] = createDefaultAdapterInfrastructure();
     if (process.env.NODE_ENV === "development") {
-      const enabled = platformAdapterTypes.filter((platform) => isMockEnabledForPlatform(platform));
+      const enabled = connectorAdapterTypes.filter((platform) =>
+        isMockEnabledForConnector(platform),
+      );
       if (enabled.length > 0) {
         console.warn(`[Mock Adapters] Enabled for: ${enabled.join(", ")}`);
       }

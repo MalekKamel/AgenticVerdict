@@ -1,5 +1,5 @@
 import { dbScoped, marketingMetrics, type Database } from "@agenticverdict/database";
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 import { and, asc, eq, gte, lte } from "drizzle-orm";
 
 export interface MarketingMetricsRow {
@@ -12,7 +12,7 @@ export interface MarketingMetricsStore {
   queryHistorical(params: {
     startDate: string;
     endDate: string;
-    platform?: PlatformType;
+    platform?: ConnectorType;
     limit?: number;
   }): Promise<readonly MarketingMetricsRow[]>;
 }
@@ -121,7 +121,7 @@ export async function analyzeTrendsFromStore(
   params: {
     startDate: string;
     endDate: string;
-    platform?: PlatformType;
+    platform?: ConnectorType;
     mode: "row_volume" | "payload_sum";
   },
 ): Promise<TrendAnalysisResult> {
@@ -162,7 +162,7 @@ export async function comparePeriodsFromStore(
   params: {
     periodA: { startDate: string; endDate: string };
     periodB: { startDate: string; endDate: string };
-    platform?: PlatformType;
+    platform?: ConnectorType;
     mode: "row_volume" | "payload_sum";
   },
 ): Promise<PeriodCompareResult> {

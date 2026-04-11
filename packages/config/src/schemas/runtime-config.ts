@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-/** Platforms that support mock adapters (aligned with `PlatformType`). */
-export const mockAdapterPlatformSchema = z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]);
+/** Connectors that support mock adapters (aligned with `ConnectorType`). */
+export const mockAdapterConnectorSchema = z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]);
 
 export const runtimeConfigSchema = z.object({
   adapters: z.object({
     mocks: z.object({
       enabled: z.boolean(),
-      platforms: z.array(mockAdapterPlatformSchema),
+      connectors: z.array(mockAdapterConnectorSchema),
       scenarios: z.record(z.string()).optional(),
     }),
   }),

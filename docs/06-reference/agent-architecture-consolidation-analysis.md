@@ -191,7 +191,7 @@ export interface AgentSystemConfig {
 
   // Tool Dependencies
   metricsStore?: MarketingMetricsStore;
-  platformAdapterGetter?: (platform: PlatformType) => PlatformAdapter;
+  platformAdapterGetter?: (platform: ConnectorType) => ConnectorAdapter;
   configCache?: TenantScopedTtlCache<unknown>;
 
   // Agent Defaults
@@ -363,7 +363,7 @@ export function getAgentSystem(): AgentSystem {
       enablePlatformTools: true,
       enableDatabaseTools: true,
       enableB2bKpiTools: true,
-      platformAdapterGetter: (platform) => createPlatformAdapter({ platform, tenantId: /* ... */ }),
+      platformAdapterGetter: (platform) => createConnectorAdapter({ platform, tenantId: /* ... */ }),
       metricsStore: createDrizzleMarketingMetricsStore(db),
     });
   }
@@ -486,7 +486,7 @@ const agent = testSystem.createTestAgent({ role: "analysis" }, new AgentMockChat
 ```typescript
 import { AgentSystem, loadLlmEnvFromProcess } from "@agenticverdict/agent-runtime";
 import { createDrizzleMarketingMetricsStore } from "@agenticverdict/database";
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 import { getDb } from "./database"; // Existing DB singleton
 
 let agentSystemInstance: AgentSystem | null = null;
@@ -502,7 +502,7 @@ export function getAgentSystem(): AgentSystem {
       platformAdapterGetter: (platform) => {
         // Get tenant context from AsyncLocalStorage
         const tenant = requireTenantContext();
-        return createPlatformAdapter({
+        return createConnectorAdapter({
           platform,
           tenantId: tenant.tenantId,
         });

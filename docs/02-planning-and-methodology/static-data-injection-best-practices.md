@@ -8,11 +8,11 @@
 
 ## Executive Summary
 
-This document provides comprehensive guidance on implementing static data injection patterns for testing the AgenticVerdict multi-platform marketing analytics system. It covers mock adapters, fixture management, data factories, database seeding, contract testing, and snapshot testing—tailored specifically to the AgenticVerdict architecture with PlatformAdapter interfaces, multi-tenant configuration, and report generation workflows.
+This document provides comprehensive guidance on implementing static data injection patterns for testing the AgenticVerdict multi-platform marketing analytics system. It covers mock adapters, fixture management, data factories, database seeding, contract testing, and snapshot testing—tailored specifically to the AgenticVerdict architecture with ConnectorAdapter interfaces, multi-tenant configuration, and report generation workflows.
 
 **Key Recommendations:**
 
-1. **Mock Adapter Pattern**: Use the existing `MockPlatformAdapter` as the foundation for all platform mocking
+1. **Mock Adapter Pattern**: Use the existing `MockConnectorAdapter` as the foundation for all platform mocking
 2. **Fixture Hierarchy**: Organize fixtures by tenant → platform → scenario with clear separation
 3. **Data Factories**: Implement builder pattern for complex test data objects
 4. **Deterministic Seeding**: Use idempotent database seeds with tenant isolation
@@ -38,18 +38,18 @@ This document provides comprehensive guidance on implementing static data inject
 
 ### 1.1 Current Implementation Analysis
 
-AgenticVerdict already has a solid foundation with `MockPlatformAdapter` in `/packages/platform-adapters/src/mock-adapter.ts`:
+AgenticVerdict already has a solid foundation with `MockConnectorAdapter` in `/packages/data-connectors/src/mock-adapter.ts`:
 
 ```typescript
-export class MockPlatformAdapter extends BasePlatformAdapter {
-  readonly platform: PlatformType;
-  private credentials: PlatformCredentials | null = null;
+export class MockConnectorAdapter extends BaseConnectorAdapter {
+  readonly platform: ConnectorType;
+  private credentials: ConnectorCredentials | null = null;
   private readonly rawResponse: unknown;
   private readonly authFailureMessage?: string;
   private readonly records?: NormalizedMetricRecord[];
 
-  constructor(platform: PlatformType, options: MockPlatformAdapterOptions) {
-    // Implements full PlatformAdapter interface
+  constructor(platform: ConnectorType, options: MockConnectorAdapterOptions) {
+    // Implements full ConnectorAdapter interface
     // Supports authentication, data fetching, normalization
   }
 }
@@ -57,8 +57,8 @@ export class MockPlatformAdapter extends BasePlatformAdapter {
 
 **Strengths:**
 
-- ✅ Implements complete `PlatformAdapter` interface
-- ✅ Inherits resilience patterns from `BasePlatformAdapter` (circuit breaker, backoff, caching)
+- ✅ Implements complete `ConnectorAdapter` interface
+- ✅ Inherits resilience patterns from `BaseConnectorAdapter` (circuit breaker, backoff, caching)
 - ✅ Supports configurable auth failures
 - ✅ Allows raw response injection
 - ✅ Supports normalized record overrides
@@ -78,15 +78,15 @@ export class MockPlatformAdapter extends BasePlatformAdapter {
 Create scenario-based mock adapters that encapsulate common test scenarios:
 
 ```typescript
-// packages/platform-adapters/src/mock-adapter-scenarios.ts
+// packages/data-connectors/src/mock-adapter-scenarios.ts
 export interface MockAdapterScenario {
   name: string;
   description: string;
-  platform: PlatformType;
-  setup: () => MockPlatformAdapterOptions;
+  platform: ConnectorType;
+  setup: () => MockConnectorAdapterOptions;
 }
 
-export const mockAdapterScenarios: Record<PlatformType, MockAdapterScenario[]> = {
+export const mockAdapterScenarios: Record<ConnectorType, MockAdapterScenario[]> = {
   meta: [
     {
       name: "high-spike-week",
@@ -134,7 +134,7 @@ export const mockAdapterScenarios: Record<PlatformType, MockAdapterScenario[]> =
 
 // Usage in tests:
 const scenario = mockAdapterScenarios.meta[0]; // high-spike-week
-const adapter = new MockPlatformAdapter("meta", {
+const adapter = new MockConnectorAdapter("meta", {
   tenantId: "test-tenant-001",
   ...scenario.setup(),
 });
@@ -145,7 +145,7 @@ const adapter = new MockPlatformAdapter("meta", {
 Implement deterministic time-series generators for realistic data:
 
 ```typescript
-// packages/platform-adapters/src/mock-time-series.ts
+// packages/data-connectors/src/mock-time-series.ts
 export interface TimeSeriesConfig {
   startDate: Date;
   endDate: Date;
@@ -216,9 +216,9 @@ const spendSeries = generateTimeSeries({
 For testing webhook handlers and event-driven workflows:
 
 ```typescript
-// packages/platform-adapters/src/mock-webhook.ts
+// packages/data-connectors/src/mock-webhook.ts
 export interface MockWebhookEvent {
-  platform: PlatformType;
+  platform: ConnectorType;
   eventType: string;
   timestamp: Date;
   payload: unknown;
@@ -226,7 +226,7 @@ export interface MockWebhookEvent {
 }
 
 export class MockWebhookGenerator {
-  constructor(private readonly platform: PlatformType) {}
+  constructor(private readonly platform: ConnectorType) {}
 
   generateCampaignUpdatedEvent(
     campaignId: string,
@@ -287,15 +287,15 @@ await webhookHandler.handle(event);
 Create automated tests that validate mock adapters conform to the same interface as real adapters:
 
 ```typescript
-// packages/platform-adapters/src/interface-compliance.test.ts
+// packages/data-connectors/src/interface-compliance.test.ts
 import { describe, it, expect } from "vitest";
-import type { PlatformAdapter } from "./adapter";
-import { MockPlatformAdapter } from "./mock-adapter";
+import type { ConnectorAdapter } from "./adapter";
+import { MockConnectorAdapter } from "./mock-adapter";
 import { MetaAdapter } from "./meta/meta-adapter";
 
 interface AdapterComplianceTest {
   name: string;
-  test: (adapter: PlatformAdapter) => Promise<void>;
+  test: (adapter: ConnectorAdapter) => Promise<void>;
 }
 
 const complianceTests: AdapterComplianceTest[] = [
@@ -345,9 +345,9 @@ const complianceTests: AdapterComplianceTest[] = [
   },
 ];
 
-describe("PlatformAdapter Interface Compliance", () => {
-  describe("MockPlatformAdapter", () => {
-    const mockAdapter = new MockPlatformAdapter("meta", {
+describe("ConnectorAdapter Interface Compliance", () => {
+  describe("MockConnectorAdapter", () => {
+    const mockAdapter = new MockConnectorAdapter("meta", {
       tenantId: "test-tenant",
     });
 
@@ -381,15 +381,15 @@ describe("PlatformAdapter Interface Compliance", () => {
 Validate that mock data matches the schema expected by real adapters:
 
 ```typescript
-// packages/platform-adapters/src/schema-validation.test.ts
+// packages/data-connectors/src/schema-validation.test.ts
 import { describe, it, expect } from "vitest";
-import { MockPlatformAdapter } from "./mock-adapter";
+import { MockConnectorAdapter } from "./mock-adapter";
 import { metaResponseSchema } from "./meta/meta-response-schema";
 import { ga4ResponseSchema } from "./ga4/ga4-response-schema";
 
 describe("Mock Adapter Schema Validation", () => {
   it("Meta mock responses match Meta schema", async () => {
-    const adapter = new MockPlatformAdapter("meta", {
+    const adapter = new MockConnectorAdapter("meta", {
       tenantId: "test-tenant",
     });
     await adapter.authenticate({ accessToken: "test" });
@@ -403,7 +403,7 @@ describe("Mock Adapter Schema Validation", () => {
   });
 
   it("GA4 mock responses match GA4 schema", async () => {
-    const adapter = new MockPlatformAdapter("ga4", {
+    const adapter = new MockConnectorAdapter("ga4", {
       tenantId: "test-tenant",
     });
     await adapter.authenticate({ accessToken: "test" });
@@ -1216,7 +1216,7 @@ Combine multiple seeds for complete test scenarios:
 ```typescript
 // packages/database/seeds/scenarios/multi-platform-report.seed.ts
 import { seedTestTenant } from "../test/test-companies.seed";
-import { seedPlatformCredentials } from "../test/test-platform-credentials.seed";
+import { seedConnectorCredentials } from "../test/test-platform-credentials.seed";
 import { seedReportTemplates } from "../base/templates.seed";
 
 export async function seedMultiPlatformReportScenario() {
@@ -1224,7 +1224,7 @@ export async function seedMultiPlatformReportScenario() {
   const tenant = await seedTestTenant("default");
 
   // 2. Add platform credentials for all platforms
-  await seedPlatformCredentials(tenant.id, ["meta", "ga4", "gsc", "gbp", "tiktok"]);
+  await seedConnectorCredentials(tenant.id, ["meta", "ga4", "gsc", "gbp", "tiktok"]);
 
   // 3. Seed report templates
   await seedReportTemplates(tenant.id, ["marketing-performance", "cross-platform-analysis"]);
@@ -1364,7 +1364,7 @@ Contract testing ensures that:
 Define explicit schemas for each platform's responses:
 
 ```typescript
-// packages/platform-adapters/src/meta/meta-response-schema.ts
+// packages/data-connectors/src/meta/meta-response-schema.ts
 import { z } from "zod";
 
 export const MetaCampaignSchema = z.object({
@@ -1396,11 +1396,11 @@ export const MetaResponseSchema = z.object({
 
 // Contract test
 import { MetaResponseSchema } from "./meta/meta-response-schema";
-import { MockPlatformAdapter } from "./mock-adapter";
+import { MockConnectorAdapter } from "./mock-adapter";
 
 describe("Meta Adapter Contract Tests", () => {
   it("mock adapter produces valid Meta response schema", async () => {
-    const adapter = new MockPlatformAdapter("meta", {
+    const adapter = new MockConnectorAdapter("meta", {
       tenantId: "test-tenant",
     });
     await adapter.authenticate({ accessToken: "test" });
@@ -1424,7 +1424,7 @@ describe("Meta Adapter Contract Tests", () => {
 Capture real API responses for comparison:
 
 ```typescript
-// packages/platform-adapters/src/meta/meta-snapshot.test.ts
+// packages/data-connectors/src/meta/meta-snapshot.test.ts
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { MetaAdapter } from "./meta-adapter";
 
@@ -1482,7 +1482,7 @@ name: Contract Tests
 on:
   pull_request:
     paths:
-      - "packages/platform-adapters/src/**"
+      - "packages/data-connectors/src/**"
   schedule:
     - cron: "0 0 * *" # Daily
 
@@ -1498,7 +1498,7 @@ jobs:
           META_TEST_CREDENTIALS: ${{ secrets.META_TEST_CREDENTIALS }}
         run: |
           pnpm install
-          pnpm test packages/platform-adapters/src/meta/*.contract.test.ts
+          pnpm test packages/data-connectors/src/meta/*.contract.test.ts
 
   schema-validation:
     runs-on: ubuntu-latest
@@ -1508,7 +1508,7 @@ jobs:
       - name: Validate schemas
         run: |
           pnpm install
-          pnpm test packages/platform-adapters/src/**/*.schema.test.ts
+          pnpm test packages/data-connectors/src/**/*.schema.test.ts
 ```
 
 ### 5.3 Contract Testing Tools
@@ -1921,7 +1921,7 @@ const reportData = new MultiPlatformReportBuilder()
 
 **Tasks:**
 
-1. Extend `MockPlatformAdapter` with scenario support
+1. Extend `MockConnectorAdapter` with scenario support
 2. Implement time-series data generator
 3. Add webhook event simulation
 4. Create interface compliance tests
@@ -2124,7 +2124,7 @@ pnpm add -D @faker-js/faker
 pnpm test tests/factories/
 
 # Run contract tests
-pnpm test packages/platform-adapters/src/**/*.contract.test.ts
+pnpm test packages/data-connectors/src/**/*.contract.test.ts
 
 # Run snapshot tests
 pnpm test --reporter=verbose

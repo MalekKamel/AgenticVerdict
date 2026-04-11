@@ -22,7 +22,7 @@ describe("createFakerBackedMockAdapter", () => {
       const raw = await adapter.fetchMetrics(range);
       const norm = adapter.normalizeData(raw, range);
       expect(norm.records.length).toBeGreaterThan(0);
-      expect(norm.platform).toBe(platform);
+      expect(norm.connector).toBe(platform);
     },
   );
 

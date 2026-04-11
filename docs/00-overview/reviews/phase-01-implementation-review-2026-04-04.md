@@ -1,6 +1,6 @@
 # Phase 01 Platform Integration - Implementation Review & Remediation Plan
 
-**Documentation update (2026-04-04):** Project-wide requirements now mandate **non-empty `tenantId`** on all `BasePlatformAdapter` constructions; centralized **SECURITY.md** and related operations docs are in `docs/03-development-phases/phase-01-platform-integration/operations/`. See [`requirements.md`](../../05-project-management/requirements.md) §Platform integration requirements. Some review metrics (e.g. coverage percentages) are a snapshot — re-run coverage for current numbers.
+**Documentation update (2026-04-04):** Project-wide requirements now mandate **non-empty `tenantId`** on all `BaseConnectorAdapter` constructions; centralized **SECURITY.md** and related operations docs are in `docs/03-development-phases/phase-01-platform-integration/operations/`. See [`requirements.md`](../../05-project-management/requirements.md) §Platform integration requirements. Some review metrics (e.g. coverage percentages) are a snapshot — re-run coverage for current numbers.
 
 **Review Date**: 2026-04-04
 **Reviewers**: Multi-Agent Analysis Team
@@ -108,8 +108,8 @@ Based on original requirements in `/docs/03-development-phases/phase-01-platform
 
 **Plugin Architecture**:
 
-- ✅ All adapters implement `PlatformAdapter` interface
-- ✅ `BasePlatformAdapter` provides consistent foundation
+- ✅ All adapters implement `ConnectorAdapter` interface
+- ✅ `BaseConnectorAdapter` provides consistent foundation
 - ✅ New platforms can be added without core changes
 
 ### 2.2 Areas Requiring Attention ⚠️
@@ -118,13 +118,13 @@ Based on original requirements in `/docs/03-development-phases/phase-01-platform
 
 ```typescript
 // ISSUE: Default tenantId allows bypassing tenant context
-// File: packages/platform-adapters/src/adapter.ts:61
+// File: packages/data-connectors/src/adapter.ts:61
 this.tenantId = options.tenantId ?? "_"; // Should be required
 ```
 
 **Remediation Required**:
 
-- Make `tenantId` a required parameter in `BasePlatformAdapter`
+- Make `tenantId` a required parameter in `BaseConnectorAdapter`
 - Throw error if tenant context not available
 - Ensure all database operations use `dbScoped()` wrapper
 
@@ -390,8 +390,8 @@ this.tenantId = options.tenantId ?? "_"; // Should be required
 **P0: Fix Tenant Context Requirement**
 
 ```typescript
-// packages/platform-adapters/src/adapter.ts
-constructor(options: BasePlatformAdapterOptions) {
+// packages/data-connectors/src/adapter.ts
+constructor(options: BaseConnectorAdapterOptions) {
   if (!options.tenantId) {
     throw new PlatformError(
       this.platform,
@@ -556,7 +556,7 @@ The project is in a strong position to proceed to Phase 02 while completing the 
 
 **Tenant Context Default**:
 
-- File: `packages/platform-adapters/src/adapter.ts`
+- File: `packages/data-connectors/src/adapter.ts`
 - Line: 61
 - Fix Required: Make `tenantId` required parameter
 
@@ -570,7 +570,7 @@ The project is in a strong position to proceed to Phase 02 while completing the 
 
 **Coverage Reports Location**:
 
-- `packages/platform-adapters/coverage/`
+- `packages/data-connectors/coverage/`
 - Latest: 95.69% overall coverage
 
 **Critical Test Files to Add**:

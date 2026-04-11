@@ -42,7 +42,7 @@ export const IS_PRODUCTION = NODE_ENV === "production";
 export const MOCK_ADAPTERS_ENABLED = NODE_ENV !== "production";
 
 // Used in adapter factory
-export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
+export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorAdapter {
   if (!IS_PRODUCTION) {
     // Development-only mock adapters
     return MockAdapterFactory.create({...});

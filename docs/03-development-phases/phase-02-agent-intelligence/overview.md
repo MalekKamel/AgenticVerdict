@@ -4,7 +4,7 @@
 **Status:** In progress
 **Last Updated:** 2026-04-09
 
-**Enhancement (P2, 2026-04-08):** `CompanyConfig.marketing.b2bKpiProfile` plus `computeB2bMarketingKpis` / `buildB2bFunnelSnapshotFromNormalizedSnapshots` in `@agenticverdict/agent-runtime` provide **configuration-driven** B2B funnel KPIs (CPQL, decision-maker / fleet-quality / regional mix, Arabic vs English engagement share). Optional `funnelMetricMapping` aggregates `NormalizedPlatformSnapshot` rows by metric suffix. Agent tool **`compute_b2b_kpis_from_snapshots`** (Phase 4 registry) reads tenant config from `requireTenantContext()`; analysis agents include it in default auto-tools. There is **no** tenant-specific code path.
+**Enhancement (P2, 2026-04-08):** `CompanyConfig.marketing.b2bKpiProfile` plus `computeB2bMarketingKpis` / `buildB2bFunnelSnapshotFromNormalizedSnapshots` in `@agenticverdict/agent-runtime` provide **configuration-driven** B2B funnel KPIs (CPQL, decision-maker / fleet-quality / regional mix, Arabic vs English engagement share). Optional `funnelMetricMapping` aggregates `NormalizedConnectorSnapshot` rows by metric suffix. Agent tool **`compute_b2b_kpis_from_snapshots`** (Phase 4 registry) reads tenant config from `requireTenantContext()`; analysis agents include it in default auto-tools. There is **no** tenant-specific code path.
 
 **Pipeline integration note (P0, 2026-04-09):** End-to-end marketing workflows require platform fetch tools on specialized agents and worker-supplied platform adapter dependencies (`PlatformFetchToolDeps`) into pipeline execution. Mock-adapter workflow paths should produce non-empty metric snapshots to avoid degraded "no data sources available" outputs. See `/docs/06-reference/mock-adapter-pipeline-remediation-plan.md`.
 
@@ -156,14 +156,14 @@ Phase 2 establishes the intelligence layer of AgenticVerdict, implementing the A
 
 - **Available:** Meta (Facebook/Instagram Ads), GA4 (Google Analytics 4), GSC (Google Search Console), GBP (Google Business Profile), TikTok Ads adapters
 - **Purpose:** Agent tools fetch platform-specific marketing metrics
-- **Integration Point:** `PlatformAdapter` interface from `@agenticverdict/platform-adapters`
+- **Integration Point:** `ConnectorAdapter` interface from `@agenticverdict/data-connectors`
 - **Status:** All 5 adapters production-ready with OAuth, caching, rate limiting, normalization
 
 **Execution caveat:** Adapter completeness alone does not guarantee pipeline completeness. Worker and specialized agent wiring must include platform dependency injection for end-to-end analysis to use adapter-backed data.
 
 **Data Normalization Layer (Phase 1) - ✅ COMPLETE**
 
-- **Available:** `NormalizedPlatformSnapshot` schema with `platform`, `dateRange`, `records[]`
+- **Available:** `NormalizedConnectorSnapshot` schema with `platform`, `dateRange`, `records[]`
 - **Purpose:** Agents analyze consistent marketing data structures across platforms
 - **Integration Point:** `runNormalizationPipeline()` and `validateNormalizedSnapshot()`
 - **Status:** Validation framework includes cross-field checks, data quality scoring, outlier detection

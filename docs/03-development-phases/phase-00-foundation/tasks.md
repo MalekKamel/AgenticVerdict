@@ -242,8 +242,8 @@ Define and implement the platform adapter interface and base classes, establishi
 
 | Task ID | Description                                           | Complexity | Estimated Effort | Dependencies | Status |
 | ------- | ----------------------------------------------------- | ---------- | ---------------- | ------------ | ------ |
-| 0.64    | Define PlatformAdapter TypeScript interface           | High       | 4 hours          | 0.3          | Done   |
-| 0.65    | Create BasePlatformAdapter abstract class             | High       | 6 hours          | 0.64         | Done   |
+| 0.64    | Define ConnectorAdapter TypeScript interface          | High       | 4 hours          | 0.3          | Done   |
+| 0.65    | Create BaseConnectorAdapter abstract class            | High       | 6 hours          | 0.64         | Done   |
 | 0.66    | Implement adapter registry pattern                    | Medium     | 4 hours          | 0.65         | Done   |
 | 0.67    | Create rate limiting utility with exponential backoff | High       | 5 hours          | 0.65         | Done   |
 | 0.68    | Implement circuit breaker pattern                     | High       | 5 hours          | 0.67         | Done   |

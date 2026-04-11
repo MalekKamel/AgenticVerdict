@@ -65,12 +65,7 @@ export {
   type LlmRuleBasedFallbackEvent,
 } from "./chat-models";
 export { applyLangSmithTracingToProcess, buildSafeLlmRunnableConfig } from "./langsmith-tracing";
-export {
-  loadLlmEnvFromProcess,
-  parseAgentLlmEnv,
-  type AgentLlmEnv,
-  type LlmProviderEnv,
-} from "./llm-env";
+export { loadLlmEnvFromProcess, parseAgentLlmEnv, type AgentLlmEnv } from "./llm-env";
 export { invokeMinimalMessageGraph } from "./minimal-agent-graph";
 export { AgentFactory, type AgentFactoryDeps } from "./agent-factory";
 export {
@@ -133,7 +128,6 @@ export {
   CompositeAgentMemory,
   createAgentMemory,
   createMemoryForMode,
-  InMemoryAgentMemory,
   NullAgentMemory,
 } from "./memory";
 export { createRuleBasedEchoAgent, type RuleBasedAgentOptions } from "./rule-based-agent";

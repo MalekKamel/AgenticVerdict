@@ -1,20 +1,20 @@
 # Platform adapters — API reference
 
-This reference describes the **public TypeScript API** of `@agenticverdict/platform-adapters`. Adapters are consumed from application services (for example the future Fastify API or workers), not directly from browser code.
+This reference describes the **public TypeScript API** of `@agenticverdict/data-connectors`. Adapters are consumed from application services (for example the future Fastify API or workers), not directly from browser code.
 
-## Core contract: `PlatformAdapter`
+## Core contract: `ConnectorAdapter`
 
-Defined in `packages/platform-adapters/src/adapter.ts`.
+Defined in `packages/data-connectors/src/adapter.ts`.
 
-| Member          | Signature                                                                   | Description                                                                                                                                                                                |
-| --------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `platform`      | `readonly PlatformType`                                                     | One of `meta`, `ga4`, `gsc`, `gbp`, `tiktok`.                                                                                                                                              |
-| `authenticate`  | `(credentials: PlatformCredentials) => Promise<void>`                       | Validates or exchanges tokens and stores internal state required for fetch. Must be called before `fetchMetrics` / `normalizeData` on raw payloads that depend on that session.            |
-| `fetchMetrics`  | `(dateRange: DateRangeIso) => Promise<unknown>`                             | Returns a **vendor-specific** JSON-serializable payload (campaigns, reports, etc.). Subject to cache, token bucket, circuit breaker, and exponential backoff inside `BasePlatformAdapter`. |
-| `normalizeData` | `(rawData: unknown, dateRange: DateRangeIso) => NormalizedPlatformSnapshot` | Pure transform from raw vendor payload to the unified normalized snapshot schema.                                                                                                          |
-| `isHealthy`     | `() => Promise<boolean>`                                                    | Lightweight probe; implementation is per adapter (typically reflects whether authenticate succeeded and core config is present).                                                           |
+| Member          | Signature                                                                    | Description                                                                                                                                                                                 |
+| --------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `platform`      | `readonly ConnectorType`                                                     | One of `meta`, `ga4`, `gsc`, `gbp`, `tiktok`.                                                                                                                                               |
+| `authenticate`  | `(credentials: ConnectorCredentials) => Promise<void>`                       | Validates or exchanges tokens and stores internal state required for fetch. Must be called before `fetchMetrics` / `normalizeData` on raw payloads that depend on that session.             |
+| `fetchMetrics`  | `(dateRange: DateRangeIso) => Promise<unknown>`                              | Returns a **vendor-specific** JSON-serializable payload (campaigns, reports, etc.). Subject to cache, token bucket, circuit breaker, and exponential backoff inside `BaseConnectorAdapter`. |
+| `normalizeData` | `(rawData: unknown, dateRange: DateRangeIso) => NormalizedConnectorSnapshot` | Pure transform from raw vendor payload to the unified normalized snapshot schema.                                                                                                           |
+| `isHealthy`     | `() => Promise<boolean>`                                                     | Lightweight probe; implementation is per adapter (typically reflects whether authenticate succeeded and core config is present).                                                            |
 
-### `PlatformCredentials`
+### `ConnectorCredentials`
 
 Opaque string map: `Readonly<Record<string, string>>`. Each adapter documents required keys via `*CredentialKeys` constants (see [AUTHENTICATION-GUIDES.md](./AUTHENTICATION-GUIDES.md)).
 
@@ -22,7 +22,7 @@ Opaque string map: `Readonly<Record<string, string>>`. Each adapter documents re
 
 Inclusive calendar range with `start` / `end` as ISO date strings (`YYYY-MM-DD`), UTC semantics as implemented per adapter.
 
-## `BasePlatformAdapter`
+## `BaseConnectorAdapter`
 
 Abstract base implementing the cross-cutting pipeline:
 
@@ -31,7 +31,7 @@ Abstract base implementing the cross-cutting pipeline:
 3. **Circuit breaker** around the guarded operation.
 4. **Exponential backoff with jitter** on retryable failures.
 
-### `BasePlatformAdapterOptions`
+### `BaseConnectorAdapterOptions`
 
 | Option                                     | Type                                | Description                                                                                                                                |
 | ------------------------------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -50,14 +50,14 @@ Abstract base implementing the cross-cutting pipeline:
 | ----------------- | --------------------------------------------------------------------------------------------- |
 | `doAuthenticate`  | Perform OAuth exchange / token validation and persist tokens or resource IDs on the instance. |
 | `fetchRawMetrics` | Perform vendor HTTP calls and return the raw payload for `fetchMetrics` (after cache miss).   |
-| `normalizeData`   | Map raw payload to `NormalizedPlatformSnapshot`.                                              |
+| `normalizeData`   | Map raw payload to `NormalizedConnectorSnapshot`.                                             |
 
 ## Registry
 
 `createAdapterRegistry<TContext>()` returns `PlatformAdapterRegistry<TContext>`:
 
 - `register(platform, factory)` — register a factory that receives `TContext` (tenant config, secrets handle, etc.).
-- `resolve(platform, context)` — returns a `PlatformAdapter`; throws `PlatformError` with code `not_registered` if missing.
+- `resolve(platform, context)` — returns a `ConnectorAdapter`; throws `PlatformError` with code `not_registered` if missing.
 - `has(platform)`, `platforms()` — introspection.
 
 ## Infrastructure bundle
@@ -81,13 +81,13 @@ Abstract base implementing the cross-cutting pipeline:
 | `GscPlatformAdapter`    | `gsc/gsc-adapter`       | Search Analytics, sitemaps, URL inspection; 16-month guard.             |
 | `GbpPlatformAdapter`    | `gbp/gbp-adapter`       | Accounts, locations, reviews, performance metrics.                      |
 | `TikTokPlatformAdapter` | `tiktok/tiktok-adapter` | Marketing API; sandbox flag; report window split.                       |
-| `MockPlatformAdapter`   | `mock-adapter`          | Test double implementing `PlatformAdapter`.                             |
+| `MockConnectorAdapter`  | `mock-adapter`          | Test double implementing `ConnectorAdapter`.                            |
 
-Constructor options for each extend `BasePlatformAdapterOptions` plus adapter-specific fields (for example `fetchImpl`, `requestTokenBucket`, `dailyQuota` on GA4). See JSDoc on each class in source.
+Constructor options for each extend `BaseConnectorAdapterOptions` plus adapter-specific fields (for example `fetchImpl`, `requestTokenBucket`, `dailyQuota` on GA4). See JSDoc on each class in source.
 
 ## Normalization and validation (downstream of adapters)
 
-- `runNormalizationPipeline`, `NormalizedPlatformSnapshot`, Zod schemas — `normalization/`
+- `runNormalizationPipeline`, `NormalizedConnectorSnapshot`, Zod schemas — `normalization/`
 - `validateNormalizedSnapshot`, `computeDataQualityScore`, outlier helpers — `validation/`
 
 ## HTTP API (web app)

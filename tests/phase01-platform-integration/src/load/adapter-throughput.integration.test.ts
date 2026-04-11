@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
   MemoryPlatformCache,
-  MetaPlatformAdapter,
+  MetaConnectorAdapter,
   metaCredentialKeys,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 import { createDefaultChaosState } from "../mock-servers/chaos";
 import { startPlatformMockGateway } from "../mock-servers/gateway";
@@ -33,7 +33,7 @@ describe("Phase 01 load — concurrency and request volume (mock APIs)", () => {
   it("completes 100 concurrent fetchMetrics calls without errors", async () => {
     const fetchImpl = createRewritingFetch(port);
     const tasks = Array.from({ length: 100 }, async (__, i) => {
-      const adapter = new MetaPlatformAdapter({
+      const adapter = new MetaConnectorAdapter({
         fetchImpl,
         requestTokenBucket: null,
         tenantId: `load-${i}`,
@@ -51,7 +51,7 @@ describe("Phase 01 load — concurrency and request volume (mock APIs)", () => {
   it("processes 1000 sequential cache reads under local SLA-shaped budget", async () => {
     const fetchImpl = createRewritingFetch(port);
     const cache = new MemoryPlatformCache();
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "throughput-one",
@@ -73,7 +73,7 @@ describe("Phase 01 load — concurrency and request volume (mock APIs)", () => {
   it("stress burst: 400 parallel cache reads completes (AC-3.3.2 lab proxy)", async () => {
     const fetchImpl = createRewritingFetch(port);
     const cache = new MemoryPlatformCache();
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "stress-one",
@@ -89,7 +89,7 @@ describe("Phase 01 load — concurrency and request volume (mock APIs)", () => {
 
   it("endurance-style loop: many iterations without throwing (AC-3.3.3 lab proxy)", async () => {
     const fetchImpl = createRewritingFetch(port);
-    const adapter = new MetaPlatformAdapter({
+    const adapter = new MetaConnectorAdapter({
       fetchImpl,
       requestTokenBucket: null,
       tenantId: "endurance",

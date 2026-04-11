@@ -36,9 +36,9 @@ This research document examines industry best practices for compiler-driven conf
 **Current Adapter Selection Flow:**
 
 ```typescript
-// packages/platform-adapters/src/adapter-factory.ts
-export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
-  const shouldUseMock = config.useMock ?? isMockEnabledForPlatform(config.platform);
+// packages/data-connectors/src/adapter-factory.ts
+export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorAdapter {
+  const shouldUseMock = config.useMock ?? isMockEnabledForConnector(config.platform);
   const shared = baseOptions(config);
 
   if (shouldUseMock) {
@@ -60,8 +60,8 @@ export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAda
 **Security Guard:**
 
 ```typescript
-export function isMockEnabledForPlatform(
-  platform: PlatformType,
+export function isMockEnabledForConnector(
+  platform: ConnectorType,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   const nodeEnv = String(env.NODE_ENV ?? "");
@@ -198,8 +198,8 @@ Use `as const` to create immutable literal types that the compiler can optimize.
 
 ```typescript
 // Already used in AgenticVerdict
-const PLATFORM_TYPES = ["meta", "ga4", "gsc", "gbp", "tiktok"] as const;
-type PlatformType = (typeof PLATFORM_TYPES)[number];
+const CONNECTOR_TYPES = ["meta", "ga4", "gsc", "gbp", "tiktok"] as const;
+type ConnectorType = (typeof CONNECTOR_TYPES)[number];
 
 // Enhanced pattern
 const BUILD_CONFIG = {
@@ -493,10 +493,10 @@ export const BUILD_CONFIG = {
 } as const;
 
 // 2. Use in adapter factory
-// packages/platform-adapters/src/adapter-factory.ts
+// packages/data-connectors/src/adapter-factory.ts
 import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
 
-export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
+export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorAdapter {
   // Compiler eliminates this entire branch in production builds
   if (BUILD_CONFIG.mockAdapters) {
     return MockAdapterFactory.create({
@@ -680,8 +680,8 @@ function createAdapterFactory<T extends Environment>(
   "adapters": [
     {
       "platform": "meta",
-      "production": "./packages/platform-adapters/src/meta/meta-adapter.ts",
-      "mock": "./packages/platform-adapters/src/mock/mock-adapter.ts"
+      "production": "./packages/data-connectors/src/meta/meta-adapter.ts",
+      "mock": "./packages/data-connectors/src/mock/mock-adapter.ts"
     }
   ]
 }
@@ -692,7 +692,7 @@ import { generateAdapterFactory } from './generator';
 
 function generateAdapterFactoryCode() {
   let code = `// Auto-generated from config/adapters.json\n`;
-  code += `export function createPlatformAdapter(platform: string) {\n`;
+  code += `export function createConnectorAdapter(platform: string) {\n`;
   code += `  switch (platform) {\n`;
 
   for (const adapter of config.adapters) {
@@ -705,7 +705,7 @@ function generateAdapterFactoryCode() {
   code += `  }\n`;
   code += `}\n`;
 
-  fs.writeFileSync('packages/platform-adapters/src/generated/factory.ts', code);
+  fs.writeFileSync('packages/data-connectors/src/generated/factory.ts', code);
 }
 
 // Pre-build hook
@@ -790,7 +790,7 @@ if (false) {
 **Build-Time Security Guarantees:**
 
 ```typescript
-// packages/platform-adapters/src/security.ts
+// packages/data-connectors/src/security.ts
 if (import.meta.env.PROD) {
   // This code only runs in production builds
   // Compiler verifies no mock imports exist
@@ -839,10 +839,10 @@ if (import.meta.env.PROD) {
 3. **Update adapter factory to use build constants**
 
    ```typescript
-   // packages/platform-adapters/src/adapter-factory.ts
+   // packages/data-connectors/src/adapter-factory.ts
    import { BUILD_CONFIG } from '@agenticverdict/config/build-constants';
 
-   export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
+   export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorAdapter {
      // Compiler eliminates this branch in production
      if (BUILD_CONFIG.mockAdaptersEnabled && config.useMock !== false) {
        return MockAdapterFactory.create({...});
@@ -886,7 +886,7 @@ if (import.meta.env.PROD) {
 
 **1. Keep Runtime Security Guards**
 
-- Don't remove the existing `isMockEnabledForPlatform` guard
+- Don't remove the existing `isMockEnabledForConnector` guard
 - Add build-time checks as additional layer
 - Defense in depth
 

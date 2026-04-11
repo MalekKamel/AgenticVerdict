@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: packages/docker/base/Dockerfile.deps
+          file: docker/base/Dockerfile.deps
           load: true
           tags: agenticverdict/deps:ci
           cache-from: type=gha,scope=monorepo-deps
@@ -101,7 +101,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: packages/docker/base/Dockerfile.deps
+          file: docker/base/Dockerfile.deps
           load: true
           tags: agenticverdict/deps:ci
           cache-from: type=gha,scope=monorepo-deps
@@ -167,7 +167,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: packages/docker/base/Dockerfile.deps
+          file: docker/base/Dockerfile.deps
           load: true
           tags: agenticverdict/deps:ci
           cache-from: type=gha,scope=monorepo-deps
@@ -176,7 +176,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: packages/docker/base/Dockerfile.chromium
+          file: docker/base/Dockerfile.chromium
           load: true
           tags: agenticverdict/chromium-base:ci
           cache-from: type=gha,scope=chromium-base

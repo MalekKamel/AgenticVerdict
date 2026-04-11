@@ -31,11 +31,11 @@ jobs:
         run: bash scripts/docker-prep.sh
 
       - name: Build workspace deps layer
-        run: docker build -f packages/docker/base/Dockerfile.deps -t agenticverdict/deps:local .
+        run: docker build -f docker/base/Dockerfile.deps -t agenticverdict/deps:local .
 
       - name: Build Chromium base (worker only)
         if: matrix.service == 'worker'
-        run: docker build -f packages/docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
+        run: docker build -f docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
 
       - name: Build image
         run: |

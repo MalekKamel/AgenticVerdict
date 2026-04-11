@@ -108,7 +108,7 @@ Phase 04 focuses on transforming AgenticVerdict from a development/staging envir
 
 - ✅ All 5 platform adapters production-ready (Meta, GA4, GSC, GBP, TikTok)
 - ✅ Adapter infrastructure (caching, circuit breaker, rate limiting)
-- ✅ Data normalization (NormalizedPlatformSnapshot schema)
+- ✅ Data normalization (NormalizedConnectorSnapshot schema)
 - ✅ Performance baselines established
 
 **From Phase 02 (Agent Intelligence):**

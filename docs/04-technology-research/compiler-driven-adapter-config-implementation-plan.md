@@ -196,7 +196,7 @@ export * from "./build-constants";
   "files": [],
   "references": [
     { "path": "./packages/config" },
-    { "path": "./packages/platform-adapters" },
+    { "path": "./packages/data-connectors" },
     { "path": "./packages/agent-runtime" },
     { "path": "./packages/report-generator" },
     { "path": "./packages/database" },
@@ -330,13 +330,13 @@ describe("Build-time Behavior", () => {
 
 #### 2.1 Update Adapter Factory
 
-**File:** `packages/platform-adapters/src/adapter-factory.ts`
+**File:** `packages/data-connectors/src/adapter-factory.ts`
 
 **Implementation:**
 
 ```typescript
 import { BUILD_CONFIG, isProductionBuild } from "@agenticverdict/config/build-constants";
-import { platformAdapterTypes, type PlatformType } from "./index";
+import { connectorAdapterTypes, type ConnectorType } from "./index";
 
 /**
  * Create a platform adapter with compile-time optimization.
@@ -347,11 +347,11 @@ import { platformAdapterTypes, type PlatformType } from "./index";
  * @param config - Adapter factory configuration
  * @returns Platform adapter instance
  */
-export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAdapter {
+export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorAdapter {
   // Compiler eliminates this entire branch in production builds
   if (!BUILD_CONFIG.isProduction && config.useMock !== false) {
     // Development-only code - never included in production
-    if (isMockEnabledForPlatform(config.platform)) {
+    if (isMockEnabledForConnector(config.platform)) {
       return MockAdapterFactory.create({
         platform: config.platform,
         tenantId: config.tenantId,
@@ -408,8 +408,8 @@ export function createPlatformAdapter(config: AdapterFactoryConfig): PlatformAda
  * NOTE: With compiler-driven configuration, this is a secondary check.
  * The primary enforcement happens at compile time through code elimination.
  */
-export function isMockEnabledForPlatform(
-  platform: PlatformType,
+export function isMockEnabledForConnector(
+  platform: ConnectorType,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   // In production builds, this should always be unreachable
@@ -688,19 +688,19 @@ async function main() {
 
 **Test Files:**
 
-- `packages/platform-adapters/src/adapter-factory.integration.test.ts`
+- `packages/data-connectors/src/adapter-factory.integration.test.ts`
 - `apps/api/src/routes/v1/workflows.integration.test.ts`
 - `apps/worker/src/queues/workflow-trigger-production-flow.integration.test.ts`
 
 **Implementation:**
 
 ```typescript
-// packages/platform-adapters/src/adapter-factory.integration.test.ts
+// packages/data-connectors/src/adapter-factory.integration.test.ts
 import { describe, expect, it, beforeEach } from "vitest";
-import { createPlatformAdapter } from "./adapter-factory";
+import { createConnectorAdapter } from "./adapter-factory";
 import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
 
-describe("createPlatformAdapter (Integration)", () => {
+describe("createConnectorAdapter (Integration)", () => {
   const tenantId = "test-tenant";
   const platform = "meta";
 
@@ -713,17 +713,17 @@ describe("createPlatformAdapter (Integration)", () => {
     });
 
     it("should create production adapter", () => {
-      const adapter = createPlatformAdapter({
+      const adapter = createConnectorAdapter({
         platform,
         tenantId,
       });
 
       expect(adapter.constructor.name).toBe("MetaPlatformAdapter");
-      expect(adapter).not.toBeInstanceOf(MockPlatformAdapter);
+      expect(adapter).not.toBeInstanceOf(MockConnectorAdapter);
     });
 
     it("should ignore useMock option in production", () => {
-      const adapter = createPlatformAdapter({
+      const adapter = createConnectorAdapter({
         platform,
         tenantId,
         useMock: true, // Should be ignored
@@ -742,16 +742,16 @@ describe("createPlatformAdapter (Integration)", () => {
     });
 
     it("should create mock adapter by default", () => {
-      const adapter = createPlatformAdapter({
+      const adapter = createConnectorAdapter({
         platform,
         tenantId,
       });
 
-      expect(adapter).toBeInstanceOf(MockPlatformAdapter);
+      expect(adapter).toBeInstanceOf(MockConnectorAdapter);
     });
 
     it("should create production adapter when useMock is false", () => {
-      const adapter = createPlatformAdapter({
+      const adapter = createConnectorAdapter({
         platform,
         tenantId,
         useMock: false,
@@ -800,14 +800,14 @@ function analyzeBundle(dir: string): BundleStats[] {
       const stats = statSync(filePath);
 
       // Check for mock adapter code
-      const hasMockCode = content.includes("MockPlatformAdapter");
+      const hasMockCode = content.includes("MockConnectorAdapter");
       const hasProductionCode = content.includes("MetaPlatformAdapter");
 
       results.push({
         file: filePath,
         size: stats.size,
         mockCode: hasMockCode ? (content.match(/MockAdapter/g) || []).length : 0,
-        productionCode: hasProductionCode ? (content.match(/PlatformAdapter/g) || []).length : 0,
+        productionCode: hasProductionCode ? (content.match(/ConnectorAdapter/g) || []).length : 0,
       });
     }
   }
@@ -989,7 +989,7 @@ This guide helps you migrate from runtime environment-based adapter selection to
 
 ```typescript
 // Adapter selection at runtime
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   useMock: process.env.NODE_ENV === "development",
 });
@@ -1000,7 +1000,7 @@ const adapter = createPlatformAdapter({
 
 ```typescript
 // Adapter selection at compile time
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   // Compiler automatically selects correct adapter
 });
@@ -1013,13 +1013,13 @@ const adapter = createPlatformAdapter({
 **Before:**
 
 ```typescript
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 ```
 
 **After:**
 
 ```typescript
-import { createPlatformAdapter } from "@agenticverdict/platform-adapters";
+import { createConnectorAdapter } from "@agenticverdict/data-connectors";
 import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
 ```
 
@@ -1076,7 +1076,7 @@ None for most use cases. The adapter factory maintains backward compatibility.
 If you encounter issues, you can revert to runtime configuration by setting:
 
 ```typescript
-const adapter = createPlatformAdapter({
+const adapter = createConnectorAdapter({
   platform: "meta",
   useMock: false, // Explicitly request production adapter
 });
@@ -1254,7 +1254,7 @@ packages/config/
   src/schemas/company.ts              [MODIFIED]
   src/index.ts                        [MODIFIED]
 
-packages/platform-adapters/
+packages/data-connectors/
   src/adapter-factory.ts               [MODIFIED]
   src/index.ts                         [MODIFIED]
 

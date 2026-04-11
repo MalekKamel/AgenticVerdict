@@ -56,7 +56,7 @@ Each execution phase lists **intent**, **primary `tasks.md` mapping**, **depende
 
 **Completion definition (done when):**
 
-- `PlatformAdapter` interface and `BaseAdapter` abstract class are implemented with registry/factory pattern.
+- `ConnectorAdapter` interface and `BaseAdapter` abstract class are implemented with registry/factory pattern.
 - Distributed caching (Redis/Upstash) is operational with <10ms p95 response time.
 - Rate limiting with token bucket algorithm is enforced per platform configuration.
 - Circuit breaker pattern is implemented with configurable thresholds and automatic recovery.
@@ -339,7 +339,7 @@ After **Phase 1** merges:
 
 **Merge discipline:**
 
-- Serialize changes to `PlatformAdapter` interface and `BaseAdapter` class.
+- Serialize changes to `ConnectorAdapter` interface and `BaseAdapter` class.
 - Use short-lived PRs for adapter implementations.
 - Coordinate changes to unified schema in normalization layer.
 - Document all schema changes immediately to avoid breaking other adapters.

@@ -29,9 +29,9 @@ describe("mock-platform-server HTTP", () => {
       payload: { start: "2026-01-01", end: "2026-01-07" },
     });
     expect(res.statusCode).toBe(200);
-    const body = res.json() as { mock?: boolean; platform?: string };
+    const body = res.json() as { mock?: boolean; connector?: string };
     expect(body.mock).toBe(true);
-    expect(body.platform).toBe("meta");
+    expect(body.connector).toBe("meta");
     await app.close();
   });
 

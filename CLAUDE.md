@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 1. **Multi-Tenancy First** — All code must support multiple companies with complete tenant isolation using AsyncLocalStorage for context propagation and row-level security for data isolation
 2. **Configuration-Driven** — No company-specific logic in code; all business rules injected via `CompanyConfig` schema
-3. **Plugin Architecture** — Platform adapters use a common interface; new platforms added without core changes
+3. **Plugin Architecture** — Data connectors (`ConnectorAdapter` in `@agenticverdict/data-connectors`) share a common interface; new connectors are added without core changes
 4. **Template-Based Reporting** — Report templates stored in database, supporting RTL/LTR and multiple languages
 5. **Don't Reinvent the Wheel** — Use battle-tested, production-proven tools documented in `/docs/04-technology-research/`
 
@@ -60,10 +60,9 @@ agenticverdict/
 │   ├── core/                 # Domain logic, entities
 │   ├── config/               # Configuration schemas (Zod)
 │   ├── database/             # Drizzle schema, migrations
-│   ├── platform-adapters/    # Platform integration layer
+│   ├── data-connectors/      # Marketing / data source integrations (ConnectorAdapter)
 │   ├── agent-runtime/        # AI agent orchestration
 │   ├── report-generator/     # PDF/Excel generation
-│   ├── ui/                   # Shared UI components
 │   ├── i18n/                 # Internationalization
 │   └── types/                # Shared TypeScript types
 └── docs/                     # Comprehensive documentation
@@ -142,16 +141,16 @@ Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wid
 
 **Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images remain Next standalone (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
 
-## Platform Adapter Pattern
+## Data Connector Pattern
 
-All platform integrations must implement the `PlatformAdapter` interface:
+All external data integrations must implement the `ConnectorAdapter` interface from `@agenticverdict/data-connectors`:
 
 ```typescript
-interface PlatformAdapter {
-  platform: PlatformType;
-  authenticate(credentials): Promise<void>;
-  fetchMetrics(dateRange): Promise<PlatformData>;
-  normalizeData(rawData): NormalizedData;
+interface ConnectorAdapter {
+  connector: ConnectorType;
+  authenticate(credentials: ConnectorCredentials): Promise<void>;
+  fetchMetrics(dateRange): Promise<unknown>;
+  normalizeData(rawData, dateRange): NormalizedConnectorSnapshot;
   isHealthy(): Promise<boolean>;
 }
 ```
@@ -160,8 +159,8 @@ Each adapter includes:
 
 - Rate limiting with exponential backoff
 - Circuit breaker for graceful degradation
-- Error handling with platform-specific retry logic
-- Data normalization to standard schema
+- Error handling with connector-specific retry logic
+- Data normalization to the shared snapshot schema (`NormalizedConnectorSnapshot`, field `connector`)
 
 ## Development Workflow
 
@@ -248,18 +247,22 @@ Container images, Compose stacks (apps, observability), security overlays, CI wo
 
 The `/docs` directory contains comprehensive project documentation:
 
-| Directory                      | Content                                                                 |
-| ------------------------------ | ----------------------------------------------------------------------- |
-| `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot    |
-| `01-getting-started/`          | Project overview, navigation                                            |
-| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                |
-| `03-development-phases/`       | Detailed phase documentation (00-04) with tasks and acceptance criteria |
-| `04-technology-research/`      | Comprehensive technology analysis with justifications                   |
-| `05-project-management/`       | Project charter, requirements, roadmap                                  |
-| `06-reference/`                | Prompts, templates, resources                                           |
-| `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops   |
+| Directory                      | Content                                                                                                           |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `architecture/`                | **Architecture SSOT:** business architecture, technical architecture, implementation guide, and research findings |
+| `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot                                              |
+| `01-getting-started/`          | Project overview, navigation                                                                                      |
+| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                                                          |
+| `03-development-phases/`       | Detailed phase documentation (00-04) with tasks and acceptance criteria                                           |
+| `04-technology-research/`      | Comprehensive technology analysis with justifications                                                             |
+| `05-project-management/`       | Project charter, requirements, roadmap                                                                            |
+| `06-reference/`                | Prompts, templates, resources                                                                                     |
+| `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops                                             |
 
-**Before making architectural decisions**, consult the relevant technology research documentation in `/docs/04-technology-research/`.
+**Before making architectural decisions**, consult:
+
+- `/docs/architecture/` — Authoritative architecture documentation (business, technical, implementation)
+- `/docs/04-technology-research/` — Technology research with justifications
 
 ### Phase 02/03 execution, audits, and roadmap follow-ups
 
@@ -281,7 +284,7 @@ When working on agent intelligence, report generation/delivery, or phase closure
 The project follows a five-phase roadmap (14 weeks total):
 
 1. **Phase 0: Foundation** (Weeks 1-2) — Infrastructure, monorepo setup, core domain models
-2. **Phase 1: Platform Integration** (Weeks 3-5) — Platform adapters, OAuth, data normalization
+2. **Phase 1: Platform Integration** (Weeks 3-5) — Connector adapters, OAuth, data normalization
 3. **Phase 2: Agent Intelligence** (Weeks 6-8) — AI agent orchestration, LangChain integration
 4. **Phase 3: Report Generation** (Weeks 9-11) — PDF/Excel generation, multi-language support
 5. **Phase 4: Production Hardening** (Weeks 12-14) — Testing, optimization, deployment
@@ -373,6 +376,15 @@ Reports are generated from templates stored in the database:
 5. **Input Validation**: All inputs validated via Zod schemas
 
 ## Reference Documentation
+
+### Architecture Documentation
+
+- **Business Architecture**: `/docs/architecture/business-architecture.md` — Business domain, entities, processes, and multi-tenancy model
+- **Technical Architecture**: `/docs/architecture/technical-architecture.md` — System architecture, components, data, security, and deployment
+- **Implementation Guide**: `/docs/architecture/implementation-guide.md` — Current status, patterns, and conventions
+- **Architecture Research**: `/docs/architecture/research/` — Multi-tenant SaaS, connectors, AI configuration, report generation
+
+### Project Documentation
 
 - **Requirements**: `/docs/05-project-management/requirements.md`
 - **Project Charter**: `/docs/05-project-management/project-charter.md`

@@ -148,28 +148,28 @@ Phase 1 establishes the foundational platform integration layer for AgenticVerdi
 
 ### Technical Approach
 
-#### Adapter architecture (as implemented in `@agenticverdict/platform-adapters`)
+#### Adapter architecture (as implemented in `@agenticverdict/data-connectors`)
 
-Adapters implement a **single, tenant-scoped interface**. Optional concerns (cache, token bucket, circuit breaker, metrics, DLQ) are composed via `BasePlatformAdapter` constructor options — not extra interface methods.
+Adapters implement a **single, tenant-scoped interface**. Optional concerns (cache, token bucket, circuit breaker, metrics, DLQ) are composed via `BaseConnectorAdapter` constructor options — not extra interface methods.
 
 ```typescript
 // Canonical Phase 1 adapter surface (TypeScript)
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 
-interface PlatformAdapter {
-  readonly platform: PlatformType;
-  authenticate(credentials: PlatformCredentials): Promise<void>;
+interface ConnectorAdapter {
+  readonly platform: ConnectorType;
+  authenticate(credentials: ConnectorCredentials): Promise<void>;
   /** Vendor-specific payload; consumers normalize via normalizeData. */
   fetchMetrics(dateRange: DateRangeIso): Promise<unknown>;
-  normalizeData(rawData: unknown, dateRange: DateRangeIso): NormalizedPlatformSnapshot;
+  normalizeData(rawData: unknown, dateRange: DateRangeIso): NormalizedConnectorSnapshot;
   isHealthy(): Promise<boolean>;
 }
 
-// BasePlatformAdapterOptions (excerpt): tenantId, cache?, cacheTtlSeconds?,
+// BaseConnectorAdapterOptions (excerpt): tenantId, cache?, cacheTtlSeconds?,
 // tokenBucket?, circuitBreaker?, metrics?, deadLetterQueue?, backoff?
 ```
 
-Platform-specific adapters (Meta, GA4, GSC, GBP, TikTok) extend `BasePlatformAdapter` and implement `doAuthenticate`, `fetchRawMetrics`, and `normalizeData`.
+Platform-specific adapters (Meta, GA4, GSC, GBP, TikTok) extend `BaseConnectorAdapter` and implement `doAuthenticate`, `fetchRawMetrics`, and `normalizeData`.
 
 #### Cache integration API (`PlatformCache`)
 
@@ -192,7 +192,7 @@ The cache layer is an **injectable dependency** per adapter instance:
 - **Definition:** “Fresh” means the cached payload, if present, was written within the **TTL window** for that platform; otherwise the adapter **refetches** from the vendor API (subject to rate limiting and circuit breaker).
 - **Stale reads:** When the cache is unavailable, adapters **degrade** to live fetch; no silent cross-tenant reuse.
 - **Tenant isolation:** Keys **always** include `tenantId`; shared keys across tenants are forbidden.
-- **Reporting:** Downstream analytics and Phase 2 agents must treat `NormalizedPlatformSnapshot` as **point-in-time**; include capture metadata from normalization where available.
+- **Reporting:** Downstream analytics and Phase 2 agents must treat `NormalizedConnectorSnapshot` as **point-in-time**; include capture metadata from normalization where available.
 
 #### Performance baseline metrics (engineering targets)
 

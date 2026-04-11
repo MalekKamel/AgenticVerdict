@@ -16,7 +16,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 
 **Technical Details**:
 
-- Create `PlatformAdapter` interface with standard methods
+- Create `ConnectorAdapter` interface with standard methods
 - Implement `BaseAdapter` abstract class with common functionality
 - Define data models for requests and responses
 - Create adapter registry and factory pattern
@@ -24,7 +24,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 
 **Acceptance Criteria**:
 
-- [ ] `PlatformAdapter` interface defined with all required methods
+- [ ] `ConnectorAdapter` interface defined with all required methods
 - [ ] `BaseAdapter` class implements authentication, retry logic, and error handling
 - [ ] Adapter registry can load and instantiate adapters by platform name
 - [ ] Logging framework captures all adapter operations
@@ -61,7 +61,7 @@ This document breaks down Phase 1 into actionable, specific tasks with clear acc
 - Set up Redis/Memcached cluster (production: **Upstash Redis**; dev: in-memory `MemoryPlatformCache`)
 - Implement the **`PlatformCache`** contract consumed by adapters: `get` / `set` / `delete` / `getMetrics` / `isDistributed` (string payloads + TTL seconds)
 - **Cache keys:** `buildAdapterCacheKey({ tenantId, platform, dateRange, segment? })` → `av:adapter:{tenantId}:{platform}:{segment}:{start}:{end}`
-- **Default TTLs:** Meta/TikTok **120s**, GA4 **300s**, GSC/GBP **600s** (`defaultAdapterCacheTtlSeconds`); override via `cacheTtlSeconds` on `BasePlatformAdapterOptions`
+- **Default TTLs:** Meta/TikTok **120s**, GA4 **300s**, GSC/GBP **600s** (`defaultAdapterCacheTtlSeconds`); override via `cacheTtlSeconds` on `BaseConnectorAdapterOptions`
 - Add cache warming for frequently accessed data (optional)
 - Implement cache invalidation strategy (TTL-first; explicit `delete` for admin flows)
 

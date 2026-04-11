@@ -1,14 +1,14 @@
 import { z } from "zod";
 
-import type { PlatformType } from "@agenticverdict/types";
+import type { ConnectorType } from "@agenticverdict/types";
 
-const platformTypeSchema = z.enum([
+const connectorTypeSchema = z.enum([
   "meta",
   "ga4",
   "gsc",
   "gbp",
   "tiktok",
-]) as z.ZodType<PlatformType>;
+]) as z.ZodType<ConnectorType>;
 
 /** Single KPI definition used in marketing configuration. */
 export const kpiConfigSchema = z.object({
@@ -19,7 +19,7 @@ export const kpiConfigSchema = z.object({
 });
 
 export const platformConfigSchema = z.object({
-  platform: platformTypeSchema,
+  platform: connectorTypeSchema,
   enabled: z.boolean(),
   label: z.string().min(1).optional(),
   /** Non-secret integration hints (credentials stay in env / secure store). */

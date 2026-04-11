@@ -25,6 +25,10 @@ const rows = [
     "Agent-runtime typecheck (tsc --noEmit)",
     "pnpm --filter @agenticverdict/agent-runtime exec tsc --noEmit",
   ),
+  timeCommand(
+    "Data-connectors Vitest (connector boundary + perf guardrails)",
+    "pnpm --filter @agenticverdict/data-connectors test",
+  ),
 ];
 
 const stamp = new Date().toISOString();

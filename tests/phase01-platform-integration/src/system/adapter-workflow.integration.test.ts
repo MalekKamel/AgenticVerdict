@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { runWithTenantContext, type TenantContext } from "@agenticverdict/core";
 import {
   MemoryPlatformCache,
-  MockPlatformAdapter,
+  MockConnectorAdapter,
   runNormalizationPipeline,
-} from "@agenticverdict/platform-adapters";
+} from "@agenticverdict/data-connectors";
 
 const tenantA = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const tenantB = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
@@ -36,7 +36,7 @@ describe("Phase 01 system — adapter workflow & tenant boundaries", () => {
 
   it("runs authenticate → fetchMetrics → normalize → pipeline under tenant context", async () => {
     await runWithTenantContext(tenantContext(tenantA, "sys-1"), async () => {
-      const adapter = new MockPlatformAdapter("meta", {
+      const adapter = new MockConnectorAdapter("meta", {
         tenantId: tenantA,
         rawResponse: { records: [] },
       });
@@ -44,14 +44,14 @@ describe("Phase 01 system — adapter workflow & tenant boundaries", () => {
       const raw = await adapter.fetchMetrics(range);
       const norm = adapter.normalizeData(raw, range);
       const piped = runNormalizationPipeline(norm);
-      expect(piped.snapshot.platform).toBe("meta");
+      expect(piped.snapshot.connector).toBe("meta");
     });
   });
 
   it("does not cross-pollute MemoryPlatformCache between tenants for the same platform and range", async () => {
     const cache = new MemoryPlatformCache();
 
-    class CountingMeta extends MockPlatformAdapter {
+    class CountingMeta extends MockConnectorAdapter {
       calls = 0;
       constructor(tenantId: string) {
         super("meta", { tenantId, cache });

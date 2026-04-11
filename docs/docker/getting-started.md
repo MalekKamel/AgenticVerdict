@@ -154,8 +154,8 @@ Override URLs if you publish services elsewhere:
 Build shared layers first (same tags as Compose defaults), then pass **`DEPS_IMAGE`** (and **`CHROMIUM_IMAGE`** for worker):
 
 ```bash
-docker build -f packages/docker/base/Dockerfile.deps -t agenticverdict/deps:local .
-docker build -f packages/docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
+docker build -f docker/base/Dockerfile.deps -t agenticverdict/deps:local .
+docker build -f docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
 
 docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/web/Dockerfile -t agenticverdict/web:local .
 docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/api/Dockerfile -t agenticverdict/api:local .

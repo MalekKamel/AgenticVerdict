@@ -218,19 +218,19 @@ export async function dbScoped<T>(callback: (db: DB) => Promise<T>): Promise<T> 
 
 ### Plugin Architecture
 
-Platform adapters implement a common interface, enabling new platforms without core changes:
+Data connectors implement a common interface, enabling new integrations without core changes:
 
 ```typescript
-interface PlatformAdapter {
-  platform: PlatformType;
-  authenticate(credentials): Promise<void>;
-  fetchMetrics(dateRange): Promise<PlatformData>;
-  normalizeData(rawData): NormalizedData;
+interface ConnectorAdapter {
+  connector: ConnectorType;
+  authenticate(credentials: ConnectorCredentials): Promise<void>;
+  fetchMetrics(dateRange): Promise<unknown>;
+  normalizeData(rawData, dateRange): NormalizedConnectorSnapshot;
   isHealthy(): Promise<boolean>;
 }
 ```
 
-**Current Platforms:**
+**Current connectors:**
 
 - Meta (Facebook & Instagram Ads)
 - Google Analytics 4 (GA4)
@@ -285,7 +285,7 @@ agenticverdict/
 │   ├── core/                   # Domain logic and entities
 │   ├── config/                 # Configuration schemas (Zod)
 │   ├── database/               # Drizzle schema and migrations
-│   ├── platform-adapters/      # Platform integration layer
+│   ├── data-connectors/        # Data connector integrations (ConnectorAdapter boundary)
 │   ├── agent-runtime/          # AI agent orchestration
 │   ├── report-generator/       # PDF/Excel generation
 │   ├── ui/                     # Shared UI components

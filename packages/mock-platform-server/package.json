@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agenticverdict/platform-adapters": "workspace:*",
+    "@agenticverdict/data-connectors": "workspace:*",
     "@agenticverdict/types": "workspace:*",
     "fastify": "^5.2.1",
     "tsx": "^4.21.0"

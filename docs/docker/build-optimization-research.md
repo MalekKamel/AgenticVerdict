@@ -525,7 +525,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/api/package.json ./apps/api/
 COPY packages/database/package.json ./packages/database/
-COPY packages/platform-adapters/package.json ./packages/platform-adapters/
+COPY packages/data-connectors/package.json ./packages/data-connectors/
 
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm \
     pnpm install --frozen-lockfile
@@ -534,7 +534,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm \
 COPY apps/web/src ./apps/web/src
 COPY apps/api/src ./apps/api/src
 COPY packages/database/src ./packages/database/src
-COPY packages/platform-adapters/src ./packages/platform-adapters/src
+COPY packages/data-connectors/src ./packages/data-connectors/src
 ```
 
 **Turborepo Integration**:

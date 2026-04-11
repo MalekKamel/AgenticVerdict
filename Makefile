@@ -105,13 +105,13 @@ restore-latest: ## Restore newest backups/backup-*.sql.gz (non-interactive)
 	echo "Using $$latest"; \
 	CONFIRM=1 bash scripts/docker-restore.sh "$$latest"
 
-db-migrate: ## Run Drizzle migrations (requires DATABASE_URL, see .env.docker.example)
-	pnpm --filter @agenticverdict/database db:migrate
+db-migrate: ## Sync DB schema via drizzle-kit push (requires DATABASE_URL; no SQL migration journal)
+	pnpm --filter @agenticverdict/database db:push
 
 db-seed: ## Seed test data via package script
 	pnpm db:seed:test
 
-db-reset: ## Drop/recreate public schema and re-migrate (destructive; local dev)
+db-reset: ## Drop/recreate public, drizzle-kit push, seed (destructive; local dev)
 	pnpm --filter @agenticverdict/database db:reset
 
 shell-db: ## psql into compose Postgres

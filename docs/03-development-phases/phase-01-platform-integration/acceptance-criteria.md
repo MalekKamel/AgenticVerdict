@@ -220,7 +220,7 @@ This document defines the comprehensive acceptance criteria for Phase 1 (Platfor
 
 **AC-1.7.0**: Cache integration API implemented as documented
 
-- **Verification**: Code review of `PlatformCache` in `@agenticverdict/platform-adapters` and adapter injection via `BasePlatformAdapterOptions`
+- **Verification**: Code review of `PlatformCache` in `@agenticverdict/data-connectors` and adapter injection via `BaseConnectorAdapterOptions`
 - **Evidence**: `get`/`set`/`delete`/`getMetrics`/`isDistributed` behave as specified; **no cross-tenant key** may omit `tenantId`
 - **Owner**: Backend Developer
 
@@ -626,9 +626,9 @@ This document defines the comprehensive acceptance criteria for Phase 1 (Platfor
 
 **Signatures**:
 
-- **Lead Developer**: ********\_******** Date: **\_\_\_**
-- **QA Lead**: ********\_******** Date: **\_\_\_**
-- **Security Engineer**: ********\_******** Date: **\_\_\_**
+- **Lead Developer**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
+- **QA Lead**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
+- **Security Engineer**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
 
 ---
 
@@ -643,8 +643,8 @@ This document defines the comprehensive acceptance criteria for Phase 1 (Platfor
 
 **Signatures**:
 
-- **Product Manager**: ********\_******** Date: **\_\_\_**
-- **Product Owner**: ********\_******** Date: **\_\_\_**
+- **Product Manager**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
+- **Product Owner**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
 
 ---
 
@@ -660,8 +660,8 @@ This document defines the comprehensive acceptance criteria for Phase 1 (Platfor
 
 **Signatures**:
 
-- **DevOps Lead**: ********\_******** Date: **\_\_\_**
-- **Support Lead**: ********\_******** Date: **\_\_\_**
+- **DevOps Lead**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
+- **Support Lead**: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
 
 ---
 
@@ -732,7 +732,7 @@ This document defines the comprehensive acceptance criteria for Phase 1 (Platfor
 
 ### Phase Completion Declaration
 
-I, ************\_\_************, being the Phase 1 Lead, hereby declare that:
+I, ****\*\*\*\*****\_\_****\*\*\*\*****, being the Phase 1 Lead, hereby declare that:
 
 1. All must-have acceptance criteria have been met
 2. All required documentation is complete
@@ -740,9 +740,9 @@ I, ************\_\_************, being the Phase 1 Lead, hereby declare that:
 4. The system is ready for production deployment
 5. All exit criteria have been satisfied
 
-**Date**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
 
-**Signature**: ************\_\_************
+**Signature**: ****\*\*\*\*****\_\_****\*\*\*\*****
 
 ---
 

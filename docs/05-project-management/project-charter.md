@@ -193,8 +193,8 @@ async function createMarketingAnalystAgent(config: CompanyConfig) {
 **Code Example Added:**
 
 ```typescript
-interface PlatformAdapter {
-  platform: PlatformType;
+interface ConnectorAdapter {
+  platform: ConnectorType;
   authenticate(credentials): Promise<void>;
   fetchMetrics(dateRange): Promise<PlatformData>;
   normalizeData(rawData): NormalizedData;

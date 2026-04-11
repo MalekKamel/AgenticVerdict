@@ -14,9 +14,9 @@ importers:
       '@agenticverdict/config':
         specifier: workspace:*
         version: link:packages/config
-      '@agenticverdict/platform-adapters':
+      '@agenticverdict/data-connectors':
         specifier: workspace:*
-        version: link:packages/platform-adapters
+        version: link:packages/data-connectors
       '@commitlint/cli':
         specifier: ^19.6.1
         version: 19.8.1(@types/node@25.5.2)(typescript@5.9.3)
@@ -180,12 +180,12 @@ importers:
       '@agenticverdict/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@agenticverdict/data-connectors':
+        specifier: workspace:*
+        version: link:../../packages/data-connectors
       '@agenticverdict/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@agenticverdict/platform-adapters':
-        specifier: workspace:*
-        version: link:../../packages/platform-adapters
       '@agenticverdict/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -265,15 +265,15 @@ importers:
       '@agenticverdict/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@agenticverdict/data-connectors':
+        specifier: workspace:*
+        version: link:../../packages/data-connectors
       '@agenticverdict/database':
         specifier: workspace:*
         version: link:../../packages/database
       '@agenticverdict/observability':
         specifier: workspace:*
         version: link:../../packages/observability
-      '@agenticverdict/platform-adapters':
-        specifier: workspace:*
-        version: link:../../packages/platform-adapters
       '@agenticverdict/report-generator':
         specifier: workspace:*
         version: link:../../packages/report-generator
@@ -341,15 +341,15 @@ importers:
       '@agenticverdict/core':
         specifier: workspace:*
         version: link:../core
+      '@agenticverdict/data-connectors':
+        specifier: workspace:*
+        version: link:../data-connectors
       '@agenticverdict/database':
         specifier: workspace:*
         version: link:../database
       '@agenticverdict/observability':
         specifier: workspace:*
         version: link:../observability
-      '@agenticverdict/platform-adapters':
-        specifier: workspace:*
-        version: link:../platform-adapters
       '@agenticverdict/testing':
         specifier: workspace:*
         version: link:../testing
@@ -441,6 +441,37 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.39)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(tsx@4.21.0)(yaml@2.8.3)
 
+  packages/data-connectors:
+    dependencies:
+      '@agenticverdict/config':
+        specifier: workspace:*
+        version: link:../config
+      '@agenticverdict/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@agenticverdict/types':
+        specifier: workspace:*
+        version: link:../types
+      '@upstash/redis':
+        specifier: ^1.37.0
+        version: 1.37.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^20.19.0
+        version: 20.19.39
+      eslint:
+        specifier: ^9.17.0
+        version: 9.39.4(jiti@2.6.1)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.39)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(tsx@4.21.0)(yaml@2.8.3)
+
   packages/database:
     dependencies:
       '@agenticverdict/config':
@@ -502,9 +533,9 @@ importers:
 
   packages/mock-platform-server:
     dependencies:
-      '@agenticverdict/platform-adapters':
+      '@agenticverdict/data-connectors':
         specifier: workspace:*
-        version: link:../platform-adapters
+        version: link:../data-connectors
       '@agenticverdict/types':
         specifier: workspace:*
         version: link:../types
@@ -548,37 +579,6 @@ importers:
       rotating-file-stream:
         specifier: ^3.2.9
         version: 3.2.9
-    devDependencies:
-      '@types/node':
-        specifier: ^20.19.0
-        version: 20.19.39
-      eslint:
-        specifier: ^9.17.0
-        version: 9.39.4(jiti@2.6.1)
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
-      vitest:
-        specifier: ^3.0.0
-        version: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.39)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(tsx@4.21.0)(yaml@2.8.3)
-
-  packages/platform-adapters:
-    dependencies:
-      '@agenticverdict/config':
-        specifier: workspace:*
-        version: link:../config
-      '@agenticverdict/observability':
-        specifier: workspace:*
-        version: link:../observability
-      '@agenticverdict/types':
-        specifier: workspace:*
-        version: link:../types
-      '@upstash/redis':
-        specifier: ^1.37.0
-        version: 1.37.0
-      zod:
-        specifier: ^3.24.1
-        version: 3.25.76
     devDependencies:
       '@types/node':
         specifier: ^20.19.0
@@ -647,6 +647,12 @@ importers:
       '@agenticverdict/core':
         specifier: workspace:*
         version: link:../core
+      '@agenticverdict/data-connectors':
+        specifier: workspace:*
+        version: link:../data-connectors
+      '@agenticverdict/types':
+        specifier: workspace:*
+        version: link:../types
       '@langchain/core':
         specifier: ^1.1.39
         version: 1.1.39(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(openai@6.33.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0)
@@ -683,39 +689,14 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.39)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(tsx@4.21.0)(yaml@2.8.3)
 
-  packages/ui:
-    dependencies:
-      '@mantine/core':
-        specifier: ^7.15.0
-        version: 7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.14)(react-dom@19.2.4(react@19.1.0))(react@19.1.0)
-      react:
-        specifier: ^19.0.0
-        version: 19.1.0
-    devDependencies:
-      '@types/node':
-        specifier: ^20.19.0
-        version: 20.19.39
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.2.14
-      eslint:
-        specifier: ^9.17.0
-        version: 9.39.4(jiti@2.6.1)
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
-      vitest:
-        specifier: ^3.0.0
-        version: 3.2.4(@types/debug@4.1.13)(@types/node@20.19.39)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(tsx@4.21.0)(yaml@2.8.3)
-
   tests/phase01-platform-integration:
     dependencies:
       '@agenticverdict/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@agenticverdict/platform-adapters':
+      '@agenticverdict/data-connectors':
         specifier: workspace:*
-        version: link:../../packages/platform-adapters
+        version: link:../../packages/data-connectors
     devDependencies:
       '@types/node':
         specifier: ^20.19.0
@@ -7605,26 +7586,12 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@floating-ui/react-dom@2.1.8(react-dom@19.2.4(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@floating-ui/dom': 1.7.6
-      react: 19.1.0
-      react-dom: 19.2.4(react@19.1.0)
-
   '@floating-ui/react@0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react-dom': 2.1.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@floating-ui/utils': 0.2.11
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      tabbable: 6.4.0
-
-  '@floating-ui/react@0.26.28(react-dom@19.2.4(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.1.0))(react@19.1.0)
-      '@floating-ui/utils': 0.2.11
-      react: 19.1.0
-      react-dom: 19.2.4(react@19.1.0)
       tabbable: 6.4.0
 
   '@floating-ui/utils@0.2.11': {}
@@ -7993,20 +7960,6 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       react-number-format: 5.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-remove-scroll: 2.7.2(@types/react@19.2.14)(react@19.1.0)
-      react-textarea-autosize: 8.5.9(@types/react@19.2.14)(react@19.1.0)
-      type-fest: 4.41.0
-    transitivePeerDependencies:
-      - '@types/react'
-
-  '@mantine/core@7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.14)(react-dom@19.2.4(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@floating-ui/react': 0.26.28(react-dom@19.2.4(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.8(react@19.1.0)
-      clsx: 2.1.1
-      react: 19.1.0
-      react-dom: 19.2.4(react@19.1.0)
-      react-number-format: 5.4.5(react-dom@19.2.4(react@19.1.0))(react@19.1.0)
       react-remove-scroll: 2.7.2(@types/react@19.2.14)(react@19.1.0)
       react-textarea-autosize: 8.5.9(@types/react@19.2.14)(react@19.1.0)
       type-fest: 4.41.0
@@ -9829,8 +9782,8 @@ snapshots:
       '@typescript-eslint/parser': 8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.4(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.2.0(eslint@9.39.4(jiti@2.6.1))
@@ -9849,7 +9802,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -9860,22 +9813,22 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.4(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -9886,7 +9839,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.4(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.10
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.58.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -11820,11 +11773,6 @@ snapshots:
       react: 19.1.0
       scheduler: 0.26.0
 
-  react-dom@19.2.4(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      scheduler: 0.27.0
-
   react-dom@19.2.4(react@19.2.4):
     dependencies:
       react: 19.2.4
@@ -11838,11 +11786,6 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  react-number-format@5.4.5(react-dom@19.2.4(react@19.1.0))(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      react-dom: 19.2.4(react@19.1.0)
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.1.0):
     dependencies:

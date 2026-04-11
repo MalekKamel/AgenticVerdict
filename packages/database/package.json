@@ -12,12 +12,10 @@
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "db:seed": "tsx scripts/seed.ts",
-    "db:seed:unsafe": "tsx scripts/seed.ts --force-migrations",
     "db:seed:test": "tsx scripts/seed-test.ts",
     "db:reset": "tsx scripts/reset-db.ts",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },

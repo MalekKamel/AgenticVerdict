@@ -23,6 +23,27 @@ export function requireTenantContext(): TenantContext {
   return ctx;
 }
 
+/**
+ * Runs `fn` with {@link TenantContext} bound via `AsyncLocalStorage`.
+ *
+ * Downstream synchronous code and `await` continuations scheduled from `fn` see the same context
+ * until the outer `run` completes.
+ *
+ * @param context - Active tenant, loaded {@link CompanyConfig}, and request correlation id.
+ * @param fn - Callback to execute inside the storage scope.
+ * @returns The value or promise returned by `fn`.
+ *
+ * @example
+ * ```ts
+ * await runWithTenantContext(
+ *   { tenantId: companyId, config, requestId: req.id },
+ *   async () => {
+ *     const row = await db.query.users.findFirst();
+ *     return row;
+ *   },
+ * );
+ * ```
+ */
 export function runWithTenantContext<T>(context: TenantContext, fn: () => T): T;
 export function runWithTenantContext<T>(context: TenantContext, fn: () => Promise<T>): Promise<T>;
 export function runWithTenantContext<T>(

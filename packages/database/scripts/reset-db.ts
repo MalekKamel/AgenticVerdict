@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -5,12 +6,21 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import * as schema from "../src/schema/index";
-import { runMigrations } from "../src/migrate";
+import { seedConnectorRegistry } from "../src/seed-connectors";
 import { seedCompaniesFromJsonDir } from "../src/seeds/company-config-seed";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
+const packageDir = join(scriptDir, "..");
 const repoRoot = join(scriptDir, "..", "..", "..");
 const defaultConfigDir = join(repoRoot, "configs", "companies");
+
+function runDrizzlePush(connectionString: string): void {
+  execFileSync("pnpm", ["exec", "drizzle-kit", "push", "--force"], {
+    cwd: packageDir,
+    env: { ...process.env, DATABASE_URL: connectionString },
+    stdio: "inherit",
+  });
+}
 
 async function main(): Promise<void> {
   const connectionString = process.env.DATABASE_URL;
@@ -28,18 +38,22 @@ async function main(): Promise<void> {
     await admin`GRANT ALL ON SCHEMA public TO postgres`;
     await admin`GRANT ALL ON SCHEMA public TO public`;
     console.info(
-      "[@agenticverdict/database] Dropped drizzle (migration journal) and public schemas; recreated public with grants.",
+      "[@agenticverdict/database] Dropped drizzle (legacy journal, if present) and public schemas; recreated public with grants.",
     );
   } finally {
     await admin.end({ timeout: 10 });
   }
 
-  await runMigrations(connectionString);
+  console.info("[@agenticverdict/database] Applying schema via drizzle-kit push --force …");
+  runDrizzlePush(connectionString);
 
   const client = postgres(connectionString, { max: 2 });
   const db = drizzle(client, { schema });
 
   try {
+    await seedConnectorRegistry(db);
+    console.info("seeded connector registry (core.data_connectors / tags / mappings)");
+
     const count = await seedCompaniesFromJsonDir(db, configDir);
     if (count === 0) {
       console.warn(`no json files in ${configDir}`);

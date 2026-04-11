@@ -1,5 +1,5 @@
-import { MockAdapterFactory } from "@agenticverdict/platform-adapters";
-import type { PlatformType } from "@agenticverdict/types";
+import { MockAdapterFactory } from "@agenticverdict/data-connectors";
+import type { ConnectorType } from "@agenticverdict/types";
 import Fastify, { type FastifyInstance, type FastifyReply } from "fastify";
 
 import { coerceDateRangeFromBody } from "./date-range-body";
@@ -27,7 +27,7 @@ function ensureMockHeaders(reply: FastifyReply, headers: ParsedMockHeaders): boo
 }
 
 async function serveMockMetrics(
-  platform: PlatformType,
+  platform: ConnectorType,
   headers: ParsedMockHeaders,
   body: unknown,
   reply: FastifyReply,
@@ -37,7 +37,7 @@ async function serveMockMetrics(
   }
   const dateRange = coerceDateRangeFromBody(body);
   const mock = MockAdapterFactory.create({
-    platform,
+    connector: platform,
     tenantId: headers.tenantId,
     scenario: headers.scenario,
     seed: headers.seed,

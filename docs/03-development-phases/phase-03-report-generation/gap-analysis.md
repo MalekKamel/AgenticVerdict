@@ -98,8 +98,8 @@ interface CompanyConfig {
 **Data Structure Available:**
 
 ```typescript
-// Available in @agenticverdict/platform-adapters
-interface NormalizedPlatformSnapshot {
+// Available in @agenticverdict/data-connectors
+interface NormalizedConnectorSnapshot {
   platform: "meta" | "ga4" | "gsc" | "gbp" | "tiktok";
   dateRange: {
     startInclusive: string;

@@ -4,7 +4,7 @@
   "packageManager": "pnpm@10.28.1",
   "scripts": {
     "build": "turbo run build",
-    "check:cycles": "madge --circular --extensions ts,tsx packages/types/src/index.ts packages/config/src/index.ts packages/core/src/index.ts packages/database/src/index.ts packages/platform-adapters/src/index.ts packages/agent-runtime/src/index.ts packages/report-generator/src/index.ts packages/ui/src/index.ts packages/i18n/src/index.ts packages/testing/src/index.ts apps/api/src/index.ts apps/worker/src/index.ts",
+    "check:cycles": "madge --circular --extensions ts,tsx packages/types/src/index.ts packages/config/src/index.ts packages/core/src/index.ts packages/database/src/index.ts packages/data-connectors/src/index.ts packages/agent-runtime/src/index.ts packages/report-generator/src/index.ts packages/i18n/src/index.ts packages/testing/src/index.ts apps/api/src/index.ts apps/worker/src/index.ts",
     "db:down": "docker compose down",
     "db:seed:test": "pnpm --filter @agenticverdict/database db:seed:test",
     "db:up": "docker compose up -d",
@@ -31,7 +31,7 @@
     "test:unit": "vitest run",
     "typecheck": "turbo run typecheck",
     "verify:build-config": "pnpm exec vitest run packages/config/src/build-constants.test.ts",
-    "verify:production-bundle": "NODE_ENV=production pnpm --filter @agenticverdict/api build:esbuild && NODE_ENV=production pnpm --filter @agenticverdict/worker build:esbuild && node tools/build/bundle-adapter-factory-smoke.mjs && node tools/build/analyze-bundles.mjs apps/api/dist apps/worker/dist packages/platform-adapters/dist",
+    "verify:production-bundle": "NODE_ENV=production pnpm --filter @agenticverdict/api build:esbuild && NODE_ENV=production pnpm --filter @agenticverdict/worker build:esbuild && node tools/build/bundle-adapter-factory-smoke.mjs && node tools/build/analyze-bundles.mjs apps/api/dist apps/worker/dist packages/data-connectors/dist",
     "benchmark:esbuild": "node tools/build/benchmark-builds.mjs",
     "benchmark:performance-baseline": "node scripts/performance-baseline.mjs"
   },
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@agenticverdict/agent-runtime": "workspace:*",
     "@agenticverdict/config": "workspace:*",
-    "@agenticverdict/platform-adapters": "workspace:*",
+    "@agenticverdict/data-connectors": "workspace:*",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/js": "^9.17.0",

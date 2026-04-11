@@ -40,8 +40,8 @@ Iterative remediation (V1 → V3) addressed duplicated installs, Chromium cost o
 
 **Implemented:**
 
-- **`packages/docker/base/Dockerfile.deps`:** single workspace **`pnpm install --frozen-lockfile`**; BuildKit pnpm store cache; manifest-only **`COPY`** list; optional **`LOCKFILE_HASH`** label.
-- **`packages/docker/base/Dockerfile.chromium`:** Chromium, fonts, runtime deps; **`chromium --version`** smoke; labels for traceability.
+- **`docker/base/Dockerfile.deps`:** single workspace **`pnpm install --frozen-lockfile`**; BuildKit pnpm store cache; manifest-only **`COPY`** list; optional **`LOCKFILE_HASH`** label.
+- **`docker/base/Dockerfile.chromium`:** Chromium, fonts, runtime deps; **`chromium --version`** smoke; labels for traceability.
 - **`docker-compose.base-images.yml`:** **`deps-base`**, **`chromium-base`** → local tags.
 - **App Dockerfiles:** **`ARG DEPS_IMAGE`**, **`FROM ${DEPS_IMAGE} AS deps`** (web, api, worker); worker **`CHROMIUM_IMAGE`**; runners use **`COPY --chown=appuser:appuser`** instead of traversing **`node_modules`** for **`chown -R`**.
 - **Compose / CI:** **`DEPS_IMAGE`** / **`CHROMIUM_IMAGE`** build args; workflows build base images with GHA scopes **`monorepo-deps`** and **`chromium-base`**; **`scripts/measure-build-performance.sh`** pre-builds bases.

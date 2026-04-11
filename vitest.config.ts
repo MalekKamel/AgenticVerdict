@@ -13,10 +13,9 @@ const testProjects = [
   "packages/i18n",
   "packages/testing",
   "packages/types",
-  "packages/ui",
   "packages/report-generator",
   "packages/agent-runtime",
-  "packages/platform-adapters",
+  "packages/data-connectors",
   "apps/api",
   "apps/worker",
   "apps/web",
@@ -38,19 +37,16 @@ export default defineConfig({
         "**/node_modules/**",
         "**/dist/**",
         "**/.next/**",
-        "**/migrations/**",
         // Stubs / shells — covered in later phases; keep coverage focused on exercised foundation code.
-        // platform-adapters + agent-runtime are Phase 7 foundation interfaces (included in coverage).
+        // data-connectors + agent-runtime are Phase 7 foundation interfaces (included in coverage).
         "apps/api/**",
         "apps/worker/**",
         "apps/web/**",
         "packages/report-generator/**",
         "packages/types/**",
-        "packages/ui/**",
         // DB runtime wiring — integration tests excluded from unit coverage.
         "packages/database/src/client.ts",
         "packages/database/src/db-scoped.ts",
-        "packages/database/src/migrate.ts",
         "packages/database/src/redis.ts",
         "packages/database/src/tenant-lifecycle.ts",
         "packages/database/src/tenant-provisioning.ts",
