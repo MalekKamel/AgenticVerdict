@@ -1,0 +1,264 @@
+{
+  "version": "2.10",
+  "variables": {
+    "badge-text-color": {
+      "type": "color",
+      "value": "#1976D2"
+    },
+    "badge-bg-color": {
+      "type": "color",
+      "value": "#E3F2FD"
+    },
+    "badge-font-size-sm": {
+      "type": "number",
+      "value": 12
+    },
+    "badge-font-size-md": {
+      "type": "number",
+      "value": 14
+    },
+    "badge-font-size-lg": {
+      "type": "number",
+      "value": 16
+    },
+    "badge-padding-xs": {
+      "type": "number",
+      "value": 4
+    },
+    "badge-padding-sm": {
+      "type": "number",
+      "value": 8
+    },
+    "badge-padding-md": {
+      "type": "number",
+      "value": 12
+    },
+    "badge-gap": {
+      "type": "number",
+      "value": 4
+    },
+    "badge-radius": {
+      "type": "number",
+      "value": 9999
+    },
+    "badge-stroke-width": {
+      "type": "number",
+      "value": 1
+    }
+  },
+  "children": [
+    {
+      "id": "badge-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "horizontal",
+      "gap": 4,
+      "padding": 8,
+      "cornerRadius": 9999,
+      "x": 0,
+      "y": 0,
+      "children": [
+        {
+          "id": "badge-icon",
+          "type": "text",
+          "reusable": false,
+          "content": "●",
+          "fontSize": 12,
+          "fill": "#1976D2"
+        },
+        {
+          "id": "badge-text",
+          "type": "text",
+          "reusable": false,
+          "fill": "#1976D2",
+          "content": "Badge",
+          "fontSize": 14,
+          "fontWeight": 500
+        }
+      ]
+    },
+    {
+      "id": "badge-primary-light",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 0,
+      "y": 100,
+      "reusable": true,
+      "fill": "#E3F2FD",
+      "descendants": {
+        "badge-icon": {
+          "fill": "#1976D2"
+        },
+        "badge-text": {
+          "fill": "#1976D2"
+        }
+      }
+    },
+    {
+      "id": "badge-primary-filled",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 200,
+      "y": 100,
+      "reusable": true,
+      "fill": "#1976D2",
+      "descendants": {
+        "badge-icon": {
+          "fill": "#FFFFFF"
+        },
+        "badge-text": {
+          "fill": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "id": "badge-primary-outline",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 400,
+      "y": 100,
+      "reusable": true,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#1976D2"
+      },
+      "descendants": {
+        "badge-icon": {
+          "fill": "#1976D2"
+        },
+        "badge-text": {
+          "fill": "#1976D2"
+        }
+      }
+    },
+    {
+      "id": "badge-success",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 0,
+      "y": 200,
+      "reusable": true,
+      "fill": "#E8F5E9",
+      "descendants": {
+        "badge-icon": {
+          "fill": "#2E7D32"
+        },
+        "badge-text": {
+          "content": "Success",
+          "fill": "#2E7D32"
+        }
+      }
+    },
+    {
+      "id": "badge-warning",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 200,
+      "y": 200,
+      "reusable": true,
+      "fill": "#FFF3E0",
+      "descendants": {
+        "badge-icon": {
+          "fill": "#ED6C02"
+        },
+        "badge-text": {
+          "content": "Warning",
+          "fill": "#ED6C02"
+        }
+      }
+    },
+    {
+      "id": "badge-error",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 400,
+      "y": 200,
+      "reusable": true,
+      "fill": "#FFEBEE",
+      "descendants": {
+        "badge-icon": {
+          "fill": "#D32F2F"
+        },
+        "badge-text": {
+          "content": "Error",
+          "fill": "#D32F2F"
+        }
+      }
+    },
+    {
+      "id": "badge-size-xs",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 0,
+      "y": 300,
+      "reusable": true,
+      "gap": 2,
+      "padding": 4,
+      "descendants": {
+        "badge-text": {
+          "content": "XS Badge"
+        }
+      }
+    },
+    {
+      "id": "badge-size-sm",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 150,
+      "y": 300,
+      "reusable": true,
+      "gap": 3,
+      "padding": 6,
+      "descendants": {
+        "badge-text": {
+          "content": "SM Badge"
+        }
+      }
+    },
+    {
+      "id": "badge-size-md",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 300,
+      "y": 300,
+      "reusable": true,
+      "gap": 4,
+      "padding": 8,
+      "descendants": {
+        "badge-text": {
+          "content": "MD Badge"
+        }
+      }
+    },
+    {
+      "id": "badge-size-lg",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 0,
+      "y": 400,
+      "reusable": true,
+      "gap": 5,
+      "padding": 10,
+      "descendants": {
+        "badge-text": {
+          "content": "LG Badge"
+        }
+      }
+    },
+    {
+      "id": "badge-size-xl",
+      "type": "ref",
+      "ref": "badge-base",
+      "x": 200,
+      "y": 400,
+      "reusable": true,
+      "gap": 6,
+      "padding": 12,
+      "descendants": {
+        "badge-text": {
+          "content": "XL Badge"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "card-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "vertical",
+      "cornerRadius": 8,
+      "fill": "#FFFFFF",
+      "children": [
+        {
+          "id": "card-header",
+          "type": "frame",
+          "reusable": false,
+          "layout": "horizontal",
+          "padding": 16,
+          "children": [
+            {
+              "id": "card-heading",
+              "type": "text",
+              "reusable": false,
+              "fill": "#212121",
+              "content": "Card Title",
+              "textAlign": "left"
+            }
+          ]
+        },
+        {
+          "id": "card-body",
+          "type": "frame",
+          "reusable": false,
+          "padding": 16,
+          "children": [
+            {
+              "id": "card-content",
+              "type": "text",
+              "reusable": false,
+              "fill": "#757575",
+              "content": "Card content goes here.",
+              "textAlign": "left",
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": "card-footer",
+          "type": "frame",
+          "reusable": false,
+          "layout": "horizontal",
+          "padding": 16,
+          "children": []
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": "fit_content(0)"
+    },
+    {
+      "id": "card-base-default",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 0,
+      "y": 150,
+      "reusable": true,
+      "stroke": {
+        "fill": "#E0E0E0",
+        "thickness": 1
+      }
+    },
+    {
+      "id": "card-base-elevated",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 200,
+      "y": 150,
+      "reusable": true,
+      "effect": [
+        {
+          "type": "shadow",
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "blur": 4,
+          "color": "rgba(0,0,0,0.1)"
+        }
+      ]
+    },
+    {
+      "id": "card-base-outlined",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 400,
+      "y": 150,
+      "reusable": true,
+      "stroke": {
+        "fill": "#E0E0E0",
+        "thickness": 2
+      }
+    },
+    {
+      "id": "card-base-filled",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 600,
+      "y": 150,
+      "reusable": true,
+      "fill": "#FAFAFA"
+    },
+    {
+      "id": "card-base-withHeader",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 800,
+      "y": 150,
+      "reusable": true,
+      "stroke": {
+        "fill": "#E0E0E0",
+        "thickness": 1
+      }
+    },
+    {
+      "id": "card-base-withFooter",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 1000,
+      "y": 150,
+      "reusable": true,
+      "stroke": {
+        "fill": "#E0E0E0",
+        "thickness": 1
+      }
+    },
+    {
+      "id": "card-base-clickable",
+      "type": "ref",
+      "ref": "card-base",
+      "x": 1200,
+      "y": 150,
+      "reusable": true,
+      "effect": [
+        {
+          "type": "shadow",
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "blur": 4,
+          "color": "rgba(0,0,0,0.1)"
+        }
+      ]
+    }
+  ]
+}

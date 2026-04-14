@@ -1,0 +1,85 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "search-input-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "horizontal",
+      "gap": 8,
+      "padding": [8, 12],
+      "cornerRadius": 8,
+      "height": 40,
+      "fill": "#FFFFFF",
+      "stroke": {
+        "fill": "#E0E0E0",
+        "thickness": 1
+      },
+      "children": [
+        {
+          "id": "search-icon",
+          "type": "icon_font",
+          "reusable": false,
+          "fill": "#9E9E9E",
+          "iconFontFamily": "lucide",
+          "iconFontName": "search",
+          "width": 20,
+          "height": 20
+        },
+        {
+          "id": "search-input-text",
+          "type": "text",
+          "reusable": false,
+          "fill": "#9E9E9E",
+          "content": "Search...",
+          "fontSize": 16,
+          "textAlign": "left"
+        },
+        {
+          "id": "clear-button",
+          "type": "text",
+          "reusable": false,
+          "fill": "#757575",
+          "content": "×",
+          "fontSize": 18
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": "fit_content(0)"
+    },
+    {
+      "id": "search-input-base-size-sm",
+      "type": "ref",
+      "ref": "search-input-base",
+      "x": 0,
+      "y": 300,
+      "name": "SearchInput/Small",
+      "reusable": true,
+      "height": 32,
+      "padding": [6, 12]
+    },
+    {
+      "id": "search-input-base-size-md",
+      "type": "ref",
+      "ref": "search-input-base",
+      "x": 0,
+      "y": 400,
+      "name": "SearchInput/Medium",
+      "reusable": true
+    },
+    {
+      "id": "search-input-base-size-lg",
+      "type": "ref",
+      "ref": "search-input-base",
+      "x": 0,
+      "y": 500,
+      "name": "SearchInput/Large",
+      "reusable": true,
+      "height": 48,
+      "padding": [10, 12]
+    }
+  ]
+}

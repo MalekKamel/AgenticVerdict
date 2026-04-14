@@ -1,0 +1,64 @@
+{
+  "version": "2.10",
+  "children": [
+    {
+      "type": "frame",
+      "id": "toast-base",
+      "x": 0,
+      "y": 0,
+      "reusable": true,
+      "fill": "#FFFFFF",
+      "cornerRadius": 8,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#E0E0E0"
+      },
+      "gap": 12,
+      "padding": 12,
+      "children": [
+        {
+          "type": "text",
+          "id": "toast-message",
+          "fill": "#212121",
+          "content": "This is a toast message.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "id": "toast-action",
+          "type": "ref",
+          "reusable": false,
+          "fill": "#1976D2",
+          "content": "Action",
+          "ref": "button-base"
+        },
+        {
+          "type": "frame",
+          "id": "OrGC1",
+          "name": "iconContainer",
+          "gap": 8,
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "4zDmi",
+              "width": 20,
+              "height": 20,
+              "iconFontName": "info-circle",
+              "iconFontFamily": "lucide",
+              "fill": "#9E9E9E"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toast-base-withAction",
+      "type": "ref",
+      "reusable": true,
+      "ref": "toast-base",
+      "x": 600,
+      "y": 150
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "radio-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "horizontal",
+      "gap": 8,
+      "children": [
+        {
+          "id": "radio-circle",
+          "type": "frame",
+          "reusable": false,
+          "cornerRadius": 9999,
+          "height": 20,
+          "width": 20,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "fill": "#E0E0E0",
+            "thickness": 2
+          },
+          "children": [
+            {
+              "id": "radio-dot",
+              "type": "frame",
+              "reusable": false,
+              "cornerRadius": 9999,
+              "height": 10,
+              "width": 10,
+              "fill": "#1976D2",
+              "enabled": false,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": "radio-label",
+          "type": "text",
+          "reusable": false,
+          "fill": "#212121",
+          "content": "Radio option",
+          "fontSize": 16,
+          "textAlign": "left"
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": "fit_content(0)"
+    },
+    {
+      "id": "radio-base-state-unselected",
+      "type": "ref",
+      "ref": "radio-base",
+      "x": 500,
+      "y": 0,
+      "name": "Radio/Unselected",
+      "reusable": true
+    },
+    {
+      "id": "radio-base-state-selected",
+      "type": "ref",
+      "ref": "radio-base",
+      "x": 500,
+      "y": 100,
+      "name": "Radio/Selected",
+      "reusable": true,
+      "descendants": {
+        "radio-circle": {
+          "stroke": {
+            "fill": "#1976D2",
+            "thickness": 2
+          }
+        },
+        "radio-dot": {
+          "enabled": true
+        },
+        "radio-label": {
+          "fontWeight": "500"
+        }
+      }
+    },
+    {
+      "id": "radio-base-state-disabled",
+      "type": "ref",
+      "ref": "radio-base",
+      "x": 500,
+      "y": 200,
+      "name": "Radio/Disabled",
+      "reusable": true,
+      "opacity": 0.5,
+      "descendants": {
+        "radio-circle": {
+          "stroke": {
+            "fill": "#BDBDBD",
+            "thickness": 1
+          }
+        },
+        "radio-label": {
+          "fill": "#9E9E9E"
+        }
+      }
+    }
+  ]
+}

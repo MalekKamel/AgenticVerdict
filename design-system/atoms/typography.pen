@@ -1,0 +1,17 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "typography-base",
+      "type": "text",
+      "reusable": true,
+      "fill": "#212121",
+      "content": "Sample text",
+      "fontSize": 14,
+      "textAlign": "left",
+      "x": 0,
+      "y": 0
+    }
+  ]
+}

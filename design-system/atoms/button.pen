@@ -1,0 +1,193 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "button-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "horizontal",
+      "gap": 8,
+      "padding": [8, 16],
+      "cornerRadius": 8,
+      "height": 40,
+      "children": [
+        {
+          "id": "button-label",
+          "type": "text",
+          "reusable": false,
+          "fill": "#FFFFFF",
+          "content": "Button",
+          "fontSize": 16,
+          "fontWeight": 500,
+          "textAlign": "center"
+        }
+      ],
+      "x": 0,
+      "y": 0
+    },
+    {
+      "id": "button-base-primary",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 150,
+      "reusable": true,
+      "fill": "#1976D2"
+    },
+    {
+      "id": "button-base-secondary",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 200,
+      "y": 150,
+      "reusable": true,
+      "fill": "#E3F2FD",
+      "stroke": {
+        "thickness": 1,
+        "fill": "#1976D2"
+      }
+    },
+    {
+      "id": "button-base-ghost",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 400,
+      "y": 150,
+      "reusable": true,
+      "fill": "transparent"
+    },
+    {
+      "id": "button-base-danger",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 600,
+      "y": 150,
+      "reusable": true,
+      "fill": "#D32F2F"
+    },
+    {
+      "id": "button-base-success",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 800,
+      "y": 150,
+      "reusable": true,
+      "fill": "#2E7D32"
+    },
+    {
+      "id": "button-base-warning",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 1000,
+      "y": 150,
+      "reusable": true,
+      "fill": "#FFA000"
+    },
+    {
+      "id": "button-base-size-xs",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 300,
+      "name": "Button/ExtraSmall",
+      "reusable": true,
+      "height": 24,
+      "padding": [6, 12]
+    },
+    {
+      "id": "button-base-size-sm",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 400,
+      "name": "Button/Small",
+      "reusable": true,
+      "height": 32,
+      "padding": [6, 12]
+    },
+    {
+      "id": "button-base-size-md",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 500,
+      "name": "Button/Medium",
+      "reusable": true,
+      "height": 40,
+      "padding": [8, 16]
+    },
+    {
+      "id": "button-base-size-lg",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 600,
+      "name": "Button/Large",
+      "reusable": true,
+      "height": 48,
+      "padding": [10, 20]
+    },
+    {
+      "id": "button-base-size-xl",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 0,
+      "y": 700,
+      "name": "Button/ExtraLarge",
+      "reusable": true,
+      "height": 56,
+      "padding": [12, 24]
+    },
+    {
+      "id": "button-base-state-default",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 500,
+      "y": 0,
+      "name": "Button/Default",
+      "reusable": true
+    },
+    {
+      "id": "button-base-state-hover",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 500,
+      "y": 100,
+      "name": "Button/Hover",
+      "reusable": true,
+      "fill": "#1565C0"
+    },
+    {
+      "id": "button-base-state-active",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 500,
+      "y": 200,
+      "name": "Button/Active",
+      "reusable": true,
+      "fill": "#0D47A1"
+    },
+    {
+      "id": "button-base-state-disabled",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 500,
+      "y": 300,
+      "name": "Button/Disabled",
+      "reusable": true,
+      "fill": "#BDBDBD",
+      "opacity": 0.5
+    },
+    {
+      "id": "button-base-state-loading",
+      "type": "ref",
+      "ref": "button-base",
+      "x": 500,
+      "y": 400,
+      "name": "Button/Loading",
+      "reusable": true,
+      "opacity": 0.7
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "form-field-base",
+      "type": "frame",
+      "reusable": true,
+      "layout": "vertical",
+      "gap": 4,
+      "children": [
+        {
+          "id": "form-field-label",
+          "type": "text",
+          "reusable": false,
+          "fill": "#212121",
+          "content": "Field Label",
+          "textAlign": "left"
+        },
+        {
+          "id": "form-field-input",
+          "type": "frame",
+          "reusable": false,
+          "layout": "horizontal",
+          "gap": 8,
+          "padding": [8, 12],
+          "cornerRadius": 8,
+          "height": 40,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "fill": "#E0E0E0",
+            "thickness": 1
+          },
+          "children": [
+            {
+              "id": "form-field-input-text",
+              "type": "text",
+              "reusable": false,
+              "fill": "#9E9E9E",
+              "content": "Enter text...",
+              "fontSize": 16,
+              "textAlign": "left"
+            }
+          ]
+        },
+        {
+          "id": "form-field-helper",
+          "type": "text",
+          "reusable": false,
+          "fill": "#757575",
+          "content": "Helper text",
+          "fontSize": 12,
+          "textAlign": "left"
+        },
+        {
+          "id": "form-field-error",
+          "type": "text",
+          "reusable": false,
+          "enabled": false,
+          "fill": "#D32F2F",
+          "content": "Error message",
+          "fontSize": 12,
+          "textAlign": "left"
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": "fit_content(0)"
+    },
+    {
+      "id": "form-field-base-state-default",
+      "type": "ref",
+      "ref": "form-field-base",
+      "x": 500,
+      "y": 0,
+      "name": "FormField/Default",
+      "reusable": true
+    },
+    {
+      "id": "form-field-base-state-error",
+      "type": "ref",
+      "ref": "form-field-base",
+      "x": 500,
+      "y": 200,
+      "name": "FormField/Error",
+      "reusable": true,
+      "descendants": {
+        "form-field-input": {
+          "stroke": {
+            "fill": "#D32F2F",
+            "thickness": 2
+          }
+        },
+        "form-field-error": {
+          "enabled": true
+        },
+        "form-field-helper": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "form-field-base-state-warning",
+      "type": "ref",
+      "ref": "form-field-base",
+      "x": 500,
+      "y": 300,
+      "name": "FormField/Warning",
+      "reusable": true,
+      "descendants": {
+        "form-field-input": {
+          "stroke": {
+            "fill": "#FFA000",
+            "thickness": 2
+          }
+        },
+        "form-field-helper": {
+          "content": "Warning message",
+          "fill": "#FFA000"
+        }
+      }
+    },
+    {
+      "id": "form-field-base-state-success",
+      "type": "ref",
+      "ref": "form-field-base",
+      "x": 500,
+      "y": 400,
+      "name": "FormField/Success",
+      "reusable": true,
+      "descendants": {
+        "form-field-input": {
+          "stroke": {
+            "fill": "#2E7D32",
+            "thickness": 2
+          }
+        },
+        "form-field-helper": {
+          "content": "Success message",
+          "fill": "#2E7D32"
+        }
+      }
+    },
+    {
+      "id": "form-field-base-state-disabled",
+      "type": "ref",
+      "ref": "form-field-base",
+      "x": 500,
+      "y": 500,
+      "name": "FormField/Disabled",
+      "reusable": true,
+      "opacity": 0.6,
+      "descendants": {
+        "form-field-label": {
+          "fill": "#9E9E9E"
+        },
+        "form-field-input": {
+          "fill": "#F5F5F5"
+        },
+        "form-field-helper": {
+          "fill": "#BDBDBD"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "version": "2.10",
+  "variables": {
+    "av-spacing-xs": {
+      "type": "number",
+      "value": 4
+    },
+    "av-spacing-sm": {
+      "type": "number",
+      "value": 8
+    },
+    "av-spacing-md": {
+      "type": "number",
+      "value": 16
+    },
+    "av-color-gray-300": {
+      "type": "color",
+      "value": "#DEE2E6"
+    },
+    "av-color-gray-400": {
+      "type": "color",
+      "value": "#CED4DA"
+    },
+    "av-font-size-sm": {
+      "type": "number",
+      "value": 14
+    },
+    "av-font-weight-medium": {
+      "type": "number",
+      "value": 500
+    }
+  },
+  "children": [
+    {
+      "id": "separator-horizontal",
+      "type": "frame",
+      "reusable": true,
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": "fit_content(0)",
+      "layout": "vertical",
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "separator-line-h",
+          "type": "frame",
+          "width": "fill_container",
+          "height": 1,
+          "fill": {
+            "type": "color",
+            "color": "#DEE2E6"
+          }
+        }
+      ]
+    },
+    {
+      "id": "separator-horizontal-dashed",
+      "type": "ref",
+      "ref": "separator-horizontal",
+      "x": 0,
+      "y": 50,
+      "reusable": true,
+      "descendants": {
+        "separator-line-h": {
+          "stroke": {
+            "fill": {
+              "type": "color",
+              "color": "#DEE2E6"
+            },
+            "thickness": 1,
+            "dashPattern": [
+              4,
+              4
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "separator-horizontal-dotted",
+      "type": "ref",
+      "ref": "separator-horizontal",
+      "x": 0,
+      "y": 100,
+      "reusable": true,
+      "descendants": {
+        "separator-line-h": {
+          "stroke": {
+            "fill": {
+              "type": "color",
+              "color": "#DEE2E6"
+            },
+            "thickness": 1,
+            "dashPattern": [
+              2,
+              2
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "separator-vertical",
+      "type": "frame",
+      "reusable": true,
+      "x": 400,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": 200,
+      "layout": "horizontal",
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "separator-line-v",
+          "type": "frame",
+          "width": 1,
+          "height": "fill_container",
+          "fill": {
+            "type": "color",
+            "color": "#DEE2E6"
+          }
+        }
+      ]
+    },
+    {
+      "id": "separator-vertical-dashed",
+      "type": "ref",
+      "ref": "separator-vertical",
+      "x": 450,
+      "y": 0,
+      "reusable": true,
+      "descendants": {
+        "separator-line-v": {
+          "stroke": {
+            "fill": {
+              "type": "color",
+              "color": "#DEE2E6"
+            },
+            "thickness": 1,
+            "dashPattern": [
+              4,
+              4
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "separator-with-label",
+      "type": "frame",
+      "reusable": true,
+      "x": 0,
+      "y": 200,
+      "width": 300,
+      "height": "fit_content(0)",
+      "layout": "horizontal",
+      "gap": 16,
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "separator-line-labeled",
+          "type": "frame",
+          "width": "fill_container",
+          "height": 1,
+          "fill": {
+            "type": "color",
+            "color": "#DEE2E6"
+          }
+        },
+        {
+          "id": "separator-label-text",
+          "type": "text",
+          "content": "OR",
+          "fontSize": 14,
+          "fontWeight": 500,
+          "fill": {
+            "type": "color",
+            "color": "#CED4DA"
+          }
+        },
+        {
+          "id": "separator-line-labeled-2",
+          "type": "frame",
+          "width": "fill_container",
+          "height": 1,
+          "fill": {
+            "type": "color",
+            "color": "#DEE2E6"
+          }
+        }
+      ]
+    }
+  ]
+}

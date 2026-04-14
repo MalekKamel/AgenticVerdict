@@ -1,0 +1,134 @@
+{
+  "version": "2.10",
+  "variables": {},
+  "children": [
+    {
+      "id": "dropdown-base",
+      "type": "frame",
+      "reusable": true,
+      "children": [
+        {
+          "id": "dropdown-trigger",
+          "type": "frame",
+          "reusable": false,
+          "layout": "horizontal",
+          "gap": 8,
+          "padding": [8, 12],
+          "cornerRadius": 8,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "thickness": 1,
+            "fill": {
+              "type": "color",
+              "color": "#E0E0E0"
+            }
+          },
+          "children": [
+            {
+              "id": "dropdown-trigger-label",
+              "type": "text",
+              "reusable": false,
+              "fill": "#212121",
+              "content": "Dropdown",
+              "fontSize": 16,
+              "textAlign": "left"
+            },
+            {
+              "id": "dropdown-trigger-icon",
+              "type": "icon_font",
+              "reusable": false,
+              "fill": "#757575",
+              "iconFontFamily": "lucide",
+              "iconFontName": "chevron-down",
+              "width": 16,
+              "height": 16
+            }
+          ],
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "dropdown-menu",
+          "type": "frame",
+          "reusable": false,
+          "layout": "vertical",
+          "padding": 4,
+          "cornerRadius": 8,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "thickness": 1,
+            "fill": {
+              "type": "color",
+              "color": "#E0E0E0"
+            }
+          },
+          "children": [
+            {
+              "id": "dropdown-item-1",
+              "type": "frame",
+              "reusable": false,
+              "layout": "horizontal",
+              "gap": 8,
+              "padding": [4, 8],
+              "cornerRadius": 4,
+              "children": [
+                {
+                  "id": "dropdown-item-icon",
+                  "type": "icon_font",
+                  "reusable": false,
+                  "fill": "#757575",
+                  "iconFontFamily": "lucide",
+                  "iconFontName": "circle",
+                  "width": 16,
+                  "height": 16
+                },
+                {
+                  "id": "dropdown-item-label",
+                  "type": "text",
+                  "reusable": false,
+                  "fill": "#212121",
+                  "content": "Menu Item",
+                  "fontSize": 16,
+                  "textAlign": "left"
+                }
+              ]
+            }
+          ],
+          "x": 0,
+          "y": 50
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": "fit_content(0)",
+      "height": "fit_content(0)"
+    },
+    {
+      "id": "dropdown-base-state-default",
+      "type": "ref",
+      "ref": "dropdown-base",
+      "x": 500,
+      "y": 0,
+      "name": "Dropdown/Default",
+      "reusable": true
+    },
+    {
+      "id": "dropdown-base-state-open",
+      "type": "ref",
+      "ref": "dropdown-base",
+      "x": 500,
+      "y": 100,
+      "name": "Dropdown/Open",
+      "reusable": true
+    },
+    {
+      "id": "dropdown-base-state-withIcons",
+      "type": "ref",
+      "ref": "dropdown-base",
+      "x": 500,
+      "y": 200,
+      "name": "Dropdown/WithIcons",
+      "reusable": true
+    }
+  ]
+}
