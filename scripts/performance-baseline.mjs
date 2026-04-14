@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Captures quick local build timings for regression notes (Phase 00 audit: clean / incremental targets).
- * Full `turbo run build` can take several minutes; esbuild slices are fast CI-friendly probes.
+ * Full `turbo run build` can take several minutes; Vite production bundle steps are fast CI-friendly probes.
  */
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -19,8 +19,8 @@ function timeCommand(label, command, options = {}) {
 }
 
 const rows = [
-  timeCommand("API esbuild bundle", "pnpm --filter @agenticverdict/api build:esbuild"),
-  timeCommand("Worker esbuild bundle", "pnpm --filter @agenticverdict/worker build:esbuild"),
+  timeCommand("API Vite bundle", "pnpm --filter @agenticverdict/api build:vite"),
+  timeCommand("Worker Vite bundle", "pnpm --filter @agenticverdict/worker build:vite"),
   timeCommand(
     "Agent-runtime typecheck (tsc --noEmit)",
     "pnpm --filter @agenticverdict/agent-runtime exec tsc --noEmit",

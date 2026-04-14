@@ -1,35 +1,48 @@
 #!/usr/bin/env node
 /**
- * Bundles platform adapter factory alone with NODE_ENV=production so esbuild can
+ * Bundles platform adapter factory alone with NODE_ENV=production so the bundler can
  * drop the mock branch; fails if mock adapter symbols remain in output.
  */
-import * as esbuild from "esbuild";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { build } from "vite";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const pkgDir = join(root, "packages/data-connectors");
 const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
 /** Keep @agenticverdict/config inlined so `process.env.NODE_ENV` define folds `IS_PRODUCTION`. */
-const external = Object.keys(pkg.dependencies).filter((name) => name !== "@agenticverdict/config");
+const external = [
+  ...Object.keys(pkg.dependencies).filter((name) => name !== "@agenticverdict/config"),
+  /^node:/,
+];
 const outfile = join(pkgDir, "dist/adapter-factory.smoke.mjs");
 
-await esbuild.build({
-  absWorkingDir: pkgDir,
-  entryPoints: [join(pkgDir, "src/adapter-factory.ts")],
-  bundle: true,
-  platform: "node",
-  target: "node20",
-  format: "esm",
-  outfile,
-  sourcemap: false,
-  external,
-  minify: true,
+await build({
+  configFile: false,
+  root: pkgDir,
+  mode: "production",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
-  logLevel: "info",
+  build: {
+    target: "node20",
+    lib: {
+      entry: join(pkgDir, "src/adapter-factory.ts"),
+      formats: ["es"],
+      fileName: () => "adapter-factory.smoke",
+    },
+    outDir: join(pkgDir, "dist"),
+    emptyOutDir: false,
+    minify: true,
+    sourcemap: false,
+    rollupOptions: {
+      external,
+      output: {
+        entryFileNames: "adapter-factory.smoke.mjs",
+      },
+    },
+  },
 });
 
 const content = readFileSync(outfile, "utf8");

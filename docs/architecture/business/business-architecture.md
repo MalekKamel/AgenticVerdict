@@ -329,8 +329,8 @@ The platform includes pre-built templates for common business needs:
 - **Technical Architecture:** `/docs/architecture/business/technical-architecture.md`
 - **Implementation Guide:** `/docs/architecture/business/implementation-guide.md`
 - **System Overview:** `/docs/00-overview/system-overview.md`
-- **Requirements:** `/docs/05-project-management/requirements.md`
-- **Project Charter:** `/docs/05-project-management/project-charter.md`
+- **Requirements:** `/docs/04-project-management/requirements.md`
+- **Project Charter:** `/docs/04-project-management/project-charter.md`
 
 ---
 

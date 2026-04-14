@@ -1,0 +1,278 @@
+/**
+ * AgenticVerdict Design System - Global Styles
+ * Implements three-tier design token system: global → brand → component
+ */
+
+@import "./reset.css";
+@import "./utilities.css";
+
+/* ============================================
+   GLOBAL TOKENS - Brand-agnostic primitives
+   ============================================ */
+
+:root {
+  /* Blue Color Scale */
+  --av-color-blue-50: #E3F2FD;
+  --av-color-blue-100: #BBDEFB;
+  --av-color-blue-200: #90CAF9;
+  --av-color-blue-300: #64B5F6;
+  --av-color-blue-400: #42A5F5;
+  --av-color-blue-500: #228BE6;
+  --av-color-blue-600: #1976D2;
+  --av-color-blue-700: #1565C0;
+  --av-color-blue-800: #0D47A1;
+  --av-color-blue-900: #0A3D91;
+
+  /* Gray Color Scale */
+  --av-color-gray-50: #FAFAFA;
+  --av-color-gray-100: #F5F5F5;
+  --av-color-gray-200: #EEEEEE;
+  --av-color-gray-300: #E0E0E0;
+  --av-color-gray-400: #BDBDBD;
+  --av-color-gray-500: #9E9E9E;
+  --av-color-gray-600: #757575;
+  --av-color-gray-700: #616161;
+  --av-color-gray-800: #424242;
+  --av-color-gray-900: #212121;
+
+  /* Semantic Colors */
+  --av-color-success: #2E7D32;
+  --av-color-warning: #ED6C02;
+  --av-color-danger: #D32F2F;
+  --av-color-info: #0288D1;
+
+  /* Spacing Scale (4px base unit) */
+  --av-spacing-0: 0;
+  --av-spacing-1: 0.25rem; /* 4px */
+  --av-spacing-2: 0.5rem;  /* 8px */
+  --av-spacing-3: 0.75rem; /* 12px */
+  --av-spacing-4: 1rem;    /* 16px */
+  --av-spacing-5: 1.25rem; /* 20px */
+  --av-spacing-6: 1.5rem;  /* 24px */
+  --av-spacing-8: 2rem;    /* 32px */
+  --av-spacing-10: 2.5rem; /* 40px */
+  --av-spacing-12: 3rem;   /* 48px */
+  --av-spacing-16: 4rem;   /* 64px */
+  --av-spacing-20: 5rem;   /* 80px */
+  --av-spacing-24: 6rem;   /* 96px */
+
+  /* Font Sizes */
+  --av-font-size-xs: 0.75rem;  /* 12px */
+  --av-font-size-sm: 0.875rem; /* 14px */
+  --av-font-size-md: 1rem;     /* 16px */
+  --av-font-size-lg: 1.125rem; /* 18px */
+  --av-font-size-xl: 1.25rem;  /* 20px */
+  --av-font-size-2xl: 1.5rem;  /* 24px */
+  --av-font-size-3xl: 1.875rem; /* 30px */
+
+  /* Font Weights */
+  --av-font-weight-normal: 400;
+  --av-font-weight-medium: 500;
+  --av-font-weight-semibold: 600;
+  --av-font-weight-bold: 700;
+
+  /* Border Radius */
+  --av-radius-sm: 0.25rem;  /* 4px */
+  --av-radius-md: 0.5rem;   /* 8px */
+  --av-radius-lg: 0.75rem;  /* 12px */
+  --av-radius-xl: 1rem;     /* 16px */
+  --av-radius-full: 9999px; /* Pill shape */
+
+  /* Shadows */
+  --av-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --av-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --av-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --av-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Font Family */
+  --av-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================
+   BRAND TOKENS - Tenant-specific overrides
+   Applied at runtime based on authenticated tenant
+   ============================================ */
+
+:root {
+  /* Default brand colors - can be overridden per tenant */
+  --brand-color-primary: var(--av-color-blue-600);
+  --brand-color-secondary: var(--av-color-gray-600);
+  --brand-color-success: var(--av-color-success);
+  --brand-color-warning: var(--av-color-warning);
+  --brand-color-danger: var(--av-color-danger);
+  --brand-color-info: var(--av-color-info);
+
+  /* Default brand typography */
+  --brand-font-family: var(--av-font-family);
+  --brand-font-family-secondary: var(--av-font-family);
+
+  /* Default brand assets */
+  --brand-logo-url: '';
+  --brand-logo-height: 32px;
+  --brand-app-name: 'AgenticVerdict';
+}
+
+/* ============================================
+   COMPONENT TOKENS - Composed from global/brand
+   ============================================ */
+
+:root {
+  /* Button Tokens */
+  --button-primary-bg: var(--brand-color-primary);
+  --button-primary-text: #FFFFFF;
+  --button-primary-hover: var(--av-color-blue-700);
+  --button-primary-active: var(--av-color-blue-800);
+  --button-primary-disabled: var(--av-color-gray-400);
+
+  --button-secondary-bg: var(--av-color-blue-50);
+  --button-secondary-text: var(--brand-color-primary);
+  --button-secondary-border: var(--brand-color-primary);
+  --button-secondary-hover: var(--av-color-blue-100);
+
+  --button-ghost-bg: transparent;
+  --button-ghost-text: var(--brand-color-primary);
+  --button-ghost-hover: var(--av-color-blue-50);
+
+  --button-danger-bg: var(--brand-color-danger);
+  --button-danger-text: #FFFFFF;
+  --button-danger-hover: var(--av-color-red-700);
+
+  --button-success-bg: var(--brand-color-success);
+  --button-success-text: #FFFFFF;
+  --button-success-hover: var(--av-color-green-700);
+
+  --button-warning-bg: var(--brand-color-warning);
+  --button-warning-text: #FFFFFF;
+  --button-warning-hover: var(--av-color-orange-700);
+
+  /* Input Tokens */
+  --input-default-bg: #FFFFFF;
+  --input-default-border: var(--av-color-gray-300);
+  --input-default-text: var(--av-color-gray-900);
+  --input-default-placeholder: var(--av-color-gray-500);
+
+  --input-error-border: var(--brand-color-danger);
+  --input-error-text: var(--brand-color-danger);
+  --input-error-bg: var(--av-color-red-50);
+
+  --input-focus-border: var(--brand-color-primary);
+  --input-focus-ring: var(--av-color-blue-200);
+
+  /* Card Tokens */
+  --card-default-bg: #FFFFFF;
+  --card-default-border: var(--av-color-gray-200);
+  --card-default-shadow: var(--av-shadow-sm);
+
+  --card-elevated-bg: #FFFFFF;
+  --card-elevated-border: transparent;
+  --card-elevated-shadow: var(--av-shadow-md);
+
+  /* Badge Tokens */
+  --badge-default-bg: var(--av-color-blue-50);
+  --badge-default-text: var(--av-color-blue-700);
+  --badge-filled-bg: var(--av-color-blue-700);
+  --badge-filled-text: #FFFFFF;
+  --badge-radius: var(--av-radius-full);
+}
+
+/* ============================================
+   BASE STYLES - Reset and utilities
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--brand-font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--av-color-gray-900);
+  background-color: var(--av-color-gray-50);
+}
+
+/* ============================================
+   ACCESSIBILITY - Focus indicators and skip links
+   ============================================ */
+
+/* Visible focus indicator for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--brand-color-primary);
+  outline-offset: 2px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  padding: 8px 16px;
+  background-color: var(--brand-color-primary);
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: var(--av-radius-md);
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   RTL SUPPORT - Logical properties for bidirectional text
+   ============================================ */
+
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+}
+
+/* ============================================
+   REDUCED MOTION - Respect user preferences
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE - Support Windows high contrast
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --button-primary-bg: WindowText;
+    --button-primary-text: Window;
+  }
+}

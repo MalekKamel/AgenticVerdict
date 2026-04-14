@@ -1,0 +1,1177 @@
+{
+  "version": "2.10",
+  "children": [
+    {
+      "type": "frame",
+      "id": "ZoQdG",
+      "x": 48,
+      "y": 1360,
+      "name": "Auth/Button/Base",
+      "reusable": true,
+      "height": 40,
+      "cornerRadius": 8,
+      "gap": 8,
+      "padding": [
+        8,
+        16
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "2EE9u",
+          "name": "authBtnLabel",
+          "fill": "#FFFFFF",
+          "content": "Button",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "id": "ollIq",
+      "type": "ref",
+      "ref": "ZoQdG",
+      "fill": "#228BE6",
+      "width": 320,
+      "name": "authBtnPrimary",
+      "x": 200,
+      "y": 1360
+    },
+    {
+      "type": "frame",
+      "id": "oTxhG",
+      "x": 560,
+      "y": 1360,
+      "name": "Auth/FormField",
+      "reusable": true,
+      "width": 400,
+      "layout": "vertical",
+      "gap": 4,
+      "children": [
+        {
+          "type": "text",
+          "id": "Bhsbu",
+          "name": "authFieldLabel",
+          "fill": "#212121",
+          "content": "Label",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "66y4m",
+          "name": "authFieldInput",
+          "width": "fill_container",
+          "height": 40,
+          "fill": "#FFFFFF",
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "#E0E0E0"
+          },
+          "padding": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "6Cxeq",
+              "name": "authFieldInputText",
+              "fill": "#9E9E9E",
+              "content": "Placeholder",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "JZulJ",
+          "name": "authFieldHelper",
+          "fill": "#757575",
+          "content": "Helper text",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "yMbmO",
+      "x": 48,
+      "y": 1460,
+      "name": "Auth/Card",
+      "reusable": true,
+      "width": 440,
+      "fill": "#FFFFFF",
+      "cornerRadius": 8,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#0000001a",
+        "offset": {
+          "x": 0,
+          "y": 2
+        },
+        "blur": 4
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "LN3yN",
+          "name": "authCardHeader",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "ZPZ9p",
+              "name": "authCardTitle",
+              "fill": "#212121",
+              "content": "Title",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "ZHT2G",
+              "name": "authCardSubtitle",
+              "fill": "#757575",
+              "content": "Subtitle",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KJL4H",
+          "name": "authCardBody",
+          "width": "fill_container",
+          "height": "fit_content(0)",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            0,
+            24,
+            24,
+            24
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t9EZp",
+      "type": "ref",
+      "ref": "ZoQdG",
+      "fill": "#E7F5FF",
+      "stroke": {
+        "thickness": 1,
+        "fill": "#228BE6"
+      },
+      "width": 320,
+      "name": "authBtnSecondary",
+      "x": 560,
+      "y": 1460,
+      "descendants": {
+        "2EE9u": {
+          "fill": "#228BE6",
+          "content": "Secondary"
+        }
+      }
+    },
+    {
+      "id": "wkvOZ",
+      "type": "ref",
+      "ref": "ZoQdG",
+      "fill": "#00000000",
+      "width": 200,
+      "name": "authBtnGhost",
+      "x": 920,
+      "y": 1460,
+      "descendants": {
+        "2EE9u": {
+          "fill": "#228BE6",
+          "content": "Link action"
+        }
+      }
+    },
+    {
+      "type": "frame",
+      "id": "R6srm",
+      "x": 48,
+      "y": 1580,
+      "name": "Auth/Checkbox",
+      "reusable": true,
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Vkfid",
+          "name": "authCheckboxBox",
+          "width": 20,
+          "height": 20,
+          "fill": "#FFFFFF",
+          "cornerRadius": 4,
+          "stroke": {
+            "thickness": 1,
+            "fill": "#E0E0E0"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "n1TDm",
+              "name": "authCheckboxMark",
+              "fill": "#228BE6",
+              "content": "✓",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "pzAom",
+          "name": "authCheckboxLabel",
+          "fill": "#212121",
+          "content": "Label",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "x04Fm",
+      "x": 200,
+      "y": 1580,
+      "name": "Auth/Alert/Error",
+      "reusable": true,
+      "width": 400,
+      "fill": "#FFEBEE",
+      "cornerRadius": 8,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#D32F2F"
+      },
+      "gap": 12,
+      "padding": 12,
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "yV6Bw",
+          "name": "authAlertIcon",
+          "width": 20,
+          "height": 20,
+          "iconFontName": "error",
+          "iconFontFamily": "Material Symbols Rounded",
+          "weight": 400,
+          "fill": "#D32F2F"
+        },
+        {
+          "type": "text",
+          "id": "bQFLN",
+          "name": "authAlertMsg",
+          "fill": "#D32F2F",
+          "textGrowth": "fixed-width",
+          "width": 320,
+          "content": "Error message",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "k9d2u",
+      "x": 0,
+      "y": 220,
+      "name": "Authentication — Screens",
+      "width": 6000,
+      "height": 1100,
+      "fill": "#ECEFF1",
+      "gap": 48,
+      "padding": 48,
+      "children": [
+        {
+          "type": "frame",
+          "id": "qNkfz",
+          "name": "Screen / Login",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "2ijmf",
+              "name": "brandRow",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "gaG44",
+                  "name": "logo",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "#228BE6"
+                },
+                {
+                  "type": "text",
+                  "id": "RXwiH",
+                  "name": "brandText",
+                  "fill": "#212121",
+                  "content": "AgenticVerdict",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "eXQRc",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "loginCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Sign in"
+                },
+                "ZHT2G": {
+                  "content": "Enter your credentials to continue"
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "dnub8",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "loginEmail",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Email"
+                        },
+                        "6Cxeq": {
+                          "content": "name@company.com"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "yh5qI",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "loginPass",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Password"
+                        },
+                        "6Cxeq": {
+                          "content": "••••••••"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "8UZnQ",
+                      "type": "ref",
+                      "ref": "ZoQdG",
+                      "fill": "#228BE6",
+                      "width": "fill_container",
+                      "name": "loginSubmit",
+                      "descendants": {
+                        "2EE9u": {
+                          "content": "Sign in",
+                          "fill": "#FFFFFF"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Cejhi",
+                      "name": "loginLinks",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zscrQ",
+                          "name": "loginForgot",
+                          "fill": "#228BE6",
+                          "content": "Forgot password?",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "yjeh9",
+                          "name": "loginRegister",
+                          "fill": "#228BE6",
+                          "content": "Create an account",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "o5puf",
+          "name": "Screen / Register",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "vqsaP",
+              "name": "regBrand",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "KhDVr",
+                  "name": "regLogo",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "#228BE6"
+                },
+                {
+                  "type": "text",
+                  "id": "d9YCW",
+                  "name": "regBrandText",
+                  "fill": "#212121",
+                  "content": "AgenticVerdict",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "cZD9m",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "regCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Create account"
+                },
+                "ZHT2G": {
+                  "content": "Start your workspace trial"
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "UpyMX",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "regName",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Full name"
+                        },
+                        "6Cxeq": {
+                          "content": "Jane Doe"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "7WfCl",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "regEmail",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Work email"
+                        },
+                        "6Cxeq": {
+                          "content": "name@company.com"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "PAHPb",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "regPass",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Password"
+                        },
+                        "6Cxeq": {
+                          "content": "••••••••"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "YpOZ6",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "regPass2",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Confirm password"
+                        },
+                        "6Cxeq": {
+                          "content": "••••••••"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "hWyJ5",
+                      "type": "ref",
+                      "ref": "R6srm",
+                      "width": "fill_container",
+                      "name": "regTerms",
+                      "descendants": {
+                        "n1TDm": {
+                          "fill": "#228BE6"
+                        },
+                        "pzAom": {
+                          "content": "I agree to the Terms of Service and Privacy Policy",
+                          "textGrowth": "fixed-width",
+                          "width": 380
+                        }
+                      }
+                    },
+                    {
+                      "id": "p0sw1",
+                      "type": "ref",
+                      "ref": "ZoQdG",
+                      "fill": "#228BE6",
+                      "width": "fill_container",
+                      "name": "regSubmit",
+                      "descendants": {
+                        "2EE9u": {
+                          "content": "Create account",
+                          "fill": "#FFFFFF"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gPVc2",
+                      "name": "regFooter",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OTb1T",
+                          "name": "regFooterTxt",
+                          "fill": "#757575",
+                          "content": "Already have an account?",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "7zJlW",
+                          "name": "regFooterLink",
+                          "fill": "#228BE6",
+                          "content": "Sign in",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "esyQk",
+          "name": "Screen / Forgot password",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uMTGs",
+              "name": "forgotBrand",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "bMTaY",
+                  "name": "forgotLogo",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "#228BE6"
+                },
+                {
+                  "type": "text",
+                  "id": "odlZK",
+                  "name": "forgotBrandText",
+                  "fill": "#212121",
+                  "content": "AgenticVerdict",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "zWeiU",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "forgotCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Reset password"
+                },
+                "ZHT2G": {
+                  "content": "We will email you a reset link"
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "B5KJV",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "forgotEmail",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Email"
+                        },
+                        "6Cxeq": {
+                          "content": "name@company.com"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "BzlYO",
+                      "type": "ref",
+                      "ref": "ZoQdG",
+                      "fill": "#228BE6",
+                      "width": "fill_container",
+                      "name": "forgotSubmit",
+                      "descendants": {
+                        "2EE9u": {
+                          "content": "Send reset link",
+                          "fill": "#FFFFFF"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LWNIZ",
+                      "name": "forgotBack",
+                      "width": "fill_container",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sHMas",
+                          "name": "forgotBackLink",
+                          "fill": "#228BE6",
+                          "content": "Back to sign in",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "niD4C",
+          "name": "Screen / Reset password",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "nhDWZ",
+              "name": "resetBrand",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "gFPYK",
+                  "name": "resetLogo",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "shield-check",
+                  "iconFontFamily": "lucide",
+                  "fill": "#228BE6"
+                },
+                {
+                  "type": "text",
+                  "id": "6jMpS",
+                  "name": "resetBrandText",
+                  "fill": "#212121",
+                  "content": "AgenticVerdict",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "3lIO6",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "resetCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Choose a new password"
+                },
+                "ZHT2G": {
+                  "content": "Use at least 8 characters with mixed case and numbers"
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "hxC90",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "resetPass",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "New password"
+                        },
+                        "6Cxeq": {
+                          "content": "••••••••"
+                        },
+                        "JZulJ": {
+                          "content": "Use 8+ characters",
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "id": "WHbck",
+                      "type": "ref",
+                      "ref": "oTxhG",
+                      "width": "fill_container",
+                      "name": "resetPass2",
+                      "descendants": {
+                        "Bhsbu": {
+                          "content": "Confirm new password"
+                        },
+                        "6Cxeq": {
+                          "content": "••••••••"
+                        },
+                        "JZulJ": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "kEHI3",
+                      "type": "ref",
+                      "ref": "ZoQdG",
+                      "fill": "#228BE6",
+                      "width": "fill_container",
+                      "name": "resetSubmit",
+                      "descendants": {
+                        "2EE9u": {
+                          "content": "Update password",
+                          "fill": "#FFFFFF"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "H8vQF",
+          "name": "Screen / Verify email",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "52VOb",
+              "name": "verifyBrand",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "D9dkX",
+                  "name": "verifyLogo",
+                  "width": 40,
+                  "height": 40,
+                  "iconFontName": "mail",
+                  "iconFontFamily": "lucide",
+                  "fill": "#228BE6"
+                },
+                {
+                  "type": "text",
+                  "id": "cPGbJ",
+                  "name": "verifyBrandText",
+                  "fill": "#212121",
+                  "content": "AgenticVerdict",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "id": "abuLI",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "verifyCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Check your inbox"
+                },
+                "ZHT2G": {
+                  "content": "We emailed a verification link. Open it to activate your account."
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "96om1",
+                      "name": "verifyHint",
+                      "fill": "#757575",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Did not receive the email? Check spam or resend below.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ERPRx",
+                      "name": "verifyActions",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "id": "afiw4",
+                          "type": "ref",
+                          "ref": "ZoQdG",
+                          "fill": "#228BE6",
+                          "name": "verifyResend",
+                          "descendants": {
+                            "2EE9u": {
+                              "content": "Resend email",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "id": "QYcE7",
+                          "type": "ref",
+                          "ref": "ZoQdG",
+                          "fill": "#00000000",
+                          "name": "verifyGhost",
+                          "descendants": {
+                            "2EE9u": {
+                              "content": "Back to sign in",
+                              "fill": "#228BE6"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jvraD",
+          "name": "Screen / Auth success",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "cxCPc",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "succCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "You are signed in"
+                },
+                "ZHT2G": {
+                  "content": "Redirecting you to the dashboard…"
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "vuBuT",
+                      "type": "ref",
+                      "ref": "x04Fm",
+                      "width": "fill_container",
+                      "name": "succAlert",
+                      "fill": "#E8F5E9",
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#2E7D32"
+                      },
+                      "descendants": {
+                        "yV6Bw": {
+                          "iconFontName": "check",
+                          "fill": "#2E7D32"
+                        },
+                        "bQFLN": {
+                          "content": "Your session is secure. You can close this tab if you opened it by mistake.",
+                          "fill": "#2E7D32"
+                        }
+                      }
+                    },
+                    {
+                      "id": "s3Cvl",
+                      "type": "ref",
+                      "ref": "ZoQdG",
+                      "fill": "#228BE6",
+                      "width": "fill_container",
+                      "name": "succBtn",
+                      "descendants": {
+                        "2EE9u": {
+                          "content": "Go to dashboard",
+                          "fill": "#FFFFFF"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "0ZzLd",
+          "name": "Screen / Auth error",
+          "width": 800,
+          "height": 980,
+          "fill": "#F5F5F5",
+          "layout": "vertical",
+          "padding": 32,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "nlbUw",
+              "type": "ref",
+              "ref": "yMbmO",
+              "width": 440,
+              "name": "errCard",
+              "descendants": {
+                "ZPZ9p": {
+                  "content": "Something went wrong"
+                },
+                "ZHT2G": {
+                  "content": "We could not complete this step. Try again or contact support."
+                },
+                "KJL4H": {
+                  "children": [
+                    {
+                      "id": "GYylS",
+                      "type": "ref",
+                      "ref": "x04Fm",
+                      "width": "fill_container",
+                      "name": "errAlert",
+                      "descendants": {
+                        "bQFLN": {
+                          "content": "Invalid or expired link. Request a new reset email from the sign-in page."
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BL09O",
+                      "name": "errRow",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "id": "6PE0T",
+                          "type": "ref",
+                          "ref": "ZoQdG",
+                          "fill": "#228BE6",
+                          "name": "errPrimary",
+                          "descendants": {
+                            "2EE9u": {
+                              "content": "Try again",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "id": "iHGOb",
+                          "type": "ref",
+                          "ref": "ZoQdG",
+                          "fill": "#E7F5FF",
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#228BE6"
+                          },
+                          "name": "errSecondary",
+                          "descendants": {
+                            "2EE9u": {
+                              "content": "Contact support",
+                              "fill": "#228BE6"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RYcex",
+      "x": 0,
+      "y": 0,
+      "name": "Spec — docs/architecture/ui/00-overview.md",
+      "width": 6000,
+      "fill": "#F1F3F5",
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 32,
+      "children": [
+        {
+          "type": "text",
+          "id": "QIIrz",
+          "name": "specTitle",
+          "fill": "#212121",
+          "content": "Authentication template (UI System Overview)",
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "LqkTQ",
+          "name": "specBody",
+          "fill": "#495057",
+          "textGrowth": "fixed-width",
+          "width": 5600,
+          "content": "Atomic template tier (atoms → molecules → AuthLayout). WCAG 2.1 AA: sufficient contrast, 40px+ controls, keyboard-friendly grouping. RTL: logical flex layout and symmetric padding—verify mirrored in DirectionProvider. Spacing rhythm 24–32px. Global token example --av-color-primary: #228BE6; brand/tenant overrides via tier-2 tokens without rebuild.",
+          "lineHeight": 1.45,
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    }
+  ]
+}

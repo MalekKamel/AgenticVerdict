@@ -7,7 +7,7 @@ This file records **developer-machine** timings for quick regression visibility.
 ## How to record a row
 
 ```bash
-pnpm benchmark:esbuild
+pnpm benchmark:vite-bundles
 pnpm benchmark:performance-baseline
 # Optional: append a dated table to this file
 PERFBASELINE_WRITE=1 pnpm benchmark:performance-baseline

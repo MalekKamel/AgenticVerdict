@@ -31,7 +31,7 @@ export default defineConfig({
       : []),
   ],
   webServer: {
-    command: `pnpm exec next build && pnpm exec next start -p ${e2ePort}`,
+    command: `pnpm exec vite build && PORT=${e2ePort} pnpm exec node .output/server/index.mjs`,
     cwd: rootDir,
     url: e2eOrigin,
     reuseExistingServer: !process.env.CI,

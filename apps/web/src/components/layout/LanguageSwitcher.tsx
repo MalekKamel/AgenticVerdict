@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Group } from "@mantine/core";
-import { useLocale } from "next-intl";
+import { useLocale } from "@/i18n/react";
 
 import { Link, usePathname } from "@/i18n/navigation";
 

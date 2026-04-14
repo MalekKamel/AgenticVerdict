@@ -41,13 +41,13 @@ function benchmark(name, command, distDir) {
 const cwd = process.cwd();
 const rows = [
   benchmark(
-    "API esbuild (current NODE_ENV)",
-    "pnpm --filter @agenticverdict/api build:esbuild",
+    "API Vite bundle (current NODE_ENV)",
+    "pnpm --filter @agenticverdict/api build:vite",
     join(cwd, "apps/api/dist"),
   ),
   benchmark(
-    "Worker esbuild (current NODE_ENV)",
-    "pnpm --filter @agenticverdict/worker build:esbuild",
+    "Worker Vite bundle (current NODE_ENV)",
+    "pnpm --filter @agenticverdict/worker build:vite",
     join(cwd, "apps/worker/dist"),
   ),
 ];

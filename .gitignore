@@ -150,8 +150,8 @@ i18n-unused-keys-report.json
 .turbo
 spaHtmlTemplates.ts
 
+.output/
+
 /ignored
 
 /test-reports
-
-/prompts

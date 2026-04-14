@@ -5,6 +5,8 @@
 **Author:** AgenticVerdict Technical Research Team
 **Status:** Research Complete
 
+**Implementation note (2026-04-15):** In this monorepo, API and worker production bundles use **Vite** library mode (`pnpm --filter @agenticverdict/api build:vite`, shared `tools/build/vite-node-cli.config.mjs`). The bundler comparison and historical snippets below remain useful background; follow the checked-in Vite configs for exact behavior.
+
 ---
 
 ## Executive Summary
@@ -13,7 +15,7 @@ This research document examines industry best practices for compiler-driven conf
 
 **Key Finding:** The industry has converged on **build-time constant injection** combined with **dead code elimination** as the standard pattern for enforcing environment-specific behavior. Major frameworks (Next.js, NestJS, Vue, React) and companies (Vercel, Shopify, Airbnb, Microsoft) all use compiler-driven configuration to eliminate runtime configuration errors.
 
-**Primary Recommendation:** Implement a **hybrid approach** combining TypeScript's type system with build-time constant injection via esbuild/Turbopack, enabling true compile-time enforcement of adapter selection while maintaining excellent developer experience.
+**Primary Recommendation:** Implement a **hybrid approach** combining TypeScript's type system with build-time constant injection via the production bundler (**Vite** in this repository for API/worker; concepts apply to esbuild or Turbopack as well), enabling true compile-time enforcement of adapter selection while maintaining excellent developer experience.
 
 ---
 

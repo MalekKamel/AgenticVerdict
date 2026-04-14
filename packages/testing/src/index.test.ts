@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import { mockConnector } from "./fixtures/connectors";
 import {
   RLS_TENANT_A,
   TEST_TENANT_ALPHA,
   createTenant,
   createTestCompanyConfig,
   createTestTenantContext,
-  mockConnector,
 } from "./index";
 
 describe("@agenticverdict/testing public API", () => {

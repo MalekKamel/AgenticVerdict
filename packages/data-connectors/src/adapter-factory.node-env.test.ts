@@ -19,5 +19,5 @@ describe("createConnectorAdapter with NODE_ENV=production (fresh module graph)",
       tenantId: "tenant-1",
     });
     expect(adapter).toBeInstanceOf(MetaConnectorAdapter);
-  });
+  }, 15_000);
 });

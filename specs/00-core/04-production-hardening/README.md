@@ -33,7 +33,7 @@ Phase 04 Production Hardening transformed AgenticVerdict from a development envi
 
 **Why Vitest over Jest**:
 - Native TypeScript support
-- Faster execution with esbuild
+- Faster execution with Vite library builds for API/worker production bundles
 - Better monorepo support with project workspaces
 - Built-in coverage with v8 provider
 

@@ -2,7 +2,7 @@
 
 import { AppShell, Burger, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/react";
 import type { ReactNode } from "react";
 
 import { ColorSchemeToggle } from "./ColorSchemeToggle";

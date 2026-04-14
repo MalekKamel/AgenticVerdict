@@ -3,6 +3,39 @@ export type { ConnectorType } from "./connector-types";
 export type { DateRange, MetricReference } from "./common";
 export { dateRangeSchema, metricReferenceSchema } from "./common";
 
+// Auth types
+export type {
+  LoginInput,
+  LoginOutput,
+  RegisterInput,
+  RegisterOutput,
+  LogoutOutput,
+  GetSessionOutput,
+  VerifyEmailInput,
+  VerifyEmailOutput,
+  RequestPasswordResetInput,
+  RequestPasswordResetOutput,
+  ConfirmPasswordResetInput,
+  ConfirmPasswordResetOutput,
+  AuthUserData,
+  AuthErrorCode,
+  AuthErrorResponse,
+} from "./auth";
+export {
+  loginInputSchema,
+  loginOutputSchema,
+  registerInputSchema,
+  registerOutputSchema,
+  logoutOutputSchema,
+  getSessionOutputSchema,
+  verifyEmailInputSchema,
+  verifyEmailOutputSchema,
+  requestPasswordResetInputSchema,
+  requestPasswordResetOutputSchema,
+  confirmPasswordResetInputSchema,
+  confirmPasswordResetOutputSchema,
+} from "./auth";
+
 export type {
   AnalysisResultResponse,
   DataSourceProvenance,

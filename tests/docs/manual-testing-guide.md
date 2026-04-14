@@ -416,7 +416,7 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
 
 **Layer 1 — build constants:** `@agenticverdict/config` exports **`BUILD_CONFIG`**, **`IS_PRODUCTION`**, and related symbols from **`build-constants`** (see [migration guide: compiler-driven config](../../docs/06-reference/migration-guide-compiler-driven-config.md)).
 
-**Layer 2 — runtime config:** **`@agenticverdict/config/configuration`** (also exported from the package root) provides **`ConfigurationService`**, validated **`RuntimeConfig`**, **`canEnableMocksViaEnv`**, centralized **`isMockEnabledForConnector`**, and the **`config`** accessor object. **`createConnectorAdapter`** imports mock enablement from this layer; production **esbuild** bundles still drop mock symbols (**`pnpm run verify:production-bundle`**).
+**Layer 2 — runtime config:** **`@agenticverdict/config/configuration`** (also exported from the package root) provides **`ConfigurationService`**, validated **`RuntimeConfig`**, **`canEnableMocksViaEnv`**, centralized **`isMockEnabledForConnector`**, and the **`config`** accessor object. **`createConnectorAdapter`** imports mock enablement from this layer; production **Vite** bundles still drop mock symbols (**`pnpm run verify:production-bundle`**).
 
 **What manual testers should know:**
 
@@ -426,7 +426,7 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml -f deploy/docker
   - **Worker:** On startup, if `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` is set, the process **logs an error and exits** (misconfiguration guard).
   - **Do not** set `AGENTICVERDICT_USE_MOCK_ADAPTERS=1` on **production** **api** / **worker** services; if you intentionally enable mock flags while `NODE_ENV` is `production` or `staging`, `isMockEnabledForConnector` **throws** when evaluating enablement (for example from the web health route).
 
-- **Development / test processes (`NODE_ENV` is `development` or `test`):** Mock adapters remain available per [Section 2.4](#24-environment-variables-reference) and [Section 2.6](#26-mock-adapter-notes). CI also runs **`pnpm run verify:production-bundle`** on production-oriented esbuild outputs and the **minified adapter-factory smoke** artifact (see root `package.json`).
+- **Development / test processes (`NODE_ENV` is `development` or `test`):** Mock adapters remain available per [Section 2.4](#24-environment-variables-reference) and [Section 2.6](#26-mock-adapter-notes). CI also runs **`pnpm run verify:production-bundle`** on production-oriented Vite outputs and the **minified adapter-factory smoke** artifact (see root `package.json`).
 
 **Postgres feature flags (Layer 3 groundwork):** tenant-aware flags are stored in **`feature_flags`** / **`tenant_feature_flags`** (migration **`0003_feature_flags`**). Evaluation API: **`createFeatureFlagService(db)`** in **`@agenticverdict/database`**. Config-change audit helper: **`auditConfigChange`**. Changelog: `changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`.
 

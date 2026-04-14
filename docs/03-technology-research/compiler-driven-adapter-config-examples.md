@@ -17,7 +17,7 @@ This document provides working code examples for compiler-driven configuration p
 1. [Build-Time Constants](#1-build-time-constants)
 2. [Type Guards and Discriminated Unions](#2-type-guards-and-discriminated-unions)
 3. [Dead Code Elimination](#3-dead-code-elimination)
-4. [esbuild Configuration](#4-esbuild-configuration)
+4. [Vite library build (API / Worker)](#4-vite-library-build-api--worker)
 5. [Testing Patterns](#5-testing-patterns)
 
 ---
@@ -306,118 +306,43 @@ if (isFeatureEnabled('debugTools')) {
 
 ---
 
-## 4. esbuild Configuration
+## 4. Vite library build (API / Worker)
 
-### 4.1 Basic esbuild Setup
-
-```javascript
-// apps/api/esbuild.config.js
-import { build } from "esbuild";
-import { esbuildPlugin } from "@esbuild/typescript-plugin";
-
-export const buildOptions = {
-  entryPoints: ["src/index.ts"],
-  bundle: true,
-  platform: "node",
-  target: "node20",
-  format: "esm",
-  outdir: "dist",
-  sourcemap: true,
-  tsconfig: "tsconfig.json",
-  plugins: [esbuildPlugin()],
-
-  // Build-time constant injection
-  define: {
-    // Replace process.env.NODE_ENV with literal value
-    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
-
-    // Define build-time constants
-    "import.meta.env.PROD": JSON.stringify(process.env.NODE_ENV === "production"),
-    "import.meta.env.MOCK_ADAPTERS": JSON.stringify(process.env.NODE_ENV !== "production"),
-  },
-};
-
-// Export for both CLI and programmatic use
-export default buildOptions;
-
-// CLI usage:
-// esbuild esbuild.config.js
-```
-
-### 4.2 Environment-Specific Builds
+Production bundles for **`apps/api`** and **`apps/worker`** use **Vite** in **library** mode: one ESM file per app (`dist/cli.mjs`), npm `dependencies` externalized, `process.env.NODE_ENV` defined from the invoking environment, and `node:` built-ins kept external. Shared logic lives in **`tools/build/vite-node-cli.config.mjs`**; each app adds a thin **`vite.config.mjs`** that calls `createNodeCliConfig`.
 
 ```javascript
-// scripts/build-prod.js
-import { build } from "esbuild";
+// tools/build/vite-node-cli.config.mjs (representative excerpt)
+import { defineConfig } from "vite";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
-async function buildProduction() {
-  await build({
-    entryPoints: ["apps/api/src/index.ts"],
-    bundle: true,
-    platform: "node",
-    target: "node20",
-    outdir: "dist/prod",
-
-    // Production build constants
+export function createNodeCliConfig(appRoot) {
+  const pkg = JSON.parse(readFileSync(join(appRoot, "package.json"), "utf8"));
+  const production = process.env.NODE_ENV === "production";
+  return defineConfig({
+    root: appRoot,
     define: {
-      "process.env.NODE_ENV": '"production"',
-      "import.meta.env.PROD": "true",
-      "import.meta.env.MOCK_ADAPTERS": "false",
+      "process.env.NODE_ENV": JSON.stringify(production ? "production" : "development"),
     },
-
-    // Minify for production
-    minify: true,
-    sourcemap: false,
-
-    // Tree-shake unused code
-    treeShaking: true,
+    build: {
+      target: "node20",
+      lib: {
+        entry: join(appRoot, "src/cli.ts"),
+        formats: ["es"],
+        fileName: () => "cli",
+      },
+      outDir: join(appRoot, "dist"),
+      sourcemap: true,
+      rollupOptions: {
+        external: [...Object.keys(pkg.dependencies), /^node:/],
+        output: { entryFileNames: "cli.mjs" },
+      },
+    },
   });
 }
-
-buildProduction().catch(console.error);
 ```
 
-```javascript
-// scripts/build-dev.js
-import { build } from "esbuild";
-
-async function buildDevelopment() {
-  await build({
-    entryPoints: ["apps/api/src/index.ts"],
-    bundle: true,
-    platform: "node",
-    target: "node20",
-    outdir: "dist/dev",
-
-    // Development build constants
-    define: {
-      "process.env.NODE_ENV": '"development"',
-      "import.meta.env.PROD": "false",
-      "import.meta.env.MOCK_ADAPTERS": "true",
-    },
-
-    // Development-friendly options
-    sourcemap: true,
-    minify: false,
-    watch: process.argv.includes("--watch"),
-  });
-}
-
-buildDevelopment().catch(console.error);
-```
-
-### 4.3 Package.json Scripts
-
-```json
-{
-  "scripts": {
-    "build": "node scripts/build-prod.js",
-    "build:dev": "node scripts/build-dev.js --watch",
-    "build:all": "pnpm run build && pnpm run build:dev",
-    "typecheck": "tsc --noEmit"
-  }
-}
-```
+**Commands:** `pnpm --filter @agenticverdict/api build:vite`, `pnpm --filter @agenticverdict/worker build:vite`. CI and local verification: **`pnpm run verify:production-bundle`** (also runs the adapter-factory smoke bundle and scans outputs for mock symbols).
 
 ---
 

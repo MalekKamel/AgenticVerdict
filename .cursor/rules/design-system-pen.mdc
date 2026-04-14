@@ -1,0 +1,11 @@
+---
+description: Pencil MCP required for design-system .pen edits
+globs: design-system/**/*.pen
+alwaysApply: false
+---
+
+# `.pen` files in `design-system/`
+
+- Use **Pencil MCP** to read and modify design content (`batch_get`, `batch_design`, `open_document`, `get_screenshot`, `export_nodes` as needed).
+- After changes, run **`pnpm run validate:pen-files`** from the repo root.
+- Follow node naming and token usage described in `/design-system/README.md` and `/docs/architecture/business/design-system/pen-files-guide.md`.

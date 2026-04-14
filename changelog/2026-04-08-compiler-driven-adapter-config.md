@@ -1,5 +1,7 @@
 # Changelog entry: Compiler-driven adapter configuration and production bundle verification
 
+**Supersession (2026-04-15):** Production bundling for API/worker moved from **esbuild** to **Vite** (`build:vite`, `tools/build/vite-node-cli.config.mjs`). Scripts **`build:esbuild`** and **`benchmark:esbuild`** were renamed to **`build:vite`** and **`benchmark:vite-bundles`**. See `changelog/2026-04-15-repository-wide-vite-migration.md`.
+
 **Date:** 2026-04-08  
 **Scope:** Execution of `docs/04-technology-research/compiler-driven-adapter-config-implementation-plan.md` — build-time constants for adapter selection, API/worker esbuild outputs, CI verification, tests, and documentation. Does **not** change the on-disk `CompanyConfig` JSON schema (no discriminated union on `environment`).
 

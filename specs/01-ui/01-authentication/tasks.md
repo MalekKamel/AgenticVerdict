@@ -22,6 +22,15 @@
 - **Stores**: `apps/web/src/stores/`
 - **Tests**: `tests/e2e/`, `tests/unit/`
 
+## Design system & `.pen` sources (mandatory)
+
+**Workflow**: design (`*.pen`) → tokens (`design-system/design-tokens.pen`) → `@agenticverdict/ui` → auth feature code in `apps/web`. See `docs/architecture/business/design-system/generation/ui-generation-quick-reference.md`.
+
+- **Authoritative visuals**: Atoms and molecules live under `design-system/atoms/*.pen` and `design-system/molecules/*.pen` (e.g. `button.pen`, `input.pen`, `card.pen`, `alert.pen`, `form-field.pen`). **Do not** hand-roll one-off styles for auth; compose from the shared library.
+- **Implementation imports**: Auth UI MUST import reusable components from `@agenticverdict/ui` (`Button`, `Input`, `FormField`, `Card`, `Alert`, `Checkbox`, `Typography`, providers). App shell MUST wrap routes with `ThemeProvider`, `DirectionProvider`, and `MantineProvider` from `@agenticverdict/ui` (see `apps/web/src/components/Providers.tsx`).
+- **Pencil MCP**: Edits to `.pen` source files MUST go through the Pencil MCP server (`get_variables`, `batch_get`, `get_screenshot`, …), not raw filesystem reads, per project governance.
+- **New primitives**: If a pattern repeats across features, add it to `packages/ui` (typed, tested) and export from the package index—never duplicate in `apps/web/src/components/auth/` long-term.
+
 ---
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -64,9 +73,9 @@
 
 ### Implementation for User Story 0
 
-- [ ] T015 [P] [US0] Create AuthLayout component in `apps/web/src/components/auth/AuthLayout.tsx` (centered card layout, logo, children prop)
+- [ ] T015 [P] [US0] Create AuthLayout component in `apps/web/src/components/auth/AuthLayout.tsx` using `Card` + `Typography` from `@agenticverdict/ui` (structure per `design-system/molecules/card.pen` + typography tokens)
 - [ ] T016 [US0] Implement auth layout wrapper route in `apps/web/src/routes/auth/__root.tsx` (file-based routing with AuthLayout component)
-- [ ] T017 [US0] Add auth layout styling with Mantine v9 theming (brand colors, spacing, shadows)
+- [ ] T017 [US0] Add auth layout styling via `@agenticverdict/ui` / design tokens (brand colors, spacing, shadows—no ad-hoc hex except documented token gaps)
 - [ ] T018 [US0] Implement responsive design for auth layout (mobile, tablet, desktop breakpoints)
 - [ ] T019 [US0] Add navigation links between auth pages (login ↔ register, forgot password links)
 - [ ] T020 [US0] Add proper ARIA landmarks and heading hierarchy to auth layout (main, h1, landmarks)
@@ -96,11 +105,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T029 [P] [US1] Create PasswordInput component in `apps/web/src/components/auth/PasswordInput.tsx` (visibility toggle, ARIA attributes)
-- [ ] T030 [P] [US1] Create AuthError component in `apps/web/src/components/auth/AuthError.tsx` (error display, ARIA alerts)
-- [ ] T031 [P] [US1] Create AuthSuccess component in `apps/web/src/components/auth/AuthSuccess.tsx` (success message, ARIA alerts)
+- [ ] T029 [P] [US1] Create PasswordInput component in `apps/web/src/components/auth/PasswordInput.tsx` using `Input` + `FormFieldLabel` from `@agenticverdict/ui` (see `design-system/atoms/input.pen`; visibility toggle, ARIA)
+- [ ] T030 [P] [US1] Create AuthError component in `apps/web/src/components/auth/AuthError.tsx` using `Alert` from `@agenticverdict/ui` (`design-system/molecules/alert.pen`; ARIA alerts)
+- [ ] T031 [P] [US1] Create AuthSuccess component in `apps/web/src/components/auth/AuthSuccess.tsx` using `Alert` variant success from `@agenticverdict/ui`
 - [ ] T032 [US1] Create useLoginMutation hook in `apps/web/src/hooks/useLoginMutation.ts` (tRPC mutation wrapper, error handling)
-- [ ] T033 [US1] Create LoginForm component in `apps/web/src/components/auth/LoginForm.tsx` (email, password, remember me, submit button, validation)
+- [ ] T033 [US1] Create LoginForm component in `apps/web/src/components/auth/LoginForm.tsx` (compose `FormField`, `Input`, `Checkbox`, `Button`, `Alert` from `@agenticverdict/ui`; validation unchanged)
 - [ ] T034 [US1] Implement login route in `apps/web/src/routes/auth/login.tsx` (file-based route with LoginForm)
 - [ ] T035 [US1] Add login form validation with Zod schema (email format, required fields)
 - [ ] T036 [US1] Implement "remember me" checkbox functionality (extended session duration)

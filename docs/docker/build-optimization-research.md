@@ -1938,7 +1938,7 @@ services:
 - [Cosign](https://github.com/sigstore/cosign) - Container signing and verification
 - [Trivy](https://github.com/aquasecurity/trivy) - Comprehensive vulnerability scanner
 - [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/) - Extended build capabilities
-- [esbuild](https://esbuild.github.io/) - Ultra-fast TypeScript bundler for API/worker services
+- [Vite](https://vite.dev/) - Bundler for the web app (`apps/web`) and production library builds for API/worker CLIs (`build:vite`), consistent with the rest of the monorepo
 
 ---
 

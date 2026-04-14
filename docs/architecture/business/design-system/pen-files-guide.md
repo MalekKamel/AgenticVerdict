@@ -2223,7 +2223,7 @@ I(parent, {
 **Development Guides:**
 
 - [Testing Strategy](/docs/02-planning-and-methodology/testing-strategy.md)
-- [Project Charter](/docs/05-project-management/project-charter.md)
+- [Project Charter](/docs/04-project-management/project-charter.md)
 - [CLAUDE.md](/CLAUDE.md) - Project development guidelines
 
 ### E. Glossary
@@ -2260,9 +2260,9 @@ I(parent, {
 
 **Approval:**
 
-- Technical Lead: ******\_\_\_\_******
-- Design Lead: ******\_\_\_\_******
-- Product Owner: ******\_\_\_\_******
+- Technical Lead: **\*\***\_\_\_\_**\*\***
+- Design Lead: **\*\***\_\_\_\_**\*\***
+- Product Owner: **\*\***\_\_\_\_**\*\***
 
 ---
 

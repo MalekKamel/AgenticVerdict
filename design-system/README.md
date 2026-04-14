@@ -47,8 +47,13 @@ function App() {
 
 ## Directory Structure
 
+Conventions also include top-level **`tokens/`**, **`patterns/`**, and **`components/`** entrypoints (see each `README.md`) alongside atomic folders.
+
 ```
 design-system/
+├── tokens/                          # Entry: links to token .pen + docs
+├── patterns/                        # Entry: UX patterns + doc links
+├── components/                      # Entry: maps atoms/molecules → packages/ui
 ├── design-tokens-implementation.md   # Three-tier token system
 ├── atoms/                             # Basic building blocks
 │   ├── button-implementation.md       # Button (6 variants × 5 sizes × 5 states)
@@ -385,6 +390,14 @@ design-system/
 - [TanStack Start Documentation](https://tanstack.com/start)
 
 ---
+
+## Enforcement (AI agents & CI)
+
+- **Agent policy:** `/prompts/ui-guidelines-enforcement.md`
+- **Cursor rules:** `.cursor/rules/ui-guidelines.mdc`, `.cursor/rules/design-system-pen.mdc`
+- **Gap analysis / roadmap:** `ENFORCEMENT-GAP-ANALYSIS.md`
+- **Validation:** `pnpm run validate:pen-files` (runs `design-system/validate-pen-files.py`)
+- **CI:** `.github/workflows/ui-guidelines-enforcement.yml` runs on changes under `design-system/`
 
 ## Contributing
 

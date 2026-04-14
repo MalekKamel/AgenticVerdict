@@ -20,9 +20,11 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 VALID_ENTITY_TYPES = [
-    "frame", "group", "rectangle", "ellipse", "line", 
-    "path", "polygon", "text", "note", "prompt", "context", 
-    "iconfont", "ref"
+    "frame", "group", "rectangle", "ellipse", "line",
+    "path", "polygon", "text", "note", "prompt", "context",
+    "iconfont",
+    "icon_font",  # Pencil JSON export uses snake_case
+    "ref",
 ]
 
 VALID_VARIABLE_TYPES = ["boolean", "color", "number", "string"]

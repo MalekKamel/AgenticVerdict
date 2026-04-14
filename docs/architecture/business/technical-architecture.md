@@ -75,15 +75,16 @@
 
 ### 1.2 Technology Stack
 
-| Layer        | Technology                      | Rationale                                                                             |
-| ------------ | ------------------------------- | ------------------------------------------------------------------------------------- |
-| **Frontend** | TanStack Start, Mantine UI      | Modern React framework, excellent DX, built-in SSR                                    |
-| **API**      | Fastify, tRPC v11               | High-performance server, end-to-end type safety across all clients (web, mobile, CLI) |
-| **Queue**    | BullMQ                          | Redis-based job queue, battle-tested                                                  |
-| **Database** | PostgreSQL 16, Drizzle ORM      | ACID compliance, RLS, 2-10x faster than Prisma                                        |
-| **Cache**    | Upstash Redis, node-cache       | Distributed cache + L1 in-memory                                                      |
-| **AI**       | Claude 3.5 Sonnet, LangChain.js | Best-in-class reasoning, mature orchestration                                         |
-| **Testing**  | Vitest, Playwright              | Fast unit tests, reliable E2E                                                         |
+| Layer        | Technology                                    | Rationale                                                                                       |
+| ------------ | --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Frontend** | TanStack Start, Mantine UI, Vite              | Modern React framework, excellent DX, built-in SSR; Vite dev/build                              |
+| **API**      | Fastify, tRPC v11                             | High-performance server, end-to-end type safety across all clients (web, mobile, CLI)           |
+| **Bundling** | Vite (web + Node library mode for api/worker) | Consistent toolchain; API/worker emit `dist/cli.mjs` via `tools/build/vite-node-cli.config.mjs` |
+| **Queue**    | BullMQ                                        | Redis-based job queue, battle-tested                                                            |
+| **Database** | PostgreSQL 16, Drizzle ORM                    | ACID compliance, RLS, 2-10x faster than Prisma                                                  |
+| **Cache**    | Upstash Redis, node-cache                     | Distributed cache + L1 in-memory                                                                |
+| **AI**       | Claude 3.5 Sonnet, LangChain.js               | Best-in-class reasoning, mature orchestration                                                   |
+| **Testing**  | Vitest, Playwright                            | Fast unit tests, reliable E2E                                                                   |
 
 ---
 
