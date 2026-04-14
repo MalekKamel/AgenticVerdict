@@ -752,7 +752,6 @@ All scenarios should generate reports in the following formats:
 |----------|-----------|--------|
 | English | LTR | Pending |
 | Arabic | RTL | Pending |
-| French | LTR | Pending |
 
 ---
 

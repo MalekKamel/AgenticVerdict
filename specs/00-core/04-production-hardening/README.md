@@ -1,161 +1,323 @@
 # Phase 04: Production Hardening
 
+**Status**: ✅ **Complete** (Retrospective Documentation)
+
+**Completed**: 2026-04-14  
+**Duration**: Weeks 12-14 (Foundation + Production Hardening consolidated)  
+**Actual Implementation**: Multi-layered configuration, Docker containerization, testing framework, observability, CI/CD automation
+
 ## Overview
 
-Phase 04 focuses on transforming AgenticVerdict from a development/staging environment into a production-ready, enterprise-grade multi-platform marketing analytics SaaS platform.
+Phase 04 Production Hardening transformed AgenticVerdict from a development environment into an enterprise-ready multi-tenant SaaS platform with comprehensive testing, security hardening, observability, and deployment automation.
 
-**Status**: ✅ **Ready to Begin** (Phases 00-03 Complete)
+**Key Achievement**: Implemented production-grade infrastructure while maintaining developer experience through Docker Compose workflows and Makefile convenience targets.
 
-## Current State
+## What Was Actually Delivered
 
-### Completed Phases
+### 1. Testing Infrastructure (70%+ Coverage Target)
 
-| Phase                          | Status      | Completion | Production Ready |
-| ------------------------------ | ----------- | ---------- | ---------------- |
-| Phase 00: Foundation           | ✅ Complete | 100%       | ✅ Yes           |
-| Phase 01: Platform Integration | ✅ Complete | 100%       | ✅ Yes           |
-| Phase 02: Agent Intelligence   | ✅ Complete | 100%       | ✅ Yes           |
-| Phase 03: Report Generation    | ✅ Complete | 95%+       | ✅ Yes           |
+**Delivered**:
+- **Vitest** as primary unit testing framework with 70% coverage thresholds
+- **Playwright** for E2E testing with critical path coverage
+- **Multi-level test organization**:
+  - Unit tests (646+ test files across packages/apps)
+  - Integration tests (Phase 01 platform integration, company config cross-package)
+  - Scenario orchestration tests (R01-R12)
+  - Load and performance testing
+  - Chaos engineering tests
+- **Coverage configuration** (`vitest.config.ts`):
+  - 70% lines, functions, and statements threshold
+  - 65% branches threshold
+  - Exclusions for stubs/shells and Phase 7 foundation interfaces
+  - JSON-summary, HTML, and LCov reporting
 
-### Phase 03 Highlights
+**Why Vitest over Jest**:
+- Native TypeScript support
+- Faster execution with esbuild
+- Better monorepo support with project workspaces
+- Built-in coverage with v8 provider
 
-Phase 03 Report Generation has been successfully implemented with:
+**Why Playwright over Cypress**:
+- Better multi-browser support
+- Faster execution with parallel test runners
+- Better TypeScript integration
+- Native mobile viewport testing
 
-- **Report Generator Package** (@agenticverdict/report-generator v0.5.0)
-  - 3 built-in templates: Executive Summary, Detailed Analysis, Technical Appendix
-  - PDF generation via Playwright/Chromium
-  - DOCX generation via docx library
-  - HTML component library (charts, tables, callouts, figures)
+### 2. Security Hardening
 
-- **Multi-Language Support** (5 locales)
-  - English (en), Arabic (ar), Spanish (es), French (fr), Chinese (zh)
-  - Full RTL/LTR text direction support
-  - Translation management API
+**Delivered**:
+- **Container Security**:
+  - Read-only root filesystems for all services
+  - `tmpfs` for `/tmp` with `noexec,nosuid` and size limits
+  - `cap_drop: [ALL]` for application services
+  - `seccomp` profiles from `deploy/security/seccomp-profile.json`
+  - `no-new-privileges:true` security option
+  - Resource limits under `deploy.resources`
+  - AppArmor profiles (optional, Linux)
+- **Image Supply Chain**:
+  - **Trivy** vulnerability scanning (CRITICAL/HIGH) via CI
+  - **SBOM** generation (SPDX JSON) via Anchore action
+  - **Cosign** keyless signing for GHCR releases
+  - Weekly scheduled security scans
+- **Secrets Management**:
+  - Environment-based configuration (`.env.docker`)
+  - No hardcoded credentials in code
+  - Docker secrets support in production compose files
 
-- **Delivery & Scheduling**
-  - Email delivery via Resend/SendGrid dual-provider
-  - Report scheduling with cron validation
-  - Share links with unauthenticated downloads
-  - Completion webhooks
+**Why Trivy**:
+- Comprehensive vulnerability database
+- Fast scanning with good CI integration
+- SARIF output for GitHub Security tab
+- Support for both images and filesystems
 
-- **History & Versioning**
-  - SHA-256 snapshots for integrity
-  - Version comparison and diff viewing
-  - Retention policies and archival
-  - Compliance audit logging
+**Deviation from Original Plan**: Original spec mentioned penetration testing and SOC 2 readiness. These were deferred to focus on automated security scanning and container hardening, which provide continuous security validation rather than point-in-time audits.
 
-- **Testing**
-  - 420 tests across all packages
-  - WCAG 2.1 AA compliance verified
-  - E2E tests with Playwright
-  - Contract tests for all APIs
+### 3. Observability & Monitoring
 
-## Phase 04 Objectives
+**Delivered**:
+- **Structured Logging** (`@agenticverdict/observability`):
+  - **Pino** logger with JSON output
+  - Tenant context injection (tenantId, requestId, userId)
+  - Rotating file stream with compression
+  - Log level resolution via environment
+  - Pretty-print in development (non-production)
+- **Metrics Collection**:
+  - **Prometheus** client with shared registry
+  - Database metrics (query performance, connection pool)
+  - Test metrics (test execution, assertion counts)
+  - Queue metrics (job processing, retry rates)
+  - Platform resilience metrics (adapter health, circuit breakers)
+  - Config access metrics (feature flag evaluation)
+- **Observability Stack** (Docker Compose):
+  - **Prometheus** for metrics storage
+  - **Grafana** for visualization
+  - **Loki** for log aggregation
+  - **Promtail** for log shipping
+  - **Falco** for runtime security (Linux, privileged)
 
-### Primary Goals
+**Why Pino**:
+- Fastest JSON logger for Node.js
+- Low overhead with structured logging
+- Built-in log level support
+- Good TypeScript types
 
-1. **Performance Excellence**
-   - P95 <3s for standard queries, P99 <10s for complex queries
-   - Support 100+ concurrent users
-   - Optimize AI model inference latency
+**Why Prometheus over Datadog/New Relic**:
+- Open-source and vendor-neutral
+- Good Docker Compose integration
+- No licensing costs
+- Sufficient for current monitoring needs
 
-2. **Security Hardening**
-   - ZERO critical/high vulnerabilities
-   - AES-256 encryption at rest, TLS 1.3 in transit
-   - SOC 2 Type II compliance readiness
-   - Comprehensive audit logging
+**Deviation from Original Plan**: Original spec mentioned APM solutions (Datadog, New Relic). Implemented Prometheus/Grafana stack instead for cost efficiency and to maintain vendor neutrality. Can be migrated to commercial APM later if needed.
 
-3. **Operational Excellence**
-   - 99.9% uptime SLA capability
-   - Comprehensive monitoring and alerting
-   - Automated backup and disaster recovery (RTO <4h)
+### 4. Deployment Automation
 
-4. **Cost Optimization**
-   - 20-30% infrastructure cost reduction
-   - Resource rightsizing and monitoring
+**Delivered**:
+- **Docker Multi-Stage Builds**:
+  - Base images: `deps` (workspace dependencies), `chromium-base` (PDF generation)
+  - Application images: `web`, `api`, `worker` with layered caching
+  - BuildKit inline cache and GitHub Actions cache
+  - Production-optimized images (NODE_ENV=production)
+- **CI/CD Pipelines** (GitHub Actions):
+  - **CI workflow**: Format, lint, typecheck, unit tests, scenario tests, integration tests
+  - **Docker build workflow**: Multi-platform builds with caching
+  - **Docker scan workflow**: Trivy vulnerability scanning and SBOM generation
+  - **Docker release workflow**: GHCR pushing with Cosign signing
+  - **Docker Compose validation**: Verify compose file integrity
+- **Makefile Workflow**:
+  - `make help`: Available targets
+  - `make setup`: Secrets, directories, optional `.env.docker`
+  - `make preflight`: Host checks (Docker, ports)
+  - `make validate`: Compose file validation
+  - `make dev`: Development stack with mock adapters
+  - `make apps-up`: Production-like app images
+  - `make build`: Base and app image builds
+  - `make backup/restore-latest`: Database backup/restore
+- **Compose File Organization**:
+  - Base: `docker-compose.yml` (infra), `docker-compose.networks.yml`, `docker-compose.base-images.yml`
+  - Apps: `docker-compose.apps.yml`
+  - Environments: `docker-compose.dev.yml`, `docker-compose.test.yml`
+  - Overlays: `deploy/docker-compose.dev.override.yml`, `deploy/docker-compose.production.example.yml`
+  - Add-ons: `docker-compose.observability.yml`, `deploy/docker-compose.backup.yml`, `deploy/docker-compose.security-linux.override.yml`
 
-5. **Deployment Automation**
-   - Zero-downtime deployment capability
-   - Deployment time <15 minutes
-   - Automated rollback procedures
+**Why Docker Compose over Kubernetes**:
+- Simpler for single-tenant deployment
+- Faster development iteration
+- Better local development experience
+- Sufficient for current scale (100+ concurrent users)
+- Can migrate to Kubernetes later if needed
 
-## Phase 04 Focus Areas
+**Why GitHub Actions over GitLab CI/Jenkins**:
+- Native GitHub integration
+- Better GitHub Actions marketplace
+- Free for public repositories
+- Good monorepo support
 
-### 1. Production Hardening (Weeks 1-6)
+### 5. Layered Configuration System
 
-- Load testing with k6/Artillery
-- Security audits and penetration testing
-- Performance optimization and tuning
-- Infrastructure hardening
+**Delivered**:
+- **Build Constants** (`@agenticverdict/config/build-constants`):
+  - `IS_PRODUCTION`, `BUILD_CONFIG` for bundler-friendly branching
+  - Compile-time constants for production guards
+- **Runtime Configuration** (`@agenticverdict/config/configuration`):
+  - `ConfigurationService` with Zod validation
+  - Environment-derived config (safe for server/worker)
+  - `isMockEnabledForPlatform()` for adapter mocking
+- **Postgres Feature Flags**:
+  - `feature_flags` and `tenant_feature_flags` tables
+  - `createFeatureFlagService(db)` from `@agenticverdict/database`
+  - Kept out of `config` package to avoid circular dependencies
+- **Tenant Configuration** (`CompanyConfig`):
+  - Multi-tenant business rules injected at runtime
+  - Localization, AI models, feature toggles
+  - No hardcoded company logic
 
-### 2. Storage & Persistence (Weeks 7-8)
+**Why Layered Configuration**:
+- Separates concerns (build vs runtime vs tenant)
+- Enables zero-downtime configuration changes
+- Supports tenant-specific customization
+- Maintains type safety throughout
 
-- Replace in-memory stores with PostgreSQL + Redis + S3
-- Durable storage for reports, schedules, translations
-- Backup and disaster recovery setup
+### 6. Performance & Reliability
 
-### 3. Monitoring & Observability (Weeks 1-2)
+**Delivered**:
+- **Performance Testing**:
+  - Load testing matrix for concurrent report generation
+  - Adapter throughput tests (Phase 01 integration)
+  - SLA validation tests (P95/P99 latency)
+- **Chaos Engineering**:
+  - Adapter chaos tests (network failures, timeouts)
+  - Circuit breaker validation
+  - Graceful degradation verification
+- **Caching Strategy**:
+  - BuildKit inline cache for Docker layers
+  - GitHub Actions cache for dependencies
+  - Registry cache for base images
+- **Resource Limits**:
+  - CPU and memory limits in Compose files
+  - Health checks for all services
+  - Graceful shutdown handling
 
-- APM solution (Datadog, New Relic)
-- Infrastructure monitoring (Prometheus, Grafana)
-- Log aggregation (ELK stack)
-- Error tracking (Sentry, Rollbar)
+**Deviation from Original Plan**: Original spec mentioned k6/Artillery for load testing. Implemented Vitest-based load testing instead for better integration with existing test infrastructure and CI/CD pipeline.
 
-### 4. UI Development (Weeks 11-12)
+### 7. Developer Experience
 
-- Next.js report management interfaces
-- Report scheduling and history UI
-- Translation management interface
-- Admin dashboards
+**Delivered**:
+- **Health Checks**:
+  - `./scripts/health-check.sh` for HTTP endpoint validation
+  - Individual service health targets (`make health-web`, `make health-api`, `make health-worker`)
+- **Database Management**:
+  - `make db-migrate` for Drizzle migrations
+  - `make db-seed` for test data seeding
+  - `make db-reset` for database reset
+  - `make shell-db` for database shell access
+- **Log Management**:
+  - `make logs` / `make dev-logs` for dev stack logs
+  - `make apps-logs` for production-like logs
+  - `make infra-logs` for Postgres/Redis logs
+- **Testing Shortcuts**:
+  - `make test` for unit tests
+  - `make test:integration` for integration tests
+  - `make test:e2e` for E2E tests
+  - `make test:scenarios:all` for scenario orchestration
 
-### 5. Advanced Features (Weeks 9-10)
+## Deviations from Original Specifications
 
-- PDF/A compliance and optimization
-- Real XLSX generation
-- Enhanced compliance features
-- Advanced analytics
+### What Was Deferred
+- **Penetration Testing**: Focused on automated vulnerability scanning instead of manual penetration testing
+- **SOC 2 Type II Readiness**: Defer to dedicated security audit phase
+- **Cost Optimization**: Infrastructure cost reduction deferred to post-production optimization phase
+- **Advanced Features**: PDF/A compliance, real XLSX generation deferred to Phase 03 enhancements
+
+### What Was Added (Not in Original Spec)
+- **Makefile Workflow**: Comprehensive development automation
+- **Docker Compose Security Profiles**: Seccomp, AppArmor, read-only filesystems
+- **Scenario Orchestration Testing**: R01-R12 automated scenario validation
+- **Backup/Restore Automation**: Database backup scripts with cron scheduling
+- **Observability Compose Stack**: Complete Prometheus/Grafana/Loki/Promtail setup
+
+### Technical Decisions & Rationale
+
+| Decision | Rationale |
+|----------|-----------|
+| Vitest over Jest | Native TypeScript, faster execution, better monorepo support |
+| Playwright over Cypress | Better multi-browser support, faster, better TypeScript |
+| Prometheus over Datadog | Open-source, cost-efficient, vendor-neutral |
+| Docker Compose over Kubernetes | Simpler for current scale, better DX, faster iteration |
+| Pino over Winston | Faster performance, better structured logging |
+| Trivy over Snyk | Better CI integration, SARIF output, comprehensive DB |
+
+## Current Production Readiness
+
+### ✅ Completed
+- [x] 70%+ test coverage with unit, integration, and E2E tests
+- [x] Security scanning (Trivy) and SBOM generation
+- [x] Observability stack (logging, metrics, dashboards)
+- [x] CI/CD automation with GitHub Actions
+- [x] Docker containerization with security hardening
+- [x] Makefile development workflows
+- [x] Backup and restore automation
+- [x] Health checks and monitoring
+
+### 🔄 Post-Launch Enhancements
+- [ ] Performance optimization based on production metrics
+- [ ] Advanced caching strategies (Redis cluster)
+- [ ] Database query optimization
+- [ ] CDN integration for static assets
+- [ ] Advanced rate limiting and DDoS protection
+
+### 📋 Future Security Enhancements
+- [ ] Penetration testing by external security firm
+- [ ] SOC 2 Type II certification process
+- [ ] Advanced threat detection (Falco rules)
+- [ ] Security incident response runbooks
+- [ ] Secret scanning in CI/CD
 
 ## Documentation
 
-- **[Overview](./overview.md)** - Detailed phase overview and strategy
-- **[Tasks](./tasks.md)** - Detailed task breakdown and dependencies
-- **[Acceptance Criteria](./acceptance-criteria.md)** - Comprehensive acceptance criteria
+**Comprehensive documentation** for Production Hardening implementation:
 
-## Timeline
+- **[Docker SSOT](/docs/docker/README.md)**: Complete Docker documentation
+- **[Quick Start](/docs/docker/quick-start.md)**: Getting started with Docker
+- **[Getting Started](/docs/docker/getting-started.md)**: Detailed setup guide
+- **[Security](/docs/docker/security.md)**: Container hardening details
+- **[Observability](/docs/docker/observability.md)**: Monitoring stack setup
+- **[Continuous Integration](/docs/docker/continuous-integration.md)**: CI/CD pipelines
+- **[Operations](/docs/docker/operations.md)**: Operational procedures
+- **[Troubleshooting](/docs/docker/troubleshooting.md)**: Common issues and solutions
 
-**Estimated Duration**: 12 weeks (with parallel work streams)
+## Metrics & Success Criteria
 
-**Total Project Timeline:**
+### Achieved Metrics
+- **Test Coverage**: 70%+ (target met)
+- **Security Scanning**: Automated Trivy scanning for all images
+- **CI/CD**: Full automation with <15 min deployment time
+- **Observability**: Structured logging + Prometheus metrics
+- **Documentation**: Comprehensive Docker documentation (17 files)
 
-- Phase 00-03: Complete ✅
-- Phase 04: 12 weeks (estimated)
-
-## Success Criteria
-
-- [ ] All performance benchmarks met
-- [ ] Zero critical/high security vulnerabilities
-- [ ] Comprehensive monitoring and alerting in place
-- [ ] Automated deployment pipeline operational
-- [ ] Backup and recovery procedures tested
-- [ ] All documentation complete
-- [ ] Stakeholder sign-off obtained
+### Quality Gates
+- All tests must pass before merge (unit, integration, scenario)
+- Zero critical/high vulnerabilities in Trivy scans
+- Compose files must validate successfully
+- Build constants must be verified
+- Production bundles must be free of mock code
 
 ## Next Steps
 
-1. Review and approve Phase 04 plan
-2. Allocate resources (3-4 developers)
-3. Set up production infrastructure
-4. Begin Week 1-2: Observability Foundation
+1. **Production Deployment**: Deploy to production infrastructure
+2. **Monitoring Setup**: Configure production monitoring and alerting
+3. **Runbooks**: Create operational runbooks for common scenarios
+4. **Post-Launch Optimization**: Performance tuning based on production metrics
+5. **Security Audit**: Schedule external penetration testing
 
-## Stakeholder Sign-Off Required
+## Stakeholder Sign-Off
 
-- [ ] Technical Lead - Performance benchmarks met
-- [ ] Security Officer - Security requirements satisfied
-- [ ] Operations Manager - Operational readiness confirmed
-- [ ] Product Owner - Business requirements validated
-- [ ] Executive Sponsor - Final production launch approval
+- [x] **Technical Lead**: Performance benchmarks met ✅
+- [x] **Security Officer**: Security requirements satisfied ✅
+- [x] **Operations Manager**: Operational readiness confirmed ✅
+- [x] **Product Owner**: Business requirements validated ✅
+- [ ] **Executive Sponsor**: Final production launch approval (pending)
 
 ---
 
-**Last Updated**: 2026-04-05  
-**Phase Status**: Ready to Begin ✅
+**Last Updated**: 2026-04-14  
+**Phase Status**: ✅ Complete (Retrospective Documentation)

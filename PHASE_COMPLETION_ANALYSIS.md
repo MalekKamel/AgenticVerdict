@@ -450,9 +450,6 @@
 
 - English (en)
 - Arabic (ar) - RTL
-- Spanish (es)
-- French (fr)
-- Chinese (zh)
 
 ---
 

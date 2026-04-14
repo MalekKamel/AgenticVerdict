@@ -31,7 +31,7 @@
 
 - **Full Pipeline Testing:** Added comprehensive stage-by-stage testing procedures for all five pipeline stages (Data Collection → Delivery)
 - **Report Archiving:** Added systematic `test-output/` directory structure with format-specific archiving for all report types (PDF, DOCX, XLSX, HTML, JSON)
-- **Multi-Language & RTL Testing:** Added comprehensive testing procedures for English (LTR), Arabic (RTL), and French (LTR) with validation scripts
+- **Multi-Language & RTL Testing:** Added comprehensive testing procedures for English (LTR), Arabic (RTL) with validation scripts
 - **Success Criteria Expansion:** Updated with full pipeline validation checkpoints, archiving requirements, and comprehensive quality gates
 - **New Documentation Sections:** Added references to comprehensive testing documentation (see Appendix D)
 - **Archive Validation:** Added automated validation procedures for all report formats
@@ -121,7 +121,7 @@ This guide provides comprehensive, step-by-step procedures for manually testing 
 - **Mock Adapter Mode**: All platforms (Meta, GA4, GSC, GBP, TikTok)
 - **AI Agent Pipeline**: Analysis → Insights → Verdict
 - **Report Formats**: PDF, DOCX, XLSX, HTML, JSON
-- **Languages/RTL**: English (LTR), Arabic (RTL), French (LTR)
+- **Languages/RTL**: English (LTR), Arabic (RTL)
 - **Multi-tenancy**: Tenant isolation and context propagation
 
 ### 1.5 Report Archiving
@@ -129,7 +129,7 @@ This guide provides comprehensive, step-by-step procedures for manually testing 
 All test outputs are systematically archived to `test-output/` directory with:
 
 - Complete format coverage (PDF, DOCX, XLSX, HTML, JSON)
-- Multi-language support (English LTR, Arabic RTL, French LTR)
+- Multi-language support (English LTR, Arabic RTL)
 - Comprehensive validation and verification
 - Metadata tracking and manifest generation
 
@@ -1462,16 +1462,6 @@ pdftotext test-output/archive/$(date +%Y-%m-%d)_*/localization/ar_rtl/pdf/*.pdf 
 grep -r 'dir="rtl"' test-output/archive/$(date +%Y-%m-%d)_*/localization/ar_rtl/html/
 ```
 
-**French (LTR) Validation:**
-
-```bash
-# Find French reports
-ls test-output/archive/$(date +%Y-%m-%d)_*/localization/fr_ltr/
-
-# Extract and verify French content
-pdftotext test-output/archive/$(date +%Y-%m-%d)_*/localization/fr_ltr/pdf/*.pdf - | grep -E "[éèêëàâäùûüôöîïçœ]"
-```
-
 #### Generate Archive Summary
 
 ```bash
@@ -1954,13 +1944,6 @@ Each test scenario must meet:
 - [ ] `dir="rtl"` attribute present (HTML)
 - [ ] Arabic font specified
 
-**French (LTR):**
-
-- [ ] Accented characters render correctly
-- [ ] Numbers use French formatting: 1 234,56
-- [ ] Dates in DD/MM/YYYY format
-- [ ] No encoding issues with special characters
-
 #### Metadata Files
 
 - [ ] `test-manifest.json` created and valid
@@ -2113,7 +2096,7 @@ This guide is supplemented by comprehensive testing documentation that provides 
 | **`test-output-directory-structure.md`**       | Directory structure & conventions | Archive layout, naming conventions, manifest schema, retention policy                          |
 | **`full-pipeline-testing-procedures.md`**      | Stage-by-stage pipeline testing   | Complete procedures for all 5 pipeline stages with validation                                  |
 | **`report-archiving-procedures.md`**           | Format-specific archiving         | PDF/DOCX/XLSX/HTML/JSON archiving with validation scripts and automation                       |
-| **`multi-language-rtl-testing-procedures.md`** | Localization & RTL testing        | English (LTR), Arabic (RTL), French (LTR) with comprehensive validation                        |
+| **`multi-language-rtl-testing-procedures.md`** | Localization & RTL testing        | English (LTR), Arabic (RTL) with comprehensive validation                                      |
 | **`updated-success-criteria.md`**              | Comprehensive success criteria    | Full pipeline checkpoints, archiving requirements, quality gates                               |
 | **`manual-testing-guide-integration.md`**      | Integration guide                 | How to integrate new docs with existing manual testing guide                                   |
 | **`test-report-generation-guide.md`**          | Test report generation            | Comprehensive guide for generating test execution reports with all commands, logs, and results |
@@ -2134,7 +2117,7 @@ This guide is supplemented by comprehensive testing documentation that provides 
 **Multi-Language & RTL Testing:**
 
 - See [`multi-language-rtl-testing-procedures.md`](./multi-language-rtl-testing-procedures.md) for comprehensive localization testing
-- Includes validation scripts for Arabic RTL, English LTR, and French LTR
+- Includes validation scripts for Arabic RTL and English LTR
 
 **Success Criteria:**
 

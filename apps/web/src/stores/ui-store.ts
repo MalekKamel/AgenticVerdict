@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from "TanStack Store";
 
 type UiStore = {
   leadFormSubmitted: boolean;

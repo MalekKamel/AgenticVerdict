@@ -255,7 +255,7 @@ For each category, we evaluated:
 │  Primary LLM: Claude 3.5 Sonnet                                  │
 │  Fallback:    GPT-4o                                             │
 ├─────────────────────────────────────────────────────────────────┤
-│  UI Library:  Mantine + shadcn/ui (custom)                       │
+│  UI Library:  Mantine v9 + shadcn/ui (custom)                       │
 │  Styling:     Tailwind CSS + antd-style                          │
 │  Forms:       React Hook Form + Zod validation                   │
 ├─────────────────────────────────────────────────────────────────┤

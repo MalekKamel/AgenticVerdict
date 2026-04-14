@@ -52,7 +52,7 @@ Built as a **multi-tenant SaaS platform**, AgenticVerdict serves multiple compan
 **Report Generation & Delivery**
 
 - PDF and Excel report generation under 60 seconds
-- Multi-language support with proper RTL/LTR rendering (Arabic, English, French)
+- Multi-language support with proper RTL/LTR rendering (Arabic, English)
 - Template-based generation with variable injection
 - Scheduled delivery via email with BullMQ job queue
 

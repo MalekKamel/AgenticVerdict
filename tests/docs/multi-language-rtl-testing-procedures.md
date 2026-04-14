@@ -23,7 +23,7 @@
 The AgenticVerdict system supports multiple languages with automatic RTL/LTR detection and rendering. This testing framework ensures:
 
 - Proper text rendering for all supported languages
-- Correct layout direction (RTL for Arabic, LTR for English/French)
+- Correct layout direction (RTL for Arabic, LTR for English)
 - Font support for all character sets
 - Date, number, and currency formatting per locale
 - Cultural appropriateness of content
@@ -34,7 +34,6 @@ The AgenticVerdict system supports multiple languages with automatic RTL/LTR det
 | -------- | ---- | --------- | ---------------- | ------------------ |
 | English  | `en` | LTR       | System fonts     | ✅ Fully Supported |
 | Arabic   | `ar` | RTL       | Noto Sans Arabic | ✅ Fully Supported |
-| French   | `fr` | LTR       | System fonts     | ✅ Supported       |
 
 ---
 
@@ -77,23 +76,6 @@ The AgenticVerdict system supports multiple languages with automatic RTL/LTR det
 - [ ] Diacritical marks display correctly
 - [ ] Numbers formatted appropriately
 - [ ] Layout mirrored correctly (navigation, sidebars, etc.)
-
-### French (fr)
-
-**Characteristics:**
-
-- **Direction:** LTR
-- **Character Set:** Latin alphabet with accents
-- **Number Format:** 1 234,56 (space as thousands separator, comma as decimal)
-- **Date Format:** DD/MM/YYYY
-- **Currency:** €
-
-**Testing Requirements:**
-
-- [ ] Accented characters render correctly
-- [ ] Numbers use French formatting
-- [ ] Dates in French format
-- [ ] No encoding issues with special characters
 
 ---
 
@@ -291,61 +273,6 @@ pdftotext report_R02_*.pdf - | grep -E "[\u0600-\u06FF]"
 # Verify no broken characters
 pdftotext report_R02_*.pdf - | od -c | grep "\\"
 # Should not show broken character sequences
-```
-
----
-
-### French (LTR) Testing
-
-#### Test Scenario: French Report Generation
-
-```bash
-#!/bin/bash
-# test_french_ltr.sh
-
-echo "Testing French (LTR) Report Generation"
-echo "======================================="
-
-TENANT_ID="33333333-3333-4333-8333-333333333333"
-TOKEN=$(
-  node scripts/generate-dev-jwt.mjs --tenant "$TENANT_ID"
-)
-
-# Trigger report generation
-RESPONSE=$(curl -s -X POST http://localhost:4000/api/v1/workflows/trigger \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "workflowId": "report-generation",
-    "testMode": true,
-    "tenantId": "'"$TENANT_ID"'",
-    "config": {
-      "language": "fr"
-    }
-  }')
-
-echo "French report triggered"
-```
-
-#### Validation Checklist
-
-- [ ] Accented characters render correctly (é, è, ê, à, ç, œ)
-- [ ] Numbers use French format: 1 234,56
-- [ ] Dates in DD/MM/YYYY format
-- [ ] Currency symbol placement correct
-- [ ] No encoding issues with special characters
-- [ ] Text flows left to right
-
-#### Content Verification
-
-```bash
-# Check for accented characters
-pdftotext report_*.pdf - | grep -E "[éèêëàâäùûüôöîïçœ]"
-# Should find French accented characters
-
-# Verify French number formatting
-pdftotext report_*.pdf - | grep -E "[0-9] [0-9]{3},[0-9]{2}"
-# Should find numbers with space thousands separator
 ```
 
 ---
@@ -620,12 +547,6 @@ test_date_formatting() {
         echo "✓ Date format detected (Arabic)"
       fi
       ;;
-    fr)
-      # Check for DD/MM/YYYY
-      if echo "$TEXT" | grep -qE "[0-9]{2}/[0-9]{2}/[0-9]{4}"; then
-        echo "✓ Date format detected (French)"
-      fi
-      ;;
   esac
 }
 ```
@@ -655,12 +576,6 @@ test_number_formatting() {
       # 1,234.56 or ١٢٣٤
       if echo "$TEXT" | grep -qE "[0-9],[0-9]{3}\.[0-9]{2}|[٠-٩]"; then
         echo "✓ Arabic number format detected"
-      fi
-      ;;
-    fr)
-      # 1 234,56
-      if echo "$TEXT" | grep -qE "[0-9] [0-9]{3},[0-9]{2}"; then
-        echo "✓ French number format detected"
       fi
       ;;
   esac
@@ -695,12 +610,6 @@ test_all_languages() {
   # Test Arabic
   echo "Testing Arabic (RTL)..."
   ./test_arabic_rtl.sh
-  # Move reports to localization directory
-  # Run validation
-
-  # Test French
-  echo "Testing French (LTR)..."
-  ./test_french_ltr.sh
   # Move reports to localization directory
   # Run validation
 

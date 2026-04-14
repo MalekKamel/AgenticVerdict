@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**AgenticVerdict** is a multi-platform marketing analytics agent system that aggregates data from multiple platforms (Meta, GA4, GSC, GBP, TikTok), generates AI-powered cross-platform insights, and delivers actionable verdicts through automated reports.
+**AgenticVerdict** is a multi-business-domain intelligence platform that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates the collection, analysis, and reporting of business metrics through unified data integration, AI-powered analysis, and automated delivery of actionable insights.
 
 **Primary Client**: Masafh (Riyadh-based B2B GPS fleet tracking company)
 
@@ -24,8 +24,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Runtime**: Node.js 20 LTS, TypeScript 5.3+
-- **Frontend**: Next.js 15 with Mantine UI components
-- **API**: tRPC v11 (internal) + Fastify (external)
+- **Frontend**: TanStack Start with Mantine UI v9 components
+- **API**: tRPC v11 unified API layer with Fastify server runtime (serves web, mobile, and CLI clients)
 
 ### Data Layer
 
@@ -53,14 +53,14 @@ agenticverdict/
 ├── Makefile                  # Docker Compose workflows (recommended entry point; `make help`)
 ├── .env.docker.example       # Local compose env template → `.env.docker` (gitignored)
 ├── apps/
-│   ├── web/          # Next.js web application
-│   ├── api/          # Standalone API service (Fastify)
+│   ├── web/          # TanStack Start web application
+│   ├── api/          # Standalone API service (Fastify + tRPC v11)
 │   └── worker/       # Background job processor
 ├── packages/
 │   ├── core/                 # Domain logic, entities
 │   ├── config/               # Configuration schemas (Zod)
 │   ├── database/             # Drizzle schema, migrations
-│   ├── data-connectors/      # Marketing / data source integrations (ConnectorAdapter)
+│   ├── data-connectors/      # Multi-domain connector packages (Marketing, Finance, Operations, SEO, Social, Local)
 │   ├── agent-runtime/        # AI agent orchestration
 │   ├── report-generator/     # PDF/Excel generation
 │   ├── i18n/                 # Internationalization
@@ -114,8 +114,11 @@ interface CompanyConfig {
     timezone: string;
     currency: string;
   };
-  marketing: {
-    channels: PlatformConfig[]; // Enabled platforms
+  business: {
+    industry: string;
+    products: string[];
+    valuePropositions: string[];
+    targetAudience: string[];
   };
   ai: {
     primaryModel: string;
@@ -139,11 +142,11 @@ Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wid
 3. **Postgres feature flags** — tables `feature_flags` / `tenant_feature_flags`; evaluate with **`createFeatureFlagService(db)`** from **`@agenticverdict/database`** (kept out of `packages/config` to avoid **`config` ↔ `database`** cycles).
 4. **Observability** — `agenticverdict_*` config/flag metrics in `@agenticverdict/observability`; **`auditConfigChange`** in `@agenticverdict/database` for config audit rows.
 
-**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images remain Next standalone (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
+**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images use TanStack Start production builds (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
 
 ## Data Connector Pattern
 
-All external data integrations must implement the `ConnectorAdapter` interface from `@agenticverdict/data-connectors`:
+All external data integrations must implement the `ConnectorAdapter` interface from `@agenticverdict/data-connectors`. Connectors are **reusable business assets** shared across all business domains — the same adapter pattern serves Marketing, Finance, Operations, SEO, Social Media, and Local Business connectors, ensuring consistent data collection, normalization, and health-checking regardless of domain:
 
 ```typescript
 interface ConnectorAdapter {
@@ -161,6 +164,7 @@ Each adapter includes:
 - Circuit breaker for graceful degradation
 - Error handling with connector-specific retry logic
 - Data normalization to the shared snapshot schema (`NormalizedConnectorSnapshot`, field `connector`)
+- Domain tagging for multi-business-domain support (Marketing, Finance, SEO, Social, Local, etc.)
 
 ## Development Workflow
 
@@ -215,7 +219,13 @@ drizzle-kit studio
 
 ### Docker
 
-**Recommended:** from the repository root, use **`make`** for everyday Compose workflows so multi-file `-f` lists stay correct. Run **`make help`**; typical flow is **`make setup`** (first machine), **`make preflight`**, **`make dev`** (dev-stage api/worker + mock-friendly env; runs base image build first), or **`make apps-up`** for production-like app images. **`make validate`** runs **`scripts/docker-validate.sh`** (same checks as **`.github/workflows/docker-compose-validate.yml`**). **`make backup`** / **`make restore-latest`** wrap **`scripts/docker-backup.sh`** / **`scripts/docker-restore.sh`**. Raw `docker compose -f …` commands remain in **`docs/docker/`** for advanced overlays (observability, backup sidecar, security) and for transparency.
+**Recommended:** from the repository root, use **`make`** for everyday Compose workflows so multi-file `-f` lists stay correct. Run **`make help`**; typical flow is **`make setup`** (first machine), **`make preflight`**, **`make dev`** (starts web, api, and worker services with mock-friendly env; runs base image build first), or **`make apps-up`** for production-like app images. **`make validate`** runs **`scripts/docker-validate.sh`** (same checks as **`.github/workflows/docker-compose-validate.yml`**). **`make backup`** / **`make restore-latest`** wrap **`scripts/docker-backup.sh`** / **`scripts/docker-restore.sh`**. Raw `docker compose -f …` commands remain in **`docs/docker/`** for advanced overlays (observability, backup sidecar, security) and for transparency.
+
+**Multi-process architecture:** `make dev` starts three services:
+
+- **web** — TanStack Start frontend with tRPC client
+- **api** — Fastify + tRPC v11 unified API server
+- **worker** — BullMQ background job processor
 
 Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational detail are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** the **`make dev`** target merges **`docker-compose.dev.yml`**; equivalently merge **`deploy/docker-compose.dev.override.yml`** with base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
 
@@ -247,17 +257,17 @@ Container images, Compose stacks (apps, observability), security overlays, CI wo
 
 The `/docs` directory contains comprehensive project documentation:
 
-| Directory                      | Content                                                                                                           |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `architecture/`                | **Architecture SSOT:** business architecture, technical architecture, implementation guide, and research findings |
-| `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot                                              |
-| `01-getting-started/`          | Project overview, navigation                                                                                      |
-| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                                                          |
-| `/specs/`                      | Authoritative phase specifications (`00-core` and future domains) with tasks and acceptance criteria              |
-| `04-technology-research/`      | Comprehensive technology analysis with justifications                                                             |
-| `05-project-management/`       | Project charter, requirements, roadmap                                                                            |
-| `06-reference/`                | Prompts, templates, resources                                                                                     |
-| `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops                                             |
+| Directory                      | Content                                                                                                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture/`                | **Architecture SSOT:** business architecture, technical architecture, multi-domain architecture docs, implementation guide, and research findings |
+| `00-overview/`                 | Documentation taxonomy, migration notes, development status snapshot                                                                              |
+| `01-getting-started/`          | Project overview, navigation                                                                                                                      |
+| `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                                                                                          |
+| `/specs/`                      | Authoritative phase specifications (`00-core` and future domains) with tasks and acceptance criteria                                              |
+| `04-technology-research/`      | Comprehensive technology analysis with justifications                                                                                             |
+| `05-project-management/`       | Project charter, requirements, roadmap                                                                                                            |
+| `06-reference/`                | Prompts, templates, resources                                                                                                                     |
+| `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops                                                                             |
 
 **Before making architectural decisions**, consult:
 
@@ -282,9 +292,9 @@ When working on agent intelligence, report generation/delivery, or phase closure
 The project follows a five-segment roadmap (14 weeks total), documented under `/specs/00-core/`:
 
 1. **Core platform: Foundation** (Weeks 1-2) — Infrastructure, monorepo setup, core domain models
-2. **Core platform: Connectors** (Weeks 3-5) — Connector adapters, OAuth, data normalization
-3. **Core platform: Intelligence** (Weeks 6-8) — AI agent orchestration, LangChain integration
-4. **Core platform: Insights** (Weeks 9-11) — PDF/Excel generation, multi-language support
+2. **Core platform: Connectors** (Weeks 3-5) — Connector adapters, OAuth, data normalization across multiple business domains
+3. **Core platform: Intelligence** (Weeks 6-8) — AI agent orchestration, LangChain integration, multi-domain analysis
+4. **Core platform: Insights** (Weeks 9-11) — PDF/Excel generation, multi-language support, cross-domain insights
 5. **Core platform: Production hardening** (Weeks 12-14) — Testing, optimization, deployment
 
 **Phase transitions require**:
@@ -377,10 +387,10 @@ Reports are generated from templates stored in the database:
 
 ### Architecture Documentation
 
-- **Business Architecture**: `/docs/architecture/business-architecture.md` — Business domain, entities, processes, and multi-tenancy model
-- **Technical Architecture**: `/docs/architecture/technical-architecture.md` — System architecture, components, data, security, and deployment
-- **Implementation Guide**: `/docs/architecture/implementation-guide.md` — Current status, patterns, and conventions
-- **Architecture Research**: `/docs/architecture/research/` — Multi-tenant SaaS, connectors, AI configuration, report generation
+- **Business Architecture**: `/docs/architecture/business/business-architecture.md` — Business domain, entities, processes, and multi-tenancy model
+- **Technical Architecture**: `/docs/architecture/business/technical-architecture.md` — System architecture, components, data, security, and deployment
+- **Implementation Guide**: `/docs/architecture/business/implementation-guide.md` — Current status, patterns, and conventions
+- **Architecture Research**: `/docs/architecture/business/research/` — Multi-tenant SaaS, connectors, AI configuration, report generation
 
 ### Project Documentation
 
@@ -394,3 +404,12 @@ Reports are generated from templates stored in the database:
 - **Changelog (Phase 02/03 consolidation, 2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
 - **Technology Research**: `/docs/04-technology-research/research-overview.md`
+
+## Active Technologies
+
+- TypeScript 5.3+ (strict mode), React 18+ (001-ui-foundation)
+- N/A (frontend design system; tenant theme config from backend API) (001-ui-foundation)
+
+## Recent Changes
+
+- 001-ui-foundation: Added TypeScript 5.3+ (strict mode), React 18+

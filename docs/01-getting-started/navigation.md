@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide helps you navigate and utilize the AgenticVerdict documentation effectively. The documentation is structured to support different roles and use cases throughout the development lifecycle.
+This guide helps you navigate and utilize the AgenticVerdict documentation effectively. AgenticVerdict is a multi-business-domain intelligence platform, and the documentation is structured to support different roles and use cases throughout the development lifecycle.
 
 ---
 
@@ -387,7 +387,7 @@ For any scope modification:
 ### Phase Documentation
 
 - [Phase 0: Foundation](/specs/00-core/00-foundation/PHASE_00_OVERVIEW.md)
-- [Phase 1: Platform Integration](/specs/00-core/01-connectors/PHASE_01_OVERVIEW.md)
+- [Phase 1: Data Connectors](/specs/00-core/01-connectors/PHASE_01_OVERVIEW.md)
 - [Phase 2: Agent Intelligence](/specs/00-core/02-intelligence/PHASE_02_OVERVIEW.md)
 - [Phase 3: Report Generation](../../specs/00-core/03-insights/overview.md)
 - [Phase 4: Production Hardening](/specs/00-core/04-production-hardening/PHASE_04_OVERVIEW.md)

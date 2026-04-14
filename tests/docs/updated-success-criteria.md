@@ -164,13 +164,6 @@ Each test scenario must meet:
 - [ ] `dir="rtl"` attribute present (HTML)
 - [ ] Arabic font specified
 
-**French (LTR):**
-
-- [ ] Accented characters render correctly
-- [ ] Numbers use French formatting: 1 234,56
-- [ ] Dates in DD/MM/YYYY format
-- [ ] No encoding issues with special characters
-
 #### Metadata Files
 
 - [ ] `test-manifest.json` created and valid

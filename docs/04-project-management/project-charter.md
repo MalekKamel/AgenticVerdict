@@ -10,9 +10,9 @@ This document serves as the project charter for **AgenticVerdict**, summarizing 
 
 **Project Name:** AgenticVerdict
 
-**Project Type:** Multi-Platform Marketing Analytics Agent System
+**Project Type:** Multi-Business-Domain Intelligence Platform
 
-**Primary Objective:** Develop a configurable, multi-platform marketing analytics agent system designed to aggregate data from multiple platforms, generate cross-platform insights, and deliver actionable verdicts. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple companies, industries, regions, and languages without code modifications.
+**Primary Objective:** Develop a configurable, multi-business-domain intelligence platform designed to aggregate data from multiple business domains (marketing, finance, operations, etc.), generate cross-domain insights, and deliver actionable recommendations. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple companies, industries, regions, and languages without code modifications.
 
 **Assessment Company:** Masafh (Riyadh-based B2B company providing GPS fleet tracking devices and SaaS fleet management platform)
 
@@ -177,24 +177,26 @@ async function createMarketingAnalystAgent(config: CompanyConfig) {
 }
 ```
 
-### 4. Platform Integration Patterns (NEW)
+### 4. Data Connector Patterns (NEW)
 
 **Original:** Basic platform list
 
 **Enhanced:**
 
-- Adapter pattern for platform abstraction
+- Adapter pattern for connector abstraction across business domains
+- Domain tagging (Marketing, Finance, SEO, Social, Local, Operations)
 - Rate limiting with token bucket algorithm
-- Circuit breaker for each platform
+- Circuit breaker for each connector
 - Error handling with graceful degradation
 - Parallel fetching with Promise.allSettled
-- **Mandatory tenant binding:** adapter construction requires a non-empty `tenantId` (no shared default cache segment); see `docs/05-project-management/requirements.md` §Platform integration requirements
+- **Mandatory tenant binding:** adapter construction requires a non-empty `tenantId` (no shared default cache segment); see `docs/05-project-management/requirements.md` §Data connector integration requirements
 
 **Code Example Added:**
 
 ```typescript
 interface ConnectorAdapter {
-  platform: ConnectorType;
+  connector: ConnectorType;
+  getBusinessDomains(): BusinessDomain[];
   authenticate(credentials): Promise<void>;
   fetchMetrics(dateRange): Promise<PlatformData>;
   normalizeData(rawData): NormalizedData;
@@ -202,7 +204,34 @@ interface ConnectorAdapter {
 }
 ```
 
-### 5. Caching Strategy (NEW)
+### 5. Connector Domain Taxonomy (NEW)
+
+**Original:** Not mentioned
+
+**Enhanced:**
+
+- Domain tagging system for connector classification
+- Marketing domain: GA4, Meta, TikTok (Sessions, Conversions, ROAS, CTR)
+- Finance domain: QuickBooks, Stripe, GA4 Revenue (Revenue, Expenses, Profit, CAC, LTV:CAC)
+- SEO domain: GSC, GA4 Organic (Organic Traffic, Rankings, Impressions, CTR)
+- Social Media domain: Meta, TikTok (Followers, Reach, Engagement Rate, Shares)
+- Local Business domain: GBP (Calls, Directions, Reviews, Rating)
+- Cross-domain correlation for unified business intelligence
+
+**Connector Classification Schema:**
+
+```typescript
+type BusinessDomain = "marketing" | "finance" | "seo" | "social" | "local" | "operations";
+
+interface ConnectorType {
+  id: string;
+  name: string;
+  domains: BusinessDomain[];
+  metrics: MetricDefinition[];
+}
+```
+
+### 6. Caching Strategy (NEW)
 
 **Original:** Not mentioned
 
@@ -213,34 +242,7 @@ interface ConnectorAdapter {
 - TTL configuration per data type
 - Cache invalidation strategies
 
-**Code Example Added:**
-
-```typescript
-class TieredCache implements CacheStrategy {
-  private l1: MemoryCache;
-  private l2: RedisCache | null;
-
-  async get<T>(key: string): Promise<T | null> {
-    let value = await this.l1.get<T>(key);
-    if (value) return value;
-
-    if (this.l2) {
-      value = await this.l2.get<T>(key);
-      if (value) {
-        await this.l1.set(key, value);
-        return value;
-      }
-    }
-    return null;
-  }
-}
-```
-
-### 6. Testing Strategy (ENHANCED)
-
-**Original:** Basic testing mention
-
-**Enhanced:**
+### 7. Testing Strategy (ENHANCED)
 
 - Unit testing with Vitest examples
 - Integration testing patterns

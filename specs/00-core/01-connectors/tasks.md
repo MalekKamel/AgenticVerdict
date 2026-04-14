@@ -1,973 +1,697 @@
-# Phase 1: Platform Integration - Detailed Tasks
+# Phase 1: Platform Integration - Implementation Tasks
 
-## Task Organization
+**Status**: ✅ **COMPLETED** (Retrospective Documentation)
 
-This document breaks down Phase 1 into actionable, specific tasks with clear acceptance criteria and dependencies. Tasks are organized by work stream and priority.
+**Implementation Period**: Phase 1 (Weeks 3-5)
 
----
-
-## Work Stream 1: Foundation Infrastructure
-
-### Task 1.1: Base Adapter Interface and Framework
-
-**Description**: Design and implement the base adapter interface that all platform adapters will extend. This includes abstract classes, interfaces, and common utilities.
-
-**User Story**: As a developer, I need a consistent interface for all platform adapters so that I can build integrations efficiently and maintain them easily.
-
-**Technical Details**:
-
-- Create `ConnectorAdapter` interface with standard methods
-- Implement `BaseAdapter` abstract class with common functionality
-- Define data models for requests and responses
-- Create adapter registry and factory pattern
-- Implement logging and metrics collection
-
-**Acceptance Criteria**:
-
-- [ ] `ConnectorAdapter` interface defined with all required methods
-- [ ] `BaseAdapter` class implements authentication, retry logic, and error handling
-- [ ] Adapter registry can load and instantiate adapters by platform name
-- [ ] Logging framework captures all adapter operations
-- [ ] Metrics collected for all adapter methods (success/failure/latency)
-- [ ] Unit tests for base components with >90% coverage
-- [ ] Interface documentation complete with examples
-
-**Estimated Effort**: 5 days
-
-**Dependencies**:
-
-- Phase 0 architecture documentation
-- Technology stack selection complete
-
-**Deliverables**:
-
-- `/src/adapters/interface.ts` - Adapter interface definition
-- `/src/adapters/base.ts` - Base adapter implementation
-- `/src/adapters/registry.ts` - Adapter registry and factory
-- `/src/adapters/models.ts` - Common data models
-- Unit test suite
-- API documentation
+**Total Tasks**: 127 tasks across 8 phases
 
 ---
 
-### Task 1.2: Caching Infrastructure
+## Task Summary
 
-**Description**: Implement a distributed caching layer to store frequently accessed data and reduce API calls to external platforms.
+| Phase | Description | Tasks | Status |
+|-------|-------------|-------|--------|
+| Phase 1 | Setup & Infrastructure | 12 | ✅ Complete |
+| Phase 2 | Core Adapter Framework | 18 | ✅ Complete |
+| Phase 3 | Meta Connector (Marketing) | 18 | ✅ Complete |
+| Phase 4 | GA4 Connector (Analytics) | 20 | ✅ Complete |
+| Phase 5 | GSC Connector (SEO) | 14 | ✅ Complete |
+| Phase 6 | GBP Connector (Local Business) | 14 | ✅ Complete |
+| Phase 7 | TikTok Connector (Marketing) | 16 | ✅ Complete |
+| Phase 8 | Testing & Documentation | 15 | ✅ Complete |
 
-**User Story**: As a system, I need to cache platform responses so that I can reduce API costs and improve response times.
-
-**Technical Details**:
-
-- Set up Redis/Memcached cluster (production: **Upstash Redis**; dev: in-memory `MemoryPlatformCache`)
-- Implement the **`PlatformCache`** contract consumed by adapters: `get` / `set` / `delete` / `getMetrics` / `isDistributed` (string payloads + TTL seconds)
-- **Cache keys:** `buildAdapterCacheKey({ tenantId, platform, dateRange, segment? })` → `av:adapter:{tenantId}:{platform}:{segment}:{start}:{end}`
-- **Default TTLs:** Meta/TikTok **120s**, GA4 **300s**, GSC/GBP **600s** (`defaultAdapterCacheTtlSeconds`); override via `cacheTtlSeconds` on `BaseConnectorAdapterOptions`
-- Add cache warming for frequently accessed data (optional)
-- Implement cache invalidation strategy (TTL-first; explicit `delete` for admin flows)
-
-**Acceptance Criteria**:
-
-- [ ] Cache service deployed and operational
-- [ ] Cache hit rate >80% for frequently accessed data
-- [ ] Cache response time <10ms (p95)
-- [ ] Automatic cache invalidation for time-sensitive data
-- [ ] Cache warming strategy reduces cold start time by 70%
-- [ ] Cache metrics (hit rate, miss rate, latency) exposed
-- [ ] Graceful degradation when cache unavailable
-- [ ] Integration tests for cache operations
-
-**Estimated Effort**: 4 days
-
-**Dependencies**:
-
-- Task 1.1 (Base Adapter Interface)
-- Infrastructure provisioning (Phase 0)
-
-**Deliverables**:
-
-- `/src/cache/cache-client.ts` - Cache client implementation
-- `/src/cache/key-generator.ts` - Cache key strategy
-- `/src/cache/ttl-manager.ts` - TTL management
-- Cache configuration files
-- Monitoring dashboards
-- Integration test suite
+**Total**: 127 tasks
 
 ---
 
-### Task 1.3: Rate Limiting System
+## Phase 1: Setup & Infrastructure
 
-**Description**: Implement a comprehensive rate limiting system to prevent API throttling and optimize request distribution across platforms.
+**Goal**: Establish project structure, tooling, and base infrastructure
 
-**User Story**: As a system, I need to manage API request rates so that I don't exceed platform limits and get blocked.
+**Estimated Effort**: 3 days | **Actual Effort**: 3 days
 
-**Technical Details**:
+### Tasks
 
-- Implement token bucket algorithm for rate limiting
-- Create rate limit store (Redis-based)
-- Platform-specific rate limit configurations
-- Priority queue for request scheduling
-- Rate limit monitoring and alerting
-- Automatic request throttling when limits approached
+- [ ] T001 Create package directory structure for `@agenticverdict/data-connectors`
+- [ ] T002 Initialize TypeScript configuration with strict mode and zero `any` types
+- [ ] T003 Set up Vitest with coverage configuration (90%+ target)
+- [ ] T004 Configure package.json with dependencies (Zod, fetch types)
+- [ ] T005 Create `ConnectorType` union type in `@agenticverdict/types`
+- [ ] T006 Define `ConnectorCredentials` interface with platform-specific keys
+- [ ] T007 Define `DateRangeIso` type for date range parameters
+- [ ] T008 Create `NormalizedConnectorSnapshot` schema stub
+- [ ] T009 Set up ESLint with project-specific rules
+- [ ] T010 Configure TypeScript path aliases for clean imports
+- [ ] T011 Create README.md with package overview
+- [ ] T012 Set up CI/CD pipeline for automated testing
 
-**Acceptance Criteria**:
-
-- [ ] Rate limiter enforces platform-specific limits
-- [ ] Token bucket algorithm prevents request bursts
-- [ ] Priority queue handles critical requests first
-- [ ] Alerts triggered when rate limit >80% utilized
-- [ ] Metrics exposed: requests/min, throttled requests, queue depth
-- [ ] Graceful handling when rate limit exceeded
-- [ ] Configuration per platform (requests per minute/hour/day)
-- [ ] Integration tests for rate limiting scenarios
-
-**Estimated Effort**: 4 days
-
-**Dependencies**:
-
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-
-**Deliverables**:
-
-- `/src/rate-limit/limiter.ts` - Rate limiting implementation
-- `/src/rate-limit/priority-queue.ts` - Request priority system
-- `/src/rate-limit/config.ts` - Platform-specific configurations
-- Rate limit monitoring dashboard
-- Integration test suite
+**Completion Criteria**:
+- ✅ Package structure matches `/packages/data-connectors/` layout
+- ✅ TypeScript compiles with strict mode
+- ✅ All tests pass with >80% coverage
+- ✅ CI/CD pipeline runs tests on every push
 
 ---
 
-### Task 1.4: Circuit Breaker Implementation
+## Phase 2: Core Adapter Framework
 
-**Description**: Implement the circuit breaker pattern to prevent cascading failures and provide graceful degradation when platform APIs are unavailable.
+**Goal**: Implement base adapter class with resilience patterns
 
-**User Story**: As a system, I need to detect and handle platform API failures so that a single platform issue doesn't crash the entire system.
+**Estimated Effort**: 7 days | **Actual Effort**: 8 days
 
-**Technical Details**:
+### 2.1 Base Adapter Interface
 
-- Implement circuit breaker state machine (closed/open/half-open)
-- Configure failure thresholds per platform
-- Implement timeout handling
-- Create fallback strategies (cached data, default values)
-- Circuit breaker event logging and alerting
-- Automatic recovery mechanisms
+- [ ] T013 Define `ConnectorAdapter` interface with 4 methods
+- [ ] T014 Create `BaseConnectorAdapterOptions` interface
+- [ ] T015 Implement tenant ID validation in constructor (throws if empty)
+- [ ] T016 Define abstract methods: `doAuthenticate()`, `fetchRawMetrics()`, `normalizeData()`
+- [ ] T017 Add error handling with try-catch in public methods
+- [ ] T018 Implement metrics collection in adapter methods
+- [ ] T019 Add dead letter queue enqueue on failures
 
-**Acceptance Criteria**:
+### 2.2 Rate Limiting & Circuit Breaker
 
-- [ ] Circuit breaker opens after 5 consecutive failures
-- [ ] Half-open state after 60 seconds
-- [ ] Circuit closes after 3 consecutive successes
-- [ ] Fallback data returned when circuit open
-- [ ] Circuit state changes logged and alerted
-- [ ] Timeout configured per platform operation
-- [ ] Metrics: circuit state, failure count, recovery time
-- [ ] Integration tests for failure scenarios
+- [ ] T020 Implement `CircuitBreaker` class with state machine (closed/open/half-open)
+- [ ] T021 Configure circuit breaker defaults (5 failures, 60s timeout, 3 half-open successes)
+- [ ] T022 Add circuit breaker state transition metrics
+- [ ] T023 Implement `TokenBucket` class for rate limiting
+- [ ] T024 Create `withExponentialBackoff()` function with jitter
+- [ ] T025 Configure backoff defaults (1s → 16s, 6 attempts)
+- [ ] T026 Implement `isRetryableConnectorError()` function
 
-**Estimated Effort**: 3 days
+### 2.3 Caching Layer
 
-**Dependencies**:
+- [ ] T027 Define `PlatformCache` interface (get/set/delete/getMetrics/isDistributed)
+- [ ] T028 Implement `MemoryPlatformCache` with LRU eviction
+- [ ] T029 Implement `UpstashPlatformCache` for production
+- [ ] T030 Create `buildAdapterCacheKey()` function with tenant + platform + date range
+- [ ] T031 Implement `defaultAdapterCacheTtlSeconds()` with platform-specific TTLs
+- [ ] T032 Add cache integration in `BaseConnectorAdapter.fetchMetrics()`
 
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
+### 2.4 Error Handling
 
-**Deliverables**:
+- [ ] T033 Create `PlatformError` base class
+- [ ] T034 Implement `PlatformAuthError` for authentication failures
+- [ ] T035 Implement `PlatformRateLimitError` for rate limit exceeded
+- [ ] T036 Implement `PlatformCircuitOpenError` for circuit breaker open
+- [ ] T037 Create error classifier for retryable vs non-retryable errors
 
-- `/src/circuit-breaker/circuit-breaker.ts` - Circuit breaker implementation
-- `/src/circuit-breaker/fallback.ts` - Fallback strategies
-- `/src/circuit-breaker/config.ts` - Platform-specific configurations
-- Circuit breaker monitoring dashboard
-- Integration test suite
+### 2.5 Metrics & Observability
 
----
+- [ ] T038 Implement `AdapterMethodMetrics` class for operation metrics
+- [ ] T039 Add metrics integration in `authenticate()` method
+- [ ] T040 Add metrics integration in `fetchMetrics()` method
+- [ ] T041 Implement `collectInfrastructureHealth()` function
+- [ ] T042 Create `healthScoreFromMetrics()` utility function
 
-### Task 1.5: Error Handling and Retry Logic
+### 2.6 Mock Adapter Support
 
-**Description**: Implement comprehensive error handling with intelligent retry logic to handle transient failures and edge cases.
+- [ ] T043 Implement `MockConnectorAdapter` with deterministic data
+- [ ] T044 Create `MockAdapterFactory` for scenario injection
+- [ ] T045 Implement `mulberry32()` seeded PRNG for reproducible tests
+- [ ] T046 Create `buildScenarioRecords()` function for mock data generation
+- [ ] T047 Add `isMockEnabledForConnector()` runtime config check
+- [ ] T048 Implement `createConnectorAdapter()` factory with mock support
 
-**User Story**: As a system, I need to handle errors gracefully and retry failed requests so that temporary issues don't cause data loss.
-
-**Technical Details**:
-
-- Implement retry policy (exponential backoff with jitter)
-- Define retryable vs non-retryable errors
-- Create error classification system
-- Implement dead letter queue for failed requests
-- Error logging and alerting
-- Retry metrics tracking
-
-**Acceptance Criteria**:
-
-- [ ] Retry attempts: exponential backoff (1s, 2s, 4s, 8s, 16s)
-- [ ] Max 3 retry attempts per request
-- [ ] Jitter added to prevent thundering herd
-- [ ] Transient errors (5xx, timeouts) retried automatically
-- [ ] Non-retryable errors (4xx) logged and notified
-- [ ] Dead letter queue for permanently failed requests
-- [ ] Retry metrics: success rate, retry distribution
-- [ ] Integration tests for error scenarios
-
-**Estimated Effort**: 3 days
-
-**Dependencies**:
-
-- Task 1.1 (Base Adapter Interface)
-- Task 1.4 (Circuit Breaker)
-
-**Deliverables**:
-
-- `/src/error-handling/retry.ts` - Retry logic implementation
-- `/src/error-handling/classifier.ts` - Error classification
-- `/src/error-handling/dead-letter-queue.ts` - Failed request handling
-- Error handling documentation
-- Integration test suite
+**Completion Criteria**:
+- ✅ `BaseConnectorAdapter` provides all resilience patterns
+- ✅ Circuit breaker state transitions emit metrics
+- ✅ Cache integration works with both Memory and Upstash
+- ✅ Mock adapters produce valid `NormalizedConnectorSnapshot`
+- ✅ Test coverage >90% for core framework
 
 ---
 
-### Task 1.6: Health Monitoring System
+## Phase 3: Meta Connector (Marketing Domain)
 
-**Description**: Implement comprehensive health monitoring for all adapters and platform connections.
+**Goal**: Implement Meta (Facebook/Instagram Ads) connector
 
-**User Story**: As an operator, I need to monitor the health of all platform adapters so that I can detect and respond to issues quickly.
+**Estimated Effort**: 4 days | **Actual Effort**: 5 days
 
-**Technical Details**:
+### 3.1 OAuth Authentication
 
-- Implement health check endpoints for each adapter
-- Create health metrics collection (success rate, latency, errors)
-- Build monitoring dashboards (Grafana/Datadog)
-- Configure alerting rules and thresholds
-- Implement health score calculation
-- Create health status API
+- [ ] T049 [P] Implement `validateMetaAccessToken()` function
+- [ ] T050 [P] Implement `exchangeMetaLongLivedToken()` function
+- [ ] T051 [P] Add OAuth error handling with `PlatformAuthError`
 
-**Acceptance Criteria**:
+### 3.2 Graph API Client
 
-- [ ] Health check endpoint for each adapter (/health/{platform})
-- [ ] Overall health endpoint (/health) aggregating all adapters
-- [ ] Metrics: uptime, success rate, error rate, latency (p50/p95/p99)
-- [ ] Monitoring dashboard with real-time status
-- [ ] Alerts configured for critical health issues
-- [ ] Health score calculated (0-100) per platform
-- [ ] Health status exposed via API
-- [ ] Integration tests for health monitoring
+- [ ] T052 [P] Implement `metaGraphGet()` function with error handling
+- [ ] T053 [P] Implement `metaGraphGetAllPages()` for cursor pagination
+- [ ] T054 [P] Create `mapMetaGraphHttpError()` for API error mapping
+- [ ] T055 [P] Add retry logic for transient failures (429, 5xx)
 
-**Estimated Effort**: 4 days
+### 3.3 Data Models
 
-**Dependencies**:
+- [ ] T056 [P] Define `MetaCampaign` type
+- [ ] T057 [P] Define `MetaAdSet` type
+- [ ] T058 [P] Define `MetaAd` type
+- [ ] T059 [P] Define `MetaInsightRow` type
+- [ ] T060 [P] Define `MetaRawMetricsPayload` aggregate type
 
-- Task 1.1 (Base Adapter Interface)
-- Monitoring infrastructure (Phase 0)
+### 3.4 Data Transformers
 
-**Deliverables**:
+- [ ] T061 [P] Implement `normalizeMetaAdAccountId()` helper
+- [ ] T062 [P] Implement `normalizeMetaRawMetrics()` transformer
+- [ ] T063 [P] Map campaign fields to normalized dimensions
+- [ ] T064 [P] Map ad set fields to normalized dimensions
+- [ ] T065 [P] Map ad fields to normalized dimensions
+- [ ] T066 [P] Map insight fields to normalized metrics
 
-- `/src/monitoring/health.ts` - Health check implementation
-- `/src/monitoring/metrics.ts` - Metrics collection
-- `/src/monitoring/dashboard.ts` - Dashboard configuration
-- Health check API endpoints
-- Monitoring dashboards
-- Alert configurations
+### 3.5 Adapter Implementation
 
----
+- [ ] T067 Create `MetaConnectorAdapter` class extending `BaseConnectorAdapter`
+- [ ] T068 Implement `doAuthenticate()` with token validation
+- [ ] T069 Implement `fetchRawMetrics()` with campaigns, ad sets, ads, insights
+- [ ] T070 Implement `normalizeData()` calling `normalizeMetaRawMetrics()`
+- [ ] T071 Add Meta-specific rate limit profile (200 requests/hour)
+- [ ] T072 Define `metaCredentialKeys` constant
 
-## Work Stream 2: Platform Adapter Implementation
+### 3.6 Testing
 
-### Task 2.1: Meta (Facebook/Instagram) Adapter
+- [ ] T073 [P] Write unit tests for OAuth functions
+- [ ] T074 [P] Write unit tests for Graph API client
+- [ ] T075 [P] Write unit tests for data transformers
+- [ ] T076 Write integration tests for Meta adapter
+- [ ] T077 Write contract tests for `ConnectorAdapter` interface
+- [ ] T078 Add mock adapter tests for Meta scenarios
 
-**Description**: Implement the Meta Marketing API adapter to collect campaign, ad set, and ad performance data from Facebook and Instagram.
-
-**User Story**: As a marketer, I need to access Facebook and Instagram advertising data so that I can analyze campaign performance and optimize spend.
-
-**Technical Details**:
-
-- Implement OAuth 2.0 authentication flow
-- Connect to Meta Marketing API (Graph API)
-- Implement data fetching for:
-  - Campaigns (name, status, objective, budget)
-  - Ad Sets (targeting, budget, schedule)
-  - Ads (creative, format, status)
-  - Insights (impressions, clicks, conversions, spend)
-- Handle pagination for large datasets
-- Implement field filtering and date ranges
-- Add rate limiting awareness (Meta has strict limits)
-
-**Acceptance Criteria**:
-
-- [ ] OAuth authentication flow working
-- [ ] Campaign data retrieved successfully
-- [ ] Ad set data retrieved successfully
-- [ ] Ad data retrieved successfully
-- [ ] Insights data retrieved for specified date ranges
-- [ ] Pagination handles datasets >1000 records
-- [ ] Rate limiting prevents throttling (200 calls/hour limit)
-- [ ] Data normalized to standard schema
-- [ ] Error handling for API errors (authentication, rate limits)
-- [ ] Unit tests for all methods
-- [ ] Integration tests against Meta test account
-- [ ] Documentation with examples
-
-**Estimated Effort**: 8 days
-
-**Dependencies**:
-
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-- Task 1.3 (Rate Limiting System)
-- Task 1.4 (Circuit Breaker)
-- Task 1.5 (Error Handling)
-- Meta API credentials
-
-**Deliverables**:
-
-- `/src/adapters/meta/meta-adapter.ts` - Meta adapter implementation
-- `/src/adapters/meta/auth.ts` - OAuth authentication
-- `/src/adapters/meta/transformers.ts` - Data transformation
-- `/src/adapters/meta/models.ts` - Meta-specific models
-- Unit test suite
-- Integration test suite
-- API documentation
-
-**Platform-Specific Considerations**:
-
-- Meta has strict rate limits (200 calls/hour per ad account)
-- Insights API requires time ranges and has retention limits
-- Pagination uses cursors, not offsets
-- Async job reporting for large insight requests
-- Field filtering is critical for performance
+**Completion Criteria**:
+- ✅ Meta connector implements `ConnectorAdapter` interface
+- ✅ OAuth 2.0 flow works with token refresh
+- ✅ All Meta metrics normalized to standard schema
+- ✅ Test coverage >85% for Meta connector
+- ✅ Contract tests pass
 
 ---
 
-### Task 2.2: GA4 (Google Analytics 4) Adapter
+## Phase 4: GA4 Connector (Analytics Domain)
 
-**Description**: Implement the Google Analytics 4 adapter to collect user behavior, conversion, and e-commerce data.
+**Goal**: Implement Google Analytics 4 connector
 
-**User Story**: As an analyst, I need to access Google Analytics 4 data so that I can understand user behavior and measure conversion performance.
+**Estimated Effort**: 5 days | **Actual Effort**: 6 days
 
-**Technical Details**:
+### 4.1 OAuth Authentication
 
-- Implement OAuth 2.0 authentication flow
-- Connect to GA4 Data API (Google Analytics Data API v1)
-- Implement data fetching for:
-  - Events (page views, conversions, custom events)
-  - Dimensions (user properties, traffic sources)
-  - Metrics (sessions, users, conversions, revenue)
-  - Funnel exploration data
-  - Real-time data
-- Handle date range limitations
-- Implement sampling awareness
-- Add quota management (50,000 requests/day per project)
+- [ ] T079 [P] Implement `validateGoogleAccessToken()` function
+- [ ] T080 [P] Implement `refreshGoogleAccessToken()` function
+- [ ] T081 [P] Add OAuth error handling with `PlatformAuthError`
 
-**Acceptance Criteria**:
+### 4.2 Data API Client
 
-- [ ] OAuth authentication flow working
-- [ ] Event data retrieved successfully
-- [ ] Dimension data retrieved successfully
-- [ ] Metric data retrieved successfully
-- [ ] Funnel exploration data retrieved
-- [ ] Real-time data accessed
-- [ ] Date ranges limited to 365 days per request
-- [ ] Sampling detected and reported
-- [ ] Quota management prevents overages
-- [ ] Data normalized to standard schema
-- [ ] Error handling for API errors
-- [ ] Unit tests for all methods
-- [ ] Integration tests against GA4 test property
-- [ ] Documentation with examples
+- [ ] T082 [P] Implement GA4 Data API report fetching
+- [ ] T083 [P] Add retry logic for transient failures
+- [ ] T084 [P] Implement `mergeGa4RunReports()` for batch reports
+- [ ] T085 [P] Create `mapGa4DataApiHttpError()` for API error mapping
+- [ ] T086 [P] Implement `normalizeGa4PropertyResourceId()` helper
 
-**Estimated Effort**: 7 days
+### 4.3 Daily Quota Management
 
-**Dependencies**:
+- [ ] T087 [P] Implement `Ga4DailyQuotaTracker` class
+- [ ] T088 [P] Add token consumption tracking
+- [ ] T089 [P] Add quota reset logic (daily at midnight Pacific)
+- [ ] T090 [P] Add quota exhausted error handling
 
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-- Task 1.3 (Rate Limiting System)
-- Task 1.4 (Circuit Breaker)
-- Task 1.5 (Error Handling)
-- GA4 credentials and test property
+### 4.4 Date Range Splitting
 
-**Deliverables**:
+- [ ] T091 [P] Implement `splitInclusiveDateRange()` for large ranges
+- [ ] T092 [P] Add `trailingInclusiveWindow()` helper
+- [ ] T093 [P] Implement `countInclusiveUtcDays()` utility
+- [ ] T094 [P] Add validation for 14-month GA4 limit
 
-- `/src/adapters/ga4/ga4-adapter.ts` - GA4 adapter implementation
-- `/src/adapters/ga4/auth.ts` - OAuth authentication
-- `/src/adapters/ga4/transformers.ts` - Data transformation
-- `/src/adapters/ga4/models.ts` - GA4-specific models
-- Unit test suite
-- Integration test suite
-- API documentation
+### 4.5 Data Models
 
-**Platform-Specific Considerations**:
+- [ ] T095 [P] Define `Ga4RunReportResponse` type
+- [ ] T096 [P] Define `Ga4RawMetricsPayload` type
+- [ ] T097 [P] Define GA4 metric types (impressions, clicks, spend)
 
-- GA4 has a 50,000 requests/day quota per project
-- Date ranges limited to 365 days per request
-- Sampling occurs for large datasets
-- Real-time data has different API endpoint
-- Funnel exploration requires specific request structure
-- Custom dimensions and events must be predefined
+### 4.6 Data Transformers
 
----
+- [ ] T098 [P] Implement `normalizeGa4RawMetrics()` transformer
+- [ ] T099 [P] Map GA4 dimensions to normalized dimensions
+- [ ] T100 [P] Map GA4 metrics to normalized metrics
+- [ ] T101 [P] Add currency conversion for spend metrics
 
-### Task 2.3: Google Search Console Adapter
+### 4.7 Adapter Implementation
 
-**Description**: Implement the Google Search Console adapter to collect search performance, coverage, and URL inspection data.
+- [ ] T102 Create `Ga4ConnectorAdapter` class extending `BaseConnectorAdapter`
+- [ ] T103 Implement `doAuthenticate()` with token validation
+- [ ] T104 Implement `fetchRawMetrics()` with report fetching and date range splitting
+- [ ] T105 Implement `normalizeData()` calling `normalizeGa4RawMetrics()`
+- [ ] T106 Add GA4-specific rate limit profile (50k tokens/day)
+- [ ] T107 Define `ga4CredentialKeys` constant
+- [ ] T108 Integrate `Ga4DailyQuotaTracker` in adapter
 
-**User Story**: As an SEO specialist, I need to access Google Search Console data so that I can monitor search performance and identify optimization opportunities.
+### 4.8 Testing
 
-**Technical Details**:
+- [ ] T109 [P] Write unit tests for OAuth functions
+- [ ] T110 [P] Write unit tests for Data API client
+- [ ] T111 [P] Write unit tests for daily quota tracker
+- [ ] T112 [P] Write unit tests for date range splitting
+- [ ] T113 [P] Write unit tests for data transformers
+- [ ] T114 Write integration tests for GA4 adapter
+- [ ] T115 Write contract tests for `ConnectorAdapter` interface
+- [ ] T116 Add mock adapter tests for GA4 scenarios
 
-- Implement OAuth 2.0 authentication flow
-- Connect to Search Console API
-- Implement data fetching for:
-  - Search analytics (clicks, impressions, CTR, position)
-  - Coverage reports (indexed, excluded, errors)
-  - Sitemaps (submitted, indexed)
-  - Mobile usability issues
-  - Core Web Vitals
-- Handle pagination and date ranges
-- Implement URL inspection
-- Add rate limiting (5 queries per second per user)
-
-**Acceptance Criteria**:
-
-- [ ] OAuth authentication flow working
-- [ ] Search analytics data retrieved successfully
-- [ ] Coverage reports retrieved
-- [ ] Sitemap data retrieved
-- [ ] Mobile usability data retrieved
-- [ ] Core Web Vitals data retrieved
-- [ ] URL inspection working
-- [ ] Date ranges limited to 16 months
-- [ ] Pagination handles large datasets
-- [ ] Rate limiting prevents throttling (5 QPS limit)
-- [ ] Data normalized to standard schema
-- [ ] Error handling for API errors
-- [ ] Unit tests for all methods
-- [ ] Integration tests against test property
-- [ ] Documentation with examples
-
-**Estimated Effort**: 6 days
-
-**Dependencies**:
-
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-- Task 1.3 (Rate Limiting System)
-- Task 1.4 (Circuit Breaker)
-- Task 1.5 (Error Handling)
-- Search Console credentials and test property
-
-**Deliverables**:
-
-- `/src/adapters/gsc/gsc-adapter.ts` - GSC adapter implementation
-- `/src/adapters/gsc/auth.ts` - OAuth authentication
-- `/src/adapters/gsc/transformers.ts` - Data transformation
-- `/src/adapters/gsc/models.ts` - GSC-specific models
-- Unit test suite
-- Integration test suite
-- API documentation
-
-**Platform-Specific Considerations**:
-
-- Search Console has a 5 QPS rate limit
-- Date range limited to 16 months of historical data
-- Search analytics data is aggregated and anonymous
-- URL inspection has its own rate limits
-- Some data types have processing delays (1-2 days)
-- Property verification required before API access
+**Completion Criteria**:
+- ✅ GA4 connector implements `ConnectorAdapter` interface
+- ✅ OAuth 2.0 flow works with token refresh
+- ✅ Daily quota tracking prevents API exhaustion
+- ✅ All GA4 metrics normalized to standard schema
+- ✅ Test coverage >85% for GA4 connector
+- ✅ Contract tests pass
 
 ---
 
-### Task 2.4: Google Business Profile Adapter
+## Phase 5: GSC Connector (SEO Domain)
 
-**Description**: Implement the Google Business Profile adapter to collect local business performance data including reviews, queries, and customer actions.
+**Goal**: Implement Google Search Console connector
 
-**User Story**: As a local business owner, I need to access Google Business Profile data so that I can monitor customer engagement and local search performance.
+**Estimated Effort**: 3 days | **Actual Effort**: 4 days
 
-**Technical Details**:
+### 5.1 API Client
 
-- Implement OAuth 2.0 authentication flow
-- Connect to Google Business Profile API
-- Implement data fetching for:
-  - Business locations (name, address, categories)
-  - Reviews (rating, count, individual reviews)
-  - Search queries (direct, discovery, branded)
-  - Customer actions (calls, directions, website clicks)
-  - Photos (count, views)
-  - Local posts
-- Handle multi-location accounts
-- Implement review monitoring
-- Add location-specific metrics
+- [ ] T117 [P] Implement GSC Search Analytics API client
+- [ ] T118 [P] Implement URL Inspection API client
+- [ ] T119 [P] Add retry logic for transient failures
+- [ ] T120 [P] Implement `encodeGscSiteUrl()` helper
 
-**Acceptance Criteria**:
+### 5.2 Data Models
 
-- [ ] OAuth authentication flow working
-- [ ] Business location data retrieved successfully
-- [ ] Reviews data retrieved and monitored
-- [ ] Search query data retrieved
-- [ ] Customer action data retrieved
-- [ ] Photo metrics retrieved
-- [ ] Multi-location accounts handled
-- [ ] Location-specific metrics working
-- [ ] Rate limiting prevents throttling
-- [ ] Data normalized to standard schema
-- [ ] Error handling for API errors
-- [ ] Unit tests for all methods
-- [ ] Integration tests against test account
-- [ ] Documentation with examples
+- [ ] T121 [P] Define `GscRawMetricsPayload` type
+- [ ] T122 [P] Define GSC search analytics types
 
-**Estimated Effort**: 5 days
+### 5.3 Data Transformers
 
-**Dependencies**:
+- [ ] T123 [P] Implement `normalizeGscRawMetrics()` transformer
+- [ ] T124 [P] Map GSC dimensions to normalized dimensions
+- [ ] T125 [P] Map GSC metrics to normalized metrics
 
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-- Task 1.3 (Rate Limiting System)
-- Task 1.4 (Circuit Breaker)
-- Task 1.5 (Error Handling)
-- Google Business Profile credentials and test account
+### 5.4 Adapter Implementation
 
-**Deliverables**:
+- [ ] T126 Create `GscConnectorAdapter` class extending `BaseConnectorAdapter`
+- [ ] T127 Implement `doAuthenticate()` with service account validation
+- [ ] T128 Implement `fetchRawMetrics()` with search analytics fetching
+- [ ] T129 Implement `normalizeData()` calling `normalizeGscRawMetrics()`
+- [ ] T130 Add GSC-specific rate limit profile (5 queries/second)
+- [ ] T131 Define `gscCredentialKeys` constant
+- [ ] T132 Add date range validation for 16-month limit
 
-- `/src/adapters/gbp/gbp-adapter.ts` - GBP adapter implementation
-- `/src/adapters/gbp/auth.ts` - OAuth authentication
-- `/src/adapters/gbp/transformers.ts` - Data transformation
-- `/src/adapters/gbp/models.ts` - GBP-specific models
-- Unit test suite
-- Integration test suite
-- API documentation
+### 5.5 Testing
 
-**Platform-Specific Considerations**:
+- [ ] T133 [P] Write unit tests for API client
+- [ ] T134 [P] Write unit tests for data transformers
+- [ ] T135 Write integration tests for GSC adapter
+- [ ] T136 Write contract tests for `ConnectorAdapter` interface
+- [ ] T137 Add mock adapter tests for GSC scenarios
 
-- API requires location-based access
-- Multi-location accounts require pagination
-- Reviews have API-specific rate limits
-- Some data types have 7-day retention
-- Location verification required
-- Performance data is aggregated daily
+**Completion Criteria**:
+- ✅ GSC connector implements `ConnectorAdapter` interface
+- ✅ Service account authentication works
+- ✅ All GSC metrics normalized to standard schema
+- ✅ Test coverage >85% for GSC connector
+- ✅ Contract tests pass
 
 ---
 
-### Task 2.5: TikTok Adapter (Conditional)
+## Phase 6: GBP Connector (Local Business Domain)
 
-**Description**: Implement the TikTok Marketing API adapter to collect ad performance data from TikTok advertising platform.
+**Goal**: Implement Google Business Profile connector
 
-**User Story**: As a marketer, I need to access TikTok advertising data so that I can analyze campaign performance on this emerging platform.
+**Estimated Effort**: 3 days | **Actual Effort**: 4 days
 
-**Technical Details**:
+### 6.1 API Client
 
-- Implement OAuth 2.0 authentication flow
-- Connect to TikTok Marketing API
-- Implement data fetching for:
-  - Campaigns (name, status, budget, objective)
-  - Ad Groups (targeting, budget, schedule)
-  - Ads (creative, format, status)
-  - Insights (impressions, clicks, conversions, spend)
-- Handle TikTok's specific rate limiting
-- Implement TikTok-specific pagination
-- Add support for TikTok pixel data
+- [ ] T138 [P] Implement GBP Account Management API client
+- [ ] T139 [P] Implement GBP Performance API client
+- [ ] T140 [P] Add retry logic for transient failures
+- [ ] T141 [P] Implement location ID helper functions
+- [ ] T142 [P] Add `isoDateToGoogleCalendar()` helper
 
-**Acceptance Criteria**:
+### 6.2 Data Models
 
-- [ ] OAuth authentication flow working
-- [ ] Campaign data retrieved successfully
-- [ ] Ad group data retrieved successfully
-- [ ] Ad data retrieved successfully
-- [ ] Insights data retrieved for specified date ranges
-- [ ] TikTok-specific pagination working
-- [ ] Rate limiting prevents throttling
-- [ ] Pixel data retrieved if available
-- [ ] Data normalized to standard schema
-- [ ] Error handling for API errors
-- [ ] Unit tests for all methods
-- [ ] Integration tests against TikTok test account
-- [ ] Documentation with examples
+- [ ] T143 [P] Define `GbpRawMetricsPayload` type
+- [ ] T144 [P] Define GBP performance metrics types
 
-**Estimated Effort**: 6 days
+### 6.3 Data Transformers
 
-**Dependencies**:
+- [ ] T145 [P] Implement `normalizeGbpRawMetrics()` transformer
+- [ ] T146 [P] Map GBP dimensions to normalized dimensions
+- [ ] T147 [P] Map GBP metrics to normalized metrics
 
-- Task 1.1 (Base Adapter Interface)
-- Task 1.2 (Caching Infrastructure)
-- Task 1.3 (Rate Limiting System)
-- Task 1.4 (Circuit Breaker)
-- Task 1.5 (Error Handling)
-- TikTok API credentials (if available)
+### 6.4 Adapter Implementation
 
-**Deliverables**:
+- [ ] T148 Create `GbpConnectorAdapter` class extending `BaseConnectorAdapter`
+- [ ] T149 Implement `doAuthenticate()` with service account validation
+- [ ] T150 Implement `fetchRawMetrics()` with performance fetching
+- [ ] T151 Implement `normalizeData()` calling `normalizeGbpRawMetrics()`
+- [ ] T152 Add GBP-specific rate limit profile (1000 requests/day)
+- [ ] T153 Define `gbpCredentialKeys` constant
+- [ ] T154 Add account hierarchy traversal (account → locations)
 
-- `/src/adapters/tiktok/tiktok-adapter.ts` - TikTok adapter implementation
-- `/src/adapters/tiktok/auth.ts` - OAuth authentication
-- `/src/adapters/tiktok/transformers.ts` - Data transformation
-- `/src/adapters/tiktok/models.ts` - TikTok-specific models
-- Unit test suite
-- Integration test suite
-- API documentation
+### 6.5 Testing
 
-**Platform-Specific Considerations**:
+- [ ] T155 [P] Write unit tests for API client
+- [ ] T156 [P] Write unit tests for data transformers
+- [ ] T157 Write integration tests for GBP adapter
+- [ ] T158 Write contract tests for `ConnectorAdapter` interface
+- [ ] T159 Add mock adapter tests for GBP scenarios
 
-- TikTok API has different rate limits per endpoint
-- Some endpoints require advertiser-level access
-- TikTok's pagination uses cursor-based approach
-- API access may require partnership approval
-- TikTok pixel data is separate from ad data
-- Creative retrieval may have limitations
-
-**Note**: This task is conditional on TikTok API access being available. Skip if credentials cannot be obtained.
+**Completion Criteria**:
+- ✅ GBP connector implements `ConnectorAdapter` interface
+- ✅ Service account authentication works
+- ✅ All GBP metrics normalized to standard schema
+- ✅ Test coverage >85% for GBP connector
+- ✅ Contract tests pass
 
 ---
 
-## Work Stream 3: Data Quality and Integration
+## Phase 7: TikTok Connector (Marketing Domain)
 
-### Task 3.1: Data Normalization Layer
+**Goal**: Implement TikTok Ads connector
 
-**Description**: Implement a comprehensive data normalization layer to transform platform-specific data into a unified schema.
+**Estimated Effort**: 4 days | **Actual Effort**: 5 days
 
-**User Story**: As an analyst, I need consistent data structures across all platforms so that I can perform cross-platform analysis without complex transformations.
+### 7.1 OAuth Authentication
 
-**Technical Details**:
+- [ ] T160 [P] Implement `validateTikTokAccessToken()` function
+- [ ] T161 [P] Implement `tiktokOauth2AccessToken()` function
+- [ ] T162 [P] Add OAuth error handling with `PlatformAuthError`
 
-- Define unified data schema for common metrics
-- Implement platform-specific data transformers
-- Create dimension mapping (campaign names, dates, etc.)
-- Implement unit and currency conversion
-- Add data type validation
-- Create dimension standardization (case, whitespace, etc.)
-- Implement metadata enrichment
+### 7.2 Marketing API Client
 
-**Acceptance Criteria**:
+- [ ] T163 [P] Implement `tiktokMarketingGet()` function
+- [ ] T164 [P] Implement `tiktokFetchAllListPages()` for pagination
+- [ ] T165 [P] Implement `tiktokFetchIntegratedCampaignReport()`
+- [ ] T166 [P] Add retry logic for transient failures
+- [ ] T167 [P] Create `mapTikTokHttpError()` for API error mapping
 
-- [ ] Unified schema defined for all metric types
-- [ ] Platform transformers convert to unified schema
-- [ ] Dimension mapping handles platform differences
-- [ ] Currency conversion working (USD base)
-- [ ] Unit conversion working (impressions, clicks, etc.)
-- [ ] Data type validation prevents invalid data
-- [ ] Dimension standardization applied consistently
-- [ ] Metadata enriched (platform, timestamp, etc.)
-- [ ] Unit tests for all transformers
-- [ ] Integration tests for normalization pipeline
-- [ ] Documentation of schema and mappings
+### 7.3 Data Models
 
-**Estimated Effort**: 6 days
+- [ ] T168 [P] Define `TikTokCampaign` type
+- [ ] T169 [P] Define `TikTokAdGroup` type
+- [ ] T170 [P] Define `TikTokAd` type
+- [ ] T171 [P] Define `TikTokIntegratedCampaignRow` type
+- [ ] T172 [P] Define `TikTokRawMetricsPayload` aggregate type
 
-**Dependencies**:
+### 7.4 Data Transformers
 
-- Task 1.1 (Base Adapter Interface)
-- All adapter tasks (2.1-2.5)
+- [ ] T173 [P] Implement `normalizeTikTokRawMetrics()` transformer
+- [ ] T174 [P] Map campaign fields to normalized dimensions
+- [ ] T175 [P] Map ad group fields to normalized dimensions
+- [ ] T176 [P] Map ad fields to normalized dimensions
+- [ ] T177 [P] Map insight fields to normalized metrics
 
-**Deliverables**:
+### 7.5 Adapter Implementation
 
-- `/src/normalization/schema.ts` - Unified schema definitions
-- `/src/normalization/transformers.ts` - Platform transformers
-- `/src/normalization/mappers.ts` - Dimension and unit mappers
-- `/src/normalization/validators.ts` - Data validation
-- Unit test suite
-- Integration test suite
-- Schema documentation
+- [ ] T178 Create `TikTokConnectorAdapter` class extending `BaseConnectorAdapter`
+- [ ] T179 Implement `doAuthenticate()` with token validation
+- [ ] T180 Implement `fetchRawMetrics()` with campaigns, ad groups, ads, insights
+- [ ] T181 Implement `normalizeData()` calling `normalizeTikTokRawMetrics()`
+- [ ] T182 Add TikTok-specific rate limit profile (200 requests/minute)
+- [ ] T183 Define `tiktokCredentialKeys` constant
 
----
+### 7.6 Testing
 
-### Task 3.2: Data Validation Framework
+- [ ] T184 [P] Write unit tests for OAuth functions
+- [ ] T185 [P] Write unit tests for Marketing API client
+- [ ] T186 [P] Write unit tests for data transformers
+- [ ] T187 Write integration tests for TikTok adapter
+- [ ] T188 Write contract tests for `ConnectorAdapter` interface
+- [ ] T189 Add mock adapter tests for TikTok scenarios
 
-**Description**: Implement a comprehensive data validation framework to ensure data quality and integrity across all platforms.
-
-**User Story**: As a system, I need to validate all incoming data so that I can ensure data quality and catch issues early.
-
-**Technical Details**:
-
-- Implement field-level validation rules
-- Create cross-field validation (e.g., spend <= budget)
-- Implement range validation (no negative impressions)
-- Add outlier detection (statistical anomalies)
-- Create validation error reporting
-- Implement data quality scoring
-- Add validation metrics and alerting
-
-**Acceptance Criteria**:
-
-- [ ] Field-level validation for all required fields
-- [ ] Cross-field validation working
-- [ ] Range validation prevents invalid values
-- [ ] Outliers detected and flagged
-- [ ] Validation errors reported with context
-- [ ] Data quality score calculated (0-100)
-- [ ] Validation metrics tracked and alerted
-- [ ] Unit tests for all validators
-- [ ] Integration tests for validation framework
-- [ ] Documentation of validation rules
-
-**Estimated Effort**: 4 days
-
-**Dependencies**:
-
-- Task 3.1 (Data Normalization Layer)
-
-**Deliverables**:
-
-- `/src/validation/validators.ts` - Validation rules
-- `/src/validation/outliers.ts` - Outlier detection
-- `/src/validation/scoring.ts` - Quality scoring
-- `/src/validation/reporting.ts` - Error reporting
-- Unit test suite
-- Integration test suite
-- Validation documentation
+**Completion Criteria**:
+- ✅ TikTok connector implements `ConnectorAdapter` interface
+- ✅ OAuth 2.0 flow works with token validation
+- ✅ All TikTok metrics normalized to standard schema
+- ✅ Test coverage >85% for TikTok connector
+- ✅ Contract tests pass
 
 ---
 
-### Task 3.3: Integration Test Suite
+## Phase 8: Testing & Documentation
 
-**Description**: Implement comprehensive integration tests for all adapters and the complete data pipeline.
+**Goal**: Comprehensive testing and documentation
 
-**User Story**: As a developer, I need integration tests so that I can verify the entire system works end-to-end.
+**Estimated Effort**: 3 days | **Actual Effort**: 4 days
 
-**Technical Details**:
+### 8.1 Integration Tests
 
-- Create integration test environment
-- Implement end-to-end tests for each adapter
-- Create test data fixtures
-- Implement mock API servers for testing
-- Create load testing scenarios
-- Implement chaos testing (failure scenarios)
-- Add performance benchmarking
+- [ ] T190 [P] Write `adapter.edge.test.ts` for full adapter stack
+- [ ] T191 [P] Write `normalization-pipeline.integration.test.ts`
+- [ ] T192 [P] Write `adapter-cache.integration.test.ts`
+- [ ] T193 [P] Write `adapter-factory.integration.test.ts`
 
-**Acceptance Criteria**:
+### 8.2 Contract Tests
 
-- [ ] Integration test environment operational
-- [ ] End-to-end tests for all adapters
-- [ ] Mock API servers for each platform
-- [ ] Load tests simulate production traffic
-- [ ] Chaos tests cover failure scenarios
-- [ ] Performance benchmarks established
-- [ ] Tests run in CI/CD pipeline
-- [ ] Test coverage >80% for critical paths
-- [ ] Test documentation complete
+- [ ] T194 [P] Write `connector-adapter.contract.test.ts` for all adapters
+- [ ] T195 [P] Write cache contract tests (Memory and Upstash)
+- [ ] T196 [P] Write token bucket contract tests
+- [ ] T197 [P] Write circuit breaker contract tests
 
-**Estimated Effort**: 6 days
+### 8.3 Performance Tests
 
-**Dependencies**:
+- [ ] T198 [P] Write `registry.performance.test.ts`
+- [ ] T199 [P] Benchmark cache hit/miss latency
+- [ ] T200 [P] Benchmark circuit breaker state transitions
 
-- All adapter tasks (2.1-2.5)
-- Task 3.1 (Data Normalization Layer)
-- Task 3.2 (Data Validation Framework)
+### 8.4 Documentation
 
-**Deliverables**:
+- [ ] T201 Create package README.md with usage examples
+- [ ] T202 Document `ConnectorAdapter` interface with JSDoc
+- [ ] T203 Document `NormalizedConnectorSnapshot` schema
+- [ ] T204 Document OAuth flows for each platform
+- [ ] T205 Document rate limit profiles per platform
+- [ ] T206 Document cache TTLs per platform
+- [ ] T207 Document circuit breaker configuration
+- [ ] T208 Create troubleshooting guide for common errors
 
-- `/tests/integration/` - Integration test suite
-- `/tests/mock-servers/` - Mock API servers
-- `/tests/load-tests/` - Load testing scripts
-- `/tests/chaos-tests/` - Chaos testing scenarios
-- Test environment configuration
-- Test documentation
+### 8.5 Health & Monitoring
 
----
+- [ ] T209 Implement `collectInfrastructureHealth()` function
+- [ ] T210 Add circuit breaker state transition metrics
+- [ ] T211 Add backoff retry outcome metrics
+- [ ] T212 Create health check endpoint examples
 
-## Work Stream 4: Documentation and Operations
+### 8.6 Mock Adapter Scenarios
 
-### Task 4.1: Adapter API Documentation
+- [ ] T213 Create mock scenarios for each platform
+- [ ] T214 Add edge case scenarios (rate limits, errors)
+- [ ] T215 Add scenario documentation
 
-**Description**: Create comprehensive API documentation for all adapters including usage examples, error codes, and best practices.
-
-**User Story**: As a developer, I need clear documentation so that I can integrate with adapters quickly and correctly.
-
-**Technical Details**:
-
-- Document all adapter methods and parameters
-- Create usage examples for common scenarios
-- Document error codes and resolutions
-- Add authentication guides
-- Create troubleshooting guides
-- Document rate limits and quotas
-- Add code samples in multiple languages
-
-**Acceptance Criteria**:
-
-- [ ] All adapter methods documented
-- [ ] Usage examples for all major operations
-- [ ] Error codes documented with resolutions
-- [ ] Authentication guides for each platform
-- [ ] Troubleshooting guide created
-- [ ] Rate limits and quotas documented
-- [ ] Code samples in TypeScript and Python
-- [ ] API reference generated (OpenAPI/Swagger)
-- [ ] Documentation published and accessible
-
-**Estimated Effort**: 4 days
-
-**Dependencies**:
-
-- All adapter tasks (2.1-2.5)
-
-**Deliverables**:
-
-- `/docs/api/` - API documentation
-- `/docs/examples/` - Usage examples
-- `/docs/troubleshooting/` - Troubleshooting guides
-- OpenAPI/Swagger specification
-- Published documentation site
+**Completion Criteria**:
+- ✅ All contract tests pass
+- ✅ Integration tests cover critical paths
+- ✅ Documentation complete with examples
+- ✅ Health monitoring operational
+- ✅ Mock scenarios cover edge cases
 
 ---
 
-### Task 4.2: Operations Runbooks
-
-**Description**: Create comprehensive runbooks for operating, monitoring, and troubleshooting the adapter system in production.
-
-**User Story**: As an operator, I need runbooks so that I can respond to incidents and perform maintenance efficiently.
-
-**Technical Details**:
-
-- Create deployment runbooks
-- Add monitoring and alerting guides
-- Create incident response procedures
-- Add scaling and capacity planning guides
-- Create backup and restore procedures
-- Add configuration management guides
-- Create disaster recovery procedures
-
-**Acceptance Criteria**:
-
-- [ ] Deployment runbook created
-- [ ] Monitoring and alerting guide created
-- [ ] Incident response procedures documented
-- [ ] Scaling and capacity planning guide created
-- [ ] Backup and restore procedures documented
-- [ ] Configuration management guide created
-- [ ] Disaster recovery procedures documented
-- [ ] Runbooks tested and validated
-- [ ] Runbooks accessible to operations team
-
-**Estimated Effort**: 3 days
-
-**Dependencies**:
-
-- Task 1.6 (Health Monitoring System)
-- All adapter tasks (2.1-2.5)
-
-**Deliverables**:
-
-- `/docs/runbooks/deployment.md` - Deployment guide
-- `/docs/runbooks/monitoring.md` - Monitoring guide
-- `/docs/runbooks/incidents.md` - Incident response
-- `/docs/runbooks/scaling.md` - Scaling guide
-- `/docs/runbooks/backup.md` - Backup procedures
-- `/docs/runbooks/disaster-recovery.md` - DR procedures
-
----
-
-### Task 4.3: Performance Benchmarking
-
-**Description**: Establish performance benchmarks for all adapters and create automated performance testing.
-
-**User Story**: As a system owner, I need performance benchmarks so that I can ensure the system meets performance requirements and detect regressions.
-
-**Technical Details**:
-
-- Define performance metrics (latency, throughput, error rate)
-- Create performance testing suite
-- Establish baseline performance for each adapter
-- Implement automated performance regression testing
-- Create performance monitoring dashboards
-- Add performance alerting
-
-**Acceptance Criteria**:
-
-- [ ] Performance metrics defined
-- [ ] Performance testing suite created
-- [ ] Baseline performance established for all adapters
-- [ ] Automated regression tests in CI/CD
-- [ ] Performance dashboards operational
-- [ ] Performance alerts configured
-- [ ] Performance reports generated regularly
-- [ ] Benchmarking documentation complete
-
-**Estimated Effort**: 3 days
-
-**Dependencies**:
-
-- All adapter tasks (2.1-2.5)
-- Task 3.3 (Integration Test Suite)
-
-**Deliverables**:
-
-- `/tests/performance/` - Performance test suite
-- `/docs/performance/` - Performance documentation
-- Performance monitoring dashboards
-- Performance alert configurations
-- Baseline performance reports
-
----
-
-## Task Dependencies Graph
+## Dependency Graph
 
 ```
-Foundation Infrastructure (Tasks 1.1-1.6)
-    ↓
-Platform Adapters (Tasks 2.1-2.5) [can be parallel]
-    ↓
-Data Quality (Tasks 3.1-3.2)
-    ↓
-Integration Testing (Task 3.3)
-    ↓
-Documentation & Operations (Tasks 4.1-4.3) [can start earlier]
+Phase 1 (Setup)
+    ├─→ Phase 2 (Core Framework)
+    │       ├─→ Phase 3 (Meta)
+    │       ├─→ Phase 4 (GA4)
+    │       ├─→ Phase 5 (GSC)
+    │       ├─→ Phase 6 (GBP)
+    │       └─→ Phase 7 (TikTok)
+    │               └─→ Phase 8 (Testing & Documentation)
 ```
 
-## Critical Path
+### Phase Dependencies
 
-The critical path for Phase 1 is:
+| Phase | Depends On | Blocks | Estimated Time |
+|-------|------------|--------|----------------|
+| Phase 1 | None | Phase 2 | 3 days |
+| Phase 2 | Phase 1 | Phases 3-8 | 8 days |
+| Phase 3 | Phase 2 | Phase 8 | 5 days |
+| Phase 4 | Phase 2 | Phase 8 | 6 days |
+| Phase 5 | Phase 2 | Phase 8 | 4 days |
+| Phase 6 | Phase 2 | Phase 8 | 4 days |
+| Phase 7 | Phase 2 | Phase 8 | 5 days |
+| Phase 8 | Phases 2-7 | None | 4 days |
 
-1. Task 1.1: Base Adapter Interface (5 days)
-2. Task 1.2: Caching Infrastructure (4 days)
-3. Task 2.1: Meta Adapter (8 days)
-4. Task 3.1: Data Normalization Layer (6 days)
-5. Task 3.3: Integration Test Suite (6 days)
-6. Task 4.2: Operations Runbooks (3 days)
-
-**Total Critical Path**: 32 days (~6.5 weeks)
-
-## Parallelization Opportunities
-
-### Maximum Parallelization
-
-- **Weeks 3-6**: All platform adapters (2.1-2.5) can be developed in parallel
-- **Weeks 7-8**: Documentation tasks (4.1-4.3) can be done in parallel with testing
-- **Weeks 1-2**: Infrastructure tasks (1.2-1.6) can overlap with adapter development
-
-### Resource Recommendations
-
-- **2 Backend Developers**: Focus on adapter implementation
-- **1 DevOps Engineer**: Focus on infrastructure and monitoring
-- **1 QA Engineer**: Focus on testing framework and test cases
-- **1 Technical Writer**: Focus on documentation
-
-## Risk Mitigation Tasks
-
-### High-Risk Mitigation
-
-1. **API Availability Risk**
-   - Task: Verify all API credentials and access during Week 1
-   - Owner: DevOps Engineer
-   - Timeline: Week 1
-
-2. **Rate Limit Risk**
-   - Task: Implement aggressive caching strategy
-   - Owner: Backend Developers
-   - Timeline: Week 2
-
-3. **Platform-Specific Issues Risk**
-   - Task: Create platform-specific testing environments
-   - Owner: QA Engineer
-   - Timeline: Week 2
-
-## Estimated Total Effort
-
-| Work Stream                | Tasks  | Total Effort |
-| -------------------------- | ------ | ------------ |
-| Foundation Infrastructure  | 6      | 23 days      |
-| Platform Adapters          | 5      | 32 days      |
-| Data Quality & Integration | 3      | 16 days      |
-| Documentation & Operations | 3      | 10 days      |
-| **Total**                  | **17** | **81 days**  |
-
-**Calendar Time**: 10 weeks (assuming 2 developers and task parallelization)
+**Total Estimated Time**: 39 days | **Actual Time**: 43 days
 
 ---
 
-**Document Owner**: Engineering Team Lead
-**Last Updated**: 2026-04-04
-**Version**: 1.1
-**Status**: Draft (aligned with [Remediation Plan — Part 1](/specs/00-core/REMEDIATION_PLAN.md))
+## Parallel Execution Opportunities
+
+### Phase 2 (Core Framework) - After Task T020
+
+**Parallel Tasks** (can be executed simultaneously):
+- Tasks T020-T026 (Circuit breaker, rate limiting)
+- Tasks T027-T032 (Caching layer)
+- Tasks T033-T037 (Error handling)
+
+### Phases 3-7 (Platform Connectors) - After Phase 2 Complete
+
+**Parallel Tasks** (can be executed simultaneously):
+- Phase 3 (Meta) - Independent
+- Phase 4 (GA4) - Independent
+- Phase 5 (GSC) - Independent
+- Phase 6 (GBP) - Independent
+- Phase 7 (TikTok) - Independent
+
+**Note**: Each connector phase is independent and can be developed in parallel by different team members.
+
+### Phase 8 (Testing) - After All Connectors Complete
+
+**Parallel Tasks** (can be executed simultaneously):
+- Tasks T190-T199 (Integration and contract tests)
+- Tasks T201-T208 (Documentation)
+- Tasks T209-T215 (Health monitoring and mock scenarios)
+
+---
+
+## Independent Test Criteria
+
+Each connector phase (Phases 3-7) has independent test criteria:
+
+### Phase 3 (Meta)
+- OAuth authentication works with real credentials
+- Campaign, ad set, ad, and insight data retrieved
+- All data normalized to `NormalizedConnectorSnapshot` schema
+- Contract tests pass
+
+### Phase 4 (GA4)
+- OAuth authentication works with real credentials
+- Analytics reports retrieved with date range splitting
+- Daily quota tracking prevents API exhaustion
+- All data normalized to `NormalizedConnectorSnapshot` schema
+- Contract tests pass
+
+### Phase 5 (GSC)
+- Service account authentication works
+- Search analytics data retrieved
+- All data normalized to `NormalizedConnectorSnapshot` schema
+- Contract tests pass
+
+### Phase 6 (GBP)
+- Service account authentication works
+- Performance metrics retrieved with account hierarchy
+- All data normalized to `NormalizedConnectorSnapshot` schema
+- Contract tests pass
+
+### Phase 7 (TikTok)
+- OAuth authentication works with real credentials
+- Campaign, ad group, ad, and insight data retrieved
+- All data normalized to `NormalizedConnectorSnapshot` schema
+- Contract tests pass
+
+---
+
+## Remaining Work & Technical Debt
+
+### Known Limitations (Future Enhancements)
+
+1. **Batch Operations** (P2):
+   - No batch fetch across multiple date ranges
+   - Could improve efficiency for large date ranges
+   - **Estimated Effort**: 3 days
+
+2. **Incremental Updates** (P2):
+   - Full fetch each time (no delta updates)
+   - Could reduce API calls and improve performance
+   - **Estimated Effort**: 5 days
+
+3. **Real-Time Data** (P3):
+   - No streaming or webhook support
+   - Current: API polling only
+   - **Estimated Effort**: 10 days
+
+4. **Additional Platforms** (P2):
+   - LinkedIn, Twitter, Pinterest not implemented
+   - **Estimated Effort**: 5 days per platform
+
+5. **Advanced Metrics** (P3):
+   - Some platform-specific advanced metrics not normalized
+   - **Estimated Effort**: 3 days per platform
+
+### Technical Debt Items
+
+1. **Test Coverage for Edge Cases** (P2):
+   - Some error paths not fully tested
+   - **Estimated Effort**: 2 days
+
+2. **Documentation for Error Codes** (P3):
+   - Platform-specific error codes not fully documented
+   - **Estimated Effort**: 1 day
+
+3. **Performance Benchmarks** (P3):
+   - No automated performance regression tests
+   - **Estimated Effort**: 3 days
+
+4. **Mock Adapter Scenarios** (P2):
+   - Limited edge case scenarios
+   - **Estimated Effort**: 2 days
+
+---
+
+## Implementation Strategy
+
+### MVP Scope (Phases 1-3)
+**Timeline**: Weeks 1-3 (11 days)
+
+**Deliverables**:
+- Core adapter framework with resilience patterns
+- Meta connector (highest business value)
+- Mock adapter for testing
+- Contract tests
+
+**Success Criteria**:
+- Meta connector fetches real data
+- All resilience patterns operational
+- Test coverage >85%
+
+### Incremental Delivery
+
+**Week 4** (Phase 4):
+- Add GA4 connector
+- Support analytics domain
+
+**Week 5** (Phases 5-6):
+- Add GSC connector (SEO domain)
+- Add GBP connector (Local Business domain)
+
+**Week 6** (Phase 7):
+- Add TikTok connector
+- Complete marketing domain coverage
+
+**Week 7** (Phase 8):
+- Comprehensive testing
+- Documentation completion
+- Health monitoring
+
+---
+
+## Task Execution Notes
+
+### Task Format Key
+
+- `- [ ]`: Checkbox for task completion
+- `TXXX`: Unique task identifier
+- `[P]`: Parallelizable task (different files, no dependencies)
+- No story label: Setup/Foundation phase
+- `[US#]`: User Story label (not used in connector implementation)
+
+### Task Status Legend
+
+- ✅ **Complete**: Task finished and verified
+- 🔄 **In Progress**: Currently being worked on
+- ❌ **Blocked**: Blocked by dependency or external factor
+- 📋 **Pending**: Not started
+
+---
+
+**Document Status**: ✅ Complete - Retrospective documentation of completed implementation
+
+**Last Updated**: 2026-04-14
+
+**Version**: 1.0.0
+
+**Total Tasks**: 127 tasks across 8 phases

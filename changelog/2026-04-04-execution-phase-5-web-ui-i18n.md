@@ -12,7 +12,7 @@
   - Root layout: **`ColorSchemeScript`** + **`mantineHtmlProps`** for Mantine color scheme; **`MantineProvider`** set to **`defaultColorScheme="auto"`** with header **light/dark toggle**.
   - **`AppShell`** layout with mobile **navbar**, **language switcher** (`next-intl` navigation `Link`), and RTL-aware **`DirectionProvider`**.
   - Base UI primitives: **`AppButton`**, **`AppCard`**, **`AppTextInput`**; **responsive** **`SimpleGrid`** and shared **breakpoint constants** (`src/lib/responsive.ts`).
-  - **Demo lead form** with **`@mantine/form`** + **Zod** (`zodResolver`) and **Zustand** store for submit state.
+  - **Demo lead form** with **`@mantine/form`** + **Zod** (`zodResolver`) and **TanStack Store** store for submit state.
   - **`next-intl`**: locale cookie **`AV_LOCALE`**, **`src/i18n/navigation.ts`**, expanded **`messages/en.json`** and **`messages/ar.json`** (Common, Errors, Validation, Layout, Home + ICU plural example).
   - Scripts: **`pnpm i18n:validate`** (en/ar leaf key parity), **`pnpm i18n:extract`** (lists message keys from `en.json` for catalogs/CI).
 - **`@agenticverdict/i18n`**

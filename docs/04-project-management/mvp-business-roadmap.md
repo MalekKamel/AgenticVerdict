@@ -2,8 +2,8 @@
 
 **Document Type:** Business Roadmap & Strategic Plan  
 **Audience:** Executive Leadership, Stakeholders, Project Managers  
-**Project:** AgenticVerdict — Multi-Platform Marketing Analytics Agent System  
-**MVP Focus:** Phase 00 (Foundation) + Phase 01 (Platform Integration) — Single Tenant (Masafh)  
+**Project:** AgenticVerdict — Multi-Business-Domain Intelligence Platform
+**MVP Focus:** Phase 00 (Foundation) + Phase 01 (Platform Integration) — Single Tenant (Masafh)
 **Date:** April 4, 2026  
 **Version:** 1.0  
 **Status:** For Review
@@ -12,42 +12,92 @@
 
 ## Table of Contents
 
-- [Executive Summary](#executive-summary)
-- [1. Product Vision & Strategic Context](#1-product-vision--strategic-context)
-  - [1.1 What AgenticVerdict Delivers](#11-what-agenticverdict-delivers)
-  - [1.2 Primary Client: Masafh](#12-primary-client-masafh)
-  - [1.3 MVP Strategy: Start Small, Build Smart](#13-mvp-strategy-start-small-build-smart)
-- [2. MVP Scope & Boundaries](#2-mvp-scope--boundaries)
-  - [2.1 What Is Included in the MVP](#21-what-is-included-in-the-mvp)
-  - [2.2 What Is Explicitly Excluded](#22-what-is-explicitly-excluded)
-  - [2.3 MVP vs. Full System Comparison](#23-mvp-vs-full-system-comparison)
-- [3. Development Roadmap: From Inception to Production](#3-development-roadmap-from-inception-to-production)
-  - [Phase 00: Foundation (Weeks 1–2)](#phase-00-foundation-weeks-12)
-  - [Phase 01: Platform Integration (Weeks 3–5)](#phase-01-platform-integration-weeks-35)
-  - [Phase 02: Agent Intelligence (Weeks 6–8)](#phase-02-agent-intelligence-weeks-68)
-  - [Phase 03: Report Generation (Weeks 9–11)](#phase-03-report-generation-weeks-911)
-  - [Phase 04: Production Hardening & Deployment (Weeks 12–14)](#phase-04-production-hardening--deployment-weeks-1214)
-- [4. Milestone Timeline & Key Deliverables](#4-milestone-timeline--key-deliverables)
-- [5. Demonstration & Stakeholder Review Plan](#5-demonstration--stakeholder-review-plan)
-- [6. Testing & Quality Assurance Strategy](#6-testing--quality-assurance-strategy)
-- [7. Production Deployment Plan](#7-production-deployment-plan)
-- [8. Risk Management & Contingency Planning](#8-risk-management--contingency-planning)
-- [9. Success Criteria & Go/No-Go Decision Points](#9-success-criteria--gono-go-decision-points)
-- [10. Post-MVP Growth Path](#10-post-mvp-growth-path)
-- [Appendix A: Glossary of Terms](#appendix-a-glossary-of-terms)
-- [Appendix B: Document References](#appendix-b-document-references)
+- [AgenticVerdict — MVP Business Roadmap](#agenticverdict--mvp-business-roadmap)
+  - [Table of Contents](#table-of-contents)
+  - [Executive Summary](#executive-summary)
+  - [1. Product Vision \& Strategic Context](#1-product-vision--strategic-context)
+    - [1.1 What AgenticVerdict Delivers](#11-what-agenticverdict-delivers)
+    - [1.2 Primary Client: Masafh](#12-primary-client-masafh)
+    - [1.3 MVP Strategy: Start Small, Build Smart](#13-mvp-strategy-start-small-build-smart)
+  - [2. MVP Scope \& Boundaries](#2-mvp-scope--boundaries)
+    - [2.1 What Is Included in the MVP](#21-what-is-included-in-the-mvp)
+      - [Core Product Engine (Full Capability)](#core-product-engine-full-capability)
+      - [Delivery Layer (Simplified)](#delivery-layer-simplified)
+      - [User Access (Single Tenant)](#user-access-single-tenant)
+    - [2.2 What Is Explicitly Excluded](#22-what-is-explicitly-excluded)
+    - [2.3 MVP vs. Full System Comparison](#23-mvp-vs-full-system-comparison)
+  - [3. Development Roadmap: From Inception to Production](#3-development-roadmap-from-inception-to-production)
+    - [Phase 00: Foundation (Weeks 1–2)](#phase-00-foundation-weeks-12)
+      - [Objectives](#objectives)
+      - [Key Activities](#key-activities)
+      - [Deliverables](#deliverables)
+      - [Demonstration Opportunity](#demonstration-opportunity)
+      - [Exit Criteria](#exit-criteria)
+    - [Phase 01: Platform Integration (Weeks 3–5)](#phase-01-platform-integration-weeks-35)
+      - [Objectives](#objectives-1)
+      - [Key Activities](#key-activities-1)
+      - [Deliverables](#deliverables-1)
+      - [Demonstration Opportunity](#demonstration-opportunity-1)
+      - [Exit Criteria](#exit-criteria-1)
+    - [Phase 02: Agent Intelligence (Weeks 6–8)](#phase-02-agent-intelligence-weeks-68)
+      - [Objectives](#objectives-2)
+      - [Key Activities](#key-activities-2)
+      - [Deliverables](#deliverables-2)
+      - [Demonstration Opportunity](#demonstration-opportunity-2)
+      - [Exit Criteria](#exit-criteria-2)
+    - [Phase 03: Report Generation (Weeks 9–11)](#phase-03-report-generation-weeks-911)
+      - [Objectives](#objectives-3)
+      - [Key Activities](#key-activities-3)
+      - [Deliverables](#deliverables-3)
+      - [Demonstration Opportunity](#demonstration-opportunity-3)
+      - [Exit Criteria](#exit-criteria-3)
+    - [Phase 04: Production Hardening \& Deployment (Weeks 12–14)](#phase-04-production-hardening--deployment-weeks-1214)
+      - [Objectives](#objectives-4)
+      - [Key Activities](#key-activities-4)
+      - [Deliverables](#deliverables-4)
+      - [Demonstration Opportunity](#demonstration-opportunity-4)
+      - [Exit Criteria](#exit-criteria-4)
+  - [4. Milestone Timeline \& Key Deliverables](#4-milestone-timeline--key-deliverables)
+    - [Critical Path Dependencies](#critical-path-dependencies)
+  - [5. Demonstration \& Stakeholder Review Plan](#5-demonstration--stakeholder-review-plan)
+    - [Demonstration Schedule](#demonstration-schedule)
+    - [Weekly Review Cycle](#weekly-review-cycle)
+  - [6. Testing \& Quality Assurance Strategy](#6-testing--quality-assurance-strategy)
+    - [Testing Pyramid](#testing-pyramid)
+    - [Coverage Targets](#coverage-targets)
+    - [Critical Code Requiring Highest Coverage](#critical-code-requiring-highest-coverage)
+    - [Quality Gates Per Phase](#quality-gates-per-phase)
+  - [7. Production Deployment Plan](#7-production-deployment-plan)
+    - [Deployment Strategy](#deployment-strategy)
+    - [Production Environment Requirements](#production-environment-requirements)
+    - [Deployment Checklist](#deployment-checklist)
+  - [8. Risk Management \& Contingency Planning](#8-risk-management--contingency-planning)
+    - [Technical Risks](#technical-risks)
+    - [Development Risks](#development-risks)
+    - [Operational Risks](#operational-risks)
+  - [9. Success Criteria \& Go/No-Go Decision Points](#9-success-criteria--gono-go-decision-points)
+    - [Phase Transition Criteria](#phase-transition-criteria)
+    - [Go/No-Go Decision Points](#gono-go-decision-points)
+    - [MVP Success Metrics](#mvp-success-metrics)
+  - [10. Post-MVP Growth Path](#10-post-mvp-growth-path)
+    - [Phase 02: Multi-Tenant Expansion (Weeks 15–18)](#phase-02-multi-tenant-expansion-weeks-1518)
+    - [Phase 03: Advanced Management (Weeks 19–22)](#phase-03-advanced-management-weeks-1922)
+    - [Phase 04: Production Excellence (Weeks 23–26)](#phase-04-production-excellence-weeks-2326)
+    - [Growth Strategy Summary](#growth-strategy-summary)
+  - [Appendix A: Glossary of Terms](#appendix-a-glossary-of-terms)
+  - [Appendix B: Document References](#appendix-b-document-references)
 
 ---
 
 ## Executive Summary
 
-This document presents a comprehensive business roadmap for the Minimum Viable Product (MVP) of **AgenticVerdict**, a multi-platform marketing analytics system that aggregates data from five marketing platforms, generates AI-powered cross-platform insights, and delivers actionable verdicts through automated reports.
+This document presents a comprehensive business roadmap for the Minimum Viable Product (MVP) of **AgenticVerdict**, a multi-business-domain intelligence platform that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business), generates AI-powered cross-domain insights, and delivers actionable verdicts through automated reports.
 
-The MVP delivers the **full intelligence pipeline** — all five platform connectors, AI analysis engine, and professional report generation — but scoped to **a single company (Masafh)** with simplified user access and no administrative management tools. This approach proves the product's core value before investing in multi-tenant infrastructure and management features.
+The MVP delivers the **full intelligence pipeline** — all initial domain connectors, AI analysis engine, and professional report generation — but scoped to **a single company (Masafh)** with simplified user access and no administrative management tools. This approach proves the product's core value before investing in multi-tenant infrastructure and management features.
 
-**Total Estimated Duration:** 14 weeks  
-**Primary Deliverable:** A production-ready marketing intelligence system serving one company with scheduled report delivery via email and a read-only web viewer.  
-**Investment Rationale:** By validating the core product with a real client first, we minimize risk, gather actionable feedback, and establish a proven foundation for scalable growth.
+**Total Estimated Duration:** 14 weeks
+**Primary Deliverable:** A production-ready multi-domain intelligence system serving one company with scheduled report delivery via email and a read-only web viewer.
+**Investment Rationale:** By validating the core product with a real client first, we minimize risk, gather actionable feedback, and establish a proven foundation for scalable growth across multiple business domains.
 
 ---
 
@@ -183,16 +233,16 @@ Establish the critical infrastructure and architectural patterns that will suppo
 
 #### Key Activities
 
-| Activity                           | Business Description                                                                             | Outcome                                                            |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| **Monorepo Setup**                 | Configure Turborepo + pnpm workspace for organized, efficient development                        | Structured codebase with build pipeline and caching                |
-| **Configuration Management**       | Implement CompanyConfig schema with validation; create Masafh seed configuration                 | System can load and validate company settings without code changes |
-| **Database Infrastructure**        | Set up PostgreSQL with Drizzle ORM; implement row-level security for tenant isolation            | Database ready to store company data with guaranteed separation    |
-| **Multi-Tenancy Architecture**     | Implement AsyncLocalStorage for tenant context propagation throughout the system                 | Every operation is automatically scoped to the correct company     |
-| **Internationalization Framework** | Set up i18n infrastructure with Arabic, English, and French support; implement RTL layout system | System can render in any supported language from day one           |
-| **Base UI Components**             | Create reusable component library with Mantine UI; ensure RTL/LTR compatibility                  | Consistent, accessible user interface foundation                   |
-| **Development Tooling**            | Configure ESLint, Prettier, TypeScript strict mode, Vitest testing framework                     | Quality standards enforced from the first line of code             |
-| **Security Infrastructure**        | Set up JWT authentication, encrypted credential storage, input validation                        | System protected against common security threats                   |
+| Activity                           | Business Description                                                                    | Outcome                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Monorepo Setup**                 | Configure Turborepo + pnpm workspace for organized, efficient development               | Structured codebase with build pipeline and caching                |
+| **Configuration Management**       | Implement CompanyConfig schema with validation; create Masafh seed configuration        | System can load and validate company settings without code changes |
+| **Database Infrastructure**        | Set up PostgreSQL with Drizzle ORM; implement row-level security for tenant isolation   | Database ready to store company data with guaranteed separation    |
+| **Multi-Tenancy Architecture**     | Implement AsyncLocalStorage for tenant context propagation throughout the system        | Every operation is automatically scoped to the correct company     |
+| **Internationalization Framework** | Set up i18n infrastructure with Arabic and English support; implement RTL layout system | System can render in any supported language from day one           |
+| **Base UI Components**             | Create reusable component library with Mantine UI; ensure RTL/LTR compatibility         | Consistent, accessible user interface foundation                   |
+| **Development Tooling**            | Configure ESLint, Prettier, TypeScript strict mode, Vitest testing framework            | Quality standards enforced from the first line of code             |
+| **Security Infrastructure**        | Set up JWT authentication, encrypted credential storage, input validation               | System protected against common security threats                   |
 
 #### Deliverables
 

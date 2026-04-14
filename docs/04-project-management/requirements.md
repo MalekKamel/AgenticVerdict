@@ -1,10 +1,10 @@
-# Project Requirements: AgenticVerdict — Multi-Platform Marketing Analytics Agent
+# Project Requirements: AgenticVerdict — Multi-Business-Domain Intelligence Platform
 
 ## Executive Summary
 
-This document outlines the technical implementation requirements for **AgenticVerdict** — a configurable, multi-platform reporting agent system that aggregates marketing data from multiple platforms, generates reports with cross-platform insights, and delivers actionable verdicts.
+This document outlines the technical implementation requirements for **AgenticVerdict** — a configurable, multi-domain intelligence platform that aggregates business metrics across marketing, finance, operations, and other domains through unified data integration, generates reports with cross-domain insights, and delivers actionable verdicts.
 
-**Note**: The system must be architected for reusability across different companies, industries, regions, and languages. Company-specific data, language preferences, regional settings, and platform configurations should be injected dynamically via configuration, not hardcoded.
+**Note**: The system must be architected for reusability across different companies, industries, regions, and languages. Company-specific data, language preferences, regional settings, and connector configurations should be injected dynamically via configuration, not hardcoded.
 
 **Implementation Context**: This project is a technical implementation of an AI agent system. For this implementation, the system will be configured for **Masafh**, a Riyadh-based B2B company providing GPS fleet tracking devices and a SaaS fleet management platform.
 
@@ -15,7 +15,7 @@ This document outlines the technical implementation requirements for **AgenticVe
 1. [System Architecture Requirements](#system-architecture-requirements)
 2. [Monorepo Structure & Workspace Organization](#monorepo-structure--workspace-organization)
 3. [Multi-Tenancy Patterns](#multi-tenancy-patterns)
-4. [Platform Integration Requirements](#platform-integration-requirements)
+4. [Data Connector Integration Requirements](#data-connector-integration-requirements)
 5. [Security & Authentication (Requirements)](#security--authentication-requirements)
 6. [Technology Stack](#technology-stack)
 7. [Sample Company Configuration: Masafh](#sample-company-configuration-masafh)
@@ -34,10 +34,10 @@ This document outlines the technical implementation requirements for **AgenticVe
 | **Dynamic Configuration**    | All company-specific data injected via configuration files or environment variables                                                                                                                                                                                                       |
 | **Language Agnostic**        | Report language determined by configuration; supports RTL/LTR rendering                                                                                                                                                                                                                   |
 | **Region Aware**             | Currency, date formats, time zones configurable per company                                                                                                                                                                                                                               |
-| **Platform Extensible**      | New platforms can be added without core system changes using plugin architecture                                                                                                                                                                                                          |
+| **Connector Extensible**     | New data connectors can be added using plugin architecture across any business domain (Marketing, Finance, SEO, Social, Local, Operations)                                                                                                                                                |
 | **Template Driven**          | Report templates are external, customizable files stored in database                                                                                                                                                                                                                      |
 | **Separation of Concerns**   | Core logic separate from company-specific implementations                                                                                                                                                                                                                                 |
-| **Fault Tolerant**           | System degrades gracefully when platforms fail or rate limits are hit                                                                                                                                                                                                                     |
+| **Fault Tolerant**           | System degrades gracefully when connectors fail or rate limits are hit                                                                                                                                                                                                                    |
 | **Observable**               | Comprehensive logging, metrics, and tracing for all operations                                                                                                                                                                                                                            |
 | **Don't Reinvent the Wheel** | All implementations must use battle-tested, production-proven tools and packages rather than custom implementations. See [`docs/04-technology-research/research-overview.md`](../04-technology-research/research-overview.md) for technology research with justifications and trade-offs. |
 
@@ -87,10 +87,20 @@ interface CompanyConfig {
     differentiators: string[];
   };
 
-  // Marketing Configuration
-  marketing: {
+  // Business Domains & Connectors
+  business: {
+    industry: string; // e.g., 'Fleet Management & GPS Tracking'
+    products: Product[];
+    targetMarkets: string[];
+    valuePropositions: string[];
+    differentiators: string[];
+    domains: BusinessDomain[]; // Active business domains for this company
+  };
+
+  // Data Connectors (domain-tagged)
+  connectors: {
     targetAudience: string; // e.g., 'B2B', 'B2C', 'B2G'
-    channels: PlatformConfig[]; // Enabled platforms and their configs
+    sources: ConnectorConfig[]; // Enabled connectors and their configs
     report: {
       client: ClientReportConfig;
       team: TeamReportConfig;
@@ -111,15 +121,16 @@ interface CompanyConfig {
     enableInsights: boolean;
     enableVerdict: boolean;
     enableRecommendations: boolean;
-    enableCrossPlatformAnalysis: boolean;
+    enableCrossDomainAnalysis: boolean; // Cross-domain insight generation
   };
 }
 
-interface PlatformConfig {
-  platform: ConnectorType;
+interface ConnectorConfig {
+  connector: ConnectorType;
+  domain: BusinessDomain; // Domain tag for categorization
   enabled: boolean;
   credentials?: Record<string, string>; // From secure storage
-  kpis: KPIConfig[]; // Platform-specific KPIs to track
+  kpis: KPIConfig[]; // Connector-specific KPIs to track
   dataSource: "api" | "mock"; // Development vs production
   rateLimit?: {
     requestsPerMinute: number;
@@ -131,13 +142,31 @@ interface PlatformConfig {
   };
 }
 
-type ConnectorType = "meta" | "ga4" | "gsc" | "gbp" | "tiktok" | "custom";
+type BusinessDomain = "marketing" | "finance" | "seo" | "social" | "local" | "operations";
+
+type ConnectorType =
+  | "meta" // Marketing, Social
+  | "ga4" // Marketing, Analytics
+  | "gsc" // SEO, Analytics
+  | "gbp" // Local, Marketing
+  | "tiktok" // Marketing, Social
+  | "quickbooks" // Finance (planned)
+  | "stripe" // Finance (planned)
+  | "custom"; // Custom connector
 
 interface KPIConfig {
   id: string;
   name: string;
   nameLocal?: string; // Localized name
-  category: "organic" | "paid" | "overall";
+  category:
+    | "organic"
+    | "paid"
+    | "overall"
+    | "revenue"
+    | "expense"
+    | "engagement"
+    | "visibility"
+    | "reputation"; // Cross-domain categories
   format: "number" | "currency" | "percentage";
   statusThresholds?: {
     good: { min?: number; max?: number };
@@ -145,6 +174,13 @@ interface KPIConfig {
     poor: { min?: number; max?: number };
   };
 }
+// KPI examples by domain:
+// Marketing: views, engagements, clicks, impressions, conversions, ROAS, CPA
+// Finance: revenue, expenses, profit, CAC, LTV:CAC, MRR
+// SEO: organic traffic, rankings, impressions, CTR
+// Social: followers, reach, engagement rate, shares
+// Local: calls, directions, reviews, rating
+// Operations: uptime, response time, ticket resolution
 ```
 
 ---
@@ -203,14 +239,16 @@ agenticverdict/
 │   │   │   └── seed/                 # Seed data
 │   │   └── package.json
 │   │
-│   ├── platform-adapters/            # Platform API adapters (@agenticverdict/data-connectors)
+│   ├── data-connectors/              # Domain-tagged data connectors (@agenticverdict/data-connectors)
 │   │   ├── src/
 │   │   │   ├── adapter.ts            # ConnectorAdapter + BaseConnectorAdapter
-│   │   │   ├── meta/                 # Meta Marketing API
-│   │   │   ├── ga4/                  # GA4 Data API
-│   │   │   ├── gsc/                  # Google Search Console
-│   │   │   ├── gbp/                  # Google Business Profile
-│   │   │   ├── tiktok/               # TikTok Marketing API
+│   │   │   ├── meta/                 # Meta Marketing API (marketing, social)
+│   │   │   ├── ga4/                  # GA4 Data API (marketing, analytics)
+│   │   │   ├── gsc/                  # Google Search Console (seo, analytics)
+│   │   │   ├── gbp/                  # Google Business Profile (local, marketing)
+│   │   │   ├── tiktok/               # TikTok Marketing API (marketing, social)
+│   │   │   ├── quickbooks/           # QuickBooks API (finance) — planned
+│   │   │   ├── stripe/               # Stripe API (finance) — planned
 │   │   │   ├── normalization/        # Shared normalization pipeline
 │   │   │   └── cache/                # L1/L2 cache helpers
 │   │   └── package.json
@@ -360,16 +398,17 @@ export function getTenantContext(): TenantContext | undefined {
 
 ---
 
-## Platform Integration Requirements
+## Data Connector Integration Requirements
 
 These rules apply to `@agenticverdict/data-connectors` and any service that constructs adapters.
 
-| Requirement                   | Detail                                                                                                                                                                                                                                                                                                                                 |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mandatory `tenantId`**      | Every adapter that extends `BaseConnectorAdapter` (Meta, GA4, GSC, GBP, TikTok, `MockConnectorAdapter`, and future platforms) MUST be constructed with a **non-empty** `tenantId` string in options (after trim). Empty or whitespace-only values are rejected at construction time via `PlatformError` with code `missing_tenant_id`. |
-| **No shared default segment** | Adapters must not silently fall back to a placeholder tenant segment for cache keys, metrics, or dead-letter correlation — that would risk cross-tenant cache hits and ambiguous operations data.                                                                                                                                      |
-| **Registry factories**        | Adapter registry factories SHOULD receive a context object that includes `tenantId` (or equivalent) and pass it into every adapter instance they create.                                                                                                                                                                               |
-| **Documentation**             | API surface and error semantics: [`specs/00-core/01-connectors/operations/API-REFERENCE.md`](../../specs/00-core/01-connectors/operations/API-REFERENCE.md) and [`ERROR-CODES.md`](../../specs/00-core/01-connectors/operations/ERROR-CODES.md).                                                                                       |
+| Requirement                   | Detail                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mandatory `tenantId`**      | Every adapter that extends `BaseConnectorAdapter` (Meta, GA4, GSC, GBP, TikTok, QuickBooks, Stripe, `MockConnectorAdapter`, and future connectors) MUST be constructed with a **non-empty** `tenantId` string in options (after trim). Empty or whitespace-only values are rejected at construction time via `PlatformError` with code `missing_tenant_id`. |
+| **No shared default segment** | Adapters must not silently fall back to a placeholder tenant segment for cache keys, metrics, or dead-letter correlation — that would risk cross-tenant cache hits and ambiguous operations data.                                                                                                                                                           |
+| **Registry factories**        | Adapter registry factories SHOULD receive a context object that includes `tenantId` (or equivalent) and pass it into every adapter instance they create.                                                                                                                                                                                                    |
+| **Domain tagging**            | Each connector MUST declare its `BusinessDomain` tag(s) at registration time, enabling domain-filtered discovery and cross-domain insight generation.                                                                                                                                                                                                       |
+| **Documentation**             | API surface and error semantics: [`specs/00-core/01-connectors/operations/API-REFERENCE.md`](../../specs/00-core/01-connectors/operations/API-REFERENCE.md) and [`ERROR-CODES.md`](../../specs/00-core/01-connectors/operations/ERROR-CODES.md).                                                                                                            |
 
 ---
 
@@ -398,6 +437,8 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 | **UI Library**      | Mantine + shadcn/ui                      | TypeScript-first, 100+ components, optimized bundle size, enterprise features |
 | **Styling**         | Tailwind CSS + antd-style                | Utility-first + component-specific styling                                    |
 | **API**             | tRPC v11 (internal) + Fastify (external) | End-to-end type safety for internal APIs; performance for public APIs         |
+
+**Multi-Domain Use Case**: The platform serves businesses across marketing, finance, SEO, social media, local business, and operations domains. The technology stack is selected to support diverse data connector types, cross-domain analysis, and domain-specific reporting — all within a unified multi-tenant architecture.
 
 ### Data Layer
 
@@ -446,6 +487,7 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
   },
 
   "business": {
+    "industry": "Fleet Management & GPS Tracking",
     "products": [
       {
         "id": "dash-cam-h20p",
@@ -475,14 +517,18 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
       "Integration with Wasl Platform for regulatory compliance",
       "24-hour installation service",
       "24/7 field and technical support"
-    ]
+    ],
+
+    "domains": ["marketing"]
+    // Future: add "finance" (QuickBooks/Stripe), "operations" (fleet telemetry), etc.
   },
 
-  "marketing": {
+  "connectors": {
     "targetAudience": "B2B",
-    "channels": [
+    "sources": [
       {
-        "platform": "meta",
+        "connector": "meta",
+        "domain": "marketing",
         "enabled": true,
         "kpis": [
           {
@@ -499,7 +545,13 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
           }
         ]
       }
-    ]
+      // Future connectors: ga4 (marketing/analytics), gsc (seo),
+      // quickbooks (finance), stripe (finance), custom (operations)
+    ],
+    "report": {
+      "client": {},
+      "team": {}
+    }
   },
 
   "ai": {
@@ -514,7 +566,7 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
     "enableInsights": true,
     "enableVerdict": true,
     "enableRecommendations": true,
-    "enableCrossPlatformAnalysis": true
+    "enableCrossDomainAnalysis": true
   }
 }
 ```
@@ -526,7 +578,7 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 | Evaluation Area                  | Weight | Success Criteria                                                                                                                                                                                                 |
 | -------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Agent Design & Orchestration** | 30%    | • Multi-tenant architecture with proper isolation<br>• Config-driven (no hardcoding)<br>• Fault tolerance with graceful degradation<br>• Clean separation of concerns<br>• Proper error handling and retry logic |
-| **Insight Quality**              | 25%    | • Genuine cross-platform analysis<br>• Data-backed with specific numbers<br>• Actionable recommendations<br>• Minimum 3 unique insights per run<br>• Context-aware for business domain                           |
+| **Insight Quality**              | 25%    | • Genuine cross-domain analysis<br>• Data-backed with specific numbers<br>• Actionable recommendations<br>• Minimum 3 unique insights per run<br>• Context-aware for business domain                             |
 | **Code Quality**                 | 20%    | • End-to-end TypeScript<br>• Comprehensive tests (70%+ coverage)<br>• Clean architecture<br>• Proper separation of concerns<br>• Industry-standard patterns                                                      |
 | **Report Output**                | 15%    | • Professional formatting<br>• Configurable language/region<br>• All required KPIs<br>• Proper RTL/LTR support<br>• Working PDF/Word generation                                                                  |
 | **Architecture Explanation**     | 10%    | • Clear design decisions<br>• Multi-company support demonstrated<br>• Scalability considerations<br>• Security considerations                                                                                    |
@@ -561,18 +613,18 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 
 - Configuration loading for Masafh
 - Agent initialization and context injection
-- Data fetching from configured platforms
+- Data fetching from configured connectors
 - Insight generation with company context
 - Report generation in Arabic with proper RTL
 - Demonstration of switching to different company/language
-- Error handling when platforms fail
+- Error handling when connectors fail
 
 ### 3. Documentation
 
 **Required Documentation:**
 
 - Configuration schema reference
-- Platform integration guide (Core platform: Connectors [`operations/`](../../specs/00-core/01-connectors/operations/README.md): API reference, auth guides, architecture, **SECURITY.md**, runbooks, OpenAPI health)
+- Connector integration guide (Core platform: Connectors [`operations/`](../../specs/00-core/01-connectors/operations/README.md): API reference, auth guides, architecture, **SECURITY.md**, runbooks, OpenAPI health)
 - Localization guide
 - Deployment guide
 - Troubleshooting guide

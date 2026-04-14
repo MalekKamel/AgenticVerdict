@@ -4,13 +4,14 @@
 
 ## Project Overview
 
-**AgenticVerdict** is a configurable, multi-platform marketing analytics agent system that aggregates data from multiple platforms, generates reports with cross-platform insights, and delivers actionable verdicts. The system is architected for reusability across different companies, industries, regions, and languages through dynamic configuration injection.
+**AgenticVerdict** is a configurable, multi-business-domain intelligence platform that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates the collection, analysis, and reporting of business metrics through unified data integration, AI-powered analysis, and automated delivery of actionable insights. The system is architected for reusability across different companies, industries, regions, and languages through dynamic configuration injection.
 
 ### Key Characteristics
 
 - **Multi-Tenant Capable**: Supports multiple company configurations with complete tenant isolation
+- **Multi-Domain Intelligence**: Aggregates data from marketing, finance, operations, SEO, social media, and local business connectors
 - **Language Agnostic**: Report language determined by configuration; supports RTL/LTR rendering
-- **Platform Extensible**: New platforms can be added using plugin architecture
+- **Connector Extensible**: New data connectors can be added using plugin architecture across any business domain
 - **Template Driven**: Report templates are external, customizable files stored in database
 - **Observable**: Comprehensive logging, metrics, and tracing for all operations
 
@@ -58,13 +59,13 @@ Comprehensive technology research with justifications and trade-offs is availabl
 
 ## Phase Overview Table
 
-| Phase                               | Duration    | Key Objectives                       | Main Deliverables                                                           | Dependencies | Exit Criteria                                                                     |
-| ----------------------------------- | ----------- | ------------------------------------ | --------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------------------------- |
-| **0: Foundation**                   | Weeks 1-2   | Project setup, infrastructure, CI/CD | Monorepo, DB schemas, base auth, CI/CD pipelines                            | None         | Local dev environment running, DB migrations working, auth flow complete          |
-| **1: Platform Integration**         | Weeks 3-5   | Core platform connectors             | Meta, GA4, GSC, GBP, TikTok adapters; normalization; health/monitoring docs | Phase 0      | Can authenticate and fetch metrics per enabled platform (see Phase 01 acceptance) |
-| **2: Agent Runtime & Intelligence** | Weeks 6-8   | AI agent orchestration               | Agent framework, prompt templates, insight generation                       | Phase 1      | Agent can analyze data and generate basic insights                                |
-| **3: Report Generation & Delivery** | Weeks 9-11  | Report creation and delivery         | PDF/Excel generation, email delivery, template system                       | Phase 2      | Can generate and deliver complete reports via email                               |
-| **4: Production Hardening**         | Weeks 12-14 | Testing, optimization, deployment    | Comprehensive test suite, performance optimization, production deployment   | Phase 3      | System production-ready with monitoring and alerting                              |
+| Phase                               | Duration    | Key Objectives                       | Main Deliverables                                                             | Dependencies | Exit Criteria                                                                        |
+| ----------------------------------- | ----------- | ------------------------------------ | ----------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| **0: Foundation**                   | Weeks 1-2   | Project setup, infrastructure, CI/CD | Monorepo, DB schemas, base auth, CI/CD pipelines                              | None         | Local dev environment running, DB migrations working, auth flow complete             |
+| **1: Data Connectors**              | Weeks 3-5   | Multi-domain connector adapters      | GA4, Meta, GSC, GBP, TikTok connectors; normalization; health/monitoring docs | Phase 0      | Can authenticate and fetch metrics across business domains (see Phase 01 acceptance) |
+| **2: Agent Runtime & Intelligence** | Weeks 6-8   | AI agent orchestration               | Agent framework, prompt templates, cross-domain insight generation            | Phase 1      | Agent can analyze multi-domain data and generate actionable insights                 |
+| **3: Report Generation & Delivery** | Weeks 9-11  | Report creation and delivery         | PDF/Excel generation, email delivery, template system                         | Phase 2      | Can generate and deliver complete reports via email                                  |
+| **4: Production Hardening**         | Weeks 12-14 | Testing, optimization, deployment    | Comprehensive test suite, performance optimization, production deployment     | Phase 3      | System production-ready with monitoring and alerting                                 |
 
 ---
 

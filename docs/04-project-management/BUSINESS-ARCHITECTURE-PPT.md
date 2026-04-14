@@ -40,7 +40,7 @@
 │    │  Masafh     │       │  Retail Co  │       │  Startup X  │              │
 │    │             │       │             │       │             │              │
 │    │  Riyadh     │       │  Dubai      │       │  Cairo      │              │
-│    │  Arabic     │       │  English    │       │  French     │              │
+│    │  Arabic     │       │  English    │       │  English     │              │
 │    │  SAR        │       │  AED        │       │  EGP        │              │
 │    │             │       │             │       │             │              │
 │    │   All 5     │       │  Meta + Tik │       │ Meta + GA4  │              │
@@ -183,7 +183,7 @@
 │  │  • Multi-platform marketing intelligence system                      │   │
 │  │  • AI-powered cross-platform insights                                │   │
 │  │  • Automated report delivery (Email + Web)                           │   │
-│  │  • Multi-language support (Arabic, English, French...)               │   │
+│  │  • Multi-language support (Arabic, English...)               │   │
 │  └──────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌──────────────────────────────────────────────────────────────────────┐   │

@@ -26,33 +26,32 @@
 
 ### 1.1 What is AgenticVerdict?
 
-AgenticVerdict is a **multi-tenant SaaS platform** that automates marketing analytics for businesses by:
+AgenticVerdict is a **multi-business-domain intelligence platform** that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates:
 
-1. **Aggregating data** from multiple marketing platforms (Meta, GA4, GSC, GBP, TikTok)
-2. **Normalizing** platform-specific data into a unified schema
-3. **Analyzing** aggregated data using AI agents (Claude 3.5 Sonnet)
-4. **Generating** actionable insights and recommendations
-5. **Delivering** professional reports via email and API
+1. **Unified data integration** from multiple business connectors (GA4, Meta, GSC, GBP, TikTok, and future finance/operations connectors)
+2. **AI-powered analysis** using advanced LLMs (Claude 3.5 Sonnet) for cross-domain insights
+3. **Automated delivery** of actionable insights and recommendations via reports and multiple channels
+4. **Multi-tenant intelligence** serving both direct businesses and agency partners with complete data isolation
 
 ### 1.2 Core Value Proposition
 
-| Problem                                          | Solution                              |
-| ------------------------------------------------ | ------------------------------------- |
-| Data scattered across 5+ platforms               | Unified view with normalized data     |
-| Manual report compilation wastes 10+ hours/month | Automated generation in <60 seconds   |
-| Single-platform analysis misses patterns         | Cross-platform AI-powered correlation |
-| Generic reports don't fit business needs         | Configurable templates and KPIs       |
-| Language barriers for global teams               | Multi-language support with RTL/LTR   |
+| Problem                    | Impact                                | Solution                                                |
+| -------------------------- | ------------------------------------- | ------------------------------------------------------- |
+| **Data Fragmentation**     | Metrics scattered across 5+ platforms | Unified view with normalized data                       |
+| **Single-Domain Analysis** | Missed cross-domain patterns          | Cross-domain AI-powered correlation                     |
+| **Generic Reporting**      | One-size-fits-all doesn't fit         | Context-aware templates with actionable recommendations |
+| **Manual Compilation**     | 10+ hours/month wasted                | Automated generation in <60 seconds                     |
+| **Language Barriers**      | Global teams struggle                 | Multi-language support with RTL/LTR                     |
 
-### 1.3 Primary Use Case: Masafh
+### 1.3 Direct Business Example: Masafh
 
-**Masafh** (Riyadh-based B2B GPS fleet tracking) uses AgenticVerdict to:
+**Masafh** (Riyadh-based B2B GPS fleet tracking) is an example of a direct business using AgenticVerdict to:
 
-- Monitor marketing performance across Saudi Arabia
+- Monitor marketing performance across Saudi Arabia (Meta, GA4, TikTok)
+- Track SEO visibility via Google Search Console
 - Generate Arabic reports with proper RTL rendering
-- Track B2B fleet management KPIs
+- Analyze cross-domain correlations (marketing spend → fleet bookings)
 - Automate monthly reporting for multiple stakeholders
-- Correlate search visibility with ad performance
 
 ---
 
@@ -102,25 +101,36 @@ Client Request
               Business context, KPIs, language injected
 ```
 
-### 2.2 Plugin Architecture
+### 2.2 Connector Adapter Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Platform Adapter Interface                   │
+│                    Data Connector Interface                     │
+│           (Reusable across Business Domains)                    │
+│                                                                 │
+│  Connectors are domain-agnostic by design. A single connector   │
+│  can serve multiple business domains (marketing, finance,       │
+│  operations, etc.) based on the metrics it exposes. This        │
+│  maximizes reuse and minimizes per-domain integration effort.   │
 └─────────────────────────────────────────────────────────────────┘
 
 interface ConnectorAdapter {
-  platform: ConnectorType;           // 'meta' | 'ga4' | 'gsc' | 'gbp' | 'tiktok'
+  connector: ConnectorType;
+  getBusinessDomains(): BusinessDomain[];  // Domain tags
 
+  // Lifecycle
   authenticate(credentials): Promise<void>;
-  fetchMetrics(dateRange): Promise<PlatformData>;
-  normalizeData(rawData): Promise<NormalizedData>;
   isHealthy(): Promise<boolean>;
+
+  // Data operations
+  fetchMetrics(dateRange): Promise<PlatformData>;
+  normalizeData(rawData): NormalizedData;
 }
 
 ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐
 │   Meta    │  │    GA4    │  │    GSC    │  │    GBP    │  │   TikTok  │
-│  Adapter  │  │  Adapter  │  │  Adapter  │  │  Adapter  │  │  Adapter  │
+│ Marketing │  │Marketing, │  │ SEO,      │  │ Local,    │  │Marketing, │
+│  Social   │  │Finance    │  │Marketing  │  │Marketing  │  │  Social   │
 └───────────┘  └───────────┘  └───────────┘  └───────────┘  └───────────┘
        │             │             │             │             │
        └─────────────┴─────────────┴─────────────┴─────────────┘
@@ -173,26 +183,26 @@ Input Data
 
 ### 3.1 Applications
 
-| App        | Technology | Purpose         | Port |
-| ---------- | ---------- | --------------- | ---- |
-| **web**    | Next.js 15 | Frontend UI     | 3000 |
-| **api**    | Fastify    | External API    | 4000 |
-| **worker** | BullMQ     | Background jobs | N/A  |
+| App        | Technology         | Purpose         | Port |
+| ---------- | ------------------ | --------------- | ---- |
+| **web**    | TanStack Start     | Frontend UI     | 3000 |
+| **api**    | Fastify + tRPC v11 | Unified API     | 4000 |
+| **worker** | BullMQ             | Background jobs | N/A  |
 
 ### 3.2 Packages
 
-| Package               | Purpose                 | Key Exports                        |
-| --------------------- | ----------------------- | ---------------------------------- |
-| **core**              | Domain logic, entities  | `Tenant`, `Report`, `Company`      |
-| **config**            | Configuration schemas   | `CompanyConfig`, Zod schemas       |
-| **database**          | Drizzle ORM, migrations | `db`, schema exports               |
-| **platform-adapters** | Platform integrations   | `ConnectorAdapter` implementations |
-| **agent-runtime**     | AI orchestration        | `AgentFactory`, `ChatModel`        |
-| **report-generator**  | Report generation       | `generateReport()`, formatters     |
-| **ui**                | Shared UI components    | Mantine-based components           |
-| **i18n**              | Internationalization    | `useLocale()`, RTL utilities       |
-| **types**             | TypeScript types        | Shared type definitions            |
-| **testing**           | Test utilities          | Mock factories, test helpers       |
+| Package              | Purpose                   | Key Exports                                    |
+| -------------------- | ------------------------- | ---------------------------------------------- |
+| **core**             | Domain logic, entities    | `Tenant`, `Report`, `Company`, `CompanyConfig` |
+| **config**           | Configuration schemas     | `CompanyConfig`, Zod schemas                   |
+| **database**         | Drizzle ORM, migrations   | `db`, `dbScoped()`, schema exports             |
+| **data-connectors**  | Multi-domain integrations | `ConnectorAdapter` implementations             |
+| **agent-runtime**    | AI orchestration          | `AgentFactory`, `ChatModel`                    |
+| **report-generator** | Report generation         | `generateReport()`, formatters                 |
+| **ui**               | Shared UI components      | Mantine-based components                       |
+| **i18n**             | Internationalization      | `useLocale()`, RTL utilities                   |
+| **types**            | TypeScript types          | Shared type definitions                        |
+| **testing**          | Test utilities            | Mock factories, test helpers                   |
 
 ### 3.3 Directory Structure
 
@@ -241,13 +251,15 @@ agenticverdict/
 │   │   ├── test/               # Database tests
 │   │   └── drizzle.config.ts
 │   │
-│   ├── platform-adapters/      # Platform integrations
+│   ├── data-connectors/        # Multi-domain integrations
 │   │   └── src/
-│   │       ├── meta/           # Meta Ads adapter
-│   │       ├── ga4/            # GA4 adapter
-│   │       ├── gsc/            # GSC adapter
-│   │       ├── gbp/            # GBP adapter
-│   │       ├── tiktok/         # TikTok adapter
+│   │       ├── meta/           # Meta Ads adapter (Marketing, Social, Finance)
+│   │       ├── ga4/            # GA4 adapter (Marketing, Finance, Operations)
+│   │       ├── gsc/            # GSC adapter (SEO, Marketing)
+│   │       ├── gbp/            # GBP adapter (Local SEO, Marketing, Operations)
+│   │       ├── tiktok/         # TikTok adapter (Marketing, Social)
+│   │       ├── quickbooks/     # QuickBooks adapter (Finance) - planned
+│   │       ├── stripe/         # Stripe adapter (Finance, Operations) - planned
 │   │       └── base.ts         # Base adapter class
 │   │
 │   ├── agent-runtime/          # AI orchestration
@@ -496,15 +508,13 @@ interface CompanyConfig {
     textDirection: "ltr" | "rtl";
   };
 
-  // Marketing Channels
-  marketing: {
-    channels: PlatformConfig[]; // Enabled platforms
-    kpis: KPIConfig[]; // Tracked metrics
-    reporting: {
-      frequency: "weekly" | "monthly";
-      dayOfWeek: number;
-      recipients: string[];
-    };
+  // Business Context
+  business: {
+    industry: string;
+    products: string[];
+    valuePropositions: string[];
+    differentiators: string[];
+    targetAudience: string[];
   };
 
   // AI Configuration
@@ -521,15 +531,6 @@ interface CompanyConfig {
     enableVerdict: boolean;
     enableDelivery: boolean;
     enableScheduling: boolean;
-  };
-
-  // Business Context
-  business: {
-    industry: string;
-    products: string[];
-    valueProps: string[];
-    differentiators: string[];
-    targetAudience: string[];
   };
 }
 ```
