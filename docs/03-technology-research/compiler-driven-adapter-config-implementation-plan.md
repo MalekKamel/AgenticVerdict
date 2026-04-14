@@ -6,6 +6,8 @@
 **Status:** Ready for Implementation
 **Related Documents:** [Research Report](./compiler-driven-adapter-config-research.md)
 
+**Implementation note (2026-04-15):** Phase 1 bundling is implemented with **Vite** (`apps/api/vite.config.mjs`, `apps/worker/vite.config.mjs`, `tools/build/vite-node-cli.config.mjs`, script **`build:vite`**). The esbuild-oriented steps below are retained as historical plan text; use the checked-in Vite files as the source of truth.
+
 ---
 
 ## Overview

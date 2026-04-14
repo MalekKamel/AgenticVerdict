@@ -16,7 +16,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. **Configuration-Driven** — No company-specific logic in code; all business rules injected via `CompanyConfig` schema
 3. **Plugin Architecture** — Data connectors (`ConnectorAdapter` in `@agenticverdict/data-connectors`) share a common interface; new connectors are added without core changes
 4. **Template-Based Reporting** — Report templates stored in database, supporting RTL/LTR and multiple languages
-5. **Don't Reinvent the Wheel** — Use battle-tested, production-proven tools documented in `/docs/04-technology-research/`
+5. **Don't Reinvent the Wheel** — Use battle-tested, production-proven tools documented in `/docs/03-technology-research/`
+6. **UI Design System Governance** — Follow `/design/README.md` and `/design/docs/`; use **Pencil MCP** for all `.pen` design files; meet **WCAG 2.1 AA** and **RTL/LTR** requirements. **MCP-first design-to-code** (inspect `.pen` with MCP, load `get_guidelines` **Code** / **Tailwind** before UI edits, map tokens from MCP output): `/design/docs/generation/ui-generation-cheatsheet.md#mcp-first-design-to-code-workflow-repo-ssot`. Cursor agents: see `.cursor/rules/ui-guidelines.mdc` and `/prompts/ui-guidelines-enforcement.md`.
 
 ## Technology Stack
 
@@ -24,6 +25,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Runtime**: Node.js 20 LTS, TypeScript 5.3+
+- **Bundling**: **Vite** — `apps/web` dev server and production builds; **`apps/api`** and **`apps/worker`** use **Vite library mode** (`pnpm build:vite` in each app) via shared `tools/build/vite-node-cli.config.mjs`, outputting `dist/cli.mjs`. CI and local hardening run `NODE_ENV=production pnpm run verify:production-bundle` (includes mock-adapter dead-code scan).
 - **Frontend**: TanStack Start with Mantine UI v9 components
 - **API**: tRPC v11 unified API layer with Fastify server runtime (serves web, mobile, and CLI clients)
 
@@ -52,6 +54,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 agenticverdict/
 ├── Makefile                  # Docker Compose workflows (recommended entry point; `make help`)
 ├── .env.docker.example       # Local compose env template → `.env.docker` (gitignored)
+├── tools/
+│   └── build/                # Shared Vite presets (Node CLI bundles, smoke scripts)
 ├── apps/
 │   ├── web/          # TanStack Start web application
 │   ├── api/          # Standalone API service (Fastify + tRPC v11)
@@ -137,12 +141,12 @@ interface CompanyConfig {
 
 Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wide behavior:
 
-1. **Build constants** — `@agenticverdict/config/build-constants` (`IS_PRODUCTION`, `BUILD_CONFIG`, …). Used for production-only guards and bundler-friendly branching.
+1. **Build constants** — `@agenticverdict/config/build-constants` (`IS_PRODUCTION`, `BUILD_CONFIG`, …). Used for production-only guards and Vite `define` / tree-shaking friendly branching.
 2. **Runtime configuration** — `@agenticverdict/config/configuration` (`ConfigurationService`, `RuntimeConfig` via Zod, `isMockEnabledForPlatform`, `config`). Env-derived; safe to import from server/worker code; does **not** pull in the database package.
 3. **Postgres feature flags** — tables `feature_flags` / `tenant_feature_flags`; evaluate with **`createFeatureFlagService(db)`** from **`@agenticverdict/database`** (kept out of `packages/config` to avoid **`config` ↔ `database`** cycles).
 4. **Observability** — `agenticverdict_*` config/flag metrics in `@agenticverdict/observability`; **`auditConfigChange`** in `@agenticverdict/database` for config audit rows.
 
-**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images use TanStack Start production builds (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, and **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**.
+**Docker (API/worker):** multi-stage Dockerfiles use **`TARGET_STAGE`** (`development` | `test` | `production`) plus **`NODE_ENV`** build args; compose overlays include **`docker-compose.dev.yml`**, **`docker-compose.test.yml`**, and **`deploy/docker-compose.dev.override.yml`**. **Web** images use TanStack Start production builds (`NODE_ENV=production`); mock adapters in Docker apply to **api** and **worker**, not bundled web. **Prefer the repo root `Makefile` for Compose operations** (`make help`, `make setup`, `make preflight`, `make dev`, `make validate`, `make apps-up`, `make infra-up`, …); copy **`.env.docker.example`** to **`.env.docker`** for local compose env (gitignored). See **`docs/docker/quick-start.md`**, **`docs/docker/getting-started.md`**, **`changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`**, and **`changelog/2026-04-15-repository-wide-vite-migration.md`** (Vite CLI bundles).
 
 ## Data Connector Pattern
 
@@ -171,11 +175,17 @@ Each adapter includes:
 ### Building
 
 ```bash
-# Build all packages in dependency order
+# Build all packages in dependency order (TypeScript `tsc` / app pipelines)
 turbo run build
 
 # Build specific package
 turbo run build --filter=@agenticverdict/web
+
+# Production Vite bundles for API/worker + adapter mock-code verification (CI parity)
+NODE_ENV=production pnpm run verify:production-bundle
+
+# Optional: timed API/worker bundle probes
+pnpm benchmark:vite-bundles
 ```
 
 ### Testing
@@ -227,7 +237,7 @@ drizzle-kit studio
 - **api** — Fastify + tRPC v11 unified API server
 - **worker** — BullMQ background job processor
 
-Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational detail are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** the **`make dev`** target merges **`docker-compose.dev.yml`**; equivalently merge **`deploy/docker-compose.dev.override.yml`** with base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/06-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
+Container images, Compose stacks (apps, observability), security overlays, CI workflows (build, scan, release), and operational detail are documented under **`docs/docker/README.md`**. Treat that directory as the single source of truth for Docker. **Mock-friendly API/worker stacks:** the **`make dev`** target merges **`docker-compose.dev.yml`**; equivalently merge **`deploy/docker-compose.dev.override.yml`** with base + apps files (see **Layered runtime and infrastructure configuration** above). Other operational topics remain in `docs/05-reference/runbooks/` (for example API troubleshooting, email, phase handoffs).
 
 ## Testing Requirements
 
@@ -264,15 +274,15 @@ The `/docs` directory contains comprehensive project documentation:
 | `01-getting-started/`          | Project overview, navigation                                                                                                                      |
 | `02-planning-and-methodology/` | Development methodology, testing strategy, quality gates                                                                                          |
 | `/specs/`                      | Authoritative phase specifications (`00-core` and future domains) with tasks and acceptance criteria                                              |
-| `04-technology-research/`      | Comprehensive technology analysis with justifications                                                                                             |
-| `05-project-management/`       | Project charter, requirements, roadmap                                                                                                            |
-| `06-reference/`                | Prompts, templates, resources                                                                                                                     |
+| `03-technology-research/`      | Comprehensive technology analysis with justifications                                                                                             |
+| `04-project-management/`       | Project charter, requirements, roadmap                                                                                                            |
+| `05-reference/`                | Prompts, templates, resources                                                                                                                     |
 | `docker/`                      | **Docker SSOT:** images, Compose, security, observability, CI/CD, ops                                                                             |
 
 **Before making architectural decisions**, consult:
 
 - `/docs/architecture/` — Authoritative architecture documentation (business, technical, implementation)
-- `/docs/04-technology-research/` — Technology research with justifications
+- `/docs/03-technology-research/` — Technology research with justifications
 
 ### Phase 02/03 execution, audits, and roadmap follow-ups
 
@@ -283,7 +293,7 @@ When working on agent intelligence, report generation/delivery, or phase closure
 | Core intelligence spec    | `specs/00-core/02-intelligence/README.md`                                       | Tasks, acceptance criteria, execution plans for intelligence            |
 | Core insights spec        | `specs/00-core/03-insights/README.md`                                           | Report generation, templates, prerequisites                             |
 | Phase 02/03 consolidation | `changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`   | Dated summary (standalone execution-plan markdown was never checked in) |
-| Future roadmap            | `docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md` | Remaining gaps and recommended enhancement tracks                       |
+| Future roadmap            | `docs/04-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md` | Remaining gaps and recommended enhancement tracks                       |
 
 **Other dated implementation notes** live under `changelog/` (prefix by date).
 
@@ -392,24 +402,30 @@ Reports are generated from templates stored in the database:
 - **Implementation Guide**: `/docs/architecture/business/implementation-guide.md` — Current status, patterns, and conventions
 - **Architecture Research**: `/docs/architecture/business/research/` — Multi-tenant SaaS, connectors, AI configuration, report generation
 
+### Design System Documentation
+
+- **Design System SSOT**: `/design/docs/DESIGN-SSOT.md` — Single source of truth for design system architecture, MCP-first workflows, component reference, validation, and maintenance
+
 ### Project Documentation
 
-- **Requirements**: `/docs/05-project-management/requirements.md`
-- **Project Charter**: `/docs/05-project-management/project-charter.md`
-- **Roadmap**: `/docs/05-project-management/roadmap-development.md`
-- **Future roadmap (gaps & enhancements)**: `/docs/05-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`
+- **Requirements**: `/docs/04-project-management/requirements.md`
+- **Project Charter**: `/docs/04-project-management/project-charter.md`
+- **Roadmap**: `/docs/04-project-management/roadmap-development.md`
+- **Future roadmap (gaps & enhancements)**: `/docs/04-project-management/future-roadmap-gaps-and-enhancements-2026-04-08.md`
 - **Core platform: Intelligence**: `/specs/00-core/02-intelligence/README.md`
 - **Core platform: Insights**: `/specs/00-core/03-insights/README.md`
 - **Phase 02/03 consolidation (2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Changelog (Phase 02/03 consolidation, 2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
-- **Technology Research**: `/docs/04-technology-research/research-overview.md`
+- **Technology Research**: `/docs/03-technology-research/research-overview.md`
 
 ## Active Technologies
 
 - TypeScript 5.3+ (strict mode), React 18+ (001-ui-foundation)
+- Vite 8+ (monorepo bundling: web app + Node CLI library builds for api/worker) (repository-wide Vite migration)
 - N/A (frontend design system; tenant theme config from backend API) (001-ui-foundation)
 
 ## Recent Changes
 
 - 001-ui-foundation: Added TypeScript 5.3+ (strict mode), React 18+
+- 2026-04-15: Repository-wide **Vite** adoption for production API/worker bundles and tooling; see `changelog/2026-04-15-repository-wide-vite-migration.md`

@@ -1,0 +1,9 @@
+{
+  "version": "2.11",
+  "children": [],
+  "imports": {
+    "tokens": "../system/design-tokens.lib.pen",
+    "atoms": "../system/atoms.lib.pen",
+    "molecules": "../system/molecules.lib.pen"
+  }
+}

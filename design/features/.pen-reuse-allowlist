@@ -1,0 +1,6 @@
+# Optional: one full reusable `name` per line (exact match) to allow a collision
+# with a system root prefix when an approved exception applies (see
+# pen-feature-ref-reusability-implementation-plan.md §5.1).
+#
+# Example:
+# Button/Default

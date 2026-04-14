@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * Critical-path smoke: production build + Next start (see playwright.config.mjs).
+ * Critical-path smoke: Vite production build + Nitro server (see playwright.config.mjs).
  * Extends locale coverage with a simple navigation path.
  */
 test.describe("Critical path smoke", () => {

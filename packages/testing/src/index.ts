@@ -1,4 +1,3 @@
-export { mockConnector } from "./fixtures/connectors";
 export { createTenant, type TestTenant } from "./factories/tenant";
 export { createTestCompanyConfig } from "./create-test-company-config";
 export {

@@ -1,0 +1,47 @@
+{
+  "name": "@agenticverdict/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles": "./src/styles/index.css",
+    "./tokens": "./src/tokens/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage",
+    "ladle": "ladle serve"
+  },
+  "dependencies": {
+    "@agenticverdict/config": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
+    "@mantine/core": "^7.15.2",
+    "@mantine/hooks": "^7.15.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.469.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@axe-core/react": "^4.10.1",
+    "@ladle/react": "^5.1.1",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.0.0",
+    "typescript": "^5",
+    "vitest": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+---
+description: Project overview, architecture, and conventions from CLAUDE.md
+alwaysApply: true
+---
+
+# Project context (CLAUDE.md)
+
+Use the repository root **`CLAUDE.md`** as the primary guide for this codebase: multi-tenancy, `CompanyConfig`, stack (Turborepo, Vite, TanStack Start, tRPC, Drizzle), Docker/Make workflows, testing expectations, and documentation map. It mirrors the guidance used for Claude Code; keep it in sync when project-wide conventions change.
+
+@CLAUDE.md

@@ -1,7 +1,7 @@
 "use client";
 
 import { ActionIcon, useMantineColorScheme } from "@mantine/core";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/react";
 
 export function ColorSchemeToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();

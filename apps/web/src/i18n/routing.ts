@@ -1,10 +1,11 @@
-import { defineRouting } from "next-intl/routing";
+/**
+ * Locale routing configuration (TanStack Router + prefix).
+ * Previously used with next-intl; kept as the single source for supported locales.
+ */
+export const routing = {
+  locales: ["en", "ar"] as const,
+  defaultLocale: "en" as const,
+  localePrefix: "always" as const,
+};
 
-export const routing = defineRouting({
-  locales: ["en", "ar"],
-  defaultLocale: "en",
-  localePrefix: "always",
-  localeCookie: {
-    name: "AV_LOCALE",
-  },
-});
+export type AppLocale = (typeof routing.locales)[number];

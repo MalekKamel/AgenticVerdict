@@ -52,7 +52,7 @@ jobs:
       - name: Verify build constants
         run: pnpm run verify:build-config
 
-      - name: Production esbuild bundles (mock-code scan)
+      - name: Production Vite bundles (mock-code scan)
         env:
           NODE_ENV: production
         run: pnpm run verify:production-bundle

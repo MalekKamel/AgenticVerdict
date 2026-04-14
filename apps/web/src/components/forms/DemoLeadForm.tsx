@@ -2,7 +2,7 @@
 
 import { Alert, Stack } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/react";
 import { z } from "zod";
 
 import { AppButton } from "@/components/ui/AppButton";

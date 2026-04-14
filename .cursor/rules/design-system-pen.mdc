@@ -1,0 +1,12 @@
+---
+description: Pencil MCP required for design-system .pen edits
+globs: design/**/*.pen
+alwaysApply: false
+---
+
+# `.pen` files in `design/`
+
+- Use **Pencil MCP** to read and modify design content (`batch_get`, `batch_design`, `open_document`, `get_screenshot`, `export_nodes`, `get_guidelines` as needed).
+- Implementing application UI from these designs: follow [MCP-first design-to-code workflow](/design/docs/generation/ui-generation-cheatsheet.md#mcp-first-design-to-code-workflow-repo-ssot) (MCP does not emit `.tsx` files; load **Code** / **Tailwind** guides before UI edits).
+- After changes, run **`pnpm run validate:pen-files`** from the repo root.
+- Follow node naming and token usage described in `/design/README.md`.

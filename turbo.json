@@ -3,9 +3,9 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".output/**", ".next/**", "!.next/cache/**"]
     },
-    "build:esbuild": {
+    "build:vite": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },

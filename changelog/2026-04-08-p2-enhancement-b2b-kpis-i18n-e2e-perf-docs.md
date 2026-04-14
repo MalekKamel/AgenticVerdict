@@ -45,7 +45,7 @@
 
 ### Root
 
-- **`scripts/performance-baseline.mjs`** — Timed esbuild + agent-runtime typecheck; optional markdown append.
+- **`scripts/performance-baseline.mjs`** — Timed Vite API/worker bundles + agent-runtime typecheck; optional markdown append.
 - **`package.json`** — `benchmark:performance-baseline` script.
 
 ---

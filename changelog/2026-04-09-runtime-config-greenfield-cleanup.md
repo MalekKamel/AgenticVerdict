@@ -104,7 +104,7 @@ Commands run after this cleanup:
 - **`pnpm exec vitest run packages/config`**
 - **`pnpm check:cycles`**
 - **`pnpm typecheck`**
-- **`pnpm verify:production-bundle`** (API/worker esbuild + adapter-factory smoke bundle: **no mock symbols** in scanned outputs)
+- **`pnpm verify:production-bundle`** (API/worker Vite bundles + adapter-factory smoke bundle: **no mock symbols** in scanned outputs)
 
 ---
 

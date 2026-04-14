@@ -114,7 +114,7 @@
 │  │  • Circular dependency check                          │  │
 │  │  • Unit tests with coverage (Vitest)                  │  │
 │  │  • Verify build constants                            │  │
-│  │  • Production esbuild bundles (mock-code scan)        │  │
+│  │  • Production Vite bundles (mock-code scan)           │  │
 │  │  • Scenario orchestration tests (R01-R12)            │  │
 │  │  • Phase 01 integration tests                        │  │
 │  │  • OpenAPI lint                                      │  │

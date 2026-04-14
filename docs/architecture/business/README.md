@@ -167,9 +167,9 @@ See **[Research README](./research/README.md)** for complete research documentat
 | Document                | Location                                             | Purpose                        |
 | ----------------------- | ---------------------------------------------------- | ------------------------------ |
 | **System Overview**     | `/docs/00-overview/system-overview.md`               | Comprehensive system reference |
-| **Requirements**        | `/docs/05-project-management/requirements.md`        | Product requirements           |
-| **Project Charter**     | `/docs/05-project-management/project-charter.md`     | Project vision and scope       |
-| **Development Roadmap** | `/docs/05-project-management/roadmap-development.md` | Phase-by-phase plan            |
+| **Requirements**        | `/docs/04-project-management/requirements.md`        | Product requirements           |
+| **Project Charter**     | `/docs/04-project-management/project-charter.md`     | Project vision and scope       |
+| **Development Roadmap** | `/docs/04-project-management/roadmap-development.md` | Phase-by-phase plan            |
 
 ### Development Phases
 
@@ -185,7 +185,7 @@ See **[Research README](./research/README.md)** for complete research documentat
 
 | Topic                            | Location                                                |
 | -------------------------------- | ------------------------------------------------------- |
-| **Technology Research Overview** | `/docs/04-technology-research/research-overview.md`     |
+| **Technology Research Overview** | `/docs/03-technology-research/research-overview.md`     |
 | **Testing Strategy**             | `/docs/02-planning-and-methodology/testing-strategy.md` |
 | **Docker Documentation**         | `/docs/docker/README.md`                                |
 

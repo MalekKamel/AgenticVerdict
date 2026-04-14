@@ -98,6 +98,9 @@ packages/
 ### 2.2 Application Structure
 
 ```
+tools/
+└── build/              # Shared Vite helpers (e.g. Node CLI bundles for api/worker)
+
 apps/
 ├── web/                # TanStack Start application
 │   ├── src/

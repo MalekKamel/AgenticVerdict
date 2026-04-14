@@ -143,7 +143,7 @@ Apply **`0003_feature_flags`** in each environment using the project’s standar
 
 - **`pnpm check:cycles`** — no new circular imports
 - **`pnpm typecheck`**
-- **`pnpm verify:production-bundle`** — production esbuild outputs and adapter-factory smoke bundle still show **no mock adapter symbols**
+- **`pnpm verify:production-bundle`** — production Vite outputs and adapter-factory smoke bundle still show **no mock adapter symbols**
 - Vitest: **`packages/config`**, **`packages/platform-adapters`** (adapter-factory + integration + node-env + security), **`packages/database`** schema test, **`packages/observability`** (metrics modules)
 
 ---

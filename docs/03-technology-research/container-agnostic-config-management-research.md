@@ -37,7 +37,7 @@ This research investigates production-grade approaches for **container-agnostic 
 **Configuration Flow:**
 
 ```
-Build Time (esbuild) → Module Evaluation (NODE_ENV) → Runtime Behavior
+Build Time (Vite production bundle) → Module Evaluation (NODE_ENV) → Runtime Behavior
 ```
 
 **Specific Problems:**

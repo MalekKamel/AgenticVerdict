@@ -1,0 +1,32 @@
+name: UI guidelines enforcement
+
+on:
+  pull_request:
+    paths:
+      - "design/**"
+      - ".github/workflows/ui-guidelines-enforcement.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "design/**"
+      - ".github/workflows/ui-guidelines-enforcement.yml"
+
+concurrency:
+  group: ui-guidelines-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-pen-files:
+    name: Validate .pen files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Pencil .pen files (Python)
+        run: python3 design/scripts/validate-pen-files.py
+
+      - name: Feature .pen reuse heuristics (Phase B)
+        run: python3 design/scripts/validate-feature-pen-reuse.py --strict
