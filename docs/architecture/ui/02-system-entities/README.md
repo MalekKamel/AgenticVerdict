@@ -228,14 +228,14 @@ Templates (Page Layouts)
 
 ```css
 /* Global tokens (brand-agnostic) */
---av-color-primary: #228be6;
---av-spacing-md: 1rem;
+--global-color-primary: #228be6;
+--global-spacing-md: 1rem;
 
 /* Brand tokens (tenant-specific) */
 --brand-color-primary: #ff6b35; /* Masafh orange */
 
 /* Component tokens (composed) */
---button-primary-bg: var(--brand-color-primary, var(--av-color-primary));
+--button-primary-bg: var(--brand-color-primary, var(--global-color-primary));
 ```
 
 ---

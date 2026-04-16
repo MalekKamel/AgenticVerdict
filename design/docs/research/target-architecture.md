@@ -118,7 +118,7 @@ assets/
 
 ### 3.3 Token Naming
 
-- **Global tokens**: `--av-<category>-<value>-<modifier>` (e.g., `--av-color-blue-500`, `--av-spacing-4`)
+- **Global tokens**: `--global-<category>-<value>-<modifier>` (e.g., `--global-color-blue-500`, `--global-spacing-4`)
 - **Brand tokens**: `--brand-<category>-<purpose>` (e.g., `--brand-color-primary`, `--brand-font-family`)
 - **Component tokens**: `--<component>-<property>-<state>` (e.g., `--button-background-primary-default`, `--input-border-error`)
 
@@ -167,7 +167,6 @@ Tokens are consumed via CSS variables: `var(--button-background-primary-default)
 - Must reference system components via `ref` (no duplication)
 - Document business context and usage scenarios
 - Follow feature naming conventions
-- Validate with `pnpm run validate:pen-files`
 
 ### 5.3 Asset Validation
 
@@ -183,8 +182,7 @@ Tokens are consumed via CSS variables: `var(--button-background-primary-default)
 1. **Check existing components**: Use `batch_get` to verify no duplicates
 2. **Determine location**: System vs feature based on reusability
 3. **Create in .pen file**: Use `batch_design` following atomic design hierarchy
-4. **Validate**: Run `pnpm run validate:pen-files`
-5. **Implement in code**: Follow MCP-first workflow to create React components
+4. **Implement in code**: Follow MCP-first workflow to create React components
 
 ### 6.2 Updating Existing Components
 
@@ -208,4 +206,3 @@ This target architecture provides a scalable foundation for AgenticVerdict desig
 
 1. Execute [pen-architecture-implementation-plan.md](./pen-architecture-implementation-plan.md) (phased migration and checklist).
 2. Update `designREADME.md` and generation docs when the tree is cut over.
-3. Run `pnpm run validate:pen-files` after each `.pen` change batch.

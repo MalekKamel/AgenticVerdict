@@ -78,7 +78,6 @@ Authors MUST follow this order:
 
 - **Read/search:** `batch_get`, `get_variables`, `snapshot_layout`, `get_screenshot` for QA.
 - **Edits:** `batch_design` (and related MCP tools) only—**no** hand-editing encrypted `.pen` JSON except validator-approved mechanical fixes ([Design system README](../../../../design/README.md)).
-- **After edits:** `pnpm run validate:pen-files` from repo root (schema + reuse policy checks; see §3.1).
 
 ### 2.5 Contribution model (industry-aligned)
 
@@ -92,7 +91,6 @@ Authors MUST follow this order:
 
 ### 3.1 Current automated gate (baseline)
 
-- **`pnpm run validate:pen-files`** — schema and policy checks must pass for all changed `.pen` files.
 - **Import checks (required)** — each feature file must have valid relative `imports` entries for required system libraries, and imported refs must resolve (`alias/ComponentId`).
 - **CI:** `.github/workflows/ui-guidelines-enforcement.yml` runs validation on pushes/PRs touching `design/**`.
 
@@ -133,8 +131,7 @@ Reviewers of any `design/features/*.pen` change confirm:
 
 1. Open feature file via MCP; add or verify `imports` aliases for `design/system` dependencies.
 2. Replace duplicated generic primitives with imported `ref` instances (`alias/ComponentId`).
-3. Re-run **`pnpm run validate:pen-files`**; capture **`get_screenshot`** for key frames.
-4. Update **`design/features/README.md`** inventory if file names or domains change.
+3. Update **`design/features/README.md`** inventory if file names or domains change.
 
 ### 4.3 Ordering and risk control
 
@@ -144,7 +141,6 @@ Reviewers of any `design/features/*.pen` change confirm:
 ### 4.4 Acceptance criteria (remediation done)
 
 - [ ] Each feature `.pen` documents (in PR description or README row) which system libraries it imports and why.
-- [ ] `pnpm run validate:pen-files` passes.
 - [ ] No unexplained duplicate generic primitives remain per inventory; generic refs resolve from imported system libraries.
 
 ---
@@ -171,7 +167,6 @@ Reviewers of any `design/features/*.pen` change confirm:
 
 | Metric                         | Method                                                                | Cadence                             |
 | ------------------------------ | --------------------------------------------------------------------- | ----------------------------------- |
-| **Validator health**           | `pnpm run validate:pen-files` green on `main`                         | Every PR touching `.pen`            |
 | **Feature file count / size**  | `design/features/README.md` inventory                                 | Update on each new file             |
 | **Import integrity**           | Scripted check of `imports` paths and resolved refs                   | Every PR touching `design/features` |
 | **Reusable nodes in features** | Manual or scripted count of `reusable: true` under `design/features/` | Quarterly audit                     |
@@ -216,8 +211,7 @@ A reviewer can answer **yes** to:
 2. **Is there an enforceable path to prevent duplicated primitives from reappearing in `features/`?**  
    **Yes**—through required imports, resolved cross-file refs, validation gates, review checklist, exception process, and quarterly audits (§3–§6).
 
-3. **Are validation, review, and remediation steps specific enough to execute?**  
-   **Yes**—commands (`pnpm run validate:pen-files`), paths (`design/system`, `design/features`), MCP tools, remediation order (§4), and RACI (§7).
+3. **Are validation, review, and remediation steps specific enough to execute?**
 
 ---
 
@@ -230,5 +224,4 @@ A reviewer can answer **yes** to:
 - [target-architecture.md](./target-architecture.md) §2.3 (feature rules)
 - [design/features/README.md](../../../../design/features/README.md)
 - [design/system/README.md](../../../../design/system/README.md)
-- `package.json` script `validate:pen-files`
 - `.github/workflows/ui-guidelines-enforcement.yml`

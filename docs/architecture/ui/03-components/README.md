@@ -252,17 +252,17 @@ All components consume design tokens from the three-tier system:
 
 ```typescript
 // Global tokens (brand-agnostic)
---av-color-primary: #228BE6;
---av-spacing-md: 1rem;
---av-radius-md: 0.5rem;
+--global-color-primary: #228BE6;
+--global-spacing-md: 1rem;
+--global-radius-md: 0.5rem;
 
 // Brand tokens (tenant-specific)
 --brand-color-primary: #FF6B35;  // Masafh orange
 --brand-logo-url: /logos/masafh.svg;
 
 // Component tokens (composed from global/brand)
---button-primary-bg: var(--brand-color-primary, var(--av-color-primary));
---card-padding: var(--av-spacing-md);
+--button-primary-bg: var(--brand-color-primary, var(--global-color-primary));
+--card-padding: var(--global-spacing-md);
 ```
 
 **Usage in Components:**

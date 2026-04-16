@@ -29,7 +29,6 @@ The implementation plan must explicitly incorporate and enforce:
 
 - Same-document `ref` semantics for Pencil `.pen` authoring.
 - Reuse-first feature authoring (no ad hoc duplicate generic atoms/molecules in feature files).
-- Validation and governance workflow (`pnpm run validate:pen-files`, PR checks, exception handling).
 - Feature coverage requirement: reusable design-system patterns must be used across **all** feature files, including `/design/features/auth.pen`.
 
 ### Required Planning Constraints
@@ -41,7 +40,7 @@ Include and enforce the following:
    - Require Pencil MCP extraction/inspection steps for tokens and component structure before implementation decisions.
    - Require feature `.pen` implementation guidance to follow reuse governance from `/design/docs/research/pen-feature-ref-reusability-implementation-plan.md`.
 2. **Three-tier token architecture**
-   - Global (`--av-*`) -> Brand (`--brand-*`) -> Component (`--component-*`).
+   - Global (`--global-*`) -> Brand (`--brand-*`) -> Component (`--component-*`).
    - Define fallback strategy and token traceability from design to code.
 3. **Component implementation standards**
    - Use Mantine v9 patterns and `@agenticverdict/ui` composition.

@@ -53,10 +53,10 @@ Design System Frame
 --input-success-text          Success message text color
 --input-height-{size}         Input height per size
 --input-padding-x-{size}      Horizontal padding per size
---av-font-size-{size}         Font size per input size
---av-spacing-{size}           Spacing values
---av-radius-md                Border radius
---av-transition-normal        Transition timing
+--global-font-size-{size}         Font size per input size
+--global-spacing-{size}           Spacing values
+--global-radius-md                Border radius
+--global-transition-normal        Transition timing
 --focus-ring-color            Focus indicator color
 ```
 
@@ -136,12 +136,12 @@ inputBase = I(document, {
   name: "Input/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
   paddingInlineStart: "$--input-padding-x-md",
   paddingInlineEnd: "$--input-padding-x-md",
-  paddingTop: "$--av-spacing-sm",
-  paddingBottom: "$--av-spacing-sm",
-  cornerRadius: "$--av-radius-md",
+  paddingTop: "$--global-spacing-sm",
+  paddingBottom: "$--global-spacing-sm",
+  cornerRadius: "$--global-radius-md",
   fill: "$--input-bg",
   stroke: {
     color: "$--input-border",
@@ -149,7 +149,7 @@ inputBase = I(document, {
   },
   height: "$--input-height-md",
   alignment: "center",
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Input text field
@@ -158,8 +158,8 @@ inputText = I(inputBase, {
   id: "input-text",
   name: "Text",
   content: "Enter text...",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-normal",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-normal",
   fill: "$--input-text",
   textAlign: "start",
 });
@@ -211,7 +211,7 @@ passwordToggle = I(inputPassword, {
   id: "password-toggle",
   name: "VisibilityToggle",
   icon: "eye",
-  size: "$--av-font-size-base",
+  size: "$--global-font-size-base",
   marginInlineStart: "auto",
 });
 
@@ -244,9 +244,9 @@ searchIcon = I(inputSearch, {
   id: "search-icon",
   name: "SearchIcon",
   icon: "search",
-  size: "$--av-font-size-base",
+  size: "$--global-font-size-base",
   fill: "$--input-placeholder",
-  marginInlineEnd: "$--av-spacing-sm",
+  marginInlineEnd: "$--global-spacing-sm",
 });
 
 U(inputSearch + "/text", {
@@ -270,7 +270,7 @@ inputSm = I(document, {
 });
 
 U(inputSm + "/text", {
-  fontSize: "$--av-font-size-sm",
+  fontSize: "$--global-font-size-sm",
 });
 
 // Medium (md) - Default
@@ -285,7 +285,7 @@ inputMd = I(document, {
 });
 
 U(inputMd + "/text", {
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
 });
 
 // Large (lg)
@@ -300,7 +300,7 @@ inputLg = I(document, {
 });
 
 U(inputLg + "/text", {
-  fontSize: "$--av-font-size-lg",
+  fontSize: "$--global-font-size-lg",
 });
 ```
 
@@ -369,9 +369,9 @@ inputDisabled = I(document, {
   ref: "input-text-md",
   id: "input-text-md-disabled",
   name: "Input/Text/Medium/Disabled",
-  fill: "$--av-color-gray-100",
+  fill: "$--global-color-gray-100",
   stroke: {
-    color: "$--av-color-gray-200",
+    color: "$--global-color-gray-200",
     thickness: 1,
   },
   opacity: 0.6,
@@ -379,7 +379,7 @@ inputDisabled = I(document, {
 });
 
 U(inputDisabled + "/text", {
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 
 // Readonly state
@@ -388,9 +388,9 @@ inputReadonly = I(document, {
   ref: "input-text-md",
   id: "input-text-md-readonly",
   name: "Input/Text/Medium/Readonly",
-  fill: "$--av-color-gray-50",
+  fill: "$--global-color-gray-50",
   stroke: {
-    color: "$--av-color-gray-200",
+    color: "$--global-color-gray-200",
     thickness: 1,
   },
 });

@@ -69,7 +69,6 @@ The target outcome is:
 1. Create/rename `.lib.pen` files in `/design/system`.
 2. Preserve component IDs and reusable node names to avoid breaking ref targets.
 3. Keep old `.pen` filenames only as temporary compatibility artifacts (if needed), with clear deprecation note and removal date.
-4. Run `pnpm run validate:pen-files` after migration.
 
 Deliverable:
 
@@ -113,13 +112,12 @@ Deliverable:
 
 ## WS4: Validation, CI, and governance updates
 
-1. Ensure `validate:pen-files` documentation describes `.lib.pen` conventions.
-2. Update any script docs/checklists that hardcode old filenames.
-3. Add checklist item to PR template requiring:
+1. Update any script docs/checklists that hardcode old filenames.
+2. Add checklist item to PR template requiring:
    - valid library imports,
    - resolved refs,
    - no feature duplication of generic primitives.
-4. Document temporary compatibility window (if dual-file strategy is used).
+3. Document temporary compatibility window (if dual-file strategy is used).
 
 Deliverable:
 
@@ -212,7 +210,6 @@ Recommendation:
 
 - All canonical system library files in `/design/system` use `.lib.pen`.
 - `/design/features/*.pen` imports and refs target `.lib.pen` files.
-- `pnpm run validate:pen-files` passes after migration.
 - Active documentation and prompts use updated file names and semantics.
 - PR/review guidance enforces library import usage and duplication prevention.
 

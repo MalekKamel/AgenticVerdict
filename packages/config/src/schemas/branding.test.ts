@@ -26,8 +26,8 @@ describe("designTokensSchema", () => {
 describe("designTokensToCssVariables", () => {
   it("generates CSS custom properties", () => {
     const vars = designTokensToCssVariables(defaultDesignTokens);
-    expect(vars["--av-color-primary"]).toBe(defaultDesignTokens.colors.primary);
-    expect(vars["--av-font-body"]).toBe(defaultDesignTokens.typography.families.body);
+    expect(vars["--global-color-primary"]).toBe(defaultDesignTokens.colors.primary);
+    expect(vars["--global-font-body"]).toBe(defaultDesignTokens.typography.families.body);
   });
 });
 
@@ -44,7 +44,7 @@ describe("mantineThemeFromDesignTokens", () => {
   it("embeds CSS variables under other.designTokensCssVariables", () => {
     const theme = mantineThemeFromDesignTokens(defaultDesignTokens);
     const other = theme.other as { designTokensCssVariables: Record<string, string> };
-    expect(other.designTokensCssVariables["--av-color-primary"]).toBe(
+    expect(other.designTokensCssVariables["--global-color-primary"]).toBe(
       defaultDesignTokens.colors.primary,
     );
   });

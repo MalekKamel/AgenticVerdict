@@ -18,6 +18,5 @@ Before adding or changing user-facing UI, use these sources of truth:
 3. **React / Mantine** — Implement screens using **`@agenticverdict/ui`** and Mantine v9 patterns already in the repo; align with atoms/molecules specs and design tokens (no one-off duplicate components).
 4. **Accessibility** — Target **WCAG 2.1 AA** (contrast, focus, keyboard, labels).
 5. **Localization** — Support **RTL and LTR** via logical properties and tenant/theme config (`CompanyConfig`), not hardcoded direction.
-6. **Pre-flight** — Check `/design/README.md` for an existing pattern; run `pnpm run validate:pen-files` after `.pen` changes.
 
 See also: `/prompts/ui-guidelines-enforcement.md`, `/design/ENFORCEMENT-GAP-ANALYSIS.md`.

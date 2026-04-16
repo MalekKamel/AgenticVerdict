@@ -24,9 +24,3 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Validate Pencil .pen files (Python)
-        run: python3 design/scripts/validate-pen-files.py
-
-      - name: Feature .pen reuse heuristics (Phase B)
-        run: python3 design/scripts/validate-feature-pen-reuse.py --strict

@@ -42,20 +42,20 @@ This guide provides a comprehensive, step-by-step approach to translating design
 ### Three-Tier Design Token System
 
 ```
-Global Tokens (--av-*) → Brand Tokens (--brand-*) → Component Tokens (--component-*)
+Global Tokens (--global-*) → Brand Tokens (--brand-*) → Component Tokens (--component-*)
 ```
 
 **Example**:
 
 ```css
 /* Global: Brand-agnostic primitive */
---av-color-blue-500: #228be6;
+--global-color-blue-500: #228be6;
 
 /* Brand: Tenant-specific override */
 --brand-color-primary: #ff6b35; /* Masafh orange */
 
 /* Component: Composed from global/brand */
---button-primary-bg: var(--brand-color-primary, var(--av-color-blue-500));
+--button-primary-bg: var(--brand-color-primary, var(--global-color-blue-500));
 ```
 
 ### Key Requirements
@@ -180,64 +180,64 @@ Convert mapped tokens into CSS custom properties with proper fallbacks:
 /* packages/ui/src/tokens/global.css */
 :root {
   /* Global Color Tokens */
-  --av-color-blue-50: #e3f2fd;
-  --av-color-blue-100: #bbdefb;
-  --av-color-blue-200: #90caf9;
-  --av-color-blue-300: #64b5f6;
-  --av-color-blue-400: #42a5f5;
-  --av-color-blue-500: #228be6;
-  --av-color-blue-600: #1976d2;
-  --av-color-blue-700: #1565c0;
-  --av-color-blue-800: #0d47a1;
+  --global-color-blue-50: #e3f2fd;
+  --global-color-blue-100: #bbdefb;
+  --global-color-blue-200: #90caf9;
+  --global-color-blue-300: #64b5f6;
+  --global-color-blue-400: #42a5f5;
+  --global-color-blue-500: #228be6;
+  --global-color-blue-600: #1976d2;
+  --global-color-blue-700: #1565c0;
+  --global-color-blue-800: #0d47a1;
 
   /* Global Spacing Tokens (4px base unit) */
-  --av-spacing-0: 0;
-  --av-spacing-1: 0.25rem; /* 4px */
-  --av-spacing-2: 0.5rem; /* 8px */
-  --av-spacing-3: 0.75rem; /* 12px */
-  --av-spacing-4: 1rem; /* 16px */
-  --av-spacing-5: 1.25rem; /* 20px */
-  --av-spacing-6: 1.5rem; /* 24px */
-  --av-spacing-8: 2rem; /* 32px */
+  --global-spacing-0: 0;
+  --global-spacing-1: 0.25rem; /* 4px */
+  --global-spacing-2: 0.5rem; /* 8px */
+  --global-spacing-3: 0.75rem; /* 12px */
+  --global-spacing-4: 1rem; /* 16px */
+  --global-spacing-5: 1.25rem; /* 20px */
+  --global-spacing-6: 1.5rem; /* 24px */
+  --global-spacing-8: 2rem; /* 32px */
 
   /* Global Typography Tokens */
-  --av-font-size-xs: 0.75rem; /* 12px */
-  --av-font-size-sm: 0.875rem; /* 14px */
-  --av-font-size-md: 1rem; /* 16px */
-  --av-font-size-lg: 1.125rem; /* 18px */
-  --av-font-size-xl: 1.25rem; /* 20px */
+  --global-font-size-xs: 0.75rem; /* 12px */
+  --global-font-size-sm: 0.875rem; /* 14px */
+  --global-font-size-md: 1rem; /* 16px */
+  --global-font-size-lg: 1.125rem; /* 18px */
+  --global-font-size-xl: 1.25rem; /* 20px */
 
   /* Global Radius Tokens */
-  --av-radius-sm: 0.25rem; /* 4px */
-  --av-radius-md: 0.5rem; /* 8px */
-  --av-radius-lg: 0.75rem; /* 12px */
-  --av-radius-xl: 1rem; /* 16px */
-  --av-radius-full: 9999px; /* Pill shape */
+  --global-radius-sm: 0.25rem; /* 4px */
+  --global-radius-md: 0.5rem; /* 8px */
+  --global-radius-lg: 0.75rem; /* 12px */
+  --global-radius-xl: 1rem; /* 16px */
+  --global-radius-full: 9999px; /* Pill shape */
 }
 
 /* Brand Tokens (tenant-specific overrides) */
 :root {
-  --brand-color-primary: var(--av-color-blue-700);
-  --brand-color-secondary: var(--av-color-gray-600);
-  --brand-color-success: var(--av-color-green-700);
-  --brand-color-warning: var(--av-color-yellow-700);
-  --brand-color-danger: var(--av-color-red-700);
+  --brand-color-primary: var(--global-color-blue-700);
+  --brand-color-secondary: var(--global-color-gray-600);
+  --brand-color-success: var(--global-color-green-700);
+  --brand-color-warning: var(--global-color-yellow-700);
+  --brand-color-danger: var(--global-color-red-700);
 }
 
 /* Component Tokens (composed from global/brand) */
 :root {
   /* Button Tokens */
-  --button-primary-bg: var(--brand-color-primary, var(--av-color-blue-700));
+  --button-primary-bg: var(--brand-color-primary, var(--global-color-blue-700));
   --button-primary-text: #ffffff;
-  --button-primary-hover: var(--brand-color-primary, var(--av-color-blue-800));
-  --button-primary-disabled: var(--av-color-gray-300);
+  --button-primary-hover: var(--brand-color-primary, var(--global-color-blue-800));
+  --button-primary-disabled: var(--global-color-gray-300);
 
   /* Badge Tokens */
-  --badge-bg-light: var(--av-color-blue-50);
-  --badge-text-light: var(--av-color-blue-700);
-  --badge-bg-filled: var(--av-color-blue-700);
+  --badge-bg-light: var(--global-color-blue-50);
+  --badge-text-light: var(--global-color-blue-700);
+  --badge-bg-filled: var(--global-color-blue-700);
   --badge-text-filled: #ffffff;
-  --badge-radius: var(--av-radius-full);
+  --badge-radius: var(--global-radius-full);
 }
 ```
 
@@ -321,7 +321,7 @@ function useDesignTokens() {
     global: {
       color: {
         blue: {
-          50: "var(--av-color-blue-50)",
+          50: "var(--global-color-blue-50)",
           // ...
         },
       },
@@ -1631,7 +1631,7 @@ it("sets internal state to true on click", () => {
 - [ ] Implement fallback values (brand → global)
 - [ ] Set up ThemeProvider with runtime theme switching
 - [ ] Test theme application in browser dev tools
-- [ ] Verify token naming follows conventions (--av-_, --brand-_, --component-\*)
+- [ ] Verify token naming follows conventions (--global-_, --brand-_, --component-\*)
 - [ ] Document token structure and usage
 - [ ] Validate color tokens (hex format)
 - [ ] Validate spacing tokens (rem/px units)

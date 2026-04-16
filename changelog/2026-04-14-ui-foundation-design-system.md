@@ -53,7 +53,7 @@
 - **`component.ts`**
   - Composed tokens using CSS custom properties with fallbacks
   - `componentTokens`: Maps design tokens to CSS variables
-  - Fallback chain: `var(--brand-*, var(--av-*, <fallback>))`
+  - Fallback chain: `var(--brand-*, var(--global-*, <fallback>))`
   - Component-specific tokens for: Button, Input, Checkbox, Badge, Card, Alert, Typography
 
 - **`index.ts`**
@@ -193,7 +193,7 @@
 
 - **`index.css`**
   - CSS custom properties for three-tier token system
-  - Global token definitions: `--av-color-*`, `--av-spacing-*`, `--av-font-*`
+  - Global token definitions: `--global-color-*`, `--global-spacing-*`, `--global-font-*`
   - Brand token definitions: `--brand-color-primary`, etc.
   - Component token definitions: `--button-primary-bg`, etc.
   - Logical properties for RTL support: `margin-inline-start`, `padding-inline-end`
@@ -290,8 +290,8 @@ Design specifications were extracted from:
 
 The design token system follows a three-tier hierarchy:
 
-1. **Global Tokens**: Brand-agnostic primitives (e.g., `--av-color-blue-600: #1976D2`)
-2. **Brand Tokens**: Tenant-specific overrides (e.g., `--brand-color-primary: var(--av-color-blue-600)`)
+1. **Global Tokens**: Brand-agnostic primitives (e.g., `--global-color-blue-600: #1976D2`)
+2. **Brand Tokens**: Tenant-specific overrides (e.g., `--brand-color-primary: var(--global-color-blue-600)`)
 3. **Component Tokens**: Composed for components (e.g., `--button-primary-bg: var(--brand-color-primary)`)
 
 This enables:

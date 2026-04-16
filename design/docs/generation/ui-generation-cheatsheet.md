@@ -74,39 +74,39 @@ mcp__pencil__get_variables({ filePath: "designfeatures/auth.pen" })
 
 Create a mapping table:
 
-| Hardcoded Value     | Token Name                          | CSS Variable                                        | Notes            |
-| ------------------- | ----------------------------------- | --------------------------------------------------- | ---------------- |
-| `#228BE6`           | `--av-color-blue-500`               | `--av-color-blue-500: #228be6;`                     | Primary color    |
-| `8` (corner radius) | `--av-radius-md`                    | `--av-radius-md: 0.5rem;`                           | Button radius    |
-| `[8, 16]` (padding) | `--av-spacing-2` / `--av-spacing-4` | `padding: var(--av-spacing-2) var(--av-spacing-4);` | Button padding   |
-| `Inter`             | `--av-font-family-sans`             | `--av-font-family-sans: 'Inter', sans‑serif;`       | Font family      |
-| `16` (font size)    | `--av-font-size-md`                 | `--av-font-size-md: 1rem;`                          | Button text size |
+| Hardcoded Value     | Token Name                                  | CSS Variable                                                | Notes            |
+| ------------------- | ------------------------------------------- | ----------------------------------------------------------- | ---------------- |
+| `#228BE6`           | `--global-color-blue-500`                   | `--global-color-blue-500: #228be6;`                         | Primary color    |
+| `8` (corner radius) | `--global-radius-md`                        | `--global-radius-md: 0.5rem;`                               | Button radius    |
+| `[8, 16]` (padding) | `--global-spacing-2` / `--global-spacing-4` | `padding: var(--global-spacing-2) var(--global-spacing-4);` | Button padding   |
+| `Inter`             | `--global-font-family-sans`                 | `--global-font-family-sans: 'Inter', sans‑serif;`           | Font family      |
+| `16` (font size)    | `--global-font-size-md`                     | `--global-font-size-md: 1rem;`                              | Button text size |
 
 ### Phase 3: Generate CSS Layers
 
 ```css
 /* global-tokens.css */
 :root {
-  --av-color-blue-500: #228be6;
-  --av-spacing-2: 0.5rem;
-  --av-spacing-4: 1rem;
-  --av-radius-md: 0.5rem;
-  --av-font-family-sans: "Inter", sans-serif;
-  --av-font-size-md: 1rem;
+  --global-color-blue-500: #228be6;
+  --global-spacing-2: 0.5rem;
+  --global-spacing-4: 1rem;
+  --global-radius-md: 0.5rem;
+  --global-font-family-sans: "Inter", sans-serif;
+  --global-font-size-md: 1rem;
 }
 
 /* brand-tokens.css */
 :root {
-  --brand-color-primary: var(--av-color-blue-500);
+  --brand-color-primary: var(--global-color-blue-500);
 }
 
 /* component-tokens.css */
 :root {
   --button-primary-bg: var(--brand-color-primary);
-  --button-primary-text: var(--av-color-white);
-  --button-primary-radius: var(--av-radius-md);
-  --button-primary-padding-y: var(--av-spacing-2);
-  --button-primary-padding-x: var(--av-spacing-4);
+  --button-primary-text: var(--global-color-white);
+  --button-primary-radius: var(--global-radius-md);
+  --button-primary-padding-y: var(--global-spacing-2);
+  --button-primary-padding-x: var(--global-spacing-4);
 }
 ```
 
@@ -122,16 +122,16 @@ const StyledButton = styled(MantineButton)`
   color: var(--button-primary-text);
   border-radius: var(--button-primary-radius);
   padding: var(--button-primary-padding-y) var(--button-primary-padding-x);
-  font-family: var(--av-font-family-sans);
-  font-size: var(--av-font-size-md);
+  font-family: var(--global-font-family-sans);
+  font-size: var(--global-font-size-md);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--button-primary-gap, var(--av-spacing-1));
+  gap: var(--button-primary-gap, var(--global-spacing-1));
 
   &:hover:not(:disabled) {
-    background: var(--button-primary-hover, var(--av-color-blue-600));
+    background: var(--button-primary-hover, var(--global-color-blue-600));
   }
 `;
 
@@ -168,7 +168,7 @@ mcp__pencil__get_screenshot({
 | `gap`                     | `8`       | `gap`        | `--button-primary-gap`                                     |
 | `fill` (bg)               | `#228BE6` | `bg`         | `--button-primary-bg`                                      |
 | `children[0].fill` (text) | `#FFFFFF` | `color`      | `--button-primary-text`                                    |
-| `children[0].fontSize`    | `16`      | `fontSize`   | `--av-font-size-md`                                        |
+| `children[0].fontSize`    | `16`      | `fontSize`   | `--global-font-size-md`                                    |
 | `children[0].fontWeight`  | `600`     | `fontWeight` | `600`                                                      |
 | `justifyContent`          | `center`  | `justify`    | `center`                                                   |
 | `alignItems`              | `center`  | `align`      | `center`                                                   |
@@ -201,8 +201,8 @@ mcp__pencil__get_screenshot({
 
 | Physical Property  | Logical Property      | Example                                                   |
 | ------------------ | --------------------- | --------------------------------------------------------- |
-| `margin‑left`      | `margin‑inline‑start` | `margin‑inline‑start: var(--av-spacing-2);`               |
-| `padding‑right`    | `padding‑inline‑end`  | `padding‑inline‑end: var(--av-spacing-4);`                |
+| `margin‑left`      | `margin‑inline‑start` | `margin‑inline‑start: var(--global-spacing-2);`           |
+| `padding‑right`    | `padding‑inline‑end`  | `padding‑inline‑end: var(--global-spacing-4);`            |
 | `border‑left`      | `border‑inline‑start` | `border‑inline‑start: 1px solid var(--formfield-border);` |
 | `text‑align: left` | `text‑align: start`   | `text‑align: start;`                                      |
 | `float: left`      | `float: inline‑start` | `float: inline‑start;`                                    |

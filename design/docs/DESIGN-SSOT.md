@@ -38,12 +38,9 @@ design/
 │   ├── illustrations/
 │   ├── images/
 │   └── README.md
-├── docs/                            # Implementation documentation
-│   ├── generation/                  # UI generation guides
-│   └── research/                    # Architecture plans
-└── scripts/                         # Validation and utility scripts
-    ├── validate-pen-files.py
-    └── validate-feature-pen-reuse.py
+└── docs/                            # Implementation documentation
+    ├── generation/                  # UI generation guides
+    └── research/                    # Architecture plans
 ```
 
 ### 1.2 Key Architectural Principles
@@ -87,11 +84,11 @@ design/
 
 ### 1.3 Three-Tier Token System
 
-| Tier          | Prefix          | Purpose                    | Example                                 |
-| ------------- | --------------- | -------------------------- | --------------------------------------- |
-| **Global**    | `--av-*`        | Brand-agnostic primitives  | `--av-color-blue-500`, `--av-spacing-4` |
-| **Brand**     | `--brand-*`     | Tenant-specific overrides  | `--brand-color-primary`                 |
-| **Component** | `--component-*` | Composed from global/brand | `--button-primary-bg`                   |
+| Tier          | Prefix          | Purpose                    | Example                                         |
+| ------------- | --------------- | -------------------------- | ----------------------------------------------- |
+| **Global**    | `--global-*`    | Brand-agnostic primitives  | `--global-color-blue-500`, `--global-spacing-4` |
+| **Brand**     | `--brand-*`     | Tenant-specific overrides  | `--brand-color-primary`                         |
+| **Component** | `--component-*` | Composed from global/brand | `--button-primary-bg`                           |
 
 **Fallback chain:** `component → brand → global → hard fallback`
 
@@ -160,35 +157,35 @@ mcp__pencil__get_variables({ filePath: "design/features/auth.pen" })
 
 Create a mapping table:
 
-| Hardcoded Value     | Token Name                          | CSS Variable                                        | Notes          |
-| ------------------- | ----------------------------------- | --------------------------------------------------- | -------------- |
-| `#228BE6`           | `--av-color-blue-500`               | `--av-color-blue-500: #228be6;`                     | Primary color  |
-| `8` (corner radius) | `--av-radius-md`                    | `--av-radius-md: 0.5rem;`                           | Button radius  |
-| `[8, 16]` (padding) | `--av-spacing-2` / `--av-spacing-4` | `padding: var(--av-spacing-2) var(--av-spacing-4);` | Button padding |
+| Hardcoded Value     | Token Name                                  | CSS Variable                                                | Notes          |
+| ------------------- | ------------------------------------------- | ----------------------------------------------------------- | -------------- |
+| `#228BE6`           | `--global-color-blue-500`                   | `--global-color-blue-500: #228be6;`                         | Primary color  |
+| `8` (corner radius) | `--global-radius-md`                        | `--global-radius-md: 0.5rem;`                               | Button radius  |
+| `[8, 16]` (padding) | `--global-spacing-2` / `--global-spacing-4` | `padding: var(--global-spacing-2) var(--global-spacing-4);` | Button padding |
 
 #### Phase 3: Generate CSS Layers
 
 ```css
 /* global-tokens.css */
 :root {
-  --av-color-blue-500: #228be6;
-  --av-spacing-2: 0.5rem;
-  --av-spacing-4: 1rem;
-  --av-radius-md: 0.5rem;
-  --av-font-family-sans: "Inter", sans-serif;
-  --av-font-size-md: 1rem;
+  --global-color-blue-500: #228be6;
+  --global-spacing-2: 0.5rem;
+  --global-spacing-4: 1rem;
+  --global-radius-md: 0.5rem;
+  --global-font-family-sans: "Inter", sans-serif;
+  --global-font-size-md: 1rem;
 }
 
 /* brand-tokens.css */
 :root {
-  --brand-color-primary: var(--av-color-blue-500);
+  --brand-color-primary: var(--global-color-blue-500);
 }
 
 /* component-tokens.css */
 :root {
   --button-primary-bg: var(--brand-color-primary);
-  --button-primary-text: var(--av-color-white);
-  --button-primary-radius: var(--av-radius-md);
+  --button-primary-text: var(--global-color-white);
+  --button-primary-radius: var(--global-radius-md);
 }
 ```
 
@@ -204,8 +201,8 @@ const StyledButton = styled(MantineButton)`
   color: var(--button-primary-text);
   border-radius: var(--button-primary-radius);
   padding: var(--button-primary-padding-y) var(--button-primary-padding-x);
-  font-family: var(--av-font-family-sans);
-  font-size: var(--av-font-size-md);
+  font-family: var(--global-font-family-sans);
+  font-size: var(--global-font-size-md);
   font-weight: 600;
 `;
 
@@ -252,8 +249,8 @@ mcp__pencil__get_screenshot({
 
 | Physical Property  | Logical Property      | Example                                                   |
 | ------------------ | --------------------- | --------------------------------------------------------- |
-| `margin-left`      | `margin-inline-start` | `margin-inline-start: var(--av-spacing-2);`               |
-| `padding-right`    | `padding-inline-end`  | `padding-inline-end: var(--av-spacing-4);`                |
+| `margin-left`      | `margin-inline-start` | `margin-inline-start: var(--global-spacing-2);`           |
+| `padding-right`    | `padding-inline-end`  | `padding-inline-end: var(--global-spacing-4);`            |
 | `border-left`      | `border-inline-start` | `border-inline-start: 1px solid var(--formfield-border);` |
 | `text-align: left` | `text-align: start`   | `text-align: start;`                                      |
 | `float: left`      | `float: inline-start` | `float: inline-start;`                                    |
@@ -332,38 +329,38 @@ Before declaring a component pixel-perfect:
 
 #### Color Tokens
 
-| .pen Token    | CSS Variable            | Usage                  |
-| ------------- | ----------------------- | ---------------------- |
-| `$primary`    | `--av-color-primary`    | Primary actions, brand |
-| `$secondary`  | `--av-color-secondary`  | Secondary elements     |
-| `$success`    | `--av-color-success`    | Success states         |
-| `$warning`    | `--av-color-warning`    | Warning states         |
-| `$error`      | `--av-color-error`      | Error states           |
-| `$background` | `--av-color-background` | Page background        |
-| `$foreground` | `--av-color-foreground` | Primary text           |
+| .pen Token    | CSS Variable                | Usage                  |
+| ------------- | --------------------------- | ---------------------- |
+| `$primary`    | `--global-color-primary`    | Primary actions, brand |
+| `$secondary`  | `--global-color-secondary`  | Secondary elements     |
+| `$success`    | `--global-color-success`    | Success states         |
+| `$warning`    | `--global-color-warning`    | Warning states         |
+| `$error`      | `--global-color-error`      | Error states           |
+| `$background` | `--global-color-background` | Page background        |
+| `$foreground` | `--global-color-foreground` | Primary text           |
 
 #### Spacing Tokens
 
-| .pen Value | CSS Variable      | Tailwind Equivalent |
-| ---------- | ----------------- | ------------------- |
-| 4          | `--av-spacing-xs` | `gap-1` or `p-1`    |
-| 8          | `--av-spacing-sm` | `gap-2` or `p-2`    |
-| 16         | `--av-spacing-md` | `gap-4` or `p-4`    |
-| 24         | `--av-spacing-lg` | `gap-6` or `p-6`    |
-| 32         | `--av-spacing-xl` | `gap-8` or `p-8`    |
+| .pen Value | CSS Variable          | Tailwind Equivalent |
+| ---------- | --------------------- | ------------------- |
+| 4          | `--global-spacing-xs` | `gap-1` or `p-1`    |
+| 8          | `--global-spacing-sm` | `gap-2` or `p-2`    |
+| 16         | `--global-spacing-md` | `gap-4` or `p-4`    |
+| 24         | `--global-spacing-lg` | `gap-6` or `p-6`    |
+| 32         | `--global-spacing-xl` | `gap-8` or `p-8`    |
 
 #### Typography Tokens
 
-| .pen Token          | CSS Variable                 | Usage            |
-| ------------------- | ---------------------------- | ---------------- |
-| `$--font-primary`   | `--av-font-family-primary`   | Headings, labels |
-| `$--font-secondary` | `--av-font-family-secondary` | Body text        |
-| `12`                | `--av-font-size-xs`          | Caption text     |
-| `14`                | `--av-font-size-sm`          | Small text       |
-| `16`                | `--av-font-size-md`          | Body text        |
-| `18`                | `--av-font-size-lg`          | Subheading       |
-| `20`                | `--av-font-size-xl`          | Heading          |
-| `24`                | `--av-font-size-2xl`         | Large heading    |
+| .pen Token          | CSS Variable                     | Usage            |
+| ------------------- | -------------------------------- | ---------------- |
+| `$--font-primary`   | `--global-font-family-primary`   | Headings, labels |
+| `$--font-secondary` | `--global-font-family-secondary` | Body text        |
+| `12`                | `--global-font-size-xs`          | Caption text     |
+| `14`                | `--global-font-size-sm`          | Small text       |
+| `16`                | `--global-font-size-md`          | Body text        |
+| `18`                | `--global-font-size-lg`          | Subheading       |
+| `20`                | `--global-font-size-xl`          | Heading          |
+| `24`                | `--global-font-size-2xl`         | Large heading    |
 
 ### 3.6 Component Props Mapping
 
@@ -447,16 +444,6 @@ All feature files must pass:
 
 ### 4.4 CI Integration
 
-#### Validation Commands
-
-```bash
-# Schema and policy validation for all .pen files
-pnpm run validate:pen-files
-
-# Feature reuse validation (strict mode)
-python3 design/scripts/validate-feature-pen-reuse.py --strict
-```
-
 #### CI Workflow
 
 `.github/workflows/ui-guidelines-enforcement.yml` runs on changes under `design/`:
@@ -473,9 +460,8 @@ python3 design/scripts/validate-feature-pen-reuse.py --strict
 1. **Check existing components**: Use `batch_get` to verify no duplicates
 2. **Determine location**: System vs feature based on reusability
 3. **Create in .pen file**: Use `batch_design` following atomic design hierarchy
-4. **Validate**: Run `pnpm run validate:pen-files`
-5. **Implement in code**: Follow MCP-first workflow to create React components
-6. **Update documentation**: Add to component inventory tables
+4. **Implement in code**: Follow MCP-first workflow to create React components
+5. **Update documentation**: Add to component inventory tables
 
 #### Updating Existing System Components
 
@@ -490,8 +476,7 @@ python3 design/scripts/validate-feature-pen-reuse.py --strict
 1. **Declare imports**: Add root-level `imports` for system libraries
 2. **Consume primitives**: Use `type: "ref"` with `ref: "alias/ComponentId"`
 3. **Add domain-specific compositions**: Only for patterns not in `system/`
-4. **Validate**: Run `pnpm run validate:pen-files` and feature reuse validation
-5. **Update inventory**: Add row to `design/features/README.md`
+4. **Update inventory**: Add row to `design/features/README.md`
 
 #### Deprecating Components
 
@@ -520,7 +505,6 @@ python3 design/scripts/validate-feature-pen-reuse.py --strict
 
 - [ ] System primitives consumed via `imports` and `ref`
 - [ ] No unauthorized generic primitive duplication
-- [ ] `pnpm run validate:pen-files` passes
 - [ ] Feature reuse validation passes
 - [ ] Business context documented
 - [ ] Screenshots attached for non-trivial changes
@@ -529,7 +513,6 @@ python3 design/scripts/validate-feature-pen-reuse.py --strict
 
 | Metric                         | Method                                              | Cadence                             |
 | ------------------------------ | --------------------------------------------------- | ----------------------------------- |
-| **Validator health**           | `pnpm run validate:pen-files` green on `main`       | Every PR touching `.pen`            |
 | **Feature file count**         | `design/features/README.md` inventory               | Update on each new file             |
 | **Import integrity**           | Scripted check of `imports` paths and resolved refs | Every PR touching `design/features` |
 | **Reusable nodes in features** | Count of `reusable: true` under `design/features/`  | Quarterly audit                     |
@@ -738,25 +721,7 @@ When the .pen template changes:
 - [TanStack Start Documentation](https://tanstack.com/start)
 - [Pencil Design Libraries](https://docs.pencil.dev/core-concepts/design-libraries)
 
-### 6.3 Validation Scripts
-
-#### `validate-pen-files.py`
-
-Validates schema, structure, and policy compliance for all `.pen` files.
-
-```bash
-python3 design/scripts/validate-pen-files.py
-```
-
-#### `validate-feature-pen-reuse.py`
-
-Validates feature file reuse policy with strict mode.
-
-```bash
-python3 design/scripts/validate-feature-pen-reuse.py --strict
-```
-
-### 6.4 Quick Reference Card: Essential Pencil MCP Commands
+### 6.3 Quick Reference Card: Essential Pencil MCP Commands
 
 ```bash
 # Get current file
@@ -782,7 +747,7 @@ mcp__pencil__get_guidelines({ category: "guide", name: "Code" });
 mcp__pencil__get_guidelines({ category: "guide", name: "Tailwind" });
 ```
 
-### 6.5 File Structure Reference
+### 6.4 File Structure Reference
 
 ```
 design/
@@ -820,13 +785,10 @@ design/
 ├── tokens/                    # Entry: links to token .pen + docs (planned)
 ├── patterns/                  # Entry: UX patterns + doc links (planned)
 ├── components/                # Entry: maps atoms/molecules → packages/ui (planned)
-├── README.md                  # Design system governance overview
-└── scripts/                   # Validation and utility scripts
-    ├── validate-pen-files.py
-    └── validate-feature-pen-reuse.py
+└── README.md                  # Design system governance overview
 ```
 
-### 6.6 Roles and Responsibilities
+### 6.5 Roles and Responsibilities
 
 | Activity                          | Design System Maintainer           | Feature Designer | Frontend (UI Package) | CI/DevEx |
 | --------------------------------- | ---------------------------------- | ---------------- | --------------------- | -------- |

@@ -36,10 +36,10 @@ Design System Frame
 --input-error-border            Error state border
 --input-warning-border          Warning state border
 --input-success-border          Success state border
---av-color-red-500              Required asterisk color
---av-spacing-xs                 Spacing between elements
---av-font-size-sm               Label font size
---av-font-size-xs               Helper/error font size
+--global-color-red-500              Required asterisk color
+--global-spacing-xs                 Spacing between elements
+--global-font-size-sm               Label font size
+--global-font-size-xs               Helper/error font size
 ```
 
 ### State Matrix
@@ -79,7 +79,7 @@ formFieldBase = I(document, {
   name: "FormField/Base",
   reusable: true,
   layout: "vertical",
-  gap: "$--av-spacing-xs",
+  gap: "$--global-spacing-xs",
   width: "fill_container",
 });
 
@@ -89,8 +89,8 @@ formFieldLabel = I(formFieldBase, {
   id: "form-field-label",
   name: "Label",
   content: "Field Label",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-medium",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-medium",
   fill: "$--form-field-label",
   textAlign: "start",
 });
@@ -109,7 +109,7 @@ formFieldHelper = I(formFieldBase, {
   id: "form-field-helper",
   name: "HelperText",
   content: "Additional guidance for this field",
-  fontSize: "$--av-font-size-xs",
+  fontSize: "$--global-font-size-xs",
   fill: "$--form-field-helper",
   textAlign: "start",
 });
@@ -120,7 +120,7 @@ formFieldError = I(formFieldBase, {
   id: "form-field-error",
   name: "ErrorMessage",
   content: "Error message describing the issue",
-  fontSize: "$--av-font-size-xs",
+  fontSize: "$--global-font-size-xs",
   fill: "$--form-field-error",
   textAlign: "start",
   visible: false,
@@ -167,7 +167,7 @@ requiredLabelContainer = I(formFieldRequired, {
   id: "form-field-required-label-container",
   name: "LabelContainer",
   layout: "horizontal",
-  gap: "$--av-spacing-xs",
+  gap: "$--global-spacing-xs",
   alignment: "center",
 });
 
@@ -176,8 +176,8 @@ requiredLabelText = I(requiredLabelContainer, {
   id: "required-label-text",
   name: "LabelText",
   content: "Password",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-medium",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-medium",
   fill: "$--form-field-label",
   textAlign: "start",
 });
@@ -187,8 +187,8 @@ requiredAsterisk = I(requiredLabelContainer, {
   id: "required-asterisk",
   name: "Asterisk",
   content: "*",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-bold",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-bold",
   fill: "$--form-field-required",
   textAlign: "start",
 });
@@ -290,13 +290,13 @@ formFieldDisabledState = I(document, {
 
 U(formFieldDisabledState + "/label", {
   content: "Disabled Field",
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 
 U(formFieldDisabledState + "/input", {
-  fill: "$--av-color-gray-100",
+  fill: "$--global-color-gray-100",
   stroke: {
-    color: "$--av-color-gray-200",
+    color: "$--global-color-gray-200",
     thickness: 1,
   },
   opacity: 0.6,
@@ -306,7 +306,7 @@ U(formFieldDisabledState + "/input", {
 U(formFieldDisabledState + "/helper", {
   visible: true,
   content: "This field cannot be edited",
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 
 U(formFieldDisabledState + "/error", {
@@ -345,9 +345,9 @@ Design System Frame
 --input-border                   Input border
 --search-icon-color              Search icon color
 --clear-button-color             Clear button color
---av-color-gray-500              Icon color
---av-spacing-sm                  Icon/button spacing
---av-transition-normal           Transition timing
+--global-color-gray-500              Icon color
+--global-spacing-sm                  Icon/button spacing
+--global-transition-normal           Transition timing
 ```
 
 ### State Matrix
@@ -390,21 +390,21 @@ searchInputBase = I(document, {
   name: "SearchInput/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
   width: "fill_container",
   height: "$--input-height-md",
-  paddingInlineStart: "$--av-spacing-md",
-  paddingInlineEnd: "$--av-spacing-md",
-  paddingTop: "$--av-spacing-sm",
-  paddingBottom: "$--av-spacing-sm",
-  cornerRadius: "$--av-radius-md",
+  paddingInlineStart: "$--global-spacing-md",
+  paddingInlineEnd: "$--global-spacing-md",
+  paddingTop: "$--global-spacing-sm",
+  paddingBottom: "$--global-spacing-sm",
+  cornerRadius: "$--global-radius-md",
   fill: "$--input-bg",
   stroke: {
     color: "$--input-border",
     thickness: 1,
   },
   alignment: "center",
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Search icon (left slot)
@@ -414,9 +414,9 @@ searchIcon = I(searchInputBase, {
   id: "search-icon",
   name: "SearchIcon",
   icon: "search",
-  size: "$--av-font-size-base",
-  fill: "$--av-color-gray-500",
-  marginInlineEnd: "$--av-spacing-sm",
+  size: "$--global-font-size-base",
+  fill: "$--global-color-gray-500",
+  marginInlineEnd: "$--global-spacing-sm",
 });
 
 // Input text area
@@ -425,7 +425,7 @@ searchInputText = I(searchInputBase, {
   id: "search-input-text",
   name: "Input",
   content: "Search...",
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
   fill: "$--input-placeholder",
   textAlign: "start",
   width: "fill_container",
@@ -440,10 +440,10 @@ clearButton = I(searchInputBase, {
   height: 24,
   alignment: "center",
   justification: "center",
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   interactive: true,
   visible: false,
-  marginInlineStart: "$--av-spacing-sm",
+  marginInlineStart: "$--global-spacing-sm",
 });
 
 clearIcon = I(clearButton, {
@@ -453,7 +453,7 @@ clearIcon = I(clearButton, {
   name: "CloseIcon",
   icon: "x",
   size: 16,
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 
 // Default state (empty)
@@ -531,11 +531,11 @@ searchInputSm = I(document, {
 });
 
 U(searchInputSm + "/search-icon", {
-  size: "$--av-font-size-sm",
+  size: "$--global-font-size-sm",
 });
 
 U(searchInputSm + "/input-text", {
-  fontSize: "$--av-font-size-sm",
+  fontSize: "$--global-font-size-sm",
 });
 
 // Large size
@@ -551,11 +551,11 @@ searchInputLg = I(document, {
 });
 
 U(searchInputLg + "/search-icon", {
-  size: "$--av-font-size-lg",
+  size: "$--global-font-size-lg",
 });
 
 U(searchInputLg + "/input-text", {
-  fontSize: "$--av-font-size-lg",
+  fontSize: "$--global-font-size-lg",
 });
 
 // Disabled state
@@ -564,9 +564,9 @@ searchInputDisabled = I(document, {
   ref: "search-input-base",
   id: "search-input-disabled",
   name: "SearchInput/Disabled",
-  fill: "$--av-color-gray-100",
+  fill: "$--global-color-gray-100",
   stroke: {
-    color: "$--av-color-gray-200",
+    color: "$--global-color-gray-200",
     thickness: 1,
   },
   opacity: 0.6,
@@ -574,11 +574,11 @@ searchInputDisabled = I(document, {
 });
 
 U(searchInputDisabled + "/search-icon", {
-  fill: "$--av-color-gray-400",
+  fill: "$--global-color-gray-400",
 });
 
 U(searchInputDisabled + "/input-text", {
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 ```
 
@@ -617,10 +617,10 @@ Design System Frame
 --card-padding                   Card internal spacing
 --card-radius                    Card corner radius
 --card-shadow                    Card shadow effect
---av-spacing-md                  Padding
---av-radius-lg                   Border radius
---av-effect-shadow-md            Shadow for elevated cards
---av-transition-normal           Hover transition
+--global-spacing-md                  Padding
+--global-radius-lg                   Border radius
+--global-effect-shadow-md            Shadow for elevated cards
+--global-transition-normal           Hover transition
 ```
 
 ### Variant Matrix
@@ -671,7 +671,7 @@ cardBase = I(document, {
     color: "$--card-border",
     thickness: 1,
   },
-  gap: "$--av-spacing-md",
+  gap: "$--global-spacing-md",
 });
 
 // Card header
@@ -682,7 +682,7 @@ cardHeader = I(cardBase, {
   layout: "horizontal",
   width: "fill_container",
   alignment: "space-between",
-  gap: "$--av-spacing-md",
+  gap: "$--global-spacing-md",
 });
 
 cardHeaderTitle = I(cardHeader, {
@@ -690,8 +690,8 @@ cardHeaderTitle = I(cardHeader, {
   id: "card-header-title",
   name: "Title",
   content: "Card Title",
-  fontSize: "$--av-font-size-xl",
-  fontWeight: "$--av-font-weight-semibold",
+  fontSize: "$--global-font-size-xl",
+  fontWeight: "$--global-font-weight-semibold",
   fill: "$--card-heading",
   textAlign: "start",
 });
@@ -703,7 +703,7 @@ cardBody = I(cardBase, {
   name: "Body",
   layout: "vertical",
   width: "fill_container",
-  gap: "$--av-spacing-md",
+  gap: "$--global-spacing-md",
 });
 
 cardBodyText = I(cardBody, {
@@ -711,7 +711,7 @@ cardBodyText = I(cardBody, {
   id: "card-body-text",
   name: "Content",
   content: "Card content goes here. This is a description of the card's purpose.",
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
   fill: "$--card-text",
   textAlign: "start",
 });
@@ -724,7 +724,7 @@ cardFooter = I(cardBase, {
   layout: "horizontal",
   width: "fill_container",
   alignment: "flex-end",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
 });
 
 // Default variant
@@ -743,7 +743,7 @@ cardElevated = I(document, {
   id: "card-elevated",
   name: "Card/Elevated",
   reusable: true,
-  effect: "$--av-effect-shadow-md",
+  effect: "$--global-effect-shadow-md",
 });
 
 // Outlined variant (stronger border)
@@ -766,7 +766,7 @@ cardFilled = I(document, {
   id: "card-filled",
   name: "Card/Filled",
   reusable: true,
-  fill: "$--av-color-gray-50",
+  fill: "$--global-color-gray-50",
 });
 
 // Card with header
@@ -815,7 +815,7 @@ cardClickable = I(document, {
   name: "Card/Clickable",
   reusable: true,
   interactive: true,
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Hover state for clickable card
@@ -824,7 +824,7 @@ cardClickableHover = I(document, {
   ref: "card-clickable",
   id: "card-clickable-hover",
   name: "Card/Clickable/Hover",
-  effect: "$--av-effect-shadow-sm",
+  effect: "$--global-effect-shadow-sm",
   stroke: {
     color: "$--brand-color-primary",
     thickness: 2,

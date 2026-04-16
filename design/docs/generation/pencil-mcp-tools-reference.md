@@ -4,6 +4,36 @@
 
 **Important**: .pen files are encrypted and can ONLY be accessed via Pencil MCP tools. Never use Read or Grep tools on .pen files.
 
+---
+
+## Complete tool inventory (13 tools)
+
+Cursor exposes these Pencil MCP tools (names as registered with the host):
+
+| #   | Tool                              | Capability summary                                                                                         |
+| --- | --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 1   | `get_editor_state`                | Active `.pen` file, selection, optional document schema.                                                   |
+| 2   | `open_document`                   | Create a new empty document or open an existing `.pen` by path.                                            |
+| 3   | `batch_get`                       | Read nodes by search patterns, node IDs, depth; optional instance resolution and variable resolution.      |
+| 4   | `batch_design`                    | Apply up to **25** operations per call: insert, copy, update, replace, move, delete, and image fill (`G`). |
+| 5   | `get_variables`                   | Read variables and themes defined in the `.pen` file.                                                      |
+| 6   | `set_variables`                   | Create or merge (or replace) variables and themes in the `.pen` file.                                      |
+| 7   | `get_guidelines`                  | List or load task guides (`guide`) and visual style archetypes (`style`).                                  |
+| 8   | `get_screenshot`                  | Render a screenshot of a node for visual verification.                                                     |
+| 9   | `snapshot_layout`                 | Inspect computed layout rectangles; optional `problemsOnly` for layout issues.                             |
+| 10  | `find_empty_space_on_canvas`      | Find empty canvas space in a direction, optionally relative to a node.                                     |
+| 11  | `search_all_unique_properties`    | Recursively collect unique values for selected properties under parent node(s).                            |
+| 12  | `replace_all_matching_properties` | Recursively bulk-replace matching property values under parent node(s).                                    |
+| 13  | `export_nodes`                    | Export node(s) to PNG, JPEG, WEBP, or PDF on disk.                                                         |
+
+**Cross-cutting capabilities**
+
+- **Editor / IO**: `get_editor_state`, `open_document`.
+- **Read path**: `batch_get`, `get_variables`, `get_screenshot`, `snapshot_layout`, `find_empty_space_on_canvas`, `search_all_unique_properties`.
+- **Write path**: `batch_design`, `set_variables`, `replace_all_matching_properties`.
+- **Guidance**: `get_guidelines`.
+- **Assets**: `export_nodes`; image fills for frames use **`G`** inside `batch_design` (stock or AI).
+
 ### Design-to-code workflow (repo)
 
 Pencil MCP **does not** write `.tsx` or other application source files. The intended flow is: **inspect** the `.pen` with `batch_get`, `get_variables`, `get_screenshot`, etc. → **load** `get_guidelines` (at minimum **Code**; **Tailwind** when applicable) → **implement** in the codebase following those guides and [UI Generation Cheat Sheet](./ui-generation-cheatsheet.md#mcp-first-design-to-code-workflow-repo-ssot). Values must come from MCP output, mapped into CSS variables / theme — not ad hoc literals.
@@ -21,9 +51,12 @@ Pencil MCP **does not** write `.tsx` or other application source files. The inte
    - [batch_design](#batch_design)
 4. [Analysis Tools](#analysis-tools)
    - [get_variables](#get_variables)
+   - [set_variables](#set_variables)
    - [get_screenshot](#get_screenshot)
    - [snapshot_layout](#snapshot_layout)
    - [find_empty_space_on_canvas](#find_empty_space_on_canvas)
+   - [search_all_unique_properties](#search_all_unique_properties)
+   - [replace_all_matching_properties](#replace_all_matching_properties)
 5. [Export Tools](#export-tools)
    - [export_nodes](#export_nodes)
 6. [Guidelines System](#guidelines-system)
@@ -119,18 +152,21 @@ interface ComponentInstance {
 
 ## Tool Overview
 
-| Tool                         | Purpose                     | When to Use                           |
-| ---------------------------- | --------------------------- | ------------------------------------- |
-| `get_editor_state`           | Get current design context  | Start of any design task              |
-| `open_document`              | Open/create .pen files      | No file currently open                |
-| `batch_get`                  | Read design content         | Discover and analyze components       |
-| `batch_design`               | Modify designs              | Make changes to .pen files            |
-| `get_variables`              | Extract design tokens       | Access colors, spacing, etc.          |
-| `get_screenshot`             | Visual verification         | Validate design appearance            |
-| `snapshot_layout`            | Check layout structure      | Debug positioning issues              |
-| `find_empty_space_on_canvas` | Find space for new elements | Adding elements to existing design    |
-| `export_nodes`               | Export to images            | Generate design assets                |
-| `get_guidelines`             | Load guides/styles          | Get best practices for specific tasks |
+| Tool                              | Purpose                     | When to Use                           |
+| --------------------------------- | --------------------------- | ------------------------------------- |
+| `get_editor_state`                | Get current design context  | Start of any design task              |
+| `open_document`                   | Open/create .pen files      | No file currently open                |
+| `batch_get`                       | Read design content         | Discover and analyze components       |
+| `batch_design`                    | Modify designs              | Make changes to .pen files            |
+| `get_variables`                   | Extract design tokens       | Access colors, spacing, etc.          |
+| `set_variables`                   | Update tokens/themes        | Align variables with code or themes   |
+| `get_screenshot`                  | Visual verification         | Validate design appearance            |
+| `snapshot_layout`                 | Check layout structure      | Debug positioning issues              |
+| `find_empty_space_on_canvas`      | Find space for new elements | Adding elements to existing design    |
+| `search_all_unique_properties`    | Audit property usage        | Find all font sizes, colors, etc.     |
+| `replace_all_matching_properties` | Bulk token replace          | Global rename of colors, radii, etc.  |
+| `export_nodes`                    | Export to images            | Generate design assets                |
+| `get_guidelines`                  | Load guides/styles          | Get best practices for specific tasks |
 
 ---
 
@@ -384,13 +420,12 @@ U(foo + "/child-id", {
 // Delete - remove node
 D("node-id");
 
-// Move - move node to new parent
-M("node-id", "new-parent-id");
+// Move - move node to new parent (optional index among siblings)
+M("node-id", "new-parent-id", 2);
 
-// Image - insert image
-img = IMG("parent-id", {
-  src: "https://example.com/image.png",
-});
+// Generate image fill (stock or AI) on a frame or rectangle — no ad-hoc URLs
+G("node-id-or-binding", "stock", "office desk");
+G(heroFrame, "ai", "modern office workspace bright");
 ```
 
 **Examples**:
@@ -550,6 +585,34 @@ const tokens = await mcp__pencil__get_variables({
 - Use semantic naming (e.g., `badge-primary-bg` not `blue-500`)
 - Group related variables with consistent prefixes
 - Document variable purposes in comments
+
+---
+
+### set_variables
+
+**Purpose**: Add, update, or replace variables and themes in a `.pen` file (including theming axes and values that are not yet present — they can be registered automatically).
+
+**When to Use**:
+
+- Syncing design tokens with code or a token spreadsheet
+- Applying a new brand theme across variables
+- Replacing the entire variable set when intentionally resetting document tokens
+
+**Parameters**:
+
+```typescript
+interface SetVariablesParams {
+  filePath: string;
+  variables: object; // Follows .pen variable schema (see `get_guidelines` / general schema)
+  replace?: boolean; // If true, replaces all variable definitions instead of merging
+}
+```
+
+**Best Practices**:
+
+- Prefer merge (default) unless you intend a full reset (`replace: true`)
+- After changes, use `get_variables` to confirm computed values
+- Theme axes integrate with variables; invalid cross-references can break instances
 
 ---
 
@@ -731,6 +794,78 @@ const spaceBelow = await mcp__pencil__find_empty_space_on_canvas({
 - Use adequate padding to avoid visual crowding
 - Consider the overall layout when choosing direction
 - Use this to maintain organized design system files
+
+---
+
+### search_all_unique_properties
+
+**Purpose**: Recursively scan subtrees under one or more parent node IDs and list **unique** values for selected visual properties (useful for audits before refactors).
+
+**When to Use**:
+
+- Inventory all distinct `fontSize`, `fillColor`, `gap`, etc. before a token migration
+- Finding one-off literals that should map to variables
+
+**Parameters**:
+
+```typescript
+interface SearchAllUniquePropertiesParams {
+  filePath: string;
+  parents: string[]; // Parent node IDs to search under
+  properties: Array<
+    | "fillColor"
+    | "textColor"
+    | "strokeColor"
+    | "strokeThickness"
+    | "cornerRadius"
+    | "padding"
+    | "gap"
+    | "fontSize"
+    | "fontFamily"
+    | "fontWeight"
+  >;
+}
+```
+
+**Return Value**: Aggregated unique values per requested property (structure returned by the server).
+
+---
+
+### replace_all_matching_properties
+
+**Purpose**: Recursively replace matching property values across all descendants of the given parent node IDs — bulk token or style migration.
+
+**When to Use**:
+
+- Replacing a deprecated hex with a variable-backed color
+- Normalizing `cornerRadius`, `gap`, or `fontSize` scales file-wide under selected roots
+
+**Parameters**:
+
+```typescript
+interface ReplaceAllMatchingPropertiesParams {
+  filePath: string;
+  parents: string[]; // Parent node IDs to scope the replacement
+  properties: {
+    fillColor?: Array<{ from: string; to: string }>;
+    textColor?: Array<{ from: string; to: string }>;
+    strokeColor?: Array<{ from: string; to: string }>;
+    strokeThickness?: Array<{ from: number[]; to: number[] }>;
+    cornerRadius?: Array<{ from: number[]; to: number[] }>;
+    padding?: Array<{ from: number[]; to: number[] }>;
+    gap?: Array<{ from: number[]; to: number[] }>;
+    fontSize?: Array<{ from: number[]; to: number[] }>;
+    fontFamily?: Array<{ from: string; to: string }>;
+    fontWeight?: Array<{ from: number[]; to: number[] }>;
+  };
+}
+```
+
+**Best Practices**:
+
+- Scope `parents` narrowly (e.g. a single library frame) before running document-wide replaces
+- Run `search_all_unique_properties` first to see what will change
+- Prefer updating variables via `set_variables` when the goal is theme-level change
 
 ---
 
@@ -1157,6 +1292,21 @@ batch_get({ nodeIds: ["node-id"], readDepth: 3 });
 // Get design tokens
 get_variables({ filePath: "/path/to/design-tokens.pen" });
 
+// Set / merge variables (optional full replace: { replace: true })
+set_variables({
+  filePath: "/path/to/file.pen",
+  variables: {
+    /* .pen variable defs */
+  },
+});
+
+// Audit distinct literals under parent roots
+search_all_unique_properties({
+  filePath: "/path/to/file.pen",
+  parents: ["frame-id"],
+  properties: ["fontSize", "fillColor", "gap"],
+});
+
 // Get screenshot
 get_screenshot({ nodeId: "component-id" });
 ```
@@ -1178,6 +1328,17 @@ D("node-id")
 
 // Move node
 M("node-id", "new-parent-id")
+
+// Image fill on frame/rectangle (stock or AI)
+G("frame-id", "stock", "keywords");
+G("frame-id", "ai", "detailed prompt");
+
+// Bulk replace scoped subtrees (use after search_all_unique_properties)
+replace_all_matching_properties({
+  filePath: "/path/to/file.pen",
+  parents: ["library-root-id"],
+  properties: { fillColor: [{ from: "#old", to: "#new" }] },
+});
 ```
 
 ### Analysis

@@ -465,34 +465,34 @@ export function Providers({ children }: { children: ReactNode }) {
 /* apps/web/src/app/globals.css */
 :root {
   /* Core design tokens as CSS variables */
-  --av-color-primary: #228be6;
-  --av-color-secondary: #748ffc;
-  --av-spacing-xs: 0.25rem;
-  --av-spacing-sm: 0.5rem;
-  --av-spacing-md: 1rem;
-  --av-spacing-lg: 1.5rem;
-  --av-spacing-xl: 2rem;
-  --av-radius-sm: 0.25rem;
-  --av-radius-md: 0.5rem;
-  --av-radius-lg: 1rem;
+  --global-color-primary: #228be6;
+  --global-color-secondary: #748ffc;
+  --global-spacing-xs: 0.25rem;
+  --global-spacing-sm: 0.5rem;
+  --global-spacing-md: 1rem;
+  --global-spacing-lg: 1.5rem;
+  --global-spacing-xl: 2rem;
+  --global-radius-sm: 0.25rem;
+  --global-radius-md: 0.5rem;
+  --global-radius-lg: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --av-color-primary: #339af0;
-    --av-color-secondary: #91a7ff;
+    --global-color-primary: #339af0;
+    --global-color-secondary: #91a7ff;
   }
 }
 
 /* RTL-aware spacing */
 [dir="rtl"] {
-  --av-spacing-start: var(--av-spacing-right);
-  --av-spacing-end: var(--av-spacing-left);
+  --global-spacing-start: var(--global-spacing-right);
+  --global-spacing-end: var(--global-spacing-left);
 }
 
 [dir="ltr"] {
-  --av-spacing-start: var(--av-spacing-left);
-  --av-spacing-end: var(--av-spacing-right);
+  --global-spacing-start: var(--global-spacing-left);
+  --global-spacing-end: var(--global-spacing-right);
 }
 ```
 
@@ -510,7 +510,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Inject critical CSS inline */}
         <style jsx global>{`
           :root {
-            --av-color-primary: #228BE6;
+            --global-color-primary: #228BE6;
           }
         `}</style>
       </head>

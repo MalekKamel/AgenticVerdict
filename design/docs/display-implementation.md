@@ -39,9 +39,9 @@ Design System Frame
 --badge-warning-text            Warning badge text color
 --badge-danger-bg               Danger badge background
 --badge-danger-text             Danger badge text color
---av-radius-full                Full border radius
---av-spacing-xs                 Icon spacing
---av-font-size-{size}           Font sizes per badge size
+--global-radius-full                Full border radius
+--global-spacing-xs                 Icon spacing
+--global-font-size-{size}           Font sizes per badge size
 ```
 
 ### Variant Matrix
@@ -78,12 +78,12 @@ badgeBase = I(document, {
   name: "Badge/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-xs",
-  paddingInlineStart: "$--av-spacing-sm",
-  paddingInlineEnd: "$--av-spacing-sm",
-  paddingTop: "$--av-spacing-xs",
-  paddingBottom: "$--av-spacing-xs",
-  cornerRadius: "$--av-radius-full",
+  gap: "$--global-spacing-xs",
+  paddingInlineStart: "$--global-spacing-sm",
+  paddingInlineEnd: "$--global-spacing-sm",
+  paddingTop: "$--global-spacing-xs",
+  paddingBottom: "$--global-spacing-xs",
+  cornerRadius: "$--global-radius-full",
   alignment: "center",
   justification: "center",
   height: "fit_content",
@@ -95,8 +95,8 @@ badgeText = I(badgeBase, {
   id: "badge-text",
   name: "Text",
   content: "Badge",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-medium",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-medium",
   fill: "$--badge-default-text",
   textAlign: "center",
 });
@@ -126,7 +126,7 @@ badgeFilled = I(document, {
 });
 
 U(badgeFilled + "/text", {
-  fill: "$--av-color-white",
+  fill: "$--global-color-white",
 });
 
 // Outline variant
@@ -168,12 +168,12 @@ badgeSm = I(document, {
   id: "badge-sm",
   name: "Badge/Small",
   reusable: true,
-  paddingInlineStart: "$--av-spacing-xs",
-  paddingInlineEnd: "$--av-spacing-xs",
+  paddingInlineStart: "$--global-spacing-xs",
+  paddingInlineEnd: "$--global-spacing-xs",
 });
 
 U(badgeSm + "/text", {
-  fontSize: "$--av-font-size-xs",
+  fontSize: "$--global-font-size-xs",
 });
 
 // Medium size (default)
@@ -186,7 +186,7 @@ badgeMd = I(document, {
 });
 
 U(badgeMd + "/text", {
-  fontSize: "$--av-font-size-sm",
+  fontSize: "$--global-font-size-sm",
 });
 
 // Large size
@@ -196,14 +196,14 @@ badgeLg = I(document, {
   id: "badge-lg",
   name: "Badge/Large",
   reusable: true,
-  paddingInlineStart: "$--av-spacing-sm",
-  paddingInlineEnd: "$--av-spacing-sm",
-  paddingTop: "$--av-spacing-xs",
-  paddingBottom: "$--av-spacing-xs",
+  paddingInlineStart: "$--global-spacing-sm",
+  paddingInlineEnd: "$--global-spacing-sm",
+  paddingTop: "$--global-spacing-xs",
+  paddingBottom: "$--global-spacing-xs",
 });
 
 U(badgeLg + "/text", {
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
 });
 
 // Badge with left icon
@@ -219,8 +219,8 @@ leftIcon = I(badgeWithLeftIcon, {
   ref: "icon-base",
   id: "badge-left-icon",
   name: "LeftIcon",
-  size: "$--av-font-size-xs",
-  marginInlineEnd: "$--av-spacing-xs",
+  size: "$--global-font-size-xs",
+  marginInlineEnd: "$--global-spacing-xs",
 });
 
 // Removable badge
@@ -239,7 +239,7 @@ removeButton = I(badgeRemovable, {
   height: 16,
   alignment: "center",
   justification: "center",
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   interactive: true,
 });
 
@@ -279,7 +279,7 @@ Design System Frame
 ```
 --icon-color                    Icon color (inherits from parent)
 --icon-color-disabled           Disabled icon color
---av-color-gray-{shade}         Gray scale for various states
+--global-color-gray-{shade}         Gray scale for various states
 --brand-color-primary           Brand colored icons
 ```
 
@@ -474,12 +474,12 @@ Design System Frame
 ### Design Tokens Used
 
 ```
---av-font-size-{size}           Font sizes
---av-font-weight-{weight}       Font weights
---av-line-height-{type}         Line heights
---av-color-gray-900             Primary text color
---av-color-gray-700             Secondary text color
---av-color-gray-500             Tertiary text color
+--global-font-size-{size}           Font sizes
+--global-font-weight-{weight}       Font weights
+--global-line-height-{type}         Line heights
+--global-color-gray-900             Primary text color
+--global-color-gray-700             Secondary text color
+--global-color-gray-500             Tertiary text color
 --brand-color-primary           Brand colored text
 ```
 
@@ -529,7 +529,7 @@ typographyBase = I(document, {
   name: "Typography/Base",
   reusable: true,
   content: "Sample text",
-  fill: "$--av-color-gray-900",
+  fill: "$--global-color-gray-900",
   textAlign: "start",
 });
 
@@ -540,10 +540,10 @@ typographyH1 = I(document, {
   name: "Typography/H1",
   reusable: true,
   content: "Page Title",
-  fontSize: "$--av-font-size-4xl",
-  fontWeight: "$--av-font-weight-bold",
-  lineHeight: "$--av-line-height-tight",
-  fill: "$--av-color-gray-900",
+  fontSize: "$--global-font-size-4xl",
+  fontWeight: "$--global-font-weight-bold",
+  lineHeight: "$--global-line-height-tight",
+  fill: "$--global-color-gray-900",
 });
 
 // Heading 2
@@ -553,10 +553,10 @@ typographyH2 = I(document, {
   name: "Typography/H2",
   reusable: true,
   content: "Section Title",
-  fontSize: "$--av-font-size-3xl",
-  fontWeight: "$--av-font-weight-bold",
-  lineHeight: "$--av-line-height-tight",
-  fill: "$--av-color-gray-900",
+  fontSize: "$--global-font-size-3xl",
+  fontWeight: "$--global-font-weight-bold",
+  lineHeight: "$--global-line-height-tight",
+  fill: "$--global-color-gray-900",
 });
 
 // Heading 3
@@ -566,10 +566,10 @@ typographyH3 = I(document, {
   name: "Typography/H3",
   reusable: true,
   content: "Subsection Title",
-  fontSize: "$--av-font-size-2xl",
-  fontWeight: "$--av-font-weight-semibold",
-  lineHeight: "$--av-line-height-tight",
-  fill: "$--av-color-gray-900",
+  fontSize: "$--global-font-size-2xl",
+  fontWeight: "$--global-font-weight-semibold",
+  lineHeight: "$--global-line-height-tight",
+  fill: "$--global-color-gray-900",
 });
 
 // Heading 4
@@ -579,10 +579,10 @@ typographyH4 = I(document, {
   name: "Typography/H4",
   reusable: true,
   content: "Card Title",
-  fontSize: "$--av-font-size-xl",
-  fontWeight: "$--av-font-weight-semibold",
-  lineHeight: "$--av-line-height-tight",
-  fill: "$--av-color-gray-900",
+  fontSize: "$--global-font-size-xl",
+  fontWeight: "$--global-font-weight-semibold",
+  lineHeight: "$--global-line-height-tight",
+  fill: "$--global-color-gray-900",
 });
 
 // Body large
@@ -592,10 +592,10 @@ typographyBodyLg = I(document, {
   name: "Typography/BodyLarge",
   reusable: true,
   content: "Large body text for readability.",
-  fontSize: "$--av-font-size-lg",
-  fontWeight: "$--av-font-weight-normal",
-  lineHeight: "$--av-line-height-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-lg",
+  fontWeight: "$--global-font-weight-normal",
+  lineHeight: "$--global-line-height-normal",
+  fill: "$--global-color-gray-700",
 });
 
 // Body medium (default)
@@ -605,10 +605,10 @@ typographyBodyMd = I(document, {
   name: "Typography/BodyMedium",
   reusable: true,
   content: "Default body text.",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-normal",
-  lineHeight: "$--av-line-height-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-normal",
+  lineHeight: "$--global-line-height-normal",
+  fill: "$--global-color-gray-700",
 });
 
 // Body small
@@ -618,10 +618,10 @@ typographyBodySm = I(document, {
   name: "Typography/BodySmall",
   reusable: true,
   content: "Small body text.",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-normal",
-  lineHeight: "$--av-line-height-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-normal",
+  lineHeight: "$--global-line-height-normal",
+  fill: "$--global-color-gray-700",
 });
 
 // Label medium
@@ -631,10 +631,10 @@ typographyLabelMd = I(document, {
   name: "Typography/LabelMedium",
   reusable: true,
   content: "Form Label",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-medium",
-  lineHeight: "$--av-line-height-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-medium",
+  lineHeight: "$--global-line-height-normal",
+  fill: "$--global-color-gray-700",
 });
 
 // Caption
@@ -644,10 +644,10 @@ typographyCaption = I(document, {
   name: "Typography/Caption",
   reusable: true,
   content: "Caption text",
-  fontSize: "$--av-font-size-xs",
-  fontWeight: "$--av-font-weight-normal",
-  lineHeight: "$--av-line-height-normal",
-  fill: "$--av-color-gray-500",
+  fontSize: "$--global-font-size-xs",
+  fontWeight: "$--global-font-weight-normal",
+  lineHeight: "$--global-line-height-normal",
+  fill: "$--global-color-gray-500",
 });
 
 // Brand colored text
@@ -657,8 +657,8 @@ typographyBrand = I(document, {
   name: "Typography/Brand",
   reusable: true,
   content: "Brand Text",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-medium",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-medium",
   fill: "$--brand-color-primary",
 });
 
@@ -669,9 +669,9 @@ typographyTruncate = I(document, {
   name: "Typography/Truncate",
   reusable: true,
   content: "Very long text that should be truncated with ellipsis",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-normal",
+  fill: "$--global-color-gray-700",
   maxWidth: 200,
   overflow: "truncate",
 });
@@ -683,9 +683,9 @@ typographyItalic = I(document, {
   name: "Typography/Italic",
   fontStyle: "italic",
   content: "Italic emphasis",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-normal",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-normal",
+  fill: "$--global-color-gray-700",
 });
 ```
 

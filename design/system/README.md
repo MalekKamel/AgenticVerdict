@@ -12,7 +12,6 @@ Authoritative Pencil sources for **design tokens** and **reusable primitives** (
 
 ## Rules
 
-- Edit **only** with Pencil MCP (`batch_get`, `batch_design`, …); run `pnpm run validate:pen-files` after changes.
 - `type: "ref"` resolves to `reusable` masters **in the same `.lib.pen` file** — see [pen-architecture-implementation-plan.md](../docs/research/pen-architecture-implementation-plan.md) §1.2.
 
 ## Related

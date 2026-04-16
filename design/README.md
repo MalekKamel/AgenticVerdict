@@ -76,8 +76,6 @@ design/
 ├── patterns/                        # Entry: UX patterns + doc links (planned)
 ├── components/                      # Entry: maps atoms/molecules → packages/ui (planned)
 └── scripts/                         # Validation and utility scripts
-    ├── validate-feature-pen-reuse.py
-    ├── validate-pen-files.py # Schema validation for .pen files
     └── merge-pen-system-layout.py
 ```
 
@@ -87,34 +85,34 @@ design/
 
 ### Three-Tier Architecture
 
-| Tier      | Prefix       | Purpose                    | Example                 |
-| --------- | ------------ | -------------------------- | ----------------------- |
-| Global    | `--av-*`     | Brand-agnostic primitives  | `--av-color-blue-700`   |
-| Brand     | `--brand-*`  | Tenant-specific overrides  | `--brand-color-primary` |
-| Component | `--button-*` | Composed from global/brand | `--button-primary-bg`   |
+| Tier      | Prefix       | Purpose                    | Example                   |
+| --------- | ------------ | -------------------------- | ------------------------- |
+| Global    | `--global-*` | Brand-agnostic primitives  | `--global-color-blue-700` |
+| Brand     | `--brand-*`  | Tenant-specific overrides  | `--brand-color-primary`   |
+| Component | `--button-*` | Composed from global/brand | `--button-primary-bg`     |
 
 ### Token Categories
 
 **Colors:**
 
 ```
-Global:    --av-color-blue-700: #1976D2
-Brand:     --brand-color-primary: var(--av-color-blue-700)
+Global:    --global-color-blue-700: #1976D2
+Brand:     --brand-color-primary: var(--global-color-blue-700)
 Component: --button-primary-bg: var(--brand-color-primary)
 ```
 
 **Spacing (4px base):**
 
 ```
---av-spacing-xs: 4px    --av-spacing-sm: 8px    --av-spacing-md: 16px
---av-spacing-lg: 24px   --av-spacing-xl: 32px
+--global-spacing-xs: 4px    --global-spacing-sm: 8px    --global-spacing-md: 16px
+--global-spacing-lg: 24px   --global-spacing-xl: 32px
 ```
 
 **Typography:**
 
 ```
---av-font-size-xs: 12px    --av-font-size-sm: 14px    --av-font-size-base: 16px
---av-font-size-lg: 18px    --av-font-size-xl: 20px
+--global-font-size-xs: 12px    --global-font-size-sm: 14px    --global-font-size-base: 16px
+--global-font-size-lg: 18px    --global-font-size-xl: 20px
 ```
 
 ### Theme Configuration
@@ -384,9 +382,7 @@ design/
 │   ├── form-field-search-card-implementation.md
 │   ├── research/
 │   └── generation/
-├── tokens/                    # Entry: links to token .pen + docs
-└── scripts/                   # Validation and utility scripts
-      └── validate-pen-files.py      # Schema validation for .pen files
+└── tokens/                    # Entry: links to token .pen + docs
 ```
 
 ---
@@ -418,7 +414,6 @@ design/
 - **Agent policy:** `/prompts/ui-guidelines-enforcement.md`
 - **Cursor rules:** `.cursor/rules/ui-guidelines.mdc`, `.cursor/rules/design-system-pen.mdc`
 - **Gap analysis / roadmap:** See research plans in `docs/research/`
-- **Validation:** `pnpm run validate:pen-files` runs `design/scripts/validate-pen-files.py` (schema) and `design/scripts/validate-feature-pen-reuse.py --strict` (feature reusable naming heuristics; Phase B in [pen-feature-ref-reusability-implementation-plan.md](docs/research/pen-feature-ref-reusability-implementation-plan.md))
 - **CI:** `.github/workflows/ui-guidelines-enforcement.yml` runs on changes under `design/`
 - **PR template:** When opening a PR that touches `design/**`, use `.github/PULL_REQUEST_TEMPLATE/design_system.md` where applicable
 

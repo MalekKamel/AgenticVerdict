@@ -140,9 +140,9 @@ pnpm test:coverage
 Brand-agnostic primitives like colors, spacing, and typography:
 
 ```css
---av-color-blue-600: #1976d2;
---av-spacing-4: 1rem;
---av-font-size-md: 1rem;
+--global-color-blue-600: #1976d2;
+--global-spacing-4: 1rem;
+--global-font-size-md: 1rem;
 ```
 
 ### Brand Tokens

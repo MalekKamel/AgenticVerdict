@@ -60,8 +60,7 @@ Produce new or updated documentation under the repository (paths to be chosen fo
 
 1. **Research memo** — Assumptions, findings, citations, and a clear recommendation (accept, adapt, or reject the proposed layout).
 2. **Target architecture** — Final directory tree, naming rules, and rules for what belongs in `system/` vs `features/` vs `assets/`.
-3. **Implementation plan** — Phases, file moves, Pencil MCP steps (`validate:pen-files` and related checks), and updates to `@agenticverdict/ui` exports.
-4. **Migration checklist** — Ordered tasks to retire the old structure completely (no backward-compatibility branch required).
+3. **Migration checklist** — Ordered tasks to retire the old structure completely (no backward-compatibility branch required).
 
 ---
 
@@ -74,7 +73,6 @@ Produce new or updated documentation under the repository (paths to be chosen fo
 
 ## 7. Execution notes
 
-- Edit `.pen` files only through **Pencil MCP** workflows per project UI guidelines; run **`pnpm run validate:pen-files`** after `.pen` changes.
 - Keep **WCAG 2.1 AA** and **RTL/LTR** requirements in scope when recommending structure (shared primitives, logical layout, tenant theming).
 
 ---

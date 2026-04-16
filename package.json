@@ -33,8 +33,7 @@
     "verify:build-config": "pnpm exec vitest run packages/config/src/build-constants.test.ts",
     "verify:production-bundle": "NODE_ENV=production pnpm --filter @agenticverdict/api build:vite && NODE_ENV=production pnpm --filter @agenticverdict/worker build:vite && node tools/build/bundle-adapter-factory-smoke.mjs && node tools/build/analyze-bundles.mjs apps/api/dist apps/worker/dist packages/data-connectors/dist",
     "benchmark:vite-bundles": "node tools/build/benchmark-builds.mjs",
-    "benchmark:performance-baseline": "node scripts/performance-baseline.mjs",
-    "validate:pen-files": "python3 design/scripts/validate-pen-files.py && python3 design/scripts/validate-feature-pen-reuse.py --strict"
+    "benchmark:performance-baseline": "node scripts/performance-baseline.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js}": [

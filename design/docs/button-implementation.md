@@ -51,10 +51,10 @@ Design System Frame
 --button-warning-bg          Warning button background
 --button-height-{size}       Button height per size
 --button-padding-x-{size}    Horizontal padding per size
---av-font-size-{size}        Font size per button size
---av-spacing-{size}          Spacing values
---av-radius-md               Border radius
---av-transition-normal       Transition timing
+--global-font-size-{size}        Font size per button size
+--global-spacing-{size}          Spacing values
+--global-radius-md               Border radius
+--global-transition-normal       Transition timing
 --focus-ring-color           Focus indicator color
 ```
 
@@ -97,7 +97,7 @@ Design System Frame
 ### Touch Targets
 
 - Minimum size: 44×44 CSS pixels (all sizes must meet this)
-- Spacing between adjacent buttons: 8px minimum (`--av-spacing-sm`)
+- Spacing between adjacent buttons: 8px minimum (`--global-spacing-sm`)
 
 ### Color Contrast
 
@@ -133,17 +133,17 @@ buttonBase = I(document, {
   name: "Button/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
   paddingInlineStart: "$--button-padding-x-md",
   paddingInlineEnd: "$--button-padding-x-md",
-  paddingTop: "$--av-spacing-sm",
-  paddingBottom: "$--av-spacing-sm",
-  cornerRadius: "$--av-radius-md",
+  paddingTop: "$--global-spacing-sm",
+  paddingBottom: "$--global-spacing-sm",
+  cornerRadius: "$--global-radius-md",
   fill: "$--button-primary-bg",
   height: "$--button-height-md",
   alignment: "center",
   justification: "center",
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Button label
@@ -152,8 +152,8 @@ buttonLabel = I(buttonBase, {
   id: "button-label",
   name: "Label",
   content: "Button",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-medium",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-medium",
   fill: "$--button-primary-text",
   textAlign: "center",
 });
@@ -247,7 +247,7 @@ buttonWarning = I(document, {
 });
 
 U(buttonWarning + "/label", {
-  fill: "$--av-color-gray-900",
+  fill: "$--global-color-gray-900",
 });
 ```
 
@@ -263,12 +263,12 @@ buttonXs = I(document, {
   height: "$--button-height-xs",
   paddingInlineStart: "$--button-padding-x-xs",
   paddingInlineEnd: "$--button-padding-x-xs",
-  paddingTop: "$--av-spacing-xs",
-  paddingBottom: "$--av-spacing-xs",
+  paddingTop: "$--global-spacing-xs",
+  paddingBottom: "$--global-spacing-xs",
 });
 
 U(buttonXs + "/label", {
-  fontSize: "$--av-font-size-xs",
+  fontSize: "$--global-font-size-xs",
 });
 
 // Small (sm)
@@ -280,12 +280,12 @@ buttonSm = I(document, {
   height: "$--button-height-sm",
   paddingInlineStart: "$--button-padding-x-sm",
   paddingInlineEnd: "$--button-padding-x-sm",
-  paddingTop: "$--av-spacing-xs",
-  paddingBottom: "$--av-spacing-xs",
+  paddingTop: "$--global-spacing-xs",
+  paddingBottom: "$--global-spacing-xs",
 });
 
 U(buttonSm + "/label", {
-  fontSize: "$--av-font-size-sm",
+  fontSize: "$--global-font-size-sm",
 });
 
 // Medium (md) - Default
@@ -300,7 +300,7 @@ buttonMd = I(document, {
 });
 
 U(buttonMd + "/label", {
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
 });
 
 // Large (lg)
@@ -312,12 +312,12 @@ buttonLg = I(document, {
   height: "$--button-height-lg",
   paddingInlineStart: "$--button-padding-x-lg",
   paddingInlineEnd: "$--button-padding-x-lg",
-  paddingTop: "$--av-spacing-sm",
-  paddingBottom: "$--av-spacing-sm",
+  paddingTop: "$--global-spacing-sm",
+  paddingBottom: "$--global-spacing-sm",
 });
 
 U(buttonLg + "/label", {
-  fontSize: "$--av-font-size-lg",
+  fontSize: "$--global-font-size-lg",
 });
 
 // Extra Large (xl)
@@ -329,12 +329,12 @@ buttonXl = I(document, {
   height: "$--button-height-xl",
   paddingInlineStart: "$--button-padding-x-xl",
   paddingInlineEnd: "$--button-padding-x-xl",
-  paddingTop: "$--av-spacing-md",
-  paddingBottom: "$--av-spacing-md",
+  paddingTop: "$--global-spacing-md",
+  paddingBottom: "$--global-spacing-md",
 });
 
 U(buttonXl + "/label", {
-  fontSize: "$--av-font-size-xl",
+  fontSize: "$--global-font-size-xl",
 });
 ```
 
@@ -394,7 +394,7 @@ loadingSpinner = I(buttonLoading, {
   type: "ref",
   ref: "spinner-base",
   id: "button-loading-spinner",
-  size: "$--av-font-size-base",
+  size: "$--global-font-size-base",
 });
 ```
 
@@ -414,8 +414,8 @@ leftIcon = I(buttonWithLeftIcon, {
   ref: "icon-base",
   id: "button-left-icon",
   name: "LeftIcon",
-  size: "$--av-font-size-base",
-  marginInlineEnd: "$--av-spacing-sm",
+  size: "$--global-font-size-base",
+  marginInlineEnd: "$--global-spacing-sm",
 });
 
 // Button with right icon
@@ -431,8 +431,8 @@ rightIcon = I(buttonWithRightIcon, {
   ref: "icon-base",
   id: "button-right-icon",
   name: "RightIcon",
-  size: "$--av-font-size-base",
-  marginInlineStart: "$--av-spacing-sm",
+  size: "$--global-font-size-base",
+  marginInlineStart: "$--global-spacing-sm",
 });
 ```
 

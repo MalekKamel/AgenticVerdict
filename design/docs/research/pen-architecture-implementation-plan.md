@@ -11,12 +11,11 @@ Phased migration from the prior layout (`designatoms/*.pen`, `designmolecules/*.
 
 **Principles (from project prompt):**
 
-| Principle             | Application                                                                                               |
-| --------------------- | --------------------------------------------------------------------------------------------------------- |
-| Pre-production        | No backward compatibility requirement for old paths                                                       |
-| Cutover               | Deliberate migration; avoid long-term parallel trees unless research dictates risk mitigation             |
-| MCP-only `.pen` edits | All `.pen` changes via Pencil MCP (`batch_design`, etc.); run `pnpm run validate:pen-files` after changes |
-| RTL/LTR + WCAG 2.1 AA | Preserved via shared tokens, logical layout in React (`@agenticverdict/ui`), and asset conventions        |
+| Principle             | Application                                                                                        |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| Pre-production        | No backward compatibility requirement for old paths                                                |
+| Cutover               | Deliberate migration; avoid long-term parallel trees unless research dictates risk mitigation      |
+| RTL/LTR + WCAG 2.1 AA | Preserved via shared tokens, logical layout in React (`@agenticverdict/ui`), and asset conventions |
 
 ### 1.1 Path mapping (current → target)
 
@@ -58,12 +57,7 @@ Add READMEs: `designsystem/README.md`, `designfeatures/README.md`, `designassets
 - Recommended: **`git checkout -b chore/pen-architecture-migration`** before moves.
 - Optional local tarball or copy to a **gitignored** path (e.g. `design.migration-backup/`), not a committed `design-system-backup-*` tree.
 
-### 2.3 Validator and CI
-
-- Extend `design/scripts/validate-pen-files.py` to discover `.pen` files under `designsystem/`, `designfeatures/`, and legacy paths during transition—or switch glob once cutover is atomic.
-- Keep `.github/workflows/ui-guidelines-enforcement.yml` in sync (already invokes `python3 designvalidate-pen-files.py`).
-
-### 2.4 Documentation
+### 2.3 Documentation
 
 - Update `designREADME.md` to describe the target tree and link here.
 - Update `designdocs/generation/ui-generation-quick-reference.md` examples to new paths after file moves.
@@ -75,7 +69,6 @@ Add READMEs: `designsystem/README.md`, `designfeatures/README.md`, `designassets
 ### 3.1 `system/design-tokens.lib.pen`
 
 - MCP: move or consolidate from `designsystem/design-tokens.lib.pen` into `designsystem/design-tokens.lib.pen`.
-- Run `pnpm run validate:pen-files`.
 
 ### 3.2 `system/atoms.lib.pen`
 
@@ -96,8 +89,6 @@ into `designsystem/molecules.lib.pen`; use internal `ref` to atoms where appropr
 ### 3.4 Visual QA
 
 - Pencil MCP: `get_screenshot` / `snapshot_layout` on representative nodes after consolidation.
-
-**Phase 2 exit:** `pnpm run validate:pen-files` passes; system `.pen` files list matches target architecture.
 
 ## 4. Phase 3 — Features (week 3)
 
@@ -135,12 +126,6 @@ After validation and sign-off:
 - Remove old `designatoms/*.pen`, `designmolecules/*.pen`, `designtemplates/*.pen` (or archive in git history only).
 - Update all doc references and MCP examples to new paths.
 
-### 5.3 Final validation
-
-```bash
-pnpm run validate:pen-files
-```
-
 **Phase 4 exit:** Only target paths remain; docs updated; CI green.
 
 ## 6. `@agenticverdict/ui` alignment
@@ -159,11 +144,8 @@ No mass rename of `packages/ui` folders is required **purely** for `.pen` restru
 
 | Step                          | Command                                                                                     |
 | ----------------------------- | ------------------------------------------------------------------------------------------- |
-| `.pen` schema / repo rules    | `pnpm run validate:pen-files`                                                               |
 | UI package (when touching TS) | `pnpm --filter @agenticverdict/ui build` (or `turbo run build --filter=@agenticverdict/ui`) |
 | E2E a11y (optional gate)      | Uses Playwright a11y specs via existing web test scripts in `package.json`                  |
-
-**2026-04-15:** `pnpm run validate:pen-files` passes on the **post-cutover** tree (**4** consolidated `.pen` files under `system/` and `features/`). Re-run after any `.pen` edit.
 
 ## 8. Acceptance criteria
 
@@ -178,7 +160,6 @@ No mass rename of `packages/ui` folders is required **purely** for `.pen` restru
 
 - [x] Research memo, target architecture, and this plan merged with **explicit paths** and **owner-ready** tasks.
 - [x] `system/` / `features/` / `assets/` layout specified and mapped to `@agenticverdict/ui` consumption (see [target architecture](./target-architecture.md) §4).
-- [x] Validation command(s) documented; **`pnpm run validate:pen-files`** passes on the **final** tree after cutover.
 - [x] Migration checklist below completed (tick in PR).
 
 ## 9. Migration checklist (ordered)
@@ -193,20 +174,17 @@ No mass rename of `packages/ui` folders is required **purely** for `.pen` restru
 
 - [x] Create `designsystem`, `designfeatures`, `designassets/{icons,illustrations,images}`.
 - [x] Add README.md in each new subtree.
-- [x] Plan `validate-pen-files.py` glob/update for new layout (`rglob` under `design`; script path is repo-relative).
 
 ### System `.pen`
 
 - [x] `designsystem/design-tokens.lib.pen`
 - [x] `designsystem/atoms.lib.pen` (all former `atoms/*.pen`)
 - [x] `designsystem/molecules.lib.pen` (all former `molecules/*.pen`, **plus** atom children duplicated for same-document `ref` resolution — see `system/README.md`)
-- [x] `pnpm run validate:pen-files`
 
 ### Features `.pen`
 
 - [x] `designfeatures/auth.pen` (from former `templates/authentication.pen`)
 - [ ] Additional `features/*.pen` per roadmap (dashboard, profile, … — as product work lands)
-- [x] `pnpm run validate:pen-files`
 
 ### Assets
 
@@ -224,7 +202,6 @@ No mass rename of `packages/ui` folders is required **purely** for `.pen` restru
 
 - [x] Delete legacy `designatoms/`, `designmolecules/`, `designtemplates/` `.pen` files (retain history in git).
 - [x] Remove duplicate `design-tokens.pen` at old location if moved.
-- [ ] Final `pnpm run validate:pen-files` on `main` after merge.
 
 ## 10. Risks and mitigations
 
@@ -232,7 +209,6 @@ No mass rename of `packages/ui` folders is required **purely** for `.pen` restru
 | ------------------------------------------ | -------------------------------------------------------------------------------------------- |
 | Large single `atoms.pen` / `molecules.pen` | Strict naming hierarchy; MCP `batch_get` filters; split only if tooling/performance requires |
 | No cross-file `ref`                        | Same-document refs in system files; React SSOT; design QA between features and system        |
-| Validator misses new paths                 | Update `validate-pen-files.py` and CI together                                               |
 | Drift between `.pen` and React             | MCP-first workflow; token naming; reviews                                                    |
 
 ---

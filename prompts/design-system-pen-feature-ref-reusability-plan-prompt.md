@@ -28,7 +28,6 @@ Produce **one markdown document** (implementation plan) that is:
 
 - **Actionable** — Phases, owners or roles, concrete checks, and acceptance criteria.
 - **Aligned with industry practice** — Governance (contribution model, review gates), versioning or change control where relevant, documentation and discoverability, and prevention of drift (lint/validation, CI, or manual audits as appropriate).
-- **Grounded in this repo** — References `validate:pen-files`, Pencil MCP workflows, and paths under `design/`; calls out **technical constraints** (for example, how **`ref`** resolves in this toolchain, including same-document vs cross-document behavior) and turns them into explicit enforcement or workflow rules.
 
 ---
 
@@ -48,7 +47,6 @@ The plan **must** include, at minimum:
 ## 5. Constraints
 
 - Do **not** hand-edit encrypted `.pen` JSON except for validator-approved mechanical fixes; design changes use **Pencil MCP** tools per repository rules.
-- Do **not** contradict the **Design system README** and **`pnpm run validate:pen-files`** expectations without documenting an explicit exception process.
 
 ---
 

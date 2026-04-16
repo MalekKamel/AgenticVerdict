@@ -85,7 +85,7 @@ Design System Frame
 ### 2.2 Success Criteria
 
 - [ ] All atom and molecule components are created as reusable components in `.pen` files
-- [ ] Design tokens follow the three-tier naming convention (`--av-*`, `--brand-*`, `--component-*`)
+- [ ] Design tokens follow the three-tier naming convention (`--global-*`, `--brand-*`, `--component-*`)
 - [ ] All components support RTL/LTR layouts with proper logical properties
 - [ ] All interactive components demonstrate keyboard accessibility
 - [ ] Color contrast ratios meet WCAG 2.1 AA requirements (4.5:1 for normal text, 3:1 for large text)
@@ -106,12 +106,12 @@ Design System Frame
 
 Before creating components, ensure the three-tier design token system is defined:
 
-**Global Tokens (`--av-*`):**
+**Global Tokens (`--global-*`):**
 
-- Colors: `--av-color-blue-700`, `--av-color-gray-500`, etc.
-- Spacing: `--av-spacing-xs`, `--av-spacing-sm`, `--av-spacing-md`, etc.
-- Typography: `--av-font-size-base`, `--av-font-weight-medium`, etc.
-- Effects: `--av-effect-shadow-md`, `--av-effect-radius-md`, etc.
+- Colors: `--global-color-blue-700`, `--global-color-gray-500`, etc.
+- Spacing: `--global-spacing-xs`, `--global-spacing-sm`, `--global-spacing-md`, etc.
+- Typography: `--global-font-size-base`, `--global-font-weight-medium`, etc.
+- Effects: `--global-effect-shadow-md`, `--global-effect-radius-md`, etc.
 
 **Brand Tokens (`--brand-*`):**
 
@@ -166,22 +166,22 @@ await mcp__pencil__set_variables({
   variables: {
     variables: {
       // Global color tokens
-      "--av-color-blue-700": { type: "color", value: "#1976D2" },
-      "--av-color-gray-100": { type: "color", value: "#F5F5F5" },
+      "--global-color-blue-700": { type: "color", value: "#1976D2" },
+      "--global-color-gray-100": { type: "color", value: "#F5F5F5" },
 
       // Global spacing tokens
-      "--av-spacing-xs": { type: "number", value: 4 },
-      "--av-spacing-sm": { type: "number", value: 8 },
-      "--av-spacing-md": { type: "number", value: 16 },
-      "--av-spacing-lg": { type: "number", value: 24 },
-      "--av-spacing-xl": { type: "number", value: 32 },
+      "--global-spacing-xs": { type: "number", value: 4 },
+      "--global-spacing-sm": { type: "number", value: 8 },
+      "--global-spacing-md": { type: "number", value: 16 },
+      "--global-spacing-lg": { type: "number", value: 24 },
+      "--global-spacing-xl": { type: "number", value: 32 },
 
       // Global typography tokens
-      "--av-font-size-base": { type: "number", value: 14 },
-      "--av-font-weight-medium": { type: "string", value: "500" },
+      "--global-font-size-base": { type: "number", value: 14 },
+      "--global-font-weight-medium": { type: "string", value: "500" },
 
       // Brand tokens (tenant-customizable)
-      "--brand-color-primary": { type: "color", value: "$--av-color-blue-700" },
+      "--brand-color-primary": { type: "color", value: "$--global-color-blue-700" },
 
       // Component tokens
       "--button-primary-bg": { type: "color", value: "$--brand-color-primary" },
@@ -221,9 +221,9 @@ buttonBase = I(designSystemId, {
   name: "Button/Base",
   reusable: true,
   layout: "horizontal",
-  padding: ["$--av-spacing-sm", "$--av-spacing-md"],
-  gap: "$--av-spacing-sm",
-  cornerRadius: "$--av-radius-md",
+  padding: ["$--global-spacing-sm", "$--global-spacing-md"],
+  gap: "$--global-spacing-sm",
+  cornerRadius: "$--global-radius-md",
   fill: "$--button-primary-bg",
   width: "fit_content",
   height: 36,
@@ -237,9 +237,9 @@ buttonLabel = I(buttonBaseId, {
   id: "button-label",
   name: "Label",
   content: "Button",
-  fontSize: "$--av-font-size-base",
-  fontWeight: "$--av-font-weight-medium",
-  fill: "$--av-color-white",
+  fontSize: "$--global-font-size-base",
+  fontWeight: "$--global-font-weight-medium",
+  fill: "$--global-color-white",
   textAlign: "center",
 });
 
@@ -268,8 +268,8 @@ buttonSmall = I(designSystemId, {
   type: "ref",
   ref: "button-base",
   name: "Button/Primary/Small",
-  padding: ["$--av-spacing-xs", "$--av-spacing-sm"],
-  fontSize: "$--av-font-size-sm",
+  padding: ["$--global-spacing-xs", "$--global-spacing-sm"],
+  fontSize: "$--global-font-size-sm",
   height: 28,
 });
 
@@ -301,13 +301,13 @@ inputBase = I(designSystemId, {
   layout: "vertical",
   width: "fill_container",
   height: 36,
-  padding: ["$--av-spacing-sm", "$--av-spacing-md"],
-  cornerRadius: "$--av-radius-md",
+  padding: ["$--global-spacing-sm", "$--global-spacing-md"],
+  cornerRadius: "$--global-radius-md",
   stroke: {
-    color: "$--av-color-gray-300",
+    color: "$--global-color-gray-300",
     thickness: 1
   },
-  fill: "$--av-color-white",
+  fill: "$--global-color-white",
   placeholder: true
 });
 
@@ -317,7 +317,7 @@ inputError = I(designSystemId, {
   ref: "input-base",
   name: "Input/Error",
   stroke: {
-    color: "$--av-color-red-500",
+    color: "$--global-color-red-500",
     thickness: 2
   }
 });
@@ -327,7 +327,7 @@ inputSuccess = I(designSystemId, {
   ref: "input-base",
   name: "Input/Success",
   stroke: {
-    color: "$--av-color-green-500",
+    color: "$--global-color-green-500",
     thickness": 2
   }
 });
@@ -367,7 +367,7 @@ formField = I(designSystemId, {
   name: "FormField/Base",
   reusable: true,
   layout: "vertical",
-  gap: "$--av-spacing-xs",
+  gap: "$--global-spacing-xs",
   width: "fill_container",
 });
 
@@ -377,9 +377,9 @@ formFieldLabel = I(formFieldId, {
   id: "form-field-label",
   name: "Label",
   content: "Field Label",
-  fontSize: "$--av-font-size-sm",
-  fontWeight: "$--av-font-weight-medium",
-  fill: "$--av-color-gray-700",
+  fontSize: "$--global-font-size-sm",
+  fontWeight: "$--global-font-weight-medium",
+  fill: "$--global-color-gray-700",
 });
 
 // Input Instance
@@ -394,8 +394,8 @@ formFieldHelper = I(formFieldId, {
   id: "form-field-helper",
   name: "Helper Text",
   content: "Additional guidance",
-  fontSize: "$--av-font-size-xs",
-  fill: "$--av-color-gray-500",
+  fontSize: "$--global-font-size-xs",
+  fill: "$--global-color-gray-500",
 });
 
 // Error Message (hidden by default)
@@ -404,8 +404,8 @@ formFieldError = I(formFieldId, {
   id: "form-field-error",
   name: "Error Message",
   content: "Error message",
-  fontSize: "$--av-font-size-xs",
-  fill: "$--av-color-red-500",
+  fontSize: "$--global-font-size-xs",
+  fill: "$--global-color-red-500",
   visible: false,
 });
 ```
@@ -420,9 +420,9 @@ cardBase = I(designSystemId, {
   name: "Card/Base",
   reusable: true,
   layout: "vertical",
-  padding: "$--av-spacing-md",
-  cornerRadius: "$--av-radius-lg",
-  fill: "$--av-color-white",
+  padding: "$--global-spacing-md",
+  cornerRadius: "$--global-radius-lg",
+  fill: "$--global-color-white",
   width: "fill_container",
   height: "fit_content",
 });
@@ -432,7 +432,7 @@ cardElevated = I(designSystemId, {
   type: "ref",
   ref: "card-base",
   name: "Card/Elevated",
-  effect: "$--av-effect-shadow-md",
+  effect: "$--global-effect-shadow-md",
 });
 
 cardOutlined = I(designSystemId, {
@@ -440,7 +440,7 @@ cardOutlined = I(designSystemId, {
   ref: "card-base",
   name: "Card/Outlined",
   stroke: {
-    color: "$--av-color-gray-200",
+    color: "$--global-color-gray-200",
     thickness: 1,
   },
 });
@@ -466,14 +466,14 @@ Create the following molecule components:
 ```javascript
 // ❌ INCORRECT - Directional properties
 leftPadding = I(componentId, {
-  paddingLeft: "$--av-spacing-md",
-  marginRight: "$--av-spacing-sm",
+  paddingLeft: "$--global-spacing-md",
+  marginRight: "$--global-spacing-sm",
 });
 
 // ✅ CORRECT - Logical properties
 logicalPadding = I(componentId, {
-  paddingInlineStart: "$--av-spacing-md",
-  marginInlineEnd: "$--av-spacing-sm",
+  paddingInlineStart: "$--global-spacing-md",
+  marginInlineEnd: "$--global-spacing-sm",
 });
 
 // Text alignment
@@ -873,11 +873,11 @@ The implementation is complete when:
 
 ### A.2 Design Token Naming
 
-| Prefix          | Purpose          | Example                 |
-| --------------- | ---------------- | ----------------------- |
-| `--av-*`        | Global tokens    | `--av-color-blue-700`   |
-| `--brand-*`     | Brand tokens     | `--brand-color-primary` |
-| `--component-*` | Component tokens | `--button-primary-bg`   |
+| Prefix          | Purpose          | Example                   |
+| --------------- | ---------------- | ------------------------- |
+| `--global-*`    | Global tokens    | `--global-color-blue-700` |
+| `--brand-*`     | Brand tokens     | `--brand-color-primary`   |
+| `--component-*` | Component tokens | `--button-primary-bg`     |
 
 ### A.3 Component Naming
 

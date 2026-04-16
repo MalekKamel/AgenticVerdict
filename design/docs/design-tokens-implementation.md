@@ -19,135 +19,135 @@ This document defines the complete design token system for AgenticVerdict. The t
 #### Primary Blues
 
 ```
---av-color-blue-50:  #E7F5FF
---av-color-blue-100: #D0EBFF
---av-color-blue-200: #A5D8FF
---av-color-blue-300: #74C0FC
---av-color-blue-400: #4DABF7
---av-color-blue-500: #228BE6  ← Primary brand blue
---av-color-blue-600: #1C7ED6
---av-color-blue-700: #1976D2
---av-color-blue-800: #1864AB
---av-color-blue-900: #1971C2
+--global-color-blue-50:  #E7F5FF
+--global-color-blue-100: #D0EBFF
+--global-color-blue-200: #A5D8FF
+--global-color-blue-300: #74C0FC
+--global-color-blue-400: #4DABF7
+--global-color-blue-500: #228BE6  ← Primary brand blue
+--global-color-blue-600: #1C7ED6
+--global-color-blue-700: #1976D2
+--global-color-blue-800: #1864AB
+--global-color-blue-900: #1971C2
 ```
 
 #### Grays (Neutral Scale)
 
 ```
---av-color-gray-0:   #FFFFFF
---av-color-gray-50:  #F8F9FA
---av-color-gray-100: #F1F3F5
---av-color-gray-200: #E9ECEF
---av-color-gray-300: #DEE2E6
---av-color-gray-400: #CED4DA
---av-color-gray-500: #ADB5BD
---av-color-gray-600: #868E96
---av-color-gray-700: #495057
---av-color-gray-800: #343A40
---av-color-gray-900: #212529
---av-color-gray-1000:#000000
+--global-color-gray-0:   #FFFFFF
+--global-color-gray-50:  #F8F9FA
+--global-color-gray-100: #F1F3F5
+--global-color-gray-200: #E9ECEF
+--global-color-gray-300: #DEE2E6
+--global-color-gray-400: #CED4DA
+--global-color-gray-500: #ADB5BD
+--global-color-gray-600: #868E96
+--global-color-gray-700: #495057
+--global-color-gray-800: #343A40
+--global-color-gray-900: #212529
+--global-color-gray-1000:#000000
 ```
 
 #### Semantic Colors
 
 ```
 # Success (Green)
---av-color-green-500:  #40C057
---av-color-green-600:  #37B24D
---av-color-green-700:  #2F9E44
+--global-color-green-500:  #40C057
+--global-color-green-600:  #37B24D
+--global-color-green-700:  #2F9E44
 
 # Warning (Yellow)
---av-color-yellow-500: #FCC419
---av-color-yellow-600: #F59F00
---av-color-yellow-700: #E67700
+--global-color-yellow-500: #FCC419
+--global-color-yellow-600: #F59F00
+--global-color-yellow-700: #E67700
 
 # Danger (Red)
---av-color-red-500:    #FF6B6B
---av-color-red-600:    #FA5252
---av-color-red-700:    #F03E3E
+--global-color-red-500:    #FF6B6B
+--global-color-red-600:    #FA5252
+--global-color-red-700:    #F03E3E
 
 # Info (Cyan)
---av-color-cyan-500:   #22B8CF
---av-color-cyan-600:   #18A5B8
---av-color-cyan-700:   #1098AD
+--global-color-cyan-500:   #22B8CF
+--global-color-cyan-600:   #18A5B8
+--global-color-cyan-700:   #1098AD
 ```
 
 ### Spacing Scale (4px Base)
 
 ```
---av-spacing-xs:   4px    (0.25rem)
---av-spacing-sm:   8px    (0.5rem)
---av-spacing-md:   16px   (1rem)
---av-spacing-lg:   24px   (1.5rem)
---av-spacing-xl:   32px   (2rem)
---av-spacing-2xl:  48px   (3rem)
---av-spacing-3xl:  64px   (4rem)
+--global-spacing-xs:   4px    (0.25rem)
+--global-spacing-sm:   8px    (0.5rem)
+--global-spacing-md:   16px   (1rem)
+--global-spacing-lg:   24px   (1.5rem)
+--global-spacing-xl:   32px   (2rem)
+--global-spacing-2xl:  48px   (3rem)
+--global-spacing-3xl:  64px   (4rem)
 ```
 
 ### Typography Scale
 
 ```
---av-font-size-xs:     12px   (0.75rem)
---av-font-size-sm:     14px   (0.875rem)
---av-font-size-base:   16px   (1rem)
---av-font-size-lg:     18px   (1.125rem)
---av-font-size-xl:     20px   (1.25rem)
---av-font-size-2xl:    24px   (1.5rem)
---av-font-size-3xl:    30px   (1.875rem)
---av-font-size-4xl:    36px   (2.25rem)
+--global-font-size-xs:     12px   (0.75rem)
+--global-font-size-sm:     14px   (0.875rem)
+--global-font-size-base:   16px   (1rem)
+--global-font-size-lg:     18px   (1.125rem)
+--global-font-size-xl:     20px   (1.25rem)
+--global-font-size-2xl:    24px   (1.5rem)
+--global-font-size-3xl:    30px   (1.875rem)
+--global-font-size-4xl:    36px   (2.25rem)
 
---av-font-weight-light:     300
---av-font-weight-normal:    400
---av-font-weight-medium:    500
---av-font-weight-semibold:  600
---av-font-weight-bold:      700
+--global-font-weight-light:     300
+--global-font-weight-normal:    400
+--global-font-weight-medium:    500
+--global-font-weight-semibold:  600
+--global-font-weight-bold:      700
 
---av-line-height-tight:   1.2
---av-line-height-normal:  1.5
---av-line-height-relaxed: 1.75
+--global-line-height-tight:   1.2
+--global-line-height-normal:  1.5
+--global-line-height-relaxed: 1.75
 
---av-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif
---av-font-family-mono:    'JetBrains Mono', 'Consolas', monospace
+--global-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif
+--global-font-family-mono:    'JetBrains Mono', 'Consolas', monospace
 ```
 
 ### Border Radius
 
 ```
---av-radius-xs:  2px
---av-radius-sm:  4px
---av-radius-md:  8px
---av-radius-lg:  12px
---av-radius-xl:  16px
---av-radius-full: 9999px
+--global-radius-xs:  2px
+--global-radius-sm:  4px
+--global-radius-md:  8px
+--global-radius-lg:  12px
+--global-radius-xl:  16px
+--global-radius-full: 9999px
 ```
 
 ### Shadows
 
 ```
---av-shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.05)
---av-shadow-md:   0 4px 6px rgba(0, 0, 0, 0.1)
---av-shadow-lg:   0 10px 15px rgba(0, 0, 0, 0.1)
---av-shadow-xl:   0 20px 25px rgba(0, 0, 0, 0.15)
+--global-shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.05)
+--global-shadow-md:   0 4px 6px rgba(0, 0, 0, 0.1)
+--global-shadow-lg:   0 10px 15px rgba(0, 0, 0, 0.1)
+--global-shadow-xl:   0 20px 25px rgba(0, 0, 0, 0.15)
 ```
 
 ### Transitions
 
 ```
---av-transition-fast:   100ms ease-in-out
---av-transition-normal: 200ms ease-in-out
---av-transition-slow:   300ms ease-in-out
+--global-transition-fast:   100ms ease-in-out
+--global-transition-normal: 200ms ease-in-out
+--global-transition-slow:   300ms ease-in-out
 ```
 
 ### Z-Index Scale
 
 ```
---av-z-index-base:      1
---av-z-index-dropdown:  100
---av-z-index-sticky:    200
---av-z-index-overlay:   300
---av-z-index-modal:     400
---av-z-index-popover:   500
---av-z-index-toast:     600
+--global-z-index-base:      1
+--global-z-index-dropdown:  100
+--global-z-index-sticky:    200
+--global-z-index-overlay:   300
+--global-z-index-modal:     400
+--global-z-index-popover:   500
+--global-z-index-toast:     600
 ```
 
 ---
@@ -157,11 +157,11 @@ This document defines the complete design token system for AgenticVerdict. The t
 ### Default Brand Configuration
 
 ```
---brand-color-primary:    var(--av-color-blue-700, #1976D2)
---brand-color-secondary:  var(--av-color-blue-400, #4DABF7)
---brand-color-accent:     var(--av-color-cyan-500, #22B8CF)
+--brand-color-primary:    var(--global-color-blue-700, #1976D2)
+--brand-color-secondary:  var(--global-color-blue-400, #4DABF7)
+--brand-color-accent:     var(--global-color-cyan-500, #22B8CF)
 
---brand-font-family:      var(--av-font-family-primary)
+--brand-font-family:      var(--global-font-family-primary)
 
 --brand-logo-url:         url('/logos/default.svg')
 --brand-logo-width:       150px
@@ -190,31 +190,31 @@ This document defines the complete design token system for AgenticVerdict. The t
 
 ```
 --button-primary-bg:        var(--brand-color-primary)
---button-primary-text:      var(--av-color-gray-0)
+--button-primary-text:      var(--global-color-gray-0)
 --button-primary-hover:     var(--brand-color-secondary)
 --button-primary-active:    var(--brand-color-primary)
---button-primary-disabled:  var(--av-color-gray-300)
+--button-primary-disabled:  var(--global-color-gray-300)
 --button-primary-focus:     var(--brand-color-secondary)
 
 --button-secondary-bg:      transparent
 --button-secondary-text:    var(--brand-color-primary)
 --button-secondary-border:  var(--brand-color-primary)
---button-secondary-hover:   var(--av-color-blue-50)
+--button-secondary-hover:   var(--global-color-blue-50)
 
---button-ghost-text:        var(--av-color-gray-700)
---button-ghost-hover:       var(--av-color-gray-100)
+--button-ghost-text:        var(--global-color-gray-700)
+--button-ghost-hover:       var(--global-color-gray-100)
 
---button-danger-bg:         var(--av-color-red-600)
---button-danger-text:       var(--av-color-gray-0)
---button-danger-hover:      var(--av-color-red-700)
+--button-danger-bg:         var(--global-color-red-600)
+--button-danger-text:       var(--global-color-gray-0)
+--button-danger-hover:      var(--global-color-red-700)
 
---button-success-bg:        var(--av-color-green-600)
---button-success-text:      var(--av-color-gray-0)
---button-success-hover:     var(--av-color-green-700)
+--button-success-bg:        var(--global-color-green-600)
+--button-success-text:      var(--global-color-gray-0)
+--button-success-hover:     var(--global-color-green-700)
 
---button-warning-bg:        var(--av-color-yellow-500)
---button-warning-text:      var(--av-color-gray-900)
---button-warning-hover:     var(--av-color-yellow-600)
+--button-warning-bg:        var(--global-color-yellow-500)
+--button-warning-text:      var(--global-color-gray-900)
+--button-warning-hover:     var(--global-color-yellow-600)
 
 --button-height-xs:         28px
 --button-height-sm:         32px
@@ -222,118 +222,118 @@ This document defines the complete design token system for AgenticVerdict. The t
 --button-height-lg:         48px
 --button-height-xl:         56px
 
---button-padding-x-xs:      var(--av-spacing-sm)
---button-padding-x-sm:      var(--av-spacing-md)
---button-padding-x-md:      var(--av-spacing-lg)
---button-padding-x-lg:      var(--av-spacing-xl)
---button-padding-x-xl:      var(--av-spacing-2xl)
+--button-padding-x-xs:      var(--global-spacing-sm)
+--button-padding-x-sm:      var(--global-spacing-md)
+--button-padding-x-md:      var(--global-spacing-lg)
+--button-padding-x-lg:      var(--global-spacing-xl)
+--button-padding-x-xl:      var(--global-spacing-2xl)
 ```
 
 ### Input Tokens
 
 ```
---input-bg:                 var(--av-color-gray-0)
---input-text:               var(--av-color-gray-900)
---input-border:             var(--av-color-gray-300)
---input-border-hover:       var(--av-color-gray-400)
+--input-bg:                 var(--global-color-gray-0)
+--input-text:               var(--global-color-gray-900)
+--input-border:             var(--global-color-gray-300)
+--input-border-hover:       var(--global-color-gray-400)
 --input-border-focus:       var(--brand-color-primary)
---input-placeholder:        var(--av-color-gray-500)
+--input-placeholder:        var(--global-color-gray-500)
 
---input-error-border:       var(--av-color-red-500)
---input-error-text:         var(--av-color-red-600)
---input-warning-border:     var(--av-color-yellow-500)
---input-warning-text:       var(--av-color-yellow-600)
---input-success-border:     var(--av-color-green-500)
---input-success-text:       var(--av-color-green-600)
+--input-error-border:       var(--global-color-red-500)
+--input-error-text:         var(--global-color-red-600)
+--input-warning-border:     var(--global-color-yellow-500)
+--input-warning-text:       var(--global-color-yellow-600)
+--input-success-border:     var(--global-color-green-500)
+--input-success-text:       var(--global-color-green-600)
 
 --input-height-sm:          32px
 --input-height-md:          40px
 --input-height-lg:          48px
 
---input-padding-x-sm:       var(--av-spacing-sm)
---input-padding-x-md:       var(--av-spacing-md)
---input-padding-x-lg:       var(--av-spacing-lg)
+--input-padding-x-sm:       var(--global-spacing-sm)
+--input-padding-x-md:       var(--global-spacing-md)
+--input-padding-x-lg:       var(--global-spacing-lg)
 ```
 
 ### Card Tokens
 
 ```
---card-bg:                  var(--av-color-gray-0)
---card-border:              var(--av-color-gray-200)
---card-text:                var(--av-color-gray-900)
---card-heading:             var(--av-color-gray-900)
+--card-bg:                  var(--global-color-gray-0)
+--card-border:              var(--global-color-gray-200)
+--card-text:                var(--global-color-gray-900)
+--card-heading:             var(--global-color-gray-900)
 
---card-padding:             var(--av-spacing-md)
---card-radius:              var(--av-radius-lg)
---card-shadow:              var(--av-shadow-md)
+--card-padding:             var(--global-spacing-md)
+--card-radius:              var(--global-radius-lg)
+--card-shadow:              var(--global-shadow-md)
 ```
 
 ### Badge Tokens
 
 ```
---badge-default-bg:         var(--av-color-gray-100)
---badge-default-text:       var(--av-color-gray-700)
+--badge-default-bg:         var(--global-color-gray-100)
+--badge-default-text:       var(--global-color-gray-700)
 
---badge-primary-bg:         var(--av-color-blue-100)
---badge-primary-text:       var(--av-color-blue-800)
+--badge-primary-bg:         var(--global-color-blue-100)
+--badge-primary-text:       var(--global-color-blue-800)
 
---badge-success-bg:         var(--av-color-green-100)
---badge-success-text:       var(--av-color-green-800)
+--badge-success-bg:         var(--global-color-green-100)
+--badge-success-text:       var(--global-color-green-800)
 
---badge-warning-bg:         var(--av-color-yellow-100)
---badge-warning-text:       var(--av-color-yellow-800)
+--badge-warning-bg:         var(--global-color-yellow-100)
+--badge-warning-text:       var(--global-color-yellow-800)
 
---badge-danger-bg:          var(--av-color-red-100)
---badge-danger-text:        var(--av-color-red-800)
+--badge-danger-bg:          var(--global-color-red-100)
+--badge-danger-text:        var(--global-color-red-800)
 ```
 
 ### Form Field Tokens
 
 ```
---form-field-label:         var(--av-color-gray-700)
---form-field-helper:        var(--av-color-gray-500)
---form-field-error:         var(--av-color-red-600)
---form-field-required:      var(--av-color-red-500)
+--form-field-label:         var(--global-color-gray-700)
+--form-field-helper:        var(--global-color-gray-500)
+--form-field-error:         var(--global-color-red-600)
+--form-field-required:      var(--global-color-red-500)
 ```
 
 ### Alert Tokens
 
 ```
---alert-info-bg:            var(--av-color-blue-50)
---alert-info-text:          var(--av-color-blue-800)
---alert-info-border:        var(--av-color-blue-300)
+--alert-info-bg:            var(--global-color-blue-50)
+--alert-info-text:          var(--global-color-blue-800)
+--alert-info-border:        var(--global-color-blue-300)
 
---alert-success-bg:         var(--av-color-green-50)
---alert-success-text:       var(--av-color-green-800)
---alert-success-border:     var(--av-color-green-300)
+--alert-success-bg:         var(--global-color-green-50)
+--alert-success-text:       var(--global-color-green-800)
+--alert-success-border:     var(--global-color-green-300)
 
---alert-warning-bg:         var(--av-color-yellow-50)
---alert-warning-text:       var(--av-color-yellow-800)
---alert-warning-border:     var(--av-color-yellow-300)
+--alert-warning-bg:         var(--global-color-yellow-50)
+--alert-warning-text:       var(--global-color-yellow-800)
+--alert-warning-border:     var(--global-color-yellow-300)
 
---alert-error-bg:           var(--av-color-red-50)
---alert-error-text:         var(--av-color-red-800)
---alert-error-border:       var(--av-color-red-300)
+--alert-error-bg:           var(--global-color-red-50)
+--alert-error-text:         var(--global-color-red-800)
+--alert-error-border:       var(--global-color-red-300)
 ```
 
 ### Tooltip/Popover Tokens
 
 ```
---tooltip-bg:               var(--av-color-gray-900)
---tooltip-text:             var(--av-color-gray-0)
---popover-bg:               var(--av-color-gray-0)
---popover-text:             var(--av-color-gray-900)
---popover-border:           var(--av-color-gray-200)
---popover-shadow:           var(--av-shadow-lg)
+--tooltip-bg:               var(--global-color-gray-900)
+--tooltip-text:             var(--global-color-gray-0)
+--popover-bg:               var(--global-color-gray-0)
+--popover-text:             var(--global-color-gray-900)
+--popover-border:           var(--global-color-gray-200)
+--popover-shadow:           var(--global-shadow-lg)
 ```
 
 ### Toast Tokens
 
 ```
---toast-bg:                 var(--av-color-gray-0)
---toast-text:               var(--av-color-gray-900)
---toast-border:             var(--av-color-gray-200)
---toast-shadow:             var(--av-shadow-xl)
+--toast-bg:                 var(--global-color-gray-0)
+--toast-text:               var(--global-color-gray-900)
+--toast-border:             var(--global-color-gray-200)
+--toast-shadow:             var(--global-shadow-xl)
 ```
 
 ---

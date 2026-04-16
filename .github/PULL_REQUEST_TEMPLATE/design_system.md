@@ -19,10 +19,6 @@ Confirm (see [pen-feature-ref-reusability-implementation-plan.md](../docs/resear
 - [ ] Pencil `ref` is only used **inside the same `.pen` document**; cross-file parity follows process + `@agenticverdict/ui` at runtime.
 - [ ] Screenshots or `snapshot_layout` attached for non-trivial layout changes (team norm).
 
-## Validation
-
-- [ ] `pnpm run validate:pen-files` (schema + feature reuse heuristic)
-
 ## Exceptions
 
 If this PR needs a temporary divergence from system primitives, link the exception issue/ADR and any allowlist entry under `design/features/.pen-reuse-allowlist`.

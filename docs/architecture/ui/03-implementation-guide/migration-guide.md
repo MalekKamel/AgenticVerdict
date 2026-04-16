@@ -453,9 +453,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 /* globals.css */
 :root {
   /* Global tokens */
-  --av-color-primary: #228be6;
-  --av-spacing-md: 1rem;
-  --av-radius-md: 0.5rem;
+  --global-color-primary: #228be6;
+  --global-spacing-md: 1rem;
+  --global-radius-md: 0.5rem;
 
   /* Brand tokens (tenant-specific) */
   --brand-color-primary: #ff6b35;

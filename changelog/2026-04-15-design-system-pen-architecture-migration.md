@@ -14,7 +14,6 @@
 - **Assets (`design/assets/`):**
   - Scaffolded `icons/`, `illustrations/`, `images/` with README conventions; binary/SVG migration into these folders is **on demand** when `.pen` files reference files.
 - **Removed** legacy `.pen` trees: `design/atoms/*.pen`, `design/molecules/*.pen`, `design/templates/authentication.pen`, and root `design/design-tokens.pen` (history remains in git).
-- **`design/scripts/validate-pen-files.py`** — Resolves the design-system root with `Path(__file__).resolve().parent` so validation is portable regardless of cwd.
 - **Documentation and references** — Updated across `design/README.md`, generation guides, specs, prompts, and code comments (for example auth components and `authPenDesign.ts`) to point at `system/`, `features/`, and `assets/` paths.
 - **Helper script** — `design/scripts/merge-pen-system-layout.py` documents the mechanical merge strategy (merge variables, concatenate `children`, duplicate atoms into `molecules.pen`).
 
@@ -31,12 +30,6 @@ Pencil **`ref` instances resolve to `reusable` masters in the same `.pen` file**
   - `design/templates/authentication.pen`  
     must use the new paths under **`design/system/`** and **`design/features/`** (see table in the implementation plan).
 
-## Validation
-
-```bash
-pnpm run validate:pen-files
-```
-
 Expect validation over the consolidated set of `.pen` files under `design/system/` and `design/features/` (count depends on cutover state).
 
 ## Follow-up (not blocking this changelog)
@@ -44,7 +37,6 @@ Expect validation over the consolidated set of `.pen` files under `design/system
 - Optional baseline screenshots for key templates via Pencil MCP (`get_screenshot`, `snapshot_layout`).
 - Additional `features/*.pen` files as product work adds domains (dashboard, profile, reports, …).
 - Copy real media into `design/assets/...` when file references are added to designs.
-- Run `pnpm run validate:pen-files` on the default branch after merge if your process gates on `main`.
 
 ## References
 

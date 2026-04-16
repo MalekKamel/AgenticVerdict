@@ -147,5 +147,4 @@ design
 
 1. **Target architecture** — [target-architecture.md](./target-architecture.md) (v1.0.0).
 2. **Implementation plan** — [pen-architecture-implementation-plan.md](./pen-architecture-implementation-plan.md) (phases, commands, checklist).
-3. **Execute migration** — MCP-only `.pen` edits; `pnpm run validate:pen-files` after changes.
-4. **Update** `designREADME.md` and generation docs at cutover.
+3. **Update** `designREADME.md` and generation docs at cutover.

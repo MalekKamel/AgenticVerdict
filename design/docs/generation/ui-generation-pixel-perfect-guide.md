@@ -220,15 +220,15 @@ If `variables` is empty (as in our example), you will need to **create a token m
 
 Map each hardcoded value to a token name following the **three‑tier naming convention**:
 
-| Hardcoded Value       | Token Name              | Tier      | CSS Custom Property                                |
-| --------------------- | ----------------------- | --------- | -------------------------------------------------- |
-| `#228BE6`             | `--av-color-blue-500`   | Global    | `--av-color-blue-500: #228be6;`                    |
-| `#228BE6` (primary)   | `--brand-color-primary` | Brand     | `--brand-color-primary: var(--av-color-blue-500);` |
-| `#228BE6` (button bg) | `--button-primary-bg`   | Component | `--button-primary-bg: var(--brand-color-primary);` |
-| `8` (corner radius)   | `--av-radius-md`        | Global    | `--av-radius-md: 0.5rem;`                          |
-| `8` (padding)         | `--av-spacing-2`        | Global    | `--av-spacing-2: 0.5rem;`                          |
-| `Inter`               | `--av-font-family-sans` | Global    | `--av-font-family-sans: 'Inter', sans‑serif;`      |
-| `16` (font size)      | `--av-font-size-md`     | Global    | `--av-font-size-md: 1rem;`                         |
+| Hardcoded Value       | Token Name                  | Tier      | CSS Custom Property                                    |
+| --------------------- | --------------------------- | --------- | ------------------------------------------------------ |
+| `#228BE6`             | `--global-color-blue-500`   | Global    | `--global-color-blue-500: #228be6;`                    |
+| `#228BE6` (primary)   | `--brand-color-primary`     | Brand     | `--brand-color-primary: var(--global-color-blue-500);` |
+| `#228BE6` (button bg) | `--button-primary-bg`       | Component | `--button-primary-bg: var(--brand-color-primary);`     |
+| `8` (corner radius)   | `--global-radius-md`        | Global    | `--global-radius-md: 0.5rem;`                          |
+| `8` (padding)         | `--global-spacing-2`        | Global    | `--global-spacing-2: 0.5rem;`                          |
+| `Inter`               | `--global-font-family-sans` | Global    | `--global-font-family-sans: 'Inter', sans‑serif;`      |
+| `16` (font size)      | `--global-font-size-md`     | Global    | `--global-font-size-md: 1rem;`                         |
 
 ### Step 3: Generate CSS Custom Properties
 
@@ -238,86 +238,86 @@ Create a CSS file that defines the tokens. Follow the **layered override pattern
 /* global-tokens.css */
 :root {
   /* Color palette */
-  --av-color-blue-500: #228be6;
-  --av-color-gray-900: #212121;
-  --av-color-gray-700: #757575;
-  --av-color-gray-400: #9e9e9e;
-  --av-color-gray-300: #e0e0e0;
-  --av-color-red-600: #d32f2f;
-  --av-color-red-50: #ffebee;
-  --av-color-green-700: #2e7d32;
-  --av-color-green-50: #e8f5e9;
-  --av-color-white: #ffffff;
-  --av-color-black: #000000;
+  --global-color-blue-500: #228be6;
+  --global-color-gray-900: #212121;
+  --global-color-gray-700: #757575;
+  --global-color-gray-400: #9e9e9e;
+  --global-color-gray-300: #e0e0e0;
+  --global-color-red-600: #d32f2f;
+  --global-color-red-50: #ffebee;
+  --global-color-green-700: #2e7d32;
+  --global-color-green-50: #e8f5e9;
+  --global-color-white: #ffffff;
+  --global-color-black: #000000;
 
   /* Spacing (4px base unit) */
-  --av-spacing-0: 0;
-  --av-spacing-1: 0.25rem; /* 4px */
-  --av-spacing-2: 0.5rem; /* 8px */
-  --av-spacing-3: 0.75rem; /* 12px */
-  --av-spacing-4: 1rem; /* 16px */
-  --av-spacing-5: 1.25rem; /* 20px */
-  --av-spacing-6: 1.5rem; /* 24px */
-  --av-spacing-8: 2rem; /* 32px */
+  --global-spacing-0: 0;
+  --global-spacing-1: 0.25rem; /* 4px */
+  --global-spacing-2: 0.5rem; /* 8px */
+  --global-spacing-3: 0.75rem; /* 12px */
+  --global-spacing-4: 1rem; /* 16px */
+  --global-spacing-5: 1.25rem; /* 20px */
+  --global-spacing-6: 1.5rem; /* 24px */
+  --global-spacing-8: 2rem; /* 32px */
 
   /* Typography */
-  --av-font-family-sans: "Inter", sans-serif;
-  --av-font-size-xs: 0.75rem; /* 12px */
-  --av-font-size-sm: 0.875rem; /* 14px */
-  --av-font-size-md: 1rem; /* 16px */
-  --av-font-size-lg: 1.125rem; /* 18px */
-  --av-font-size-xl: 1.25rem; /* 20px */
-  --av-font-size-2xl: 1.5rem; /* 24px */
+  --global-font-family-sans: "Inter", sans-serif;
+  --global-font-size-xs: 0.75rem; /* 12px */
+  --global-font-size-sm: 0.875rem; /* 14px */
+  --global-font-size-md: 1rem; /* 16px */
+  --global-font-size-lg: 1.125rem; /* 18px */
+  --global-font-size-xl: 1.25rem; /* 20px */
+  --global-font-size-2xl: 1.5rem; /* 24px */
 
   /* Border radius */
-  --av-radius-sm: 0.25rem; /* 4px */
-  --av-radius-md: 0.5rem; /* 8px */
-  --av-radius-lg: 0.75rem; /* 12px */
-  --av-radius-xl: 1rem; /* 16px */
-  --av-radius-full: 9999px;
+  --global-radius-sm: 0.25rem; /* 4px */
+  --global-radius-md: 0.5rem; /* 8px */
+  --global-radius-lg: 0.75rem; /* 12px */
+  --global-radius-xl: 1rem; /* 16px */
+  --global-radius-full: 9999px;
 
   /* Shadows */
-  --av-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --av-shadow-md: 0 2px 4px 0 rgb(0 0 0 / 0.1);
-  --av-shadow-lg: 0 4px 8px 0 rgb(0 0 0 / 0.1);
+  --global-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --global-shadow-md: 0 2px 4px 0 rgb(0 0 0 / 0.1);
+  --global-shadow-lg: 0 4px 8px 0 rgb(0 0 0 / 0.1);
 }
 
 /* brand-tokens.css */
 :root {
-  --brand-color-primary: var(--av-color-blue-500);
-  --brand-color-secondary: var(--av-color-gray-700);
-  --brand-color-success: var(--av-color-green-700);
-  --brand-color-danger: var(--av-color-red-600);
-  --brand-color-background: var(--av-color-white);
-  --brand-color-surface: var(--av-color-gray-300);
+  --brand-color-primary: var(--global-color-blue-500);
+  --brand-color-secondary: var(--global-color-gray-700);
+  --brand-color-success: var(--global-color-green-700);
+  --brand-color-danger: var(--global-color-red-600);
+  --brand-color-background: var(--global-color-white);
+  --brand-color-surface: var(--global-color-gray-300);
 }
 
 /* component-tokens.css */
 :root {
   /* Button */
   --button-primary-bg: var(--brand-color-primary);
-  --button-primary-text: var(--av-color-white);
-  --button-primary-hover: var(--av-color-blue-600);
-  --button-primary-disabled: var(--av-color-gray-300);
-  --button-primary-radius: var(--av-radius-md);
-  --button-primary-padding-y: var(--av-spacing-2);
-  --button-primary-padding-x: var(--av-spacing-4);
-  --button-primary-gap: var(--av-spacing-1);
+  --button-primary-text: var(--global-color-white);
+  --button-primary-hover: var(--global-color-blue-600);
+  --button-primary-disabled: var(--global-color-gray-300);
+  --button-primary-radius: var(--global-radius-md);
+  --button-primary-padding-y: var(--global-spacing-2);
+  --button-primary-padding-x: var(--global-spacing-4);
+  --button-primary-gap: var(--global-spacing-1);
 
   /* Form field */
-  --formfield-bg: var(--av-color-white);
-  --formfield-border: var(--av-color-gray-300);
+  --formfield-bg: var(--global-color-white);
+  --formfield-border: var(--global-color-gray-300);
   --formfield-border-focus: var(--brand-color-primary);
-  --formfield-radius: var(--av-radius-md);
-  --formfield-padding: var(--av-spacing-3);
-  --formfield-gap: var(--av-spacing-1);
+  --formfield-radius: var(--global-radius-md);
+  --formfield-padding: var(--global-spacing-3);
+  --formfield-gap: var(--global-spacing-1);
 
   /* Card */
-  --card-bg: var(--av-color-white);
-  --card-shadow: var(--av-shadow-md);
-  --card-radius: var(--av-radius-md);
-  --card-padding: var(--av-spacing-6);
-  --card-gap: var(--av-spacing-4);
+  --card-bg: var(--global-color-white);
+  --card-shadow: var(--global-shadow-md);
+  --card-radius: var(--global-radius-md);
+  --card-padding: var(--global-spacing-6);
+  --card-gap: var(--global-spacing-4);
 }
 ```
 
@@ -347,7 +347,7 @@ export interface DesignTokens {
 export const tokens: DesignTokens = {
   colors: {
     blue: {
-      500: "var(--av-color-blue-500)",
+      500: "var(--global-color-blue-500)",
       // … other shades
     },
     // … other color families
@@ -387,9 +387,9 @@ Create a **property mapping table** for each component.
 | `gap`                     | `8`       | `gap`        | `var(--button-primary-gap)`                                          |
 | `fill` (background)       | `#228BE6` | `bg`         | `var(--button-primary-bg)`                                           |
 | `children[0].fill` (text) | `#FFFFFF` | `color`      | `var(--button-primary-text)`                                         |
-| `children[0].fontSize`    | `16`      | `fontSize`   | `var(--av-font-size-md)`                                             |
+| `children[0].fontSize`    | `16`      | `fontSize`   | `var(--global-font-size-md)`                                         |
 | `children[0].fontWeight`  | `600`     | `fontWeight` | `600`                                                                |
-| `children[0].fontFamily`  | `Inter`   | `fontFamily` | `var(--av-font-family-sans)`                                         |
+| `children[0].fontFamily`  | `Inter`   | `fontFamily` | `var(--global-font-family-sans)`                                     |
 | `justifyContent`          | `center`  | `justify`    | `center`                                                             |
 | `alignItems`              | `center`  | `align`      | `center`                                                             |
 
@@ -431,8 +431,8 @@ const StyledButton = styled(MantineButton)<ButtonProps>`
   border-radius: var(--button-radius);
   padding: var(--button-padding-y) var(--button-padding-x);
   gap: var(--button-gap);
-  font-family: var(--av-font-family-sans);
-  font-size: var(--av-font-size-md);
+  font-family: var(--global-font-family-sans);
+  font-size: var(--global-font-size-md);
   font-weight: 600;
   justify-content: center;
   align-items: center;
@@ -484,13 +484,13 @@ const StyledCard = styled(MantineCard)`
 `;
 
 const CardHeader = styled.div`
-  padding: var(--card-header-padding, var(--av-spacing-6) var(--av-spacing-6) 0);
-  gap: var(--av-spacing-2);
+  padding: var(--card-header-padding, var(--global-spacing-6) var(--global-spacing-6) 0);
+  gap: var(--global-spacing-2);
 `;
 
 const CardBody = styled.div`
-  padding: var(--card-body-padding, 0 var(--av-spacing-6) var(--av-spacing-6));
-  gap: var(--av-spacing-4);
+  padding: var(--card-body-padding, 0 var(--global-spacing-6) var(--global-spacing-6));
+  gap: var(--global-spacing-4);
 `;
 
 export function Card({ children, ...props }: MantineCardProps) {
@@ -548,11 +548,11 @@ function pxToRem(px: number): string {
 
 Map .pen `gap` and `padding` values to spacing tokens.
 
-| .pen Value         | Token                                                      | CSS                                                 |
-| ------------------ | ---------------------------------------------------------- | --------------------------------------------------- |
-| `gap: 4`           | `--av-spacing-1`                                           | `gap: var(--av-spacing-1);`                         |
-| `padding: [8, 16]` | `--av-spacing-2` (vertical), `--av-spacing-4` (horizontal) | `padding: var(--av-spacing-2) var(--av-spacing-4);` |
-| `padding: 12`      | `--av-spacing-3`                                           | `padding: var(--av-spacing-3);`                     |
+| .pen Value         | Token                                                              | CSS                                                         |
+| ------------------ | ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `gap: 4`           | `--global-spacing-1`                                               | `gap: var(--global-spacing-1);`                             |
+| `padding: [8, 16]` | `--global-spacing-2` (vertical), `--global-spacing-4` (horizontal) | `padding: var(--global-spacing-2) var(--global-spacing-4);` |
+| `padding: 12`      | `--global-spacing-3`                                               | `padding: var(--global-spacing-3);`                         |
 
 ### Step 4: RTL/LTR Flipping
 
@@ -566,7 +566,7 @@ Use **CSS logical properties** to automatically flip for RTL languages.
 | `text‑align: left` | `text‑align: start`   | Yes        |
 | `float: left`      | `float: inline‑start` | Yes        |
 
-**Example**: Instead of `margin‑left: 8px`, use `margin‑inline‑start: var(--av-spacing-2)`.
+**Example**: Instead of `margin‑left: 8px`, use `margin‑inline‑start: var(--global-spacing-2)`.
 
 ### Step 5: Responsive Considerations
 
@@ -581,7 +581,7 @@ const Container = styled.div`
 
   ${({ theme }) => theme.fn.smallerThan("sm")} {
     max-width: 100%;
-    padding: var(--av-spacing-4);
+    padding: var(--global-spacing-4);
   }
 `;
 ```

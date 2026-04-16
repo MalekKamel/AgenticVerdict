@@ -491,7 +491,7 @@ specs/01-ui/
 <button style={{ backgroundColor: '#228BE6' }}>
 
 // Use design tokens
-<button style={{ backgroundColor: 'var(--brand-color-primary, var(--av-color-primary))' }}>
+<button style={{ backgroundColor: 'var(--brand-color-primary, var(--global-color-primary))' }}>
 ```
 
 ---

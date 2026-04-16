@@ -15,7 +15,6 @@ The core architecture (consolidated system libraries in `design/system/` with fe
    - `design/system/atoms.lib.pen` exists
    - `design/system/molecules.lib.pen` exists
    - All legacy `.pen` files from `design/atoms/`, `design/molecules/`, and `design/templates/` have been removed
-   - Validation script `validate-pen-files.py` passes without errors
 
 2. **Feature File Update**
    - All feature files (including `auth.pen`) use correct imports:
@@ -29,7 +28,6 @@ The core architecture (consolidated system libraries in `design/system/` with fe
    ```
 
    - Component references use proper `ref: "atoms/ComponentId"` syntax
-   - Feature reuse validator `validate-feature-pen-reuse.py` passes with no violations
 
 3. **Directory Structure**
    - Correct structure established:
@@ -82,19 +80,9 @@ The review's primary observation about documentation consistency issues is accur
 
 This creates a dangerous disconnect where the actual implementation has moved forward, but the documentation has become a source of misinformation.
 
-### 2. Validation and Test Coverage
-
-While the schema validation (`validate-pen-files.py`) works correctly, it only validates JSON structure and basic constraints, not the functional correctness of the design system:
-
-- All validation is limited to JSON schema compliance
-- No validation for actual component behavior and interconnectivity
-- No testing of how components render when imported into different contexts
-- No regression testing framework for ensuring new changes don't break existing components
-- No verification that the actual component instances are functional in the new system
-
 This creates a false sense of security — a change that breaks component rendering might still pass the schema validation.
 
-### 3. Implementation Complexity Not Fully Captured
+### 2. Implementation Complexity Not Fully Captured
 
 The migration from multiple small files to consolidated `.lib.pen` files introduced significant complexity that was not adequately documented:
 
@@ -105,7 +93,7 @@ The migration from multiple small files to consolidated `.lib.pen` files introdu
 
 The current implementation relies on implicit understanding rather than documented processes.
 
-### 4. CI/CD Process Gaps
+### 3. CI/CD Process Gaps
 
 The CI/CD integration is incomplete:
 
@@ -116,7 +104,7 @@ The CI/CD integration is incomplete:
 
 The current system would allow documentation to fall out of sync with implementation without triggering any alerts.
 
-### 5. Migration Timeline Inaccuracy
+### 4. Migration Timeline Inaccuracy
 
 The migration timeline in the original plan no longer reflects reality:
 
@@ -127,7 +115,7 @@ The migration timeline in the original plan no longer reflects reality:
 
 This creates confusion for team members who might follow outdated documentation.
 
-### 6. Feature File Governance
+### 5. Feature File Governance
 
 The system lacks mechanisms to ensure continued compliance:
 
@@ -135,8 +123,6 @@ The system lacks mechanisms to ensure continued compliance:
 - No process for tracking exceptions to reuse rules
 - No enforcement mechanisms to prevent new components from being defined in feature files instead of system libraries
 - No clear ownership for monitoring compliance
-
-The current `validate-feature-pen-reuse.py` script only checks for naming collisions, not for the creation of new components that should be in the system library.
 
 ## Required Additions
 
@@ -156,7 +142,6 @@ The current `validate-feature-pen-reuse.py` script only checks for naming collis
   - No hardcoded values that should use design tokens
 - [ ] Add regression testing for component behavior
 - [ ] Create a component test report that confirms expected behavior on changes
-- [ ] Expand `validate-pen-files.py` with additional validation rules
 
 ### 3. Migration Impact Assessment
 

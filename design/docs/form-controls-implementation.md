@@ -32,9 +32,9 @@ Design System Frame
 --checkbox-label-text            Label text color
 --checkbox-disabled-bg           Disabled checkbox background
 --checkbox-disabled-border       Disabled checkbox border
---av-color-white                 White fill
---av-spacing-sm                  Spacing between checkbox and label
---av-radius-sm                   Checkbox corner radius
+--global-color-white                 White fill
+--global-spacing-sm                  Spacing between checkbox and label
+--global-radius-sm                   Checkbox corner radius
 --focus-ring-color               Focus indicator color
 ```
 
@@ -73,7 +73,7 @@ checkboxBase = I(document, {
   name: "Checkbox/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
   alignment: "center",
 });
 
@@ -84,7 +84,7 @@ checkboxBox = I(checkboxBase, {
   name: "Box",
   width: 20,
   height: 20,
-  cornerRadius: "$--av-radius-sm",
+  cornerRadius: "$--global-radius-sm",
   fill: "$--checkbox-bg",
   stroke: {
     color: "$--checkbox-border",
@@ -112,7 +112,7 @@ checkboxLabel = I(checkboxBase, {
   id: "checkbox-label",
   name: "Label",
   content: "Checkbox label",
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
   fill: "$--checkbox-label-text",
   textAlign: "start",
 });
@@ -161,7 +161,7 @@ U(checkboxIndeterminate + "/box", {
       type: "frame",
       width: 10,
       height: 2,
-      fill: "$--av-color-white",
+      fill: "$--global-color-white",
     },
   ],
 });
@@ -185,7 +185,7 @@ U(checkboxDisabled + "/box", {
 });
 
 U(checkboxDisabled + "/label", {
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 ```
 
@@ -220,8 +220,8 @@ Design System Frame
 --radio-label-text               Label text color
 --radio-disabled-bg              Disabled radio background
 --radio-disabled-border          Disabled radio border
---av-color-white                 White fill
---av-spacing-sm                  Spacing
+--global-color-white                 White fill
+--global-spacing-sm                  Spacing
 --focus-ring-color               Focus indicator color
 ```
 
@@ -259,7 +259,7 @@ radioBase = I(document, {
   name: "Radio/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-sm",
+  gap: "$--global-spacing-sm",
   alignment: "center",
 });
 
@@ -270,7 +270,7 @@ radioCircle = I(radioBase, {
   name: "Circle",
   width: 20,
   height: 20,
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   fill: "$--radio-bg",
   stroke: {
     color: "$--radio-border",
@@ -287,7 +287,7 @@ radioDot = I(radioCircle, {
   name: "Dot",
   width: 10,
   height: 10,
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   fill: "$--radio-dot-color",
   visible: false,
 });
@@ -298,7 +298,7 @@ radioLabel = I(radioBase, {
   id: "radio-label",
   name: "Label",
   content: "Radio option",
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
   fill: "$--radio-label-text",
   textAlign: "start",
 });
@@ -324,7 +324,7 @@ U(radioSelected + "/circle/dot", {
 });
 
 U(radioSelected + "/label", {
-  fontWeight: "$--av-font-weight-medium",
+  fontWeight: "$--global-font-weight-medium",
 });
 
 // Disabled state
@@ -345,7 +345,7 @@ U(radioDisabled + "/circle", {
 });
 
 U(radioDisabled + "/label", {
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 ```
 
@@ -382,9 +382,9 @@ Design System Frame
 --switch-thumb-bg-on           Thumb background when on
 --switch-track-disabled        Disabled track background
 --switch-label-text            Label text color
---av-spacing-sm                Spacing
---av-radius-full               Full border radius
---av-transition-normal         Transition timing
+--global-spacing-sm                Spacing
+--global-radius-full               Full border radius
+--global-transition-normal         Transition timing
 --focus-ring-color             Focus indicator color
 ```
 
@@ -427,7 +427,7 @@ switchBase = I(document, {
   name: "Switch/Base",
   reusable: true,
   layout: "horizontal",
-  gap: "$--av-spacing-md",
+  gap: "$--global-spacing-md",
   alignment: "center",
 });
 
@@ -438,11 +438,11 @@ switchTrack = I(switchBase, {
   name: "Track",
   width: 44,
   height: 24,
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   fill: "$--switch-track-bg-off",
   padding: 2,
   alignment: "flex-start",
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Switch thumb
@@ -452,9 +452,9 @@ switchThumb = I(switchTrack, {
   name: "Thumb",
   width: 20,
   height: 20,
-  cornerRadius: "$--av-radius-full",
+  cornerRadius: "$--global-radius-full",
   fill: "$--switch-thumb-bg-off",
-  transition: "$--av-transition-normal",
+  transition: "$--global-transition-normal",
 });
 
 // Label
@@ -463,7 +463,7 @@ switchLabel = I(switchBase, {
   id: "switch-label",
   name: "Label",
   content: "Enable feature",
-  fontSize: "$--av-font-size-base",
+  fontSize: "$--global-font-size-base",
   fill: "$--switch-label-text",
   textAlign: "start",
 });
@@ -516,7 +516,7 @@ U(switchSm + "/track/thumb", {
 });
 
 U(switchSm + "/label", {
-  fontSize: "$--av-font-size-sm",
+  fontSize: "$--global-font-size-sm",
 });
 
 // Medium size (default)
@@ -549,7 +549,7 @@ U(switchLg + "/track/thumb", {
 });
 
 U(switchLg + "/label", {
-  fontSize: "$--av-font-size-lg",
+  fontSize: "$--global-font-size-lg",
 });
 
 // Disabled state
@@ -567,11 +567,11 @@ U(switchDisabled + "/track", {
 });
 
 U(switchDisabled + "/track/thumb", {
-  fill: "$--av-color-gray-400",
+  fill: "$--global-color-gray-400",
 });
 
 U(switchDisabled + "/label", {
-  fill: "$--av-color-gray-500",
+  fill: "$--global-color-gray-500",
 });
 ```
 

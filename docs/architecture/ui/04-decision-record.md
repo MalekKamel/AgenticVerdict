@@ -182,13 +182,13 @@ Brand Tokens (Semantic)
 Component Tokens (Specific)
 ```
 
-**Global Tokens** (`--av-color-blue-700: #1976D2`) provide:
+**Global Tokens** (`--global-color-blue-700: #1976D2`) provide:
 
 - Technology-agnostic raw values
 - Single source of truth for design primitives
 - Easy synchronization with design tools (future)
 
-**Brand Tokens** (`--brand-color-primary: var(--av-color-blue-700)`) provide:
+**Brand Tokens** (`--brand-color-primary: var(--global-color-blue-700)`) provide:
 
 - Semantic naming for design intent
 - Tenant-specific overrides without code changes
@@ -403,7 +403,7 @@ import { DirectionProvider } from '@mantine/core';
 ```css
 /* Instead of margin-left, use margin-inline-start */
 .sidebar {
-  margin-inline-start: var(--av-spacing-md);
+  margin-inline-start: var(--global-spacing-md);
   text-align: start; /* Instead of text-align: left */
 }
 ```

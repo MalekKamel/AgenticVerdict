@@ -84,23 +84,12 @@ Then update instances to use system references:
 U("instance-id", { ref: "atoms/Button/Primary/Default" });
 ```
 
-### 7. Validate Changes
-
-```bash
-# Run system validation
-pnpm run validate:pen-files
-
-# Run feature reuse validation
-python3 design/scripts/validate-feature-pen-reuse.py --strict
-```
-
 ## Acceptance Criteria
 
 - [ ] All duplicate components removed from `auth.pen`
 - [ ] Proper `imports` configured for system libraries
 - [ ] All instances reference system components via `ref: "alias/ComponentId"`
 - [ ] No visual regression (screenshots match before/after)
-- [ ] Validation passes: `pnpm run validate:pen-files`
 - [ ] Feature reuse validation passes with `--strict` flag
 - [ ] Component inventory reflects only domain-specific or auth-unique compositions
 

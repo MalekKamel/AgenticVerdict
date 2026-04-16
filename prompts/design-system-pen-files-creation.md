@@ -56,7 +56,7 @@ The AgenticVerdict Design System is a comprehensive, accessible, and internation
 
 Create a comprehensive three-tier design token system:
 
-**Tier 1: Global Tokens (`--av-*`)**
+**Tier 1: Global Tokens (`--global-*`)**
 
 - Colors: 10-color scale (blue, gray, semantic colors)
 - Spacing: 7-point scale (4px base: xs, sm, md, lg, xl, 2xl, 3xl)

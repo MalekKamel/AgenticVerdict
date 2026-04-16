@@ -15,7 +15,6 @@ The current codebase already has core building blocks in place (three-tier token
 - `/packages/ui/src/tokens` already implements the required three-tier architecture (`global`, `brand`, `component`) and fallback composition, but no parity gate currently proves `.pen` token values and code token exports remain in sync.
 - `/packages/ui` exports `ThemeProvider`, `DirectionProvider`, and `MantineProvider`; the architecture is reusable and auth-compatible.
 - Runtime and implementation baseline is Mantine v9; auth reusable work should use v9 APIs and patterns consistently across `@agenticverdict/ui` and route consumption.
-- Existing CI validation focuses on `.pen` quality and reuse policy (`pnpm run validate:pen-files`) but does not yet enforce React-layer anti-duplication (for example, preventing direct one-off primitive implementations in auth UI).
 
 ### Auth route reuse gap analysis (`/apps/web/src/routes/$locale/auth`)
 
@@ -72,13 +71,12 @@ Establish MCP-first token discovery, mapping, and typed code generation with thr
    - add `importAlias` and `importSourceFile` columns.
    - `lineageSource` values: `system-import`, `feature-auth-composition`, `approved-feature-exception`.
 3. Normalize naming contract for tiers:
-   - Global: `--av-*`
+   - Global: `--global-*`
    - Brand: `--brand-*`
    - Component: `--component-*` (or deterministic component prefix documented in mapping table).
 4. Reconcile mapped values with `/packages/ui/src/tokens/{global,brand,component}.ts` and ensure fallback contract is explicit (`component -> brand -> global -> hard fallback`).
 5. Generate/update token typings in `@agenticverdict/ui` so all mapped token keys are typed and discoverable.
 6. Add drift validation:
-   - keep `pnpm run validate:pen-files` as hard gate for `.pen` updates.
    - add token-traceability check in CI to fail on unmapped auth token literals.
 
 ### Deliverables, milestones, and acceptance criteria
@@ -90,7 +88,6 @@ Establish MCP-first token discovery, mapping, and typed code generation with thr
 - **M1.3 Deliverable:** updated token code + typings in `@agenticverdict/ui`.
   - **Acceptance:** no `any`; fallback chain is visible in generated CSS variable usage.
 - **M1.4 Deliverable:** CI drift checks active.
-  - **Acceptance:** CI fails on unmapped token literals and on `validate:pen-files` violations.
 
 ## 5. Phase 2: Component Generation Plan
 
@@ -152,9 +149,6 @@ Adopt reusable UI contracts across `/apps/web/src/routes/$locale/auth` and auth 
 - Require explicit root-level `imports` for required `/design/system` libraries.
 - Require cross-file `ref` composition (`alias/ComponentId`) for generic auth primitives that exist in system.
 - Require feature reusable naming conventions (`Auth/...`) only for domain-specific compositions not owned by system.
-- Enforce strict validation workflow:
-  - `pnpm run validate:pen-files`
-  - `design/scripts/validate-feature-pen-reuse.py --strict` (via existing script chain)
 - Maintain/extend allowlist only for approved exceptions with rationale and timeboxed remediation.
 
 ### Provider integration, route-level refactors, and migration sequencing deliverables
@@ -194,7 +188,6 @@ Adopt reusable UI contracts across `/apps/web/src/routes/$locale/auth` and auth 
 
 ### Parity verification and regression prevention
 
-- Keep `pnpm run validate:pen-files` required for any `.pen` delta.
 - Add CI checks for broken `imports` relative paths and unresolved `alias/ComponentId` refs in feature files.
 - Add CI checks to prevent auth-layer hardcoded style literals where mapped tokens exist.
 - Add lint/review rule to flag new auth primitive reimplementations when equivalent `@agenticverdict/ui` exports exist.
@@ -215,7 +208,7 @@ Adopt reusable UI contracts across `/apps/web/src/routes/$locale/auth` and auth 
 ## 9. Definition of Done
 
 - MCP-first workflow is operational and audited for auth reusable implementation.
-- Three-tier token architecture (`--av-*` -> `--brand-*` -> `--component-*`) is traceable from design artifacts to code usage.
+- Three-tier token architecture (`--global-*` -> `--brand-*` -> `--component-*`) is traceable from design artifacts to code usage.
 - Auth routes and auth components consume reusable `@agenticverdict/ui` primitives/molecules without duplicate primitive reimplementation.
 - Feature `.pen` reuse governance is enforced (Design Libraries imports, cross-file refs to `/design/system`, strict validation, exception allowlist discipline).
 - Accessibility and localization requirements are met (WCAG 2.1 AA, keyboard support, RTL/LTR correctness, locale-aware navigation).

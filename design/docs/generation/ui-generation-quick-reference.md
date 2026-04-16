@@ -245,13 +245,13 @@ mcp__pencil__export_nodes({
 
 ```typescript
 // .pen token: $primary-color
-// CSS variable: --av-color-primary
+// CSS variable: --global-color-primary
 // React usage:
 
 const styles = {
   button: {
-    backgroundColor: "var(--av-color-primary)",
-    color: "var(--av-color-primary-foreground)",
+    backgroundColor: "var(--global-color-primary)",
+    color: "var(--global-color-primary-foreground)",
   },
 };
 ```
@@ -297,32 +297,32 @@ interface ButtonProps {
 
 ### Color Tokens
 
-| .pen Token    | CSS Variable            | Usage                  |
-| ------------- | ----------------------- | ---------------------- |
-| `$primary`    | `--av-color-primary`    | Primary actions, brand |
-| `$secondary`  | `--av-color-secondary`  | Secondary elements     |
-| `$success`    | `--av-color-success`    | Success states         |
-| `$warning`    | `--av-color-warning`    | Warning states         |
-| `$error`      | `--av-color-error`      | Error states           |
-| `$background` | `--av-color-background` | Page background        |
-| `$foreground` | `--av-color-foreground` | Primary text           |
+| .pen Token    | CSS Variable                | Usage                  |
+| ------------- | --------------------------- | ---------------------- |
+| `$primary`    | `--global-color-primary`    | Primary actions, brand |
+| `$secondary`  | `--global-color-secondary`  | Secondary elements     |
+| `$success`    | `--global-color-success`    | Success states         |
+| `$warning`    | `--global-color-warning`    | Warning states         |
+| `$error`      | `--global-color-error`      | Error states           |
+| `$background` | `--global-color-background` | Page background        |
+| `$foreground` | `--global-color-foreground` | Primary text           |
 
 ### Spacing Tokens
 
-| .pen Value | CSS Variable      | Tailwind Equivalent |
-| ---------- | ----------------- | ------------------- |
-| 4          | `--av-spacing-xs` | `gap-1` or `p-1`    |
-| 8          | `--av-spacing-sm` | `gap-2` or `p-2`    |
-| 16         | `--av-spacing-md` | `gap-4` or `p-4`    |
-| 24         | `--av-spacing-lg` | `gap-6` or `p-6`    |
-| 32         | `--av-spacing-xl` | `gap-8` or `p-8`    |
+| .pen Value | CSS Variable          | Tailwind Equivalent |
+| ---------- | --------------------- | ------------------- |
+| 4          | `--global-spacing-xs` | `gap-1` or `p-1`    |
+| 8          | `--global-spacing-sm` | `gap-2` or `p-2`    |
+| 16         | `--global-spacing-md` | `gap-4` or `p-4`    |
+| 24         | `--global-spacing-lg` | `gap-6` or `p-6`    |
+| 32         | `--global-spacing-xl` | `gap-8` or `p-8`    |
 
 ### Typography Tokens
 
-| .pen Token          | CSS Variable                 | Usage            |
-| ------------------- | ---------------------------- | ---------------- |
-| `$--font-primary`   | `--av-font-family-primary`   | Headings, labels |
-| `$--font-secondary` | `--av-font-family-secondary` | Body text        |
+| .pen Token          | CSS Variable                     | Usage            |
+| ------------------- | -------------------------------- | ---------------- |
+| `$--font-primary`   | `--global-font-family-primary`   | Headings, labels |
+| `$--font-secondary` | `--global-font-family-secondary` | Body text        |
 
 ---
 
@@ -635,11 +635,11 @@ mcp__pencil__export_nodes({
 
 ### Card 3: Token Mapping
 
-| Type    | .pen Token        | CSS Variable               |
-| ------- | ----------------- | -------------------------- |
-| Color   | `$primary`        | `--av-color-primary`       |
-| Spacing | 16                | `--av-spacing-md`          |
-| Font    | `$--font-primary` | `--av-font-family-primary` |
+| Type    | .pen Token        | CSS Variable                   |
+| ------- | ----------------- | ------------------------------ |
+| Color   | `$primary`        | `--global-color-primary`       |
+| Spacing | 16                | `--global-spacing-md`          |
+| Font    | `$--font-primary` | `--global-font-family-primary` |
 
 ---
 
