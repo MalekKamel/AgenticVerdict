@@ -19,10 +19,10 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ## Path Conventions
 
-- **Web frontend**: `apps/web/src/`
+- **Web frontend**: `apps/frontend/src/`
 - **API backend**: `packages/api/src/`
 - **Database**: `packages/database/src/`
-- **Components**: `apps/web/src/components/`
+- **Components**: `apps/frontend/src/components/`
 
 ---
 
@@ -30,12 +30,12 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 **Purpose**: Admin infrastructure initialization and base components
 
-- [ ] T001 Create admin route structure under `apps/web/src/routes/admin/` with index, health, users, and audit routes
+- [ ] T001 Create admin route structure under `apps/frontend/src/routes/admin/` with index, health, users, and audit routes
 - [ ] T002 [P] Create admin-only tRPC middleware at `packages/api/src/router/middleware/admin-only.ts`
 - [ ] T003 [P] Create audit log database schema at `packages/database/src/schema/audit.ts` with indexes
 - [ ] T004 [P] Run database migration for audit logs table using Drizzle
-- [ ] T005 [P] Create base admin layout component at `apps/web/src/components/admin/templates/AdminLayout.tsx`
-- [ ] T006 Add admin navigation sidebar at `apps/web/src/components/admin/organisms/AdminSidebar.tsx`
+- [ ] T005 [P] Create base admin layout component at `apps/frontend/src/components/admin/templates/AdminLayout.tsx`
+- [ ] T006 Add admin navigation sidebar at `apps/frontend/src/components/admin/organisms/AdminSidebar.tsx`
 
 ---
 
@@ -48,10 +48,10 @@ description: "Task list for Phase 11 (Administration) implementation"
 - [ ] T007 Create admin router aggregation at `packages/api/src/router/admin/index.ts` combining health, users, and audit routers
 - [ ] T008 [P] Implement audit log trigger system at `packages/database/src/triggers/audit-trigger.ts` for automatic logging
 - [ ] T009 [P] Create audit service at `packages/api/src/services/audit-service.ts` for log creation with sensitive data masking
-- [ ] T010 Create base admin organisms directory at `apps/web/src/components/admin/organisms/`
-- [ ] T011 Create base admin molecules directory at `apps/web/src/components/admin/molecules/`
-- [ ] T012 [P] Create admin hooks directory at `apps/web/src/components/admin/hooks/`
-- [ ] T013 Create unauthorized access page at `apps/web/src/routes/unauthorized.tsx`
+- [ ] T010 Create base admin organisms directory at `apps/frontend/src/components/admin/organisms/`
+- [ ] T011 Create base admin molecules directory at `apps/frontend/src/components/admin/molecules/`
+- [ ] T012 [P] Create admin hooks directory at `apps/frontend/src/components/admin/hooks/`
+- [ ] T013 Create unauthorized access page at `apps/frontend/src/routes/unauthorized.tsx`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -65,14 +65,14 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Create MetricCard molecule at `apps/web/src/components/admin/molecules/MetricCard.tsx` with value, label, trend indicator
-- [ ] T015 [P] [US1] Create AlertNotification molecule at `apps/web/src/components/admin/molecules/AlertNotification.tsx` with severity badge
+- [ ] T014 [P] [US1] Create MetricCard molecule at `apps/frontend/src/components/admin/molecules/MetricCard.tsx` with value, label, trend indicator
+- [ ] T015 [P] [US1] Create AlertNotification molecule at `apps/frontend/src/components/admin/molecules/AlertNotification.tsx` with severity badge
 - [ ] T016 [P] [US1] Install Recharts package for data visualizations
-- [ ] T017 [P] [US1] Create MetricChart component at `apps/web/src/components/admin/molecules/MetricChart.tsx` using Recharts LineChart
-- [ ] T018 [US1] Create useSystemHealth hook at `apps/web/src/components/admin/hooks/useSystemHealth.ts` with tRPC query and polling
-- [ ] T019 [US1] Create useSystemAlerts hook at `apps/web/src/components/admin/hooks/useSystemAlerts.ts` with tRPC query
-- [ ] T020 [US1] Create HealthDashboard organism at `apps/web/src/components/admin/organisms/HealthDashboard.tsx` with metric grid and charts
-- [ ] T021 [US1] Create health route at `apps/web/src/routes/admin.health.tsx` using HealthDashboard component
+- [ ] T017 [P] [US1] Create MetricChart component at `apps/frontend/src/components/admin/molecules/MetricChart.tsx` using Recharts LineChart
+- [ ] T018 [US1] Create useSystemHealth hook at `apps/frontend/src/components/admin/hooks/useSystemHealth.ts` with tRPC query and polling
+- [ ] T019 [US1] Create useSystemAlerts hook at `apps/frontend/src/components/admin/hooks/useSystemAlerts.ts` with tRPC query
+- [ ] T020 [US1] Create HealthDashboard organism at `apps/frontend/src/components/admin/organisms/HealthDashboard.tsx` with metric grid and charts
+- [ ] T021 [US1] Create health route at `apps/frontend/src/routes/admin.health.tsx` using HealthDashboard component
 - [ ] T022 [US1] Implement health tRPC router at `packages/api/src/router/admin/health.router.ts` with getMetrics and getAlerts procedures
 - [ ] T023 [US1] Add metric history query to health router for chart data with time range filtering
 - [ ] T024 [US1] Add real-time polling to health hooks (5-10 second intervals) for metric updates
@@ -91,14 +91,14 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T027 [P] [US2] Create RoleBadge molecule at `apps/web/src/components/admin/molecules/RoleBadge.tsx` with color coding
-- [ ] T028 [P] [US2] Create UserSearchFilter molecule at `apps/web/src/components/admin/molecules/UserSearchFilter.tsx` with text search and dropdowns
-- [ ] T029 [P] [US2] Create UserBulkActions molecule at `apps/web/src/components/admin/molecules/UserBulkActions.tsx` with bulk operations
-- [ ] T030 [US2] Create useUserList hook at `apps/web/src/components/admin/hooks/useUserList.ts` with pagination and filters
-- [ ] T031 [US2] Create UserTable organism at `apps/web/src/components/admin/organisms/UserTable.tsx` with Mantine Table component
-- [ ] T032 [US2] Create UserEditModal component at `apps/web/src/components/admin/organisms/UserEditModal.tsx` for role/status changes
-- [ ] T033 [US2] Create users list route at `apps/web/src/routes/admin.users.tsx` using UserTable component
-- [ ] T034 [US2] Create user detail route at `apps/web/src/routes/admin.users.$userId_.tsx` with profile and edit options
+- [ ] T027 [P] [US2] Create RoleBadge molecule at `apps/frontend/src/components/admin/molecules/RoleBadge.tsx` with color coding
+- [ ] T028 [P] [US2] Create UserSearchFilter molecule at `apps/frontend/src/components/admin/molecules/UserSearchFilter.tsx` with text search and dropdowns
+- [ ] T029 [P] [US2] Create UserBulkActions molecule at `apps/frontend/src/components/admin/molecules/UserBulkActions.tsx` with bulk operations
+- [ ] T030 [US2] Create useUserList hook at `apps/frontend/src/components/admin/hooks/useUserList.ts` with pagination and filters
+- [ ] T031 [US2] Create UserTable organism at `apps/frontend/src/components/admin/organisms/UserTable.tsx` with Mantine Table component
+- [ ] T032 [US2] Create UserEditModal component at `apps/frontend/src/components/admin/organisms/UserEditModal.tsx` for role/status changes
+- [ ] T033 [US2] Create users list route at `apps/frontend/src/routes/admin.users.tsx` using UserTable component
+- [ ] T034 [US2] Create user detail route at `apps/frontend/src/routes/admin.users.$userId_.tsx` with profile and edit options
 - [ ] T035 [US2] Implement users tRPC router at `packages/api/src/router/admin/users.router.ts` with list, update, bulkUpdate procedures
 - [ ] T036 [US2] Add user query with pagination, search, role, status, and tenant filters to users router
 - [ ] T037 [US2] Implement updateUser mutation with self-modification prevention (cannot change own admin role)
@@ -121,11 +121,11 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ### Implementation for User Story 3
 
-- [ ] T044 [P] [US3] Create AuditLogFilters molecule at `apps/web/src/components/admin/molecules/AuditLogFilters.tsx` with date range, type, severity filters
-- [ ] T045 [P] [US3] Create AuditLogDetail component at `apps/web/src/components/admin/organisms/AuditLogDetail.tsx` for event information
-- [ ] T046 [US3] Create useAuditLogs hook at `apps/web/src/components/admin/hooks/useAuditLogs.ts` with pagination and filters
-- [ ] T047 [US3] Create AuditLogViewer organism at `apps/web/src/components/admin/organisms/AuditLogViewer.tsx` with expandable table
-- [ ] T048 [US3] Create audit log route at `apps/web/src/routes/admin.audit.tsx` using AuditLogViewer component
+- [ ] T044 [P] [US3] Create AuditLogFilters molecule at `apps/frontend/src/components/admin/molecules/AuditLogFilters.tsx` with date range, type, severity filters
+- [ ] T045 [P] [US3] Create AuditLogDetail component at `apps/frontend/src/components/admin/organisms/AuditLogDetail.tsx` for event information
+- [ ] T046 [US3] Create useAuditLogs hook at `apps/frontend/src/components/admin/hooks/useAuditLogs.ts` with pagination and filters
+- [ ] T047 [US3] Create AuditLogViewer organism at `apps/frontend/src/components/admin/organisms/AuditLogViewer.tsx` with expandable table
+- [ ] T048 [US3] Create audit log route at `apps/frontend/src/routes/admin.audit.tsx` using AuditLogViewer component
 - [ ] T049 [US3] Implement audit tRPC router at `packages/api/src/router/admin/audit.router.ts` with query, getById, export procedures
 - [ ] T050 [US3] Add audit log query with pagination, date range, event type, user, tenant, severity filters
 - [ ] T051 [US3] Implement keyword search across audit log fields (description, user email, IP address)
@@ -148,10 +148,10 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ### Implementation for User Story 4
 
-- [ ] T058 [P] [US4] Create admin-auth utility at `apps/web/src/lib/admin-auth.ts` with role checking functions
-- [ ] T059 [P] [US4] Add admin route protection to `apps/web/src/routes/admin.health.tsx` loader with redirect for non-admin
-- [ ] T060 [P] [US4] Add admin route protection to `apps/web/src/routes/admin.users.tsx` loader with redirect for non-admin
-- [ ] T061 [P] [US4] Add admin route protection to `apps/web/src/routes/admin.audit.tsx` loader with redirect for non-admin
+- [ ] T058 [P] [US4] Create admin-auth utility at `apps/frontend/src/lib/admin-auth.ts` with role checking functions
+- [ ] T059 [P] [US4] Add admin route protection to `apps/frontend/src/routes/admin.health.tsx` loader with redirect for non-admin
+- [ ] T060 [P] [US4] Add admin route protection to `apps/frontend/src/routes/admin.users.tsx` loader with redirect for non-admin
+- [ ] T061 [P] [US4] Add admin route protection to `apps/frontend/src/routes/admin.audit.tsx` loader with redirect for non-admin
 - [ ] T062 [P] [US4] Apply admin-only middleware to health router procedures at `packages/api/src/router/admin/health.router.ts`
 - [ ] T063 [P] [US4] Apply admin-only middleware to users router procedures at `packages/api/src/router/admin/users.router.ts`
 - [ ] T064 [P] [US4] Apply admin-only middleware to audit router procedures at `packages/api/src/router/admin/audit.router.ts`
@@ -168,12 +168,12 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 **Purpose**: Ensure critical admin workflows function correctly and can be tested automatically
 
-- [ ] T069 [P] [E2E] Create health dashboard E2E test at `apps/web/e2e/admin/health.spec.ts` testing metric display and alerts
-- [ ] T070 [P] [E2E] Create user admin E2E test at `apps/web/e2e/admin/users.spec.ts` testing search, filter, edit workflows
-- [ ] T071 [P] [E2E] Create audit log E2E test at `apps/web/e2e/admin/audit.spec.ts` testing filters, search, export
-- [ ] T072 [P] [E2E] Create access control E2E test at `apps/web/e2e/admin/access-control.spec.ts` testing admin/non-admin access
-- [ ] T073 [P] [E2E] Create bulk user actions E2E test at `apps/web/e2e/admin/bulk-actions.spec.ts` testing multi-user operations
-- [ ] T074 [P] [E2E] Create audit logging E2E test at `apps/web/e2e/admin/audit-logging.spec.ts` verifying all admin actions are logged
+- [ ] T069 [P] [E2E] Create health dashboard E2E test at `apps/frontend/e2e/admin/health.spec.ts` testing metric display and alerts
+- [ ] T070 [P] [E2E] Create user admin E2E test at `apps/frontend/e2e/admin/users.spec.ts` testing search, filter, edit workflows
+- [ ] T071 [P] [E2E] Create audit log E2E test at `apps/frontend/e2e/admin/audit.spec.ts` testing filters, search, export
+- [ ] T072 [P] [E2E] Create access control E2E test at `apps/frontend/e2e/admin/access-control.spec.ts` testing admin/non-admin access
+- [ ] T073 [P] [E2E] Create bulk user actions E2E test at `apps/frontend/e2e/admin/bulk-actions.spec.ts` testing multi-user operations
+- [ ] T074 [P] [E2E] Create audit logging E2E test at `apps/frontend/e2e/admin/audit-logging.spec.ts` verifying all admin actions are logged
 
 ---
 
@@ -244,18 +244,18 @@ description: "Task list for Phase 11 (Administration) implementation"
 
 ```bash
 # Launch all molecules for User Story 1 together:
-Task T014: "Create MetricCard molecule at apps/web/src/components/admin/molecules/MetricCard.tsx"
-Task T015: "Create AlertNotification molecule at apps/web/src/components/admin/molecules/AlertNotification.tsx"
+Task T014: "Create MetricCard molecule at apps/frontend/src/components/admin/molecules/MetricCard.tsx"
+Task T015: "Create AlertNotification molecule at apps/frontend/src/components/admin/molecules/AlertNotification.tsx"
 Task T016: "Install Recharts package for data visualizations"
-Task T017: "Create MetricChart component at apps/web/src/components/admin/molecules/MetricChart.tsx"
+Task T017: "Create MetricChart component at apps/frontend/src/components/admin/molecules/MetricChart.tsx"
 
 # Launch all hooks for User Story 1 together:
-Task T018: "Create useSystemHealth hook at apps/web/src/components/admin/hooks/useSystemHealth.ts"
-Task T019: "Create useSystemAlerts hook at apps/web/src/components/admin/hooks/useSystemAlerts.ts"
+Task T018: "Create useSystemHealth hook at apps/frontend/src/components/admin/hooks/useSystemHealth.ts"
+Task T019: "Create useSystemAlerts hook at apps/frontend/src/components/admin/hooks/useSystemAlerts.ts"
 
 # Launch backend and frontend in parallel:
 Task T022: "Implement health tRPC router at packages/api/src/router/admin/health.router.ts"
-Task T020: "Create HealthDashboard organism at apps/web/src/components/admin/organisms/HealthDashboard.tsx"
+Task T020: "Create HealthDashboard organism at apps/frontend/src/components/admin/organisms/HealthDashboard.tsx"
 ```
 
 ---

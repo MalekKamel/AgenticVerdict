@@ -1,4 +1,5 @@
-import { and, eq, inArray } from "drizzle-orm";
+import type { FeatureFlagAdminRow } from "@agenticverdict/types";
+import { and, asc, eq, inArray } from "drizzle-orm";
 
 import type { Database } from "./client";
 import { featureFlags, tenantFeatureFlags } from "./schema/feature-flags";
@@ -91,6 +92,25 @@ export class FeatureFlagService {
       out[key] = this.resolveValue(def.defaultValue, overrideByFlagId.get(def.id));
     }
     return out;
+  }
+
+  /**
+   * Admin read-model: all flag definitions with values resolved for a tenant (same semantics as {@link getFlags}).
+   */
+  async listAdminSnapshot(tenantId: string): Promise<FeatureFlagAdminRow[]> {
+    const defs = await this.db.select().from(featureFlags).orderBy(asc(featureFlags.flagKey));
+    if (defs.length === 0) {
+      return [];
+    }
+    const keys = defs.map((d) => d.flagKey);
+    const resolved = await this.getFlags(keys, { tenantId });
+    return defs.map((def) => ({
+      flagKey: def.flagKey,
+      type: def.type,
+      description: def.description ?? null,
+      defaultValue: def.defaultValue,
+      resolvedValue: resolved[def.flagKey],
+    }));
   }
 }
 

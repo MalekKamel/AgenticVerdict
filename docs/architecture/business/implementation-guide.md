@@ -283,7 +283,7 @@ export const connectorsRouter = t.router({
 **Web Client Usage (TanStack Start + tRPC):**
 
 ```typescript
-// apps/web/src/components/ConnectorCard.tsx
+// apps/frontend/src/components/ConnectorCard.tsx
 import { trpc } from '@/lib/trpc'
 
 function ConnectorCard({ connector }: { connector: string }) {

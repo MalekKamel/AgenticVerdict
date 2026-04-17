@@ -15,9 +15,9 @@
 
 ## Path Conventions
 
-- **Web application**: `apps/web/src/` for source, `apps/web/tests/` for tests
+- **Web application**: `apps/frontend/src/` for source, `apps/frontend/tests/` for tests
 - **Shared packages**: `packages/config/src/` for schemas, `packages/database/src/` for database
-- **Translation files**: `apps/web/src/locales/` for JSON files
+- **Translation files**: `apps/frontend/src/locales/` for JSON files
 
 ---
 
@@ -25,12 +25,12 @@
 
 **Purpose**: Core internationalization infrastructure that all user stories depend on
 
-- [ ] T001 Create translation file directory structure at apps/web/src/locales/ with en/ and ar/ subdirectories
-- [ ] T002 [P] Create common.json translation file in apps/web/src/locales/en/ with shared translations (buttons, labels, navigation)
-- [ ] T003 [P] Create common.json translation file in apps/web/src/locales/ar/ with Arabic translations for common keys
-- [ ] T004 [P] Install @tanstack/react-router-i18n plugin and configure i18n in apps/web/src/lib/i18n.ts
-- [ ] T005 [P] Create locale type definitions (Locale schema, locale config) in apps/web/src/lib/locales.ts
-- [ ] T006 Create date/currency/number formatters in apps/web/src/lib/formatters.ts with locale-aware formatting
+- [ ] T001 Create translation file directory structure at apps/frontend/src/locales/ with en/ and ar/ subdirectories
+- [ ] T002 [P] Create common.json translation file in apps/frontend/src/locales/en/ with shared translations (buttons, labels, navigation)
+- [ ] T003 [P] Create common.json translation file in apps/frontend/src/locales/ar/ with Arabic translations for common keys
+- [ ] T004 [P] Install @tanstack/react-router-i18n plugin and configure i18n in apps/frontend/src/lib/i18n.ts
+- [ ] T005 [P] Create locale type definitions (Locale schema, locale config) in apps/frontend/src/lib/locales.ts
+- [ ] T006 Create date/currency/number formatters in apps/frontend/src/lib/formatters.ts with locale-aware formatting
 - [ ] T007 Add language_preference column to users table in packages/database/src/schema/users.ts
 - [ ] T008 Create locale configuration Zod schemas in packages/config/src/schemas/locale.ts
 
@@ -44,15 +44,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Create LocaleProvider component in apps/web/src/components/i18n/LocaleProvider.tsx to wrap app with i18n context
+- [ ] T009 Create LocaleProvider component in apps/frontend/src/components/i18n/LocaleProvider.tsx to wrap app with i18n context
 - [ ] T010 Configure __root.tsx to use DirectionProvider from Mantine with dynamic dir based on locale
-- [ ] T011 Create locale store in apps/web/src/stores/locale-store.ts for locale state management and persistence
-- [ ] T012 Add locale-based routing structure (e.g., [...lang]/) in apps/web/src/routes/ for SEO-friendly URLs
-- [ ] T013 Create useTrans hook wrapper in apps/web/src/lib/i18n.ts for convenient translation access
-- [ ] T014 Add tRPC procedure for saving user language preference in apps/web/src/server/routers/users.ts
-- [ ] T015 Create browser language detection utility in apps/web/src/lib/i18n.ts for first-visit hint
-- [ ] T016 Add unit tests for i18n utilities in apps/web/tests/unit/i18n.test.ts
-- [ ] T017 Add unit tests for formatters in apps/web/tests/unit/formatters.test.ts
+- [ ] T011 Create locale store in apps/frontend/src/stores/locale-store.ts for locale state management and persistence
+- [ ] T012 Add locale-based routing structure (e.g., [...lang]/) in apps/frontend/src/routes/ for SEO-friendly URLs
+- [ ] T013 Create useTrans hook wrapper in apps/frontend/src/lib/i18n.ts for convenient translation access
+- [ ] T014 Add tRPC procedure for saving user language preference in apps/frontend/src/server/routers/users.ts
+- [ ] T015 Create browser language detection utility in apps/frontend/src/lib/i18n.ts for first-visit hint
+- [ ] T016 Add unit tests for i18n utilities in apps/frontend/tests/unit/i18n.test.ts
+- [ ] T017 Add unit tests for formatters in apps/frontend/tests/unit/formatters.test.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -68,17 +68,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T018 [P] [US1] E2E test for language switching workflow in apps/web/tests/e2e/language-switching.spec.ts
-- [ ] T019 [P] [US1] Unit test for locale persistence in apps/web/tests/unit/locale-store.test.ts
-- [ ] T020 [P] [US1] Integration test for translation loading in apps/web/tests/integration/i18n.test.ts
+- [ ] T018 [P] [US1] E2E test for language switching workflow in apps/frontend/tests/e2e/language-switching.spec.ts
+- [ ] T019 [P] [US1] Unit test for locale persistence in apps/frontend/tests/unit/locale-store.test.ts
+- [ ] T020 [P] [US1] Integration test for translation loading in apps/frontend/tests/integration/i18n.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create LanguageSwitcher component in apps/web/src/components/i18n/LanguageSwitcher.tsx
-- [ ] T022 [P] [US1] Add language switcher to settings page in apps/web/src/routes/settings/index.tsx
-- [ ] T023 [P] [US1] Add language switcher to user menu in apps/web/src/components/layout/UserMenu.tsx
+- [ ] T021 [P] [US1] Create LanguageSwitcher component in apps/frontend/src/components/i18n/LanguageSwitcher.tsx
+- [ ] T022 [P] [US1] Add language switcher to settings page in apps/frontend/src/routes/settings/index.tsx
+- [ ] T023 [P] [US1] Add language switcher to user menu in apps/frontend/src/components/layout/UserMenu.tsx
 - [ ] T024 [US1] Implement setLocale function in locale store with localStorage persistence (depends on T011)
-- [ ] T025 [US1] Implement language change tRPC mutation in apps/web/src/server/routers/users.ts
+- [ ] T025 [US1] Implement language change tRPC mutation in apps/frontend/src/server/routers/users.ts
 - [ ] T026 [US1] Add locale change listener to trigger UI updates without page reload
 - [ ] T027 [US1] Add loading state for translation file loading during language switch
 - [ ] T028 [US1] Implement fallback to English if translation file fails to load
@@ -96,17 +96,17 @@
 
 ### Tests for User Story 2 (OPTIONAL - only if requested) ⚠️
 
-- [ ] T030 [P] [US2] Unit test for translation file validation in apps/web/tests/unit/translation-validation.test.ts
-- [ ] T031 [P] [US2] Integration test for translation upload API in apps/web/tests/integration/locale-api.test.ts
+- [ ] T030 [P] [US2] Unit test for translation file validation in apps/frontend/tests/unit/translation-validation.test.ts
+- [ ] T031 [P] [US2] Integration test for translation upload API in apps/frontend/tests/integration/locale-api.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Create locale management page route in apps/web/src/routes/admin/locales.tsx
-- [ ] T033 [P] [US2] Create LocaleManagement component in apps/web/src/components/admin/LocaleManagement.tsx
+- [ ] T032 [P] [US2] Create locale management page route in apps/frontend/src/routes/admin/locales.tsx
+- [ ] T033 [P] [US2] Create LocaleManagement component in apps/frontend/src/components/admin/LocaleManagement.tsx
 - [ ] T034 [US2] Implement translation file upload UI in LocaleManagement component
 - [ ] T035 [US2] Create TranslationCoverage component to show translation completion percentage
-- [ ] T036 [US2] Implement translation file validation API in apps/web/src/server/routers/admin/locales.ts
-- [ ] T037 [US2] Create missing keys detection utility in apps/web/src/lib/i18n.ts
+- [ ] T036 [US2] Implement translation file validation API in apps/frontend/src/server/routers/admin/locales.ts
+- [ ] T037 [US2] Create missing keys detection utility in apps/frontend/src/lib/i18n.ts
 - [ ] T038 [US2] Add locale-specific settings form (date format, currency symbol) in LocaleManagement component
 - [ ] T039 [US2] Implement tRPC procedure for updating locale configuration
 
@@ -124,18 +124,18 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T040 [P] [US3] E2E test for dashboard RTL layout in apps/web/tests/e2e/rtl-layouts.spec.ts
-- [ ] T041 [P] [US3] E2E test for form RTL tab order in apps/web/tests/e2e/rtl-layouts.spec.ts
-- [ ] T042 [P] [US3] Visual regression test for RTL screenshots in apps/web/tests/visual/rtl.spec.ts
+- [ ] T040 [P] [US3] E2E test for dashboard RTL layout in apps/frontend/tests/e2e/rtl-layouts.spec.ts
+- [ ] T041 [P] [US3] E2E test for form RTL tab order in apps/frontend/tests/e2e/rtl-layouts.spec.ts
+- [ ] T042 [P] [US3] Visual regression test for RTL screenshots in apps/frontend/tests/visual/rtl.spec.ts
 
 ### Implementation for User Story 3
 
-- [ ] T043 [P] [US3] Audit all pages for RTL compliance (create checklist in apps/web/docs/rtl-checklist.md)
-- [ ] T044 [P] [US3] Update sidebar component in apps/web/src/components/layout/Sidebar.tsx for RTL positioning
-- [ ] T045 [P] [US3] Update data table component in apps/web/src/components/data/DataTable.tsx for RTL column alignment
-- [ ] T046 [P] [US3] Update form components in apps/web/src/components/forms/ for RTL focus order
+- [ ] T043 [P] [US3] Audit all pages for RTL compliance (create checklist in apps/frontend/docs/rtl-checklist.md)
+- [ ] T044 [P] [US3] Update sidebar component in apps/frontend/src/components/layout/Sidebar.tsx for RTL positioning
+- [ ] T045 [P] [US3] Update data table component in apps/frontend/src/components/data/DataTable.tsx for RTL column alignment
+- [ ] T046 [P] [US3] Update form components in apps/frontend/src/components/forms/ for RTL focus order
 - [ ] T047 [US3] Add RTL-specific CSS overrides using logical properties (margin-inline-start instead of margin-left)
-- [ ] T048 [US3] Update chart components in apps/web/src/components/charts/ for RTL axis labels and legends
+- [ ] T048 [US3] Update chart components in apps/frontend/src/components/charts/ for RTL axis labels and legends
 - [ ] T049 [US3] Test and fix icon mirroring for directional icons (arrows, chevrons)
 - [ ] T050 [US3] Update modal and drawer components for RTL positioning
 - [ ] T051 [US3] Test all navigation flows in RTL mode (breadcrumbs, pagination, step wizards)
@@ -152,18 +152,18 @@
 
 ### Tests for User Story 4 (OPTIONAL - only if requested) ⚠️
 
-- [ ] T052 [P] [US4] Unit test for translation key validation in apps/web/tests/unit/translation-validation.test.ts
-- [ ] T053 [P] [US4] Integration test for missing key detection in apps/web/tests/integration/i18n.test.ts
+- [ ] T052 [P] [US4] Unit test for translation key validation in apps/frontend/tests/unit/translation-validation.test.ts
+- [ ] T053 [P] [US4] Integration test for missing key detection in apps/frontend/tests/integration/i18n.test.ts
 
 ### Implementation for User Story 4
 
-- [ ] T054 [P] [US4] Create translation validation script in apps/web/scripts/validate-translations.ts
-- [ ] T055 [P] [US4] Add namespace script to organize translation keys by feature in apps/web/scripts/organize-translations.ts
-- [ ] T056 [US4] Create translation coverage report generator in apps/web/scripts/translation-coverage.ts
+- [ ] T054 [P] [US4] Create translation validation script in apps/frontend/scripts/validate-translations.ts
+- [ ] T055 [P] [US4] Add namespace script to organize translation keys by feature in apps/frontend/scripts/organize-translations.ts
+- [ ] T056 [US4] Create translation coverage report generator in apps/frontend/scripts/translation-coverage.ts
 - [ ] T057 [US4] Add missing key placeholder component (displays [missing_key] when translation not found)
 - [ ] T058 [US4] Implement translation key logging to Sentry for production monitoring
 - [ ] T059 [US4] Add npm scripts for translation validation (npm run validate:translations)
-- [ ] T060 [US4] Create translation maintenance guide in apps/web/docs/translation-maintenance.md
+- [ ] T060 [US4] Create translation maintenance guide in apps/frontend/docs/translation-maintenance.md
 
 **Checkpoint**: Translation files are validated, missing keys are tracked, and maintenance is streamlined
 
@@ -173,15 +173,15 @@
 
 **Purpose**: Create translation files for each feature area
 
-- [ ] T061 [P] Create dashboard.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T062 [P] Create connectors.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T063 [P] Create insights.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T064 [P] Create settings.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T065 [P] Create reports.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T066 [P] Create templates.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T067 [P] Create scheduling.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T068 [P] Create tenant.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
-- [ ] T069 [P] Create admin.json translation files in apps/web/src/locales/en/ and apps/web/src/locales/ar/
+- [ ] T061 [P] Create dashboard.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T062 [P] Create connectors.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T063 [P] Create insights.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T064 [P] Create settings.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T065 [P] Create reports.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T066 [P] Create templates.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T067 [P] Create scheduling.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T068 [P] Create tenant.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
+- [ ] T069 [P] Create admin.json translation files in apps/frontend/src/locales/en/ and apps/frontend/src/locales/ar/
 - [ ] T070 Add ICU message format support for pluralization in translation files
 
 **Checkpoint**: All feature areas have complete English and Arabic translations
@@ -192,9 +192,9 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T071 [P] Add internationalization documentation in apps/web/docs/i18n.md
-- [ ] T072 [P] Create RTL development guidelines in apps/web/docs/rtl-guidelines.md
-- [ ] T073 [P] Add translation key naming conventions guide in apps/web/docs/translation-conventions.md
+- [ ] T071 [P] Add internationalization documentation in apps/frontend/docs/i18n.md
+- [ ] T072 [P] Create RTL development guidelines in apps/frontend/docs/rtl-guidelines.md
+- [ ] T073 [P] Add translation key naming conventions guide in apps/frontend/docs/translation-conventions.md
 - [ ] T074 Performance optimization: Implement lazy loading for translation files by namespace
 - [ ] T075 Performance optimization: Add translation file caching in localStorage
 - [ ] T076 Add SEO meta tags for locale-based URLs (hreflang, alternate links)
@@ -252,14 +252,14 @@
 
 ```bash
 # Launch all tests for User Story 1 together:
-Task: "E2E test for language switching workflow in apps/web/tests/e2e/language-switching.spec.ts"
-Task: "Unit test for locale persistence in apps/web/tests/unit/locale-store.test.ts"
-Task: "Integration test for translation loading in apps/web/tests/integration/i18n.test.ts"
+Task: "E2E test for language switching workflow in apps/frontend/tests/e2e/language-switching.spec.ts"
+Task: "Unit test for locale persistence in apps/frontend/tests/unit/locale-store.test.ts"
+Task: "Integration test for translation loading in apps/frontend/tests/integration/i18n.test.ts"
 
 # Launch all components for User Story 1 together:
-Task: "Create LanguageSwitcher component in apps/web/src/components/i18n/LanguageSwitcher.tsx"
-Task: "Add language switcher to settings page in apps/web/src/routes/settings/index.tsx"
-Task: "Add language switcher to user menu in apps/web/src/components/layout/UserMenu.tsx"
+Task: "Create LanguageSwitcher component in apps/frontend/src/components/i18n/LanguageSwitcher.tsx"
+Task: "Add language switcher to settings page in apps/frontend/src/routes/settings/index.tsx"
+Task: "Add language switcher to user menu in apps/frontend/src/components/layout/UserMenu.tsx"
 ```
 
 ---

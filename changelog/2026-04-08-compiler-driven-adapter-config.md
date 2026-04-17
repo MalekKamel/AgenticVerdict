@@ -147,7 +147,7 @@ This entry documents the shift toward **shared build constants** (`NODE_ENV`-der
 - **`CompanyConfig` discriminated union** (`environment` / `mockAdapters` / `debugMode`) from the plan — would invalidate existing tenant JSON; deferred with migration guide clarification.
 - **`@esbuild/typescript-plugin`** — esbuild compiles TypeScript without it.
 - **TypeScript solution `references` overhaul** at repo root — avoided broad monorepo churn; Turbo and package `typecheck` remain the source of truth.
-- **`isMockEnabledForPlatform` throwing** when `BUILD_CONFIG.isProduction` — would break **`apps/web`** aggregated adapter health, which calls the helper per platform in production.
+- **`isMockEnabledForPlatform` throwing** when `BUILD_CONFIG.isProduction` — would break **`apps/frontend`** aggregated adapter health, which calls the helper per platform in production.
 - **Separate `examples/compiler-driven-config` repository** (plan appendix) — out of repo scope.
 - **`docs/02-planning-and-methodology/architecture.md`** — file not present in the tree at time of implementation.
 

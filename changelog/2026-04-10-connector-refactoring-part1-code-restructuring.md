@@ -74,7 +74,7 @@ New files under `packages/database/src/schema/core/`:
 
 - **Directory:** `packages/platform-adapters` → `packages/data-connectors` (git mv).
 - **Package name:** `@agenticverdict/platform-adapters` → `@agenticverdict/data-connectors`.
-- **Consumers updated:** `apps/web`, `apps/worker`, `packages/agent-runtime`, `packages/mock-platform-server`, `tests/phase01-platform-integration`, `tests/factories`, root `package.json` (cycle check + production bundle path + devDependency), `vitest.config.ts`, `tools/build/bundle-adapter-factory-smoke.mjs`, `docker/base/Dockerfile.deps`.
+- **Consumers updated:** `apps/frontend`, `apps/worker`, `packages/agent-runtime`, `packages/mock-platform-server`, `tests/phase01-platform-integration`, `tests/factories`, root `package.json` (cycle check + production bundle path + devDependency), `vitest.config.ts`, `tools/build/bundle-adapter-factory-smoke.mjs`, `docker/base/Dockerfile.deps`.
 - **`pnpm-lock.yaml`** regenerated via `pnpm install`.
 
 **Documentation:** Many historical markdown paths and filter commands still mention `platform-adapters`; update them when touching those docs. The OpenAPI asset filename `platform-adapters-health.yaml` is unchanged.

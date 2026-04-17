@@ -28,7 +28,7 @@
 | `docker-compose.test.yml`                                             | API/worker test stage + mock env                         |
 | `deploy/docker-compose.dev.override.yml`                              | Same intent as `docker-compose.dev.yml` (deploy path)    |
 | `docker-compose.observability.yml`                                    | Prometheus, Loki, Promtail, Grafana, Falco               |
-| `apps/web/Dockerfile`                                                 | Next.js standalone / distroless                          |
+| `apps/frontend/Dockerfile`                                            | Next.js standalone / distroless                          |
 | `apps/api/Dockerfile`                                                 | Fastify API + tsx                                        |
 | `apps/worker/Dockerfile`                                              | BullMQ worker + tsx                                      |
 | `deploy/docker-compose.backup.yml`                                    | Scheduled backups                                        |

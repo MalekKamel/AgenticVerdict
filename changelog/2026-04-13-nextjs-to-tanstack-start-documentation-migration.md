@@ -179,7 +179,7 @@ Several documents reference `next.config.ts` which should be removed or replaced
 
 ## Notes
 
-- The existing Next.js codebase (`apps/web/`) was noted as a **demonstration prototype only** and is disposable
+- The existing Next.js codebase (`apps/frontend/`) was noted as a **demonstration prototype only** and is disposable
 - No production features were implemented in Next.js — this is a greenfield implementation
 - The UI architecture and component patterns documented remain valid
 - All business logic, multi-tenancy patterns, and backend architecture are unaffected

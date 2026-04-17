@@ -80,7 +80,7 @@ specs/01-ui/10-agency/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── agency/
 │   │   ├── index.tsx                    # Agency dashboard overview
@@ -382,7 +382,7 @@ export const agencyRouter = t.router({
 
 1. **Foundation** (Days 1-2):
    - Set up agency tRPC router and base procedures
-   - Create agency route structure in `apps/web/src/routes/agency/`
+   - Create agency route structure in `apps/frontend/src/routes/agency/`
    - Implement TanStack Store for agency dashboard state
 
 2. **Dashboard Overview** (Days 3-5):

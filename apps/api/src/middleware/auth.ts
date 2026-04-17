@@ -5,6 +5,8 @@ import { jwtVerify } from "jose";
 
 import { TenantSecurityError } from "@agenticverdict/core";
 
+import { parseSessionCookie } from "../lib/auth-session-cookie";
+
 const JWT_SECRET_MIN_LENGTH = 8;
 
 let jwtSecretFileContentLoaded = false;
@@ -19,7 +21,8 @@ export function resetJwtSecretCacheForTests(): void {
   jwtSecretFromFile = undefined;
 }
 
-function resolveJwtSecret(): string | undefined {
+/** @internal Exposed for session JWT signing in tRPC auth procedures. */
+export function resolveJwtSecret(): string | undefined {
   const secretFilePath = process.env.JWT_SECRET_FILE?.trim();
   if (secretFilePath) {
     if (!jwtSecretFileContentLoaded) {
@@ -153,6 +156,53 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
 
     request.auth = { userId: sub, tenantId, roles };
   };
+}
+
+/**
+ * Verifies `Authorization: Bearer` JWT without mutating the request.
+ * Used by tRPC `auth.getSession` and other session-aware procedures.
+ */
+export async function verifyBearerSessionFromRequest(
+  request: FastifyRequest,
+): Promise<{ auth: AuthPayload; sessionExpiresAt: string | null } | null> {
+  const bearer = getBearerToken(request.headers.authorization);
+  const fromCookie = parseSessionCookie(request.headers.cookie);
+  const token = bearer ?? fromCookie;
+  if (!token) {
+    return null;
+  }
+
+  const secret = resolveJwtSecret();
+  if (!secret) {
+    return null;
+  }
+
+  try {
+    const verified = await jwtVerify(token, new TextEncoder().encode(secret));
+    const payload = verified.payload as Record<string, unknown>;
+    const sub = typeof payload.sub === "string" ? payload.sub : undefined;
+    const tenantId = typeof payload.tenant_id === "string" ? payload.tenant_id : undefined;
+    const rolesRaw = payload.roles;
+    const roles = Array.isArray(rolesRaw)
+      ? rolesRaw.filter((r): r is string => typeof r === "string")
+      : [];
+
+    if (!sub || !tenantId) {
+      return null;
+    }
+
+    const sessionExpiresAt =
+      typeof verified.payload.exp === "number"
+        ? new Date(verified.payload.exp * 1000).toISOString()
+        : null;
+
+    return {
+      auth: { userId: sub, tenantId, roles },
+      sessionExpiresAt,
+    };
+  } catch {
+    return null;
+  }
 }
 
 export function tenantSecurityErrorReply(

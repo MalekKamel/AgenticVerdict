@@ -53,12 +53,12 @@ specs/01-ui/13-production-hardening/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── .github/
 │   └── workflows/
 │       ├── lighthouse-ci.yml          # Lighthouse CI workflow
 │       └── accessibility-ci.yml       # axe-core accessibility tests
-├── apps/web/src/
+├── apps/frontend/src/
 │   ├── lib/
 │   │   ├── monitoring/
 │   │   │   ├── analytics.ts           # Analytics event tracking (Plausible/PostHog)
@@ -104,7 +104,7 @@ docs/
         └── 13-production-hardening.md  # Phase 13 implementation details
 ```
 
-**Structure Decision**: Monitoring and accessibility utilities live in `apps/web/src/lib/monitoring/` since they are web-specific (browser APIs for Core Web Vitals, DOM manipulation for accessibility). Shared monitoring abstractions (`packages/monitoring/`) enable future mobile/CLI clients to use the same analytics and error tracking services with platform-specific implementations. CI configuration uses standard GitHub Actions workflows (`.github/workflows/`) for Lighthouse and accessibility testing.
+**Structure Decision**: Monitoring and accessibility utilities live in `apps/frontend/src/lib/monitoring/` since they are web-specific (browser APIs for Core Web Vitals, DOM manipulation for accessibility). Shared monitoring abstractions (`packages/monitoring/`) enable future mobile/CLI clients to use the same analytics and error tracking services with platform-specific implementations. CI configuration uses standard GitHub Actions workflows (`.github/workflows/`) for Lighthouse and accessibility testing.
 
 ## Complexity Tracking
 
@@ -134,7 +134,7 @@ docs/
 **Goal**: Implement WCAG 2.1 AA compliance with automated testing and manual validation.
 
 **Implementation Tasks**:
-1. **Accessibility Utilities** (`apps/web/src/lib/utils/accessibility.ts`)
+1. **Accessibility Utilities** (`apps/frontend/src/lib/utils/accessibility.ts`)
    - `A11yAnnouncer` component for screen reader announcements (live regions)
    - `useFocusManagement` hook for trapping focus in modals/dropdowns
    - `skipToContent` link implementation for keyboard users
@@ -165,7 +165,7 @@ docs/
 **Goal**: Implement Core Web Vitals tracking, bundle optimization, and CI performance budgets.
 
 **Implementation Tasks**:
-1. **Core Web Vitals Tracking** (`apps/web/src/lib/monitoring/performance.ts`)
+1. **Core Web Vitals Tracking** (`apps/frontend/src/lib/monitoring/performance.ts`)
    - Integrate `web-vitals` library for LCP, FID, CLS measurement
    - Send metrics to analytics backend (Plausible custom events or dedicated metrics endpoint)
    - Add performance context (page, tenant, route, device type)
@@ -197,14 +197,14 @@ docs/
 **Goal**: Integrate error tracking and analytics to enable data-driven product development and rapid incident response.
 
 **Implementation Tasks**:
-1. **Error Tracking with Sentry** (`apps/web/src/lib/monitoring/error-tracking.ts`)
+1. **Error Tracking with Sentry** (`apps/frontend/src/lib/monitoring/error-tracking.ts`)
    - Install `@sentry/react` and configure for TanStack Start SSR
    - Implement PII scrubbing (sanitize URLs, query params, error context)
    - Attach tenant context (tenant ID, user role, feature flags) to all errors
    - Integrate with tRPC error handling for backend error correlation
    - Create `ErrorBoundary` component to catch React component errors
 
-2. **Analytics Integration** (`apps/web/src/lib/monitoring/analytics.ts`)
+2. **Analytics Integration** (`apps/frontend/src/lib/monitoring/analytics.ts`)
    - Select provider (Plausible recommended for privacy, self-hostable)
    - Implement `trackPageView` for route changes
    - Implement `trackEvent` for feature usage (e.g., `insight_created`, `connector_added`)
@@ -342,7 +342,7 @@ jobs:
 ### Error Tracking Integration
 
 ```typescript
-// apps/web/src/lib/monitoring/error-tracking.ts
+// apps/frontend/src/lib/monitoring/error-tracking.ts
 import * as Sentry from "@sentry/react";
 
 Sentry.init({
@@ -359,7 +359,7 @@ Sentry.init({
 ### Analytics Integration
 
 ```typescript
-// apps/web/src/lib/monitoring/analytics.ts
+// apps/frontend/src/lib/monitoring/analytics.ts
 import Plausible from "plausible-tracker";
 
 export const plausible = Plausible({

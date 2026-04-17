@@ -2,15 +2,15 @@
 
 ## Background
 
-The `apps/web` package was originally scaffolded with Next.js. The project has since migrated to **TanStack Start**. Residual Next.js configuration, dependencies, patterns, and documentation may still exist and should be eliminated so the web app has a single, coherent stack.
+The `apps/frontend` package was originally scaffolded with Next.js. The project has since migrated to **TanStack Start**. Residual Next.js configuration, dependencies, patterns, and documentation may still exist and should be eliminated so the web app has a single, coherent stack.
 
 ## Goal
 
-Complete removal of Next.js from `apps/web` and alignment of the codebase with **TanStack Start** as the only application framework and runtime for that package.
+Complete removal of Next.js from `apps/frontend` and alignment of the codebase with **TanStack Start** as the only application framework and runtime for that package.
 
 ## Scope of work
 
-1. **Analyze** `apps/web` (and any shared packages it depends on for routing/build) to identify:
+1. **Analyze** `apps/frontend` (and any shared packages it depends on for routing/build) to identify:
    - Next.js dependencies and scripts
    - Next.js-specific APIs, file conventions, and configuration
    - Documentation or comments that still describe a Next.js setup
@@ -24,7 +24,7 @@ Complete removal of Next.js from `apps/web` and alignment of the codebase with *
 
 ## Deliverable
 
-A fully migrated `apps/web` tree where TanStack Start is the sole stack, with a clean build and no type or lint regressions attributable to this cleanup.
+A fully migrated `apps/frontend` tree where TanStack Start is the sole stack, with a clean build and no type or lint regressions attributable to this cleanup.
 
 ## Constraints
 

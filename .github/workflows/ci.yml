@@ -34,11 +34,27 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Policy: docs/05-reference/dependency-audit-policy.md — informational until critical backlog is cleared.
+      - name: Dependency audit (informational)
+        continue-on-error: true
+        run: pnpm audit 2>&1 | tee pnpm-audit-report.txt
+
+      - name: Upload dependency audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pnpm-audit-report
+          path: pnpm-audit-report.txt
+          if-no-files-found: ignore
+
       - name: Install Playwright Chromium (report-generator PDF unit tests)
         run: pnpm --filter @agenticverdict/report-generator exec playwright install chromium
 
       - name: Format (Prettier check)
         run: pnpm run format:check
+
+      - name: Validate Pencil .pen files (design tokens pipeline)
+        run: pnpm run validate:pen-files
 
       - name: Lint and typecheck (Turbo)
         run: pnpm exec turbo run lint typecheck
@@ -48,6 +64,12 @@ jobs:
 
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
+
+      - name: Web app unit coverage (scoped hooks + tRPC modules)
+        run: pnpm --filter @agenticverdict/web exec vitest run --coverage
+
+      - name: Web production build
+        run: pnpm --filter @agenticverdict/web build
 
       - name: Verify build constants
         run: pnpm run verify:build-config

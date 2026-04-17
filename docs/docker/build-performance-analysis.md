@@ -24,7 +24,7 @@ The AgenticVerdict Docker implementation follows modern best practices with mult
 
 ## 1. Current Implementation Analysis
 
-### 1.1 Web Service (`apps/web/Dockerfile`)
+### 1.1 Web Service (`apps/frontend/Dockerfile`)
 
 **Current Structure** (52 lines):
 
@@ -47,7 +47,7 @@ RUN node scripts/dockerPrebuild.mjs
 RUN pnpm --filter @agenticverdict/web exec next build --no-lint
 
 FROM gcr.io/distroless/nodejs20-debian12 AS runner
-COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/frontend/.next/standalone ./
 # ... runtime configuration
 ```
 
@@ -79,6 +79,7 @@ COPY --from=builder /app/apps/web/.next/standalone ./
    - **Recommendation**: Copy only package manifests, then source after install
 
 2. **Line 31**: No cache mount for pnpm store
+
    ```dockerfile
    RUN pnpm install --frozen-lockfile
    ```
@@ -493,7 +494,7 @@ Best Practice: Registry cache
 
 ```bash
 # Build each service with timing
-time docker build -f apps/web/Dockerfile -t agenticverdict/web:baseline .
+time docker build -f apps/frontend/Dockerfile -t agenticverdict/web:baseline .
 time docker build -f apps/api/Dockerfile -t agenticverdict/api:baseline .
 time docker build -f apps/worker/Dockerfile -t agenticverdict/worker:baseline .
 
@@ -508,10 +509,10 @@ docker images | grep agenticverdict
 
 ```bash
 # Same commands as baseline, compare results
-time docker build -f apps/web/Dockerfile -t agenticverdict/web:optimized .
+time docker build -f apps/frontend/Dockerfile -t agenticverdict/web:optimized .
 
 # Extract cache hit rate from build logs
-docker buildx build --progress=plain -f apps/web/Dockerfile . 2>&1 | grep -E "(CACHED|#\d)"
+docker buildx build --progress=plain -f apps/frontend/Dockerfile . 2>&1 | grep -E "(CACHED|#\d)"
 
 # Calculate cache hit percentage
 ```
@@ -542,7 +543,7 @@ Add to CI/CD workflow:
 ### Immediate Actions (Week 1)
 
 1. **Add pnpm cache mounts to all Dockerfiles**
-   - apps/web/Dockerfile: Line 24
+   - apps/frontend/Dockerfile: Line 24
    - apps/api/Dockerfile: Line 27
    - apps/worker/Dockerfile: Line 27
 
@@ -615,7 +616,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS deps
 # Copy only package manifests for pnpm install
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
-COPY apps/web/package.json ./apps/web/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY apps/worker/package.json ./apps/worker/
 COPY packages/*/package.json ./packages/*/
@@ -627,8 +628,8 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm,sharing=shar
     pnpm install --frozen-lockfile
 
 # Then copy source files
-COPY apps/web/src ./apps/web/src
-COPY apps/web/public ./apps/web/public
+COPY apps/frontend/src ./apps/frontend/src
+COPY apps/frontend/public ./apps/frontend/public
 COPY packages/*/src ./packages/*/
 ```
 
@@ -688,7 +689,7 @@ RUN node scripts/dockerPrebuild.mjs
 ## References
 
 - **Current Implementation**:
-  - apps/web/Dockerfile
+  - apps/frontend/Dockerfile
   - apps/api/Dockerfile
   - apps/worker/Dockerfile
   - .github/workflows/docker-build.yml

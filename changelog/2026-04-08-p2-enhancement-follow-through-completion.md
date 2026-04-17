@@ -28,7 +28,7 @@
 - **`src/bleu-score.ts`** (+ **`bleu-score.test.ts`**) — Sentence-level BLEU-style scoring for same-language pairs.
 - **`src/arabic-structural-ci.test.ts`** — CI gate calling `assertArabicStructuralLocaleQuality`.
 
-### `apps/web`
+### `apps/frontend`
 
 - **`e2e/home-journey.spec.ts`** — Localized home + demo form path.
 - **`e2e/api-health.optional.spec.ts`** — Optional API `/health` check.

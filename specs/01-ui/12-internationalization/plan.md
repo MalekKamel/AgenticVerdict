@@ -11,7 +11,7 @@ Phase 12 implements comprehensive internationalization (I18n) and localization (
 
 **Language/Version**: TypeScript 5.3+ (strict mode), React 18+
 **Primary Dependencies**: @tanstack/react-router with i18n plugin, Mantine UI v9 with DirectionProvider, @formatjs/icu-messageformat-parser for ICU parsing
-**Storage**: Translation files stored as JSON in apps/web/src/locales/, user language preference in PostgreSQL (users.language_preference) and localStorage for immediate hydration
+**Storage**: Translation files stored as JSON in apps/frontend/src/locales/, user language preference in PostgreSQL (users.language_preference) and localStorage for immediate hydration
 **Testing**: Vitest for unit tests, Playwright for RTL/LTR visual regression tests
 **Target Platform**: TanStack Start web application (SSR with client hydration)
 **Project Type**: Monorepo web application (Turborepo)
@@ -60,7 +60,7 @@ specs/01-ui/12-internationalization/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── locales/                    # Translation files by language
 │   │   ├── en/
@@ -125,7 +125,7 @@ packages/
 **Organization**: Namespaced JSON files per feature area
 
 ```json
-// apps/web/src/locales/en/common.json
+// apps/frontend/src/locales/en/common.json
 {
   "buttons": {
     "save": "Save",
@@ -146,7 +146,7 @@ packages/
   }
 }
 
-// apps/web/src/locales/ar/common.json
+// apps/frontend/src/locales/ar/common.json
 {
   "buttons": {
     "save": "حفظ",
@@ -175,7 +175,7 @@ packages/
 **Setup**: Configure the i18n plugin with locale definitions
 
 ```typescript
-// apps/web/src/lib/i18n.ts
+// apps/frontend/src/lib/i18n.ts
 import { i18n } from '@tanstack/react-router-i18n'
 import { z } from 'zod'
 
@@ -200,7 +200,7 @@ export const i18nConfig = i18n({
 **Usage in components**:
 
 ```typescript
-// apps/web/src/components/dashboard/DashboardHeader.tsx
+// apps/frontend/src/components/dashboard/DashboardHeader.tsx
 import { useTrans } from '@tanstack/react-router-i18n'
 
 export function DashboardHeader() {
@@ -220,7 +220,7 @@ export function DashboardHeader() {
 **Root route configuration**:
 
 ```typescript
-// apps/web/src/routes/__root.tsx
+// apps/frontend/src/routes/__root.tsx
 import { DirectionProvider } from '@mantine/core'
 import { useLocale } from './lib/i18n'
 
@@ -265,7 +265,7 @@ const useStyles = createStyles((theme) => ({
 **Date/currency/number formatters**:
 
 ```typescript
-// apps/web/src/lib/formatters.ts
+// apps/frontend/src/lib/formatters.ts
 import { Locale } from './i18n'
 
 export interface Formatters {
@@ -309,7 +309,7 @@ export function formatArabicNumerals(num: number): string {
 **Language switcher component**:
 
 ```typescript
-// apps/web/src/components/i18n/LanguageSwitcher.tsx
+// apps/frontend/src/components/i18n/LanguageSwitcher.tsx
 import { Select } from '@mantine/core'
 import { useLocale, useTrans } from '@tanstack/react-router-i18n'
 
@@ -334,7 +334,7 @@ export function LanguageSwitcher() {
 **Locale persistence**:
 
 ```typescript
-// apps/web/src/stores/locale-store.ts
+// apps/frontend/src/stores/locale-store.ts
 import { create } from '@tanstack/react-store'
 import { Locale } from '@/lib/i18n'
 
@@ -361,7 +361,7 @@ export const useLocaleStore = create<LocaleStore>((set) => ({
 **Admin locale management page**:
 
 ```typescript
-// apps/web/src/components/admin/LocaleManagement.tsx
+// apps/frontend/src/components/admin/LocaleManagement.tsx
 import { useState } from 'react'
 import { Button, FileInput, Group, Stack, Text, Progress } from '@mantine/core'
 
@@ -409,7 +409,7 @@ function TranslationCoverage({ locale }: { locale: string }) {
 **RTL validation tests**:
 
 ```typescript
-// apps/web/tests/e2e/rtl-layouts.spec.ts
+// apps/frontend/tests/e2e/rtl-layouts.spec.ts
 import { test, expect } from '@playwright/test'
 
 test.describe('RTL Layouts', () => {
@@ -446,7 +446,7 @@ test.describe('RTL Layouts', () => {
 **Translation validation script**:
 
 ```typescript
-// apps/web/scripts/validate-translations.ts
+// apps/frontend/scripts/validate-translations.ts
 import fs from 'fs'
 import path from 'path'
 

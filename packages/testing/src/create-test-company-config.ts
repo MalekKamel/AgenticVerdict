@@ -43,5 +43,6 @@ export function createTestCompanyConfig(overrides: Partial<CompanyConfig> = {}):
     },
     ai: { ...base.ai, ...overrides.ai },
     features: { ...base.features, ...overrides.features },
+    ui: overrides.ui !== undefined ? { ...base.ui, ...overrides.ui } : base.ui,
   });
 }

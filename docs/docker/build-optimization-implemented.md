@@ -40,7 +40,7 @@ docker compose -f docker-compose.base-images.yml build
 
 ## Application Dockerfiles (behavioral summary)
 
-### Web (`apps/web/Dockerfile`)
+### Web (`apps/frontend/Dockerfile`)
 
 - **`FROM ${DEPS_IMAGE} AS deps`**, then builder copies **`packages`** → **`tests`** → **`apps`** (cache-friendly order).
 - Optional **`USE_TURBOPACK=true`** for **`next build --turbopack`**; Compose may set this while CI often keeps the default webpack path unless workflows pass the arg.

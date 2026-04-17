@@ -196,7 +196,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 ### Current Dockerfile Patterns
 
-**Web Service** (`apps/web/Dockerfile`):
+**Web Service** (`apps/frontend/Dockerfile`):
 
 - Base: `node:20-bookworm-slim`
 - Runtime: `gcr.io/distroless/nodejs20-debian12`
@@ -289,7 +289,7 @@ Each phase can be independently rolled back:
 
 **Dockerfiles**:
 
-- `apps/web/Dockerfile` — Next.js 15 standalone
+- `apps/frontend/Dockerfile` — Next.js 15 standalone
 - `apps/api/Dockerfile` — Fastify API with tsx
 - `apps/worker/Dockerfile` — BullMQ worker with Chromium
 

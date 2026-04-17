@@ -152,11 +152,11 @@ This checklist MUST be completed before marking Phase 01 (Authentication) as don
 
 ### Code Organization
 
-- [ ] All auth components are in `apps/web/src/components/auth/`
-- [ ] All auth hooks are in `apps/web/src/hooks/`
-- [ ] All auth routes are in `apps/web/src/routes/auth/`
-- [ ] All validation schemas are in `apps/web/src/lib/validations/`
-- [ ] Auth store is in `apps/web/src/stores/auth-store.ts`
+- [ ] All auth components are in `apps/frontend/src/components/auth/`
+- [ ] All auth hooks are in `apps/frontend/src/hooks/`
+- [ ] All auth routes are in `apps/frontend/src/routes/auth/`
+- [ ] All validation schemas are in `apps/frontend/src/lib/validations/`
+- [ ] Auth store is in `apps/frontend/src/stores/auth-store.ts`
 
 ---
 
@@ -164,7 +164,7 @@ This checklist MUST be completed before marking Phase 01 (Authentication) as don
 
 - [ ] Auth component API documentation is complete
 - [ ] Auth hook API documentation is complete
-- [ ] Auth flow documentation is complete in `apps/web/README.md`
+- [ ] Auth flow documentation is complete in `apps/frontend/README.md`
 - [ ] tRPC contracts are documented in `contracts/trpc-contracts.md`
 - [ ] Any architectural decisions are documented
 - [ ] Code comments are added for complex logic

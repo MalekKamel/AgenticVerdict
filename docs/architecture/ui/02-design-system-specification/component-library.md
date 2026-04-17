@@ -147,7 +147,7 @@ export * from "./utils";
 **Recommended: Barrel Exports for Developer Experience**
 
 ```typescript
-// Usage in apps/web
+// Usage in apps/frontend
 import { Button, Input, Card, DataTable } from "@agenticverdict/ui";
 
 // Tree-shaking is preserved with ES modules
@@ -1462,19 +1462,19 @@ FormField.displayName = 'FormField';
 **Step 1: Audit existing components**
 
 ```bash
-# Find all UI components in apps/web
-find apps/web/src/components -name "*.tsx" -o -name "*.ts"
+# Find all UI components in apps/frontend
+find apps/frontend/src/components -name "*.tsx" -o -name "*.ts"
 
 # Categorize by complexity and reuse
 # - High reuse: Migrate to @agenticverdict/ui
-# - Low reuse: Keep in apps/web
+# - Low reuse: Keep in apps/frontend
 # - Domain-specific: Consider organisms
 ```
 
 **Step 2: Extract reusable components**
 
 ```typescript
-// Before: apps/web/src/components/Button.tsx
+// Before: apps/frontend/src/components/Button.tsx
 export function Button({ onClick, children }) {
   return <button onClick={onClick}>{children}</button>;
 }
@@ -1514,7 +1514,7 @@ import { Button } from "@agenticverdict/ui";
 
 ```bash
 # After verification and testing
-rm apps/web/src/components/Button.tsx
+rm apps/frontend/src/components/Button.tsx
 ```
 
 ---

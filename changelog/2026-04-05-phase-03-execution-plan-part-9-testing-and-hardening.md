@@ -12,13 +12,13 @@
 - **`apps/api` — `api.contract.test.ts`:** Part 9 scenarios (see Scope); `beforeEach` calls `__clearRateLimitMemoryForTests`.
 - **`packages/report-generator` — `template-rendering-perf.test.ts`:** Executive-summary perf smoke case.
 - **`packages/i18n` — `package.json`:** `exports["./formatters"]` → `src/formatters.ts`.
-- **`apps/web` — `HomeContentClient.tsx`:** Import formatters from `@agenticverdict/i18n/formatters`; subtitle + demo **Badge** contrast.
-- **`apps/web` — `Providers.tsx`:** `createTheme` with `primaryShade` for filled controls.
-- **`apps/web` — `LanguageSwitcher.tsx`:** Inactive locale `variant="outline"`.
-- **`apps/web` — `AppShellLayout.tsx`:** Navbar hint uses `gray.7` instead of `dimmed`.
-- **`apps/web` — `playwright.config.mjs`:** `next build` + `next start` for E2E; conditional Firefox/WebKit projects.
-- **`apps/web` — `e2e/a11y-home.spec.ts`:** Axe **wcag2a** + **wcag2aa** on EN/AR home.
-- **`apps/web` — `package.json`:** devDependency `@axe-core/playwright`.
+- **`apps/frontend` — `HomeContentClient.tsx`:** Import formatters from `@agenticverdict/i18n/formatters`; subtitle + demo **Badge** contrast.
+- **`apps/frontend` — `Providers.tsx`:** `createTheme` with `primaryShade` for filled controls.
+- **`apps/frontend` — `LanguageSwitcher.tsx`:** Inactive locale `variant="outline"`.
+- **`apps/frontend` — `AppShellLayout.tsx`:** Navbar hint uses `gray.7` instead of `dimmed`.
+- **`apps/frontend` — `playwright.config.mjs`:** `next build` + `next start` for E2E; conditional Firefox/WebKit projects.
+- **`apps/frontend` — `e2e/a11y-home.spec.ts`:** Axe **wcag2a** + **wcag2aa** on EN/AR home.
+- **`apps/frontend` — `package.json`:** devDependency `@axe-core/playwright`.
 
 ---
 

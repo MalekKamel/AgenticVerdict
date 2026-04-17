@@ -423,7 +423,7 @@ specs/01-ui/
 
 - **>80% code reuse** between Web and Desktop implementations
 - Shared components in `packages/ui/`
-- Platform-specific code isolated to `apps/web/` and `apps/desktop/`
+- Platform-specific code isolated to `apps/frontend/` and `apps/desktop/`
 
 ### 8.4 Testing
 
@@ -448,7 +448,7 @@ specs/01-ui/
 ## 10. Code Deliverables
 
 1. **`packages/ui/`** - Shared UI component library
-2. **`apps/web/`** - Complete Next.js web application
+2. **`apps/frontend/`** - Complete Next.js web application
 3. **`apps/desktop/`** - Electron desktop application (wrapper)
 4. **E2E Tests** - Playwright test suite
 5. **Component Documentation** - Storybook or similar

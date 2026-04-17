@@ -286,7 +286,7 @@ import { TextInput } from "@mantine/core";
 For consistent app-wide defaults:
 
 ```tsx
-// apps/web/src/components/ui/AppButton.tsx
+// apps/frontend/src/components/ui/AppButton.tsx
 import { Button, type ButtonProps } from "@mantine/core";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
@@ -309,7 +309,7 @@ export function AppButton({ children, radius = "md", type = "button", ...props }
 For complex business components:
 
 ```tsx
-// apps/web/src/components/organisms/ConnectorCard.tsx
+// apps/frontend/src/components/organisms/ConnectorCard.tsx
 import { AppCard } from "@/components/ui/AppCard";
 import { AppButton } from "@/components/ui/AppButton";
 import { Badge } from "@mantine/core";
@@ -337,7 +337,7 @@ export function ConnectorCard({ connector }: { connector: Connector }) {
 For enhanced accessibility beyond Mantine defaults:
 
 ```tsx
-// apps/web/src/components/ui/AccessiblePopover.tsx
+// apps/frontend/src/components/ui/AccessiblePopover.tsx
 import { Popover } from "@mantine/core";
 import * as RadixPopover from "@radix-ui/react-popover";
 

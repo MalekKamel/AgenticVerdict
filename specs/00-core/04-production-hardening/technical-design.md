@@ -350,7 +350,7 @@ buildx build \
   --cache-from type=gha,scope=monorepo-deps \
   --cache-to type=gha,mode=max,scope=monorepo-deps \
   --build-arg DEPS_IMAGE=agenticverdict/deps:ci \
-  -f apps/web/Dockerfile \
+  -f apps/frontend/Dockerfile \
   -t ghcr.io/agenticverdict/web:latest \
   --push \
   .

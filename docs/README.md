@@ -105,7 +105,7 @@ See [Development Phases](/specs/00-core/) for detailed documentation.
 - **Build Tools**: Turborepo, pnpm workspaces
 - **Backend**: tRPC (internal), Drizzle ORM, Fastify (target for external API), Next.js route handlers where used
 - **AI Frameworks**: LangChain.js / LangGraph.js (target stack per `CLAUDE.md`)
-- **Frontend**: Next.js 15, Mantine (see `apps/web`)
+- **Frontend**: Next.js 15, Mantine (see `apps/frontend`)
 - **Testing**: Vitest, Playwright (target), Testing Library
 - **Observability**: OpenTelemetry, Prometheus, Grafana (targets per research docs)
 

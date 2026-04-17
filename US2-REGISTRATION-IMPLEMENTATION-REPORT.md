@@ -15,7 +15,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T042: E2E Test for Registration Flow
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Complete registration flow test from form submission to verification page
@@ -25,7 +25,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T043: E2E Test for Email Validation
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Tests invalid email formats (invalid@, @example.com, etc.)
@@ -35,7 +35,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T044: E2E Test for Password Strength Validation
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Tests password strength indicator (weak → strong)
@@ -46,7 +46,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T045: E2E Test for Email Exists Error Handling
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Tests error display when email already exists
@@ -56,7 +56,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T046: E2E Test for Verification Flow
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Tests email verification with valid token
@@ -66,7 +66,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T047: E2E Test for Resend Verification Email
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - Tests resend email functionality
@@ -76,7 +76,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T048: E2E Test for Accessibility (axe-core)
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/test/e2e/auth/registration-flow.e2e.ts`
+**File**: `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts`
 **Details**:
 
 - WCAG 2.1 AA compliance test with axe-core
@@ -88,8 +88,8 @@ Successfully implemented the complete user registration flow with email verifica
 **Status**: ✅ COMPLETED
 **Files**:
 
-- `/apps/web/src/hooks/__tests__/useRegisterMutation.test.ts`
-- `/apps/web/src/components/auth/__tests__/RegisterForm.test.tsx`
+- `/apps/frontend/src/hooks/__tests__/useRegisterMutation.test.ts`
+- `/apps/frontend/src/components/auth/__tests__/RegisterForm.test.tsx`
 
 **Details**:
 
@@ -121,7 +121,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T050: Create useRegisterMutation Hook
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/hooks/useRegisterMutation.ts`
+**File**: `/apps/frontend/src/hooks/useRegisterMutation.ts`
 **Features**:
 
 - tRPC mutation wrapper for registration API
@@ -133,7 +133,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T051: Create RegisterForm Component
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/components/auth/RegisterForm.tsx`
+**File**: `/apps/frontend/src/components/auth/RegisterForm.tsx`
 **Features**:
 
 - Email field with validation
@@ -150,7 +150,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T052: Implement Register Route
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/app/[locale]/auth/register/page.tsx`
+**File**: `/apps/frontend/src/app/[locale]/auth/register/page.tsx`
 **Features**:
 
 - Uses RegisterForm component
@@ -161,7 +161,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T053: Add Registration Form Validation
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/lib/validations/auth.ts`
+**File**: `/apps/frontend/src/lib/validations/auth.ts`
 **Features**:
 
 - Zod schema for all form fields
@@ -188,7 +188,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T055: Add Password Confirmation Validation
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/components/auth/RegisterForm.tsx`
+**File**: `/apps/frontend/src/components/auth/RegisterForm.tsx`
 **Features**:
 
 - Inline error when passwords don't match
@@ -199,7 +199,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T056: Implement Email Verification Success Page
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/app/[locale]/auth/verify-email/page.tsx`
+**File**: `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx`
 **Features**:
 
 - Route: `/auth/verify-email`
@@ -212,7 +212,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T057: Handle Email Verification Link with Token Parameter
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/app/[locale]/auth/verify-email/page.tsx`
+**File**: `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx`
 **Features**:
 
 - Parses token from URL query parameter
@@ -223,7 +223,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T058: Implement Expired Verification Link Error Handling
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/app/[locale]/auth/verify-email/page.tsx`
+**File**: `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx`
 **Features**:
 
 - Detects expired tokens from error message
@@ -234,7 +234,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T059: Add Loading States to Registration Form
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/components/auth/RegisterForm.tsx`
+**File**: `/apps/frontend/src/components/auth/RegisterForm.tsx`
 **Features**:
 
 - Button spinner during submission
@@ -245,7 +245,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T060: Implement Resend Verification Email Functionality
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/app/[locale]/auth/verify-email/page.tsx`
+**File**: `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx`
 **Features**:
 
 - Rate limited (60-second countdown)
@@ -258,7 +258,7 @@ Successfully implemented the complete user registration flow with email verifica
 #### T061: Add Keyboard Navigation and Focus Management
 
 **Status**: ✅ COMPLETED
-**File**: `/apps/web/src/components/auth/RegisterForm.tsx`
+**File**: `/apps/frontend/src/components/auth/RegisterForm.tsx`
 **Features**:
 
 - Enter key submits form
@@ -283,9 +283,9 @@ Successfully implemented the complete user registration flow with email verifica
 
 ### Updated Files:
 
-- `/apps/web/messages/en.json` - Added missing keys for registration flow
-- `/apps/web/messages/ar.json` - Arabic translations (TODO: verify)
-- `/apps/web/messages/fr.json` - French translations (TODO: verify)
+- `/apps/frontend/messages/en.json` - Added missing keys for registration flow
+- `/apps/frontend/messages/ar.json` - Arabic translations (TODO: verify)
+- `/apps/frontend/messages/fr.json` - French translations (TODO: verify)
 
 ### New Translation Keys Added:
 
@@ -402,20 +402,20 @@ Successfully implemented the complete user registration flow with email verifica
 
 ### Created Files (15):
 
-1. `/apps/web/test/e2e/auth/registration-flow.e2e.ts` - E2E test suite
-2. `/apps/web/src/hooks/useRegisterMutation.ts` - Registration mutation hook
-3. `/apps/web/src/components/auth/RegisterForm.tsx` - Registration form component
-4. `/apps/web/src/hooks/__tests__/useRegisterMutation.test.ts` - Hook unit tests
-5. `/apps/web/src/components/auth/__tests__/RegisterForm.test.tsx` - Component unit tests
-6. `/apps/web/src/app/[locale]/auth/verify-email/page.tsx` - Verification page
-7. `/apps/web/src/app/[locale]/auth/verify-email/page.tsx` - (duplicate, needs cleanup)
+1. `/apps/frontend/test/e2e/auth/registration-flow.e2e.ts` - E2E test suite
+2. `/apps/frontend/src/hooks/useRegisterMutation.ts` - Registration mutation hook
+3. `/apps/frontend/src/components/auth/RegisterForm.tsx` - Registration form component
+4. `/apps/frontend/src/hooks/__tests__/useRegisterMutation.test.ts` - Hook unit tests
+5. `/apps/frontend/src/components/auth/__tests__/RegisterForm.test.tsx` - Component unit tests
+6. `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx` - Verification page
+7. `/apps/frontend/src/app/[locale]/auth/verify-email/page.tsx` - (duplicate, needs cleanup)
 8. Translation updates to en.json
 
 ### Modified Files (3):
 
-1. `/apps/web/src/app/[locale]/auth/register/page.tsx` - Updated to use RegisterForm
-2. `/apps/web/src/lib/validations/auth.ts` - Added acceptTerms to registerSchema
-3. `/apps/web/messages/en.json` - Added missing translation keys
+1. `/apps/frontend/src/app/[locale]/auth/register/page.tsx` - Updated to use RegisterForm
+2. `/apps/frontend/src/lib/validations/auth.ts` - Added acceptTerms to registerSchema
+3. `/apps/frontend/messages/en.json` - Added missing translation keys
 
 ## Test Results
 

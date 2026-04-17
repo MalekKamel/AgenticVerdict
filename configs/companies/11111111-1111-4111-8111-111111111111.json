@@ -44,6 +44,26 @@
     "enableInsights": true,
     "enableVerdict": true
   },
+  "ui": {
+    "brand": {
+      "colors": {
+        "primary": "#1976D2",
+        "secondary": "#616161",
+        "success": "#2E7D32",
+        "warning": "#F57C00",
+        "danger": "#C62828",
+        "info": "#0288D1"
+      },
+      "typography": {
+        "fontFamily": "Inter, system-ui, -apple-system, sans-serif"
+      },
+      "branding": {
+        "logoUrl": "/logos/masafh-logo.svg",
+        "logoHeight": "32px",
+        "appName": "Masafh"
+      }
+    }
+  },
   "business": {
     "products": ["GPS fleet tracking", "Fleet management SaaS"],
     "valueProps": ["Real-time visibility", "Saudi market focus"],

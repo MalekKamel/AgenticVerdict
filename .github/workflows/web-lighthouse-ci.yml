@@ -1,0 +1,67 @@
+# Lab Core Web Vitals / a11y smoke via Lighthouse (production web bundle).
+# Policy + thresholds: docs/05-reference/web-core-web-vitals-evidence.md
+
+name: Web Lighthouse CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/web-lighthouse-ci.yml"
+
+concurrency:
+  group: web-lhci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse (apps/web)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web (production)
+        run: pnpm --filter @agenticverdict/web build
+
+      - name: Run Lighthouse CI
+        working-directory: apps/web
+        env:
+          PORT: "3000"
+        run: npx --yes @lhci/cli@0.14.0 autorun --config=./lighthouserc.cjs
+
+      - name: Upload Lighthouse CI output (JSON + HTML when present)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-ci
+          path: apps/web/.lighthouseci/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Lighthouse HTML reports (best-effort)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-html
+          path: apps/web/.lighthouseci/**/*.html
+          if-no-files-found: ignore
+          retention-days: 14

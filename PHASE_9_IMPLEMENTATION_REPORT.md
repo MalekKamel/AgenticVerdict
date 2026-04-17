@@ -12,7 +12,7 @@ Phase 9 focused on finalizing the authentication UI implementation through compr
 
 ### T107-T109: Documentation (Complete)
 
-- **apps/web/README.md**: Comprehensive documentation covering:
+- **apps/frontend/README.md**: Comprehensive documentation covering:
   - Authentication system features and routes
   - Component usage examples with props
   - Hook usage patterns
@@ -21,7 +21,7 @@ Phase 9 focused on finalizing the authentication UI implementation through compr
   - Troubleshooting guide
   - Architecture overview
 
-- **apps/web/docs/AUTH_API_REFERENCE.md**: Complete API reference including:
+- **apps/frontend/docs/AUTH_API_REFERENCE.md**: Complete API reference including:
   - All auth components (LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, PasswordInput, AuthError, AuthSuccess)
   - All auth hooks (useAuth, useRequireAuth, useLoginMutation, useRegisterMutation, usePasswordReset)
   - Validation schemas (loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema)

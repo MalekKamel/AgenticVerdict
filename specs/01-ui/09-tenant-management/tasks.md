@@ -20,12 +20,12 @@ description: "Task list for Phase 09 - Tenant Management implementation"
 ## Path Conventions
 
 Web application structure:
-- **Frontend routes**: `apps/web/src/routes/`
-- **Components**: `apps/web/src/components/`
-- **Stores**: `apps/web/src/stores/`
-- **Hooks**: `apps/web/src/hooks/`
-- **Utilities**: `apps/web/src/lib/`
-- **Tests**: `apps/web/src/tests/`
+- **Frontend routes**: `apps/frontend/src/routes/`
+- **Components**: `apps/frontend/src/components/`
+- **Stores**: `apps/frontend/src/stores/`
+- **Hooks**: `apps/frontend/src/hooks/`
+- **Utilities**: `apps/frontend/src/lib/`
+- **Tests**: `apps/frontend/src/tests/`
 
 ---
 
@@ -33,9 +33,9 @@ Web application structure:
 
 **Purpose**: Tenant store and utility setup
 
-- [ ] T001 Create tenant store with TanStack Store in `apps/web/src/stores/tenant-store.ts`
-- [ ] T002 [P] Create tenant context utilities in `apps/web/src/lib/tenant-context.ts`
-- [ ] T003 [P] Create tenant switch utilities in `apps/web/src/lib/tenant-utils.ts`
+- [ ] T001 Create tenant store with TanStack Store in `apps/frontend/src/stores/tenant-store.ts`
+- [ ] T002 [P] Create tenant context utilities in `apps/frontend/src/lib/tenant-context.ts`
+- [ ] T003 [P] Create tenant switch utilities in `apps/frontend/src/lib/tenant-utils.ts`
 
 ---
 
@@ -45,11 +45,11 @@ Web application structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Create `useTenantSwitch` hook in `apps/web/src/hooks/useTenantSwitch.ts` (depends on T001, T003)
-- [ ] T005 [P] Create `useTenantConfig` hook in `apps/web/src/hooks/useTenantConfig.ts`
-- [ ] T006 [P] Create `useCompanyBranding` hook in `apps/web/src/hooks/useCompanyBranding.ts`
-- [ ] T007 [P] Create `useTenantList` hook in `apps/web/src/hooks/useTenantList.ts`
-- [ ] T008 Create base form components in `apps/web/src/components/forms/` (BrandingSection, DomainSection, LocalizationSection)
+- [ ] T004 Create `useTenantSwitch` hook in `apps/frontend/src/hooks/useTenantSwitch.ts` (depends on T001, T003)
+- [ ] T005 [P] Create `useTenantConfig` hook in `apps/frontend/src/hooks/useTenantConfig.ts`
+- [ ] T006 [P] Create `useCompanyBranding` hook in `apps/frontend/src/hooks/useCompanyBranding.ts`
+- [ ] T007 [P] Create `useTenantList` hook in `apps/frontend/src/hooks/useTenantList.ts`
+- [ ] T008 Create base form components in `apps/frontend/src/components/forms/` (BrandingSection, DomainSection, LocalizationSection)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -65,23 +65,23 @@ Web application structure:
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T009 [P] [US1] E2E test for tenant switcher display in `apps/web/src/tests/e2e/tenant-switcher.spec.ts`
-- [ ] T010 [P] [US1] E2E test for tenant switch flow in `apps/web/src/tests/e2e/tenant-switcher.spec.ts`
-- [ ] T011 [P] [US1] E2E test for cache invalidation on tenant switch in `apps/web/src/tests/e2e/tenant-switcher.spec.ts`
-- [ ] T012 [P] [US1] E2E test for single-tenant display (no dropdown) in `apps/web/src/tests/e2e/tenant-switcher.spec.ts`
-- [ ] T013 [P] [US1] E2E test for RTL layout validation in `apps/web/src/tests/e2e/tenant-switcher.spec.ts`
+- [ ] T009 [P] [US1] E2E test for tenant switcher display in `apps/frontend/src/tests/e2e/tenant-switcher.spec.ts`
+- [ ] T010 [P] [US1] E2E test for tenant switch flow in `apps/frontend/src/tests/e2e/tenant-switcher.spec.ts`
+- [ ] T011 [P] [US1] E2E test for cache invalidation on tenant switch in `apps/frontend/src/tests/e2e/tenant-switcher.spec.ts`
+- [ ] T012 [P] [US1] E2E test for single-tenant display (no dropdown) in `apps/frontend/src/tests/e2e/tenant-switcher.spec.ts`
+- [ ] T013 [P] [US1] E2E test for RTL layout validation in `apps/frontend/src/tests/e2e/tenant-switcher.spec.ts`
 
 ### Unit Tests for User Story 1
 
-- [ ] T014 [P] [US1] Unit test for tenant store state management in `apps/web/src/tests/unit/tenant-store.test.ts`
-- [ ] T015 [P] [US1] Unit test for tenant switch utilities in `apps/web/src/tests/unit/tenant-utils.test.ts`
+- [ ] T014 [P] [US1] Unit test for tenant store state management in `apps/frontend/src/tests/unit/tenant-store.test.ts`
+- [ ] T015 [P] [US1] Unit test for tenant switch utilities in `apps/frontend/src/tests/unit/tenant-utils.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Create TenantSwitcher component in `apps/web/src/components/tenant/TenantSwitcher.tsx` (depends on T007, T004)
-- [ ] T017 [US1] Create TenantAvatar component in `apps/web/src/components/tenant/TenantAvatar.tsx`
-- [ ] T018 [US1] Create TenantMenuItem component in `apps/web/src/components/tenant/TenantMenuItem.tsx`
-- [ ] T019 [US1] Integrate TenantSwitcher into topbar in `apps/web/src/routes/_components/topbar.tsx`
+- [ ] T016 [US1] Create TenantSwitcher component in `apps/frontend/src/components/tenant/TenantSwitcher.tsx` (depends on T007, T004)
+- [ ] T017 [US1] Create TenantAvatar component in `apps/frontend/src/components/tenant/TenantAvatar.tsx`
+- [ ] T018 [US1] Create TenantMenuItem component in `apps/frontend/src/components/tenant/TenantMenuItem.tsx`
+- [ ] T019 [US1] Integrate TenantSwitcher into topbar in `apps/frontend/src/routes/_components/topbar.tsx`
 - [ ] T020 [US1] Implement tenant switch animation and loading states
 - [ ] T021 [US1] Add keyboard navigation support for tenant switcher dropdown
 - [ ] T022 [US1] Add screen reader announcements for tenant switch events
@@ -98,24 +98,24 @@ Web application structure:
 
 ### E2E Tests for User Story 2 ⚠️
 
-- [ ] T023 [P] [US2] E2E test for company settings page load in `apps/web/src/tests/e2e/company-settings.spec.ts`
-- [ ] T024 [P] [US2] E2E test for branding upload and save in `apps/web/src/tests/e2e/company-settings.spec.ts`
-- [ ] T025 [P] [US2] E2E test for brand color customization in `apps/web/src/tests/e2e/company-settings.spec.ts`
-- [ ] T026 [P] [US2] E2E test for custom domain configuration in `apps/web/src/tests/e2e/company-settings.spec.ts`
-- [ ] T027 [P] [US2] E2E test for localization settings in `apps/web/src/tests/e2e/company-settings.spec.ts`
+- [ ] T023 [P] [US2] E2E test for company settings page load in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
+- [ ] T024 [P] [US2] E2E test for branding upload and save in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
+- [ ] T025 [P] [US2] E2E test for brand color customization in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
+- [ ] T026 [P] [US2] E2E test for custom domain configuration in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
+- [ ] T027 [P] [US2] E2E test for localization settings in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
 
 ### Unit Tests for User Story 2
 
-- [ ] T028 [P] [US2] Unit test for branding form validation in `apps/web/src/tests/unit/branding-form.test.ts`
-- [ ] T029 [P] [US2] Unit test for domain validation logic in `apps/web/src/tests/unit/domain-validation.test.ts`
+- [ ] T028 [P] [US2] Unit test for branding form validation in `apps/frontend/src/tests/unit/branding-form.test.ts`
+- [ ] T029 [P] [US2] Unit test for domain validation logic in `apps/frontend/src/tests/unit/domain-validation.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Create company settings route in `apps/web/src/routes/settings/company.tsx`
-- [ ] T031 [US2] Create CompanySettingsForm component in `apps/web/src/components/tenant/CompanySettingsForm.tsx` (depends on T008)
-- [ ] T032 [US2] Create BrandingSection form component in `apps/web/src/components/forms/BrandingSection.tsx`
-- [ ] T033 [US2] Create DomainSection form component in `apps/web/src/components/forms/DomainSection.tsx`
-- [ ] T034 [US2] Create LocalizationSection form component in `apps/web/src/components/forms/LocalizationSection.tsx`
+- [ ] T030 [US2] Create company settings route in `apps/frontend/src/routes/settings/company.tsx`
+- [ ] T031 [US2] Create CompanySettingsForm component in `apps/frontend/src/components/tenant/CompanySettingsForm.tsx` (depends on T008)
+- [ ] T032 [US2] Create BrandingSection form component in `apps/frontend/src/components/forms/BrandingSection.tsx`
+- [ ] T033 [US2] Create DomainSection form component in `apps/frontend/src/components/forms/DomainSection.tsx`
+- [ ] T034 [US2] Create LocalizationSection form component in `apps/frontend/src/components/forms/LocalizationSection.tsx`
 - [ ] T035 [US2] Implement logo upload with image preview in BrandingSection
 - [ ] T036 [US2] Implement brand color picker with live preview in BrandingSection
 - [ ] T037 [US2] Implement domain configuration with DNS verification in DomainSection
@@ -135,19 +135,19 @@ Web application structure:
 
 ### E2E Tests for User Story 3 ⚠️
 
-- [ ] T041 [P] [US3] E2E test for tenant settings page load in `apps/web/src/tests/e2e/tenant-settings.spec.ts`
-- [ ] T042 [P] [US3] E2E test for AI model selection and save in `apps/web/src/tests/e2e/tenant-settings.spec.ts`
-- [ ] T043 [P] [US3] E2E test for feature flag toggling in `apps/web/src/tests/e2e/tenant-settings.spec.ts`
-- [ ] T044 [P] [US3] E2E test for business domain selection in `apps/web/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T041 [P] [US3] E2E test for tenant settings page load in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T042 [P] [US3] E2E test for AI model selection and save in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T043 [P] [US3] E2E test for feature flag toggling in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T044 [P] [US3] E2E test for business domain selection in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
 
 ### Unit Tests for User Story 3
 
-- [ ] T045 [P] [US3] Unit test for tenant configuration form validation in `apps/web/src/tests/unit/tenant-config-form.test.ts`
+- [ ] T045 [P] [US3] Unit test for tenant configuration form validation in `apps/frontend/src/tests/unit/tenant-config-form.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T046 [US3] Create tenant settings route in `apps/web/src/routes/settings/tenant.tsx`
-- [ ] T047 [US3] Create TenantSettingsForm component in `apps/web/src/components/tenant/TenantSettingsForm.tsx`
+- [ ] T046 [US3] Create tenant settings route in `apps/frontend/src/routes/settings/tenant.tsx`
+- [ ] T047 [US3] Create TenantSettingsForm component in `apps/frontend/src/components/tenant/TenantSettingsForm.tsx`
 - [ ] T048 [US3] Create AI configuration section in TenantSettingsForm
 - [ ] T049 [US3] Create feature flags section with toggle switches in TenantSettingsForm
 - [ ] T050 [US3] Create business domain selection with checkboxes in TenantSettingsForm
@@ -167,21 +167,21 @@ Web application structure:
 
 ### E2E Tests for User Story 4 ⚠️
 
-- [ ] T054 [P] [US4] E2E test for client list page load in `apps/web/src/tests/e2e/client-management.spec.ts`
-- [ ] T055 [P] [US4] E2E test for client onboarding flow in `apps/web/src/tests/e2e/client-management.spec.ts`
-- [ ] T056 [P] [US4] E2E test for client context switching in `apps/web/src/tests/e2e/client-management.spec.ts`
-- [ ] T057 [P] [US4] E2E test for client card interactions in `apps/web/src/tests/e2e/client-management.spec.ts`
+- [ ] T054 [P] [US4] E2E test for client list page load in `apps/frontend/src/tests/e2e/client-management.spec.ts`
+- [ ] T055 [P] [US4] E2E test for client onboarding flow in `apps/frontend/src/tests/e2e/client-management.spec.ts`
+- [ ] T056 [P] [US4] E2E test for client context switching in `apps/frontend/src/tests/e2e/client-management.spec.ts`
+- [ ] T057 [P] [US4] E2E test for client card interactions in `apps/frontend/src/tests/e2e/client-management.spec.ts`
 
 ### Unit Tests for User Story 4
 
-- [ ] T058 [P] [US4] Unit test for client list virtualization in `apps/web/src/tests/unit/client-list.test.ts`
+- [ ] T058 [P] [US4] Unit test for client list virtualization in `apps/frontend/src/tests/unit/client-list.test.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T059 [US4] Create agency clients route in `apps/web/src/routes/agency/clients.tsx`
-- [ ] T060 [US4] Create ClientList component with virtualization in `apps/web/src/components/tenant/ClientList.tsx`
-- [ ] T061 [US4] Create ClientCard component in `apps/web/src/components/tenant/ClientCard.tsx`
-- [ ] T062 [US4] Create ClientOnboardingModal component in `apps/web/src/components/tenant/ClientOnboardingModal.tsx`
+- [ ] T059 [US4] Create agency clients route in `apps/frontend/src/routes/agency/clients.tsx`
+- [ ] T060 [US4] Create ClientList component with virtualization in `apps/frontend/src/components/tenant/ClientList.tsx`
+- [ ] T061 [US4] Create ClientCard component in `apps/frontend/src/components/tenant/ClientCard.tsx`
+- [ ] T062 [US4] Create ClientOnboardingModal component in `apps/frontend/src/components/tenant/ClientOnboardingModal.tsx`
 - [ ] T063 [US4] Implement client search/filter functionality in ClientList
 - [ ] T064 [US4] Implement client status indicators (active, suspended, pending)
 - [ ] T065 [US4] Implement client metrics display in ClientCard
@@ -201,19 +201,19 @@ Web application structure:
 
 ### E2E Tests for User Story 5 ⚠️
 
-- [ ] T069 [P] [US5] E2E test for onboarding wizard initiation in `apps/web/src/tests/e2e/onboarding.spec.ts`
-- [ ] T070 [P] [US5] E2E test for complete onboarding flow in `apps/web/src/tests/e2e/onboarding.spec.ts`
-- [ ] T071 [P] [US5] E2E test for onboarding step validation in `apps/web/src/tests/e2e/onboarding.spec.ts`
-- [ ] T072 [P] [US5] E2E test for onboarding completion and redirect in `apps/web/src/tests/e2e/onboarding.spec.ts`
+- [ ] T069 [P] [US5] E2E test for onboarding wizard initiation in `apps/frontend/src/tests/e2e/onboarding.spec.ts`
+- [ ] T070 [P] [US5] E2E test for complete onboarding flow in `apps/frontend/src/tests/e2e/onboarding.spec.ts`
+- [ ] T071 [P] [US5] E2E test for onboarding step validation in `apps/frontend/src/tests/e2e/onboarding.spec.ts`
+- [ ] T072 [P] [US5] E2E test for onboarding completion and redirect in `apps/frontend/src/tests/e2e/onboarding.spec.ts`
 
 ### Unit Tests for User Story 5
 
-- [ ] T073 [P] [US5] Unit test for onboarding state management in `apps/web/src/tests/unit/onboarding.test.ts`
+- [ ] T073 [P] [US5] Unit test for onboarding state management in `apps/frontend/src/tests/unit/onboarding.test.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T074 [US5] Create onboarding route in `apps/web/src/routes/agency/onboarding.tsx`
-- [ ] T075 [US5] Create OnboardingWizard component in `apps/web/src/components/tenant/OnboardingWizard.tsx`
+- [ ] T074 [US5] Create onboarding route in `apps/frontend/src/routes/agency/onboarding.tsx`
+- [ ] T075 [US5] Create OnboardingWizard component in `apps/frontend/src/components/tenant/OnboardingWizard.tsx`
 - [ ] T076 [US5] Create OnboardingStep1 (Company Info) component
 - [ ] T077 [US5] Create OnboardingStep2 (Branding) component
 - [ ] T078 [US5] Create OnboardingStep3 (Business Domains) component

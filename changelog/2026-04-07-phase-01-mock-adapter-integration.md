@@ -82,7 +82,7 @@ This entry documents the implementation that makes platform adapter resolution e
 - **`src/index.ts`**
   - exports `mockAdapterEnvSchema`, `parseMockAdapterEnv`, and associated types.
 
-### `apps/web`
+### `apps/frontend`
 
 - **`src/app/api/health/adapters/route.ts`**
   - augments health payload with:

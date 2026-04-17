@@ -25,7 +25,7 @@ Implement the primary output feature of the AgenticVerdict platform: the report 
 **Storage**: N/A (frontend UI; report data from backend tRPC API)
 **Testing**: Vitest (unit tests), Playwright (E2E tests for critical user journeys), @axe-core/react (accessibility)
 **Target Platform**: Modern evergreen browsers (Chrome, Firefox, Safari, Edge) with PDF rendering support
-**Project Type**: Web application (monorepo package: apps/web with routes in src/routes/)
+**Project Type**: Web application (monorepo package: apps/frontend with routes in src/routes/)
 **Performance Goals**:
 - Report viewer initial load: <2s (3G connection)
 - Page navigation: <500ms (cached pages)
@@ -147,7 +147,7 @@ specs/01-ui/05-reports/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── routes/
 │   │   ├── reports/
@@ -191,7 +191,7 @@ apps/web/
         └── reports-sharing.spec.ts
 ```
 
-**Structure Decision**: Web application structure using TanStack Start file-based routing in `apps/web/src/routes/`. Report-specific components organized under `components/reports/` with shared chart rendering in `components/charts/`. State management via TanStack Store in `stores/`. Custom hooks for data fetching and functionality in `hooks/`. Utilities for PDF viewing and file downloading in `lib/`.
+**Structure Decision**: Web application structure using TanStack Start file-based routing in `apps/frontend/src/routes/`. Report-specific components organized under `components/reports/` with shared chart rendering in `components/charts/`. State management via TanStack Store in `stores/`. Custom hooks for data fetching and functionality in `hooks/`. Utilities for PDF viewing and file downloading in `lib/`.
 
 ## Complexity Tracking
 

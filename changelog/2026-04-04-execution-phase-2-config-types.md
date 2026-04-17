@@ -55,7 +55,7 @@ This entry records the configuration package work that satisfies Phase 0 accepta
 ## Follow-ups (not in this change set)
 
 - Acceptance **§2** asks for **90%** coverage on config logic; current tests are substantial but not yet at that threshold across all branches (e.g. hot-reload paths, invalid env JSON).
-- **E2E “app fails on invalid config”** belongs with `apps/api` / `apps/web` bootstrap once those apps load `ConfigManager` at startup.
+- **E2E “app fails on invalid config”** belongs with `apps/api` / `apps/frontend` bootstrap once those apps load `ConfigManager` at startup.
 - **`packages/types`**: `PlatformType` remains the shared enum source; `CompanyConfig` stays on `@agenticverdict/config` to avoid a dependency cycle with Zod.
 
 ---

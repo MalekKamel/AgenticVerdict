@@ -69,7 +69,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ### 2.5 Other packages (from target architecture)
 
-**Not created (yet):** Shared component library beyond what ships in `apps/web` (the former `packages/ui` stub was removed 2026-04-11).
+**Not created (yet):** Shared component library beyond what ships in `apps/frontend` (the former `packages/ui` stub was removed 2026-04-11).
 
 ### 2.6 Data and samples
 

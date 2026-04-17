@@ -2,12 +2,12 @@
 
 ## Context
 
-- The web application (`apps/web`) has already been migrated to **TanStack Start** with **Vite** as the bundler.
+- The web application (`apps/frontend`) has already been migrated to **TanStack Start** with **Vite** as the bundler.
 - Other packages or apps in the monorepo may still rely on non-Vite build tooling or inconsistent configuration.
 
 ## Objective
 
-Complete a **repository-wide adoption of Vite** for bundling and dev servers where applicable, so build and development workflows are consistent with `apps/web` and with modern tooling expectations.
+Complete a **repository-wide adoption of Vite** for bundling and dev servers where applicable, so build and development workflows are consistent with `apps/frontend` and with modern tooling expectations.
 
 **Clarification:** This effort targets **Vite** as the build tool. **Turborepo** (`turbo`) may remain in use for monorepo task orchestration (for example `turbo run build`); the goal is not to replace orchestration unless explicitly required, but to ensure **bundling and Vite-related workflows** are correctly documented and implemented.
 

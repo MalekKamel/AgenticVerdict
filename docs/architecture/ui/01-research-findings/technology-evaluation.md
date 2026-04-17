@@ -907,7 +907,7 @@ export function isRTLLocale(locale: Locale): boolean {
 ```
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 import { DirectionProvider, MantineProvider } from '@mantine/core';
 import { useLocale } from 'next-intl';
 

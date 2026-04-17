@@ -19,7 +19,7 @@ description: "Task list for Phase 05 - Reports UI implementation"
 
 ## Path Conventions
 
-- **Web app**: `apps/web/src/` for frontend code, `apps/web/tests/` for tests
+- **Web app**: `apps/frontend/src/` for frontend code, `apps/frontend/tests/` for tests
 
 Paths shown below assume web app structure - adjust based on plan.md structure.
 
@@ -29,8 +29,8 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 **Purpose**: Project initialization and basic structure for reports UI
 
-- [ ] T001 Create reports directory structure under apps/web/src/components/reports/
-- [ ] T002 Create reports routes directory under apps/web/src/routes/reports/
+- [ ] T001 Create reports directory structure under apps/frontend/src/components/reports/
+- [ ] T002 Create reports routes directory under apps/frontend/src/routes/reports/
 - [ ] T003 [P] Install PDF.js dependency: `pnpm add pdfjs-dist`
 - [ ] T004 [P] Install file-saver dependency: `pnpm add file-saver @types/file-saver`
 - [ ] T005 [P] Configure PDF.js worker in vite config
@@ -43,13 +43,13 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Define TypeScript interfaces for Report, ReportSection, ReportExport, ShareLink in apps/web/src/types/reports.ts
-- [ ] T007 Create report viewer store using TanStack Store in apps/web/src/stores/report-store.ts
+- [ ] T006 Define TypeScript interfaces for Report, ReportSection, ReportExport, ShareLink in apps/frontend/src/types/reports.ts
+- [ ] T007 Create report viewer store using TanStack Store in apps/frontend/src/stores/report-store.ts
 - [ ] T008 [P] Implement tRPC router procedures for reports in packages/api/src/routers/reports.ts
-- [ ] T009 [P] Create Zod validation schemas for report filters and export options in apps/web/src/lib/validation/reports.ts
-- [ ] T010 Set up error handling utilities for report operations in apps/web/src/lib/errors/report-errors.ts
-- [ ] T011 Create report formatting utilities (date, currency, number) in apps/web/src/lib/report-utils.ts
-- [ ] T012 Configure i18n support for reports in apps/web/src/lib/i18n/reports.ts
+- [ ] T009 [P] Create Zod validation schemas for report filters and export options in apps/frontend/src/lib/validation/reports.ts
+- [ ] T010 Set up error handling utilities for report operations in apps/frontend/src/lib/errors/report-errors.ts
+- [ ] T011 Create report formatting utilities (date, currency, number) in apps/frontend/src/lib/report-utils.ts
+- [ ] T012 Configure i18n support for reports in apps/frontend/src/lib/i18n/reports.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -65,25 +65,25 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T013 [P] [US1] Unit test for ReportViewer component in apps/web/tests/unit/components/ReportViewer.test.tsx
-- [ ] T014 [P] [US1] Unit test for ReportTableOfContents in apps/web/tests/unit/components/ReportTableOfContents.test.tsx
-- [ ] T015 [P] [US1] E2E test for report viewing journey in apps/web/tests/e2e/reports-viewing.spec.ts
+- [ ] T013 [P] [US1] Unit test for ReportViewer component in apps/frontend/tests/unit/components/ReportViewer.test.tsx
+- [ ] T014 [P] [US1] Unit test for ReportTableOfContents in apps/frontend/tests/unit/components/ReportTableOfContents.test.tsx
+- [ ] T015 [P] [US1] E2E test for report viewing journey in apps/frontend/tests/e2e/reports-viewing.spec.ts
 
 ### Implementation for User Story 1
 
-- [ ] T016 [P] [US1] Create ReportViewer component shell in apps/web/src/components/reports/ReportViewer.tsx
-- [ ] T017 [P] [US1] Create ReportHeader component in apps/web/src/components/reports/ReportHeader.tsx
-- [ ] T018 [P] [US1] Create ReportTableOfContents component in apps/web/src/components/reports/ReportTableOfContents.tsx
-- [ ] T019 [P] [US1] Create ReportPages container in apps/web/src/components/reports/ReportPages.tsx
-- [ ] T020 [P] [US1] Create ReportPage component for single page rendering in apps/web/src/components/reports/ReportPage.tsx
-- [ ] T021 [P] [US1] Create ReportControls component (zoom, nav, fullscreen) in apps/web/src/components/reports/ReportControls.tsx
+- [ ] T016 [P] [US1] Create ReportViewer component shell in apps/frontend/src/components/reports/ReportViewer.tsx
+- [ ] T017 [P] [US1] Create ReportHeader component in apps/frontend/src/components/reports/ReportHeader.tsx
+- [ ] T018 [P] [US1] Create ReportTableOfContents component in apps/frontend/src/components/reports/ReportTableOfContents.tsx
+- [ ] T019 [P] [US1] Create ReportPages container in apps/frontend/src/components/reports/ReportPages.tsx
+- [ ] T020 [P] [US1] Create ReportPage component for single page rendering in apps/frontend/src/components/reports/ReportPage.tsx
+- [ ] T021 [P] [US1] Create ReportControls component (zoom, nav, fullscreen) in apps/frontend/src/components/reports/ReportControls.tsx
 - [ ] T022 [US1] Implement multi-page navigation logic in ReportViewer component (depends on T016-T021)
 - [ ] T023 [US1] Integrate chart rendering in ReportPage component using Recharts
 - [ ] T024 [US1] Implement table of contents navigation and active section highlighting
 - [ ] T025 [US1] Add zoom controls (75%, 100%, 125%, 150%) with state management
 - [ ] T026 [US1] Implement fullscreen mode for report viewer
-- [ ] T027 [US1] Create report viewer page route in apps/web/src/routes/reports/$reportId.tsx
-- [ ] T028 [US1] Implement useReportData hook for fetching report data in apps/web/src/hooks/useReportData.ts
+- [ ] T027 [US1] Create report viewer page route in apps/frontend/src/routes/reports/$reportId.tsx
+- [ ] T028 [US1] Implement useReportData hook for fetching report data in apps/frontend/src/hooks/useReportData.ts
 - [ ] T029 [US1] Add loading states and error handling for report viewer
 - [ ] T030 [US1] Implement keyboard navigation for report viewer (arrow keys, page up/down)
 - [ ] T031 [US1] Add scroll position tracking and table of contents active section updates
@@ -102,18 +102,18 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T034 [P] [US2] Unit test for ReportExportModal in apps/web/tests/unit/components/ReportExportModal.test.tsx
-- [ ] T035 [P] [US2] Unit test for useReportExport hook in apps/web/tests/unit/hooks/useReportExport.test.ts
-- [ ] T036 [P] [US2] E2E test for export workflow in apps/web/tests/e2e/reports-export.spec.ts
+- [ ] T034 [P] [US2] Unit test for ReportExportModal in apps/frontend/tests/unit/components/ReportExportModal.test.tsx
+- [ ] T035 [P] [US2] Unit test for useReportExport hook in apps/frontend/tests/unit/hooks/useReportExport.test.ts
+- [ ] T036 [P] [US2] E2E test for export workflow in apps/frontend/tests/e2e/reports-export.spec.ts
 
 ### Implementation for User Story 2
 
-- [ ] T037 [P] [US2] Create ReportExportModal component in apps/web/src/components/reports/ReportExportModal.tsx
-- [ ] T038 [P] [US2] Create FormatSelector component (PDF/Excel) in apps/web/src/components/reports/FormatSelector.tsx
-- [ ] T039 [P] [US2] Create ExportOptions component in apps/web/src/components/reports/ExportOptions.tsx
-- [ ] T040 [P] [US2] Create ExportProgress component in apps/web/src/components/reports/ExportProgress.tsx
-- [ ] T041 [P] [US2] Create file downloader utility in apps/web/src/lib/file-downloader.ts
-- [ ] T042 [US2] Implement useReportExport hook in apps/web/src/hooks/useReportExport.ts (depends on T041)
+- [ ] T037 [P] [US2] Create ReportExportModal component in apps/frontend/src/components/reports/ReportExportModal.tsx
+- [ ] T038 [P] [US2] Create FormatSelector component (PDF/Excel) in apps/frontend/src/components/reports/FormatSelector.tsx
+- [ ] T039 [P] [US2] Create ExportOptions component in apps/frontend/src/components/reports/ExportOptions.tsx
+- [ ] T040 [P] [US2] Create ExportProgress component in apps/frontend/src/components/reports/ExportProgress.tsx
+- [ ] T041 [P] [US2] Create file downloader utility in apps/frontend/src/lib/file-downloader.ts
+- [ ] T042 [US2] Implement useReportExport hook in apps/frontend/src/hooks/useReportExport.ts (depends on T041)
 - [ ] T043 [US2] Implement PDF export handling with progress tracking (depends on T037-T042)
 - [ ] T044 [US2] Implement Excel export handling with progress tracking
 - [ ] T045 [US2] Add export options validation and error handling
@@ -136,17 +136,17 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T052 [P] [US3] Unit test for ReportLibrary in apps/web/tests/unit/components/ReportLibrary.test.tsx
-- [ ] T053 [P] [US3] Unit test for ReportCard in apps/web/tests/unit/components/ReportCard.test.tsx
-- [ ] T054 [P] [US3] E2E test for library browsing in apps/web/tests/e2e/reports-library.spec.ts
+- [ ] T052 [P] [US3] Unit test for ReportLibrary in apps/frontend/tests/unit/components/ReportLibrary.test.tsx
+- [ ] T053 [P] [US3] Unit test for ReportCard in apps/frontend/tests/unit/components/ReportCard.test.tsx
+- [ ] T054 [P] [US3] E2E test for library browsing in apps/frontend/tests/e2e/reports-library.spec.ts
 
 ### Implementation for User Story 3
 
-- [ ] T055 [P] [US3] Create ReportLibrary component in apps/web/src/components/reports/ReportLibrary.tsx
-- [ ] T056 [P] [US3] Create ReportFilters component (search, date range, filters) in apps/web/src/components/reports/ReportFilters.tsx
-- [ ] T057 [P] [US3] Create ReportCard component with preview in apps/web/src/components/reports/ReportCard.tsx
-- [ ] T058 [P] [US3] Create ReportPagination component in apps/web/src/components/reports/ReportPagination.tsx
-- [ ] T059 [P] [US3] Create ReportPreview hover component in apps/web/src/components/reports/ReportPreview.tsx
+- [ ] T055 [P] [US3] Create ReportLibrary component in apps/frontend/src/components/reports/ReportLibrary.tsx
+- [ ] T056 [P] [US3] Create ReportFilters component (search, date range, filters) in apps/frontend/src/components/reports/ReportFilters.tsx
+- [ ] T057 [P] [US3] Create ReportCard component with preview in apps/frontend/src/components/reports/ReportCard.tsx
+- [ ] T058 [P] [US3] Create ReportPagination component in apps/frontend/src/components/reports/ReportPagination.tsx
+- [ ] T059 [P] [US3] Create ReportPreview hover component in apps/frontend/src/components/reports/ReportPreview.tsx
 - [ ] T060 [US3] Implement report list fetching with filters and pagination
 - [ ] T061 [US3] Implement search functionality with debouncing
 - [ ] T062 [US3] Add filter controls (date range, insight, connector, status)
@@ -154,7 +154,7 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 - [ ] T064 [US3] Add report count summary display
 - [ ] T065 [US3] Implement virtual scrolling or pagination for large libraries
 - [ ] T066 [US3] Add favorite/star functionality for important reports
-- [ ] T067 [US3] Create report library page route in apps/web/src/routes/reports/index.tsx
+- [ ] T067 [US3] Create report library page route in apps/frontend/src/routes/reports/index.tsx
 - [ ] T068 [US3] Add loading states and error handling for library
 - [ ] T069 [US3] Test library with 100+ reports for performance
 - [ ] T070 [US3] Ensure library meets WCAG 2.1 AA accessibility standards
@@ -171,24 +171,24 @@ Paths shown below assume web app structure - adjust based on plan.md structure.
 
 ### Tests for User Story 4 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T071 [P] [US4] Unit test for ReportShareModal in apps/web/tests/unit/components/ReportShareModal.test.tsx
-- [ ] T072 [P] [US4] Unit test for ShareLinkManager in apps/web/tests/unit/components/ShareLinkManager.test.tsx
-- [ ] T073 [P] [US4] E2E test for sharing workflow in apps/web/tests/e2e/reports-sharing.spec.ts
+- [ ] T071 [P] [US4] Unit test for ReportShareModal in apps/frontend/tests/unit/components/ReportShareModal.test.tsx
+- [ ] T072 [P] [US4] Unit test for ShareLinkManager in apps/frontend/tests/unit/components/ShareLinkManager.test.tsx
+- [ ] T073 [P] [US4] E2E test for sharing workflow in apps/frontend/tests/e2e/reports-sharing.spec.ts
 
 ### Implementation for User Story 4
 
-- [ ] T074 [P] [US4] Create ReportShareModal component in apps/web/src/components/reports/ReportShareModal.tsx
-- [ ] T075 [P] [US4] Create ShareOptions component (public, password, expiration) in apps/web/src/components/reports/ShareOptions.tsx
-- [ ] T076 [P] [US4] Create ShareUrl component with copy and QR code in apps/web/src/components/reports/ShareUrl.tsx
-- [ ] T077 [P] [US4] Create ShareLinkManager component in apps/web/src/components/reports/ShareLinkManager.tsx
-- [ ] T078 [P] [US4] Create useShareLink hook in apps/web/src/hooks/useShareLink.ts
+- [ ] T074 [P] [US4] Create ReportShareModal component in apps/frontend/src/components/reports/ReportShareModal.tsx
+- [ ] T075 [P] [US4] Create ShareOptions component (public, password, expiration) in apps/frontend/src/components/reports/ShareOptions.tsx
+- [ ] T076 [P] [US4] Create ShareUrl component with copy and QR code in apps/frontend/src/components/reports/ShareUrl.tsx
+- [ ] T077 [P] [US4] Create ShareLinkManager component in apps/frontend/src/components/reports/ShareLinkManager.tsx
+- [ ] T078 [P] [US4] Create useShareLink hook in apps/frontend/src/hooks/useShareLink.ts
 - [ ] T079 [US4] Implement share link generation with tRPC (depends on T078)
 - [ ] T080 [US4] Implement password protection for share links
 - [ ] T081 [US4] Add expiration date configuration for share links
 - [ ] T082 [US4] Implement share link list display with access counts
 - [ ] T083 [US4] Add revoke functionality for share links
 - [ ] T084 [US4] Generate QR code for share links using qrcode library
-- [ ] T085 [US4] Create shared report page route in apps/web/src/routes/reports/shared/$shareToken.tsx
+- [ ] T085 [US4] Create shared report page route in apps/frontend/src/routes/reports/shared/$shareToken.tsx
 - [ ] T086 [US4] Implement shared report access with password validation
 - [ ] T087 [US4] Add "View on AgenticVerdict" branding to shared reports
 - [ ] T088 [US4] Integrate share modal into ReportViewer actions (depends on T022 from US1)

@@ -10,12 +10,12 @@
 
 ### Current State
 
-- The authentication UI core (`/apps/web`) has been implemented according to specifications in `/specs/01-ui/01-authentication`
+- The authentication UI core (`/apps/frontend`) has been implemented according to specifications in `/specs/01-ui/01-authentication`
 - A design system foundation exists but requires integration with `.pen` files as the single source of truth
 
 ### Design System Philosophy
 
-- **.pen files are the authoritative source** for all design system definitions at `/apps/web`
+- **.pen files are the authoritative source** for all design system definitions at `/apps/frontend`
 - All design implementations must be generated from `.pen` files using Pencil.dev
 - Manual design system implementation is prohibited to ensure consistency and maintainability
 
@@ -61,7 +61,7 @@ Establish a unified design workflow that:
 
 - Extract reusable components to `/packages/ui` whenever duplication is identified
 - New components that have potential for reuse across features must be added to `/packages/ui`
-- Feature-specific implementations in `/apps/web` should consume components from `/packages/ui`
+- Feature-specific implementations in `/apps/frontend` should consume components from `/packages/ui`
 - Maintain clear documentation for component props, variants, and usage patterns
 
 ---
@@ -106,7 +106,7 @@ Establish a unified design workflow that:
 1. All authentication UI specifications reference `.pen` files as design source
 2. Design system is fully implemented via Pencil.dev with zero manual implementation
 3. Reusable components are centralized in `/packages/ui`
-4. No duplicate component code exists between `/apps/web` and `/packages/ui`
+4. No duplicate component code exists between `/apps/frontend` and `/packages/ui`
 5. `.pen` files serve as the verifiable single source of truth for all design decisions
 
 ---

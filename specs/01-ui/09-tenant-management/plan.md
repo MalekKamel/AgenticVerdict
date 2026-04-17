@@ -58,7 +58,7 @@ specs/01-ui/09-tenant-management/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── settings/
 │   │   ├── company.tsx          # Company settings page
@@ -102,7 +102,7 @@ packages/api/src/routers/
 └── agency-router.ts             # Agency partner client operations
 ```
 
-**Structure Decision**: This is a **web application** pattern with clear separation between UI routes, reusable components, state management, and API integration. Tenant management UI components reside in `apps/web/` while backend logic lives in `packages/api/` and database schemas in `packages/database/`.
+**Structure Decision**: This is a **web application** pattern with clear separation between UI routes, reusable components, state management, and API integration. Tenant management UI components reside in `apps/frontend/` while backend logic lives in `packages/api/` and database schemas in `packages/database/`.
 
 ## Implementation Strategy
 
@@ -135,7 +135,7 @@ export const tenantRouter = t.router({
 **Client-Side Tenant State Management**:
 
 ```typescript
-// apps/web/src/stores/tenant-store.ts
+// apps/frontend/src/stores/tenant-store.ts
 import { createStore } from '@tanstack/react-store';
 
 interface TenantState {
@@ -150,7 +150,7 @@ export const tenantStore = createStore<TenantState>({
   branding: {}
 });
 
-// apps/web/src/hooks/useTenantSwitch.ts
+// apps/frontend/src/hooks/useTenantSwitch.ts
 export function useTenantSwitch() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -180,7 +180,7 @@ export function useTenantSwitch() {
 The tenant switcher is integrated into the topbar and provides quick access to tenant switching:
 
 ```typescript
-// apps/web/src/components/tenant/TenantSwitcher.tsx
+// apps/frontend/src/components/tenant/TenantSwitcher.tsx
 import { Menu, Button, Text, Avatar, Stack } from '@mantine/core';
 import { useTenantList } from '@/hooks/useTenantConfig';
 
@@ -229,7 +229,7 @@ export function TenantSwitcher() {
 Both company and tenant settings use a similar tabbed form layout:
 
 ```typescript
-// apps/web/src/routes/settings/company.tsx
+// apps/frontend/src/routes/settings/company.tsx
 import { Tabs, Container } from '@mantine/core';
 import { CompanySettingsForm } from '@/components/tenant/CompanySettingsForm';
 
@@ -265,7 +265,7 @@ export default function CompanySettingsPage() {
 Agency partners have a specialized client management interface with virtualization for large portfolios:
 
 ```typescript
-// apps/web/src/components/tenant/ClientList.tsx
+// apps/frontend/src/components/tenant/ClientList.tsx
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Box } from '@mantine/core';
 
@@ -329,7 +329,7 @@ import { DirectionProvider } from '@mantine/core';
 Tenant switching requires comprehensive cache invalidation:
 
 ```typescript
-// apps/web/src/lib/tenant-utils.ts
+// apps/frontend/src/lib/tenant-utils.ts
 export function invalidateTenantContext(
   queryClient: QueryClient,
   tenantId: string

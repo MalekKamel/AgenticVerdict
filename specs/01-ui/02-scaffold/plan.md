@@ -51,7 +51,7 @@ specs/01-ui/02-scaffold/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── routes/                          # TanStack Start file-based routing
 │   │   ├── __root.tsx                   # Root layout (already exists)
@@ -115,7 +115,7 @@ packages/
                 └── common.json          # Arabic translations (add navigation keys)
 ```
 
-**Structure Decision**: The monorepo structure with Turborepo is already established. Layout components are initially implemented in `apps/web/src/components/layout/` for rapid development, with the intent to extract reusable templates to `packages/ui/src/templates/` in future phases (Phase 13: Production Hardening) to enable code sharing with future mobile or desktop applications.
+**Structure Decision**: The monorepo structure with Turborepo is already established. Layout components are initially implemented in `apps/frontend/src/components/layout/` for rapid development, with the intent to extract reusable templates to `packages/ui/src/templates/` in future phases (Phase 13: Production Hardening) to enable code sharing with future mobile or desktop applications.
 
 ---
 
@@ -285,7 +285,7 @@ function generateBreadcrumbs(
 
 ### DashboardLayout
 
-**File**: `apps/web/src/components/layout/DashboardLayout.tsx`
+**File**: `apps/frontend/src/components/layout/DashboardLayout.tsx`
 
 **Props**:
 ```typescript
@@ -333,7 +333,7 @@ interface DashboardLayoutProps {
 
 ### AuthLayout
 
-**File**: `apps/web/src/components/layout/AuthLayout.tsx`
+**File**: `apps/frontend/src/components/layout/AuthLayout.tsx`
 
 **Props**:
 ```typescript
@@ -368,7 +368,7 @@ interface AuthLayoutProps {
 
 ### ReportLayout
 
-**File**: `apps/web/src/components/layout/ReportLayout.tsx`
+**File**: `apps/frontend/src/components/layout/ReportLayout.tsx`
 
 **Props**:
 ```typescript
@@ -411,7 +411,7 @@ interface ReportLayoutProps {
 
 ### SettingsLayout
 
-**File**: `apps/web/src/components/layout/SettingsLayout.tsx`
+**File**: `apps/frontend/src/components/layout/SettingsLayout.tsx`
 
 **Props**:
 ```typescript

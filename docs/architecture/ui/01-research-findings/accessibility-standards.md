@@ -1109,7 +1109,7 @@ name: Accessibility Tests
 on:
   pull_request:
     paths:
-      - "apps/web/**"
+      - "apps/frontend/**"
       - "packages/ui/**"
 
 jobs:

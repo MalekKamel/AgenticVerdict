@@ -111,7 +111,7 @@ If implementation requires specification changes:
 ## File Structure Conventions
 
 ```
-apps/web/src/
+apps/frontend/src/
 ├── routes/auth/
 │   ├── __root.tsx              # Auth layout wrapper
 │   ├── login.tsx               # /auth/login

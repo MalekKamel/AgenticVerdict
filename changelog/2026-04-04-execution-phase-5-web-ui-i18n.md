@@ -7,7 +7,7 @@
 
 ## Summary
 
-- **`apps/web`**
+- **`apps/frontend`**
   - Added **`/api/health`** and **`/api/ready`** JSON routes (implementation-scope health/readiness-style probes).
   - Root layout: **`ColorSchemeScript`** + **`mantineHtmlProps`** for Mantine color scheme; **`MantineProvider`** set to **`defaultColorScheme="auto"`** with header **light/dark toggle**.
   - **`AppShell`** layout with mobile **navbar**, **language switcher** (`next-intl` navigation `Link`), and RTL-aware **`DirectionProvider`**.

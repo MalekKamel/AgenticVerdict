@@ -557,7 +557,7 @@
   - `/apps/api/src/api.contract.test.ts` - Contract tests
   - `/apps/api/src/middleware/rate-limit.ts` - Rate limiting
   - `/packages/report-generator/src/template-rendering-perf.test.ts` - Performance tests
-  - `/apps/web/e2e/a11y-home.spec.ts` - Accessibility tests
+  - `/apps/frontend/e2e/a11y-home.spec.ts` - Accessibility tests
 
 **Acceptance Criteria Met**:
 
@@ -707,7 +707,7 @@
 - `src/services/translation-store.ts` - Translations
 - `src/services/report-audit-store.ts` - Audit events
 
-**Web Package** (`/apps/web/`):
+**Web Package** (`/apps/frontend/`):
 
 - `src/` - Next.js web application
 - `e2e/` - Playwright E2E tests

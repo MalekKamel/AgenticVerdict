@@ -25,11 +25,11 @@
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create Phase 13 directory structure at `/specs/01-ui/13-production-hardening/`
-- [ ] T002 Initialize monitoring and accessibility package dependencies in `apps/web/package.json`
+- [ ] T002 Initialize monitoring and accessibility package dependencies in `apps/frontend/package.json`
 - [ ] T003 [P] [US1] Configure GitHub Actions workflow for accessibility CI at `.github/workflows/accessibility-ci.yml`
 - [ ] T004 [P] [US2] Configure GitHub Actions workflow for Lighthouse CI at `.github/workflows/lighthouse-ci.yml`
-- [ ] T005 [P] [US3] Create monitoring library directory structure at `apps/web/src/lib/monitoring/`
-- [ ] T006 [P] [US1] Create accessibility utilities directory at `apps/web/src/lib/utils/accessibility.ts`
+- [ ] T005 [P] [US3] Create monitoring library directory structure at `apps/frontend/src/lib/monitoring/`
+- [ ] T006 [P] [US1] Create accessibility utilities directory at `apps/frontend/src/lib/utils/accessibility.ts`
 
 ---
 
@@ -45,8 +45,8 @@
 - [ ] T010 [P] Install and configure analytics provider (Plausible or PostHog)
 - [ ] T011 Install and configure `webpack-bundle-analyzer` for bundle analysis
 - [ ] T012 Install and configure `@lhci/cli` for Lighthouse CI integration
-- [ ] T013 Create base monitoring configuration in `apps/web/src/lib/monitoring/`
-- [ ] T014 Create base accessibility utilities in `apps/web/src/lib/utils/accessibility.ts`
+- [ ] T013 Create base monitoring configuration in `apps/frontend/src/lib/monitoring/`
+- [ ] T014 Create base accessibility utilities in `apps/frontend/src/lib/utils/accessibility.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -62,28 +62,28 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T015 [P] [US1] Automated axe-core test for dashboard route in `apps/web/src/__tests__/a11y/dashboard.test.ts`
-- [ ] T016 [P] [US1] Automated axe-core test for insight creation flow in `apps/web/src/__tests__/a11y/insight-creation.test.ts`
-- [ ] T017 [P] [US1] Automated axe-core test for connector management in `apps/web/src/__tests__/a11y/connectors.test.ts`
-- [ ] T018 [P] [US1] Playwright keyboard navigation test for critical user paths in `apps/web/src/__tests__/e2e/keyboard-nav.spec.ts`
-- [ ] T019 [P] [US1] Playwright screen reader test for RTL layout (Arabic) in `apps/web/src/__tests__/e2e/screen-reader-rtl.spec.ts`
+- [ ] T015 [P] [US1] Automated axe-core test for dashboard route in `apps/frontend/src/__tests__/a11y/dashboard.test.ts`
+- [ ] T016 [P] [US1] Automated axe-core test for insight creation flow in `apps/frontend/src/__tests__/a11y/insight-creation.test.ts`
+- [ ] T017 [P] [US1] Automated axe-core test for connector management in `apps/frontend/src/__tests__/a11y/connectors.test.ts`
+- [ ] T018 [P] [US1] Playwright keyboard navigation test for critical user paths in `apps/frontend/src/__tests__/e2e/keyboard-nav.spec.ts`
+- [ ] T019 [P] [US1] Playwright screen reader test for RTL layout (Arabic) in `apps/frontend/src/__tests__/e2e/screen-reader-rtl.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T020 [P] [US1] Create `A11yAnnouncer` component for screen reader live regions in `apps/web/src/components/monitoring/A11yLiveRegion.tsx`
-- [ ] T021 [P] [US1] Create `useFocusManagement` hook for focus trapping in `apps/web/src/lib/utils/accessibility.ts`
-- [ ] T022 [P] [US1] Create `SkipLink` component for keyboard navigation in `apps/web/src/components/atoms/SkipLink.tsx`
-- [ ] T023 [P] [US1] Create `FocusTrap` component for modals/dropdowns in `apps/web/src/components/atoms/FocusTrap.tsx`
-- [ ] T024 [P] [US1] Implement `announceToScreenReader` utility function in `apps/web/src/lib/utils/accessibility.ts`
+- [ ] T020 [P] [US1] Create `A11yAnnouncer` component for screen reader live regions in `apps/frontend/src/components/monitoring/A11yLiveRegion.tsx`
+- [ ] T021 [P] [US1] Create `useFocusManagement` hook for focus trapping in `apps/frontend/src/lib/utils/accessibility.ts`
+- [ ] T022 [P] [US1] Create `SkipLink` component for keyboard navigation in `apps/frontend/src/components/atoms/SkipLink.tsx`
+- [ ] T023 [P] [US1] Create `FocusTrap` component for modals/dropdowns in `apps/frontend/src/components/atoms/FocusTrap.tsx`
+- [ ] T024 [P] [US1] Implement `announceToScreenReader` utility function in `apps/frontend/src/lib/utils/accessibility.ts`
 - [ ] T025 [US1] Audit existing Mantine components for accessibility gaps (missing ARIA labels, roles, states)
-- [ ] T026 [US1] Add missing ARIA attributes to interactive components in `apps/web/src/components/`
-- [ ] T027 [US1] Implement visible focus indicators in `apps/web/src/styles/accessibility.css`
-- [ ] T028 [US1] Ensure all icons have `aria-label` or `aria-hidden` attributes in `apps/web/src/components/`
+- [ ] T026 [US1] Add missing ARIA attributes to interactive components in `apps/frontend/src/components/`
+- [ ] T027 [US1] Implement visible focus indicators in `apps/frontend/src/styles/accessibility.css`
+- [ ] T028 [US1] Ensure all icons have `aria-label` or `aria-hidden` attributes in `apps/frontend/src/components/`
 - [ ] T029 [US1] Validate color contrast ratios for all UI elements meet WCAG AA standards (4.5:1 for text, 3:1 for UI components)
 - [ ] T030 [US1] Test and fix keyboard navigation for all interactive elements (logical tab order, no keyboard traps)
 - [ ] T031 [US1] Test and fix screen reader compatibility for dynamic content updates (live regions)
 - [ ] T032 [US1] Validate RTL accessibility (Arabic) with screen readers and fix issues
-- [ ] T033 [US1] Configure axe-core to run in CI and fail on violations in `apps/web/playwright.config.ts`
+- [ ] T033 [US1] Configure axe-core to run in CI and fail on violations in `apps/frontend/playwright.config.ts`
 - [ ] T034 [US1] Create accessibility patterns documentation in `docs/06-reference/accessibility-guide.md`
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. All routes pass axe-core tests with zero violations, keyboard navigation works end-to-end, and screen reader testing passes for English and Arabic.
@@ -98,24 +98,24 @@
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T035 [P] [US2] Core Web Vitals tracking test in `apps/web/src/__tests__/unit/performance.test.ts`
-- [ ] T036 [P] [US2] Lighthouse CI configuration test in `apps/web/src/__tests__/integration/lighthouse.test.ts`
-- [ ] T037 [P] [US2] Bundle analysis test to verify size budgets in `apps/web/src/__tests__/integration/bundle-size.test.ts`
+- [ ] T035 [P] [US2] Core Web Vitals tracking test in `apps/frontend/src/__tests__/unit/performance.test.ts`
+- [ ] T036 [P] [US2] Lighthouse CI configuration test in `apps/frontend/src/__tests__/integration/lighthouse.test.ts`
+- [ ] T037 [P] [US2] Bundle analysis test to verify size budgets in `apps/frontend/src/__tests__/integration/bundle-size.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T038 [P] [US2] Create `performance.ts` monitoring module in `apps/web/src/lib/monitoring/performance.ts`
+- [ ] T038 [P] [US2] Create `performance.ts` monitoring module in `apps/frontend/src/lib/monitoring/performance.ts`
 - [ ] T039 [P] [US2] Integrate `web-vitals` library for LCP, FID, CLS measurement
-- [ ] T040 [P] [US2] Implement performance tracking with tenant context in `apps/web/src/lib/monitoring/performance.ts`
-- [ ] T041 [US2] Send Core Web Vitals metrics to analytics backend in `apps/web/src/lib/monitoring/performance.ts`
+- [ ] T040 [P] [US2] Implement performance tracking with tenant context in `apps/frontend/src/lib/monitoring/performance.ts`
+- [ ] T041 [US2] Send Core Web Vitals metrics to analytics backend in `apps/frontend/src/lib/monitoring/performance.ts`
 - [ ] T042 [P] [US2] Create `.lighthouserc.json` configuration with performance budgets (score ≥90, route budgets)
 - [ ] T043 [P] [US2] Configure Lighthouse CI GitHub Actions workflow in `.github/workflows/lighthouse-ci.yml`
-- [ ] T044 [US2] Integrate webpack-bundle-analyzer with TanStack Start build in `apps/web/package.json`
-- [ ] T045 [US2] Analyze current bundle and identify optimization opportunities in `apps/web/`
-- [ ] T046 [US2] Verify route-based code splitting is enabled for all routes in `apps/web/src/routes/`
-- [ ] T047 [US2] Lazy load heavy components (charts, rich text editors) via `React.lazy()` in `apps/web/src/components/`
-- [ ] T048 [US2] Remove duplicate dependencies across packages in `apps/web/package.json` and root `package.json`
-- [ ] T049 [US2] Create internal performance dashboard route at `apps/web/src/routes/admin/performance.tsx`
+- [ ] T044 [US2] Integrate webpack-bundle-analyzer with TanStack Start build in `apps/frontend/package.json`
+- [ ] T045 [US2] Analyze current bundle and identify optimization opportunities in `apps/frontend/`
+- [ ] T046 [US2] Verify route-based code splitting is enabled for all routes in `apps/frontend/src/routes/`
+- [ ] T047 [US2] Lazy load heavy components (charts, rich text editors) via `React.lazy()` in `apps/frontend/src/components/`
+- [ ] T048 [US2] Remove duplicate dependencies across packages in `apps/frontend/package.json` and root `package.json`
+- [ ] T049 [US2] Create internal performance dashboard route at `apps/frontend/src/routes/admin/performance.tsx`
 - [ ] T050 [US2] Display aggregate Core Web Vitals (p75, p95) with trend lines in dashboard
 - [ ] T051 [US2] Add page-level performance breakdowns to dashboard
 - [ ] T052 [US2] Link to Lighthouse reports for detailed audits in dashboard
@@ -134,30 +134,30 @@
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T055 [P] [US3] PII scrubbing test for error tracking in `apps/web/src/__tests__/unit/error-scrubbing.test.ts`
-- [ ] T056 [P] [US3] Error context attachment test in `apps/web/src/__tests__/integration/error-tracking.test.ts`
-- [ ] T057 [P] [US3] Analytics event tracking test in `apps/web/src/__tests__/unit/analytics.test.ts`
+- [ ] T055 [P] [US3] PII scrubbing test for error tracking in `apps/frontend/src/__tests__/unit/error-scrubbing.test.ts`
+- [ ] T056 [P] [US3] Error context attachment test in `apps/frontend/src/__tests__/integration/error-tracking.test.ts`
+- [ ] T057 [P] [US3] Analytics event tracking test in `apps/frontend/src/__tests__/unit/analytics.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T058 [P] [US3] Create `error-tracking.ts` module in `apps/web/src/lib/monitoring/error-tracking.ts`
-- [ ] T059 [P] [US3] Install and configure `@sentry/react` for TanStack Start SSR in `apps/web/src/lib/monitoring/error-tracking.ts`
-- [ ] T060 [US3] Implement PII scrubbing (URLs, query params, error context) in `apps/web/src/lib/monitoring/error-tracking.ts`
-- [ ] T061 [US3] Attach tenant context (tenant ID, user role, feature flags) to all errors in `apps/web/src/lib/monitoring/error-tracking.ts`
-- [ ] T062 [US3] Integrate with tRPC error handling for backend error correlation in `apps/web/src/lib/monitoring/error-tracking.ts`
-- [ ] T063 [P] [US3] Create `ErrorBoundary` component with Sentry integration in `apps/web/src/components/monitoring/ErrorBoundary.tsx`
-- [ ] T064 [P] [US3] Create `analytics.ts` module in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T065 [US3] Initialize analytics provider (Plausible or PostHog) in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T066 [US3] Implement `trackPageView` for route changes in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T067 [US3] Implement `trackEvent` for feature usage tracking in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T068 [US3] Add funnel tracking for critical user paths in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T069 [US3] Configure analytics to respect tenant data isolation in `apps/web/src/lib/monitoring/analytics.ts`
+- [ ] T058 [P] [US3] Create `error-tracking.ts` module in `apps/frontend/src/lib/monitoring/error-tracking.ts`
+- [ ] T059 [P] [US3] Install and configure `@sentry/react` for TanStack Start SSR in `apps/frontend/src/lib/monitoring/error-tracking.ts`
+- [ ] T060 [US3] Implement PII scrubbing (URLs, query params, error context) in `apps/frontend/src/lib/monitoring/error-tracking.ts`
+- [ ] T061 [US3] Attach tenant context (tenant ID, user role, feature flags) to all errors in `apps/frontend/src/lib/monitoring/error-tracking.ts`
+- [ ] T062 [US3] Integrate with tRPC error handling for backend error correlation in `apps/frontend/src/lib/monitoring/error-tracking.ts`
+- [ ] T063 [P] [US3] Create `ErrorBoundary` component with Sentry integration in `apps/frontend/src/components/monitoring/ErrorBoundary.tsx`
+- [ ] T064 [P] [US3] Create `analytics.ts` module in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T065 [US3] Initialize analytics provider (Plausible or PostHog) in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T066 [US3] Implement `trackPageView` for route changes in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T067 [US3] Implement `trackEvent` for feature usage tracking in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T068 [US3] Add funnel tracking for critical user paths in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T069 [US3] Configure analytics to respect tenant data isolation in `apps/frontend/src/lib/monitoring/analytics.ts`
 - [ ] T070 [US3] Configure Sentry dashboards for error monitoring in Sentry UI
 - [ ] T071 [US3] Configure analytics dashboards for product metrics in analytics provider UI
 - [ ] T072 [US3] Set up alerts for critical error spikes (>50 errors/min) in Sentry
-- [ ] T073 [US3] Implement consent banner for analytics (GDPR/CCPA compliance) in `apps/web/src/components/monitoring/ConsentBanner.tsx`
-- [ ] T074 [US3] Configure analytics to anonymize IP addresses in `apps/web/src/lib/monitoring/analytics.ts`
-- [ ] T075 [US3] Add tenant-level analytics opt-out for enterprise customers in `apps/web/src/lib/monitoring/analytics.ts`
+- [ ] T073 [US3] Implement consent banner for analytics (GDPR/CCPA compliance) in `apps/frontend/src/components/monitoring/ConsentBanner.tsx`
+- [ ] T074 [US3] Configure analytics to anonymize IP addresses in `apps/frontend/src/lib/monitoring/analytics.ts`
+- [ ] T075 [US3] Add tenant-level analytics opt-out for enterprise customers in `apps/frontend/src/lib/monitoring/analytics.ts`
 - [ ] T076 [US3] Create incident response runbooks in `docs/06-reference/incident-runbooks.md`
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 3 should all work independently. Error tracking captures errors with full context and scrubs PII, analytics events fire for page views and user actions, and dashboards provide visibility into system health and user behavior.
@@ -172,22 +172,22 @@
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T077 [P] [US4] Bundle size budget test in CI (fail if >500KB initial, >200KB per route) in `apps/web/src/__tests__/integration/bundle-budget.test.ts`
+- [ ] T077 [P] [US4] Bundle size budget test in CI (fail if >500KB initial, >200KB per route) in `apps/frontend/src/__tests__/integration/bundle-budget.test.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T078 [P] [US4] Generate baseline bundle report using webpack-bundle-analyzer in `apps/web/`
+- [ ] T078 [P] [US4] Generate baseline bundle report using webpack-bundle-analyzer in `apps/frontend/`
 - [ ] T079 [US4] Identify large dependencies (>50KB) for optimization in bundle report
-- [ ] T080 [US4] Check for duplicate dependencies and run dedupe in `apps/web/package.json` and root `package.json`
-- [ ] T081 [US4] Verify route-based code splitting is enabled for all routes in `apps/web/src/routes/`
-- [ ] T082 [US4] Lazy load chart libraries (Recharts) only on insight/report pages in `apps/web/src/components/`
-- [ ] T083 [US4] Lazy load rich text editors only on template editing pages in `apps/web/src/components/`
-- [ ] T084 [US4] Lazy load date pickers only when needed in `apps/web/src/components/`
+- [ ] T080 [US4] Check for duplicate dependencies and run dedupe in `apps/frontend/package.json` and root `package.json`
+- [ ] T081 [US4] Verify route-based code splitting is enabled for all routes in `apps/frontend/src/routes/`
+- [ ] T082 [US4] Lazy load chart libraries (Recharts) only on insight/report pages in `apps/frontend/src/components/`
+- [ ] T083 [US4] Lazy load rich text editors only on template editing pages in `apps/frontend/src/components/`
+- [ ] T084 [US4] Lazy load date pickers only when needed in `apps/frontend/src/components/`
 - [ ] T085 [US4] Split vendor chunks for better caching (React, ReactDOM, Mantine separate) in Turborepo config
-- [ ] T086 [US4] Replace moment.js with date-fns or luxon (smaller, tree-shakeable) in `apps/web/package.json`
-- [ ] T087 [US4] Replace lodash with individual functions or es-toolkit in `apps/web/package.json`
-- [ ] T088 [US4] Audit for unused Mantine modules and remove unused imports in `apps/web/src/components/`
-- [ ] T089 [US4] Optimize font files (subset fonts, use WOFF2) in `apps/web/src/styles/`
+- [ ] T086 [US4] Replace moment.js with date-fns or luxon (smaller, tree-shakeable) in `apps/frontend/package.json`
+- [ ] T087 [US4] Replace lodash with individual functions or es-toolkit in `apps/frontend/package.json`
+- [ ] T088 [US4] Audit for unused Mantine modules and remove unused imports in `apps/frontend/src/components/`
+- [ ] T089 [US4] Optimize font files (subset fonts, use WOFF2) in `apps/frontend/src/styles/`
 - [ ] T090 [US4] Add bundle size check to CI (fail if bundle grows >5% without approval) in `.github/workflows/bundle-check.yml`
 - [ ] T091 [US4] Generate bundle diff in PR comments using size-limit or bundlesize in CI workflow
 - [ ] T092 [US4] Configure Turborepo to cache bundle analysis reports in `turbo.json`
@@ -204,7 +204,7 @@
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T093 [P] [US5] Validate accessibility checklist completeness by running all steps in `apps/web/`
+- [ ] T093 [P] [US5] Validate accessibility checklist completeness by running all steps in `apps/frontend/`
 - [ ] T094 [P] [US5] Validate performance audit produces actionable reports in CI
 - [ ] T095 [P] [US5] Validate incident runbooks provide clear steps for triage in `docs/06-reference/incident-runbooks.md`
 

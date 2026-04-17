@@ -32,7 +32,7 @@ This guide provides comprehensive performance optimization strategies for the Ag
 Next.js 15 provides automatic code splitting for routes, but we can optimize further:
 
 ```typescript
-// apps/web/src/app/[locale]/insights/page.tsx
+// apps/frontend/src/app/[locale]/insights/page.tsx
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@mantine/core';
 
@@ -68,7 +68,7 @@ const AnalyticsChart = dynamic(
 For heavy UI components within routes:
 
 ```typescript
-// apps/web/src/components/dashboard/Dashboard.tsx
+// apps/frontend/src/components/dashboard/Dashboard.tsx
 import { lazy, Suspense } from 'react';
 
 // Lazy load connector management
@@ -128,7 +128,7 @@ const AgencyDashboard = dynamic(
 Strategic preloading for improved user experience:
 
 ```typescript
-// apps/web/src/components/layout/AppShellLayout.tsx
+// apps/frontend/src/components/layout/AppShellLayout.tsx
 import { useEffect } from 'react';
 
 export function AppShellLayout({ children }: { children: ReactNode }) {
@@ -184,7 +184,7 @@ import { Card } from "@mantine/core/lib/Card";
 Analyze and optimize Mantine imports:
 
 ```typescript
-// apps/web/src/components/ui/index.ts
+// apps/frontend/src/components/ui/index.ts
 // Create optimized component exports
 
 export { AppButton } from "./AppButton";
@@ -199,7 +199,7 @@ export { AppTextInput } from "./AppTextInput";
 Setup bundle analysis in Next.js 15:
 
 ```javascript
-// apps/web/next.config.ts
+// apps/frontend/next.config.ts
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -212,7 +212,7 @@ module.exports = withBundleAnalyzer(nextConfig);
 ```
 
 ```json
-// apps/web/package.json
+// apps/frontend/package.json
 {
   "scripts": {
     "analyze": "ANALYZE=true next build"
@@ -248,7 +248,7 @@ import { LineChart } from "recharts/es6/components/LineChart";
 Configure webpack chunk splitting:
 
 ```javascript
-// apps/web/next.config.ts
+// apps/frontend/next.config.ts
 const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -290,7 +290,7 @@ const nextConfig = {
 Implement virtual scrolling for large data sets:
 
 ```typescript
-// apps/web/src/components/data/VirtualizedList.tsx
+// apps/frontend/src/components/data/VirtualizedList.tsx
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 export function VirtualizedInsightList({ insights }: { insights: Insight[] }) {
@@ -330,7 +330,7 @@ export function VirtualizedInsightList({ insights }: { insights: Insight[] }) {
 Strategic memoization for expensive components:
 
 ```typescript
-// apps/web/src/components/dashboard/KPICard.tsx
+// apps/frontend/src/components/dashboard/KPICard.tsx
 import { memo } from 'react';
 
 export const KPICard = memo(function KPICard({
@@ -360,7 +360,7 @@ export const KPICard = memo(function KPICard({
 Optimize user interactions:
 
 ```typescript
-// apps/web/src/components/search/SearchInput.tsx
+// apps/frontend/src/components/search/SearchInput.tsx
 import { useDebouncedValue } from '@mantine/hooks';
 import { useEffect } from 'react';
 
@@ -390,7 +390,7 @@ export function SearchInput() {
 Prefer CSS animations over JavaScript:
 
 ```css
-/* apps/web/src/app/animations.css */
+/* apps/frontend/src/app/animations.css */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -443,7 +443,7 @@ Prefer CSS animations over JavaScript:
 For AgenticVerdict, use CSS variables for design tokens:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 import { createTheme, MantineProvider } from '@mantine/core';
 
 const theme = createTheme({
@@ -462,7 +462,7 @@ export function Providers({ children }: { children: ReactNode }) {
 ```
 
 ```css
-/* apps/web/src/app/globals.css */
+/* apps/frontend/src/app/globals.css */
 :root {
   /* Core design tokens as CSS variables */
   --av-color-primary: #228be6;
@@ -501,7 +501,7 @@ export function Providers({ children }: { children: ReactNode }) {
 Inject design tokens efficiently:
 
 ```typescript
-// apps/web/src/app/layout.tsx
+// apps/frontend/src/app/layout.tsx
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" {...mantineHtmlProps}>
@@ -525,7 +525,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 Optimize theme switching:
 
 ```typescript
-// apps/web/src/components/layout/ColorSchemeToggle.tsx
+// apps/frontend/src/components/layout/ColorSchemeToggle.tsx
 import { useColorScheme } from '@mantine/hooks';
 
 export function ColorSchemeToggle() {
@@ -551,7 +551,7 @@ export function ColorSchemeToggle() {
 For agency partners with white-labeling:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 export function Providers({
   children,
   brandConfig
@@ -588,7 +588,7 @@ export function Providers({
 Implement Core Web Vitals monitoring:
 
 ```typescript
-// apps/web/src/app/[locale]/layout.tsx
+// apps/frontend/src/app/[locale]/layout.tsx
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export default function LocaleLayout({ children }: { children: ReactNode }) {
@@ -606,7 +606,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
 Configure performance budgets in Next.js:
 
 ```javascript
-// apps/web/next.config.ts
+// apps/frontend/next.config.ts
 const nextConfig = {
   experimental: {
     optimizeCss: true,
@@ -626,7 +626,7 @@ const nextConfig = {
 Monitor runtime performance:
 
 ```typescript
-// apps/web/src/lib/performance.ts
+// apps/frontend/src/lib/performance.ts
 export class PerformanceMonitor {
   static mark(name: string) {
     if (typeof performance !== "undefined") {
@@ -666,7 +666,7 @@ export async function loadData() {
 Track user-centric metrics:
 
 ```typescript
-// apps/web/src/lib/analytics.ts
+// apps/frontend/src/lib/analytics.ts
 export function trackWebVitals() {
   if (typeof window !== "undefined") {
     import("web-vitals").then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
@@ -689,7 +689,7 @@ export function trackWebVitals() {
 Utilize Next.js 15's partial prerendering:
 
 ```typescript
-// apps/web/src/app/[locale]/dashboard/page.tsx
+// apps/frontend/src/app/[locale]/dashboard/page.tsx
 export const runtime = 'edge';
 export const dynamic = 'force-static';
 
@@ -747,7 +747,7 @@ export function InsightCard({ insight }: { insight: Insight }) {
 Use Next.js Image component:
 
 ```typescript
-// apps/web/src/components/images/OptimizedImage.tsx
+// apps/frontend/src/components/images/OptimizedImage.tsx
 import Image from 'next/image';
 
 export function OptimizedImage({ src, alt }: { src: string; alt: string }) {
@@ -770,7 +770,7 @@ export function OptimizedImage({ src, alt }: { src: string; alt: string }) {
 Optimize font loading:
 
 ```typescript
-// apps/web/src/app/layout.tsx
+// apps/frontend/src/app/layout.tsx
 import { Inter, Cairo } from 'next/font/google';
 
 const inter = Inter({
@@ -819,7 +819,7 @@ export { Textarea } from "@mantine/core/lib/Textarea";
 Optimize Mantine CSS:
 
 ```javascript
-// apps/web/postcss.config.mjs
+// apps/frontend/postcss.config.mjs
 export default {
   plugins: {
     "postcss-preset-mantine": {
@@ -841,7 +841,7 @@ export default {
 Optimize form performance with Mantine Form:
 
 ```typescript
-// apps/web/src/components/forms/OptimizedForm.tsx
+// apps/frontend/src/components/forms/OptimizedForm.tsx
 import { useForm } from '@mantine/form';
 
 export function OptimizedInsightForm() {
@@ -876,7 +876,7 @@ export function OptimizedInsightForm() {
 For the analytics dashboard:
 
 ```typescript
-// apps/web/src/app/[locale]/dashboard/page.tsx
+// apps/frontend/src/app/[locale]/dashboard/page.tsx
 export default function AnalyticsDashboard() {
   return (
     <div>
@@ -907,7 +907,7 @@ export default function AnalyticsDashboard() {
 Optimize for agency partners:
 
 ```typescript
-// apps/web/src/components/agency/TenantSwitcher.tsx
+// apps/frontend/src/components/agency/TenantSwitcher.tsx
 export function TenantSwitcher() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
 
@@ -934,7 +934,7 @@ export function TenantSwitcher() {
 Optimize for RTL/LTR switching:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 export function Providers({ children }: { children: ReactNode }) {
   const locale = useLocale();
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
@@ -954,7 +954,7 @@ export function Providers({ children }: { children: ReactNode }) {
 Optimize connector status monitoring:
 
 ```typescript
-// apps/web/src/components/connectors/ConnectorStatus.tsx
+// apps/frontend/src/components/connectors/ConnectorStatus.tsx
 export function ConnectorStatus() {
   const [statuses, setStatuses] = useState<ConnectorStatus[]>([]);
 
@@ -1055,7 +1055,7 @@ Create `.lighthouserc.json`:
 Create performance regression tests:
 
 ```typescript
-// apps/web/e2e/performance.spec.ts
+// apps/frontend/e2e/performance.spec.ts
 import { test, expect } from "@playwright/test";
 
 test.describe("Performance Tests", () => {

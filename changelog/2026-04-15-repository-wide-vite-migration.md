@@ -1,7 +1,7 @@
 # Repository-wide Vite migration (production bundles)
 
 **Date:** 2026-04-15  
-**Scope:** Align API/worker production bundling and the adapter-factory smoke script with **Vite**, consistent with `apps/web`, and update scripts, Turbo task names, CI labels, and documentation that referenced **esbuild** for these paths.
+**Scope:** Align API/worker production bundling and the adapter-factory smoke script with **Vite**, consistent with `apps/frontend`, and update scripts, Turbo task names, CI labels, and documentation that referenced **esbuild** for these paths.
 
 ## Summary
 
@@ -10,7 +10,7 @@
 - **Removed** `apps/api/esbuild.config.mjs` and `apps/worker/esbuild.config.mjs`.
 - **Renamed scripts:** `build:esbuild` → **`build:vite`**, **`benchmark:esbuild`** → **`benchmark:vite-bundles`** (root `package.json`). **Turbo** task **`build:esbuild`** → **`build:vite`** (`turbo.json`).
 - **Migrated** `tools/build/bundle-adapter-factory-smoke.mjs` from esbuild to **`vite` `build()`** (minified smoke artifact unchanged path: `packages/data-connectors/dist/adapter-factory.smoke.mjs`).
-- **Root devDependencies:** `esbuild` removed; **`vite`** `^8.0.8` added (matches `apps/web`).
+- **Root devDependencies:** `esbuild` removed; **`vite`** `^8.0.8` added (matches `apps/frontend`).
 - **API/worker devDependencies:** `esbuild` replaced with **`vite`** `^8.0.8`.
 
 ## Breaking changes

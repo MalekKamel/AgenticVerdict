@@ -9,10 +9,10 @@ This slice delivers **container images** for web, API, and worker; **Postgres an
 
 ## Application images
 
-### Next.js web (`apps/web`)
+### Next.js web (`apps/frontend`)
 
-- **`next.config.ts`:** `output: "standalone"` and `outputFileTracingRoot` at the monorepo root so `.next/standalone` traces workspace packages; runtime entry is `apps/web/server.js` relative to the standalone root.
-- **`apps/web/Dockerfile`:** Multi-stage build on **Node 20 bookworm-slim** (`pnpm install --frozen-lockfile`, `scripts/dockerPrebuild.mjs`, `next build --no-lint`), then **`gcr.io/distroless/nodejs20-debian12`**: copies standalone output, `.next/static`, and `public` as **65532:65532**, runs non-root, **`NODE_OPTIONS`** for IPv4-first DNS and **TLS 1.2+**, **`HEALTHCHECK`** via **`/nodejs/bin/node -e`** and **`fetch`** to `/api/health`. Build stages set **`COREPACK_ENABLE_DOWNLOAD_PROMPT=0`**.
+- **`next.config.ts`:** `output: "standalone"` and `outputFileTracingRoot` at the monorepo root so `.next/standalone` traces workspace packages; runtime entry is `apps/frontend/server.js` relative to the standalone root.
+- **`apps/frontend/Dockerfile`:** Multi-stage build on **Node 20 bookworm-slim** (`pnpm install --frozen-lockfile`, `scripts/dockerPrebuild.mjs`, `next build --no-lint`), then **`gcr.io/distroless/nodejs20-debian12`**: copies standalone output, `.next/static`, and `public` as **65532:65532**, runs non-root, **`NODE_OPTIONS`** for IPv4-first DNS and **TLS 1.2+**, **`HEALTHCHECK`** via **`/nodejs/bin/node -e`** and **`fetch`** to `/api/health`. Build stages set **`COREPACK_ENABLE_DOWNLOAD_PROMPT=0`**.
 - **Lint in images:** Image builds use **`--no-lint`**; ESLint remains for local dev and CI (see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) when present).
 
 ### API (`apps/api`)
@@ -139,7 +139,7 @@ pnpm run db:up
 docker compose ps
 
 # Direct image builds (optional)
-docker build -f apps/web/Dockerfile -t agenticverdict/web:local .
+docker build -f apps/frontend/Dockerfile -t agenticverdict/web:local .
 docker build -f apps/api/Dockerfile -t agenticverdict/api:local .
 docker build -f apps/worker/Dockerfile -t agenticverdict/worker:local .
 

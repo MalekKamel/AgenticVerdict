@@ -15,11 +15,13 @@ import { registerReportScheduleRoutes } from "./routes/v1/report-schedules";
 import { registerReportTemplateRoutes } from "./routes/v1/report-templates";
 import { registerTranslationRoutes } from "./routes/v1/translations";
 import { registerTestFlowRoutes } from "./routes/v1/test-flow";
+import { registerTelemetryIngestRoutes } from "./routes/v1/telemetry-ingest";
 import { registerValidationRoutes } from "./routes/v1/validation";
 import { registerVerdictRoutes } from "./routes/v1/verdicts";
 import { registerWorkflowRoutes } from "./routes/v1/workflows";
 import "./middleware/jwt-tenant-context";
 import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
+import { registerTrpc } from "./trpc/register-fastify";
 
 /**
  * Swagger plugins use Fastify's default `FastifyBaseLogger` generic; this server uses Pino's `Logger`
@@ -112,6 +114,8 @@ export async function buildApiServer(): Promise<FastifyInstance> {
       registerValidationRoutes(scope, redis);
       registerWorkflowRoutes(scope, redis);
       registerTestFlowRoutes(scope, redis);
+      registerTelemetryIngestRoutes(scope, redis);
+      await registerTrpc(scope);
     },
     { prefix: "/api/v1" },
   );

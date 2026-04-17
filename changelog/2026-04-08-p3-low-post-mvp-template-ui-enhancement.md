@@ -9,11 +9,11 @@
 
 ## Summary
 
-| Track                                         | Status (2026-04-08)                             | Notes                                                                                                                                                                                                                                                                                                                 |
-| --------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P3-1 Template management UI**               | **Planned / not yet implemented in `apps/web`** | Backend surface exists under Fastify (`/api/v1/report-templates`); operators and analysts today rely on API clients or deployment-time changes for heavy template work. This changelog records the agreed scope, phases, and acceptance criteria so engineering can schedule the ~2-week frontend-led build post-MVP. |
-| **Performance baselines (timeline P3)**       | **Partially covered**                           | `docs/06-reference/performance-baselines.md` and `scripts/performance-baseline.mjs` provide a baseline workflow; ongoing refinement (CI wiring, tenant-scoped runs, dashboard links) remains optional P3 polish.                                                                                                      |
-| **PDF/A compliance evaluation (timeline P3)** | **Not started**                                 | Document-only / spike when archival or regulated delivery is required; no code change in this slice.                                                                                                                                                                                                                  |
+| Track                                         | Status (2026-04-08)                                  | Notes                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P3-1 Template management UI**               | **Planned / not yet implemented in `apps/frontend`** | Backend surface exists under Fastify (`/api/v1/report-templates`); operators and analysts today rely on API clients or deployment-time changes for heavy template work. This changelog records the agreed scope, phases, and acceptance criteria so engineering can schedule the ~2-week frontend-led build post-MVP. |
+| **Performance baselines (timeline P3)**       | **Partially covered**                                | `docs/06-reference/performance-baselines.md` and `scripts/performance-baseline.mjs` provide a baseline workflow; ongoing refinement (CI wiring, tenant-scoped runs, dashboard links) remains optional P3 polish.                                                                                                      |
+| **PDF/A compliance evaluation (timeline P3)** | **Not started**                                      | Document-only / spike when archival or regulated delivery is required; no code change in this slice.                                                                                                                                                                                                                  |
 
 ---
 
@@ -41,9 +41,9 @@ Report template routes are registered in `registerReportTemplateRoutes` and expo
 
 Supporting services include `template-customization-store` and the composite template engine from `@agenticverdict/report-generator` (`templateHtmlOverrideSource`).
 
-### Web (`apps/web`)
+### Web (`apps/frontend`)
 
-No dedicated report-template admin or editor routes were found under `apps/web` at the time of this changelog. The P3-1 deliverable is therefore **net-new UI** consuming the existing authenticated API.
+No dedicated report-template admin or editor routes were found under `apps/frontend` at the time of this changelog. The P3-1 deliverable is therefore **net-new UI** consuming the existing authenticated API.
 
 ### Packages
 
@@ -64,12 +64,12 @@ No dedicated report-template admin or editor routes were found under `apps/web` 
 
 ### Proposed tech stack (remediation-aligned)
 
-| Layer          | Choice                                   | Rationale                                                 |
-| -------------- | ---------------------------------------- | --------------------------------------------------------- |
-| Framework      | Next.js App Router (existing `apps/web`) | Matches monorepo standards; SSR for auth-aware shell.     |
-| Components     | Mantine                                  | Existing design system.                                   |
-| JSON editing   | Monaco Editor                            | Large HTML / JSON payloads, syntax highlighting, search.  |
-| Visual builder | React Flow                               | Recommended in remediation for composable layout editing. |
+| Layer          | Choice                                        | Rationale                                                 |
+| -------------- | --------------------------------------------- | --------------------------------------------------------- |
+| Framework      | Next.js App Router (existing `apps/frontend`) | Matches monorepo standards; SSR for auth-aware shell.     |
+| Components     | Mantine                                       | Existing design system.                                   |
+| JSON editing   | Monaco Editor                                 | Large HTML / JSON payloads, syntax highlighting, search.  |
+| Visual builder | React Flow                                    | Recommended in remediation for composable layout editing. |
 
 ---
 
@@ -126,7 +126,7 @@ No dedicated report-template admin or editor routes were found under `apps/web` 
 - [ ] Preview reflects tenant overrides and optional Phase 2 merged content when requested.
 - [ ] RTL/LTR and locale selection align with `@agenticverdict/i18n` conventions used by the preview API.
 - [ ] No `any` types in new TypeScript; shared types derived from existing Zod/OpenAPI patterns where practical.
-- [ ] E2E smoke: login → open template → save version → preview (Playwright under `apps/web/e2e/`).
+- [ ] E2E smoke: login → open template → save version → preview (Playwright under `apps/frontend/e2e/`).
 
 ---
 

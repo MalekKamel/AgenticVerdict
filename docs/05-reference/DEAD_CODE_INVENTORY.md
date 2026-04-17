@@ -121,7 +121,7 @@ This inventory identifies code that can be safely removed, including:
 - No imports found anywhere in the codebase
 - Contains only a stub constant (`UI_STUB_VERSION`)
 - Not used by web app
-- UI components are implemented directly in `apps/web`
+- UI components are implemented directly in `apps/frontend`
 
 **Confidence Level:** HIGH
 
@@ -133,7 +133,7 @@ This inventory identifies code that can be safely removed, including:
 
 **Current alternative:**
 
-- UI components are in `apps/web/src/components/`
+- UI components are in `apps/frontend/src/components/`
 
 **Dependencies to update:** None (no consumers)
 

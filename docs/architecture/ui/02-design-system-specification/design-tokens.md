@@ -808,7 +808,7 @@ export const examplecorpTokens: TenantUITokens = {
 **Theme Loader Hook:**
 
 ```typescript
-// apps/web/src/hooks/use-tenant-theme.ts
+// apps/frontend/src/hooks/use-tenant-theme.ts
 import { useQuery } from "@tanstack/react-query";
 import { TenantUITokens } from "@agenticverdict/config";
 
@@ -831,7 +831,7 @@ export function useTenantTheme(tenantId: string) {
 **Dynamic Theme Provider:**
 
 ```tsx
-// apps/web/src/providers/dynamic-theme-provider.tsx
+// apps/frontend/src/providers/dynamic-theme-provider.tsx
 import { useEffect } from "react";
 import { MantineProvider, MantineThemeOverride } from "@mantine/core";
 import { useTenantTheme } from "../hooks/use-tenant-theme";
@@ -946,7 +946,7 @@ export function Logo({ variant = "light", height = 32, className }: LogoProps) {
 **Favicon Injection:**
 
 ```tsx
-// apps/web/src/routes/__root.tsx
+// apps/frontend/src/routes/__root.tsx
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useTenantConfig } from "../hooks/use-tenant-config";
 
@@ -1666,6 +1666,7 @@ export function ThemeSwitcher() {
    ```
 
 4. Document in this specification:
+
    ```markdown
    ## 2.1 Color Tokens
 
@@ -1714,7 +1715,7 @@ export function ThemeSwitcher() {
 
 3. Test theme application:
    ```typescript
-   // apps/web/src/routes/_test.tsx
+   // apps/frontend/src/routes/_test.tsx
    export default function TestTheme() {
      return (
        <DynamicThemeProvider tenantId="newclient">

@@ -67,7 +67,7 @@ claude -p "/speckit-specify Write specifications for Foundation based on the com
 **Example Command**:
 
 ```bash
-claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/web, apps/api, apps/worker. Reference the implementation in packages/ for accurate details."
+claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/frontend, apps/api, apps/worker. Reference the implementation in packages/ for accurate details."
 ```
 
 ### Step 3: `/speckit.tasks`
@@ -104,7 +104,7 @@ claude -p "/speckit.tasks Generate the implementation task breakdown for Foundat
 ```bash
 claude -p "/speckit-specify Write specifications for Foundation based on the completed implementation at /specs/00-core/00-foundation. Reference the original requirements and intent from /specs/00-core-initial/00-foundation as a baseline, but document the system AS IMPLEMENTED. Focus on: what functionality was delivered, why specific architectural decisions were made, how the system solves the intended business problems, and any deviations from original specifications with their rationale."
 
-claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo, Zod. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/web, apps/api, apps/worker. Reference packages/core, packages/database, packages/config for accurate details."
+claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo, Zod. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/frontend, apps/api, apps/worker. Reference packages/core, packages/database, packages/config for accurate details."
 
 claude -p "/speckit.tasks Generate the implementation task breakdown for Foundation based on the completed implementation. Tasks should: reflect the actual work completed, be organized by functional area with clear dependencies, include testing and documentation tasks, and provide acceptance criteria. Since implementation is complete, mark tasks accordingly and highlight any remaining work or technical debt."
 ```
@@ -258,7 +258,7 @@ claude -p "/speckit.tasks Generate the implementation task breakdown for Product
 ```bash
 # Phase 00: Foundation
 claude -p "/speckit-specify Write specifications for Foundation based on the completed implementation at /specs/00-core/00-foundation. Reference the original requirements and intent from /specs/00-core-initial/00-foundation as a baseline, but document the system AS IMPLEMENTED. Focus on: what functionality was delivered, why specific architectural decisions were made, how the system solves the intended business problems, and any deviations from original specifications with their rationale."
-claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo, Zod. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/web, apps/api, apps/worker. Reference packages/core, packages/database, packages/config for accurate details."
+claude -p "/speckit-plan Document the technical implementation for Foundation as actually implemented in the codebase. Technology stack: Drizzle ORM, BullMQ, Fastify, tRPC v11, PostgreSQL 16, Turborepo, Zod. Architecture: multi-tenant SaaS with AsyncLocalStorage context propagation, row-level security, monorepo structure with apps/frontend, apps/api, apps/worker. Reference packages/core, packages/database, packages/config for accurate details."
 claude -p "/speckit.tasks Generate the implementation task breakdown for Foundation based on the completed implementation. Tasks should: reflect the actual work completed, be organized by functional area with clear dependencies, include testing and documentation tasks, and provide acceptance criteria. Since implementation is complete, mark tasks accordingly and highlight any remaining work or technical debt."
 
 # Phase 01: Connectors

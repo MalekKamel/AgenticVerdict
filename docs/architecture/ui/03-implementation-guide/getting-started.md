@@ -91,7 +91,7 @@ git checkout feature/phase-00-foundation
 pnpm install
 
 # This installs dependencies for:
-# - apps/web/ (TanStack Start web application)
+# - apps/frontend/ (TanStack Start web application)
 # - apps/api/ (Fastify + tRPC API server)
 # - apps/worker/ (BullMQ background job processor)
 # - packages/ui/ (Shared component library)
@@ -187,7 +187,7 @@ agenticverdict/
 └── package.json              # Root package configuration
 ```
 
-### Web App Structure (`apps/web/src/`)
+### Web App Structure (`apps/frontend/src/`)
 
 **File-based Routing (TanStack Start)**
 
@@ -230,7 +230,7 @@ Let's create a simple component following AgenticVerdict conventions:
 
 ### Step 1: Create a New Component
 
-Create `apps/web/src/components/ui/AppBadge.tsx`:
+Create `apps/frontend/src/components/ui/AppBadge.tsx`:
 
 ````typescript
 "use client";
@@ -267,7 +267,7 @@ export function AppBadge({
 
 ### Step 2: Create a Container Component (Organism Level)
 
-Create `apps/web/src/components/dashboard/ConnectorStatusCard.tsx`:
+Create `apps/frontend/src/components/dashboard/ConnectorStatusCard.tsx`:
 
 ```typescript
 "use client";
@@ -325,7 +325,7 @@ export function ConnectorStatusCard({
 
 ### Step 3: Add Translations
 
-Update `apps/web/messages/en.json`:
+Update `apps/frontend/messages/en.json`:
 
 ```json
 {
@@ -340,7 +340,7 @@ Update `apps/web/messages/en.json`:
 }
 ```
 
-Update `apps/web/messages/ar.json`:
+Update `apps/frontend/messages/ar.json`:
 
 ```json
 {
@@ -357,7 +357,7 @@ Update `apps/web/messages/ar.json`:
 
 ### Step 4: Use the Component
 
-In `apps/web/src/app/[locale]/page.tsx`:
+In `apps/frontend/src/app/[locale]/page.tsx`:
 
 ```typescript
 import { ConnectorStatusCard } from "@/components/dashboard/ConnectorStatusCard";
@@ -383,10 +383,10 @@ AgenticVerdict uses tRPC for type-safe API communication between the TanStack St
 
 ### Setting Up the tRPC Client
 
-The tRPC client is configured in `apps/web/src/lib/trpc.ts`:
+The tRPC client is configured in `apps/frontend/src/lib/trpc.ts`:
 
 ```typescript
-// apps/web/src/lib/trpc.ts
+// apps/frontend/src/lib/trpc.ts
 import { createTRPCReact } from "@trpc/react-query";
 import type { AppRouter } from "@agenticverdict/api";
 
@@ -398,7 +398,7 @@ export const trpc = createTRPCReact<AppRouter>();
 Fetch data from the API with full type safety:
 
 ```typescript
-// apps/web/src/routes/dashboard.tsx
+// apps/frontend/src/routes/dashboard.tsx
 import { createRoute } from '@tanstack/react-router'
 import { trpc } from '@/lib/trpc'
 
@@ -431,7 +431,7 @@ function Dashboard() {
 Perform mutations with automatic cache updates:
 
 ```typescript
-// apps/web/src/routes/connector-settings.tsx
+// apps/frontend/src/routes/connector-settings.tsx
 import { trpc } from '@/lib/trpc'
 
 function ConnectorSettings() {
@@ -571,7 +571,7 @@ pnpm --filter @agenticverdict/web test --watch
 pnpm test:coverage
 ```
 
-**Example Unit Test:** `apps/web/src/components/ui/__tests__/AppButton.test.tsx`
+**Example Unit Test:** `apps/frontend/src/components/ui/__tests__/AppButton.test.tsx`
 
 ```typescript
 import { render, screen } from "@testing-library/react";
@@ -601,7 +601,7 @@ describe("AppButton", () => {
 
 ### E2E Testing with Playwright
 
-**Test Location:** `apps/web/e2e/`
+**Test Location:** `apps/frontend/e2e/`
 
 ```bash
 # Run all E2E tests
@@ -617,7 +617,7 @@ pnpm test:e2e -- --headed
 pnpm test:e2e -- --debug
 ```
 
-**Example E2E Test:** `apps/web/e2e/home-journey.spec.ts`
+**Example E2E Test:** `apps/frontend/e2e/home-journey.spec.ts`
 
 ```typescript
 import { expect, test } from "@playwright/test";
@@ -673,10 +673,10 @@ pnpm test:e2e a11y-home.spec.ts
 
 ```bash
 # Create a new route at /dashboard
-mkdir -p apps/web/src/routes/dashboard
+mkdir -p apps/frontend/src/routes/dashboard
 
 # Create index.tsx
-cat > apps/web/src/routes/dashboard/index.tsx << 'EOF'
+cat > apps/frontend/src/routes/dashboard/index.tsx << 'EOF'
 import { createRoute } from '@tanstack/react-router'
 import { Title } from '@mantine/core'
 import { useTranslations } from 'next-intl'
@@ -704,14 +704,14 @@ EOF
 
 ```bash
 # 1. Update routing configuration
-# Edit apps/web/src/i18n/routing.ts:
+# Edit apps/frontend/src/i18n/routing.ts:
 export const routing = defineRouting({
   locales: ["en", "ar", "fr"],  // Add "fr"
   defaultLocale: "en",
 });
 
 # 2. Create translation file
-cp apps/web/messages/en.json apps/web/messages/fr.json
+cp apps/frontend/messages/en.json apps/frontend/messages/fr.json
 
 # 3. Translate content in fr.json
 ```
@@ -750,7 +750,7 @@ export function StyledComponent() {
 ### State Management with TanStack Store
 
 ```typescript
-// apps/web/src/stores/connector-store.ts
+// apps/frontend/src/stores/connector-store.ts
 import { create } from "TanStack Store";
 
 interface Connector {
@@ -912,7 +912,7 @@ function Layout({ children }) {
 pnpm --filter @agenticverdict/web dev --turbopack
 
 # Clear Next.js cache
-rm -rf apps/web/.next
+rm -rf apps/frontend/.next
 ```
 
 **Slow page loads:**
@@ -948,7 +948,7 @@ pnpm ls --depth=0
 
 ### Development Workflow
 
-1. **Start with existing components** - Check `apps/web/src/components/ui/` before creating new ones
+1. **Start with existing components** - Check `apps/frontend/src/components/ui/` before creating new ones
 2. **Follow atomic design** - Organize components by complexity (atoms → molecules → organisms)
 3. **Test RTL layouts** - Always test with both English and Arabic
 4. **Write tests first** - Follow TDD for critical components

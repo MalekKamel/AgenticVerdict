@@ -15,11 +15,11 @@
 
 ## Path Conventions
 
-- **Web app**: `apps/web/src/` for frontend components, `packages/api/src/` for backend procedures
-- Frontend routes: `apps/web/src/routes/agency/`
-- Frontend components: `apps/web/src/components/agency/`
+- **Web app**: `apps/frontend/src/` for frontend components, `packages/api/src/` for backend procedures
+- Frontend routes: `apps/frontend/src/routes/agency/`
+- Frontend components: `apps/frontend/src/components/agency/`
 - Backend router: `packages/api/src/router/agency.ts`
-- Tests: `apps/web/src/tests/` for E2E, `apps/web/src/__tests__/` for unit
+- Tests: `apps/frontend/src/tests/` for E2E, `apps/frontend/src/__tests__/` for unit
 
 ---
 
@@ -27,10 +27,10 @@
 
 **Purpose**: Agency-specific project initialization and structure
 
-- [ ] T001 Create agency route structure in apps/web/src/routes/agency/
-- [ ] T002 Create agency components directory in apps/web/src/components/agency/
+- [ ] T001 Create agency route structure in apps/frontend/src/routes/agency/
+- [ ] T002 Create agency components directory in apps/frontend/src/components/agency/
 - [ ] T003 [P] Create agency tRPC router in packages/api/src/router/agency.ts
-- [ ] T004 [P] Create TanStack Store for agency dashboard state in apps/web/src/stores/agency-store.ts
+- [ ] T004 [P] Create TanStack Store for agency dashboard state in apps/frontend/src/stores/agency-store.ts
 
 ---
 
@@ -43,7 +43,7 @@
 - [ ] T005 Define agency data model schemas in packages/database/src/schema/agency_partners.ts
 - [ ] T006 [P] Define branding configuration schema in packages/database/src/schema/branding.ts
 - [ ] T007 [P] Implement AsyncLocalStorage context propagation for agency tenant queries
-- [ ] T008 [P] Create base agency hooks in apps/web/src/hooks/ (useAgencyMetrics.ts, useClientPerformance.ts)
+- [ ] T008 [P] Create base agency hooks in apps/frontend/src/hooks/ (useAgencyMetrics.ts, useClientPerformance.ts)
 - [ ] T009 Install @tanstack/react-virtual dependency for virtual scrolling
 - [ ] T010 Set up agency-specific error handling and logging
 
@@ -61,19 +61,19 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T011 [P] [US1] E2E test for agency dashboard load in apps/web/src/tests/agency/agency-dashboard.spec.ts
-- [ ] T012 [P] [US1] Unit test for ClientCard component in apps/web/src/__tests__/components/agency/ClientCard.test.tsx
+- [ ] T011 [P] [US1] E2E test for agency dashboard load in apps/frontend/src/tests/agency/agency-dashboard.spec.ts
+- [ ] T012 [P] [US1] Unit test for ClientCard component in apps/frontend/src/__tests__/components/agency/ClientCard.test.tsx
 
 ### Implementation for User Story 1
 
 - [ ] T013 [P] [US1] Implement tRPC procedure getAggregatedMetrics in packages/api/src/router/agency.ts
 - [ ] T014 [P] [US1] Implement tRPC procedure getClientList in packages/api/src/router/agency.ts
-- [ ] T015 [P] [US1] Create AggregatedMetrics component in apps/web/src/components/agency/AggregatedMetrics.tsx
-- [ ] T016 [P] [US1] Create ClientCard component in apps/web/src/components/agency/ClientCard.tsx
-- [ ] T017 [US1] Create ClientCardGrid component with virtual scrolling in apps/web/src/components/agency/ClientCardGrid.tsx (depends on T016)
-- [ ] T018 [US1] Create ClientFilters component in apps/web/src/components/agency/ClientFilters.tsx
-- [ ] T019 [US1] Create AgencyDashboard route in apps/web/src/routes/agency/index.tsx (depends on T015, T017, T018)
-- [ ] T020 [US1] Implement useAgencyMetrics hook in apps/web/src/hooks/useAgencyMetrics.ts
+- [ ] T015 [P] [US1] Create AggregatedMetrics component in apps/frontend/src/components/agency/AggregatedMetrics.tsx
+- [ ] T016 [P] [US1] Create ClientCard component in apps/frontend/src/components/agency/ClientCard.tsx
+- [ ] T017 [US1] Create ClientCardGrid component with virtual scrolling in apps/frontend/src/components/agency/ClientCardGrid.tsx (depends on T016)
+- [ ] T018 [US1] Create ClientFilters component in apps/frontend/src/components/agency/ClientFilters.tsx
+- [ ] T019 [US1] Create AgencyDashboard route in apps/frontend/src/routes/agency/index.tsx (depends on T015, T017, T018)
+- [ ] T020 [US1] Implement useAgencyMetrics hook in apps/frontend/src/hooks/useAgencyMetrics.ts
 - [ ] T021 [US1] Implement hover preview functionality on ClientCard component
 - [ ] T022 [US1] Add warning indicators for degraded performance clients in ClientCard
 - [ ] T023 [US1] Add responsive grid layout for ClientCardGrid (mobile/tablet/desktop)
@@ -92,17 +92,17 @@
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T026 [P] [US2] E2E test for client detail navigation in apps/web/src/tests/agency/client-detail.spec.ts
-- [ ] T027 [P] [US2] Unit test for ClientPerformanceView component in apps/web/src/__tests__/components/agency/ClientPerformanceView.test.tsx
+- [ ] T026 [P] [US2] E2E test for client detail navigation in apps/frontend/src/tests/agency/client-detail.spec.ts
+- [ ] T027 [P] [US2] Unit test for ClientPerformanceView component in apps/frontend/src/__tests__/components/agency/ClientPerformanceView.test.tsx
 
 ### Implementation for User Story 2
 
 - [ ] T028 [P] [US2] Implement tRPC procedure getClientPerformance in packages/api/src/router/agency.ts
-- [ ] T029 [P] [US2] Implement useClientPerformance hook in apps/web/src/hooks/useClientPerformance.ts
-- [ ] T030 [US2] Create ClientPerformanceView component in apps/web/src/components/agency/ClientPerformanceView.tsx (depends on T029)
+- [ ] T029 [P] [US2] Implement useClientPerformance hook in apps/frontend/src/hooks/useClientPerformance.ts
+- [ ] T030 [US2] Create ClientPerformanceView component in apps/frontend/src/components/agency/ClientPerformanceView.tsx (depends on T029)
 - [ ] T031 [US2] Create domain-specific metric display components (MarketingMetrics, FinanceMetrics, etc.)
-- [ ] T032 [US2] Create ConnectorHealthSection component in apps/web/src/components/agency/ConnectorHealthSection.tsx
-- [ ] T033 [US2] Create client detail route in apps/web/src/routes/agency/clients.$clientId.tsx (depends on T030)
+- [ ] T032 [US2] Create ConnectorHealthSection component in apps/frontend/src/components/agency/ConnectorHealthSection.tsx
+- [ ] T033 [US2] Create client detail route in apps/frontend/src/routes/agency/clients.$clientId.tsx (depends on T030)
 - [ ] T034 [US2] Implement navigation with scroll position preservation between dashboard and detail views
 - [ ] T035 [US2] Add "Back to Agency Dashboard" navigation button
 - [ ] T036 [US2] Add accessibility attributes to ClientPerformanceView components
@@ -120,18 +120,18 @@
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T038 [P] [US3] E2E test for client comparison in apps/web/src/tests/agency/client-comparison.spec.ts
-- [ ] T039 [P] [US3] Unit test for ClientComparisonView component in apps/web/src/__tests__/components/agency/ClientComparisonView.test.tsx
+- [ ] T038 [P] [US3] E2E test for client comparison in apps/frontend/src/tests/agency/client-comparison.spec.ts
+- [ ] T039 [P] [US3] Unit test for ClientComparisonView component in apps/frontend/src/__tests__/components/agency/ClientComparisonView.test.tsx
 
 ### Implementation for User Story 3
 
 - [ ] T040 [P] [US3] Implement tRPC procedure compareClients in packages/api/src/router/agency.ts
-- [ ] T041 [P] [US3] Implement useClientComparison hook in apps/web/src/hooks/useClientComparison.ts
-- [ ] T042 [US3] Create ClientComparisonView component in apps/web/src/components/agency/ClientComparisonView.tsx (depends on T041)
+- [ ] T041 [P] [US3] Implement useClientComparison hook in apps/frontend/src/hooks/useClientComparison.ts
+- [ ] T042 [US3] Create ClientComparisonView component in apps/frontend/src/components/agency/ClientComparisonView.tsx (depends on T041)
 - [ ] T043 [US3] Create ComparisonColumn component for individual client metrics
 - [ ] T044 [US3] Create MetricComparison component with ranking indicators
 - [ ] T045 [US3] Create client selection UI with checkboxes (2-4 client limit)
-- [ ] T046 [US3] Create comparison route in apps/web/src/routes/agency/compare.tsx (depends on T042)
+- [ ] T046 [US3] Create comparison route in apps/frontend/src/routes/agency/compare.tsx (depends on T042)
 - [ ] T047 [US3] Implement tooltip component for metric definitions
 - [ ] T048 [US3] Add visual indicators for best-performing clients (badges, colors)
 - [ ] T049 [US3] Add accessibility attributes to ClientComparisonView components
@@ -149,19 +149,19 @@
 
 ### Tests for User Story 4 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T051 [P] [US4] E2E test for branding customization in apps/web/src/tests/agency/branding.spec.ts
-- [ ] T052 [P] [US4] Unit test for BrandingSettings component in apps/web/src/__tests__/components/agency/BrandingSettings.test.tsx
+- [ ] T051 [P] [US4] E2E test for branding customization in apps/frontend/src/tests/agency/branding.spec.ts
+- [ ] T052 [P] [US4] Unit test for BrandingSettings component in apps/frontend/src/__tests__/components/agency/BrandingSettings.test.tsx
 
 ### Implementation for User Story 4
 
 - [ ] T053 [P] [US4] Implement tRPC mutation updateBranding in packages/api/src/router/agency.ts
-- [ ] T054 [P] [US4] Implement useBrandingConfig hook in apps/web/src/hooks/useBrandingConfig.ts
-- [ ] T055 [US4] Create BrandingSettings form component in apps/web/src/components/agency/BrandingSettings.tsx
-- [ ] T056 [US4] Create BrandingPreview component in apps/web/src/components/agency/BrandingPreview.tsx
+- [ ] T054 [P] [US4] Implement useBrandingConfig hook in apps/frontend/src/hooks/useBrandingConfig.ts
+- [ ] T055 [US4] Create BrandingSettings form component in apps/frontend/src/components/agency/BrandingSettings.tsx
+- [ ] T056 [US4] Create BrandingPreview component in apps/frontend/src/components/agency/BrandingPreview.tsx
 - [ ] T057 [US4] Implement logo upload with validation (size limits, format checking)
 - [ ] T058 [US4] Implement color picker for brand colors (primary, secondary, accent)
 - [ ] T059 [US4] Implement live preview updates using CSS custom properties
-- [ ] T060 [US4] Create branding settings route in apps/web/src/routes/agency/settings.branding.tsx
+- [ ] T060 [US4] Create branding settings route in apps/frontend/src/routes/agency/settings.branding.tsx
 - [ ] T061 [US4] Apply agency branding to dashboard header and reports
 - [ ] T062 [US4] Add branding scope option (dashboard/reports/both)
 - [ ] T063 [US4] Add accessibility attributes to BrandingSettings components

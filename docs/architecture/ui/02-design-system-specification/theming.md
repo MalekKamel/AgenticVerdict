@@ -271,7 +271,7 @@ export const darkTheme = {
 The system automatically detects user's OS-level color scheme preference:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 import { useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -300,7 +300,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 Manual toggle with smooth transitions:
 
 ```typescript
-// apps/web/src/components/layout/ColorSchemeToggle.tsx
+// apps/frontend/src/components/layout/ColorSchemeToggle.tsx
 import { ActionIcon, useMantineColorScheme } from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
 
@@ -611,7 +611,7 @@ export function AppFooter() {
 Mantine's `DirectionProvider` automatically handles text direction changes:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 import { DirectionProvider } from '@mantine/core';
 import { useLocale } from 'next-intl';
 
@@ -808,7 +808,7 @@ Mantine provides multiple ways to override the theme:
 **1. Global Theme Override (Provider Level):**
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 import { createTheme, MantineProvider } from '@mantine/core';
 
 const customTheme = createTheme({
@@ -1046,7 +1046,7 @@ export function generateDarkTheme(baseTheme: MantineTheme): MantineTheme {
 Complete provider setup with all theme options:
 
 ```typescript
-// apps/web/src/components/Providers.tsx
+// apps/frontend/src/components/Providers.tsx
 // Note: "use client" directive is optional in TanStack Start (client-side by default)
 
 import {
@@ -1190,7 +1190,7 @@ export function Providers({ children }: { children: ReactNode }) {
 Complete RTL/LTR setup with locale detection:
 
 ```typescript
-// apps/web/src/i18n/config.ts
+// apps/frontend/src/i18n/config.ts
 export const locales = ['en', 'ar'] as const;
 export type Locale = (typeof locales)[number];
 
@@ -1208,7 +1208,7 @@ export function getDirection(locale: Locale): 'ltr' | 'rtl' {
   return isRTLLocale(locale) ? 'rtl' : 'ltr';
 }
 
-// apps/web/src/components/Providers.tsx (enhanced)
+// apps/frontend/src/components/Providers.tsx (enhanced)
 export function Providers({ children }: { children: ReactNode }) {
   const locale = useLocale();
   const dir = getDirection(locale as Locale);
@@ -1230,7 +1230,7 @@ export function Providers({ children }: { children: ReactNode }) {
 Mantine generates CSS variables automatically, but you can add custom ones:
 
 ```css
-/* apps/web/src/styles/theme.css */
+/* apps/frontend/src/styles/theme.css */
 :root {
   /* Custom brand colors */
   --brand-primary: #3182ce;
@@ -1300,7 +1300,7 @@ function CustomBox() {
 Complete theme switching with persistence:
 
 ```typescript
-// apps/web/src/hooks/use-theme.ts
+// apps/frontend/src/hooks/use-theme.ts
 import { useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
@@ -1360,7 +1360,7 @@ export function ThemeSwitcher() {
 **Theme Switching with Animation:**
 
 ```typescript
-// apps/web/src/components/layout/ThemeSwitcher.tsx
+// apps/frontend/src/components/layout/ThemeSwitcher.tsx
 import {
   ActionIcon,
   useMantineColorScheme,
@@ -1561,7 +1561,7 @@ export function ArabicText({ children, ...props }: TextProps) {
 ### 7.4 Dynamic Theme Switching
 
 ```typescript
-// apps/web/src/components/DynamicThemeProvider.tsx
+// apps/frontend/src/components/DynamicThemeProvider.tsx
 // Note: "use client" directive is optional in TanStack Start (client-side by default)
 
 import {

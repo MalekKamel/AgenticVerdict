@@ -1350,7 +1350,7 @@ test.describe("Button visual tests", () => {
 Implement dynamic theme loading and application:
 
 ```typescript
-// apps/web/src/providers/AppProviders.tsx
+// apps/frontend/src/providers/AppProviders.tsx
 
 import { trpc } from '@agenticverdict/web/trpc';
 import { ThemeProvider, DirectionProvider } from '@agenticverdict/ui';
@@ -1378,7 +1378,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   );
 }
 
-// apps/web/src/routes/__root.tsx
+// apps/frontend/src/routes/__root.tsx
 
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { AppProviders } from '../providers/AppProviders';
@@ -1395,7 +1395,7 @@ export const Route = createRootRoute({
 **Theme Switching**:
 
 ```typescript
-// apps/web/src/components/admin/ThemeSwitcher.tsx
+// apps/frontend/src/components/admin/ThemeSwitcher.tsx
 
 import { trpc } from '@agenticverdict/web/trpc';
 import { useTheme } from '@agenticverdict/ui';

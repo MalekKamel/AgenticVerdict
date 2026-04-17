@@ -2,7 +2,7 @@
 
 ## Context
 
-- All design components for the web application (`/apps/web`) must use `.pen` files as the single source of truth for the design system.
+- All design components for the web application (`/apps/frontend`) must use `.pen` files as the single source of truth for the design system.
 - The current UI foundation has been implemented according to the specifications at `/specs/01-ui/01-authentication`.
 
 ## Objective

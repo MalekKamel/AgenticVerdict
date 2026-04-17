@@ -187,7 +187,7 @@ export * from "./build-constants";
 - `tsconfig.json` (root)
 - `apps/api/tsconfig.json`
 - `apps/worker/tsconfig.json`
-- `apps/web/tsconfig.json`
+- `apps/frontend/tsconfig.json`
 
 **Implementation:**
 
@@ -205,7 +205,7 @@ export * from "./build-constants";
     { "path": "./packages/types" },
     { "path": "./apps/api" },
     { "path": "./apps/worker" },
-    { "path": "./apps/web" }
+    { "path": "./apps/frontend" }
   ]
 }
 ```

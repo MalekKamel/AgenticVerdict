@@ -67,7 +67,7 @@ specs/01-ui/01-authentication/
 ### Source Code (monorepo)
 
 ```text
-apps/web/
+apps/frontend/
 ├── routes/
 │   ├── __root.tsx              # Root layout with providers
 │   ├── index.tsx               # Landing page (redirects if authenticated)
@@ -139,7 +139,7 @@ tests/
         └── useRequireAuth.test.ts
 ```
 
-**Structure Decision**: Monorepo with `apps/web` for TanStack Start frontend, `packages/api` for tRPC procedures. Auth components organized by feature under `components/auth/`, shared UI components from Phase 00-foundation in `components/ui/`. State management via TanStack Store in `stores/auth-store.ts`. tRPC mutations wrapped in custom hooks under `hooks/` for reusability and testing.
+**Structure Decision**: Monorepo with `apps/frontend` for TanStack Start frontend, `packages/api` for tRPC procedures. Auth components organized by feature under `components/auth/`, shared UI components from Phase 00-foundation in `components/ui/`. State management via TanStack Store in `stores/auth-store.ts`. tRPC mutations wrapped in custom hooks under `hooks/` for reusability and testing.
 
 ---
 
@@ -1015,7 +1015,7 @@ console.log('Login attempt:', { email, password }) // BAD
 
 ## Migration Path from Prototype
 
-The existing Next.js prototype (`apps/web/`) is disposable. Migration steps:
+The existing Next.js prototype (`apps/frontend/`) is disposable. Migration steps:
 
 1. **Preserve**: Business logic, multi-tenancy patterns, backend architecture (unchanged)
 2. **Replace**: Next.js App Router → TanStack Start file-based routing

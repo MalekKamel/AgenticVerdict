@@ -346,7 +346,7 @@ export const insightsTable = pgTable("insights", {
 
 - ✅ `package.json` (root)
 - ✅ `apps/worker/package.json`
-- ✅ `apps/web/package.json`
+- ✅ `apps/frontend/package.json`
 - ✅ `apps/api/package.json`
 - ✅ `packages/agent-runtime/package.json`
 - ✅ `packages/mock-platform-server/package.json`

@@ -26,7 +26,7 @@ This specification outlines the comprehensive migration of the AgenticVerdict we
 
 ### 1.1 Current State Assessment
 
-The current web implementation (`apps/web/`) is a **demonstration prototype only** and does not reflect production architecture. It was built with Next.js 15 to expedite initial development but requires complete reconstruction using appropriate tooling.
+The current web implementation (`apps/frontend/`) is a **demonstration prototype only** and does not reflect production architecture. It was built with Next.js 15 to expedite initial development but requires complete reconstruction using appropriate tooling.
 
 **Key Points:**
 

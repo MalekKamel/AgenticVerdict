@@ -66,7 +66,7 @@ specs/01-ui/08-settings/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── settings_.tsx                    # Settings layout with tabs
 │   ├── settings.profile.tsx             # User profile settings

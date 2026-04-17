@@ -26,7 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Runtime**: Node.js 20 LTS, TypeScript 5.3+
 - **Bundling**: **Vite** — `apps/web` dev server and production builds; **`apps/api`** and **`apps/worker`** use **Vite library mode** (`pnpm build:vite` in each app) via shared `tools/build/vite-node-cli.config.mjs`, outputting `dist/cli.mjs`. CI and local hardening run `NODE_ENV=production pnpm run verify:production-bundle` (includes mock-adapter dead-code scan).
-- **Frontend**: TanStack Start with Mantine UI v9 components
+- **Frontend**: TanStack Start with Mantine UI v9 components — see `/docs/05-reference/frontend-development-guidelines.md`
 - **API**: tRPC v11 unified API layer with Fastify server runtime (serves web, mobile, and CLI clients)
 
 ### Data Layer
@@ -414,6 +414,7 @@ Reports are generated from templates stored in the database:
 - **Changelog (Phase 02/03 consolidation, 2026-04-08)**: `/changelog/2026-04-08-phase-02-03-systematic-implementation-consolidation.md`
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
 - **Technology Research**: `/docs/03-technology-research/research-overview.md`
+- **Frontend development guidelines**: `/docs/05-reference/frontend-development-guidelines.md`
 
 ## Active Technologies
 

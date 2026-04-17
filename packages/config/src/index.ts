@@ -36,6 +36,12 @@ export { watchCompanyConfigDirectory } from "./hot-reload";
 export { assertValidCompanyConfig, parseCompanyConfigPayload } from "./middleware";
 export { aiConfigSchema, type AiConfig } from "./schemas/ai";
 export { companyConfigSchema, type CompanyConfig } from "./schemas/company";
+export {
+  companyBrandTokensSchema,
+  companyUiSchema,
+  type CompanyBrandTokens,
+  type CompanyUi,
+} from "./schemas/company-ui";
 export { featureFlagsConfigSchema, type FeatureFlagsConfig } from "./schemas/feature-flags";
 export { localizationConfigSchema, type LocalizationConfig } from "./schemas/localization";
 export {

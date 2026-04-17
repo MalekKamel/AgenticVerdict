@@ -78,10 +78,10 @@ export COMPOSE_FULL_OBS="$COMPOSE_APPS -f docker-compose.observability.yml"
 
 Run when Dockerfiles, `package.json`, lockfile, or `scripts/dockerPrebuild.mjs` change.
 
-| Step | Action                                                                          | Pass criteria                                                                                                                        |
-| ---- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| B.1  | `docker compose $COMPOSE_APPS build --no-cache` (or `up -d --build` in Phase C) | All images build; Node 20 / `dockerPrebuild` gate passes                                                                             |
-| B.2  | Optional standalone builds                                                      | Per [getting-started](./getting-started.md): `docker build -f apps/web/Dockerfile -t agenticverdict/web:local .` (repeat api/worker) |
+| Step | Action                                                                          | Pass criteria                                                                                                                             |
+| ---- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| B.1  | `docker compose $COMPOSE_APPS build --no-cache` (or `up -d --build` in Phase C) | All images build; Node 20 / `dockerPrebuild` gate passes                                                                                  |
+| B.2  | Optional standalone builds                                                      | Per [getting-started](./getting-started.md): `docker build -f apps/frontend/Dockerfile -t agenticverdict/web:local .` (repeat api/worker) |
 
 **Notes:** Web image uses Next standalone + distroless runner; API/worker use `tsx` at runtime. Worker expects `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1` in Compose unless the image is extended for Chromium/PDF.
 

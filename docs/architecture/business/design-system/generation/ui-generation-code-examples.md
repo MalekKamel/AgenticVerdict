@@ -110,7 +110,7 @@ Using `mcp__pencil__get_variables()`:
 
 ### 1.3 TypeScript Component Implementation
 
-**File**: `apps/web/ui/components/badge.tsx`
+**File**: `apps/frontend/ui/components/badge.tsx`
 
 ```tsx
 import { forwardRef } from "react";
@@ -312,7 +312,7 @@ Badge.displayName = "Badge";
 
 ### 1.4 CSS Custom Properties Integration
 
-**File**: `apps/web/styles/theme.css`
+**File**: `apps/frontend/styles/theme.css`
 
 ```css
 :root {
@@ -414,7 +414,7 @@ Badge.displayName = "Badge";
 
 ### 2.2 Translating Auto-Layout to CSS
 
-**File**: `apps/web/ui/components/card.tsx`
+**File**: `apps/frontend/ui/components/card.tsx`
 
 ```tsx
 import { forwardRef } from "react";
@@ -575,7 +575,7 @@ Card.displayName = "Card";
 
 ### 2.3 Responsive Breakpoint Implementation
 
-**File**: `apps/web/ui/hooks/use-breakpoint.ts`
+**File**: `apps/frontend/ui/hooks/use-breakpoint.ts`
 
 ```tsx
 import { useEffect, useState } from "react";
@@ -705,7 +705,7 @@ const variables = await mcp__pencil__get_variables({
 
 ### 3.2 Three-Tier Token System TypeScript Types
 
-**File**: `apps/web/ui/types/theme.ts`
+**File**: `apps/frontend/ui/types/theme.ts`
 
 ```typescript
 /**
@@ -955,7 +955,7 @@ export const masafhTheme: Theme = {
 
 ### 3.3 Theme Provider Implementation
 
-**File**: `apps/web/ui/providers/theme-provider.tsx`
+**File**: `apps/frontend/ui/providers/theme-provider.tsx`
 
 ```tsx
 import { createContext, useContext, useEffect, useState } from "react";
@@ -1099,7 +1099,7 @@ export function ThemedComponent() {
 
 ### 4.1 Direction Provider Implementation
 
-**File**: `apps/web/ui/providers/direction-provider.tsx`
+**File**: `apps/frontend/ui/providers/direction-provider.tsx`
 
 ```tsx
 import { createContext, useContext, useEffect, useState } from "react";
@@ -1178,7 +1178,7 @@ export function useDirection() {
 
 ### 4.3 Icon Mirroring for Directional Icons
 
-**File**: `apps/web/ui/components/icon.tsx`
+**File**: `apps/frontend/ui/components/icon.tsx`
 
 ```tsx
 import { forwardRef } from "react";
@@ -1251,7 +1251,7 @@ export function IconExamples() {
 
 ### 4.4 Complete RTL-Safe Component Example
 
-**File**: `apps/web/ui/components/button.tsx`
+**File**: `apps/frontend/ui/components/button.tsx`
 
 ```tsx
 import { forwardRef } from "react";

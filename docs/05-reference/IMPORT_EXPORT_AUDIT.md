@@ -41,8 +41,8 @@ packages/mock-platform-server/src/mock-headers.ts
 packages/testing/src/fixtures/connectors.ts
 apps/worker/src/connector-factory.ts
 apps/worker/src/queues/report-queues.ts
-apps/web/src/lib/adapter-infrastructure.ts
-apps/web/src/app/api/health/adapters/route.ts
+apps/frontend/src/lib/adapter-infrastructure.ts
+apps/frontend/src/app/api/health/adapters/route.ts
 tests/phase01-platform-integration/ (7 test files)
 tests/factories/mock-adapter-from-platform-factory.ts
 ```

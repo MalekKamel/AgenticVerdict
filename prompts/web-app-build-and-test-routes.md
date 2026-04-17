@@ -2,7 +2,7 @@
 
 ## Context
 
-Authentication features in `/apps/web/src/routes/$locale/auth` have been implemented and require manual browser testing. The application is built with TanStack Start (Vite) and uses dynamic locale routing.
+Authentication features in `/apps/frontend/src/routes/$locale/auth` have been implemented and require manual browser testing. The application is built with TanStack Start (Vite) and uses dynamic locale routing.
 
 ## Objective
 
@@ -12,7 +12,7 @@ Build the web application, analyze its route structure, and provide a comprehens
 
 ### 1. Analyze Route Structure
 
-- Examine the route definitions in `/apps/web/src/routes/` to identify all accessible paths.
+- Examine the route definitions in `/apps/frontend/src/routes/` to identify all accessible paths.
 - Document the route hierarchy, including dynamic segments (`$locale`) and nested routes.
 - Note any route‑specific requirements (authentication, parameters, query strings).
 
@@ -38,7 +38,7 @@ Build the web application, analyze its route structure, and provide a comprehens
 ## Workflow Summary
 
 1. **Route Analysis**
-   - Use `Glob` and `Read` tools to inspect `/apps/web/src/routes/` and its subdirectories.
+   - Use `Glob` and `Read` tools to inspect `/apps/frontend/src/routes/` and its subdirectories.
    - Map the route tree, noting file‑based routing conventions (TanStack Router).
 
 2. **Build Execution**
@@ -80,6 +80,6 @@ Build the web application, analyze its route structure, and provide a comprehens
 
 - `/docs/architecture/business/technical-architecture.md` – System architecture and component overview.
 - `/docs/02-planning-and-methodology/testing-strategy.md` – Project testing standards and coverage targets.
-- `/apps/web/package.json` – Web application scripts and dependencies.
+- `/apps/frontend/package.json` – Web application scripts and dependencies.
 - `/specs/00-core/01-connectors/` – Relevant specifications for authentication and routing.
 - `/changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md` – Context on local development with mock adapters.

@@ -25,7 +25,7 @@ Implement the primary value feature of the AgenticVerdict platform: the Insight 
 **Storage**: N/A (frontend UI; insight data from backend tRPC API)
 **Testing**: Vitest (unit tests), Playwright (E2E tests for critical user journeys), @axe-core/react (accessibility)
 **Target Platform**: Modern evergreen browsers (Chrome, Firefox, Safari, Edge) with CSS custom properties support
-**Project Type**: Web application (monorepo package: apps/web with routes in src/routes/)
+**Project Type**: Web application (monorepo package: apps/frontend with routes in src/routes/)
 **Performance Goals**:
 - Insight list load time: <2s (3G connection)
 - Wizard step transition: <500ms
@@ -122,7 +122,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### Development Standards Compliance
 
 **Code Organization**:
-- Feature-based routing: `apps/web/src/routes/insights/`
+- Feature-based routing: `apps/frontend/src/routes/insights/`
 - Component organization: atoms (DataTable, ChartCard), molecules (FilterBar, MetricSelector), organisms (InsightWizard, InsightFeed)
 - Reusable components extracted to `packages/ui/` where appropriate
 
@@ -164,7 +164,7 @@ specs/01-ui/04-insights/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── routes/
 │   │   ├── insights/
@@ -220,7 +220,7 @@ packages/ui/src/                               # Shared UI components
     └── Chart/                                # Reusable chart wrapper
 ```
 
-**Structure Decision**: Feature-based routing in `apps/web/src/routes/insights/` with co-located components for tight coupling. Shared components extracted to `packages/ui/` when reused across features. TanStack Store for wizard state management. tRPC router in `packages/api/` following monorepo conventions. This structure balances discoverability with code organization and aligns with TanStack Start best practices.
+**Structure Decision**: Feature-based routing in `apps/frontend/src/routes/insights/` with co-located components for tight coupling. Shared components extracted to `packages/ui/` when reused across features. TanStack Store for wizard state management. tRPC router in `packages/api/` following monorepo conventions. This structure balances discoverability with code organization and aligns with TanStack Start best practices.
 
 ## Complexity Tracking
 
@@ -296,7 +296,7 @@ packages/ui/src/                               # Shared UI components
 ### Multi-Step Wizard with TanStack Store
 
 ```typescript
-// apps/web/src/stores/insight-wizard-store.ts
+// apps/frontend/src/stores/insight-wizard-store.ts
 import { createStore } from '@tanstack/react-store'
 
 interface InsightWizardState {
@@ -327,7 +327,7 @@ export const insightWizardStore = createStore<InsightWizardState>({
 ### Recharts Data Visualization
 
 ```typescript
-// apps/web/src/routes/insights/components/MetricChart.tsx
+// apps/frontend/src/routes/insights/components/MetricChart.tsx
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 interface MetricChartProps {
@@ -408,7 +408,7 @@ export const insightsRouter = t.router({
 ### Mantine v9 Stepper for Wizard
 
 ```typescript
-// apps/web/src/routes/insights/components/InsightWizard.tsx
+// apps/frontend/src/routes/insights/components/InsightWizard.tsx
 import { Stepper, Button, Group } from '@mantine/core'
 
 const steps = [

@@ -47,7 +47,7 @@ Executed **Part 2: Interface Renaming** from `docs/architecture/connector-refact
 - **Marketing / company config** (`platformConfigSchema`, channel object field **`platform`**) — still “which channel” in `CompanyConfig`, not the adapter interface.
 - **Agent DB tools** — Zod fields remain **`platform`** (optional filter) with **`connectorTypeSchema`** validation; store rows still use **`MarketingMetricsRow.platform`** (DB column semantics).
 - **Prometheus label names** in `@agenticverdict/observability` — still **`platform`** on metrics counters/histograms (deployment compatibility).
-- **HTTP route** `apps/web/src/app/api/health/platforms/[platform]/` — URL segment unchanged; handler resolves **`ConnectorType`** against **`report.connectors`**.
+- **HTTP route** `apps/frontend/src/app/api/health/platforms/[platform]/` — URL segment unchanged; handler resolves **`ConnectorType`** against **`report.connectors`**.
 
 ## Documentation
 

@@ -53,7 +53,7 @@
 #### Deployment & Operations
 - **Containerization**: Docker multi-stage builds
 - **Orchestration**: Docker Compose for local development
-- **Build Tooling**: Vite (aligned with `apps/web`) for API/worker production bundles (`build:vite`) and the web app; Turborepo orchestrates tasks
+- **Build Tooling**: Vite (aligned with `apps/frontend`) for API/worker production bundles (`build:vite`) and the web app; Turborepo orchestrates tasks
 - **Process Management**: Node.js native clustering support
 
 ### Architecture Patterns

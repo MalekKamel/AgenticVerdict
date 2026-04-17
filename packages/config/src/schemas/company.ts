@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { aiConfigSchema } from "./ai";
+import { companyUiSchema } from "./company-ui";
 import { featureFlagsConfigSchema } from "./feature-flags";
 import { localizationConfigSchema } from "./localization";
 import { b2bKpiProfileSchema } from "./marketing-b2b";
@@ -17,6 +18,7 @@ export const companyConfigSchema = z.object({
   }),
   ai: aiConfigSchema,
   features: featureFlagsConfigSchema,
+  ui: companyUiSchema.optional(),
   business: z
     .object({
       products: z.array(z.string()),

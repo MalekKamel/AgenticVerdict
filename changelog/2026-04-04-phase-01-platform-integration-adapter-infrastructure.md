@@ -34,7 +34,7 @@ This entry summarizes changes that implement shared adapter resilience, caching,
 - **Tests** — Coverage across circuit breaker recovery, backoff/jitter, cache hit rate, DLQ, token bucket, priority queue, registry, Upstash cache (mocked Redis), adapter cache integration, edge cases (corrupt cache JSON, DLQ vs circuit-open), infrastructure health, Redis env, and adapter infrastructure bundle.
 - **`vitest.config.ts`** — Package-local **`coverage`** include/exclude and **thresholds** (see Summary).
 
-### `apps/web`
+### `apps/frontend`
 
 - **`src/lib/adapter-infrastructure.ts`** — Process-local singleton **`getSharedAdapterInfrastructure()`** backed by **`createDefaultAdapterInfrastructure()`**.
 - **`src/app/api/health/adapters/route.ts`** — **`GET`** returns aggregated infrastructure health (**503** when `status !== "ok"`).
@@ -57,7 +57,7 @@ This entry summarizes changes that implement shared adapter resilience, caching,
 - **`mock-adapter.ts`** — Implements **`doAuthenticate`** instead of overriding **`authenticate`** directly.
 - **`index.ts`** — Re-exports new public surface (cache, resilience, health, infrastructure factory).
 
-### `apps/web`
+### `apps/frontend`
 
 - **`src/app/api/health/route.ts`** — **`async GET`**; JSON includes **`infrastructure`** from **`getSharedAdapterInfrastructure().getHealth()`**; HTTP **200** with **`status: "ok" | "degraded"`** in the body (degraded does not fail the route, to match “endpoint operational” probes).
 

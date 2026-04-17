@@ -232,7 +232,7 @@ function createMantineTheme(direction: "ltr" | "rtl") {
       ] as const,
     },
     primaryColor: "blue",
-    /** Match apps/web WCAG AA contrast for filled primary actions */
+    /** Match apps/frontend WCAG AA contrast for filled primary actions */
     primaryShade: { light: 8, dark: 7 } as const,
     dir: direction,
     cursorType: "pointer" as const,

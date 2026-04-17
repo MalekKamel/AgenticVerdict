@@ -49,7 +49,7 @@ specs/01-ui/11-administration/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── admin._index.tsx                    # Admin dashboard landing (redirects to health)
 │   ├── admin.health.tsx                    # System health dashboard

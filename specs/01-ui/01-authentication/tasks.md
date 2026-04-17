@@ -15,21 +15,21 @@
 
 ## Path Conventions
 
-- **Web app**: `apps/web/src/`
-- **Routes**: `apps/web/src/routes/`
-- **Components**: `apps/web/src/components/`
-- **Hooks**: `apps/web/src/hooks/`
-- **Stores**: `apps/web/src/stores/`
+- **Web app**: `apps/frontend/src/`
+- **Routes**: `apps/frontend/src/routes/`
+- **Components**: `apps/frontend/src/components/`
+- **Hooks**: `apps/frontend/src/hooks/`
+- **Stores**: `apps/frontend/src/stores/`
 - **Tests**: `tests/e2e/`, `tests/unit/`
 
 ## Design system & `.pen` sources (mandatory)
 
-**Workflow**: design (`*.pen`) → tokens (`design-system/design-tokens.pen`) → `@agenticverdict/ui` → auth feature code in `apps/web`. See `docs/architecture/business/design-system/generation/ui-generation-quick-reference.md`.
+**Workflow**: design (`*.pen`) → tokens (`design-system/design-tokens.pen`) → `@agenticverdict/ui` → auth feature code in `apps/frontend`. See `docs/architecture/business/design-system/generation/ui-generation-quick-reference.md`.
 
 - **Authoritative visuals**: Atoms and molecules live under `design-system/atoms/*.pen` and `design-system/molecules/*.pen` (e.g. `button.pen`, `input.pen`, `card.pen`, `alert.pen`, `form-field.pen`). **Do not** hand-roll one-off styles for auth; compose from the shared library.
-- **Implementation imports**: Auth UI MUST import reusable components from `@agenticverdict/ui` (`Button`, `Input`, `FormField`, `Card`, `Alert`, `Checkbox`, `Typography`, providers). App shell MUST wrap routes with `ThemeProvider`, `DirectionProvider`, and `MantineProvider` from `@agenticverdict/ui` (see `apps/web/src/components/Providers.tsx`).
+- **Implementation imports**: Auth UI MUST import reusable components from `@agenticverdict/ui` (`Button`, `Input`, `FormField`, `Card`, `Alert`, `Checkbox`, `Typography`, providers). App shell MUST wrap routes with `ThemeProvider`, `DirectionProvider`, and `MantineProvider` from `@agenticverdict/ui` (see `apps/frontend/src/components/Providers.tsx`).
 - **Pencil MCP**: Edits to `.pen` source files MUST go through the Pencil MCP server (`get_variables`, `batch_get`, `get_screenshot`, …), not raw filesystem reads, per project governance.
-- **New primitives**: If a pattern repeats across features, add it to `packages/ui` (typed, tested) and export from the package index—never duplicate in `apps/web/src/components/auth/` long-term.
+- **New primitives**: If a pattern repeats across features, add it to `packages/ui` (typed, tested) and export from the package index—never duplicate in `apps/frontend/src/components/auth/` long-term.
 
 ---
 
@@ -37,11 +37,11 @@
 
 **Purpose**: Project initialization and basic structure for authentication features
 
-- [ ] T001 Create auth route directory structure at `apps/web/src/routes/auth/`
-- [ ] T002 Create auth components directory structure at `apps/web/src/components/auth/`
-- [ ] T003 [P] Create auth hooks directory structure at `apps/web/src/hooks/`
-- [ ] T004 [P] Create auth store file at `apps/web/src/stores/auth-store.ts`
-- [ ] T005 [P] Create validation schemas directory at `apps/web/src/lib/validations/`
+- [ ] T001 Create auth route directory structure at `apps/frontend/src/routes/auth/`
+- [ ] T002 Create auth components directory structure at `apps/frontend/src/components/auth/`
+- [ ] T003 [P] Create auth hooks directory structure at `apps/frontend/src/hooks/`
+- [ ] T004 [P] Create auth store file at `apps/frontend/src/stores/auth-store.ts`
+- [ ] T005 [P] Create validation schemas directory at `apps/frontend/src/lib/validations/`
 
 ---
 
@@ -51,15 +51,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Implement auth store with TanStack Store in `apps/web/src/stores/auth-store.ts` (isAuthenticated, user, tenantId, isLoading, error states)
-- [ ] T007 [P] Implement useAuth hook in `apps/web/src/hooks/useAuth.ts` (auth store integration)
-- [ ] T008 [P] Create auth validation schemas in `apps/web/src/lib/validations/auth.ts` (loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema using Zod)
-- [ ] T009 [P] Create password validation utilities in `apps/web/src/lib/validations/password.ts` (password strength checker, requirement validation)
-- [ ] T010 Create useRequireAuth hook in `apps/web/src/hooks/useRequireAuth.ts` (protected route guard)
-- [ ] T011 [P] Create accessibility utilities in `apps/web/src/lib/utils/accessibility.ts` (ARIA attributes, focus management helpers)
-- [ ] T012 [P] Add auth-related translation keys to `apps/web/src/i18n/locales/en.json` (login, register, password reset keys)
-- [ ] T013 [P] Add auth-related translation keys to `apps/web/src/i18n/locales/ar.json` (Arabic translations for auth)
-- [ ] T014 [P] Add auth-related translation keys to `apps/web/src/i18n/locales/fr.json` (French translations for auth)
+- [ ] T006 Implement auth store with TanStack Store in `apps/frontend/src/stores/auth-store.ts` (isAuthenticated, user, tenantId, isLoading, error states)
+- [ ] T007 [P] Implement useAuth hook in `apps/frontend/src/hooks/useAuth.ts` (auth store integration)
+- [ ] T008 [P] Create auth validation schemas in `apps/frontend/src/lib/validations/auth.ts` (loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema using Zod)
+- [ ] T009 [P] Create password validation utilities in `apps/frontend/src/lib/validations/password.ts` (password strength checker, requirement validation)
+- [ ] T010 Create useRequireAuth hook in `apps/frontend/src/hooks/useRequireAuth.ts` (protected route guard)
+- [ ] T011 [P] Create accessibility utilities in `apps/frontend/src/lib/utils/accessibility.ts` (ARIA attributes, focus management helpers)
+- [ ] T012 [P] Add auth-related translation keys to `apps/frontend/src/i18n/locales/en.json` (login, register, password reset keys)
+- [ ] T013 [P] Add auth-related translation keys to `apps/frontend/src/i18n/locales/ar.json` (Arabic translations for auth)
+- [ ] T014 [P] Add auth-related translation keys to `apps/frontend/src/i18n/locales/fr.json` (French translations for auth)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -73,8 +73,8 @@
 
 ### Implementation for User Story 0
 
-- [ ] T015 [P] [US0] Create AuthLayout component in `apps/web/src/components/auth/AuthLayout.tsx` using `Card` + `Typography` from `@agenticverdict/ui` (structure per `design-system/molecules/card.pen` + typography tokens)
-- [ ] T016 [US0] Implement auth layout wrapper route in `apps/web/src/routes/auth/__root.tsx` (file-based routing with AuthLayout component)
+- [ ] T015 [P] [US0] Create AuthLayout component in `apps/frontend/src/components/auth/AuthLayout.tsx` using `Card` + `Typography` from `@agenticverdict/ui` (structure per `design-system/molecules/card.pen` + typography tokens)
+- [ ] T016 [US0] Implement auth layout wrapper route in `apps/frontend/src/routes/auth/__root.tsx` (file-based routing with AuthLayout component)
 - [ ] T017 [US0] Add auth layout styling via `@agenticverdict/ui` / design tokens (brand colors, spacing, shadows—no ad-hoc hex except documented token gaps)
 - [ ] T018 [US0] Implement responsive design for auth layout (mobile, tablet, desktop breakpoints)
 - [ ] T019 [US0] Add navigation links between auth pages (login ↔ register, forgot password links)
@@ -105,12 +105,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T029 [P] [US1] Create PasswordInput component in `apps/web/src/components/auth/PasswordInput.tsx` using `Input` + `FormFieldLabel` from `@agenticverdict/ui` (see `design-system/atoms/input.pen`; visibility toggle, ARIA)
-- [ ] T030 [P] [US1] Create AuthError component in `apps/web/src/components/auth/AuthError.tsx` using `Alert` from `@agenticverdict/ui` (`design-system/molecules/alert.pen`; ARIA alerts)
-- [ ] T031 [P] [US1] Create AuthSuccess component in `apps/web/src/components/auth/AuthSuccess.tsx` using `Alert` variant success from `@agenticverdict/ui`
-- [ ] T032 [US1] Create useLoginMutation hook in `apps/web/src/hooks/useLoginMutation.ts` (tRPC mutation wrapper, error handling)
-- [ ] T033 [US1] Create LoginForm component in `apps/web/src/components/auth/LoginForm.tsx` (compose `FormField`, `Input`, `Checkbox`, `Button`, `Alert` from `@agenticverdict/ui`; validation unchanged)
-- [ ] T034 [US1] Implement login route in `apps/web/src/routes/auth/login.tsx` (file-based route with LoginForm)
+- [ ] T029 [P] [US1] Create PasswordInput component in `apps/frontend/src/components/auth/PasswordInput.tsx` using `Input` + `FormFieldLabel` from `@agenticverdict/ui` (see `design-system/atoms/input.pen`; visibility toggle, ARIA)
+- [ ] T030 [P] [US1] Create AuthError component in `apps/frontend/src/components/auth/AuthError.tsx` using `Alert` from `@agenticverdict/ui` (`design-system/molecules/alert.pen`; ARIA alerts)
+- [ ] T031 [P] [US1] Create AuthSuccess component in `apps/frontend/src/components/auth/AuthSuccess.tsx` using `Alert` variant success from `@agenticverdict/ui`
+- [ ] T032 [US1] Create useLoginMutation hook in `apps/frontend/src/hooks/useLoginMutation.ts` (tRPC mutation wrapper, error handling)
+- [ ] T033 [US1] Create LoginForm component in `apps/frontend/src/components/auth/LoginForm.tsx` (compose `FormField`, `Input`, `Checkbox`, `Button`, `Alert` from `@agenticverdict/ui`; validation unchanged)
+- [ ] T034 [US1] Implement login route in `apps/frontend/src/routes/auth/login.tsx` (file-based route with LoginForm)
 - [ ] T035 [US1] Add login form validation with Zod schema (email format, required fields)
 - [ ] T036 [US1] Implement "remember me" checkbox functionality (extended session duration)
 - [ ] T037 [US1] Add loading states to login form during mutation (button spinner, disabled state)
@@ -142,13 +142,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T050 [P] [US2] Create useRegisterMutation hook in `apps/web/src/hooks/useRegisterMutation.ts` (tRPC mutation wrapper, success handling)
-- [ ] T051 [US2] Create RegisterForm component in `apps/web/src/components/auth/RegisterForm.tsx` (email, password, confirm password, first name, last name)
-- [ ] T052 [US2] Implement register route in `apps/web/src/routes/auth/register.tsx` (file-based route with RegisterForm)
+- [ ] T050 [P] [US2] Create useRegisterMutation hook in `apps/frontend/src/hooks/useRegisterMutation.ts` (tRPC mutation wrapper, success handling)
+- [ ] T051 [US2] Create RegisterForm component in `apps/frontend/src/components/auth/RegisterForm.tsx` (email, password, confirm password, first name, last name)
+- [ ] T052 [US2] Implement register route in `apps/frontend/src/routes/auth/register.tsx` (file-based route with RegisterForm)
 - [ ] T053 [US2] Add registration form validation with Zod schema (all fields, password matching, email format)
 - [ ] T054 [US2] Implement password strength indicator (real-time feedback as user types)
 - [ ] T055 [US2] Add password confirmation validation (inline error when passwords don't match)
-- [ ] T056 [US2] Implement email verification success page in `apps/web/src/routes/auth/verify-email.tsx` (success message, login link)
+- [ ] T056 [US2] Implement email verification success page in `apps/frontend/src/routes/auth/verify-email.tsx` (success message, login link)
 - [ ] T057 [US2] Handle email verification link with token parameter (query param parsing)
 - [ ] T058 [US2] Implement expired verification link error handling (error page with resend option)
 - [ ] T059 [US2] Add loading states to registration form during mutation
@@ -176,9 +176,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T068 [P] [US3] Create useRequestPasswordReset hook in `apps/web/src/hooks/usePasswordReset.ts` (tRPC mutation wrapper)
-- [ ] T069 [US3] Create ForgotPasswordForm component in `apps/web/src/components/auth/ForgotPasswordForm.tsx` (email input, submit button)
-- [ ] T070 [US3] Implement forgot password route in `apps/web/src/routes/auth/forgot-password.tsx` (file-based route)
+- [ ] T068 [P] [US3] Create useRequestPasswordReset hook in `apps/frontend/src/hooks/usePasswordReset.ts` (tRPC mutation wrapper)
+- [ ] T069 [US3] Create ForgotPasswordForm component in `apps/frontend/src/components/auth/ForgotPasswordForm.tsx` (email input, submit button)
+- [ ] T070 [US3] Implement forgot password route in `apps/frontend/src/routes/auth/forgot-password.tsx` (file-based route)
 - [ ] T071 [US3] Add forgot password form validation with Zod schema (email format, required field)
 - [ ] T072 [US3] Implement generic success message (same for existing and non-existing emails - security)
 - [ ] T073 [US3] Add loading states to forgot password form during mutation
@@ -206,9 +206,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T082 [P] [US4] Create useConfirmPasswordReset hook in `apps/web/src/hooks/usePasswordReset.ts` (tRPC mutation wrapper)
-- [ ] T083 [US4] Create ResetPasswordForm component in `apps/web/src/components/auth/ResetPasswordForm.tsx` (new password, confirm password, submit)
-- [ ] T084 [US4] Implement reset password route in `apps/web/src/routes/auth/reset-password.tsx` (file-based route with token query param)
+- [ ] T082 [P] [US4] Create useConfirmPasswordReset hook in `apps/frontend/src/hooks/usePasswordReset.ts` (tRPC mutation wrapper)
+- [ ] T083 [US4] Create ResetPasswordForm component in `apps/frontend/src/components/auth/ResetPasswordForm.tsx` (new password, confirm password, submit)
+- [ ] T084 [US4] Implement reset password route in `apps/frontend/src/routes/auth/reset-password.tsx` (file-based route with token query param)
 - [ ] T085 [US4] Add reset password form validation with Zod schema (password requirements, matching passwords)
 - [ ] T086 [US4] Implement password strength indicator on reset form
 - [ ] T087 [US4] Handle expired reset link error (error message with request new link option)
@@ -237,7 +237,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T097 [P] [US5] Create error type definitions in `apps/web/src/lib/types/errors.ts` (network error, validation error, auth error types)
+- [ ] T097 [P] [US5] Create error type definitions in `apps/frontend/src/lib/types/errors.ts` (network error, validation error, auth error types)
 - [ ] T098 [US5] Implement network error detection and user-friendly messages (offline detection, retry options)
 - [ ] T099 [US5] Implement server error handling (generic error message with support contact)
 - [ ] T100 [US5] Implement session expiry detection and redirect (401 handling, redirect to login with message)
@@ -258,7 +258,7 @@
 
 ### Documentation
 
-- [ ] T107 [P] Document auth flow in `apps/web/README.md` (setup, usage, testing)
+- [ ] T107 [P] Document auth flow in `apps/frontend/README.md` (setup, usage, testing)
 - [ ] T108 [P] Document auth component API (props, usage examples)
 - [ ] T109 [P] Document auth hooks API (parameters, return values, examples)
 

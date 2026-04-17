@@ -205,7 +205,7 @@ packages/ui/
 │   └── visual-regression/  # Visual regression tests (future)
 └── package.json
 
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── routes/             # TanStack Start file-based routing
 │   │   ├── __root.tsx      # Root layout with providers
@@ -221,7 +221,7 @@ apps/web/
 └── package.json
 ```
 
-**Structure Decision**: Monorepo web application following atomic design principles. The UI components are organized in `packages/ui/` as a shared package that can be imported by `apps/web/` (TanStack Start frontend), with potential for future reuse in mobile (React Native) and CLI interfaces. The atomic design hierarchy (atoms → molecules → organisms → templates) scales naturally with the codebase and mirrors component complexity.
+**Structure Decision**: Monorepo web application following atomic design principles. The UI components are organized in `packages/ui/` as a shared package that can be imported by `apps/frontend/` (TanStack Start frontend), with potential for future reuse in mobile (React Native) and CLI interfaces. The atomic design hierarchy (atoms → molecules → organisms → templates) scales naturally with the codebase and mirrors component complexity.
 
 ## Complexity Tracking
 

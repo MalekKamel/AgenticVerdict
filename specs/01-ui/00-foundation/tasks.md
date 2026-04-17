@@ -19,7 +19,7 @@ description: "Task list for UI Foundation phase implementation"
 
 ## Path Conventions
 
-- **Monorepo web application**: `packages/ui/src/` (design system), `apps/web/src/` (TanStack Start app)
+- **Monorepo web application**: `packages/ui/src/` (design system), `apps/frontend/src/` (TanStack Start app)
 - Paths shown below assume monorepo structure from plan.md
 
 ---
@@ -29,7 +29,7 @@ description: "Task list for UI Foundation phase implementation"
 **Purpose**: Project initialization and TanStack Start + Mantine v9 integration
 
 - [x] T001 Initialize packages/ui/ with TypeScript 5.3+ strict mode configuration
-- [x] T002 [P] Install TanStack Start dependencies in apps/web/ (@tanstack/start, @tanstack/react-router)
+- [x] T002 [P] Install TanStack Start dependencies in apps/frontend/ (@tanstack/start, @tanstack/react-router)
 - [x] T003 [P] Install Mantine v9 dependencies (@mantine/core, @mantine/hooks, @emotion/react)
 - [x] T004 [P] Install testing dependencies (Vitest, Playwright, @axe-core/react)
 - [x] T005 [P] Configure TypeScript strict mode and tsconfig paths for monorepo
@@ -63,15 +63,15 @@ description: "Task list for UI Foundation phase implementation"
 ### Internationalization Setup
 
 - [x] T018 [P] Install @tanstack/react-router i18n dependencies
-- [x] T019 Create locale type definitions in apps/web/src/i18n/types.ts (Locale, TextDirection, NumberFormat, CurrencyFormat)
-- [x] T020 [P] Create English translation file in apps/web/src/i18n/locales/en.json
-- [x] T021 [P] Create Arabic translation file in apps/web/src/i18n/locales/ar.json
-- [x] T022 Configure i18n in apps/web/src/i18n/i18n.ts (language detection, fallbacks)
+- [x] T019 Create locale type definitions in apps/frontend/src/i18n/types.ts (Locale, TextDirection, NumberFormat, CurrencyFormat)
+- [x] T020 [P] Create English translation file in apps/frontend/src/i18n/locales/en.json
+- [x] T021 [P] Create Arabic translation file in apps/frontend/src/i18n/locales/ar.json
+- [x] T022 Configure i18n in apps/frontend/src/i18n/i18n.ts (language detection, fallbacks)
 
 ### Testing Infrastructure
 
 - [x] T023 [P] Configure Vitest for unit testing in packages/ui/vitest.config.ts
-- [x] T024 [P] Configure Playwright for E2E testing in apps/web/playwright.config.ts
+- [x] T024 [P] Configure Playwright for E2E testing in apps/frontend/playwright.config.ts
 - [x] T025 [P] Setup @axe-core/react for accessibility testing
 - [x] T026 Create test utilities in packages/ui/tests/utils/test-utils.ts (renderWithProviders, mockTheme)
 - [x] T027 [P] Create accessibility test utilities in packages/ui/tests/utils/a11y-test-utils.ts (axeRunner, checkA11y)
@@ -83,9 +83,9 @@ description: "Task list for UI Foundation phase implementation"
 
 ### App Structure
 
-- [x] T030 Create root layout in apps/web/src/routes/__root.tsx (wraps with ThemeProvider, DirectionProvider, MantineProvider)
-- [x] T031 Create home page in apps/web/src/routes/index.tsx (basic page for testing)
-- [x] T032 Setup tRPC client in apps/web/src/providers/TRPCProvider.tsx
+- [x] T030 Create root layout in apps/frontend/src/routes/__root.tsx (wraps with ThemeProvider, DirectionProvider, MantineProvider)
+- [x] T031 Create home page in apps/frontend/src/routes/index.tsx (basic page for testing)
+- [x] T032 Setup tRPC client in apps/frontend/src/providers/TRPCProvider.tsx
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -168,8 +168,8 @@ description: "Task list for UI Foundation phase implementation"
 ### Component Library Exports
 
 - [x] T078 [US1] Create package index in packages/ui/src/index.ts (export all components, hooks, providers, types)
-- [x] T079 [US1] Create component demo page in apps/web/src/routes/components.tsx (showcase all atoms and molecules)
-- [x] T080 [US1] Create accessibility audit page in apps/web/src/routes/accessibility.tsx (run axe-core on all components)
+- [x] T079 [US1] Create component demo page in apps/frontend/src/routes/components.tsx (showcase all atoms and molecules)
+- [x] T080 [US1] Create accessibility audit page in apps/frontend/src/routes/accessibility.tsx (run axe-core on all components)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. All 21 components (11 atoms + 10 molecules) are complete with passing tests.
 
@@ -238,7 +238,7 @@ description: "Task list for UI Foundation phase implementation"
 - [x] T108 [P] [US3] Create default theme configuration in packages/ui/src/tokens/themes/default.ts
 - [x] T109 [P] [US3] Create Masafh theme configuration in packages/ui/src/tokens/themes/masafh.ts
 - [x] T110 [P] [US3] Create example agency theme configuration in packages/ui/src/tokens/themes/agency-demo.ts
-- [x] T111 [US3] Create theme switching demo page in apps/web/src/routes/theme-switcher.tsx
+- [x] T111 [US3] Create theme switching demo page in apps/frontend/src/routes/theme-switcher.tsx
 - [x] T112 [US3] Create theme integration E2E tests in apps-web/tests/e2e/theme-switching.spec.ts
 
 **Checkpoint**: All user stories should now be independently functional. Agency partners can white-label the platform with custom branding.
@@ -272,13 +272,13 @@ description: "Task list for UI Foundation phase implementation"
 - [x] T123 [P] [US4] Create RTL test suite for atom components in packages/ui/tests/rtl/atoms-rtl.test.tsx
 - [x] T124 [P] [US4] Create RTL test suite for molecule components in packages/ui/tests/rtl/molecules-rtl.test.tsx
 - [x] T125 [US4] Test bidirectional text (mixed LTR and RTL) in packages/ui/tests/rtl/bidirectional-text.test.tsx
-- [x] T126 [US4] Create RTL switching demo page in apps/web/src/routes/rtl-demo.tsx
-- [x] T127 [US4] Create RTL E2E tests in apps/web/tests/e2e/rtl-switching.spec.ts
+- [x] T126 [US4] Create RTL switching demo page in apps/frontend/src/routes/rtl-demo.tsx
+- [x] T127 [US4] Create RTL E2E tests in apps/frontend/tests/e2e/rtl-switching.spec.ts
 
 ### Translation Completeness
 
-- [x] T128 [P] [US4] Verify all translation keys exist for English in apps/web/src/i18n/locales/en.json
-- [x] T129 [P] [US4] Verify all translation keys exist for Arabic in apps/web/src/i18n/locales/ar.json
+- [x] T128 [P] [US4] Verify all translation keys exist for English in apps/frontend/src/i18n/locales/en.json
+- [x] T129 [P] [US4] Verify all translation keys exist for Arabic in apps/frontend/src/i18n/locales/ar.json
 - [x] T130 [US4] Create missing translation key detector in apps-web/tests/i18n/translation-completeness.test.ts
 
 **Checkpoint**: All user stories should now be independently functional. RTL users experience properly mirrored layouts.
@@ -301,7 +301,7 @@ description: "Task list for UI Foundation phase implementation"
 
 ### Performance Optimization
 
-- [x] T138 [P] Implement route-based code splitting for components >50KB in apps/web/src/routes/__root.tsx
+- [x] T138 [P] Implement route-based code splitting for components >50KB in apps/frontend/src/routes/__root.tsx
 - [x] T139 [P] Setup bundle size analysis in packages/ui/package.json (bundlesize package)
 - [x] T140 Verify initial bundle size <500KB gzipped
 - [x] T141 Implement lazy loading for heavy components (DatePicker, Dropdown, Popover) in packages/ui/src/index.ts

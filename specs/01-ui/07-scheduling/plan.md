@@ -55,7 +55,7 @@ specs/01-ui/07-scheduling/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── insights/
 │   │   ├── $insightId/

@@ -134,16 +134,16 @@ const adapter = registry.resolve("meta", { tenantId: "tenant-123" });
 
 ### 4.1 Application Startup
 
-| Application   | Integration Point                            | Action Required                         |
-| ------------- | -------------------------------------------- | --------------------------------------- |
-| `apps/web`    | `apps/web/src/lib/adapter-infrastructure.ts` | Update to use environment-aware factory |
-| `apps/api`    | `apps/api/src/index.ts`                      | Register mock-aware factories           |
-| `apps/worker` | `apps/worker/src/index.ts`                   | Register mock-aware factories           |
+| Application     | Integration Point                                 | Action Required                         |
+| --------------- | ------------------------------------------------- | --------------------------------------- |
+| `apps/frontend` | `apps/frontend/src/lib/adapter-infrastructure.ts` | Update to use environment-aware factory |
+| `apps/api`      | `apps/api/src/index.ts`                           | Register mock-aware factories           |
+| `apps/worker`   | `apps/worker/src/index.ts`                        | Register mock-aware factories           |
 
 ### 4.2 Example: Web App Integration
 
 ```typescript
-// Illustrative: real wiring is in apps/web/src/lib/adapter-infrastructure.ts
+// Illustrative: real wiring is in apps/frontend/src/lib/adapter-infrastructure.ts
 import {
   connectorAdapterTypes,
   createDefaultAdapterInfrastructure,
@@ -170,7 +170,7 @@ export function getSharedAdapterInfrastructure(): AdapterInfrastructureBundle {
 
 ### 4.3 Health Check Indicators
 
-The health endpoint **`apps/web/src/app/api/health/adapters/route.ts`** merges infrastructure health with mock metadata (`mockMode`, `mockConnectors`, per-row `adapterType`). Shape follows **`getSharedAdapterInfrastructure().getHealth()`** plus those fields.
+The health endpoint **`apps/frontend/src/app/api/health/adapters/route.ts`** merges infrastructure health with mock metadata (`mockMode`, `mockConnectors`, per-row `adapterType`). Shape follows **`getSharedAdapterInfrastructure().getHealth()`** plus those fields.
 
 ---
 
@@ -187,7 +187,7 @@ Authoritative logic: **`isMockEnabledForConnector`** in **`packages/config/src/c
 Add validation at application startup:
 
 ```typescript
-// apps/web/src/middleware.ts or startup check
+// apps/frontend/src/middleware.ts or startup check
 export function validateMockAdapterConfig() {
   if (process.env.NODE_ENV !== "development" && process.env.NODE_ENV !== "test") {
     const mockVars = Object.keys(process.env).filter(
@@ -342,12 +342,12 @@ AGENTICVERDICT_USE_MOCK_ADAPTERS=1 pnpm dev
 
 ### Phase 2: Application Integration (Priority 1)
 
-| Task | File                                            | Description                      |
-| ---- | ----------------------------------------------- | -------------------------------- |
-| 2.1  | `apps/web/src/lib/adapter-infrastructure.ts`    | Use mock-aware factory           |
-| 2.2  | `apps/web/src/app/api/health/adapters/route.ts` | Add mock mode status to response |
-| 2.3  | `apps/api/src/index.ts`                         | Register mock-aware factories    |
-| 2.4  | `apps/worker/src/index.ts`                      | Register mock-aware factories    |
+| Task | File                                                 | Description                      |
+| ---- | ---------------------------------------------------- | -------------------------------- |
+| 2.1  | `apps/frontend/src/lib/adapter-infrastructure.ts`    | Use mock-aware factory           |
+| 2.2  | `apps/frontend/src/app/api/health/adapters/route.ts` | Add mock mode status to response |
+| 2.3  | `apps/api/src/index.ts`                              | Register mock-aware factories    |
+| 2.4  | `apps/worker/src/index.ts`                           | Register mock-aware factories    |
 
 ### Phase 3: Documentation & Examples (Priority 2)
 

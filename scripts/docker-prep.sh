@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 echo "docker-prep: removing local build artifacts..."
-rm -rf apps/web/.next apps/web/out
+rm -rf apps/frontend/.next apps/frontend/out
 rm -rf apps/api/dist apps/api/build
 rm -rf apps/worker/dist apps/worker/build
 find packages -type d \( -name .next -o -name dist -o -name build \) -prune -exec rm -rf {} + 2>/dev/null || true

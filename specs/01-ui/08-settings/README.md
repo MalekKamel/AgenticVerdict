@@ -171,7 +171,7 @@ Once Settings Layout (US0) is complete, these user stories can be developed in p
 
 1. **Review acceptance criteria**: Each user story in spec.md has testable scenarios
 2. **Review checklists**: Use [checklists/](./checklists/) for systematic testing
-3. **Run E2E tests**: Execute Playwright tests in `apps/web/src/e2e/settings-*.spec.ts`
+3. **Run E2E tests**: Execute Playwright tests in `apps/frontend/src/e2e/settings-*.spec.ts`
 4. **Test RTL switching**: Verify language change triggers RTL layout switch
 5. **Test role-based access**: Verify non-admins cannot access team/billing settings
 

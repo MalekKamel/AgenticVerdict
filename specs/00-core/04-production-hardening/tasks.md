@@ -82,8 +82,8 @@ This task breakdown documents the **actual work completed** for Production Harde
 - ✅ Tests pass consistently
 
 **Files**:
-- `apps/web/playwright.config.mjs`
-- `apps/web/e2e/*.spec.ts`
+- `apps/frontend/playwright.config.mjs`
+- `apps/frontend/e2e/*.spec.ts`
 
 ---
 
@@ -542,7 +542,7 @@ This task breakdown documents the **actual work completed** for Production Harde
 **Files**:
 - `docker/base/Dockerfile.deps`
 - `docker/base/Dockerfile.chromium`
-- `apps/web/Dockerfile`
+- `apps/frontend/Dockerfile`
 - `apps/api/Dockerfile`
 - `apps/worker/Dockerfile`
 
@@ -1009,7 +1009,7 @@ This task breakdown documents the **actual work completed** for Production Harde
 
 **Files**:
 - `scripts/health-check.sh`
-- `apps/web/src/routes/health.ts`
+- `apps/frontend/src/routes/health.ts`
 - `apps/api/src/routes/health.ts`
 - `apps/worker/src/routes/health.ts`
 

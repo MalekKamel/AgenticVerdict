@@ -74,7 +74,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 
 - **Directory resolution**
   - Explicit `configDir` or `COMPANY_CONFIG_DIR` (absolute or relative to `process.cwd()`).
-  - Fallback probe: `configs/companies` then `../../configs/companies` so `apps/web` dev cwd resolves the repo-level sample configs.
+  - Fallback probe: `configs/companies` then `../../configs/companies` so `apps/frontend` dev cwd resolves the repo-level sample configs.
 
 - **Test suite**
   - Vitest unit test for minimal valid `CompanyConfig` parsing (`src/schemas/company.test.ts`).
@@ -174,7 +174,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 
 - **Scaffold evolution**
   - Replaced default single-locale `src/app/page.tsx` with locale-prefixed routes under `src/app/[locale]/`.
-  - Removed nested `apps/web/pnpm-lock.yaml` to avoid conflicting lockfiles with the workspace root.
+  - Removed nested `apps/frontend/pnpm-lock.yaml` to avoid conflicting lockfiles with the workspace root.
 
 #### Phase 0 docs (`specs/00-core/00-foundation/`)
 

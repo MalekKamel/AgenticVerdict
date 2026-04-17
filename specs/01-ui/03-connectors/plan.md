@@ -14,7 +14,7 @@ Phase 03 (Connectors) implements the connector management interface that enables
 **Storage**: PostgreSQL 16 via Drizzle ORM (connector configurations), Redis (cache connector metadata), BullMQ (sync job queue)
 **Testing**: Vitest (unit tests), Playwright (E2E tests)
 **Target Platform**: Web browsers (Chrome, Firefox, Safari, Edge) with responsive design (desktop, tablet, mobile)
-**Project Type**: Web application (monorepo: apps/web)
+**Project Type**: Web application (monorepo: apps/frontend)
 **Performance Goals**: <2s page load for connector list, <500ms filter response time, <30s manual sync completion
 **Constraints**: WCAG 2.1 AA compliance, full RTL support, OAuth popup handling, multi-tenant isolation
 **Scale/Scope**: 6 connector types (MVP), 20+ connectors per tenant, 5 business domains
@@ -46,7 +46,7 @@ specs/01-ui/03-connectors/
 ### Source Code (repository root)
 
 ```text
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── routes/
 │   │   ├── connectors/
@@ -113,7 +113,7 @@ packages/api/
 │       └── connector-service.ts           # Business logic for connectors
 ```
 
-**Structure Decision**: Web application structure with TanStack Start file-based routing. Connector-specific components are organized by atomic design (atoms/molecules/organisms) and co-located in `components/connectors/`. tRPC router in `apps/web/server/api/routers/` handles all connector API procedures.
+**Structure Decision**: Web application structure with TanStack Start file-based routing. Connector-specific components are organized by atomic design (atoms/molecules/organisms) and co-located in `components/connectors/`. tRPC router in `apps/frontend/server/api/routers/` handles all connector API procedures.
 
 ## Complexity Tracking
 
@@ -129,7 +129,7 @@ packages/api/
 
 ### Connector List Page (`/connectors`)
 
-**Route**: `apps/web/src/routes/connectors/index.tsx`
+**Route**: `apps/frontend/src/routes/connectors/index.tsx`
 
 **Purpose**: Central hub for viewing all data connectors with health status, filtering, and quick actions.
 
@@ -176,7 +176,7 @@ packages/api/
 
 ### Connector Add Page (`/connectors/add`)
 
-**Route**: `apps/web/src/routes/connectors/add.tsx`
+**Route**: `apps/frontend/src/routes/connectors/add.tsx`
 
 **Purpose**: Multi-step wizard for adding new connectors with platform selection, OAuth authentication, and configuration.
 
@@ -238,7 +238,7 @@ packages/api/
 
 ### Connector Detail Page (`/connectors/$connectorId`)
 
-**Route**: `apps/web/src/routes/connectors/$connectorId.tsx`
+**Route**: `apps/frontend/src/routes/connectors/$connectorId.tsx`
 
 **Purpose**: Comprehensive view of connector health, recent data, sync history, and troubleshooting.
 
@@ -294,7 +294,7 @@ packages/api/
 
 ### Connector Configure Page (`/connectors/$connectorId.configure`)
 
-**Route**: `apps/web/src/routes/connectors/$connectorId.configure.tsx`
+**Route**: `apps/frontend/src/routes/connectors/$connectorId.configure.tsx`
 
 **Purpose**: Configure connector settings (accounts, metrics, sync frequency, notifications).
 
@@ -349,7 +349,7 @@ packages/api/
 
 ### Connector Remove Page (`/connectors/$connectorId.remove`)
 
-**Route**: `apps/web/src/routes/connectors/$connectorId.remove.tsx`
+**Route**: `apps/frontend/src/routes/connectors/$connectorId.remove.tsx`
 
 **Purpose**: Confirmation page for disconnecting connectors with impact warnings and alternatives.
 
@@ -396,7 +396,7 @@ packages/api/
 
 ## tRPC Router Definition
 
-**File**: `apps/web/server/api/routers/connectors.ts`
+**File**: `apps/frontend/server/api/routers/connectors.ts`
 
 ```typescript
 import { z } from 'zod'
@@ -660,7 +660,7 @@ export const connectors = pgTable('connectors', {
 
 ### Unit Tests (Vitest)
 
-**File**: `apps/web/tests/unit/components/connectors/ConnectorCard.test.tsx`
+**File**: `apps/frontend/tests/unit/components/connectors/ConnectorCard.test.tsx`
 
 ```typescript
 import { describe, it, expect } from 'vitest'
@@ -706,7 +706,7 @@ describe('ConnectorCard', () => {
 
 ### E2E Tests (Playwright)
 
-**File**: `apps/web/tests/e2e/connectors/connector-list.spec.ts`
+**File**: `apps/frontend/tests/e2e/connectors/connector-list.spec.ts`
 
 ```typescript
 import { test, expect } from '@playwright/test'
@@ -739,7 +739,7 @@ test.describe('Connector List Page', () => {
 })
 ```
 
-**File**: `apps/web/tests/e2e/connectors/connector-add.spec.ts`
+**File**: `apps/frontend/tests/e2e/connectors/connector-add.spec.ts`
 
 ```typescript
 import { test, expect } from '@playwright/test'

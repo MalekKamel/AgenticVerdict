@@ -174,7 +174,7 @@ export * from "./atoms/Button";
 export * from "./atoms/Input";
 export * from "./molecules/SearchInput";
 
-// Usage in apps/web
+// Usage in apps/frontend
 import { Button, Input, SearchInput } from "@agenticverdict/ui";
 ```
 
@@ -460,7 +460,7 @@ export function useTenantTheme(tenantId: string) {
 **Mantine Theme Integration:**
 
 ```typescript
-// apps/web/src/providers/theme-provider.tsx
+// apps/frontend/src/providers/theme-provider.tsx
 import { MantineProvider, MantineThemeOverride } from '@mantine/core';
 
 export function ThemeProvider({ children, tenantTheme }: Props) {
@@ -628,7 +628,7 @@ export type TenantUIConfig = z.infer<typeof TenantUISchema>;
 **Tenant Configuration Loading:**
 
 ```typescript
-// apps/web/src/hooks/use-tenant-config.ts
+// apps/frontend/src/hooks/use-tenant-config.ts
 export function useTenantConfig() {
   const { tenantId } = useTenantContext();
 
@@ -673,7 +673,7 @@ export function Logo({ variant = "light", height = 32 }: Props) {
 **Favicon Injection:**
 
 ```tsx
-// apps/web/src/app/layout.tsx
+// apps/frontend/src/app/layout.tsx
 export default function RootLayout({ children }: Props) {
   const { branding } = useTenantConfig();
 
@@ -723,7 +723,7 @@ export function loadTheme(tenantId: string): ThemeDefinition {
 **Runtime Theme Application:**
 
 ```tsx
-// apps/web/src/providers/dynamic-theme-provider.tsx
+// apps/frontend/src/providers/dynamic-theme-provider.tsx
 export function DynamicThemeProvider({ children }: Props) {
   const { tenantId } = useTenantContext();
   const theme = loadTheme(tenantId);
@@ -1514,7 +1514,7 @@ export function generateColorScale(hexColor: string): string[] {
 **Tenant Theme Provider:**
 
 ```tsx
-// apps/web/src/providers/tenant-theme-provider.tsx
+// apps/frontend/src/providers/tenant-theme-provider.tsx
 import { MantineProvider } from "@mantine/core";
 import { useTenantConfig } from "@/hooks/use-tenant-config";
 import { createTheme } from "@agenticverdict/ui";
@@ -1556,7 +1556,7 @@ export function TenantSwitcher() {
 **Automatic Direction Switching:**
 
 ```tsx
-// apps/web/src/providers/direction-provider.tsx
+// apps/frontend/src/providers/direction-provider.tsx
 import { useLocale } from "next-intl";
 
 export function DirectionProvider({ children }: Props) {

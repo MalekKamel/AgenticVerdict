@@ -43,7 +43,7 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 - **API** runner extends **`${DEPS_IMAGE}`** so **`node_modules`** is inherited as **`appuser`** (no giant **`COPY`**). **Worker** copies **`node_modules`** from **deps** without **`--chown`** (root-owned, readable **`appuser`**).
 - For the full implemented architecture, see [Build optimization (implemented)](./build-optimization-implemented.md) and [Build best practices](./build-best-practices.md).
 
-## Web (`apps/web/Dockerfile`)
+## Web (`apps/frontend/Dockerfile`)
 
 | Stage     | Purpose                                                                                                                                             |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -56,9 +56,9 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 - User **65532:65532** (non-root).
 - `NODE_OPTIONS=--dns-result-order=ipv4first --tls-min-v1.2`
 - **HEALTHCHECK:** distroless Node `fetch` to `http://127.0.0.1:3000/api/health`
-- **CMD:** `apps/web/server.js` (Next.js **standalone** output)
+- **CMD:** `apps/frontend/server.js` (Next.js **standalone** output)
 
-**Monorepo alignment:** `apps/web/next.config.ts` sets `output: "standalone"` and `outputFileTracingRoot` to the monorepo root so workspace packages trace into `.next/standalone`.
+**Monorepo alignment:** `apps/frontend/next.config.ts` sets `output: "standalone"` and `outputFileTracingRoot` to the monorepo root so workspace packages trace into `.next/standalone`.
 
 **Lint:** Image build skips ESLint (`--no-lint`); lint remains for local dev and CI.
 

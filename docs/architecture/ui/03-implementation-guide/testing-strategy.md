@@ -1453,7 +1453,7 @@ test.describe("visual regression", () => {
 **Directory Structure:**
 
 ```
-apps/web/
+apps/frontend/
 ├── src/
 │   ├── components/
 │   │   ├── ui/

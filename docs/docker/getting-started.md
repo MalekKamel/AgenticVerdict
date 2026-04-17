@@ -157,7 +157,7 @@ Build shared layers first (same tags as Compose defaults), then pass **`DEPS_IMA
 docker build -f docker/base/Dockerfile.deps -t agenticverdict/deps:local .
 docker build -f docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
 
-docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/web/Dockerfile -t agenticverdict/web:local .
+docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/frontend/Dockerfile -t agenticverdict/web:local .
 docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/api/Dockerfile -t agenticverdict/api:local .
 docker build \
   --build-arg DEPS_IMAGE=agenticverdict/deps:local \

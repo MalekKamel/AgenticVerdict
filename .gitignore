@@ -53,7 +53,6 @@ bun.lockb
 
 # Build outputs
 dist/
-apps/web/.next/
 apps/api/dist/
 apps/worker/dist/
 public/spa/
@@ -155,3 +154,5 @@ spaHtmlTemplates.ts
 /ignored
 
 /test-reports
+
+routeTree.gen.ts

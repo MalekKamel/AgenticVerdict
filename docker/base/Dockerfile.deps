@@ -22,7 +22,7 @@ ARG LOCKFILE_HASH=
 LABEL org.agenticverdict.deps.lockfile-hash="${LOCKFILE_HASH}"
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
-COPY apps/web/package.json ./apps/web/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY apps/worker/package.json ./apps/worker/
 COPY packages/agent-runtime/package.json ./packages/agent-runtime/

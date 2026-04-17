@@ -15,9 +15,9 @@
 
 ## Path Conventions
 
-- **Web application**: `apps/web/src/` (frontend), `apps/web/server/` (API)
+- **Web application**: `apps/frontend/src/` (frontend), `apps/frontend/server/` (API)
 - **Packages**: `packages/database/src/` (schema), `packages/api/src/` (services)
-- **Tests**: `apps/web/tests/unit/` (unit), `apps/web/tests/e2e/` (E2E)
+- **Tests**: `apps/frontend/tests/unit/` (unit), `apps/frontend/tests/e2e/` (E2E)
 
 ---
 
@@ -25,9 +25,9 @@
 
 **Purpose**: Project initialization and connector-specific structure
 
-- [ ] T001 Create connector-specific directory structure in apps/web/src/components/connectors/ (atoms/, molecules/, organisms/)
-- [ ] T002 Create connector routes directory structure in apps/web/src/routes/connectors/
-- [ ] T003 [P] Create connector test directories: apps/web/tests/unit/components/connectors/ and apps/web/tests/e2e/connectors/
+- [ ] T001 Create connector-specific directory structure in apps/frontend/src/components/connectors/ (atoms/, molecules/, organisms/)
+- [ ] T002 Create connector routes directory structure in apps/frontend/src/routes/connectors/
+- [ ] T003 [P] Create connector test directories: apps/frontend/tests/unit/components/connectors/ and apps/frontend/tests/e2e/connectors/
 
 ---
 
@@ -38,11 +38,11 @@
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
 - [ ] T004 Define Drizzle schema for connectors table in packages/database/src/schema/connectors.ts
-- [ ] T005 [P] Define TypeScript interfaces for Connector, ConnectorConfig, ConnectorHealth, OAuthState in apps/web/src/types/connector.ts
+- [ ] T005 [P] Define TypeScript interfaces for Connector, ConnectorConfig, ConnectorHealth, OAuthState in apps/frontend/src/types/connector.ts
 - [ ] T006 [P] Define Zod validation schemas for connector operations in packages/api/src/schemas/connector.schema.ts
-- [ ] T007 Implement tRPC router stubs for connectors in apps/web/server/api/routers/connectors.ts (all procedures with placeholder implementations)
+- [ ] T007 Implement tRPC router stubs for connectors in apps/frontend/server/api/routers/connectors.ts (all procedures with placeholder implementations)
 - [ ] T008 [P] Implement connector service stubs in packages/api/src/services/connector-service.ts (business logic placeholders)
-- [ ] T009 Create connector store for filter state in apps/web/src/stores/connector-store.ts
+- [ ] T009 Create connector store for filter state in apps/frontend/src/stores/connector-store.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -58,27 +58,27 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] E2E test for connector list page load in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T011 [P] [US1] E2E test for connector filtering by domain in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T012 [P] [US1] E2E test for connector filtering by status in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T013 [P] [US1] E2E test for manual sync trigger in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T014 [P] [US1] Unit test for ConnectorCard component in apps/web/tests/unit/components/connectors/ConnectorCard.test.tsx
+- [ ] T010 [P] [US1] E2E test for connector list page load in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T011 [P] [US1] E2E test for connector filtering by domain in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T012 [P] [US1] E2E test for connector filtering by status in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T013 [P] [US1] E2E test for manual sync trigger in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T014 [P] [US1] Unit test for ConnectorCard component in apps/frontend/tests/unit/components/connectors/ConnectorCard.test.tsx
 
 ### Implementation for User Story 1
 
-- [ ] T015 [P] [US1] Create StatusBadge atom component in apps/web/src/components/connectors/atoms/StatusBadge.tsx
-- [ ] T016 [P] [US1] Create DomainTag atom component in apps/web/src/components/connectors/atoms/DomainTag.tsx
-- [ ] T017 [P] [US1] Create ConnectorIcon atom component in apps/web/src/components/connectors/atoms/ConnectorIcon.tsx
-- [ ] T018 [P] [US1] Create SyncButton atom component in apps/web/src/components/connectors/atoms/SyncButton.tsx
-- [ ] T019 [P] [US1] Create ConnectorCard molecule component in apps/web/src/components/connectors/molecules/ConnectorCard.tsx (depends on T015, T016, T017, T018)
-- [ ] T020 [P] [US1] Create FilterBar molecule component in apps/web/src/components/connectors/molecules/FilterBar.tsx
-- [ ] T021 [US1] Create ConnectorGrid organism component in apps/web/src/components/connectors/organisms/ConnectorGrid.tsx (depends on T019)
-- [ ] T022 [US1] Create connector list page route in apps/web/src/routes/connectors/index.tsx (depends on T020, T021)
-- [ ] T023 [US1] Implement tRPC connectors.list procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T024 [US1] Implement tRPC connectors.sync procedure in apps/web/server/api/routers/connectors.ts
+- [ ] T015 [P] [US1] Create StatusBadge atom component in apps/frontend/src/components/connectors/atoms/StatusBadge.tsx
+- [ ] T016 [P] [US1] Create DomainTag atom component in apps/frontend/src/components/connectors/atoms/DomainTag.tsx
+- [ ] T017 [P] [US1] Create ConnectorIcon atom component in apps/frontend/src/components/connectors/atoms/ConnectorIcon.tsx
+- [ ] T018 [P] [US1] Create SyncButton atom component in apps/frontend/src/components/connectors/atoms/SyncButton.tsx
+- [ ] T019 [P] [US1] Create ConnectorCard molecule component in apps/frontend/src/components/connectors/molecules/ConnectorCard.tsx (depends on T015, T016, T017, T018)
+- [ ] T020 [P] [US1] Create FilterBar molecule component in apps/frontend/src/components/connectors/molecules/FilterBar.tsx
+- [ ] T021 [US1] Create ConnectorGrid organism component in apps/frontend/src/components/connectors/organisms/ConnectorGrid.tsx (depends on T019)
+- [ ] T022 [US1] Create connector list page route in apps/frontend/src/routes/connectors/index.tsx (depends on T020, T021)
+- [ ] T023 [US1] Implement tRPC connectors.list procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T024 [US1] Implement tRPC connectors.sync procedure in apps/frontend/server/api/routers/connectors.ts
 - [ ] T025 [US1] Implement connector service listConnectors method in packages/api/src/services/connector-service.ts
 - [ ] T026 [US1] Implement connector service triggerSync method in packages/api/src/services/connector-service.ts
-- [ ] T027 [US1] Add connector list to sidebar navigation in apps/web/src/routes/_layouts/dashboard.tsx
+- [ ] T027 [US1] Add connector list to sidebar navigation in apps/frontend/src/routes/_layouts/dashboard.tsx
 - [ ] T028 [US1] Add loading states (skeleton cards) to connector list page
 - [ ] T029 [US1] Add empty state to connector list page (no connectors connected)
 - [ ] T030 [US1] Add error handling and retry logic to connector list page
@@ -99,34 +99,34 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T033 [P] [US2] E2E test for platform selection step in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T034 [P] [US2] E2E test for OAuth authentication flow in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T035 [P] [US2] E2E test for configuration step in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T036 [P] [US2] E2E test for confirmation step in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T037 [P] [US2] Unit test for PlatformCard component in apps/web/tests/unit/components/connectors/PlatformCard.test.tsx
-- [ ] T038 [P] [US2] Unit test for ConnectorSetupWizard component in apps/web/tests/unit/components/connectors/ConnectorSetupWizard.test.tsx
+- [ ] T033 [P] [US2] E2E test for platform selection step in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T034 [P] [US2] E2E test for OAuth authentication flow in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T035 [P] [US2] E2E test for configuration step in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T036 [P] [US2] E2E test for confirmation step in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T037 [P] [US2] Unit test for PlatformCard component in apps/frontend/tests/unit/components/connectors/PlatformCard.test.tsx
+- [ ] T038 [P] [US2] Unit test for ConnectorSetupWizard component in apps/frontend/tests/unit/components/connectors/ConnectorSetupWizard.test.tsx
 
 ### Implementation for User Story 2
 
-- [ ] T039 [P] [US2] Create PlatformCard molecule component in apps/web/src/components/connectors/molecules/PlatformCard.tsx
-- [ ] T040 [P] [US2] Create PlatformGrid organism component in apps/web/src/components/connectors/organisms/PlatformGrid.tsx (depends on T039)
-- [ ] T041 [P] [US2] Create MetricCheckbox molecule component in apps/web/src/components/connectors/molecules/MetricCheckbox.tsx
-- [ ] T042 [P] [US2] Create ConnectorConfigForm organism component in apps/web/src/components/connectors/organisms/ConnectorConfigForm.tsx (depends on T041)
-- [ ] T043 [US2] Create ConnectorSetupWizard organism component in apps/web/src/components/connectors/organisms/ConnectorSetupWizard.tsx (depends on T040, T042)
-- [ ] T044 [US2] Create connector add page route in apps/web/src/routes/connectors/add.tsx (depends on T043)
-- [ ] T045 [US2] Implement OAuth popup handling hook in apps/web/src/hooks/useOAuthFlow.ts
-- [ ] T046 [US2] Implement tRPC connectors.getAvailablePlatforms procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T047 [US2] Implement tRPC connectors.create procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T048 [US2] Implement tRPC connectors.initiateOAuth procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T049 [US2] Implement tRPC connectors.completeOAuth procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T050 [US2] Implement tRPC connectors.getAvailableMetrics procedure in apps/web/server/api/routers/connectors.ts
+- [ ] T039 [P] [US2] Create PlatformCard molecule component in apps/frontend/src/components/connectors/molecules/PlatformCard.tsx
+- [ ] T040 [P] [US2] Create PlatformGrid organism component in apps/frontend/src/components/connectors/organisms/PlatformGrid.tsx (depends on T039)
+- [ ] T041 [P] [US2] Create MetricCheckbox molecule component in apps/frontend/src/components/connectors/molecules/MetricCheckbox.tsx
+- [ ] T042 [P] [US2] Create ConnectorConfigForm organism component in apps/frontend/src/components/connectors/organisms/ConnectorConfigForm.tsx (depends on T041)
+- [ ] T043 [US2] Create ConnectorSetupWizard organism component in apps/frontend/src/components/connectors/organisms/ConnectorSetupWizard.tsx (depends on T040, T042)
+- [ ] T044 [US2] Create connector add page route in apps/frontend/src/routes/connectors/add.tsx (depends on T043)
+- [ ] T045 [US2] Implement OAuth popup handling hook in apps/frontend/src/hooks/useOAuthFlow.ts
+- [ ] T046 [US2] Implement tRPC connectors.getAvailablePlatforms procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T047 [US2] Implement tRPC connectors.create procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T048 [US2] Implement tRPC connectors.initiateOAuth procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T049 [US2] Implement tRPC connectors.completeOAuth procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T050 [US2] Implement tRPC connectors.getAvailableMetrics procedure in apps/frontend/server/api/routers/connectors.ts
 - [ ] T051 [US2] Implement connector service createConnector method in packages/api/src/services/connector-service.ts
 - [ ] T052 [US2] Implement connector service initiateOAuth method in packages/api/src/services/connector-service.ts
 - [ ] T053 [US2] Implement connector service completeOAuth method in packages/api/src/services/connector-service.ts
 - [ ] T054 [US2] Implement connector service getAvailablePlatforms method in packages/api/src/services/connector-service.ts
 - [ ] T055 [US2] Implement connector service getAvailableMetrics method in packages/api/src/services/connector-service.ts
 - [ ] T056 [US2] Implement OAuth state parameter generation and validation in packages/api/src/services/oauth-service.ts
-- [ ] T057 [US2] Implement OAuth callback handler in apps/web/src/routes/connectors/oauth/callback.tsx
+- [ ] T057 [US2] Implement OAuth callback handler in apps/frontend/src/routes/connectors/oauth/callback.tsx
 - [ ] T058 [US2] Add query parameter handling (?platform=meta, ?redirect=/insights) to connector add page
 - [ ] T059 [US2] Add loading states (stepper progress, spinners) to setup wizard
 - [ ] T060 [US2] Add error handling for OAuth failures (denied permissions, network errors)
@@ -145,16 +145,16 @@
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T063 [P] [US3] E2E test for connector configuration in apps/web/tests/e2e/connectors/connector-configure.spec.ts
-- [ ] T064 [P] [US3] Unit test for ConnectorConfigForm component in apps/web/tests/unit/components/connectors/ConnectorConfigForm.test.tsx
+- [ ] T063 [P] [US3] E2E test for connector configuration in apps/frontend/tests/e2e/connectors/connector-configure.spec.ts
+- [ ] T064 [P] [US3] Unit test for ConnectorConfigForm component in apps/frontend/tests/unit/components/connectors/ConnectorConfigForm.test.tsx
 
 ### Implementation for User Story 3
 
 - [ ] T065 [US3] Reuse ConnectorConfigForm organism from US2 (T042) or create enhanced version
-- [ ] T066 [US3] Create connector configure page route in apps/web/src/routes/connectors/$connectorId.configure.tsx
-- [ ] T067 [US3] Implement tRPC connectors.update procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T068 [US3] Implement tRPC connectors.testConnection procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T069 [US3] Implement tRPC connectors.getById procedure in apps/web/server/api/routers/connectors.ts
+- [ ] T066 [US3] Create connector configure page route in apps/frontend/src/routes/connectors/$connectorId.configure.tsx
+- [ ] T067 [US3] Implement tRPC connectors.update procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T068 [US3] Implement tRPC connectors.testConnection procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T069 [US3] Implement tRPC connectors.getById procedure in apps/frontend/server/api/routers/connectors.ts
 - [ ] T070 [US3] Implement connector service updateConnector method in packages/api/src/services/connector-service.ts
 - [ ] T071 [US3] Implement connector service testConnection method in packages/api/src/services/connector-service.ts
 - [ ] T072 [US3] Implement connector service getConnectorById method in packages/api/src/services/connector-service.ts
@@ -177,18 +177,18 @@
 
 ### Tests for User Story 4 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T079 [P] [US4] E2E test for connector detail page in apps/web/tests/e2e/connectors/connector-detail.spec.ts
-- [ ] T080 [P] [US4] Unit test for ConnectorHealth organism component in apps/web/tests/unit/components/connectors/ConnectorHealth.test.tsx
+- [ ] T079 [P] [US4] E2E test for connector detail page in apps/frontend/tests/e2e/connectors/connector-detail.spec.ts
+- [ ] T080 [P] [US4] Unit test for ConnectorHealth organism component in apps/frontend/tests/unit/components/connectors/ConnectorHealth.test.tsx
 
 ### Implementation for User Story 4
 
-- [ ] T081 [P] [US4] Create HealthCard molecule component in apps/web/src/components/connectors/molecules/HealthCard.tsx
-- [ ] T082 [P] [US4] Create SyncHistoryTable molecule component in apps/web/src/components/connectors/molecules/SyncHistoryTable.tsx
-- [ ] T083 [P] [US4] Create TroubleshootingCard molecule component in apps/web/src/components/connectors/molecules/TroubleshootingCard.tsx
-- [ ] T084 [US4] Create ConnectorHealth organism component in apps/web/src/components/connectors/organisms/ConnectorHealth.tsx (depends on T081)
-- [ ] T085 [US4] Create connector detail page route in apps/web/src/routes/connectors/$connectorId.tsx (depends on T084, T082, T083)
-- [ ] T086 [US4] Implement tRPC connectors.getHealthHistory procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T087 [US4] Implement tRPC connectors.getSyncHistory procedure in apps/web/server/api/routers/connectors.ts
+- [ ] T081 [P] [US4] Create HealthCard molecule component in apps/frontend/src/components/connectors/molecules/HealthCard.tsx
+- [ ] T082 [P] [US4] Create SyncHistoryTable molecule component in apps/frontend/src/components/connectors/molecules/SyncHistoryTable.tsx
+- [ ] T083 [P] [US4] Create TroubleshootingCard molecule component in apps/frontend/src/components/connectors/molecules/TroubleshootingCard.tsx
+- [ ] T084 [US4] Create ConnectorHealth organism component in apps/frontend/src/components/connectors/organisms/ConnectorHealth.tsx (depends on T081)
+- [ ] T085 [US4] Create connector detail page route in apps/frontend/src/routes/connectors/$connectorId.tsx (depends on T084, T082, T083)
+- [ ] T086 [US4] Implement tRPC connectors.getHealthHistory procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T087 [US4] Implement tRPC connectors.getSyncHistory procedure in apps/frontend/server/api/routers/connectors.ts
 - [ ] T088 [US4] Implement connector service getHealthHistory method in packages/api/src/services/connector-service.ts
 - [ ] T089 [US4] Implement connector service getSyncHistory method in packages/api/src/services/connector-service.ts
 - [ ] T090 [US4] Add Recharts integration for health metrics visualization (LineChart, BarChart, AreaChart)
@@ -210,17 +210,17 @@
 
 ### Tests for User Story 5 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T096 [P] [US5] E2E test for connector removal flow in apps/web/tests/e2e/connectors/connector-remove.spec.ts
-- [ ] T097 [P] [US5] Unit test for confirmation input validation in apps/web/tests/unit/components/connectors/ConfirmationInput.test.tsx
+- [ ] T096 [P] [US5] E2E test for connector removal flow in apps/frontend/tests/e2e/connectors/connector-remove.spec.ts
+- [ ] T097 [P] [US5] Unit test for confirmation input validation in apps/frontend/tests/unit/components/connectors/ConfirmationInput.test.tsx
 
 ### Implementation for User Story 5
 
-- [ ] T098 [P] [US5] Create ConfirmationInput molecule component in apps/web/src/components/connectors/molecules/ConfirmationInput.tsx
-- [ ] T099 [US5] Create connector remove page route in apps/web/src/routes/connectors/$connectorId.remove.tsx (depends on T098)
-- [ ] T100 [US5] Implement tRPC connectors.getAffectedInsights procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T101 [US5] Implement tRPC connectors.remove procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T102 [US5] Implement tRPC connectors.pause procedure in apps/web/server/api/routers/connectors.ts
-- [ ] T103 [US5] Implement tRPC connectors.exportData procedure in apps/web/server/api/routers/connectors.ts
+- [ ] T098 [P] [US5] Create ConfirmationInput molecule component in apps/frontend/src/components/connectors/molecules/ConfirmationInput.tsx
+- [ ] T099 [US5] Create connector remove page route in apps/frontend/src/routes/connectors/$connectorId.remove.tsx (depends on T098)
+- [ ] T100 [US5] Implement tRPC connectors.getAffectedInsights procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T101 [US5] Implement tRPC connectors.remove procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T102 [US5] Implement tRPC connectors.pause procedure in apps/frontend/server/api/routers/connectors.ts
+- [ ] T103 [US5] Implement tRPC connectors.exportData procedure in apps/frontend/server/api/routers/connectors.ts
 - [ ] T104 [US5] Implement connector service getAffectedInsights method in packages/api/src/services/connector-service.ts
 - [ ] T105 [US5] Implement connector service removeConnector method in packages/api/src/services/connector-service.ts
 - [ ] T106 [US5] Implement connector service pauseConnector method in packages/api/src/services/connector-service.ts
@@ -244,7 +244,7 @@
 
 ### Tests for User Story 6 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T114 [P] [US6] E2E test for domain filtering in apps/web/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T114 [P] [US6] E2E test for domain filtering in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
 
 ### Implementation for User Story 6
 
@@ -268,9 +268,9 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T126 [P] Add unit tests for all connector atoms (StatusBadge, DomainTag, ConnectorIcon, SyncButton) in apps/web/tests/unit/components/connectors/atoms/
-- [ ] T127 [P] Add unit tests for all connector molecules (ConnectorCard, PlatformCard, FilterBar, HealthCard, etc.) in apps/web/tests/unit/components/connectors/molecules/
-- [ ] T128 [P] Add unit tests for connector hooks (useConnectorHealth, useOAuthFlow, useConnectorSync) in apps/web/tests/unit/hooks/
+- [ ] T126 [P] Add unit tests for all connector atoms (StatusBadge, DomainTag, ConnectorIcon, SyncButton) in apps/frontend/tests/unit/components/connectors/atoms/
+- [ ] T127 [P] Add unit tests for all connector molecules (ConnectorCard, PlatformCard, FilterBar, HealthCard, etc.) in apps/frontend/tests/unit/components/connectors/molecules/
+- [ ] T128 [P] Add unit tests for connector hooks (useConnectorHealth, useOAuthFlow, useConnectorSync) in apps/frontend/tests/unit/hooks/
 - [ ] T129 Code cleanup and refactoring (remove unused imports, consolidate duplicate logic)
 - [ ] T130 Performance optimization (lazy load chart components, virtual scrolling for large connector lists)
 - [ ] T131 Security hardening (CSRF protection for OAuth, credential encryption validation)
@@ -290,16 +290,16 @@
 
 **Purpose**: Comprehensive testing across all connector workflows
 
-- [ ] T141 Write comprehensive E2E test suite for connector list page in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T142 Write comprehensive E2E test suite for connector add flow in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T143 Write comprehensive E2E test suite for connector configure in apps/web/tests/e2e/connectors/connector-configure.spec.ts
-- [ ] T144 Write comprehensive E2E test suite for connector detail in apps/web/tests/e2e/connectors/connector-detail.spec.ts
-- [ ] T145 Write comprehensive E2E test suite for connector removal in apps/web/tests/e2e/connectors/connector-remove.spec.ts
-- [ ] T146 Write E2E test for multi-domain connector filtering in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T147 Write E2E test for OAuth failure recovery in apps/web/tests/e2e/connectors/connector-add.spec.ts
-- [ ] T148 Write E2E test for sync failure handling in apps/web/tests/e2e/connectors/connector-detail.spec.ts
-- [ ] T149 Write E2E test for manual sync trigger in apps/web/tests/e2e/connectors/connector-list.spec.ts
-- [ ] T150 Write E2E test for connector configuration validation in apps/web/tests/e2e/connectors/connector-configure.spec.ts
+- [ ] T141 Write comprehensive E2E test suite for connector list page in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T142 Write comprehensive E2E test suite for connector add flow in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T143 Write comprehensive E2E test suite for connector configure in apps/frontend/tests/e2e/connectors/connector-configure.spec.ts
+- [ ] T144 Write comprehensive E2E test suite for connector detail in apps/frontend/tests/e2e/connectors/connector-detail.spec.ts
+- [ ] T145 Write comprehensive E2E test suite for connector removal in apps/frontend/tests/e2e/connectors/connector-remove.spec.ts
+- [ ] T146 Write E2E test for multi-domain connector filtering in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T147 Write E2E test for OAuth failure recovery in apps/frontend/tests/e2e/connectors/connector-add.spec.ts
+- [ ] T148 Write E2E test for sync failure handling in apps/frontend/tests/e2e/connectors/connector-detail.spec.ts
+- [ ] T149 Write E2E test for manual sync trigger in apps/frontend/tests/e2e/connectors/connector-list.spec.ts
+- [ ] T150 Write E2E test for connector configuration validation in apps/frontend/tests/e2e/connectors/connector-configure.spec.ts
 
 ---
 

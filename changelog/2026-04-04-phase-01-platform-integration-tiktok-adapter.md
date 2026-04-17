@@ -3,7 +3,7 @@
 **Date:** 2026-04-04  
 **Scope:** Phase 1 (Platform Integration) — [Execution Phase 5 — TikTok adapter implementation (conditional)](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2: Task 2.5).
 
-This entry adds the optional TikTok Marketing API (`open_api/v1.3`) read path: OAuth token exchange and validation, advertiser scoping, cursor-style list pagination for campaigns / ad groups / ads, integrated report pulls with automatic **30-day** date windows (aligned with TikTok stat-time reporting limits), per-request token-bucket throttling, normalization into the shared snapshot shape, and opt-in **sandbox** hosts. It does **not** add TikTok Pixel ingestion (called out separately in `tasks.md`), browser OAuth UI in `apps/web`, the cross-cutting normalization framework beyond TikTok’s transformer (Work Stream 3), or automated load/performance CI gates (Execution Phase 7).
+This entry adds the optional TikTok Marketing API (`open_api/v1.3`) read path: OAuth token exchange and validation, advertiser scoping, cursor-style list pagination for campaigns / ad groups / ads, integrated report pulls with automatic **30-day** date windows (aligned with TikTok stat-time reporting limits), per-request token-bucket throttling, normalization into the shared snapshot shape, and opt-in **sandbox** hosts. It does **not** add TikTok Pixel ingestion (called out separately in `tasks.md`), browser OAuth UI in `apps/frontend`, the cross-cutting normalization framework beyond TikTok’s transformer (Work Stream 3), or automated load/performance CI gates (Execution Phase 7).
 
 ---
 
@@ -57,7 +57,7 @@ Commands run successfully after the changes:
 ## Known follow-ups (not in this change set)
 
 - **TikTok Pixel** — Separate from Marketing API ads entities; still open per Task 2.5 checklist in `tasks.md`.
-- **Browser OAuth routes** — No `apps/web` OAuth callback wiring; credentials are expected from your identity / vault layer.
+- **Browser OAuth routes** — No `apps/frontend` OAuth callback wiring; credentials are expected from your identity / vault layer.
 - **Live integration** — Opt-in env-gated test; obtain Business API access and sandbox or production credentials to unskip **`tiktok.integration.test.ts`**.
 - **Execution Phase 6** — Cross-platform normalization / validation framework remains the next major bundle in the execution plan.
 

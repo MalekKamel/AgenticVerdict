@@ -484,7 +484,7 @@ jobs:
       "gzip": true
     },
     {
-      "path": "apps/web/dist/index.js",
+      "path": "apps/frontend/dist/index.js",
       "limit": "500 KB",
       "gzip": true
     }

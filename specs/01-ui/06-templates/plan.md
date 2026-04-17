@@ -14,7 +14,7 @@ Phase 06 (Templates) implements a template library and customization system that
 **Storage**: PostgreSQL via Drizzle ORM (template metadata, configurations, usage tracking)
 **Testing**: Vitest (unit tests), Playwright (E2E tests for critical user journeys)
 **Target Platform**: Web browser (Chrome, Firefox, Safari, Edge - last 2 versions)
-**Project Type**: Web application (frontend in monorepo: `apps/web/`)
+**Project Type**: Web application (frontend in monorepo: `apps/frontend/`)
 **Performance Goals**: <3s template library page load, <2s template detail page load, <3s preview modal load
 **Constraints**: WCAG 2.1 AA compliance, RTL/LTR support, multi-language (English/Arabic minimum)
 **Scale/Scope**: 6-8 pages/routes, 15-20 components, 10-12 tRPC procedures
@@ -51,7 +51,7 @@ specs/01-ui/06-templates/
 ### Source Code (repository root)
 
 ```text
-apps/web/src/
+apps/frontend/src/
 ├── routes/
 │   ├── templates_/
 │   │   ├── index.tsx              # Template library page
@@ -196,7 +196,7 @@ export const templateUsage = pgTable('template_usage', {
 ### State Management (TanStack Store)
 
 ```typescript
-// apps/web/src/stores/template-store.ts
+// apps/frontend/src/stores/template-store.ts
 import { createStore } from '@tanstack/react-store'
 
 interface TemplateStore {

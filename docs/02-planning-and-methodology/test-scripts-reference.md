@@ -26,7 +26,7 @@ Reference for **pnpm commands**, **scenario orchestration** (`tests/scenarios/`,
 | -------------------------------------- | ------------------------------------------------------------------------------- | ---------------- | -------------------------------------------------- |
 | `pnpm run test`                        | Unit tests (Turbo / packages)                                                   | Varies           | Primary package coverage                           |
 | `pnpm run test:integration`            | Package integration tests                                                       | Varies           | API, DB, adapters                                  |
-| `pnpm run test:e2e`                    | Playwright E2E                                                                  | Varies           | `apps/web`                                         |
+| `pnpm run test:e2e`                    | Playwright E2E                                                                  | Varies           | `apps/frontend`                                    |
 | `pnpm run test:coverage`               | Root Vitest + coverage                                                          | Varies           | Includes `tests/utils` project                     |
 | `pnpm run test:scenarios:all`          | Scenarios R01–R12                                                               | ~2–15 min        | Chromium for PDF scenarios                         |
 | `pnpm run test:scenario R12`           | Prerequisites (Node, pnpm, Docker)                                              | Seconds          | Run first when debugging env                       |

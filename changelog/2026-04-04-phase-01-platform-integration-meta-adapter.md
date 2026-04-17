@@ -3,7 +3,7 @@
 **Date:** 2026-04-04  
 **Scope:** Phase 1 (Platform Integration) — [Execution Phase 2 — Meta adapter implementation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.1).
 
-This entry summarizes the first vendor-specific adapter: Marketing API reads, OAuth-style token handling (validation + long-lived exchange), cursor pagination, per-request throttling aligned with Meta’s hourly budget, and normalization into the shared snapshot shape. It does **not** cover GA4, GSC, GBP, or TikTok adapters, browser OAuth UI in `apps/web`, automated load/performance gates (Execution Phase 7), or the cross-platform normalization framework beyond Meta’s transformer (Work Stream 3 remains separate).
+This entry summarizes the first vendor-specific adapter: Marketing API reads, OAuth-style token handling (validation + long-lived exchange), cursor pagination, per-request throttling aligned with Meta’s hourly budget, and normalization into the shared snapshot shape. It does **not** cover GA4, GSC, GBP, or TikTok adapters, browser OAuth UI in `apps/frontend`, automated load/performance gates (Execution Phase 7), or the cross-platform normalization framework beyond Meta’s transformer (Work Stream 3 remains separate).
 
 ---
 

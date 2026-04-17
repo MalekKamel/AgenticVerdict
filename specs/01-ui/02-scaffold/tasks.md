@@ -19,8 +19,8 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 ## Path Conventions
 
-- **Web app**: `apps/web/src/` for all implementation
-- **Tests**: `apps/web/src/components/__tests__/` for unit tests, `apps/web/e2e/` for E2E tests
+- **Web app**: `apps/frontend/src/` for all implementation
+- **Tests**: `apps/frontend/src/components/__tests__/` for unit tests, `apps/frontend/e2e/` for E2E tests
 - **Paths shown below** use the web app structure
 
 ---
@@ -29,11 +29,11 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 **Purpose**: Initial setup for layout components and navigation system
 
-- [ ] T001 Create layout components directory structure at `apps/web/src/components/layout/`
-- [ ] T002 Create navigation components directory structure at `apps/web/src/components/navigation/`
-- [ ] T003 Create report components directory structure at `apps/web/src/components/report/`
-- [ ] T004 [P] Create hooks directory structure at `apps/web/src/hooks/`
-- [ ] T005 [P] Create lib utilities directory structure at `apps/web/src/lib/`
+- [ ] T001 Create layout components directory structure at `apps/frontend/src/components/layout/`
+- [ ] T002 Create navigation components directory structure at `apps/frontend/src/components/navigation/`
+- [ ] T003 Create report components directory structure at `apps/frontend/src/components/report/`
+- [ ] T004 [P] Create hooks directory structure at `apps/frontend/src/hooks/`
+- [ ] T005 [P] Create lib utilities directory structure at `apps/frontend/src/lib/`
 
 ---
 
@@ -45,12 +45,12 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 - [ ] T006 Add navigation translation keys to `packages/i18n/src/locales/en/common.json` (nav, layout, settings sections)
 - [ ] T007 [P] Add navigation translation keys to `packages/i18n/src/locales/ar/common.json` (nav, layout, settings sections in Arabic)
-- [ ] T008 Create tRPC router for layout data at `apps/web/src/server/routers/layout.ts` (getNavigationMenu, getUserProfile)
-- [ ] T009 [P] Create navigation type definitions at `apps/web/src/types/navigation.ts` (NavigationItem, BreadcrumbItem, UserMenuItem, SettingsSection, TOCItem)
-- [ ] T010 Create navigation configuration at `apps/web/src/lib/navigation.ts` (navigation items structure, helpers)
-- [ ] T011 Create breadcrumb utilities at `apps/web/src/lib/breadcrumbs.ts` (generateBreadcrumbs, findNavigationItem)
-- [ ] T012 [P] Create useLayout hook at `apps/web/src/hooks/useLayout.ts` (layout state, sidebar state)
-- [ ] T013 [P] Create useSidebar hook at `apps/web/src/hooks/useSidebar.ts` (collapse/expand state with localStorage persistence)
+- [ ] T008 Create tRPC router for layout data at `apps/frontend/src/server/routers/layout.ts` (getNavigationMenu, getUserProfile)
+- [ ] T009 [P] Create navigation type definitions at `apps/frontend/src/types/navigation.ts` (NavigationItem, BreadcrumbItem, UserMenuItem, SettingsSection, TOCItem)
+- [ ] T010 Create navigation configuration at `apps/frontend/src/lib/navigation.ts` (navigation items structure, helpers)
+- [ ] T011 Create breadcrumb utilities at `apps/frontend/src/lib/breadcrumbs.ts` (generateBreadcrumbs, findNavigationItem)
+- [ ] T012 [P] Create useLayout hook at `apps/frontend/src/hooks/useLayout.ts` (layout state, sidebar state)
+- [ ] T013 [P] Create useSidebar hook at `apps/frontend/src/hooks/useSidebar.ts` (collapse/expand state with localStorage persistence)
 
 **Checkpoint**: Foundation ready - layout implementation can now begin in parallel
 
@@ -66,22 +66,22 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T014 [P] [US2] Unit test for AuthLayout component in `apps/web/src/components/__tests__/AuthLayout.test.tsx`
-- [ ] T015 [P] [US2] E2E test for signin page layout in `apps/web/e2e/auth-layout.spec.ts`
-- [ ] T016 [P] [US2] E2E test for RTL auth layout in `apps/web/e2e/auth-layout-rtl.spec.ts`
-- [ ] T017 [P] [US2] E2E test for mobile auth layout in `apps/web/e2e/auth-layout-mobile.spec.ts`
-- [ ] T018 [P] [US2] Accessibility test for auth layout with axe-core in `apps/web/e2e/auth-layout-a11y.spec.ts`
+- [ ] T014 [P] [US2] Unit test for AuthLayout component in `apps/frontend/src/components/__tests__/AuthLayout.test.tsx`
+- [ ] T015 [P] [US2] E2E test for signin page layout in `apps/frontend/e2e/auth-layout.spec.ts`
+- [ ] T016 [P] [US2] E2E test for RTL auth layout in `apps/frontend/e2e/auth-layout-rtl.spec.ts`
+- [ ] T017 [P] [US2] E2E test for mobile auth layout in `apps/frontend/e2e/auth-layout-mobile.spec.ts`
+- [ ] T018 [P] [US2] Accessibility test for auth layout with axe-core in `apps/frontend/e2e/auth-layout-a11y.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Create AuthLayout component in `apps/web/src/components/layout/AuthLayout.tsx`
+- [ ] T019 [US2] Create AuthLayout component in `apps/frontend/src/components/layout/AuthLayout.tsx`
 - [ ] T020 [US2] Implement AuthLayout size variants (sm: 400px, md: 480px, lg: 560px)
 - [ ] T021 [US2] Implement AuthLayout responsive behavior (centered card, mobile padding)
 - [ ] T022 [US2] Add AuthLayout accessibility features (semantic HTML, ARIA labels, focus management)
 - [ ] T023 [US2] Implement RTL layout mirroring for AuthLayout (automatic via Mantine + next-intl)
-- [ ] T024 [US2] Update signin route to use AuthLayout at `apps/web/src/routes/[locale]/signin.tsx`
-- [ ] T025 [US2] Create signup route with AuthLayout at `apps/web/src/routes/[locale]/signup.tsx`
-- [ ] T026 [US2] Create forgot-password route with AuthLayout at `apps/web/src/routes/[locale]/forgot-password.tsx`
+- [ ] T024 [US2] Update signin route to use AuthLayout at `apps/frontend/src/routes/[locale]/signin.tsx`
+- [ ] T025 [US2] Create signup route with AuthLayout at `apps/frontend/src/routes/[locale]/signup.tsx`
+- [ ] T026 [US2] Create forgot-password route with AuthLayout at `apps/frontend/src/routes/[locale]/forgot-password.tsx`
 
 **Checkpoint**: At this point, User Story 2 should be fully functional and testable independently
 
@@ -97,36 +97,36 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T027 [P] [US1] Unit test for DashboardLayout component in `apps/web/src/components/__tests__/DashboardLayout.test.tsx`
-- [ ] T028 [P] [US1] Unit test for Sidebar component in `apps/web/src/components/__tests__/Sidebar.test.tsx`
-- [ ] T029 [P] [US1] Unit test for Topbar component in `apps/web/src/components/__tests__/Topbar.test.tsx`
-- [ ] T030 [P] [US1] Unit test for Breadcrumb component in `apps/web/src/components/__tests__/Breadcrumb.test.tsx`
-- [ ] T031 [P] [US1] E2E test for desktop dashboard layout in `apps/web/e2e/dashboard-layout.spec.ts`
-- [ ] T032 [P] [US1] E2E test for mobile dashboard layout in `apps/web/e2e/dashboard-layout-mobile.spec.ts`
-- [ ] T033 [P] [US1] E2E test for RTL dashboard layout in `apps/web/e2e/dashboard-layout-rtl.spec.ts`
-- [ ] T034 [P] [US1] E2E test for sidebar collapse/expand in `apps/web/e2e/dashboard-layout-sidebar.spec.ts`
-- [ ] T035 [P] [US1] Accessibility test for dashboard layout with axe-core in `apps/web/e2e/dashboard-layout-a11y.spec.ts`
+- [ ] T027 [P] [US1] Unit test for DashboardLayout component in `apps/frontend/src/components/__tests__/DashboardLayout.test.tsx`
+- [ ] T028 [P] [US1] Unit test for Sidebar component in `apps/frontend/src/components/__tests__/Sidebar.test.tsx`
+- [ ] T029 [P] [US1] Unit test for Topbar component in `apps/frontend/src/components/__tests__/Topbar.test.tsx`
+- [ ] T030 [P] [US1] Unit test for Breadcrumb component in `apps/frontend/src/components/__tests__/Breadcrumb.test.tsx`
+- [ ] T031 [P] [US1] E2E test for desktop dashboard layout in `apps/frontend/e2e/dashboard-layout.spec.ts`
+- [ ] T032 [P] [US1] E2E test for mobile dashboard layout in `apps/frontend/e2e/dashboard-layout-mobile.spec.ts`
+- [ ] T033 [P] [US1] E2E test for RTL dashboard layout in `apps/frontend/e2e/dashboard-layout-rtl.spec.ts`
+- [ ] T034 [P] [US1] E2E test for sidebar collapse/expand in `apps/frontend/e2e/dashboard-layout-sidebar.spec.ts`
+- [ ] T035 [P] [US1] Accessibility test for dashboard layout with axe-core in `apps/frontend/e2e/dashboard-layout-a11y.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T036 [P] [US1] Create Sidebar component in `apps/web/src/components/navigation/Sidebar.tsx`
+- [ ] T036 [P] [US1] Create Sidebar component in `apps/frontend/src/components/navigation/Sidebar.tsx`
 - [ ] T037 [P] [US1] Implement Sidebar collapse/expand functionality with icon-only mode
 - [ ] T038 [US1] Implement Sidebar responsive behavior (desktop panel, mobile overlay)
 - [ ] T039 [US1] Add Sidebar accessibility features (ARIA landmarks, keyboard navigation, focus trap)
 - [ ] T040 [US1] Implement RTL layout mirroring for Sidebar (automatic via Mantine + next-intl)
-- [ ] T041 [P] [US1] Create Topbar component in `apps/web/src/components/navigation/Topbar.tsx`
-- [ ] T042 [P] [US1] Create UserMenu component in `apps/web/src/components/navigation/UserMenu.tsx`
+- [ ] T041 [P] [US1] Create Topbar component in `apps/frontend/src/components/navigation/Topbar.tsx`
+- [ ] T042 [P] [US1] Create UserMenu component in `apps/frontend/src/components/navigation/UserMenu.tsx`
 - [ ] T043 [US1] Implement Topbar with logo, language switcher, theme toggle, and user menu
-- [ ] T044 [US1] Create Breadcrumb component in `apps/web/src/components/navigation/Breadcrumb.tsx`
+- [ ] T044 [US1] Create Breadcrumb component in `apps/frontend/src/components/navigation/Breadcrumb.tsx`
 - [ ] T045 [US1] Implement breadcrumb auto-generation from route hierarchy
-- [ ] T046 [US1] Create NavigationItems component in `apps/web/src/components/navigation/NavigationItems.tsx`
+- [ ] T046 [US1] Create NavigationItems component in `apps/frontend/src/components/navigation/NavigationItems.tsx`
 - [ ] T047 [US1] Implement nested navigation with collapsible sections
-- [ ] T048 [US1] Create TenantSwitcher component in `apps/web/src/components/navigation/TenantSwitcher.tsx` (UI only, tRPC integration in Phase 09)
-- [ ] T049 [US1] Create DashboardLayout component in `apps/web/src/components/layout/DashboardLayout.tsx`
+- [ ] T048 [US1] Create TenantSwitcher component in `apps/frontend/src/components/navigation/TenantSwitcher.tsx` (UI only, tRPC integration in Phase 09)
+- [ ] T049 [US1] Create DashboardLayout component in `apps/frontend/src/components/layout/DashboardLayout.tsx`
 - [ ] T050 [US1] Integrate Sidebar, Topbar, and Breadcrumb into DashboardLayout
 - [ ] T051 [US1] Implement DashboardLayout responsive behavior (desktop sidebar, mobile overlay)
 - [ ] T052 [US1] Add DashboardLayout accessibility features (skip-to-content link, landmarks, keyboard nav)
-- [ ] T053 [US1] Update root layout to use DashboardLayout for authenticated routes at `apps/web/src/routes/[locale]/layout.tsx`
+- [ ] T053 [US1] Update root layout to use DashboardLayout for authenticated routes at `apps/frontend/src/routes/[locale]/layout.tsx`
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -142,24 +142,24 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T054 [P] [US4] Unit test for SettingsLayout component in `apps/web/src/components/__tests__/SettingsLayout.test.tsx`
-- [ ] T055 [P] [US4] E2E test for settings layout in `apps/web/e2e/settings-layout.spec.ts`
-- [ ] T056 [P] [US4] E2E test for mobile settings layout in `apps/web/e2e/settings-layout-mobile.spec.ts`
-- [ ] T057 [P] [US4] E2E test for RTL settings layout in `apps/web/e2e/settings-layout-rtl.spec.ts`
-- [ ] T058 [P] [US4] Accessibility test for settings layout with axe-core in `apps/web/e2e/settings-layout-a11y.spec.ts`
+- [ ] T054 [P] [US4] Unit test for SettingsLayout component in `apps/frontend/src/components/__tests__/SettingsLayout.test.tsx`
+- [ ] T055 [P] [US4] E2E test for settings layout in `apps/frontend/e2e/settings-layout.spec.ts`
+- [ ] T056 [P] [US4] E2E test for mobile settings layout in `apps/frontend/e2e/settings-layout-mobile.spec.ts`
+- [ ] T057 [P] [US4] E2E test for RTL settings layout in `apps/frontend/e2e/settings-layout-rtl.spec.ts`
+- [ ] T058 [P] [US4] Accessibility test for settings layout with axe-core in `apps/frontend/e2e/settings-layout-a11y.spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T059 [P] [US4] Create SettingsLayout component in `apps/web/src/components/layout/SettingsLayout.tsx`
+- [ ] T059 [P] [US4] Create SettingsLayout component in `apps/frontend/src/components/layout/SettingsLayout.tsx`
 - [ ] T060 [US4] Implement SettingsLayout section navigation with active state highlighting
 - [ ] T061 [US4] Implement SettingsLayout responsive behavior (desktop sidebar, mobile tabs/drawer)
 - [ ] T062 [US4] Add SettingsLayout form state handling (loading, saving, error, success)
 - [ ] T063 [US4] Add SettingsLayout accessibility features (form structure, ARIA alerts, focus management)
 - [ ] T064 [US4] Implement RTL layout mirroring for SettingsLayout (automatic via Mantine + next-intl)
-- [ ] T065 [US4] Create settings routes structure at `apps/web/src/routes/[locale]/settings/`
-- [ ] T066 [US4] Create account settings route at `apps/web/src/routes/[locale]/settings/account.tsx`
-- [ ] T067 [US4] Create company settings route at `apps/web/src/routes/[locale]/settings/company.tsx`
-- [ ] T068 [US4] Create connectors settings route at `apps/web/src/routes/[locale]/settings/connectors.tsx`
+- [ ] T065 [US4] Create settings routes structure at `apps/frontend/src/routes/[locale]/settings/`
+- [ ] T066 [US4] Create account settings route at `apps/frontend/src/routes/[locale]/settings/account.tsx`
+- [ ] T067 [US4] Create company settings route at `apps/frontend/src/routes/[locale]/settings/company.tsx`
+- [ ] T068 [US4] Create connectors settings route at `apps/frontend/src/routes/[locale]/settings/connectors.tsx`
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 4 should all work independently
 
@@ -175,32 +175,32 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 > **NOTE: Write these tests FIRST, ensure them FAIL before implementation**
 
-- [ ] T069 [P] [US3] Unit test for ReportLayout component in `apps/web/src/components/__tests__/ReportLayout.test.tsx`
-- [ ] T070 [P] [US3] Unit test for ReportViewer component in `apps/web/src/components/__tests__/ReportViewer.test.tsx`
-- [ ] T071 [P] [US3] Unit test for ReportActions component in `apps/web/src/components/__tests__/ReportActions.test.tsx`
-- [ ] T072 [P] [US3] Unit test for TableOfContents component in `apps/web/src/components/__tests__/TableOfContents.test.tsx`
-- [ ] T073 [P] [US3] E2E test for report layout in `apps/web/e2e/report-layout.spec.ts`
-- [ ] T074 [P] [US3] E2E test for mobile report layout in `apps/web/e2e/report-layout-mobile.spec.ts`
-- [ ] T075 [P] [US3] E2E test for RTL report layout in `apps/web/e2e/report-layout-rtl.spec.ts`
-- [ ] T076 [P] [US3] E2E test for fullscreen mode in `apps/web/e2e/report-layout-fullscreen.spec.ts`
-- [ ] T077 [P] [US3] Accessibility test for report layout with axe-core in `apps/web/e2e/report-layout-a11y.spec.ts`
+- [ ] T069 [P] [US3] Unit test for ReportLayout component in `apps/frontend/src/components/__tests__/ReportLayout.test.tsx`
+- [ ] T070 [P] [US3] Unit test for ReportViewer component in `apps/frontend/src/components/__tests__/ReportViewer.test.tsx`
+- [ ] T071 [P] [US3] Unit test for ReportActions component in `apps/frontend/src/components/__tests__/ReportActions.test.tsx`
+- [ ] T072 [P] [US3] Unit test for TableOfContents component in `apps/frontend/src/components/__tests__/TableOfContents.test.tsx`
+- [ ] T073 [P] [US3] E2E test for report layout in `apps/frontend/e2e/report-layout.spec.ts`
+- [ ] T074 [P] [US3] E2E test for mobile report layout in `apps/frontend/e2e/report-layout-mobile.spec.ts`
+- [ ] T075 [P] [US3] E2E test for RTL report layout in `apps/frontend/e2e/report-layout-rtl.spec.ts`
+- [ ] T076 [P] [US3] E2E test for fullscreen mode in `apps/frontend/e2e/report-layout-fullscreen.spec.ts`
+- [ ] T077 [P] [US3] Accessibility test for report layout with axe-core in `apps/frontend/e2e/report-layout-a11y.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T078 [P] [US3] Create ReportViewer component in `apps/web/src/components/report/ReportViewer.tsx`
+- [ ] T078 [P] [US3] Create ReportViewer component in `apps/frontend/src/components/report/ReportViewer.tsx`
 - [ ] T079 [US3] Implement PDF viewer using browser native PDF viewer
 - [ ] T080 [US3] Implement Excel viewer using HTML table renderer
-- [ ] T081 [P] [US3] Create ReportActions component in `apps/web/src/components/report/ReportActions.tsx`
+- [ ] T081 [P] [US3] Create ReportActions component in `apps/frontend/src/components/report/ReportActions.tsx`
 - [ ] T082 [US3] Implement export, print, share, and fullscreen controls
-- [ ] T083 [P] [US3] Create TableOfContents component in `apps/web/src/components/report/TableOfContents.tsx`
+- [ ] T083 [P] [US3] Create TableOfContents component in `apps/frontend/src/components/report/TableOfContents.tsx`
 - [ ] T084 [US3] Implement TOC navigation with scroll-to-section
-- [ ] T085 [US3] Create ReportLayout component in `apps/web/src/components/layout/ReportLayout.tsx`
+- [ ] T085 [US3] Create ReportLayout component in `apps/frontend/src/components/layout/ReportLayout.tsx`
 - [ ] T086 [US3] Integrate ReportViewer, TableOfContents, and ReportActions into ReportLayout
 - [ ] T087 [US3] Implement ReportLayout responsive behavior (desktop TOC sidebar, mobile drawer)
 - [ ] T088 [US3] Implement fullscreen mode for ReportLayout
 - [ ] T089 [US3] Add ReportLayout accessibility features (document landmarks, keyboard navigation, ARIA labels)
 - [ ] T090 [US3] Implement RTL layout mirroring for ReportLayout (automatic via Mantine + next-intl)
-- [ ] T091 [US3] Create report detail route at `apps/web/src/routes/[locale]/reports/$reportId.tsx`
+- [ ] T091 [US3] Create report detail route at `apps/frontend/src/routes/[locale]/reports/$reportId.tsx`
 
 **Checkpoint**: At this point, all user stories should now be independently functional
 
@@ -216,9 +216,9 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T092 [P] [US5] E2E test for language switching in `apps/web/e2e/language-switching.spec.ts`
-- [ ] T093 [P] [US5] E2E test for RTL layout preservation after language switch in `apps/web/e2e/rtl-preservation.spec.ts`
-- [ ] T094 [P] [US5] E2E test for missing translation fallbacks in `apps/web/e2e/translation-fallbacks.spec.ts`
+- [ ] T092 [P] [US5] E2E test for language switching in `apps/frontend/e2e/language-switching.spec.ts`
+- [ ] T093 [P] [US5] E2E test for RTL layout preservation after language switch in `apps/frontend/e2e/rtl-preservation.spec.ts`
+- [ ] T094 [P] [US5] E2E test for missing translation fallbacks in `apps/frontend/e2e/translation-fallbacks.spec.ts`
 
 ### Implementation for User Story 5
 
@@ -238,9 +238,9 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T102 [P] Update existing AppShellLayout to use new DashboardLayout at `apps/web/src/components/layout/AppShellLayout.tsx` (refactor)
-- [ ] T103 [P] Create layout component documentation in `apps/web/src/components/layout/README.md`
-- [ ] T104 [P] Create navigation component documentation in `apps/web/src/components/navigation/README.md`
+- [ ] T102 [P] Update existing AppShellLayout to use new DashboardLayout at `apps/frontend/src/components/layout/AppShellLayout.tsx` (refactor)
+- [ ] T103 [P] Create layout component documentation in `apps/frontend/src/components/layout/README.md`
+- [ ] T104 [P] Create navigation component documentation in `apps/frontend/src/components/navigation/README.md`
 - [ ] T105 Code cleanup and refactoring across all layout components
 - [ ] T106 Performance optimization (bundle analysis, lazy loading for heavy components)
 - [ ] T107 [P] Add visual regression tests for all layout components

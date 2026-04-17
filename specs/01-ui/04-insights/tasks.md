@@ -16,9 +16,9 @@
 
 ## Path Conventions
 
-- **Web app**: `apps/web/src/` for routes and components, `packages/ui/src/` for shared components
+- **Web app**: `apps/frontend/src/` for routes and components, `packages/ui/src/` for shared components
 - **API**: `packages/api/src/router/` for tRPC routers
-- **Tests**: `apps/web/tests/` for E2E tests, `packages/ui/tests/` for component tests
+- **Tests**: `apps/frontend/tests/` for E2E tests, `packages/ui/tests/` for component tests
 
 ---
 
@@ -26,10 +26,10 @@
 
 **Purpose**: Project initialization and basic structure for insights feature
 
-- [ ] T001 Create insight routes directory structure in apps/web/src/routes/insights/
+- [ ] T001 Create insight routes directory structure in apps/frontend/src/routes/insights/
 - [ ] T002 [P] Create tRPC insights router at packages/api/src/router/insights/router.ts
-- [ ] T003 [P] Create TanStack Store for wizard state at apps/web/src/stores/insight-wizard-store.ts
-- [ ] T004 [P] Add insight-related i18n strings to apps/web/src/i18n/locales/en.json and ar.json
+- [ ] T003 [P] Create TanStack Store for wizard state at apps/frontend/src/stores/insight-wizard-store.ts
+- [ ] T004 [P] Add insight-related i18n strings to apps/frontend/src/i18n/locales/en.json and ar.json
 - [ ] T005 [P] Install Recharts dependency for data visualization
 
 ---
@@ -58,12 +58,12 @@
 - [ ] T016 [P] Create DataTable organism in packages/ui/src/organisms/DataTable/ for insight list
 - [ ] T017 [P] Create FilterBar molecule in packages/ui/src/molecules/FilterBar/ for search and filters
 - [ ] T018 [P] Create ChartCard organism in packages/ui/src/organisms/ChartCard/ for metric charts
-- [ ] T019 Create MetricChart component in apps/web/src/routes/insights/components/MetricChart.tsx wrapping Recharts
+- [ ] T019 Create MetricChart component in apps/frontend/src/routes/insights/components/MetricChart.tsx wrapping Recharts
 
 ### Wizard Infrastructure
 
-- [ ] T020 Initialize TanStack Store with wizard state schema in apps/web/src/stores/insight-wizard-store.ts
-- [ ] T021 [P] Create InsightWizard shell component in apps/web/src/routes/insights/components/InsightWizard.tsx using Mantine Stepper
+- [ ] T020 Initialize TanStack Store with wizard state schema in apps/frontend/src/stores/insight-wizard-store.ts
+- [ ] T021 [P] Create InsightWizard shell component in apps/frontend/src/routes/insights/components/InsightWizard.tsx using Mantine Stepper
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -79,28 +79,28 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T022 [P] [US1] E2E test for insight creation wizard in apps/web/tests/e2e/insights/create-insight.spec.ts
-- [ ] T023 [P] [US1] E2E test for insight cloning in apps/web/tests/e2e/insights/clone-insight.spec.ts
+- [ ] T022 [P] [US1] E2E test for insight creation wizard in apps/frontend/tests/e2e/insights/create-insight.spec.ts
+- [ ] T023 [P] [US1] E2E test for insight cloning in apps/frontend/tests/e2e/insights/clone-insight.spec.ts
 
 ### Implementation for User Story 1
 
 #### Template Selection Step
 
-- [ ] T024 [P] [US1] Create TemplateSelector component in apps/web/src/routes/insights/components/TemplateSelector.tsx
+- [ ] T024 [P] [US1] Create TemplateSelector component in apps/frontend/src/routes/insights/components/TemplateSelector.tsx
 - [ ] T025 [US1] Implement template card grid with name, description, and preview
 - [ ] T026 [US1] Implement template selection state management in TanStack Store
 - [ ] T027 [US1] Implement template recommendation logic based on business domain
 
 #### Connector Selection Step
 
-- [ ] T028 [P] [US1] Create ConnectorSelector component in apps/web/src/routes/insights/components/ConnectorSelector.tsx
+- [ ] T028 [P] [US1] Create ConnectorSelector component in apps/frontend/src/routes/insights/components/ConnectorSelector.tsx
 - [ ] T029 [US1] Implement connector multi-select with health status indicators
 - [ ] T030 [US1] Implement connector filtering by business domain
 - [ ] T031 [US1] Implement "Connect" action for disconnected connectors
 
 #### Metric Selection Step
 
-- [ ] T032 [P] [US1] Create MetricSelector component in apps/web/src/routes/insights/components/MetricSelector.tsx
+- [ ] T032 [P] [US1] Create MetricSelector component in apps/frontend/src/routes/insights/components/MetricSelector.tsx
 - [ ] T033 [US1] Implement metric grouping by connector with expand/collapse
 - [ ] T034 [US1] Implement metric multi-select with search and filtering
 - [ ] T035 [US1] Implement metric recommendation based on template selection
@@ -108,7 +108,7 @@
 
 #### AI Configuration Step
 
-- [ ] T037 [P] [US1] Create AIConfigPanel component in apps/web/src/routes/insights/components/AIConfigPanel.tsx
+- [ ] T037 [P] [US1] Create AIConfigPanel component in apps/frontend/src/routes/insights/components/AIConfigPanel.tsx
 - [ ] T038 [US1] Implement model selection dropdown (Claude 3.5 Sonnet, GPT-4o)
 - [ ] T039 [US1] Implement quality level selection (Fast, Balanced, Thorough)
 - [ ] T040 [US1] Implement detail level selection (Concise, Standard, Comprehensive)
@@ -117,7 +117,7 @@
 
 #### Schedule & Delivery Step
 
-- [ ] T043 [P] [US1] Create ScheduleConfig component in apps/web/src/routes/insights/components/ScheduleConfig.tsx
+- [ ] T043 [P] [US1] Create ScheduleConfig component in apps/frontend/src/routes/insights/components/ScheduleConfig.tsx
 - [ ] T044 [US1] Implement schedule frequency selection (On-demand, Daily, Weekly, Monthly)
 - [ ] T045 [US1] Implement time zone picker with tenant default
 - [ ] T046 [US1] Implement next run time calculation and display
@@ -135,7 +135,7 @@
 
 #### Clone Functionality
 
-- [ ] T055 [P] [US1] Implement insight clone in apps/web/src/routes/insights/components/InsightActions.tsx
+- [ ] T055 [P] [US1] Implement insight clone in apps/frontend/src/routes/insights/components/InsightActions.tsx
 - [ ] T056 [US1] Implement tRPC insights.clone mutation call
 - [ ] T057 [US1] Implement navigation to edit interface after clone
 - [ ] T058 [US1] Implement "(Copy)" suffix on cloned insight name
@@ -152,14 +152,14 @@
 
 ### E2E Tests for User Story 3 ⚠️
 
-- [ ] T059 [P] [US3] E2E test for insight list search and filter in apps/web/tests/e2e/insights/insight-list.spec.ts
-- [ ] T060 [P] [US3] E2E test for insight management actions in apps/web/tests/e2e/insights/insight-actions.spec.ts
+- [ ] T059 [P] [US3] E2E test for insight list search and filter in apps/frontend/tests/e2e/insights/insight-list.spec.ts
+- [ ] T060 [P] [US3] E2E test for insight management actions in apps/frontend/tests/e2e/insights/insight-actions.spec.ts
 
 ### Implementation for User Story 3
 
 #### Insight List Page
 
-- [ ] T061 [P] [US3] Create insight list page route at apps/web/src/routes/insights/index.tsx
+- [ ] T061 [P] [US3] Create insight list page route at apps/frontend/src/routes/insights/index.tsx
 - [ ] T062 [US3] Implement InsightList component using DataTable organism
 - [ ] T063 [US3] Implement insight table columns: name, status, last run, next run, actions
 - [ ] T064 [US3] Implement status badge indicators (active, inactive, error, pending)
@@ -196,14 +196,14 @@
 
 ### E2E Tests for User Story 4 ⚠️
 
-- [ ] T076 [P] [US4] E2E test for insight detail view in apps/web/tests/e2e/insights/insight-detail.spec.ts
-- [ ] T077 [P] [US4] E2E test for chart interactions in apps/web/tests/e2e/insights/chart-interactions.spec.ts
+- [ ] T076 [P] [US4] E2E test for insight detail view in apps/frontend/tests/e2e/insights/insight-detail.spec.ts
+- [ ] T077 [P] [US4] E2E test for chart interactions in apps/frontend/tests/e2e/insights/chart-interactions.spec.ts
 
 ### Implementation for User Story 4
 
 #### Insight Detail Page
 
-- [ ] T078 [P] [US4] Create insight detail page route at apps/web/src/routes/insights/$insightId.tsx
+- [ ] T078 [P] [US4] Create insight detail page route at apps/frontend/src/routes/insights/$insightId.tsx
 - [ ] T079 [US4] Implement InsightDetail component with header, metrics, charts, analysis sections
 - [ ] T080 [US4] Implement key metrics summary cards at top of detail view
 - [ ] T081 [US4] Implement insight configuration summary section
@@ -241,14 +241,14 @@
 
 ### E2E Tests for User Story 2 ⚠️
 
-- [ ] T094 [P] [US2] E2E test for insight feed in apps/web/tests/e2e/insights/insight-feed.spec.ts
-- [ ] T095 [P] [US2] E2E test for feed actions (mark read, important, take action) in apps/web/tests/e2e/insights/feed-actions.spec.ts
+- [ ] T094 [P] [US2] E2E test for insight feed in apps/frontend/tests/e2e/insights/insight-feed.spec.ts
+- [ ] T095 [P] [US2] E2E test for feed actions (mark read, important, take action) in apps/frontend/tests/e2e/insights/feed-actions.spec.ts
 
 ### Implementation for User Story 2
 
 #### Insight Feed Page
 
-- [ ] T096 [P] [US2] Create insight feed page route at apps/web/src/routes/insights/feed.tsx
+- [ ] T096 [P] [US2] Create insight feed page route at apps/frontend/src/routes/insights/feed.tsx
 - [ ] T097 [US2] Implement InsightFeed component with infinite scroll
 - [ ] T098 [US2] Implement insight cards with key metrics, sparkline charts, summary
 - [ ] T099 [US2] Implement reverse chronological ordering (newest first)
@@ -279,13 +279,13 @@
 
 ### E2E Tests for User Story 5 ⚠️
 
-- [ ] T108 [P] [US5] E2E test for insight editing in apps/web/tests/e2e/insights/edit-insight.spec.ts
+- [ ] T108 [P] [US5] E2E test for insight editing in apps/frontend/tests/e2e/insights/edit-insight.spec.ts
 
 ### Implementation for User Story 5
 
 #### Edit Interface
 
-- [ ] T109 [P] [US5] Create insight edit page route at apps/web/src/routes/insights/$insightId/edit.tsx
+- [ ] T109 [P] [US5] Create insight edit page route at apps/frontend/src/routes/insights/$insightId/edit.tsx
 - [ ] T110 [US5] Implement edit wizard reusing InsightWizard component
 - [ ] T111 [US5] Implement pre-loading of existing configurations into wizard steps
 - [ ] T112 [US5] Implement configuration display showing current settings per step

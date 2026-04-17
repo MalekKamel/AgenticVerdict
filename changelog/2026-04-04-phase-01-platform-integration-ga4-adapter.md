@@ -3,7 +3,7 @@
 **Date:** 2026-04-04  
 **Scope:** Phase 1 (Platform Integration) — [Execution Phase 3 — GA4 adapter implementation](specs/00-core/01-connectors/EXECUTION-PLAN.md) (`tasks.md` Work Stream 2, Task 2.2).
 
-This entry adds the second vendor adapter: Google Analytics Data API v1 (REST) reads with OAuth bearer validation and refresh-token exchange, automatic splitting of inclusive ranges longer than 365 days, per-UTC-day request budgeting aligned with the ~50k calls/day project quota, sampling detection on standard and realtime responses, optional funnel exploration via v1alpha, and normalization into the shared snapshot shape. It does **not** add browser OAuth routes in `apps/web`, GSC/GBP/TikTok adapters, load/performance automation (Execution Phase 7), or the cross-cutting normalization framework beyond GA4’s transformer (Work Stream 3 remains separate).
+This entry adds the second vendor adapter: Google Analytics Data API v1 (REST) reads with OAuth bearer validation and refresh-token exchange, automatic splitting of inclusive ranges longer than 365 days, per-UTC-day request budgeting aligned with the ~50k calls/day project quota, sampling detection on standard and realtime responses, optional funnel exploration via v1alpha, and normalization into the shared snapshot shape. It does **not** add browser OAuth routes in `apps/frontend`, GSC/GBP/TikTok adapters, load/performance automation (Execution Phase 7), or the cross-cutting normalization framework beyond GA4’s transformer (Work Stream 3 remains separate).
 
 ---
 

@@ -255,7 +255,7 @@ The AgenticVerdict platform has **foundational validation infrastructure** but l
 3. Run pre-implementation checklist validator
 4. Fail PR if any violations found
 
-**Trigger:** Pull requests to `main`, `feature/**`, `apps/web/**`
+**Trigger:** Pull requests to `main`, `feature/**`, `apps/frontend/**`
 
 ### Priority 2: High-Priority Gaps (Affect User Experience)
 
@@ -372,7 +372,7 @@ on:
   pull_request:
     paths:
       - "design-system/**"
-      - "apps/web/**/*.{tsx,ts}"
+      - "apps/frontend/**/*.{tsx,ts}"
       - "packages/ui/**/*.{tsx,ts}"
 
 jobs:

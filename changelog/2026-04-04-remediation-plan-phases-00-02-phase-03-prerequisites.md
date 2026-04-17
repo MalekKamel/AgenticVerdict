@@ -129,7 +129,7 @@ With server running: browse `/documentation` and `GET /documentation/json` on th
 - **Persistence:** API analysis/insight/verdict data is **in-memory** per process for the current demo store; replacing with tenant-scoped database reads is a Phase 03+ hardening step (called out in `remediation-known-issues.md`).
 - **Provenance:** DB migration and tracker exist; **full “store every run in DB”** wiring across all agent entrypoints may still be incremental.
 - **Email:** **SendGrid** implementation and bounce webhooks are not primary; **SPF/DKIM/DMARC** remain operational tasks for the sending domain.
-- **R-9 extras:** Plan mentions Mantine theme and CSS variables — implemented in config **helpers**; **automatic wiring into `apps/web`** may be a separate UI task.
+- **R-9 extras:** Plan mentions Mantine theme and CSS variables — implemented in config **helpers**; **automatic wiring into `apps/frontend`** may be a separate UI task.
 - **Calendar:** Phase 03 **handoff session** scheduling remains a manual checklist item in `REMEDIATION_PLAN.md` Part 3.
 
 ---

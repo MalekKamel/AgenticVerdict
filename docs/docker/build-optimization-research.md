@@ -311,12 +311,12 @@ COPY . .
 
 # ✅ Granular copying: only invalidates when specific files change
 COPY package.json pnpm-lock.yaml ./
-COPY apps/web/package.json ./apps/web/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/database/package.json ./packages/database/
 RUN pnpm install --frozen-lockfile
 
 # Then copy source files
-COPY apps/web/src ./apps/web/src
+COPY apps/frontend/src ./apps/frontend/src
 COPY packages/database/src ./packages/database/src
 ```
 
@@ -522,7 +522,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy only package.json files first (small, rarely changed)
-COPY apps/web/package.json ./apps/web/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY packages/database/package.json ./packages/database/
 COPY packages/data-connectors/package.json ./packages/data-connectors/
@@ -531,7 +531,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm \
     pnpm install --frozen-lockfile
 
 # Then copy source (large, frequently changed)
-COPY apps/web/src ./apps/web/src
+COPY apps/frontend/src ./apps/frontend/src
 COPY apps/api/src ./apps/api/src
 COPY packages/database/src ./packages/database/src
 COPY packages/data-connectors/src ./packages/data-connectors/src
@@ -1102,7 +1102,7 @@ Next.js 15's standalone output mode produces a minimal bundle containing only ne
 **Implementation from AgenticVerdict web service**:
 
 ```dockerfile
-# apps/web/Dockerfile
+# apps/frontend/Dockerfile
 FROM node:20-alpine AS base
 # Install dependencies only when needed
 FROM base AS deps
@@ -1123,9 +1123,9 @@ FROM gcr.io/distroless/nodejs20-debian12 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--dns-result-order=ipv4first --tls-min-v1.2"
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=65532:65532 /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/static ./apps/frontend/.next/static
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/public ./apps/frontend/public
 USER 65532:65532
 EXPOSE 3000
 
@@ -1133,7 +1133,7 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD ["/nodejs/bin/node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 
-CMD ["apps/web/server.js"]
+CMD ["apps/frontend/server.js"]
 ```
 
 **Key Optimizations**:
@@ -1259,7 +1259,7 @@ RUN turbo run build --filter=@agenticverdict/web
    RUN turbo run build
 
    FROM base AS production
-   COPY --from=build /app/apps/web/.next/standalone ./
+   COPY --from=build /app/apps/frontend/.next/standalone ./
    # No devDependencies in final image
    ```
 
@@ -1633,9 +1633,9 @@ Only copy necessary artifacts from build stage:
 COPY --from=builder /app /app
 
 # ✅ GOOD: Copy only standalone output
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=65532:65532 /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/static ./apps/frontend/.next/static
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/public ./apps/frontend/public
 ```
 
 **Size impact**:
@@ -1938,7 +1938,7 @@ services:
 - [Cosign](https://github.com/sigstore/cosign) - Container signing and verification
 - [Trivy](https://github.com/aquasecurity/trivy) - Comprehensive vulnerability scanner
 - [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/) - Extended build capabilities
-- [Vite](https://vite.dev/) - Bundler for the web app (`apps/web`) and production library builds for API/worker CLIs (`build:vite`), consistent with the rest of the monorepo
+- [Vite](https://vite.dev/) - Bundler for the web app (`apps/frontend`) and production library builds for API/worker CLIs (`build:vite`), consistent with the rest of the monorepo
 
 ---
 

@@ -52,7 +52,7 @@ This requirement **eliminates TanStack Start server functions** as a viable opti
 
 ### 1.4 Greenfield Implementation Advantage
 
-AgenticVerdict is in pre-production. The existing Next.js prototype (`apps/web/`) is a demonstration prototype only with no production features. This provides:
+AgenticVerdict is in pre-production. The existing Next.js prototype (`apps/frontend/`) is a demonstration prototype only with no production features. This provides:
 
 - No backward compatibility requirements
 - No existing API contracts to maintain
@@ -101,7 +101,7 @@ AgenticVerdict is in pre-production. The existing Next.js prototype (`apps/web/`
 TanStack Start provides first-class tRPC integration via `@tanstack/start-trpc`:
 
 ```typescript
-// apps/web/src/routes/index.tsx
+// apps/frontend/src/routes/index.tsx
 import { createRoute } from '@tanstack/react-router'
 import { trpc } from '@/lib/trpc'
 
@@ -344,7 +344,7 @@ export const connectorsRouter = t.router({
 #### Web Client Usage
 
 ```typescript
-// apps/web/src/components/ConnectorCard.tsx
+// apps/frontend/src/components/ConnectorCard.tsx
 import { trpc } from '@/lib/trpc'
 
 function ConnectorCard({ connector }: { connector: string }) {

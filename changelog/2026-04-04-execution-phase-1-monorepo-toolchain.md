@@ -79,7 +79,7 @@ This keeps formatting checks meaningful for product code without mass-editing do
 ### Files touched by Prettier (scoped run)
 
 - `eslint.config.mjs`
-- `apps/web/eslint.config.mjs`
+- `apps/frontend/eslint.config.mjs`
 - `packages/database/src/db-scoped.ts`
 
 ---
@@ -101,7 +101,7 @@ Commands that were run successfully after the changes:
 - **TypeScript project references** (`tsc --build` with `composite` / emitted `dist/`): not introduced; current libraries use `tsc --noEmit` and source `exports`.
 - **Turbo “no output files found” warnings**: remain for tasks that do not write `dist/` or `.next/`; can be addressed later with per-package `outputs: []` or a move to emitted builds.
 - **Acceptance criteria §1** testing targets (for example high coverage on “build utilities”): no new tests added for tooling itself.
-- **Root ESLint + React**: not extended for `packages/**/*.tsx` until shared TSX exists under packages; `apps/web` keeps its own Next.js ESLint config.
+- **Root ESLint + React**: not extended for `packages/**/*.tsx` until shared TSX exists under packages; `apps/frontend` keeps its own Next.js ESLint config.
 
 ---
 

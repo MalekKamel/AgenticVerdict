@@ -29,7 +29,7 @@ This document outlines a greenfield implementation for AgenticVerdict's configur
 | 2   | Compiler-driven adapter selection         | `packages/data-connectors/src/adapter-factory.ts` | Mock branch unreachable in production |
 | 3   | Docker build-time environment locking     | `apps/*/Dockerfile`                               | Default `NODE_ENV=production`         |
 | 4   | Runtime without bundling                  | Docker `CMD` with `tsx`                           | No build-time define injection        |
-| 5   | Next.js dead code elimination             | `apps/web/next.config.ts`                         | Mocks eliminated at build time        |
+| 5   | Next.js dead code elimination             | `apps/frontend/next.config.ts`                    | Mocks eliminated at build time        |
 
 ### The Core Problem
 
