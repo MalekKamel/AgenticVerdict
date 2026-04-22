@@ -1001,7 +1001,7 @@ RUN pnpm run build --filter=@agenticverdict/core...
 
 ```bash
 # Build only changed packages
-docker build --build-arg BUILD_PACKAGE=@agenticverdict/web .
+docker build --build-arg BUILD_PACKAGE=@agenticverdict/frontend .
 
 # Dockerfile with build arg
 ARG BUILD_PACKAGE

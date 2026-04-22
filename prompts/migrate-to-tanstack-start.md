@@ -409,12 +409,12 @@ This documentation update must precede:
 
 ### A.2 Command Replacements
 
-| Next.js Command                                | TanStack Start Equivalent                      |
-| ---------------------------------------------- | ---------------------------------------------- |
-| `pnpm dev`                                     | `pnpm dev`                                     |
-| `pnpm build`                                   | `pnpm build`                                   |
-| `pnpm start`                                   | `pnpm start`                                   |
-| `turbo run build --filter=@agenticverdict/web` | `turbo run build --filter=@agenticverdict/web` |
+| Next.js Command                                     | TanStack Start Equivalent                           |
+| --------------------------------------------------- | --------------------------------------------------- |
+| `pnpm dev`                                          | `pnpm dev`                                          |
+| `pnpm build`                                        | `pnpm build`                                        |
+| `pnpm start`                                        | `pnpm start`                                        |
+| `turbo run build --filter=@agenticverdict/frontend` | `turbo run build --filter=@agenticverdict/frontend` |
 
 ### A.3 File Structure Mapping
 

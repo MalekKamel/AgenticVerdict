@@ -57,7 +57,7 @@ Commands run successfully after the changes:
 
 - `pnpm install`
 - `pnpm test` (Turbo workspace tests)
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 - `pnpm exec vitest run --coverage` from **`packages/platform-adapters`** (meets package coverage thresholds)
 
 ---

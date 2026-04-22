@@ -49,7 +49,7 @@ This entry adds the optional TikTok Marketing API (`open_api/v1.3`) read path: O
 Commands run successfully after the changes:
 
 - `pnpm test` (Turbo workspace tests)
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 - `pnpm exec vitest run --coverage` from **`packages/platform-adapters`** (meets package coverage thresholds)
 
 ---

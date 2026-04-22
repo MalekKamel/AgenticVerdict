@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useLocale } from "@/i18n/react";
 import { type ReactNode, useState } from "react";
 
+import { DesktopDeepLinkBridge } from "@/components/desktop/DesktopDeepLinkBridge";
 import { TenantBrandedThemeProvider } from "@/components/providers/TenantBrandedThemeProvider";
 import { WebVitalsReporter } from "@/components/observability/WebVitalsReporter";
 import { trpc, trpcClient } from "@/lib/api/trpc-client";
@@ -23,6 +24,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <DesktopDeepLinkBridge />
         <WebVitalsReporter />
         <SessionProvider>
           <TenantProvider>

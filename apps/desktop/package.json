@@ -1,0 +1,39 @@
+{
+  "name": "@agenticverdict/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/electron-main.mjs",
+  "author": "AgenticVerdict",
+  "scripts": {
+    "build": "node ./scripts/build.mjs",
+    "copy-frontend-output": "node ./scripts/copy-frontend-output.mjs",
+    "fetch-bundled-node": "node ./scripts/fetch-bundled-node.mjs",
+    "dev": "concurrently -k \"pnpm run dev:bundle\" \"pnpm run dev:electron\"",
+    "dev:bundle": "node ./scripts/build.mjs --watch",
+    "dev:electron": "wait-on ./dist/electron-main.mjs ./dist/preload.mjs && electron .",
+    "lint": "eslint src e2e playwright.config.ts vitest.config.ts",
+    "package": "pnpm run build && pnpm run copy-frontend-output && electron-builder",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@agenticverdict/desktop-ipc": "workspace:*",
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^20.19.0",
+    "concurrently": "^9.2.1",
+    "electron": "^34.5.8",
+    "electron-builder": "^26.0.0",
+    "esbuild": "^0.25.12",
+    "tar": "^7.4.3",
+    "unzipper": "^0.12.3",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4",
+    "wait-on": "^9.0.3"
+  }
+}

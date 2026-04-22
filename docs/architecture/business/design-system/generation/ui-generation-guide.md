@@ -1352,7 +1352,7 @@ Implement dynamic theme loading and application:
 ```typescript
 // apps/frontend/src/providers/AppProviders.tsx
 
-import { trpc } from '@agenticverdict/web/trpc';
+import { trpc } from '@agenticverdict/frontend/trpc';
 import { ThemeProvider, DirectionProvider } from '@agenticverdict/ui';
 import { Spinner } from '@agenticverdict/ui';
 
@@ -1397,7 +1397,7 @@ export const Route = createRootRoute({
 ```typescript
 // apps/frontend/src/components/admin/ThemeSwitcher.tsx
 
-import { trpc } from '@agenticverdict/web/trpc';
+import { trpc } from '@agenticverdict/frontend/trpc';
 import { useTheme } from '@agenticverdict/ui';
 
 export function ThemeSwitcher() {

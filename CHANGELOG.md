@@ -61,7 +61,7 @@ Phase 0 foundation: monorepo scaffold, core packages, web shell, and phase docum
 - Package `@agenticverdict/config` with Zod `CompanyConfig` schema, file-based `loadCompanyConfig` with in-memory cache and monorepo-friendly config directory resolution.
 - Package `@agenticverdict/core` with `AsyncLocalStorage` tenant context helpers (`runWithTenantContext`, `getTenantContext`, `requireTenantContext`) and unit tests.
 - Package `@agenticverdict/database` with Drizzle ORM, initial `companies` schema, `createDatabaseClient`, and `dbScoped` helper using PostgreSQL `set_config` for tenant session state.
-- Application `@agenticverdict/web` (Next.js 15, App Router): Mantine with `DirectionProvider` for RTL/LTR, `next-intl` with `/en` and `/ar`, demo home page loading validated company config from disk.
+- Application `@agenticverdict/frontend` (Next.js 15, App Router): Mantine with `DirectionProvider` for RTL/LTR, `next-intl` with `/en` and `/ar`, demo home page loading validated company config from disk.
 - Sample company configuration at `configs/companies/11111111-1111-4111-8111-111111111111.json`.
 - Environment template at `.env.example` (`DATABASE_URL`, `COMPANY_CONFIG_DIR`).
 - Phase 0 developer scope document `specs/00-core/00-foundation/implementation-scope.md` (waves, deferred work vs `tasks.md`, config source of truth).

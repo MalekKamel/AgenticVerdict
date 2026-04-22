@@ -1,0 +1,38 @@
+appId: com.agenticverdict.desktop
+productName: AgenticVerdict
+copyright: Copyright © AgenticVerdict
+
+directories:
+  output: release
+
+files:
+  - dist/**/*
+  - package.json
+
+extraResources:
+  - from: resources/frontend-output
+    to: frontend-output
+  # After `pnpm run fetch-bundled-node`, uncomment to ship Node beside the app:
+  # - from: resources/node
+  #   to: node
+
+# Generic update feed (set `DESKTOP_UPDATES_URL` at runtime + host `latest.yml` + artifacts).
+# publish:
+#   - provider: generic
+#     url: https://releases.example.com/desktop
+
+mac:
+  category: public.app-category.business
+  target:
+    - dmg
+    - zip
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+win:
+  target:
+    - nsis
+
+linux:
+  target:
+    - AppImage

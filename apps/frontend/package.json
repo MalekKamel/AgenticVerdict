@@ -1,11 +1,12 @@
 {
-  "name": "@agenticverdict/web",
+  "name": "@agenticverdict/frontend",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
+    "build:spa": "vite build --mode spa",
     "build:analyze": "ANALYZE=true vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
@@ -18,6 +19,7 @@
     "i18n:validate": "node scripts/validate-translations.mjs"
   },
   "dependencies": {
+    "@agenticverdict/desktop-ipc": "workspace:*",
     "@agenticverdict/api": "workspace:*",
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/core": "workspace:*",

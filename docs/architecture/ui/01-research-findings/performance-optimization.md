@@ -1009,13 +1009,13 @@ export function ConnectorStatus() {
 
 ```bash
 # Run bundle analyzer
-pnpm --filter @agenticverdict/web analyze
+pnpm --filter @agenticverdict/frontend analyze
 
 # Run Lighthouse audits
-pnpm --filter @agenticverdict/web lighthouse
+pnpm --filter @agenticverdict/frontend lighthouse
 
 # Check bundle sizes
-pnpm --filter @agenticverdict/web build:stats
+pnpm --filter @agenticverdict/frontend build:stats
 ```
 
 ### 10.2 Production Monitoring

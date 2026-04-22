@@ -492,7 +492,7 @@ For more details, see the API specification in `/prompts/tanstack-start-full-sta
 pnpm dev
 
 # Start only the web app
-pnpm --filter @agenticverdict/web dev
+pnpm --filter @agenticverdict/frontend dev
 
 # The web app will be available at:
 # - http://localhost:3000 (English)
@@ -513,10 +513,10 @@ pnpm --filter @agenticverdict/web dev
 pnpm build
 
 # Build only the web app
-pnpm --filter @agenticverdict/web build
+pnpm --filter @agenticverdict/frontend build
 
 # Start production server
-pnpm --filter @agenticverdict/web start
+pnpm --filter @agenticverdict/frontend start
 ```
 
 ### Docker Development Stack
@@ -565,7 +565,7 @@ AgenticVerdict uses a comprehensive testing strategy with Vitest (unit tests) an
 pnpm test
 
 # Run tests in watch mode
-pnpm --filter @agenticverdict/web test --watch
+pnpm --filter @agenticverdict/frontend test --watch
 
 # Run tests with coverage
 pnpm test:coverage
@@ -608,7 +608,7 @@ describe("AppButton", () => {
 pnpm test:e2e
 
 # Run specific test file
-pnpm --filter @agenticverdict/web exec playwright test home-journey.spec.ts
+pnpm --filter @agenticverdict/frontend exec playwright test home-journey.spec.ts
 
 # Run tests in headed mode (see browser)
 pnpm test:e2e -- --headed
@@ -811,7 +811,7 @@ lsof -ti:3000
 kill -9 $(lsof -ti:3000)
 
 # Or use a different port
-PORT=3001 pnpm --filter @agenticverdict/web dev
+PORT=3001 pnpm --filter @agenticverdict/frontend dev
 ```
 
 #### Issue: Module Not Found
@@ -872,10 +872,10 @@ docker compose logs postgres
 
 ```bash
 # Validate translations
-pnpm --filter @agenticverdict/web i18n:validate
+pnpm --filter @agenticverdict/frontend i18n:validate
 
 # List all translation keys
-pnpm --filter @agenticverdict/web i18n:extract
+pnpm --filter @agenticverdict/frontend i18n:extract
 
 # Ensure keys exist in both en.json and ar.json
 ```
@@ -909,7 +909,7 @@ function Layout({ children }) {
 
 ```bash
 # Use Turbopack for faster builds
-pnpm --filter @agenticverdict/web dev --turbopack
+pnpm --filter @agenticverdict/frontend dev --turbopack
 
 # Clear Next.js cache
 rm -rf apps/frontend/.next
@@ -919,7 +919,7 @@ rm -rf apps/frontend/.next
 
 ```bash
 # Analyze bundle size
-pnpm --filter @agenticverdict/web build --analyze
+pnpm --filter @agenticverdict/frontend build --analyze
 
 # Check for large dependencies
 pnpm ls --depth=0
@@ -1009,11 +1009,11 @@ pnpm build             # Build all packages
 ```bash
 # Start development
 pnpm dev                          # All apps
-pnpm --filter @agenticverdict/web dev  # Web app only
+pnpm --filter @agenticverdict/frontend dev  # Web app only
 
 # Build
 pnpm build                        # All packages
-pnpm --filter @agenticverdict/web build  # Web app only
+pnpm --filter @agenticverdict/frontend build  # Web app only
 
 # Testing
 pnpm test                         # Unit tests

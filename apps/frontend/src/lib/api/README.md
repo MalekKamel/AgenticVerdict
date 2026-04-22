@@ -57,7 +57,7 @@ Implemented a production-ready authentication API integration pattern using **tR
 ### 1. Dependencies Installed
 
 ```bash
-pnpm add --filter @agenticverdict/web \
+pnpm add --filter @agenticverdict/frontend \
   @trpc/client \
   @trpc/server \
   @trpc/react-query \

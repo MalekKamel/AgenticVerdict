@@ -134,11 +134,11 @@ No dedicated report-template admin or editor routes were found under `apps/front
 
 ```bash
 # Web unit / typecheck
-pnpm --filter @agenticverdict/web exec tsc --noEmit
-pnpm --filter @agenticverdict/web test
+pnpm --filter @agenticverdict/frontend exec tsc --noEmit
+pnpm --filter @agenticverdict/frontend test
 
 # E2E (when spec exists)
-pnpm --filter @agenticverdict/web exec playwright test
+pnpm --filter @agenticverdict/frontend exec playwright test
 
 # Contract regression (API unchanged)
 pnpm --filter @agenticverdict/api exec vitest run src/api.contract.test.ts

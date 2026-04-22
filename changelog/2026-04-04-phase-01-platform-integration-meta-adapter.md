@@ -49,7 +49,7 @@ Commands that were run successfully after the changes:
 - `pnpm --filter @agenticverdict/platform-adapters test`
 - `pnpm exec vitest run --coverage` from **`packages/platform-adapters`** — meets package coverage thresholds
 - `pnpm test` (Turbo workspace tests)
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 - `pnpm --filter @agenticverdict/platform-adapters lint`
 
 ---

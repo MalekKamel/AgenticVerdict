@@ -918,7 +918,7 @@ function generateColorScale(primary: string): string[] {
 
 ```tsx
 // packages/ui/src/components/atoms/Logo/Logo.tsx
-import { useTenantConfig } from "@agenticverdict/web/hooks/use-tenant-config";
+import { useTenantConfig } from "@agenticverdict/frontend/hooks/use-tenant-config";
 
 interface LogoProps {
   variant?: "light" | "dark";
@@ -1530,8 +1530,8 @@ export function Spacing({ space = "md", direction = "vertical", ...props }: Spac
 import { useMantineColorScheme } from "@mantine/core";
 import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { IconSun, IconMoon } from "@tabler/icons-react";
-import { useTenantTheme } from "@agenticverdict/web/hooks/use-tenant-theme";
-import { useTenantContext } from "@agenticverdict/web/contexts/tenant-context";
+import { useTenantTheme } from "@agenticverdict/frontend/hooks/use-tenant-theme";
+import { useTenantContext } from "@agenticverdict/frontend/contexts/tenant-context";
 
 export function ThemeSwitcher() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();

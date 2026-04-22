@@ -55,9 +55,9 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ### 2.3 Applications
 
-| App                   | Status | Highlights                                                                                                                                                                                           |
-| --------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@agenticverdict/web` | In use | Next.js 15, App Router, Mantine + `DirectionProvider`, next-intl, demo home; **`/api/health`**, **`/api/health/adapters`**, **`/api/health/platforms/[platform]`** for adapter infrastructure status |
+| App                        | Status | Highlights                                                                                                                                                                                           |
+| -------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@agenticverdict/frontend` | In use | Next.js 15, App Router, Mantine + `DirectionProvider`, next-intl, demo home; **`/api/health`**, **`/api/health/adapters`**, **`/api/health/platforms/[platform]`** for adapter infrastructure status |
 
 **Not present:** `apps/api` (standalone Fastify service), `apps/worker` (BullMQ) — still planned per architecture docs.
 

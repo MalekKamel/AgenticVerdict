@@ -849,7 +849,7 @@ async function generateReport(config) {
 pnpm dev
 
 # Start specific app
-pnpm --filter @agenticverdict/web dev
+pnpm --filter @agenticverdict/frontend dev
 pnpm --filter @agenticverdict/api dev
 pnpm --filter @agenticverdict/worker dev
 

@@ -23,7 +23,7 @@
 
 ## Verification (local)
 
-- `pnpm --filter @agenticverdict/web run i18n:validate`
+- `pnpm --filter @agenticverdict/frontend run i18n:validate`
 - `pnpm exec turbo run build lint test typecheck`
 - `pnpm run check:cycles`
 

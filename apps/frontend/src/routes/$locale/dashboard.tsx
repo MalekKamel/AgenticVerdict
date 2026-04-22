@@ -9,6 +9,11 @@ import { fetchProtectedRouteSession } from "@/lib/auth/protected-route-session";
 
 export const Route = createFileRoute("/$locale/dashboard")({
   beforeLoad: async ({ params, location }) => {
+    /** SPA builds: no SSR `createServerFn` session probe; `useRequireAuth` on pages enforces client-side. */
+    if (import.meta.env.MODE === "spa") {
+      return;
+    }
+
     const result = await fetchProtectedRouteSession();
     if (result.skipSsrGuard || result.authenticated) {
       return;

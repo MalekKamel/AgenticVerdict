@@ -3,7 +3,7 @@
 **Date:** 2026-04-17  
 **Scope:** Execution of **Phase 2 (Weeks 3–4) — Core features** from [`web-tanstack-start-recommendations-implementation-plan-2026-04-17.md`](../docs/03-technology-research/frontend/web-tanstack-start-recommendations-implementation-plan-2026-04-17.md): unified session-aware auth guard, mock session persistence aligned with `useSessionQuery`, protected dashboard route, MFA readiness types + env gate, design-token pipeline in main CI, `eslint-plugin-jsx-a11y`, expanded axe E2E (login + RTL), and additional unit tests. Aligns with [Decision 11](../docs/architecture/ui/04-decision-record.md#decision-11-trpc-as-unified-api-layer-for-multi-client-support) (domain RPC on `apps/api`).
 
-**Verification run:** `pnpm run validate:pen-files`, `pnpm exec turbo run lint typecheck --filter=@agenticverdict/web`, `pnpm --filter @agenticverdict/web test`, `pnpm --filter @agenticverdict/web build`, `pnpm exec vitest run --coverage` (monorepo gate), `pnpm --filter @agenticverdict/web test:e2e` (recommended before merge).
+**Verification run:** `pnpm run validate:pen-files`, `pnpm exec turbo run lint typecheck --filter=@agenticverdict/frontend`, `pnpm --filter @agenticverdict/frontend test`, `pnpm --filter @agenticverdict/frontend build`, `pnpm exec vitest run --coverage` (monorepo gate), `pnpm --filter @agenticverdict/frontend test:e2e` (recommended before merge).
 
 ---
 

@@ -27,10 +27,10 @@
 ```bash
 pnpm --filter @agenticverdict/api test
 pnpm --filter @agenticverdict/report-generator test -- src/template-rendering-perf.test.ts
-pnpm --filter @agenticverdict/web test:e2e
+pnpm --filter @agenticverdict/frontend test:e2e
 # Optional full browser matrix (install browsers first):
 # pnpm exec playwright install
-# E2E_ALL_BROWSERS=1 pnpm --filter @agenticverdict/web test:e2e
+# E2E_ALL_BROWSERS=1 pnpm --filter @agenticverdict/frontend test:e2e
 ```
 
 ---

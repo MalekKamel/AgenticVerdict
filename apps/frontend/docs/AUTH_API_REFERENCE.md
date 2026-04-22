@@ -13,7 +13,7 @@ Layout wrapper for all authentication pages.
 **Import:**
 
 ```tsx
-import { AuthLayout } from "@agenticverdict/web/components/auth/AuthLayout";
+import { AuthLayout } from "@agenticverdict/frontend/components/auth/AuthLayout";
 ```
 
 **Props:**
@@ -43,7 +43,7 @@ Login form with email/password authentication and remember-me functionality.
 **Import:**
 
 ```tsx
-import { LoginForm } from "@agenticverdict/web/components/auth/LoginForm";
+import { LoginForm } from "@agenticverdict/frontend/components/auth/LoginForm";
 ```
 
 **Props:**
@@ -71,7 +71,7 @@ interface LoginFormProps {
 **Usage:**
 
 ```tsx
-import { LoginForm } from "@agenticverdict/web/components/auth/LoginForm";
+import { LoginForm } from "@agenticverdict/frontend/components/auth/LoginForm";
 
 export default function LoginPage() {
   return <LoginForm onSuccess={() => console.log("Logged in!")} redirectTo="/dashboard" />;
@@ -94,7 +94,7 @@ User registration form with password strength indicator and email verification f
 **Import:**
 
 ```tsx
-import { RegisterForm } from "@agenticverdict/web/components/auth/RegisterForm";
+import { RegisterForm } from "@agenticverdict/frontend/components/auth/RegisterForm";
 ```
 
 **Props:**
@@ -131,7 +131,7 @@ interface RegisterFormProps {
 **Usage:**
 
 ```tsx
-import { RegisterForm } from "@agenticverdict/web/components/auth/RegisterForm";
+import { RegisterForm } from "@agenticverdict/frontend/components/auth/RegisterForm";
 
 export default function RegisterPage() {
   return <RegisterForm onSuccess={() => router.push("/auth/verify-email")} />;
@@ -154,7 +154,7 @@ Password reset request form with generic security messages (prevents email enume
 **Import:**
 
 ```tsx
-import { ForgotPasswordForm } from "@agenticverdict/web/components/auth/ForgotPasswordForm";
+import { ForgotPasswordForm } from "@agenticverdict/frontend/components/auth/ForgotPasswordForm";
 ```
 
 **Props:**
@@ -184,7 +184,7 @@ interface ForgotPasswordFormProps {
 **Usage:**
 
 ```tsx
-import { ForgotPasswordForm } from "@agenticverdict/web/components/auth/ForgotPasswordForm";
+import { ForgotPasswordForm } from "@agenticverdict/frontend/components/auth/ForgotPasswordForm";
 
 export default function ForgotPasswordPage() {
   return <ForgotPasswordForm />;
@@ -200,7 +200,7 @@ Password reset confirmation form with token validation and password strength ind
 **Import:**
 
 ```tsx
-import { ResetPasswordForm } from "@agenticverdict/web/components/auth/ResetPasswordForm";
+import { ResetPasswordForm } from "@agenticverdict/frontend/components/auth/ResetPasswordForm";
 ```
 
 **Props:**
@@ -231,7 +231,7 @@ interface ResetPasswordFormProps {
 ```tsx
 "use client";
 
-import { ResetPasswordForm } from "@agenticverdict/web/components/auth/ResetPasswordForm";
+import { ResetPasswordForm } from "@agenticverdict/frontend/components/auth/ResetPasswordForm";
 import { useRouterState } from "@tanstack/react-router";
 
 export default function ResetPasswordPage() {
@@ -255,7 +255,7 @@ Password input field with visibility toggle (show/hide).
 **Import:**
 
 ```tsx
-import { PasswordInput } from "@agenticverdict/web/components/auth/PasswordInput";
+import { PasswordInput } from "@agenticverdict/frontend/components/auth/PasswordInput";
 ```
 
 **Props:**
@@ -283,7 +283,7 @@ interface PasswordInputProps extends Omit<React.ComponentProps<"input">, "type">
 **Usage:**
 
 ```tsx
-import { PasswordInput } from "@agenticverdict/web/components/auth/PasswordInput";
+import { PasswordInput } from "@agenticverdict/frontend/components/auth/PasswordInput";
 
 function MyForm() {
   const [password, setPassword] = useState("");
@@ -310,7 +310,7 @@ Error message display component with ARIA alerts.
 **Import:**
 
 ```tsx
-import { AuthError } from "@agenticverdict/web/components/auth/AuthError";
+import { AuthError } from "@agenticverdict/frontend/components/auth/AuthError";
 ```
 
 **Props:**
@@ -336,7 +336,7 @@ interface AuthErrorProps {
 **Usage:**
 
 ```tsx
-import { AuthError } from "@agenticverdict/web/components/auth/AuthError";
+import { AuthError } from "@agenticverdict/frontend/components/auth/AuthError";
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -359,7 +359,7 @@ Success message display component with ARIA live regions.
 **Import:**
 
 ```tsx
-import { AuthSuccess } from "@agenticverdict/web/components/auth/AuthSuccess";
+import { AuthSuccess } from "@agenticverdict/frontend/components/auth/AuthSuccess";
 ```
 
 **Props:**
@@ -385,7 +385,7 @@ interface AuthSuccessProps {
 **Usage:**
 
 ```tsx
-import { AuthSuccess } from "@agenticverdict/web/components/auth/AuthSuccess";
+import { AuthSuccess } from "@agenticverdict/frontend/components/auth/AuthSuccess";
 
 function ResetPasswordForm() {
   const [success, setSuccess] = useState(false);
@@ -412,7 +412,7 @@ Access authentication state and actions from TanStack Store.
 **Import:**
 
 ```tsx
-import { useAuth } from "@agenticverdict/web/hooks/useAuth";
+import { useAuth } from "@agenticverdict/frontend/hooks/useAuth";
 ```
 
 **Returns:**
@@ -445,7 +445,7 @@ interface UseAuthReturn {
 **Usage:**
 
 ```tsx
-import { useAuth } from "@agenticverdict/web/hooks/useAuth";
+import { useAuth } from "@agenticverdict/frontend/hooks/useAuth";
 
 function DashboardHeader() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -472,7 +472,7 @@ Protect routes that require authentication. Redirects unauthenticated users.
 **Import:**
 
 ```tsx
-import { useRequireAuth } from "@agenticverdict/web/hooks/useRequireAuth";
+import { useRequireAuth } from "@agenticverdict/frontend/hooks/useRequireAuth";
 ```
 
 **Parameters:**
@@ -497,7 +497,7 @@ interface UseRequireAuthReturn {
 **Usage:**
 
 ```tsx
-import { useRequireAuth } from "@agenticverdict/web/hooks/useRequireAuth";
+import { useRequireAuth } from "@agenticverdict/frontend/hooks/useRequireAuth";
 import { useRouter } from "@/i18n/navigation";
 
 function DashboardPage() {
@@ -528,7 +528,7 @@ Login form mutation hook with tRPC integration.
 **Import:**
 
 ```tsx
-import { useLoginMutation } from "@agenticverdict/web/hooks/useLoginMutation";
+import { useLoginMutation } from "@agenticverdict/frontend/hooks/useLoginMutation";
 ```
 
 **Returns:**
@@ -556,7 +556,7 @@ interface LoginFormData {
 **Usage:**
 
 ```tsx
-import { useLoginMutation } from "@agenticverdict/web/hooks/useLoginMutation";
+import { useLoginMutation } from "@agenticverdict/frontend/hooks/useLoginMutation";
 import { useForm } from "@mantine/form";
 
 function LoginForm() {
@@ -600,7 +600,7 @@ Registration form mutation hook with tRPC integration.
 **Import:**
 
 ```tsx
-import { useRegisterMutation } from "@agenticverdict/web/hooks/useRegisterMutation";
+import { useRegisterMutation } from "@agenticverdict/frontend/hooks/useRegisterMutation";
 ```
 
 **Mutation Variables:**
@@ -619,7 +619,7 @@ interface RegisterFormData {
 **Usage:**
 
 ```tsx
-import { useRegisterMutation } from "@agenticverdict/web/hooks/useRegisterMutation";
+import { useRegisterMutation } from "@agenticverdict/frontend/hooks/useRegisterMutation";
 
 function RegisterForm() {
   const registerMutation = useRegisterMutation();
@@ -651,7 +651,7 @@ Combined hook for password reset request and confirmation.
 **Import:**
 
 ```tsx
-import { usePasswordReset } from "@agenticverdict/web/hooks/usePasswordReset";
+import { usePasswordReset } from "@agenticverdict/frontend/hooks/usePasswordReset";
 ```
 
 **Returns:**
@@ -677,7 +677,7 @@ interface UsePasswordResetReturn {
 **Usage:**
 
 ```tsx
-import { usePasswordReset } from "@agenticverdict/web/hooks/usePasswordReset";
+import { usePasswordReset } from "@agenticverdict/frontend/hooks/usePasswordReset";
 
 function ForgotPasswordForm() {
   const { requestReset } = usePasswordReset();
@@ -711,7 +711,7 @@ function ResetPasswordForm({ token }: { token: string }) {
 Zod schema for login form validation.
 
 ```tsx
-import { loginSchema } from '@agenticverdict/web/lib/validations/auth';
+import { loginSchema } from '@agenticverdict/frontend/lib/validations/auth';
 
 // Schema shape:
 {
@@ -726,7 +726,7 @@ import { loginSchema } from '@agenticverdict/web/lib/validations/auth';
 ```tsx
 import { useForm } from "@mantine/form";
 import { zodResolver } from "@mantine/form/zod-resolver";
-import { loginSchema } from "@agenticverdict/web/lib/validations/auth";
+import { loginSchema } from "@agenticverdict/frontend/lib/validations/auth";
 
 const form = useForm({
   initialValues: { email: "", password: "", rememberMe: false },
@@ -741,7 +741,7 @@ const form = useForm({
 Zod schema for registration form validation.
 
 ```tsx
-import { registerSchema } from '@agenticverdict/web/lib/validations/auth';
+import { registerSchema } from '@agenticverdict/frontend/lib/validations/auth';
 
 // Schema shape:
 {

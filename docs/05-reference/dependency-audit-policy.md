@@ -10,7 +10,7 @@
 ## Policy
 
 1. **Triage weekly** — Owners review the CI artifact (or run `pnpm audit` locally) and track **critical** and **high** severity items in the issue tracker.
-2. **Remediation** — Prefer dependency upgrades that clear advisories without breaking `turbo run test` and `pnpm --filter @agenticverdict/web build` on the same branch.
+2. **Remediation** — Prefer dependency upgrades that clear advisories without breaking `turbo run test` and `pnpm --filter @agenticverdict/frontend build` on the same branch.
 3. **Waivers** — If a finding cannot be fixed immediately, document the **CVE/advisory ID**, **risk assessment**, and **targeted fix date** on the tracking ticket. Do not merge unrelated code without a recorded decision.
 4. **Future gate** — When the monorepo is free of unresolved critical issues (or a defined subset), CI may switch to `continue-on-error: false` or `pnpm audit --audit-level=high` with explicit owner approval.
 

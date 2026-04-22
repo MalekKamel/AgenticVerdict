@@ -118,10 +118,10 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 - **Tests**
   - Vitest placeholder (`--passWithNoTests`) until integration tests with a real database are added.
 
-#### @agenticverdict/web
+#### @agenticverdict/frontend
 
 - **Next.js 15 application (App Router, Turbopack dev/build)**
-  - Package name `@agenticverdict/web`; `src/` layout.
+  - Package name `@agenticverdict/frontend`; `src/` layout.
   - `next.config.ts`: `transpilePackages` for `@agenticverdict/types`, `@agenticverdict/config`, `@agenticverdict/core`.
   - `next-intl` plugin wired via `createNextIntlPlugin("./src/i18n/request.ts")`.
 
@@ -170,7 +170,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 - **Version control**
   - `.gitignore` no longer ignores `pnpm-lock.yaml` so the workspace lockfile can be committed for reproducible installs.
 
-#### @agenticverdict/web
+#### @agenticverdict/frontend
 
 - **Scaffold evolution**
   - Replaced default single-locale `src/app/page.tsx` with locale-prefixed routes under `src/app/[locale]/`.
@@ -214,7 +214,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 - Runtime: `drizzle-orm` (^0.38.x), `postgres` (^3.4.x); workspace `@agenticverdict/core`.
 - Dev: `drizzle-kit` (^0.30.x), `@types/node`, `eslint`, `typescript`, `vitest`.
 
-#### @agenticverdict/web
+#### @agenticverdict/frontend
 
 - Runtime: `next` (15.5.x), `react` / `react-dom` (19.x), `next-intl` (^3.26.x), `@mantine/core` / `@mantine/hooks` (^7.15.x); workspace `@agenticverdict/config`, `@agenticverdict/core`.
 - Dev: `eslint`, `eslint-config-next`, `@eslint/eslintrc`, `typescript`, `@types/*`, `postcss`, `postcss-preset-mantine`, `postcss-simple-vars`, `vitest`.
@@ -238,7 +238,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 ### Contributors
 
 - `@agenticverdict/types` — shared literals consumed by config schemas.
-- `@agenticverdict/config` — Zod contracts and disk loading consumed by `@agenticverdict/core` and `@agenticverdict/web`.
+- `@agenticverdict/config` — Zod contracts and disk loading consumed by `@agenticverdict/core` and `@agenticverdict/frontend`.
 - `@agenticverdict/core` — tenant context primitives intended for API, worker, and database layers.
 - `@agenticverdict/database` — persistence layer foundation for Phase 0 database tasks and Phase 1+ data access.
 - `specs/00-core/00-foundation/*` — planning and acceptance criteria maintained alongside code.

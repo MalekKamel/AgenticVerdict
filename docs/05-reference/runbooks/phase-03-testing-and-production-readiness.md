@@ -6,13 +6,13 @@ This runbook aligns with execution plan **Part 9** (Weeks 35–38) in [`specs/00
 
 ## 1. Automated testing (pre-release)
 
-| Layer                         | Command                                                                                              | Notes                                                            |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Monorepo unit + coverage      | `pnpm exec vitest run --coverage`                                                                    | CI quality gate                                                  |
-| API contract + Phase 03 flows | `pnpm --filter @agenticverdict/api test`                                                             | Includes RBAC, rate limits, reports, i18n, history               |
-| Report generator              | `pnpm --filter @agenticverdict/report-generator test`                                                | Includes template perf smoke (`template-rendering-perf.test.ts`) |
-| Web E2E (Chromium)            | `pnpm --filter @agenticverdict/web test:e2e`                                                         | Locale + axe WCAG smoke on `/en` and `/ar`                       |
-| Web E2E (Firefox + WebKit)    | `E2E_ALL_BROWSERS=1 pnpm --filter @agenticverdict/web test:e2e` after `pnpm exec playwright install` | Matches CI when all browsers are installed                       |
+| Layer                         | Command                                                                                                   | Notes                                                            |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Monorepo unit + coverage      | `pnpm exec vitest run --coverage`                                                                         | CI quality gate                                                  |
+| API contract + Phase 03 flows | `pnpm --filter @agenticverdict/api test`                                                                  | Includes RBAC, rate limits, reports, i18n, history               |
+| Report generator              | `pnpm --filter @agenticverdict/report-generator test`                                                     | Includes template perf smoke (`template-rendering-perf.test.ts`) |
+| Web E2E (Chromium)            | `pnpm --filter @agenticverdict/frontend test:e2e`                                                         | Locale + axe WCAG smoke on `/en` and `/ar`                       |
+| Web E2E (Firefox + WebKit)    | `E2E_ALL_BROWSERS=1 pnpm --filter @agenticverdict/frontend test:e2e` after `pnpm exec playwright install` | Matches CI when all browsers are installed                       |
 
 ---
 

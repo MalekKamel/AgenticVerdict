@@ -1,0 +1,4 @@
+{
+  "$schema": "See apps/desktop/README.md (runtime API URL)",
+  "apiBaseUrl": "https://api.example.com"
+}

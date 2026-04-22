@@ -200,7 +200,7 @@ function App() {
 ### 3.3 Dynamic Theme Loading
 
 ```typescript
-import { trpc } from '@agenticverdict/web/trpc';
+import { trpc } from '@agenticverdict/frontend/trpc';
 
 function ThemeLoader({ children }: { children: React.ReactNode }) {
   const { data: theme } = trpc.tenants.getTheme.useQuery();

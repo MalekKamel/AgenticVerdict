@@ -113,7 +113,7 @@ The following commands were executed successfully after implementation:
 - `pnpm --filter @agenticverdict/phase01-platform-integration test`
 - `pnpm --filter @agenticverdict/platform-adapters typecheck`
 - `pnpm --filter @agenticverdict/config typecheck`
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 
 ---
 

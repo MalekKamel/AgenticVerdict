@@ -40,7 +40,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build web (production)
-        run: pnpm --filter @agenticverdict/web build
+        run: pnpm --filter @agenticverdict/frontend build
 
       - name: Run Lighthouse CI
         working-directory: apps/web

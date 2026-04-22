@@ -44,7 +44,7 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS builder
 COPY . .
 RUN node scripts/dockerPrebuild.mjs
-RUN pnpm --filter @agenticverdict/web exec next build --no-lint
+RUN pnpm --filter @agenticverdict/frontend exec next build --no-lint
 
 FROM gcr.io/distroless/nodejs20-debian12 AS runner
 COPY --from=builder /app/apps/frontend/.next/standalone ./

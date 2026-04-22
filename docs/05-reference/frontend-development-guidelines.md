@@ -142,7 +142,7 @@ Cross-cutting concerns (tenant, errors, auth, tRPC, RTL, a11y, observability) ap
 
 ### 4.10 Production readiness & security (Rec 10)
 
-- **MUST** keep **CI** parity: `pnpm --filter @agenticverdict/web build`, tests, and documented jobs (Lighthouse, axe, etc.) green when touching gated areas.
+- **MUST** keep **CI** parity: `pnpm --filter @agenticverdict/frontend build`, tests, and documented jobs (Lighthouse, axe, etc.) green when touching gated areas.
 - **MUST** maintain **security headers** and **CSP nonce** patterns for SSR where the stack uses them (`src/start.ts`, `src/lib/csp.ts`, Vite/Nitro config)—changes **MUST** be reviewed for XSS and nonce correctness.
 - **MUST** follow deployment/rollback runbooks such as [`web-deploy-rollback.md`](./runbooks/web-deploy-rollback.md) for production-impacting releases.
 - **SHOULD** keep **dependency and security scanning** policy aligned with [`security-scanning-backlog-2026-04-17.md`](./security-scanning-backlog-2026-04-17.md) and org requirements.

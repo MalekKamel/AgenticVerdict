@@ -54,6 +54,7 @@ function developmentHtmlSecurityHeaders(): Record<string, string> {
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === "production";
+  const spaEnabled = mode === "spa" || process.env.VITE_BUILD_SPA === "true";
 
   return {
     plugins: [
@@ -70,7 +71,18 @@ export default defineConfig(({ mode }) => {
           },
         },
       }),
-      tanstackStart(),
+      tanstackStart({
+        ...(spaEnabled
+          ? {
+              spa: {
+                enabled: true,
+                prerender: {
+                  crawlLinks: true,
+                },
+              },
+            }
+          : {}),
+      }),
       viteReact(),
       ...(analyze
         ? [

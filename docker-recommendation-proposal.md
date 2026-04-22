@@ -265,11 +265,11 @@ ARG USE_TURBOPACK=false
 RUN --mount=type=cache,target=/root/.cache/turbo \
     --mount=type=cache,target=/root/.cache/npm \
     if [ "$USE_TURBOPACK" = "true" ]; then \
-      pnpm --filter @agenticverdict/web exec next build \
+      pnpm --filter @agenticverdict/frontend exec next build \
         --no-lint \
         --turbopack; \
     else \
-      pnpm --filter @agenticverdict/web exec next build \
+      pnpm --filter @agenticverdict/frontend exec next build \
         --no-lint; \
     fi
 

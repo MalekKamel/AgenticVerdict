@@ -66,10 +66,10 @@ jobs:
         run: pnpm exec vitest run --coverage
 
       - name: Web app unit coverage (scoped hooks + tRPC modules)
-        run: pnpm --filter @agenticverdict/web exec vitest run --coverage
+        run: pnpm --filter @agenticverdict/frontend exec vitest run --coverage
 
       - name: Web production build
-        run: pnpm --filter @agenticverdict/web build
+        run: pnpm --filter @agenticverdict/frontend build
 
       - name: Verify build constants
         run: pnpm run verify:build-config
@@ -123,7 +123,45 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: pnpm --filter @agenticverdict/web exec playwright install --with-deps
+        run: pnpm --filter @agenticverdict/frontend exec playwright install --with-deps
 
       - name: Run E2E tests
-        run: pnpm --filter @agenticverdict/web test:e2e
+        run: pnpm --filter @agenticverdict/frontend test:e2e
+
+  desktop-e2e:
+    name: Desktop (unit + Electron smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: quality
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web (Nitro .output for embedded server)
+        run: pnpm --filter @agenticverdict/frontend build
+
+      - name: Build desktop main/preload bundle
+        run: pnpm --filter @agenticverdict/desktop build
+
+      - name: Desktop IPC package (Vitest)
+        run: pnpm --filter @agenticverdict/desktop-ipc test
+
+      - name: Desktop unit tests (Vitest)
+        run: pnpm --filter @agenticverdict/desktop test
+
+      - name: Desktop embedded smoke (Playwright Electron)
+        run: pnpm --filter @agenticverdict/desktop test:e2e

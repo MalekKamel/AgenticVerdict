@@ -32,7 +32,7 @@ Tune assertions after baseline runs; prefer **staging** verification for CSP and
 ## How to run locally
 
 ```bash
-pnpm --filter @agenticverdict/web build
+pnpm --filter @agenticverdict/frontend build
 cd apps/frontend && npx --yes @lhci/cli@0.14.0 autorun
 ```
 

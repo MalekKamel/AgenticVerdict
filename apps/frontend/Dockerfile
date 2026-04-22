@@ -15,9 +15,9 @@ ARG USE_TURBOPACK=false
 RUN --mount=type=cache,target=/root/.cache/turbo \
     --mount=type=cache,target=/root/.cache/npm \
     if [ "$USE_TURBOPACK" = "true" ]; then \
-      pnpm --filter @agenticverdict/web exec next build --no-lint --turbopack; \
+      pnpm --filter @agenticverdict/frontend exec next build --no-lint --turbopack; \
     else \
-      pnpm --filter @agenticverdict/web exec next build --no-lint; \
+      pnpm --filter @agenticverdict/frontend exec next build --no-lint; \
     fi
 
 # Distroless runtime for Next.js standalone (no shell; Node fetch healthcheck).

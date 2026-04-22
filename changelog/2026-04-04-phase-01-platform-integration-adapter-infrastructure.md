@@ -43,7 +43,7 @@ This entry summarizes changes that implement shared adapter resilience, caching,
 ### Dependencies
 
 - **`@agenticverdict/platform-adapters`**: **`@upstash/redis`**.
-- **`@agenticverdict/web`**: **`@agenticverdict/platform-adapters`**, **`@agenticverdict/types`** (platform enum validation on the dynamic health route).
+- **`@agenticverdict/frontend`**: **`@agenticverdict/platform-adapters`**, **`@agenticverdict/types`** (platform enum validation on the dynamic health route).
 
 ---
 
@@ -69,7 +69,7 @@ Commands that were run successfully after the changes:
 
 - `pnpm install`
 - `pnpm test` (Turbo workspace tests)
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 - `pnpm run check:cycles` — no circular dependencies on configured entrypoints
 - `pnpm exec vitest run --coverage` from **`packages/platform-adapters`** — meets package coverage thresholds
 

@@ -367,7 +367,7 @@ pnpm --filter @agenticverdict/ui test:coverage
 
 ```bash
 # Test integration with web app
-pnpm --filter @agenticverdict/web dev
+pnpm --filter @agenticverdict/frontend dev
 
 # Verify components render correctly
 # Verify theme switching works

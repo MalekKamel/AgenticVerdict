@@ -15,7 +15,7 @@ Broader `src/lib/**` and route modules are covered incrementally; thresholds are
 
 ## Current floor (CI)
 
-Vitest `coverage.thresholds` in `apps/frontend/vitest.config.mjs` are the enforced gate for `pnpm --filter @agenticverdict/web exec vitest run --coverage` (also run from root CI).
+Vitest `coverage.thresholds` in `apps/frontend/vitest.config.mjs` are the enforced gate for `pnpm --filter @agenticverdict/frontend exec vitest run --coverage` (also run from root CI).
 
 Target trajectory aligns with the repository testing strategy (~85% for business-critical modules); web reaches that on these globs first, then expands the include list.
 

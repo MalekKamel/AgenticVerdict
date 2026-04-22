@@ -5,6 +5,7 @@ const testProjects = [
   "tests/integration",
   "tests/orchestrator",
   "tests/utils",
+  "packages/desktop-ipc",
   "packages/mock-platform-server",
   "packages/observability",
   "packages/config",

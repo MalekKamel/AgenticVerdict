@@ -33,3 +33,15 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** Injected by `apps/desktop` preload (`contextBridge`). */
+type AgenticDesktopApi = {
+  readonly platform: "electron";
+  getRuntimeConfig: () => { apiBaseUrl?: string };
+  openExternal: (url: string) => Promise<void>;
+  onDeepLink: (handler: (url: string) => void) => () => void;
+};
+
+interface Window {
+  agenticDesktop?: AgenticDesktopApi;
+}

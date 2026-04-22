@@ -179,7 +179,7 @@ Each adapter includes:
 turbo run build
 
 # Build specific package
-turbo run build --filter=@agenticverdict/web
+turbo run build --filter=@agenticverdict/frontend
 
 # Production Vite bundles for API/worker + adapter mock-code verification (CI parity)
 NODE_ENV=production pnpm run verify:production-bundle
@@ -211,7 +211,7 @@ turbo run test:e2e
 pnpm dev
 
 # Start specific app
-pnpm --filter @agenticverdict/web dev
+pnpm --filter @agenticverdict/frontend dev
 ```
 
 ### Database

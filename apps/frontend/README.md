@@ -1,4 +1,4 @@
-# @agenticverdict/web
+# @agenticverdict/frontend
 
 AgenticVerdict web application - Multi-business-domain intelligence platform with authentication, multi-language support, and accessibility features.
 
@@ -132,7 +132,7 @@ The authentication system provides:
 #### LoginForm
 
 ```tsx
-import { LoginForm } from "@agenticverdict/web/components/auth";
+import { LoginForm } from "@agenticverdict/frontend/components/auth";
 
 export default function LoginPage() {
   return <LoginForm onSuccess={() => router.push("/dashboard")} />;
@@ -147,7 +147,7 @@ export default function LoginPage() {
 #### RegisterForm
 
 ```tsx
-import { RegisterForm } from "@agenticverdict/web/components/auth";
+import { RegisterForm } from "@agenticverdict/frontend/components/auth";
 
 export default function RegisterPage() {
   return <RegisterForm onSuccess={() => router.push("/auth/verify-email")} />;
@@ -161,7 +161,7 @@ export default function RegisterPage() {
 #### ForgotPasswordForm
 
 ```tsx
-import { ForgotPasswordForm } from "@agenticverdict/web/components/auth";
+import { ForgotPasswordForm } from "@agenticverdict/frontend/components/auth";
 
 export default function ForgotPasswordPage() {
   return <ForgotPasswordForm />;
@@ -171,7 +171,7 @@ export default function ForgotPasswordPage() {
 #### ResetPasswordForm
 
 ```tsx
-import { ResetPasswordForm } from "@agenticverdict/web/components/auth";
+import { ResetPasswordForm } from "@agenticverdict/frontend/components/auth";
 
 export default function ResetPasswordPage() {
   // Token is passed via URL query parameter
@@ -190,7 +190,7 @@ export default function ResetPasswordPage() {
 Access authentication state and actions:
 
 ```tsx
-import { useAuth } from "@agenticverdict/web/hooks/useAuth";
+import { useAuth } from "@agenticverdict/frontend/hooks/useAuth";
 
 function MyComponent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -217,7 +217,7 @@ function MyComponent() {
 Protect routes that require authentication:
 
 ```tsx
-import { useRequireAuth } from "@agenticverdict/web/hooks/useRequireAuth";
+import { useRequireAuth } from "@agenticverdict/frontend/hooks/useRequireAuth";
 
 function ProtectedPage() {
   const { user, isLoading } = useRequireAuth({
@@ -238,7 +238,7 @@ function ProtectedPage() {
 Login form hook:
 
 ```tsx
-import { useLoginMutation } from "@agenticverdict/web/hooks/useLoginMutation";
+import { useLoginMutation } from "@agenticverdict/frontend/hooks/useLoginMutation";
 
 function LoginForm() {
   const loginMutation = useLoginMutation();
@@ -259,7 +259,7 @@ function LoginForm() {
 Registration form hook:
 
 ```tsx
-import { useRegisterMutation } from "@agenticverdict/web/hooks/useRegisterMutation";
+import { useRegisterMutation } from "@agenticverdict/frontend/hooks/useRegisterMutation";
 
 function RegisterForm() {
   const registerMutation = useRegisterMutation();
@@ -278,7 +278,7 @@ function RegisterForm() {
 Zod schemas are available for form validation:
 
 ```tsx
-import { loginSchema, registerSchema } from "@agenticverdict/web/lib/validations/auth";
+import { loginSchema, registerSchema } from "@agenticverdict/frontend/lib/validations/auth";
 
 // Login schema: { email, password, rememberMe }
 // Register schema: { email, password, confirmPassword, firstName, lastName, acceptTerms }

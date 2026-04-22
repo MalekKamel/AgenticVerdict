@@ -542,7 +542,7 @@ export default async (job: Job) => {
 **Decision:** Create client libraries for each platform
 
 - **`@agenticverdict/api-client`** — Shared types and utilities
-- **`@agenticverdict/web-api`** — Web-specific tRPC client
+- **`@agenticverdict/frontend-api`** — Web-specific tRPC client
 - **`@agenticverdict/mobile-api`** — React Native tRPC client
 - **`@agenticverdict/cli-api`** — CLI HTTP client
 

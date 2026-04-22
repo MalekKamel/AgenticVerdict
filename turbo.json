@@ -24,6 +24,11 @@
       "cache": false,
       "outputs": ["test-results/**", "playwright-report/**"]
     },
+    "package": {
+      "dependsOn": ["@agenticverdict/frontend#build"],
+      "cache": false,
+      "outputs": ["release/**"]
+    },
     "typecheck": {}
   }
 }

@@ -60,7 +60,7 @@ Executed **Part 2: Interface Renaming** from `docs/architecture/connector-refact
 - `pnpm --filter @agenticverdict/data-connectors typecheck` + **`test`** (291 tests passed; 5 integration tests skipped as before)
 - `pnpm --filter @agenticverdict/agent-runtime typecheck` + **`test`**
 - `pnpm --filter @agenticverdict/mock-platform-server typecheck`
-- `pnpm --filter @agenticverdict/web typecheck`
+- `pnpm --filter @agenticverdict/frontend typecheck`
 - `pnpm --filter @agenticverdict/worker typecheck`
 
 **Note:** `@agenticverdict/api` still reports pre-existing Fastify `FastifyInstance` / logger generic mismatches under `turbo run typecheck` (unchanged by this work).

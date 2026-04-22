@@ -376,7 +376,7 @@ turbo run build
 
 # Verify all packages build
 turbo run build --filter=@agenticverdict/*
-turbo run build --filter=@agenticverdict/web
+turbo run build --filter=@agenticverdict/frontend
 turbo run build --filter=@agenticverdict/api
 turbo run build --filter=@agenticverdict/worker
 ```

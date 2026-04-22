@@ -42,7 +42,7 @@ Build the web application, analyze its route structure, and provide a comprehens
    - Map the route tree, noting file‑based routing conventions (TanStack Router).
 
 2. **Build Execution**
-   - Run `pnpm dev` from the repository root to start all services (web, API, worker), or `pnpm --filter @agenticverdict/web dev` to start only the web app. For full authentication functionality, ensure the API service is also running.
+   - Run `pnpm dev` from the repository root to start all services (web, API, worker), or `pnpm --filter @agenticverdict/frontend dev` to start only the web app. For full authentication functionality, ensure the API service is also running.
    - Monitor the build output for errors; resolve any compilation or dependency issues.
    - Confirm the development server is reachable at `http://localhost:3000`.
 

@@ -100,7 +100,7 @@ Use **multiple agents** when:
 1. **Define the SSOT** for the router type: export `AppRouter` from `@agenticverdict/api` (or a dedicated `@agenticverdict/trpc-contract` package if the team splits client/server).
 2. **Wire the web app** to import `AppRouter` from that package; delete or shrink the stub to re-exports only during migration if needed.
 3. **Update** `apps/frontend/src/lib/api/trpc-client.ts` and any `createTRPCReact` / `inferRouterInputs` usage to use the shared type.
-4. **CI:** Ensure `pnpm --filter @agenticverdict/web build` and typecheck fail on procedure renames (desired).
+4. **CI:** Ensure `pnpm --filter @agenticverdict/frontend build` and typecheck fail on procedure renames (desired).
 
 **Acceptance criteria**
 

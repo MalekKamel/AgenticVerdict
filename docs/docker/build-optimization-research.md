@@ -1221,7 +1221,7 @@ turbo run build --filter=[HEAD^1]
 turbo run build --filter=...[@agenticverdict/database]
 
 # Build specific package and its dependencies
-turbo run build --filter=@agenticverdict/web
+turbo run build --filter=@agenticverdict/frontend
 ```
 
 **Integration with Docker builds**:
@@ -1229,7 +1229,7 @@ turbo run build --filter=@agenticverdict/web
 ```dockerfile
 # In CI, run selective builds before Docker build
 RUN pnpm install --frozen-lockfile
-RUN turbo run build --filter=@agenticverdict/web
+RUN turbo run build --filter=@agenticverdict/frontend
 # Only web artifacts included in final image
 ```
 

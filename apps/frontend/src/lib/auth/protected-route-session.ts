@@ -5,6 +5,9 @@
  *
  * **Dev mock auth** (`VITE_PUBLIC_AUTH_API_MOCK` not `"false"`): skips the SSR gate so the
  * in-memory mock in `auth-api.ts` remains client-only; `useRequireAuth` still guards after hydration.
+ *
+ * **SPA / `build:spa`:** Dashboard `beforeLoad` skips this server function; rely on
+ * {@link useRequireAuth} (client) for redirects — expect a brief unauthenticated paint (FOUC) vs SSR.
  */
 
 import { createServerFn } from "@tanstack/react-start";

@@ -3,7 +3,7 @@
 **Date:** 2026-04-17  
 **Scope:** Execution of **Phase 1 (Weeks 1–2) — Foundation** from [`web-tanstack-start-recommendations-implementation-plan-2026-04-17.md`](../docs/03-technology-research/frontend/web-tanstack-start-recommendations-implementation-plan-2026-04-17.md): stack SSOT documentation, file-based routing notes, tenant resolution for the browser client, tRPC client headers aligned with the API (`x-tenant-id`, `x-request-id`), baseline route error UI, and structured client-side error logging. Aligns with [Decision 11](../docs/architecture/ui/04-decision-record.md#decision-11-trpc-as-unified-api-layer-for-multi-client-support) (tRPC on `apps/api`, not TanStack server functions for domain RPC).
 
-**Verification run:** `pnpm --filter @agenticverdict/web test`, `pnpm --filter @agenticverdict/web typecheck`, `pnpm --filter @agenticverdict/web lint`, `pnpm --filter @agenticverdict/web build`.
+**Verification run:** `pnpm --filter @agenticverdict/frontend test`, `pnpm --filter @agenticverdict/frontend typecheck`, `pnpm --filter @agenticverdict/frontend lint`, `pnpm --filter @agenticverdict/frontend build`.
 
 ---
 

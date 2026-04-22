@@ -9,6 +9,10 @@
     "db:seed:test": "pnpm --filter @agenticverdict/database db:seed:test",
     "db:up": "docker compose up -d",
     "dev": "turbo run dev",
+    "desktop:dev": "pnpm -r --parallel --filter @agenticverdict/frontend --filter @agenticverdict/desktop dev",
+    "desktop:dev:desktop-only": "pnpm --filter @agenticverdict/desktop dev",
+    "desktop:package": "pnpm exec turbo run package --filter=@agenticverdict/desktop",
+    "test:e2e:desktop": "pnpm --filter @agenticverdict/desktop test:e2e",
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,cjs,json}\" \"packages/**/*.{ts,tsx,js,mjs,cjs,json}\" \"vitest.config.ts\" \"*.mjs\" \"package.json\" \"*.yml\" \"*.yaml\" \".github/**/*.yml\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json}\" \"packages/**/*.{ts,tsx,js,mjs,cjs,json}\" \"vitest.config.ts\" \"*.mjs\" \"package.json\" \"*.yml\" \"*.yaml\" \".github/**/*.yml\"",
     "observability:up": "docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d",
@@ -18,7 +22,7 @@
     "test": "turbo run test",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "turbo run test:e2e",
-    "test:e2e:web:smoke": "pnpm --filter @agenticverdict/web exec playwright test e2e/critical-path-smoke.spec.ts e2e/home-journey.spec.ts e2e/locale-smoke.spec.ts e2e/a11y-home.spec.ts e2e/api-health.optional.spec.ts --project=chromium",
+    "test:e2e:frontend:smoke": "pnpm --filter @agenticverdict/frontend exec playwright test e2e/critical-path-smoke.spec.ts e2e/home-journey.spec.ts e2e/locale-smoke.spec.ts e2e/a11y-home.spec.ts e2e/api-health.optional.spec.ts --project=chromium",
     "test:integration": "turbo run test:integration",
     "test:phase01-integration": "pnpm --filter @agenticverdict/phase01-platform-integration test",
     "test:p1-report-load-matrix": "pnpm --filter @agenticverdict/api exec vitest run src/routes/v1/reports-concurrent-load-matrix.test.ts",
@@ -76,5 +80,11 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.0",
     "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
   }
 }

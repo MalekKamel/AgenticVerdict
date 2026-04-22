@@ -5,7 +5,7 @@
 
 ## Deploy (N+1)
 
-1. **Build** the web app with `NODE_ENV=production`: `pnpm --filter @agenticverdict/web build` (CI does this before E2E and Lighthouse).
+1. **Build** the web app with `NODE_ENV=production`: `pnpm --filter @agenticverdict/frontend build` (CI does this before E2E and Lighthouse).
 2. **Tag / record** the git SHA and image digest (or artifact id) promoted to the environment.
 3. **Apply** the new version using your platform (Kubernetes rollout, Compose pull, etc.). Ensure **`PORT`** and **`VITE_*` / `API_URL`** env vars match the previous release unless intentionally changed.
 4. **Smoke:** open `/en` and `/en/auth/login`; verify no CSP console errors (see `apps/frontend/README.md`).

@@ -37,11 +37,37 @@ import { shouldRetryTrpcMutation, shouldRetryTrpcQuery } from "./trpc-retry-poli
  */
 export const trpc = createTRPCReact<AppRouter>();
 
+function getDesktopApiBaseUrl(): string | undefined {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+  const desktop = window.agenticDesktop;
+  if (!desktop || desktop.platform !== "electron") {
+    return undefined;
+  }
+  const url = desktop.getRuntimeConfig()?.apiBaseUrl?.trim();
+  if (url) {
+    return url.replace(/\/$/, "");
+  }
+  return undefined;
+}
+
 /**
  * Get the API base URL from environment or default to localhost
  */
 function getBaseUrl(): string {
   if (typeof window !== "undefined") {
+    const fromDesktop = getDesktopApiBaseUrl();
+    if (fromDesktop) {
+      return fromDesktop;
+    }
+    const fromVite =
+      typeof import.meta !== "undefined" && import.meta.env?.VITE_PUBLIC_API_URL
+        ? String(import.meta.env.VITE_PUBLIC_API_URL).trim()
+        : "";
+    if (fromVite) {
+      return fromVite.replace(/\/$/, "");
+    }
     // Browser: use relative URL (works with proxy or same-origin)
     return "";
   }
