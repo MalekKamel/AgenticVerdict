@@ -3,12 +3,16 @@
 import { Button, Group } from "@mantine/core";
 import { useLocale } from "@/i18n/react";
 
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, useLocaleAwareCurrentPath } from "@/i18n/navigation";
 
 const LOCALES = ["en", "ar"] as const;
 
-export function LanguageSwitcher() {
-  const pathname = usePathname();
+type LanguageSwitcherProps = {
+  onSwitch?: (locale: (typeof LOCALES)[number]) => void;
+};
+
+export function LanguageSwitcher({ onSwitch }: LanguageSwitcherProps) {
+  const localeAwarePath = useLocaleAwareCurrentPath();
   const locale = useLocale();
 
   return (
@@ -17,10 +21,11 @@ export function LanguageSwitcher() {
         <Button
           key={l}
           component={Link}
-          href={pathname}
+          href={localeAwarePath}
           locale={l}
           size="compact-sm"
           variant={l === locale ? "filled" : "outline"}
+          onClick={() => onSwitch?.(l)}
         >
           {l.toUpperCase()}
         </Button>

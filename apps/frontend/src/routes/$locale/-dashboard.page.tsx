@@ -1,5 +1,8 @@
-import { Container, Stack, Text, Title } from "@mantine/core";
+"use client";
 
+import { Anchor, Container, Stack, Text, Title } from "@mantine/core";
+
+import { useAppShellHeader } from "@/components/layout/app-shell-context";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { isFeatureFlagsAdminUiEnabled } from "@/lib/feature-flags/feature-flags-readiness";
 import { isOnboardingWizardEnabled } from "@/lib/onboarding/onboarding-readiness";
@@ -10,6 +13,9 @@ export default function DashboardPage() {
   const tNav = useTranslations("navigation");
   const tCommon = useTranslations("common");
   const { user, isLoading } = useRequireAuth();
+  useAppShellHeader({
+    breadcrumbs: [{ label: tNav("dashboard"), href: "/dashboard" }],
+  });
 
   if (isLoading) {
     return (
@@ -28,10 +34,20 @@ export default function DashboardPage() {
         <Title order={1}>{tNav("dashboard")}</Title>
         <Text>{user?.email}</Text>
         <Stack gap="xs">
-          {showOnboarding ? <Link href="/onboarding">{tNav("onboarding")}</Link> : null}
-          {showFlags ? <Link href="/dashboard/feature-flags">{tNav("featureFlags")}</Link> : null}
+          {showOnboarding ? (
+            <Anchor component={Link} href="/onboarding">
+              {tNav("onboarding")}
+            </Anchor>
+          ) : null}
+          {showFlags ? (
+            <Anchor component={Link} href="/dashboard/feature-flags">
+              {tNav("featureFlags")}
+            </Anchor>
+          ) : null}
         </Stack>
-        <Link href="/">{tNav("home")}</Link>
+        <Anchor component={Link} href="/">
+          {tNav("home")}
+        </Anchor>
       </Stack>
     </Container>
   );

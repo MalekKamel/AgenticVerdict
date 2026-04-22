@@ -1,3 +1,4 @@
+import { Loader, Stack, Text } from "@mantine/core";
 import { Suspense } from "react";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -27,9 +28,11 @@ function VerifyEmailFallback() {
   const t = useTranslations("common");
 
   return (
-    <div className="flex flex-col items-center gap-3 py-2" role="status" aria-live="polite">
-      <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--av-color-primary-subtle)] border-t-[var(--av-color-primary)]" />
-      <p className="text-sm text-[var(--av-color-text-secondary)]">{t("loading")}</p>
-    </div>
+    <Stack align="center" gap="md" py="xs" role="status" aria-live="polite">
+      <Loader size="lg" type="dots" />
+      <Text size="sm" c="dimmed">
+        {t("loading")}
+      </Text>
+    </Stack>
   );
 }

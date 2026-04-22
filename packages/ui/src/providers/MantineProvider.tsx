@@ -6,7 +6,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { MantineProvider as MantineCoreProvider } from "@mantine/core";
+import {
+  MantineProvider as MantineCoreProvider,
+  localStorageColorSchemeManager,
+} from "@mantine/core";
 import { useDirection } from "./DirectionProvider";
 import { useTheme } from "./ThemeProvider";
 
@@ -249,8 +252,19 @@ export function MantineProvider({ children }: MantineProviderProps) {
   useTheme(); // Ensure theme context is available
 
   const mantineTheme = createMantineTheme(direction);
+  const colorSchemeManager = localStorageColorSchemeManager({
+    key: "agenticverdict-color-scheme",
+  });
 
-  return <MantineCoreProvider theme={mantineTheme}>{children}</MantineCoreProvider>;
+  return (
+    <MantineCoreProvider
+      theme={mantineTheme}
+      defaultColorScheme="auto"
+      colorSchemeManager={colorSchemeManager}
+    >
+      {children}
+    </MantineCoreProvider>
+  );
 }
 
 /**

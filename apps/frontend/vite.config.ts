@@ -98,6 +98,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       tsconfigPaths: true,
+      dedupe: ["react", "react-dom", "@mantine/core", "@mantine/hooks"],
     },
     server: {
       port: 3000,

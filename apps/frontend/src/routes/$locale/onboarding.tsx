@@ -1,9 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/$locale/onboarding")({
-  component: RouteComponent,
+  component: lazyRouteComponent(() => import("./-onboarding.page")),
 });
-
-function RouteComponent() {
-  return <div>Hello "/$locale/onboarding"!</div>;
-}

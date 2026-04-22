@@ -80,6 +80,19 @@ export function DirectionProvider({
 
   const [direction, setDirectionState] = useState<TextDirection>(getInitialDirection());
 
+  // SPA locale changes update `initialLocale` without remounting this provider. If we only
+  // read it in useState's initializer, `direction` (and thus `documentElement.dir`) can stay
+  // stale while route markup uses the correct inner `dir`. Mantine AppShell matches
+  // `:where([dir="rtl"]) …` on *any* ancestor, so a stale `html[dir="rtl"]` incorrectly applies
+  // RTL navbar transforms in an LTR subtree (navbar appears to slide the wrong way).
+  useEffect(() => {
+    if (!initialLocale) {
+      return;
+    }
+    const nextDirection = LOCALE_TO_DIRECTION[initialLocale] ?? "ltr";
+    setDirectionState((current) => (current === nextDirection ? current : nextDirection));
+  }, [initialLocale]);
+
   // Apply direction to document
   useEffect(() => {
     const root = document.documentElement;

@@ -1,8 +1,7 @@
 "use client";
 
-import { extractTenantSlugFromHost } from "@agenticverdict/core";
-
 import { trpc } from "@/lib/api/trpc-client";
+import { extractTenantSlugFromHost } from "@/lib/tenant/extract-tenant-slug";
 import { getEffectiveTenantId, isTenantUuid } from "@/lib/tenant/tenant-resolution";
 import { useAuthStore } from "@/stores/auth-store";
 import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";

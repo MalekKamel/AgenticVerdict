@@ -83,7 +83,7 @@ export const authStore = new Store(initialAuthState);
 
 // React hook to use the auth store
 export function useAuthStore(): AuthState {
-  return useStore(authStore) as AuthState;
+  return useStore(authStore, (state) => state);
 }
 
 // Store actions
@@ -136,12 +136,13 @@ export const authActions = {
   },
 
   logout: () => {
-    authStore.setState({
+    authStore.setState((prev: AuthState) => ({
+      ...prev,
       isAuthenticated: false,
       user: null,
       tenantId: null,
       error: null,
       isLoading: false,
-    });
+    }));
   },
 };

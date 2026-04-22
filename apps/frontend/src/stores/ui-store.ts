@@ -1,19 +1,29 @@
 import { Store } from "@tanstack/store";
 import { useStore } from "@tanstack/react-store";
 
-type UiStore = {
+interface UiState {
   leadFormSubmitted: boolean;
-  setLeadFormSubmitted: (value: boolean) => void;
+}
+
+// Initial state
+const initialUiState: UiState = {
+  leadFormSubmitted: false,
 };
 
-export const uiStore = new Store<UiStore>({
-  leadFormSubmitted: false,
-  setLeadFormSubmitted: (leadFormSubmitted) => {
-    uiStore.state = { ...uiStore.state, leadFormSubmitted };
-  },
-});
+// Create the store
+export const uiStore = new Store<UiState>(initialUiState);
 
-// Type-safe selector hook
-export function useUiStore<T>(selector: (store: UiStore) => T): T {
+// React hook to use the ui store
+export function useUiStore<T>(selector: (state: UiState) => T): T {
   return useStore(uiStore, selector);
 }
+
+// Store actions
+export const uiActions = {
+  setLeadFormSubmitted: (leadFormSubmitted: boolean) => {
+    uiStore.setState((prev: UiState) => ({
+      ...prev,
+      leadFormSubmitted,
+    }));
+  },
+};

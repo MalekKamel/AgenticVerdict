@@ -165,7 +165,7 @@ export const Dropdown = ({
                 )}
               >
                 {item.icon && <span aria-hidden="true">{item.icon}</span>}
-                <span className="flex-1 text-left">{item.label}</span>
+                <span className="flex-1 text-start">{item.label}</span>
                 {item.rightIcon && <span aria-hidden="true">{item.rightIcon}</span>}
               </button>
             );

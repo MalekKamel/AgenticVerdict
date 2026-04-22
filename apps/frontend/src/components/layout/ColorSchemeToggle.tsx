@@ -1,21 +1,32 @@
 "use client";
 
-import { ActionIcon, useMantineColorScheme } from "@mantine/core";
+import { ActionIcon, useMantineColorScheme, useComputedColorScheme } from "@mantine/core";
 import { useTranslations } from "@/i18n/react";
 
-export function ColorSchemeToggle() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+type ColorSchemeToggleProps = {
+  onToggle?: (nextColorScheme: "light" | "dark") => void;
+};
+
+export function ColorSchemeToggle({ onToggle }: ColorSchemeToggleProps) {
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme();
   const t = useTranslations("Layout");
+  const nextColorScheme = computedColorScheme === "dark" ? "light" : "dark";
 
   return (
     <ActionIcon
-      onClick={() => toggleColorScheme()}
+      id="color-scheme-toggle"
+      data-testid="color-scheme-toggle"
+      onClick={() => {
+        setColorScheme(nextColorScheme);
+        onToggle?.(nextColorScheme);
+      }}
       variant="default"
       size="lg"
       radius="md"
-      aria-label={colorScheme === "dark" ? t("toggleLight") : t("toggleDark")}
+      aria-label={computedColorScheme === "dark" ? t("toggleLight") : t("toggleDark")}
     >
-      {colorScheme === "dark" ? "☀" : "☾"}
+      {computedColorScheme === "dark" ? "☀" : "☾"}
     </ActionIcon>
   );
 }

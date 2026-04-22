@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useAppShellHeader } from "@/components/layout/app-shell-context";
 import { logOnboardingEvent } from "@/lib/onboarding/onboarding-analytics";
 import { isOnboardingWizardEnabled } from "@/lib/onboarding/onboarding-readiness";
 import { Link } from "@/i18n/navigation";
@@ -20,6 +21,12 @@ export default function OnboardingPage() {
   const locale = params.locale ?? "en";
   const enabled = isOnboardingWizardEnabled();
   const [active, setActive] = useState(0);
+  useAppShellHeader({
+    breadcrumbs: [
+      { label: tNav("dashboard"), href: "/dashboard" },
+      { label: tNav("onboarding"), href: "/onboarding" },
+    ],
+  });
 
   useEffect(() => {
     if (!enabled) {

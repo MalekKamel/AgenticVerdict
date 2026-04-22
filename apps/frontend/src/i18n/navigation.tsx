@@ -1,7 +1,13 @@
 /**
  * Locale-aware navigation (replaces next-intl createNavigation).
  */
-import { Link as RouterLink, useNavigate, useRouterState, useParams } from "@tanstack/react-router";
+import {
+  Link as RouterLink,
+  useNavigate,
+  useRouter as useTanStackRouter,
+  useRouterState,
+  useParams,
+} from "@tanstack/react-router";
 import { forwardRef, useMemo, type ComponentProps } from "react";
 
 import type { AppLocale } from "./routing";
@@ -18,6 +24,15 @@ function useLocaleParam(): AppLocale {
 
 function withLocalePrefix(locale: AppLocale, path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
+  const hasLocalePrefix = (routing.locales as readonly string[]).some(
+    (supportedLocale) =>
+      normalized === `/${supportedLocale}` || normalized.startsWith(`/${supportedLocale}/`),
+  );
+
+  if (hasLocalePrefix) {
+    return normalized;
+  }
+
   if (normalized === "/") {
     return `/${locale}`;
   }
@@ -42,6 +57,13 @@ export function usePathname(): string {
   return stripLocalePrefix(pathname, locale);
 }
 
+export function useLocaleAwareCurrentPath(): string {
+  const locale = useLocaleParam();
+  const location = useRouterState({ select: (s) => s.location });
+  const path = stripLocalePrefix(location.pathname, locale);
+  return `${path}${location.searchStr}${location.hash}`;
+}
+
 export type LocaleLinkProps = Omit<ComponentProps<typeof RouterLink>, "to"> & {
   href?: string;
   to?: string;
@@ -62,6 +84,7 @@ export const Link = forwardRef<HTMLAnchorElement, LocaleLinkProps>(function Link
 
 export function useRouter() {
   const navigate = useNavigate();
+  const router = useTanStackRouter();
   const locale = useLocaleParam();
 
   return useMemo(
@@ -75,11 +98,13 @@ export function useRouter() {
           replace: true,
         });
       },
-      prefetch: () => {
-        /* noop: TanStack Router handles preloading */
+      prefetch: (path: string) => {
+        void router.preloadRoute({
+          to: withLocalePrefix(locale, path.startsWith("/") ? path : `/${path}`),
+        });
       },
       back: () => window.history.back(),
     }),
-    [navigate, locale],
+    [navigate, locale, router],
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { Alert, Container, Stack, Table, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Container, Stack, Table, Text, Title } from "@mantine/core";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useAppShellHeader } from "@/components/layout/app-shell-context";
 import { trpc } from "@/lib/api/trpc-client";
 import { isFeatureFlagsAdminUiEnabled } from "@/lib/feature-flags/feature-flags-readiness";
 import { Link } from "@/i18n/navigation";
@@ -27,6 +28,12 @@ export default function FeatureFlagsAdminPage() {
   const params = useParams({ strict: false }) as { locale?: string };
   const locale = params.locale ?? "en";
   const enabled = isFeatureFlagsAdminUiEnabled();
+  useAppShellHeader({
+    breadcrumbs: [
+      { label: tNav("dashboard"), href: "/dashboard" },
+      { label: tNav("featureFlags"), href: "/dashboard/feature-flags" },
+    ],
+  });
 
   useEffect(() => {
     if (!enabled) {
@@ -105,7 +112,9 @@ export default function FeatureFlagsAdminPage() {
             ))}
           </Table.Tbody>
         </Table>
-        <Link href="/dashboard">{tNav("dashboard")}</Link>
+        <Anchor component={Link} href="/dashboard">
+          {tNav("dashboard")}
+        </Anchor>
       </Stack>
     </Container>
   );

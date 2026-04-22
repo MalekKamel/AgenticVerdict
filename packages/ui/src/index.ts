@@ -48,6 +48,7 @@ export * from "./molecules/Dropdown";
 export * from "./molecules/Tooltip";
 export * from "./molecules/Popover";
 export * from "./molecules/Toast";
+export * from "./molecules/AppShellNavList";
 
 // ===================================================================
 // UTILITIES
