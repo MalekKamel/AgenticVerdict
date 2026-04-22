@@ -42,10 +42,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, AppPasswordInputProps>
           />
           <button
             type="button"
-            className="absolute inset-y-0 end-0 z-10 flex items-center pe-3 text-gray-500 transition-colors hover:text-gray-800"
+            className="absolute inset-y-0 end-0 z-10 flex min-h-11 min-w-11 items-center justify-center pe-3 text-[var(--av-color-text-secondary)] transition-colors hover:text-[var(--av-color-text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]"
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? t("hidePassword") : t("showPassword")}
-            tabIndex={-1}
+            aria-pressed={visible}
           >
             {visible ? (
               <svg

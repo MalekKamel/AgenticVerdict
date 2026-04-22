@@ -60,9 +60,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             data-checked={req.met ? "true" : "false"}
             className="flex items-center gap-2 text-sm"
             style={{
-              color: req.met
-                ? "var(--av-color-success, #2E7D32)"
-                : "var(--av-color-gray-600, #757575)",
+              color: req.met ? "var(--av-color-success)" : "var(--av-color-text-secondary)",
             }}
           >
             <span
@@ -70,8 +68,8 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
               className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
               style={{
                 backgroundColor: req.met
-                  ? "var(--av-color-success, #2E7D32)"
-                  : "var(--av-color-gray-300, #E0E0E0)",
+                  ? "var(--av-color-success)"
+                  : "var(--av-color-border-subtle)",
               }}
             >
               {req.met ? "✓" : "✗"}
@@ -93,6 +91,8 @@ export interface RegisterFormProps {
 
 export function RegisterForm({ onSuccess, onError, className, children }: RegisterFormProps) {
   const t = useTranslations("auth.register");
+  const authLinkClass =
+    "text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const register = useRegisterMutation();
 
   const [passwordsMatch, setPasswordsMatch] = useState<boolean | null>(null);
@@ -263,21 +263,13 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
           <div className="flex flex-col gap-2">
             <Checkbox
               label={t("fields.acceptTerms.label")}
+              id="register-accept-terms"
               checked={Boolean(termsProps.checked)}
-              onCheckedChange={(checked) => {
-                termsProps.onChange?.({
-                  currentTarget: { checked },
-                } as React.ChangeEvent<HTMLInputElement>);
-              }}
+              onChange={termsProps.onChange}
             />
             <Typography variant="body-sm" color="secondary" as="div">
               {t("fields.acceptTerms.description")}{" "}
-              <a
-                href="/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className={authLinkClass}>
                 {t("fields.acceptTerms.termsLink")}
               </a>{" "}
               {t("fields.acceptTerms.and")}{" "}
@@ -285,7 +277,7 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
                 href="/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className={authLinkClass}
               >
                 {t("fields.acceptTerms.privacyLink")}
               </a>
@@ -302,7 +294,7 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
             fullWidth
             size="lg"
             loading={register.isPending}
-            disabled={!form.isValid() || !form.isDirty()}
+            disabled={register.isPending}
             aria-busy={register.isPending}
           >
             {register.isPending ? t("buttons.creatingAccount") : t("buttons.createAccount")}

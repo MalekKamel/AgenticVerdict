@@ -2,11 +2,12 @@
  * Email verification UI — `@agenticverdict/ui` (`Card`, `Alert`, `Button`, `Typography`).
  */
 
-import { Alert, Button, Card, Typography } from "@agenticverdict/ui";
+import { Alert, Button, Typography } from "@agenticverdict/ui";
 import { useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useVerifyEmailMutation } from "@/hooks/useAuthMutation";
+import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
 
@@ -25,30 +26,58 @@ export function VerifyEmailClient() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [resendCountdown, setResendCountdown] = useState(0);
   const [resendSuccess, setResendSuccess] = useState(false);
+  const statusRegionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!token) {
+      logAuthFunnelEvent("auth.verify_email.result", {
+        flow: "verify_email",
+        outcome: "failure",
+        tokenPresent: false,
+        errorCode: "MISSING_TOKEN",
+      });
       setStatus("error");
       setErrorMessage(t("errors.noToken"));
       return;
     }
 
     const verifyToken = async () => {
+      const startedAt = performance.now();
       try {
+        logAuthFunnelEvent("auth.verify_email.attempt", {
+          flow: "verify_email",
+          tokenPresent: true,
+        });
         await verifyEmail.mutateAsync({ token });
         setStatus("success");
+        logAuthFunnelEvent("auth.verify_email.result", {
+          flow: "verify_email",
+          outcome: "success",
+          tokenPresent: true,
+          latencyMs: Math.round(performance.now() - startedAt),
+        });
       } catch (error) {
         const message = (error as Error).message;
+        let errorCode = "VERIFY_EMAIL_FAILED";
 
         if (message.includes("expired")) {
           setStatus("expired");
+          errorCode = "EXPIRED_TOKEN";
         } else if (message.includes("invalid")) {
           setStatus("invalid");
+          errorCode = "INVALID_TOKEN";
         } else {
           setStatus("error");
         }
 
         setErrorMessage(message);
+        logAuthFunnelEvent("auth.verify_email.result", {
+          flow: "verify_email",
+          outcome: "failure",
+          tokenPresent: true,
+          errorCode,
+          latencyMs: Math.round(performance.now() - startedAt),
+        });
       }
     };
 
@@ -65,9 +94,20 @@ export function VerifyEmailClient() {
     }
   }, [resendCountdown]);
 
+  useEffect(() => {
+    if (status === "loading") {
+      return;
+    }
+    statusRegionRef.current?.focus();
+  }, [status]);
+
   const handleResend = async () => {
     setResendSuccess(true);
     setResendCountdown(RESEND_COUNTDOWN);
+    logAuthFunnelEvent("auth.verify_email.resend_click", {
+      flow: "verify_email",
+      resendCooldownSec: RESEND_COUNTDOWN,
+    });
 
     setTimeout(() => {
       setResendSuccess(false);
@@ -76,10 +116,7 @@ export function VerifyEmailClient() {
 
   const renderLoading = () => (
     <div className="flex flex-col items-center gap-4">
-      <div
-        className="h-12 w-12 rounded-full border-4 border-blue-100 border-t-blue-600"
-        style={{ animation: "verify-email-spin 1s linear infinite" }}
-      />
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--av-color-primary-subtle)] border-t-[var(--av-color-primary)]" />
       <Typography variant="body-sm" color="secondary">
         {t("status.verifying")}
       </Typography>
@@ -87,8 +124,14 @@ export function VerifyEmailClient() {
   );
 
   const renderSuccess = () => (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-3xl font-bold text-green-700">
+    <div
+      ref={statusRegionRef}
+      tabIndex={-1}
+      role="status"
+      aria-live="polite"
+      className="flex flex-col items-center gap-4 text-center focus:outline-none"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-success-subtle)] text-3xl font-bold text-[var(--av-color-success)]">
         ✓
       </div>
       <Typography variant="h3">{t("status.success")}</Typography>
@@ -102,8 +145,14 @@ export function VerifyEmailClient() {
   );
 
   const renderError = () => (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl font-bold text-red-700">
+    <div
+      ref={statusRegionRef}
+      tabIndex={-1}
+      role="alert"
+      aria-live="assertive"
+      className="flex flex-col items-center gap-4 text-center focus:outline-none"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-3xl font-bold text-[var(--av-color-danger)]">
         ✕
       </div>
       <Typography variant="h3">{t("status.error")}</Typography>
@@ -118,8 +167,14 @@ export function VerifyEmailClient() {
   );
 
   const renderExpired = () => (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-3xl font-bold text-orange-700">
+    <div
+      ref={statusRegionRef}
+      tabIndex={-1}
+      role="alert"
+      aria-live="assertive"
+      className="flex flex-col items-center gap-4 text-center focus:outline-none"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-warning-subtle)] text-3xl font-bold text-[var(--av-color-warning)]">
         ⏱
       </div>
       <Typography variant="h3">{t("status.expired")}</Typography>
@@ -143,8 +198,14 @@ export function VerifyEmailClient() {
   );
 
   const renderInvalid = () => (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-3xl font-bold text-red-700">
+    <div
+      ref={statusRegionRef}
+      tabIndex={-1}
+      role="alert"
+      aria-live="assertive"
+      className="flex flex-col items-center gap-4 text-center focus:outline-none"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-3xl font-bold text-[var(--av-color-danger)]">
         ⚠
       </div>
       <Typography variant="h3">{t("status.invalid")}</Typography>
@@ -160,27 +221,12 @@ export function VerifyEmailClient() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-[480px] p-4">
-      <Card variant="elevated" padding="lg" className="w-full">
-        <div className="mb-4 text-center">
-          <Typography variant="h3" color="primary" weight="bold" className="tracking-tight">
-            Masafh
-          </Typography>
-        </div>
-
-        {status === "loading" && renderLoading()}
-        {status === "success" && renderSuccess()}
-        {status === "error" && renderError()}
-        {status === "expired" && renderExpired()}
-        {status === "invalid" && renderInvalid()}
-      </Card>
-
-      <style>{`
-        @keyframes verify-email-spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
+    <>
+      {status === "loading" && renderLoading()}
+      {status === "success" && renderSuccess()}
+      {status === "error" && renderError()}
+      {status === "expired" && renderExpired()}
+      {status === "invalid" && renderInvalid()}
+    </>
   );
 }

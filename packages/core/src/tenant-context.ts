@@ -9,10 +9,11 @@ export interface TenantContext {
   userId?: string;
 }
 
-const tenantStorage = new AsyncLocalStorage<TenantContext>();
+const tenantStorage =
+  typeof AsyncLocalStorage === "function" ? new AsyncLocalStorage<TenantContext>() : undefined;
 
 export function getTenantContext(): TenantContext | undefined {
-  return tenantStorage.getStore();
+  return tenantStorage?.getStore();
 }
 
 export function requireTenantContext(): TenantContext {
@@ -50,6 +51,9 @@ export function runWithTenantContext<T>(
   context: TenantContext,
   fn: () => T | Promise<T>,
 ): T | Promise<T> {
+  if (!tenantStorage) {
+    return fn();
+  }
   return tenantStorage.run(context, fn);
 }
 
@@ -62,5 +66,5 @@ export function runWithTenantContext<T>(
  * still see tenant context without wrapping every handler manually.
  */
 export function bindTenantContextAsyncContinuation(context: TenantContext): void {
-  tenantStorage.enterWith(context);
+  tenantStorage?.enterWith(context);
 }

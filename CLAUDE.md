@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. **Plugin Architecture** — Data connectors (`ConnectorAdapter` in `@agenticverdict/data-connectors`) share a common interface; new connectors are added without core changes
 4. **Template-Based Reporting** — Report templates stored in database, supporting RTL/LTR and multiple languages
 5. **Don't Reinvent the Wheel** — Use battle-tested, production-proven tools documented in `/docs/03-technology-research/`
-6. **UI Design System Governance** — Follow `/design-system/README.md` and `/docs/architecture/business/design-system/`; use **Pencil MCP** for all `.pen` design files; meet **WCAG 2.1 AA** and **RTL/LTR** requirements. Cursor agents: see `.cursor/rules/ui-guidelines.mdc` and `/prompts/ui-guidelines-enforcement.md`.
+6. **UI Design System Governance** — Follow `/docs/05-reference/frontend-ui-architecture-guidelines.md` (primary frontend UI/architecture SSOT), `/design-system/README.md`, and `/docs/architecture/business/design-system/`; use **Pencil MCP** for all `.pen` design files; meet **WCAG 2.1 AA** and **RTL/LTR** requirements. Cursor agents: see `.cursor/rules/ui-guidelines.mdc` and `/prompts/ui-guidelines-enforcement.md`.
 
 ## Technology Stack
 
@@ -47,6 +47,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Unit Testing**: Vitest with 70%+ coverage target (80%+ for business logic)
 - **E2E Testing**: Playwright for critical user journeys
 - **Type Safety**: Zero `any` types, strict TypeScript mode
+
+## Frontend UI & Architecture Compliance (Mandatory)
+
+For any task that changes `apps/frontend`, `packages/ui`, frontend routing, feature UX flows, localization, or design-token/component behavior:
+
+1. **Primary frontend guideline SSOT**
+   - `/docs/05-reference/frontend-ui-architecture-guidelines.md`
+   - Treat all `MUST` statements as mandatory implementation rules.
+   - Use `/docs/05-reference/frontend-ui-architecture-guidelines-checklist.md` during implementation and review.
+
+2. **Required supporting governance**
+   - `/design-system/README.md`
+   - `/prompts/ui-guidelines-enforcement.md`
+   - `/docs/05-reference/frontend-development-guidelines.md`
+
+3. **Required constraints**
+   - Reuse shared `@agenticverdict/ui` + Mantine v9 patterns and tokenized styles.
+   - Preserve route -> page -> component -> hook/service -> API boundaries.
+   - Enforce WCAG 2.1 AA and RTL/LTR parity for changed UI surfaces.
+   - Keep navigation, protected-route, and session behavior safe (no loop-prone redirects or unsafe targets).
+
+4. **Required quality gates for changed scope**
+   - `pnpm --filter @agenticverdict/frontend exec tsc --noEmit --pretty false`
+   - Targeted unit tests for changed critical logic
+   - Relevant E2E and a11y checks for changed flows
+   - `pnpm --filter @agenticverdict/frontend run i18n:validate` when locale dictionaries or locale-driven UI are touched
+
+5. **Conflict handling and deviations**
+   - If guidance conflicts, precedence is:
+     1. `/docs/05-reference/frontend-ui-architecture-guidelines.md`
+     2. `/design-system/README.md`
+     3. `/docs/05-reference/frontend-development-guidelines.md`
+     4. `/CLAUDE.md`
+   - Deviations from `MUST` rules require explicit PR rationale, risk, mitigation, owner, and due date.
 
 ## Repository Structure (Planned)
 

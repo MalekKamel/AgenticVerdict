@@ -28,11 +28,13 @@ export interface AuthLayoutProps {
 export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
   ({ children, title, description, navLinks, className, showSkipLink = true }, ref) => {
     const t = useTranslations();
+    const authLinkClass =
+      "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
 
     return (
       <div
         ref={ref}
-        className={`flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4 ${className ?? ""}`}
+        className={`flex min-h-screen flex-col items-center justify-center bg-[var(--av-color-surface-subtle)] p-4 ${className ?? ""}`}
       >
         {showSkipLink ? (
           <a href="#main-content" className="skip-link">
@@ -71,32 +73,29 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
               </div>
             ) : null}
 
-            <div
+            <main
               id="main-content"
-              role="main"
+              tabIndex={-1}
               aria-label={t("auth.layout.mainContent")}
               className="flex flex-col gap-4"
             >
               {children}
-            </div>
+            </main>
 
             {navLinks ? (
-              <div className="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-4 text-center">
+              <div className="mt-6 flex flex-col gap-3 border-t border-[var(--av-color-border-subtle)] pt-4 text-center">
                 {navLinks.registerLabel ? (
-                  <Link href="/auth/register" className="text-sm text-blue-600 hover:underline">
+                  <Link href="/auth/register" className={authLinkClass}>
                     {navLinks.registerLabel}
                   </Link>
                 ) : null}
                 {navLinks.loginLabel ? (
-                  <Link href="/auth/login" className="text-sm text-blue-600 hover:underline">
+                  <Link href="/auth/login" className={authLinkClass}>
                     {navLinks.loginLabel}
                   </Link>
                 ) : null}
                 {navLinks.forgotPasswordLabel ? (
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
+                  <Link href="/auth/forgot-password" className={authLinkClass}>
                     {navLinks.forgotPasswordLabel}
                   </Link>
                 ) : null}

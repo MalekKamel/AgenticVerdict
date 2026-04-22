@@ -55,6 +55,10 @@ test.describe("Login Accessibility Tests", () => {
 
     // Tab to remember me checkbox
     await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: /show password/i })).toBeFocused();
+
+    // Tab to remember me checkbox
+    await page.keyboard.press("Tab");
     await expect(page.getByLabel(/remember me/i)).toBeFocused();
 
     // Tab to submit button
@@ -97,6 +101,7 @@ test.describe("Login Accessibility Tests", () => {
         outlineColor: styles.outlineColor,
         outlineStyle: styles.outlineStyle,
         outlineWidth: styles.outlineWidth,
+        boxShadow: styles.boxShadow,
       };
     });
 
@@ -111,7 +116,7 @@ test.describe("Login Accessibility Tests", () => {
     await page.keyboard.press("Tab");
 
     // Skip link should be present
-    const skipLink = page.locator(".auth-skip-link");
+    const skipLink = page.locator(".skip-link");
     await expect(skipLink).toBeAttached();
   });
 });

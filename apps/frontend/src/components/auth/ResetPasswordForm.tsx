@@ -24,24 +24,30 @@ interface PasswordRequirementProps {
   label: string;
   met: boolean;
   ariaId: string;
+  metLabel: string;
+  unmetLabel: string;
 }
 
-function PasswordRequirement({ label, met, ariaId }: PasswordRequirementProps) {
+function PasswordRequirement({
+  label,
+  met,
+  ariaId,
+  metLabel,
+  unmetLabel,
+}: PasswordRequirementProps) {
   return (
     <li
       id={ariaId}
       className="flex items-center gap-2 text-sm"
       style={{
-        color: met ? "var(--av-color-success, #2E7D32)" : "var(--av-color-gray-600, #757575)",
+        color: met ? "var(--av-color-success)" : "var(--av-color-text-secondary)",
       }}
-      aria-label={`${label}: ${met ? "met" : "not met"}`}
+      aria-label={`${label}: ${met ? metLabel : unmetLabel}`}
     >
       <span
         className="inline-flex h-4 w-4 items-center justify-center rounded-full text-white"
         style={{
-          backgroundColor: met
-            ? "var(--av-color-success, #2E7D32)"
-            : "var(--av-color-gray-300, #E0E0E0)",
+          backgroundColor: met ? "var(--av-color-success)" : "var(--av-color-border-subtle)",
         }}
         aria-hidden
       >
@@ -60,6 +66,8 @@ export function ResetPasswordForm({
   className,
 }: ResetPasswordFormProps) {
   const t = useTranslations();
+  const authLinkClass =
+    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResetPasswordFormData>({
@@ -97,7 +105,7 @@ export function ResetPasswordForm({
         <Alert variant="error" title={t("auth.resetPassword.errors.invalidToken")}>
           <div className="flex flex-col gap-3">
             <Typography variant="body-sm">{t("auth.resetPassword.errors.invalidToken")}</Typography>
-            <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+            <Link href="/auth/forgot-password" className={authLinkClass}>
               {t("auth.resetPassword.buttons.requestNew")}
             </Link>
           </div>
@@ -115,10 +123,7 @@ export function ResetPasswordForm({
               <div className="flex flex-col gap-3">
                 <Typography variant="body-sm">{apiError}</Typography>
                 {isTokenExpired ? (
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
+                  <Link href="/auth/forgot-password" className={authLinkClass}>
                     {t("auth.resetPassword.buttons.requestNew")}
                   </Link>
                 ) : null}
@@ -138,6 +143,8 @@ export function ResetPasswordForm({
                     label={t(req.label)}
                     met={req.met}
                     ariaId={req.ariaId}
+                    metLabel={t("common.success")}
+                    unmetLabel={t("common.error")}
                   />
                 ))}
               </ul>
@@ -217,7 +224,7 @@ export function ResetPasswordForm({
           <div className="text-center">
             <Link
               href="/auth/login"
-              className="text-sm text-blue-600 hover:underline"
+              className={authLinkClass}
               aria-label={t("auth.resetPassword.buttons.backToLogin")}
             >
               {t("auth.resetPassword.buttons.backToLogin")}

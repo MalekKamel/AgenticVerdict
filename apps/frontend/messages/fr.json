@@ -21,6 +21,8 @@
     "confirm": "Confirmer",
     "yes": "Oui",
     "no": "Non",
+    "retry": "Réessayer",
+    "contactSupport": "Contacter le support",
     "required": "Obligatoire",
     "optional": "Optionnel"
   },
@@ -188,18 +190,48 @@
       "title": "Créer un compte",
       "description": "Rejoignez AgenticVerdict pour commencer à obtenir des informations commerciales.",
       "fields": {
-        "email": "Email",
-        "password": "Mot de passe",
-        "confirmPassword": "Confirmer le mot de passe",
-        "firstName": "Prénom",
-        "lastName": "Nom de famille"
+        "email": {
+          "label": "Email",
+          "placeholder": "Entrez votre email"
+        },
+        "password": {
+          "label": "Mot de passe",
+          "placeholder": "Créez un mot de passe fort"
+        },
+        "confirmPassword": {
+          "label": "Confirmer le mot de passe",
+          "placeholder": "Confirmez votre mot de passe"
+        },
+        "firstName": {
+          "label": "Prénom",
+          "placeholder": "Entrez votre prénom"
+        },
+        "lastName": {
+          "label": "Nom de famille",
+          "placeholder": "Entrez votre nom de famille"
+        },
+        "acceptTerms": {
+          "label": "J'accepte les Conditions d'utilisation et la Politique de confidentialité",
+          "description": "En créant un compte, vous acceptez nos",
+          "termsLink": "Conditions d'utilisation",
+          "and": "et",
+          "privacyLink": "Politique de confidentialité"
+        }
       },
       "buttons": {
         "submit": "Créer un compte",
+        "createAccount": "Créer un compte",
+        "creatingAccount": "Création du compte...",
         "hasAccount": "Vous avez déjà un compte ?",
         "signIn": "Se connecter"
       },
       "errors": {
+        "apiError": "Échec de l'inscription",
+        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+        "passwordsMatch": "Les mots de passe correspondent",
+        "acceptTerms": {
+          "required": "Vous devez accepter les conditions pour continuer"
+        },
         "email": {
           "required": "L'email est obligatoire",
           "invalid": "Veuillez entrer une adresse email valide",
@@ -289,9 +321,13 @@
       },
       "buttons": {
         "submit": "Vérifier",
-        "resend": "Renvoyer le code"
+        "resend": "Renvoyer le code",
+        "resendCountdown": "Renvoyer ({{seconds}}s)",
+        "signIn": "Se connecter",
+        "backToRegister": "Retour à l'inscription"
       },
       "errors": {
+        "noToken": "Aucun jeton de vérification trouvé",
         "code": {
           "required": "Le code de vérification est obligatoire",
           "invalidLength": "Le code de vérification doit contenir 6 chiffres",
@@ -302,7 +338,18 @@
         "tooManyAttempts": "Trop de tentatives échouées. Veuillez demander un nouveau code."
       },
       "success": "Email vérifié avec succès.",
-      "resendSuccess": "Nouveau code de vérification envoyé à votre email."
+      "resendSuccess": "Nouveau code de vérification envoyé à votre email.",
+      "status": {
+        "verifying": "Vérification de votre email...",
+        "success": "Email vérifié avec succès",
+        "successMessage": "Votre email a été vérifié. Vous pouvez maintenant vous connecter.",
+        "error": "Échec de la vérification",
+        "expired": "Lien expiré",
+        "expiredMessage": "Ce lien de vérification a expiré. Veuillez en demander un nouveau.",
+        "invalid": "Lien invalide",
+        "invalidMessage": "Ce lien de vérification est invalide. Veuillez vous inscrire à nouveau.",
+        "resendSuccess": "Un nouvel email de vérification a été envoyé. Vérifiez votre boîte de réception."
+      }
     },
     "password": {
       "showPassword": "Afficher le mot de passe",

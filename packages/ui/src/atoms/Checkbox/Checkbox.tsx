@@ -13,7 +13,7 @@
 
 "use client";
 
-import React, { type InputHTMLAttributes, forwardRef, useState } from "react";
+import React, { type InputHTMLAttributes, forwardRef, useId, useState } from "react";
 import clsx from "clsx";
 
 /**
@@ -84,6 +84,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       indeterminate = false,
       label,
       onCheckedChange,
+      onChange: inputOnChange,
       className,
       id,
       disabled,
@@ -101,10 +102,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       if (!isControlled) {
         setInternalChecked(newChecked);
       }
+      inputOnChange?.(event);
       onCheckedChange?.(newChecked);
     };
 
-    const checkboxId = id || `checkbox-${Math.random().toString(36).substring(2, 9)}`;
+    const generatedId = useId();
+    const checkboxId = id || `checkbox-${generatedId}`;
 
     return (
       <label

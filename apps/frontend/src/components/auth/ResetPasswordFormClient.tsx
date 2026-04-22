@@ -4,16 +4,16 @@ import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { useConfirmPasswordReset } from "@/hooks/usePasswordReset";
 
 export function ResetPasswordFormClient() {
-  const resetMutation = useConfirmPasswordReset();
-  const isPending = resetMutation.isPending;
-  const error = resetMutation.error;
   const search = useRouterState({ select: (s) => s.location.search });
   const token = new URLSearchParams(search).get("token") || "";
+  const resetMutation = useConfirmPasswordReset(token);
+  const isPending = resetMutation.isPending;
+  const error = resetMutation.error;
 
   return (
     <ResetPasswordForm
       token={token}
-      onSubmit={(data) => resetMutation.mutate({ newPassword: data.password })}
+      onSubmit={(data) => resetMutation.mutate({ token: data.token, newPassword: data.password })}
       isLoading={isPending}
       error={error?.message}
     />

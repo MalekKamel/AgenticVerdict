@@ -21,6 +21,8 @@ export interface LoginFormProps {
 
 export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps) {
   const t = useTranslations("auth.login");
+  const authLinkClass =
+    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const { login, isLoading, error, clearError } = useLoginMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -128,7 +130,7 @@ export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps
             }}
           />
 
-          <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+          <Link href="/auth/forgot-password" className={authLinkClass}>
             {t("buttons.forgotPassword")}
           </Link>
         </div>
@@ -141,7 +143,7 @@ export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps
           <Typography variant="body-sm" color="secondary" as="span">
             {t("buttons.noAccount")}{" "}
           </Typography>
-          <Link href="/auth/register" className="text-sm font-medium text-blue-600 hover:underline">
+          <Link href="/auth/register" className={`${authLinkClass} font-medium`}>
             {t("buttons.createAccount")}
           </Link>
         </div>

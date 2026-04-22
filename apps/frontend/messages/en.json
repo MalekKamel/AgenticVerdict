@@ -21,6 +21,8 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
+    "retry": "Retry",
+    "contactSupport": "Contact support",
     "required": "Required",
     "optional": "Optional"
   },
@@ -219,6 +221,7 @@
         }
       },
       "buttons": {
+        "submit": "Create Account",
         "createAccount": "Create Account",
         "creatingAccount": "Creating Account...",
         "hasAccount": "Already have an account?",

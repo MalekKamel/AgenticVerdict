@@ -27,6 +27,8 @@ function forgotPasswordFieldError(
 
 export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormProps) {
   const t = useTranslations("auth.forgotPassword");
+  const authLinkClass =
+    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const requestReset = useRequestPasswordReset();
@@ -139,11 +141,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
       </form>
 
       <div className="mt-6 text-center">
-        <Link
-          href="/auth/login"
-          className="text-sm text-blue-600 hover:underline"
-          aria-label={t("buttons.backToLogin")}
-        >
+        <Link href="/auth/login" className={authLinkClass} aria-label={t("buttons.backToLogin")}>
           {t("buttons.backToLogin")}
         </Link>
       </div>

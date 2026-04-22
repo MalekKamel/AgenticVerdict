@@ -30,6 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 
 import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
+import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import type { RegisterInput } from "@agenticverdict/types";
 
 /**
@@ -61,8 +62,13 @@ import type { RegisterInput } from "@agenticverdict/types";
  */
 export function useRegisterMutation() {
   const router = useRouter();
+  let startedAt = 0;
 
   return useMutation({
+    onMutate: () => {
+      startedAt = performance.now();
+      logAuthFunnelEvent("auth.register.submit", { flow: "register" });
+    },
     mutationFn: async (input: RegisterInput) => {
       const result = await authApi.register(input);
 
@@ -75,12 +81,23 @@ export function useRegisterMutation() {
     onSuccess: (data) => {
       // Don't update auth store - user needs to verify email first
       console.log("Registration successful:", data.message);
+      logAuthFunnelEvent("auth.register.result", {
+        flow: "register",
+        outcome: "success",
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
 
       // Redirect to verification page
       router.push("/auth/verify-email");
     },
     onError: (error) => {
       console.error("Registration failed:", error.message);
+      logAuthFunnelEvent("auth.register.result", {
+        flow: "register",
+        outcome: "failure",
+        errorCode: "REGISTER_FAILED",
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
     },
   });
 }

@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "build:vite": "vite build",
-    "dev": "node --import tsx src/cli.ts",
+    "dev": "API_PORT_AUTO_INCREMENT=1 node --import tsx src/cli.ts",
     "lint": "eslint .",
     "start": "node --import tsx src/cli.ts",
     "test": "vitest run",

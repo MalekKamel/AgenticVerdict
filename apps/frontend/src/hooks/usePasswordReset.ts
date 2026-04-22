@@ -14,6 +14,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { useRouter } from "@/i18n/navigation";
 
 import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
+import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import type { RequestPasswordResetInput, ConfirmPasswordResetInput } from "@agenticverdict/types";
 
 /**
@@ -48,7 +49,12 @@ import type { RequestPasswordResetInput, ConfirmPasswordResetInput } from "@agen
  * ```
  */
 export function useRequestPasswordReset() {
+  let startedAt = 0;
   return useMutation({
+    onMutate: () => {
+      startedAt = performance.now();
+      logAuthFunnelEvent("auth.forgot_password.submit", { flow: "forgot_password" });
+    },
     mutationFn: async (input: RequestPasswordResetInput) => {
       const result = await authApi.requestPasswordReset(input);
 
@@ -65,10 +71,21 @@ export function useRequestPasswordReset() {
       // Note: We show the same success message for both existing and non-existing emails
       // This prevents email enumeration attacks
       // The backend should return a generic message
+      logAuthFunnelEvent("auth.forgot_password.result", {
+        flow: "forgot_password",
+        outcome: "success",
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
     },
     onError: (error) => {
       // Log error for debugging
       console.error("Password reset request failed:", error.message);
+      logAuthFunnelEvent("auth.forgot_password.result", {
+        flow: "forgot_password",
+        outcome: "failure",
+        errorCode: "REQUEST_RESET_FAILED",
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
     },
   });
 }
@@ -107,15 +124,36 @@ export function useRequestPasswordReset() {
  * }
  * ```
  */
-export function useConfirmPasswordReset() {
+type ConfirmPasswordResetPayload =
+  | ConfirmPasswordResetInput
+  | Omit<ConfirmPasswordResetInput, "token">;
+
+export function useConfirmPasswordReset(tokenOverride?: string) {
   const router = useRouter();
   const search = useRouterState({ select: (s) => s.location.search });
-  const token = new URLSearchParams(search).get("token") || "";
+  const tokenFromSearch = new URLSearchParams(search).get("token") || "";
+  let startedAt = 0;
 
   return useMutation({
-    mutationFn: async (input: Omit<ConfirmPasswordResetInput, "token">) => {
+    onMutate: (input) => {
+      startedAt = performance.now();
+      const token = "token" in input ? input.token : (tokenOverride ?? tokenFromSearch);
+      logAuthFunnelEvent("auth.reset_password.submit", {
+        flow: "reset_password",
+        tokenPresent: Boolean(token),
+      });
+    },
+    mutationFn: async (input: ConfirmPasswordResetPayload) => {
+      const token = "token" in input ? input.token : (tokenOverride ?? tokenFromSearch);
+
       // Validate token exists
       if (!token) {
+        logAuthFunnelEvent("auth.reset_password.result", {
+          flow: "reset_password",
+          outcome: "failure",
+          errorCode: "INVALID_TOKEN",
+          tokenPresent: false,
+        });
         throw new Error("auth.resetPassword.errors.invalidToken");
       }
 
@@ -131,8 +169,25 @@ export function useConfirmPasswordReset() {
       return result.data;
     },
     onSuccess: () => {
+      logAuthFunnelEvent("auth.reset_password.result", {
+        flow: "reset_password",
+        outcome: "success",
+        tokenPresent: true,
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
       // Redirect to login page after successful password reset
       router.push("/auth/login");
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : "";
+      const invalidToken = message.includes("invalidToken");
+      logAuthFunnelEvent("auth.reset_password.result", {
+        flow: "reset_password",
+        outcome: "failure",
+        errorCode: invalidToken ? "INVALID_TOKEN" : "RESET_PASSWORD_FAILED",
+        tokenPresent: !invalidToken,
+        latencyMs: Math.round(performance.now() - startedAt),
+      });
     },
   });
 }

@@ -23,10 +23,12 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouterState } from "@tanstack/react-router";
 
 import { useRouter } from "@/i18n/navigation";
 import { authActions } from "@/stores/auth-store";
 import { authApi } from "@/lib/api/auth-api";
+import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import type { LoginInput } from "@agenticverdict/types";
 import { useCallback, useState } from "react";
 
@@ -44,6 +46,33 @@ export interface UseLoginMutationReturn {
   clearError: () => void;
 }
 
+export function resolvePostLoginRedirect(redirectFromSearch: string | null): string {
+  if (!redirectFromSearch || !redirectFromSearch.startsWith("/")) {
+    return "/dashboard";
+  }
+
+  if (redirectFromSearch.startsWith("/auth")) {
+    return "/dashboard";
+  }
+
+  return redirectFromSearch;
+}
+
+function classifyRedirectTarget(redirectFromSearch: string | null): {
+  target: string;
+  redirectClass: "dashboard_default" | "safe_internal" | "auth_loop_blocked";
+} {
+  if (!redirectFromSearch || !redirectFromSearch.startsWith("/")) {
+    return { target: "/dashboard", redirectClass: "dashboard_default" };
+  }
+
+  if (redirectFromSearch.startsWith("/auth")) {
+    return { target: "/dashboard", redirectClass: "auth_loop_blocked" };
+  }
+
+  return { target: redirectFromSearch, redirectClass: "safe_internal" };
+}
+
 /**
  * Hook for handling login mutation
  *
@@ -56,18 +85,24 @@ export interface UseLoginMutationReturn {
 export function useLoginMutation(): UseLoginMutationReturn {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const search = useRouterState({ select: (s) => s.location.search });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const redirectFromSearch = new URLSearchParams(search).get("redirect");
+
   const login = useCallback(
     async (credentials: LoginInput) => {
+      const startedAt = performance.now();
       setIsLoading(true);
       setError(null);
       authActions.setLoading(true);
       authActions.clearError();
+      logAuthFunnelEvent("auth.login.submit", { flow: "login" });
 
       try {
         const result = await authApi.login(credentials);
+        const latencyMs = Math.round(performance.now() - startedAt);
 
         if (result.success) {
           // Update auth store
@@ -79,8 +114,15 @@ export function useLoginMutation(): UseLoginMutationReturn {
           setIsLoading(false);
           authActions.setLoading(false);
 
-          // Redirect to dashboard
-          router.push("/dashboard");
+          // Keep locale-aware redirect destination while preventing auth-route loops.
+          const { target, redirectClass } = classifyRedirectTarget(redirectFromSearch);
+          logAuthFunnelEvent("auth.login.result", {
+            flow: "login",
+            outcome: "success",
+            latencyMs,
+            redirectClass,
+          });
+          router.push(target);
         } else {
           // Handle error - use generic message for security
           const genericError = "Invalid email or password";
@@ -88,6 +130,12 @@ export function useLoginMutation(): UseLoginMutationReturn {
           authActions.setError({
             code: result.error.code,
             message: genericError,
+          });
+          logAuthFunnelEvent("auth.login.result", {
+            flow: "login",
+            outcome: "failure",
+            errorCode: result.error.code,
+            latencyMs,
           });
           setIsLoading(false);
           authActions.setLoading(false);
@@ -100,11 +148,17 @@ export function useLoginMutation(): UseLoginMutationReturn {
           code: "INTERNAL_ERROR",
           message: genericError,
         });
+        logAuthFunnelEvent("auth.login.result", {
+          flow: "login",
+          outcome: "failure",
+          errorCode: "INTERNAL_ERROR",
+          latencyMs: Math.round(performance.now() - startedAt),
+        });
         setIsLoading(false);
         authActions.setLoading(false);
       }
     },
-    [queryClient, router],
+    [queryClient, redirectFromSearch, router],
   );
 
   const clearError = useCallback(() => {
