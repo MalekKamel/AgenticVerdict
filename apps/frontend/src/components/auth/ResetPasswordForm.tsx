@@ -1,11 +1,12 @@
 "use client";
 
-import { Alert, Button, Typography } from "@agenticverdict/ui";
+import { Alert, Button, Text } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "@/i18n/react";
 import { useCallback, useEffect, useRef } from "react";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import { IconCheck, IconKey, IconX } from "@tabler/icons-react";
 
+import { AUTH_TEXT_LINK_CLASS, AUTH_TRACK_MUTED_CLASS } from "@/components/auth/authUi";
 import { resetPasswordSchema } from "@/lib/validations/auth";
 import { calculatePasswordStrength, getPasswordRequirements } from "@/lib/validations/password";
 import type { ResetPasswordFormData } from "@/lib/validations/auth";
@@ -66,8 +67,6 @@ export function ResetPasswordForm({
   className,
 }: ResetPasswordFormProps) {
   const t = useTranslations();
-  const authLinkClass =
-    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResetPasswordFormData>({
@@ -102,10 +101,10 @@ export function ResetPasswordForm({
   if (!token) {
     return (
       <div className={className}>
-        <Alert variant="error" title={t("auth.resetPassword.errors.invalidToken")}>
-          <div className="flex flex-col gap-3">
-            <Typography variant="body-sm">{t("auth.resetPassword.errors.invalidToken")}</Typography>
-            <Link href="/auth/forgot-password" className={authLinkClass}>
+        <Alert color="red" title={t("auth.resetPassword.errors.invalidToken")} variant="light">
+          <Text size="sm">{t("auth.resetPassword.errors.invalidToken")}</Text>
+          <div className="mt-3">
+            <Link href="/auth/forgot-password" className={AUTH_TEXT_LINK_CLASS}>
               {t("auth.resetPassword.buttons.requestNew")}
             </Link>
           </div>
@@ -119,15 +118,15 @@ export function ResetPasswordForm({
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <div className="flex flex-col gap-6">
           {apiError ? (
-            <Alert variant="error" title={t("common.error")}>
-              <div className="flex flex-col gap-3">
-                <Typography variant="body-sm">{apiError}</Typography>
-                {isTokenExpired ? (
-                  <Link href="/auth/forgot-password" className={authLinkClass}>
+            <Alert color="red" title={t("common.error")} variant="light">
+              <Text size="sm">{apiError}</Text>
+              {isTokenExpired ? (
+                <div className="mt-3">
+                  <Link href="/auth/forgot-password" className={AUTH_TEXT_LINK_CLASS}>
                     {t("auth.resetPassword.buttons.requestNew")}
                   </Link>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </Alert>
           ) : null}
 
@@ -151,19 +150,15 @@ export function ResetPasswordForm({
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <Typography variant="body-sm" weight="medium">
+                  <Text size="sm" fw={500}>
                     {t("auth.password.strength.label")}
-                  </Typography>
-                  <Typography
-                    variant="body-sm"
-                    weight="medium"
-                    style={{ color: passwordStrength.color }}
-                  >
+                  </Text>
+                  <Text size="sm" fw={500} style={{ color: passwordStrength.color }}>
                     {t(passwordStrength.label)}
-                  </Typography>
+                  </Text>
                 </div>
                 <div
-                  className="h-2 w-full overflow-hidden rounded-full bg-gray-200"
+                  className={AUTH_TRACK_MUTED_CLASS}
                   role="progressbar"
                   aria-label={t("auth.password.strength.ariaLabel")}
                   aria-valuemin={0}
@@ -188,6 +183,7 @@ export function ResetPasswordForm({
             label={t("auth.resetPassword.fields.password")}
             placeholder={t("auth.resetPassword.fields.password")}
             required
+            radius="md"
             {...form.getInputProps("password")}
             error={typeof form.errors.password === "string" ? form.errors.password : undefined}
             aria-describedby="password-requirement-minlength password-requirement-uppercase password-requirement-lowercase password-requirement-number password-requirement-special"
@@ -199,6 +195,7 @@ export function ResetPasswordForm({
             label={t("auth.resetPassword.fields.confirmPassword")}
             placeholder={t("auth.resetPassword.fields.confirmPassword")}
             required
+            radius="md"
             {...form.getInputProps("confirmPassword")}
             error={
               typeof form.errors.confirmPassword === "string"
@@ -214,7 +211,9 @@ export function ResetPasswordForm({
             fullWidth
             loading={isLoading}
             disabled={isLoading}
+            radius="md"
             aria-busy={isLoading}
+            leftSection={!isLoading ? <IconKey size={20} stroke={1.75} aria-hidden /> : undefined}
           >
             {isLoading
               ? t("auth.resetPassword.buttons.resetting")
@@ -224,7 +223,7 @@ export function ResetPasswordForm({
           <div className="text-center">
             <Link
               href="/auth/login"
-              className={authLinkClass}
+              className={AUTH_TEXT_LINK_CLASS}
               aria-label={t("auth.resetPassword.buttons.backToLogin")}
             >
               {t("auth.resetPassword.buttons.backToLogin")}

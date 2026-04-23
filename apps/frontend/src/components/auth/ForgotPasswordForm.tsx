@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "@/i18n/react";
-import { Alert, Button, FormField, Input } from "@agenticverdict/ui";
+import { Alert, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconMailForward } from "@tabler/icons-react";
 
 import { useRequestPasswordReset } from "@/hooks/usePasswordReset";
 import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validations/auth";
-import { Link } from "@/i18n/navigation";
 
 interface ForgotPasswordFormProps {
   onSuccess?: (message: string) => void;
@@ -27,8 +27,7 @@ function forgotPasswordFieldError(
 
 export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormProps) {
   const t = useTranslations("auth.forgotPassword");
-  const authLinkClass =
-    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
+  const tCommon = useTranslations("common");
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const requestReset = useRequestPasswordReset();
@@ -85,7 +84,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
     <div>
       {successMessage ? (
         <div className="mb-4" role="status" aria-live="polite">
-          <Alert variant="success" title={t("buttons.submit")}>
+          <Alert color="green" title={t("alerts.successTitle")} variant="light">
             {successMessage}
           </Alert>
         </div>
@@ -93,39 +92,37 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
 
       {errorMessage ? (
         <div className="mb-4" role="alert" aria-live="assertive">
-          <Alert variant="error" title={t("errors.email.required")}>
+          <Alert color="red" title={tCommon("error")} variant="light">
             {errorMessage}
           </Alert>
         </div>
       ) : null}
 
       <form onSubmit={form.onSubmit(handleSubmit)} aria-label={t("title")}>
-        <div className="flex flex-col gap-4">
-          <FormField
+        <div className="flex flex-col gap-5">
+          <TextInput
+            ref={emailInputRef}
+            id="forgot-password-email"
+            type="email"
+            autoComplete="email"
+            key={form.key("email")}
             label={t("fields.email")}
             required
-            id="forgot-password-email"
+            radius="md"
+            w="100%"
             error={forgotPasswordFieldError(
               typeof form.errors.email === "string" ? form.errors.email : undefined,
               t,
             )}
-          >
-            <Input
-              ref={emailInputRef}
-              id="forgot-password-email"
-              type="email"
-              autoComplete="email"
-              key={form.key("email")}
-              {...form.getInputProps("email")}
-              onChange={(event) => {
-                form.getInputProps("email").onChange(event);
-                handleInputChange();
-              }}
-              aria-required
-              aria-invalid={!!form.errors.email}
-              aria-describedby={form.errors.email ? "email-error" : "email-description"}
-            />
-          </FormField>
+            {...form.getInputProps("email")}
+            onChange={(event) => {
+              form.getInputProps("email").onChange(event);
+              handleInputChange();
+            }}
+            aria-required
+            aria-invalid={!!form.errors.email}
+            aria-describedby={form.errors.email ? "email-error" : "email-description"}
+          />
 
           <Button
             type="submit"
@@ -133,18 +130,18 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
             loading={requestReset.isPending}
             disabled={requestReset.isPending}
             size="md"
+            radius="md"
             aria-busy={requestReset.isPending}
+            leftSection={
+              !requestReset.isPending ? (
+                <IconMailForward size={20} stroke={1.75} aria-hidden />
+              ) : undefined
+            }
           >
-            {requestReset.isPending ? t("buttons.submit") : t("buttons.submit")}
+            {requestReset.isPending ? t("buttons.submitting") : t("buttons.submit")}
           </Button>
         </div>
       </form>
-
-      <div className="mt-6 text-center">
-        <Link href="/auth/login" className={authLinkClass} aria-label={t("buttons.backToLogin")}>
-          {t("buttons.backToLogin")}
-        </Link>
-      </div>
     </div>
   );
 }

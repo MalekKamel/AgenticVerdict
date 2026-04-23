@@ -1,5 +1,5 @@
 /**
- * LoginForm — uses `@agenticverdict/ui` primitives aligned with `design-system/atoms/*.pen`.
+ * LoginForm — Mantine form controls (`TextInput`, `PasswordInput`, `Alert`, `Button`).
  */
 
 "use client";
@@ -7,9 +7,11 @@
 import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { type LoginFormData } from "@/lib/validations/auth";
 import { PasswordInput } from "@/components/auth/PasswordInput";
-import { Alert, Button, Checkbox, FormField, Input, Typography } from "@agenticverdict/ui";
+import { AUTH_TEXT_LINK_CLASS } from "@/components/auth/authUi";
+import { Alert, Button, Checkbox, Text, TextInput } from "@mantine/core";
 import { useTranslations } from "@/i18n/react";
 import { useForm } from "@mantine/form";
+import { IconLogin2 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 
@@ -21,8 +23,6 @@ export interface LoginFormProps {
 
 export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps) {
   const t = useTranslations("auth.login");
-  const authLinkClass =
-    "text-sm text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const { login, isLoading, error, clearError } = useLoginMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -75,14 +75,12 @@ export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps
     }
   };
 
-  const rememberProps = form.getInputProps("rememberMe", { type: "checkbox" });
-
   return (
     <form onSubmit={form.onSubmit(handleSubmit)} className={className} noValidate>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         {error ? (
           <div role="alert" aria-live="assertive">
-            <Alert variant="error" title={t("errors.invalidCredentials")}>
+            <Alert color="red" title={t("errors.invalidCredentials")} variant="light">
               {error}
             </Alert>
           </div>
@@ -90,24 +88,24 @@ export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps
 
         {successMessage ? (
           <div role="status" aria-live="polite">
-            <Alert variant="success">{successMessage}</Alert>
+            <Alert color="green" variant="light">
+              {successMessage}
+            </Alert>
           </div>
         ) : null}
 
-        <FormField
-          label={t("fields.email")}
-          required
+        <TextInput
+          key={form.key("email")}
           id="login-email"
+          label={t("fields.email")}
+          type="email"
+          required
+          autoComplete="email"
+          radius="md"
+          w="100%"
           error={typeof form.errors.email === "string" ? form.errors.email : undefined}
-        >
-          <Input
-            key={form.key("email")}
-            id="login-email"
-            type="email"
-            autoComplete="email"
-            {...form.getInputProps("email")}
-          />
-        </FormField>
+          {...form.getInputProps("email")}
+        />
 
         <PasswordInput
           label={t("fields.password")}
@@ -116,34 +114,39 @@ export function LoginForm({ onSuccess, defaultEmail, className }: LoginFormProps
           autoComplete="current-password"
           key={form.key("password")}
           error={form.errors.password}
+          radius="md"
           {...form.getInputProps("password")}
         />
 
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Checkbox
+            key={form.key("rememberMe")}
             label={t("fields.rememberMe")}
-            checked={Boolean(rememberProps.checked)}
-            onCheckedChange={(checked) => {
-              rememberProps.onChange?.({
-                currentTarget: { checked },
-              } as React.ChangeEvent<HTMLInputElement>);
-            }}
+            {...form.getInputProps("rememberMe", { type: "checkbox" })}
           />
 
-          <Link href="/auth/forgot-password" className={authLinkClass}>
+          <Link href="/auth/forgot-password" className={AUTH_TEXT_LINK_CLASS}>
             {t("buttons.forgotPassword")}
           </Link>
         </div>
 
-        <Button type="submit" fullWidth size="md" loading={isLoading} disabled={isLoading}>
+        <Button
+          type="submit"
+          fullWidth
+          size="md"
+          radius="md"
+          loading={isLoading}
+          disabled={isLoading}
+          leftSection={!isLoading ? <IconLogin2 size={20} stroke={1.75} aria-hidden /> : undefined}
+        >
           {isLoading ? t("buttons.submitting") : t("buttons.submit")}
         </Button>
 
-        <div className="text-center">
-          <Typography variant="body-sm" color="secondary" as="span">
+        <div className="border-t border-[var(--av-color-border-subtle)] pt-5 text-center">
+          <Text size="sm" c="dimmed" span>
             {t("buttons.noAccount")}{" "}
-          </Typography>
-          <Link href="/auth/register" className={`${authLinkClass} font-medium`}>
+          </Text>
+          <Link href="/auth/register" className={AUTH_TEXT_LINK_CLASS}>
             {t("buttons.createAccount")}
           </Link>
         </div>

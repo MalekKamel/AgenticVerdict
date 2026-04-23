@@ -1,5 +1,5 @@
 /**
- * RegisterForm — `@agenticverdict/ui` + `design-system/atoms/*.pen` / `molecules/alert.pen`.
+ * RegisterForm — Mantine form controls (`TextInput`, `PasswordInput`, `Alert`, `Button`, `Checkbox`).
  */
 
 "use client";
@@ -8,11 +8,13 @@ import { useForm } from "@mantine/form";
 import { useTranslations } from "@/i18n/react";
 import { type ReactNode, useEffect, useState } from "react";
 
-import { Alert, Button, Checkbox, FormField, Input, Typography } from "@agenticverdict/ui";
+import { AUTH_TEXT_LINK_CLASS, AUTH_TRACK_MUTED_CLASS } from "@/components/auth/authUi";
+import { Alert, Button, Checkbox, List, Text, TextInput } from "@mantine/core";
 import { useRegisterMutation } from "@/hooks/useRegisterMutation";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import { calculatePasswordStrength, type PasswordStrengthResult } from "@/lib/validations/password";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { IconCheck, IconUserPlus, IconX } from "@tabler/icons-react";
 
 const AUTH_PASSWORD_PREFIX = "auth.password.";
 
@@ -37,7 +39,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   return (
     <div className="mt-2 flex flex-col gap-2">
       <div
-        className="h-2 w-full overflow-hidden rounded-full bg-gray-200"
+        className={AUTH_TRACK_MUTED_CLASS}
         role="progressbar"
         aria-valuenow={strength.percentage}
         aria-valuemin={0}
@@ -49,35 +51,43 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           style={{ width: `${strength.percentage}%`, backgroundColor: strength.color }}
         />
       </div>
-      <Typography variant="body-sm" color="secondary">
+      <Text size="sm" c="dimmed">
         {t(passwordMessageKey(strength.label))}
-      </Typography>
+      </Text>
 
-      <ul data-testid="password-requirements" className="m-0 list-none p-0">
+      <List
+        data-testid="password-requirements"
+        listStyleType="none"
+        m={0}
+        p={0}
+        spacing="xs"
+        size="sm"
+      >
         {strength.requirements.map((req) => (
-          <li
+          <List.Item
             key={req.id}
             data-checked={req.met ? "true" : "false"}
-            className="flex items-center gap-2 text-sm"
             style={{
               color: req.met ? "var(--av-color-success)" : "var(--av-color-text-secondary)",
             }}
+            icon={
+              <span
+                className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-white"
+                style={{
+                  backgroundColor: req.met
+                    ? "var(--av-color-success)"
+                    : "var(--av-color-border-subtle)",
+                }}
+                aria-hidden
+              >
+                {req.met ? <IconCheck size={10} stroke={3} /> : <IconX size={10} stroke={3} />}
+              </span>
+            }
           >
-            <span
-              aria-hidden
-              className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
-              style={{
-                backgroundColor: req.met
-                  ? "var(--av-color-success)"
-                  : "var(--av-color-border-subtle)",
-              }}
-            >
-              {req.met ? "✓" : "✗"}
-            </span>
             <span id={req.ariaId}>{t(`requirements.${req.id}`)}</span>
-          </li>
+          </List.Item>
         ))}
-      </ul>
+      </List>
     </div>
   );
 }
@@ -91,8 +101,6 @@ export interface RegisterFormProps {
 
 export function RegisterForm({ onSuccess, onError, className, children }: RegisterFormProps) {
   const t = useTranslations("auth.register");
-  const authLinkClass =
-    "text-[var(--av-color-primary)] underline-offset-2 transition-colors hover:text-[var(--av-color-primary-600)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--av-color-primary)]";
   const register = useRegisterMutation();
 
   const [passwordsMatch, setPasswordsMatch] = useState<boolean | null>(null);
@@ -159,30 +167,28 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
 
       {register.isError ? (
         <div className="mb-4" data-testid="form-error">
-          <Alert variant="error" title={t("errors.apiError")}>
+          <Alert color="red" title={t("errors.apiError")} variant="light">
             {(register.error as Error).message}
           </Alert>
         </div>
       ) : null}
 
       <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
-        <div className="flex flex-col gap-4">
-          <FormField
+        <div className="flex flex-col gap-5">
+          <TextInput
+            {...form.getInputProps("email")}
+            id="register-email"
+            name="email"
+            type="email"
             label={t("fields.email.label")}
             required
-            id="register-email"
+            autoComplete="email"
+            radius="md"
+            w="100%"
             error={typeof form.errors.email === "string" ? form.errors.email : undefined}
-          >
-            <Input
-              {...form.getInputProps("email")}
-              id="register-email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              aria-describedby="register-email-description"
-              aria-invalid={!!form.errors.email}
-            />
-          </FormField>
+            aria-describedby="register-email-description"
+            aria-invalid={!!form.errors.email}
+          />
 
           <div>
             <PasswordInput
@@ -194,6 +200,7 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
               required
               autoComplete="new-password"
               error={typeof form.errors.password === "string" ? form.errors.password : undefined}
+              radius="md"
               aria-describedby="register-password-description"
               aria-invalid={!!form.errors.password}
               onChange={(e) => {
@@ -218,47 +225,45 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
             }
             required
             autoComplete="new-password"
+            radius="md"
             aria-describedby="register-confirm-password-description"
             aria-invalid={!!form.errors.confirmPassword || passwordsMatch === false}
           />
 
           {passwordsMatch === true && watchedConfirmPassword.length > 0 ? (
-            <Typography variant="body-sm" color="success">
-              ✓ {t("errors.passwordsMatch")}
-            </Typography>
+            <Text size="sm" c="green" className="inline-flex items-center gap-1.5">
+              <IconCheck size={16} stroke={2.5} className="shrink-0" aria-hidden />
+              {t("errors.passwordsMatch")}
+            </Text>
           ) : null}
 
-          <FormField
+          <TextInput
+            {...form.getInputProps("firstName")}
+            id="register-first-name"
+            name="firstName"
             label={t("fields.firstName.label")}
             required
-            id="register-first-name"
+            autoComplete="given-name"
+            radius="md"
+            w="100%"
             error={typeof form.errors.firstName === "string" ? form.errors.firstName : undefined}
-          >
-            <Input
-              {...form.getInputProps("firstName")}
-              id="register-first-name"
-              name="firstName"
-              autoComplete="given-name"
-              aria-describedby="register-first-name-description"
-              aria-invalid={!!form.errors.firstName}
-            />
-          </FormField>
+            aria-describedby="register-first-name-description"
+            aria-invalid={!!form.errors.firstName}
+          />
 
-          <FormField
+          <TextInput
+            {...form.getInputProps("lastName")}
+            id="register-last-name"
+            name="lastName"
             label={t("fields.lastName.label")}
             required
-            id="register-last-name"
+            autoComplete="family-name"
+            radius="md"
+            w="100%"
             error={typeof form.errors.lastName === "string" ? form.errors.lastName : undefined}
-          >
-            <Input
-              {...form.getInputProps("lastName")}
-              id="register-last-name"
-              name="lastName"
-              autoComplete="family-name"
-              aria-describedby="register-last-name-description"
-              aria-invalid={!!form.errors.lastName}
-            />
-          </FormField>
+            aria-describedby="register-last-name-description"
+            aria-invalid={!!form.errors.lastName}
+          />
 
           <div className="flex flex-col gap-2">
             <Checkbox
@@ -267,9 +272,14 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
               checked={Boolean(termsProps.checked)}
               onChange={termsProps.onChange}
             />
-            <Typography variant="body-sm" color="secondary" as="div">
+            <Text size="sm" c="dimmed" component="div">
               {t("fields.acceptTerms.description")}{" "}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" className={authLinkClass}>
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={AUTH_TEXT_LINK_CLASS}
+              >
                 {t("fields.acceptTerms.termsLink")}
               </a>{" "}
               {t("fields.acceptTerms.and")}{" "}
@@ -277,15 +287,15 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
                 href="/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={authLinkClass}
+                className={AUTH_TEXT_LINK_CLASS}
               >
                 {t("fields.acceptTerms.privacyLink")}
               </a>
-            </Typography>
+            </Text>
             {form.errors.acceptTerms ? (
-              <Typography variant="body-sm" color="danger" role="alert">
+              <Text size="sm" c="red" role="alert">
                 {form.errors.acceptTerms}
-              </Typography>
+              </Text>
             ) : null}
           </div>
 
@@ -293,9 +303,13 @@ export function RegisterForm({ onSuccess, onError, className, children }: Regist
             type="submit"
             fullWidth
             size="lg"
+            radius="md"
             loading={register.isPending}
             disabled={register.isPending}
             aria-busy={register.isPending}
+            leftSection={
+              !register.isPending ? <IconUserPlus size={20} stroke={1.75} aria-hidden /> : undefined
+            }
           >
             {register.isPending ? t("buttons.creatingAccount") : t("buttons.createAccount")}
           </Button>

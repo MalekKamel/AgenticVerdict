@@ -286,11 +286,15 @@
     "forgotPassword": {
       "title": "Forgot Password",
       "description": "Enter your email address and we'll send you a link to reset your password.",
+      "alerts": {
+        "successTitle": "Check your email"
+      },
       "fields": {
         "email": "Email"
       },
       "buttons": {
         "submit": "Send Reset Link",
+        "submitting": "Sending...",
         "backToLogin": "Back to Sign In"
       },
       "errors": {
@@ -404,6 +408,7 @@
     },
     "layout": {
       "mainContent": "Authentication form",
+      "footerNav": "Other sign-in options",
       "poweredBy": "Powered by AgenticVerdict"
     }
   },

@@ -2,6 +2,23 @@
 
 @tailwind utilities;
 
+/* Map design-token aliases to Mantine so UI follows ColorSchemeScript / localStorage (not `prefers-color-scheme` alone). */
+:root {
+  --av-color-primary: var(--brand-color-primary, var(--mantine-primary-color-filled));
+  --av-color-primary-600: var(--mantine-primary-color-filled-hover);
+  --av-color-text-primary: var(--mantine-color-text);
+  --av-color-text-secondary: var(--mantine-color-dimmed);
+  --av-color-border-subtle: var(--mantine-color-default-border);
+}
+
+:root[data-mantine-color-scheme="light"] {
+  --av-color-surface-subtle: var(--mantine-color-gray-0);
+}
+
+:root[data-mantine-color-scheme="dark"] {
+  --av-color-surface-subtle: var(--mantine-color-body);
+}
+
 /* App shell variables (non-auth routes may rely on these) */
 :root {
   --background: #ffffff;
@@ -69,4 +86,21 @@ a {
 
 [data-mantine-color-scheme="dark"] {
   color-scheme: dark;
+}
+
+/* Auth routes — full-viewport shell: subtle brand wash + rhythm (tokens; RTL layout-neutral) */
+.auth-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: max(1.5rem, var(--mantine-spacing-xl));
+  padding-inline: var(--mantine-spacing-md);
+  background-color: var(--av-color-surface-subtle);
+  background-image: radial-gradient(
+    ellipse 100% 60% at 50% -15%,
+    color-mix(in srgb, var(--av-color-primary) 12%, transparent),
+    transparent 52%
+  );
 }

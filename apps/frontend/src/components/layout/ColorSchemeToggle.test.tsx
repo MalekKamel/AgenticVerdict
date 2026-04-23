@@ -1,7 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
+import { MantineProvider, useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { ReactElement } from "react";
 import { ColorSchemeToggle } from "./ColorSchemeToggle";
+
+function renderWithMantine(ui: ReactElement) {
+  return render(<MantineProvider defaultColorScheme="light">{ui}</MantineProvider>);
+}
 
 // Mock Mantine hooks
 vi.mock("@mantine/core", async () => {
@@ -30,7 +35,7 @@ describe("ColorSchemeToggle", () => {
     });
     mockedUseComputedColorScheme.mockReturnValue("light");
 
-    render(<ColorSchemeToggle />);
+    renderWithMantine(<ColorSchemeToggle />);
     const button = screen.getByTestId("color-scheme-toggle");
     expect(button).toBeInTheDocument();
     expect(button.textContent).toBe("☾");
@@ -45,7 +50,7 @@ describe("ColorSchemeToggle", () => {
     });
     mockedUseComputedColorScheme.mockReturnValue("dark");
 
-    render(<ColorSchemeToggle />);
+    renderWithMantine(<ColorSchemeToggle />);
     const button = screen.getByTestId("color-scheme-toggle");
     expect(button.textContent).toBe("☀");
   });
@@ -60,7 +65,7 @@ describe("ColorSchemeToggle", () => {
     });
     mockedUseComputedColorScheme.mockReturnValue("light");
 
-    render(<ColorSchemeToggle />);
+    renderWithMantine(<ColorSchemeToggle />);
     const button = screen.getByTestId("color-scheme-toggle");
     fireEvent.click(button);
 
@@ -78,7 +83,7 @@ describe("ColorSchemeToggle", () => {
     });
     mockedUseComputedColorScheme.mockReturnValue("dark");
 
-    render(<ColorSchemeToggle onToggle={mockOnToggle} />);
+    renderWithMantine(<ColorSchemeToggle onToggle={mockOnToggle} />);
     const button = screen.getByTestId("color-scheme-toggle");
     fireEvent.click(button);
 

@@ -1,8 +1,8 @@
 /**
- * Email verification UI — `@agenticverdict/ui` (`Card`, `Alert`, `Button`, `Typography`).
+ * Email verification UI — Mantine `Loader`, `Alert`, `Button`, `Text`, `Title`.
  */
 
-import { Alert, Button, Typography } from "@agenticverdict/ui";
+import { Alert, Button, Loader, Text, Title } from "@mantine/core";
 import { useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,6 +10,12 @@ import { useVerifyEmailMutation } from "@/hooks/useAuthMutation";
 import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconCircleX,
+  IconClockHour4,
+} from "@tabler/icons-react";
 
 type VerificationStatus = "loading" | "success" | "error" | "expired" | "invalid";
 
@@ -116,10 +122,10 @@ export function VerifyEmailClient() {
 
   const renderLoading = () => (
     <div className="flex flex-col items-center gap-4">
-      <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--av-color-primary-subtle)] border-t-[var(--av-color-primary)]" />
-      <Typography variant="body-sm" color="secondary">
+      <Loader size="lg" type="oval" />
+      <Text size="sm" c="dimmed">
         {t("status.verifying")}
-      </Typography>
+      </Text>
     </div>
   );
 
@@ -131,14 +137,14 @@ export function VerifyEmailClient() {
       aria-live="polite"
       className="flex flex-col items-center gap-4 text-center focus:outline-none"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-success-subtle)] text-3xl font-bold text-[var(--av-color-success)]">
-        ✓
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-success-subtle)] text-[var(--av-color-success)]">
+        <IconCircleCheck size={40} stroke={1.5} aria-hidden />
       </div>
-      <Typography variant="h3">{t("status.success")}</Typography>
-      <Typography variant="body-sm" color="secondary">
+      <Title order={3}>{t("status.success")}</Title>
+      <Text size="sm" c="dimmed">
         {t("status.successMessage")}
-      </Typography>
-      <Button size="lg" className="mt-2" onClick={() => router.push("/auth/login")}>
+      </Text>
+      <Button size="lg" radius="md" className="mt-2" onClick={() => router.push("/auth/login")}>
         {t("buttons.signIn")}
       </Button>
     </div>
@@ -152,13 +158,15 @@ export function VerifyEmailClient() {
       aria-live="assertive"
       className="flex flex-col items-center gap-4 text-center focus:outline-none"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-3xl font-bold text-[var(--av-color-danger)]">
-        ✕
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-[var(--av-color-danger)]">
+        <IconCircleX size={40} stroke={1.5} aria-hidden />
       </div>
-      <Typography variant="h3">{t("status.error")}</Typography>
-      <Alert variant="error">{errorMessage}</Alert>
+      <Title order={3}>{t("status.error")}</Title>
+      <Alert color="red" variant="light" maw="100%">
+        {errorMessage}
+      </Alert>
       <div className="mt-2 flex flex-wrap justify-center gap-2">
-        <Button variant="secondary" onClick={() => router.push("/auth/register")}>
+        <Button variant="light" onClick={() => router.push("/auth/register")}>
           {t("buttons.backToRegister")}
         </Button>
         <Button onClick={() => router.push("/auth/login")}>{t("buttons.signIn")}</Button>
@@ -174,15 +182,15 @@ export function VerifyEmailClient() {
       aria-live="assertive"
       className="flex flex-col items-center gap-4 text-center focus:outline-none"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-warning-subtle)] text-3xl font-bold text-[var(--av-color-warning)]">
-        ⏱
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-warning-subtle)] text-[var(--av-color-warning)]">
+        <IconClockHour4 size={40} stroke={1.5} aria-hidden />
       </div>
-      <Typography variant="h3">{t("status.expired")}</Typography>
-      <Typography variant="body-sm" color="secondary">
+      <Title order={3}>{t("status.expired")}</Title>
+      <Text size="sm" c="dimmed">
         {t("status.expiredMessage")}
-      </Typography>
+      </Text>
       <div className="mt-2 flex flex-wrap justify-center gap-2">
-        <Button variant="secondary" onClick={handleResend} disabled={resendCountdown > 0}>
+        <Button variant="light" onClick={handleResend} disabled={resendCountdown > 0}>
           {resendCountdown > 0
             ? t("buttons.resendCountdown", { seconds: resendCountdown })
             : t("buttons.resend")}
@@ -191,7 +199,9 @@ export function VerifyEmailClient() {
       </div>
       {resendSuccess ? (
         <div className="mt-4 w-full">
-          <Alert variant="success">{t("status.resendSuccess")}</Alert>
+          <Alert color="green" variant="light">
+            {t("status.resendSuccess")}
+          </Alert>
         </div>
       ) : null}
     </div>
@@ -205,15 +215,15 @@ export function VerifyEmailClient() {
       aria-live="assertive"
       className="flex flex-col items-center gap-4 text-center focus:outline-none"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-3xl font-bold text-[var(--av-color-danger)]">
-        ⚠
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--av-color-danger-subtle)] text-[var(--av-color-danger)]">
+        <IconAlertTriangle size={40} stroke={1.5} aria-hidden />
       </div>
-      <Typography variant="h3">{t("status.invalid")}</Typography>
-      <Typography variant="body-sm" color="secondary">
+      <Title order={3}>{t("status.invalid")}</Title>
+      <Text size="sm" c="dimmed">
         {t("status.invalidMessage")}
-      </Typography>
+      </Text>
       <div className="mt-2">
-        <Button variant="secondary" onClick={() => router.push("/auth/register")}>
+        <Button variant="light" onClick={() => router.push("/auth/register")}>
           {t("buttons.backToRegister")}
         </Button>
       </div>

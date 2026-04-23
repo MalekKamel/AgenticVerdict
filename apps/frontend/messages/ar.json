@@ -286,11 +286,15 @@
     "forgotPassword": {
       "title": "نسيت كلمة المرور",
       "description": "أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+      "alerts": {
+        "successTitle": "تحقق من بريدك الإلكتروني"
+      },
       "fields": {
         "email": "البريد الإلكتروني"
       },
       "buttons": {
         "submit": "إرسال رابط إعادة التعيين",
+        "submitting": "جارٍ الإرسال...",
         "backToLogin": "العودة إلى تسجيل الدخول"
       },
       "errors": {
@@ -404,6 +408,7 @@
     },
     "layout": {
       "mainContent": "نموذج المصادقة",
+      "footerNav": "خيارات تسجيل الدخول الأخرى",
       "poweredBy": "مدعوم من AgenticVerdict"
     }
   },

@@ -1,10 +1,10 @@
 /**
- * AuthSuccess — inline alerts from `design-system/molecules/alert.pen` via `@agenticverdict/ui`.
+ * AuthSuccess — Mantine `Alert` for success messaging.
  */
 
 "use client";
 
-import { Alert } from "@agenticverdict/ui";
+import { Alert } from "@mantine/core";
 import { forwardRef, useEffect, useState } from "react";
 
 export interface AuthSuccessProps {
@@ -51,9 +51,10 @@ export const AuthSuccess = forwardRef<HTMLDivElement, AuthSuccessProps>(
     return (
       <div ref={ref} className={className}>
         <Alert
-          variant="success"
+          color="green"
           title={title}
-          closable={!!onDismiss}
+          variant="light"
+          withCloseButton={!!onDismiss}
           onClose={onDismiss ? handleClose : undefined}
           role="status"
           aria-live="polite"

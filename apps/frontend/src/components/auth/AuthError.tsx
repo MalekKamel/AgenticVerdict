@@ -1,10 +1,10 @@
 /**
- * AuthError — `design-system/molecules/alert.pen` via `@agenticverdict/ui`.
+ * AuthError — Mantine `Alert`, `Button`, `Text` for structured error handling.
  */
 
 "use client";
 
-import { Alert, Button, Typography } from "@agenticverdict/ui";
+import { Alert, Button, Group, List, Text } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useTranslations } from "@/i18n/react";
 import { forwardRef, useEffect, useRef } from "react";
@@ -77,52 +77,47 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
     const shouldShowRetry = showRetryButton && retryable && onRetry;
     const shouldShowContact = showContactSupport && onContactSupport;
 
-    const alertVariant = (() => {
-      if (!appError) return "error" as const;
-      if (isNetworkError(appError)) return "warning" as const;
-      if (isRateLimitError(appError)) return "warning" as const;
-      if (isAuthError(appError) || isServerError(appError)) return "error" as const;
-      return "error" as const;
+    const alertColor = (() => {
+      if (!appError) return "red" as const;
+      if (isNetworkError(appError)) return "yellow" as const;
+      if (isRateLimitError(appError)) return "yellow" as const;
+      if (isAuthError(appError) || isServerError(appError)) return "red" as const;
+      return "red" as const;
     })();
 
     return (
       <div ref={errorRef} className={className} tabIndex={-1}>
         <Alert
-          variant={alertVariant}
+          color={alertColor}
           title={t("common.error")}
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
+          variant="light"
+          icon={<IconAlertCircle size={20} aria-hidden />}
         >
-          <div className="flex flex-col gap-3">
-            <Typography variant="body-sm" color="danger">
-              {errorMessage}
-            </Typography>
-            {(shouldShowRetry || shouldShowContact) && (
-              <div className="flex flex-wrap gap-2">
-                {shouldShowRetry ? (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={onRetry}
-                    aria-label={t("common.retry")}
-                  >
-                    {t("common.retry") || t("errors.common.tryAgain")}
-                  </Button>
-                ) : null}
-                {shouldShowContact ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={onContactSupport}
-                    aria-label={t("common.contactSupport")}
-                  >
-                    {t("common.contactSupport") || t("errors.common.contactSupport")}
-                  </Button>
-                ) : null}
-              </div>
-            )}
-          </div>
+          <Text size="sm" c="red" component="div">
+            {errorMessage}
+          </Text>
+          {shouldShowRetry || shouldShowContact ? (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {shouldShowRetry ? (
+                <Button variant="light" size="xs" onClick={onRetry} aria-label={t("common.retry")}>
+                  {t("common.retry") || t("errors.common.tryAgain")}
+                </Button>
+              ) : null}
+              {shouldShowContact ? (
+                <Button
+                  variant="transparent"
+                  size="xs"
+                  onClick={onContactSupport}
+                  aria-label={t("common.contactSupport")}
+                >
+                  {t("common.contactSupport") || t("errors.common.contactSupport")}
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
         </Alert>
       </div>
     );
@@ -141,20 +136,13 @@ interface FormErrorProps {
 
 export function FormError({ message, field, className }: FormErrorProps) {
   return (
-    <div
-      className={`mt-2 ${className ?? ""}`}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <div className="flex items-center gap-2 text-sm text-red-700">
-        <IconAlertCircle size={16} aria-hidden="true" />
-        <span>
-          {field ? <span className="font-semibold">{field}: </span> : null}
-          {message}
-        </span>
-      </div>
-    </div>
+    <Group className={className} gap="xs" role="alert" aria-live="assertive" aria-atomic="true">
+      <IconAlertCircle size={16} aria-hidden="true" />
+      <Text size="sm" c="red">
+        {field ? <span className="font-semibold">{field}: </span> : null}
+        {message}
+      </Text>
+    </Group>
   );
 }
 
@@ -166,15 +154,12 @@ interface InlineErrorProps {
 
 export function InlineError({ id, children, className }: InlineErrorProps) {
   return (
-    <p
-      id={id}
-      className={`mt-1 flex items-center gap-1.5 text-xs text-red-700 ${className ?? ""}`}
-      role="alert"
-      aria-live="polite"
-    >
+    <Group id={id} className={className} gap={6} role="alert" aria-live="polite">
       <IconAlertCircle size={14} aria-hidden="true" />
-      <span>{children}</span>
-    </p>
+      <Text size="xs" c="red" component="span">
+        {children}
+      </Text>
+    </Group>
   );
 }
 
@@ -195,26 +180,24 @@ export function ErrorSummary({ errors, title, className }: ErrorSummaryProps) {
   }
 
   return (
-    <div
-      className={`mb-4 rounded-lg border border-red-200 bg-red-50 p-4 ${className ?? ""}`}
+    <Alert
+      className={className}
+      color="red"
+      title={title}
+      variant="light"
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
     >
-      {title ? (
-        <Typography variant="body-sm" color="danger" className="mb-2 font-medium">
-          {title}
-        </Typography>
-      ) : null}
-      <ul className="m-0 list-disc ps-5">
+      <List listStyleType="disc" m={0} p={0} size="sm" c="red" withPadding>
         {errors.map((err, index) => (
-          <li key={`${err.field}-${index}`}>
-            <Typography variant="body-sm" color="danger" as="span">
+          <List.Item key={`${err.field}-${index}`}>
+            <Text size="sm" c="red" component="span">
               <strong>{err.field}:</strong> {err.message}
-            </Typography>
-          </li>
+            </Text>
+          </List.Item>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Alert>
   );
 }
