@@ -1,13 +1,13 @@
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 import { runWithTenantContext } from "@agenticverdict/core";
 import { eq } from "drizzle-orm";
 
 import type { Database } from "./client";
 import { dbScoped } from "./db-scoped";
-import { companies } from "./schema/companies";
+import { tenants } from "./schema/tenants";
 
-export function suggestSlugFromCompanyName(companyName: string): string {
-  const base = companyName
+export function suggestSlugFromTenantName(tenantName: string): string {
+  const base = tenantName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
@@ -16,33 +16,33 @@ export function suggestSlugFromCompanyName(companyName: string): string {
 }
 
 /**
- * Inserts the tenant row for a validated `CompanyConfig`. Caller must ensure config files (or env) exist for runtime loading.
- * Uses `runWithTenantContext` + `dbScoped` so RLS policies on `companies` allow the insert.
+ * Inserts the tenant row for a validated `TenantConfig`. Caller must ensure config files (or env) exist for runtime loading.
+ * Uses `runWithTenantContext` + `dbScoped` so RLS policies on `tenants` allow the insert.
  */
-export async function provisionTenantCompany(
+export async function provisionTenantTenant(
   db: Database,
-  companyConfig: CompanyConfig,
+  tenantConfig: TenantConfig,
   slug: string,
 ): Promise<void> {
   const ctx = {
-    tenantId: companyConfig.companyId,
-    config: companyConfig,
+    tenantId: tenantConfig.tenantId,
+    config: tenantConfig,
     requestId: "provision-tenant",
   };
 
   await runWithTenantContext(ctx, async () =>
     dbScoped(db, async (tx) => {
       const [existing] = await tx
-        .select({ id: companies.id })
-        .from(companies)
-        .where(eq(companies.id, companyConfig.companyId))
+        .select({ id: tenants.id })
+        .from(tenants)
+        .where(eq(tenants.id, tenantConfig.tenantId))
         .limit(1);
       if (existing) {
-        throw new Error(`Company ${companyConfig.companyId} already exists`);
+        throw new Error(`Tenant ${tenantConfig.tenantId} already exists`);
       }
-      await tx.insert(companies).values({
-        id: companyConfig.companyId,
-        name: companyConfig.companyName,
+      await tx.insert(tenants).values({
+        id: tenantConfig.tenantId,
+        name: tenantConfig.tenantName,
         slug,
         active: true,
       });

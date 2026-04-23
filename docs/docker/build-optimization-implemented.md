@@ -8,7 +8,7 @@ Background research and older assessments remain in [Build performance analysis]
 
 ## Goals (achieved)
 
-- One shared **`pnpm install`** layer reused by **web**, **api**, and **worker** (`DEPS_IMAGE`).
+- One shared **`pnpm install`** layer reused by **frontend**, **api**, and **worker** (`DEPS_IMAGE`).
 - No per-build Chromium **apt** on the worker runner (pre-built **`CHROMIUM_IMAGE`**).
 - Avoid recursive **`chown -R`** over **`node_modules`** and avoid expensive **`COPY --chown`** on huge trees where possible.
 - Keep Docker **build context** small (nested **`.next`**, **`dist`**, etc. ignored and optionally stripped locally).
@@ -40,7 +40,7 @@ docker compose -f docker-compose.base-images.yml build
 
 ## Application Dockerfiles (behavioral summary)
 
-### Web (`apps/frontend/Dockerfile`)
+### Frontend (`apps/frontend/Dockerfile`)
 
 - **`FROM ${DEPS_IMAGE} AS deps`**, then builder copies **`packages`** → **`tests`** → **`apps`** (cache-friendly order).
 - Optional **`USE_TURBOPACK=true`** for **`next build --turbopack`**; Compose may set this while CI often keeps the default webpack path unless workflows pass the arg.
@@ -65,9 +65,9 @@ docker compose -f docker-compose.base-images.yml build
 
 | Arg                  | Default (local)                      | Used by                                               |
 | -------------------- | ------------------------------------ | ----------------------------------------------------- |
-| **`DEPS_IMAGE`**     | `agenticverdict/deps:local`          | web, api, worker                                      |
+| **`DEPS_IMAGE`**     | `agenticverdict/deps:local`          | frontend, api, worker                                 |
 | **`CHROMIUM_IMAGE`** | `agenticverdict/chromium-base:local` | worker                                                |
-| **`USE_TURBOPACK`**  | `false`                              | web builder                                           |
+| **`USE_TURBOPACK`**  | `false`                              | frontend builder                                      |
 | **`TARGET_STAGE`**   | `production`                         | api, worker (`development` \| `test` \| `production`) |
 
 CI tags **`agenticverdict/deps:ci`** and **`agenticverdict/chromium-base:ci`** and passes them as **`--build-arg`** (see [Continuous integration](./continuous-integration.md)).
@@ -83,7 +83,7 @@ CI tags **`agenticverdict/deps:ci`** and **`agenticverdict/chromium-base:ci`** a
 
 ## Continuous integration
 
-- GHA cache scopes **`monorepo-deps`** and **`chromium-base`** deduplicate expensive base layers across **web** / **api** / **worker** jobs.
+- GHA cache scopes **`monorepo-deps`** and **`chromium-base`** deduplicate expensive base layers across **frontend** / **api** / **worker** jobs.
 - **`docker-prep.sh`** runs after checkout on build workflows to normalize context size on self-hosted or dirty workspaces.
 
 Details: [Continuous integration](./continuous-integration.md).

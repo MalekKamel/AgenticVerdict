@@ -784,7 +784,7 @@ describe("E2E Report Generation", () => {
       locale: "ar",
       format: "pdf",
       data: {
-        companyInfo: { name: "Test Company" },
+        tenantInfo: { name: "Test Tenant" },
         metrics: generatePlatformMetrics(),
         insights: generateInsights(),
       },

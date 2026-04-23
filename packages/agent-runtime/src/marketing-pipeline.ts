@@ -84,12 +84,12 @@ export interface RunMarketingPipelineOptions {
   workflowId?: string;
   specialization: Pick<
     CreateSpecializedMarketingAgentOptions,
-    | "companyName"
+    | "tenantName"
     | "promptVars"
     | "templateVersion"
     | "factoryConfig"
     | "platformDeps"
-    | "companyContextDeps"
+    | "tenantContextDeps"
   >;
   /** When true, uses production chat models (requires keys). */
   useProductionModels?: boolean;

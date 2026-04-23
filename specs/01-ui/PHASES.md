@@ -155,7 +155,7 @@ Multi-tenant switching and management. **User Story P4: Multi-Tenant Tenant Swit
 
 **Key Deliverables**:
 - Tenant switcher component
-- Company settings page
+- Tenant settings page
 - Tenant settings page
 - Client management (for agency partners)
 - Tenant onboarding workflow

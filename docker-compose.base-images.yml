@@ -1,4 +1,4 @@
-# Build shared image layers before api / worker / web (pnpm deps + Chromium for worker).
+# Build shared image layers before api / worker / frontend (pnpm deps + Chromium for worker).
 # Usage (repo root):
 #   docker compose -f docker-compose.base-images.yml build
 #

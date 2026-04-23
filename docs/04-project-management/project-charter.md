@@ -12,9 +12,9 @@ This document serves as the project charter for **AgenticVerdict**, summarizing 
 
 **Project Type:** Multi-Business-Domain Intelligence Platform
 
-**Primary Objective:** Develop a configurable, multi-business-domain intelligence platform designed to aggregate data from multiple business domains (marketing, finance, operations, etc.), generate cross-domain insights, and deliver actionable recommendations. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple companies, industries, regions, and languages without code modifications.
+**Primary Objective:** Develop a configurable, multi-business-domain intelligence platform designed to aggregate data from multiple business domains (marketing, finance, operations, etc.), generate cross-domain insights, and deliver actionable recommendations. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple tenants, industries, regions, and languages without code modifications.
 
-**Assessment Company:** Masafh (Riyadh-based B2B company providing GPS fleet tracking devices and SaaS fleet management platform)
+**Assessment Tenant:** Masafh (Riyadh-based B2B tenant providing GPS fleet tracking devices and SaaS fleet management platform)
 
 ---
 
@@ -159,13 +159,13 @@ const tenant = tenantContext.getStore();
 **Code Example Added:**
 
 ```typescript
-async function createMarketingAnalystAgent(config: CompanyConfig) {
+async function createMarketingAnalystAgent(config: TenantConfig) {
   const tools = [new PlatformDataTool(), new DatabaseQueryTool(), new ReportGeneratorTool()];
 
   const agent = await createReactAgent({
     llm: createLLM(config.ai),
     tools,
-    prompt: loadPromptTemplate(config.companyId, "analyst"),
+    prompt: loadPromptTemplate(config.tenantId, "analyst"),
   });
 
   return new AgentExecutor({
@@ -329,7 +329,7 @@ Trade-offs:
 ### New Fields Added:
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   // ... existing fields ...
 
   localization: {
@@ -374,23 +374,23 @@ interface CompanyConfig {
 1. **Configuration Versioning:**
 
 ```sql
-ALTER TABLE companies ADD COLUMN config_version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE tenants ADD COLUMN config_version INTEGER NOT NULL DEFAULT 1;
 ```
 
 2. **Row-Level Security:**
 
 ```sql
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY company_isolation_policy ON companies
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL USING (id = current_setting('app.current_tenant_id')::uuid);
 ```
 
 3. **Search Optimization:**
 
 ```sql
-ALTER TABLE companies ADD COLUMN search_vector tsvector
+ALTER TABLE tenants ADD COLUMN search_vector tsvector
   GENERATED ALWAYS AS (to_tsvector('english', ...)) STORED;
-CREATE INDEX idx_search_vector ON companies USING GIN (search_vector);
+CREATE INDEX idx_search_vector ON tenants USING GIN (search_vector);
 ```
 
 4. **Platform Data Tracking:**
@@ -402,7 +402,7 @@ CREATE TABLE platform_data (
   errors JSONB NOT NULL DEFAULT '[]'::jsonb,
   fetched_at TIMESTAMPTZ DEFAULT NOW(),
   data_source TEXT CHECK (data_source IN ('api', 'mock')),
-  UNIQUE(company_id, platform, period_start, period_end)
+  UNIQUE(tenant_id, platform, period_start, period_end)
 );
 ```
 

@@ -15,7 +15,7 @@ This checklist MUST be completed before marking Phase 01 (Authentication) as don
 - [ ] **US0-AC1**: Auth layout displays consistently across all auth pages (login, register, password reset)
 - [ ] **US0-AC2**: Layout is responsive on mobile, tablet, and desktop breakpoints
 - [ ] **US0-AC3**: Layout supports RTL for Arabic and LTR for English/French
-- [ ] **US0-AC4**: Layout includes company logo and proper branding
+- [ ] **US0-AC4**: Layout includes tenant logo and proper branding
 - [ ] **US0-AC5**: Layout includes navigation links between auth pages
 - [ ] **US0-AC6**: Layout has proper ARIA landmarks and heading hierarchy
 - [ ] **US0-AC7**: Layout passes accessibility audit (axe-core with zero violations)

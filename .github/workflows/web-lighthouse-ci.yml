@@ -9,7 +9,7 @@ on:
     branches:
       - main
     paths:
-      - "apps/web/**"
+      - "apps/frontend/**"
       - ".github/workflows/web-lighthouse-ci.yml"
 
 concurrency:
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   lighthouse:
-    name: Lighthouse (apps/web)
+    name: Lighthouse (apps/frontend)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,7 +43,7 @@ jobs:
         run: pnpm --filter @agenticverdict/frontend build
 
       - name: Run Lighthouse CI
-        working-directory: apps/web
+        working-directory: apps/frontend
         env:
           PORT: "3000"
         run: npx --yes @lhci/cli@0.14.0 autorun --config=./lighthouserc.cjs
@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-ci
-          path: apps/web/.lighthouseci/**
+          path: apps/frontend/.lighthouseci/**
           if-no-files-found: ignore
           retention-days: 14
 
@@ -62,6 +62,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-html
-          path: apps/web/.lighthouseci/**/*.html
+          path: apps/frontend/.lighthouseci/**/*.html
           if-no-files-found: ignore
           retention-days: 14

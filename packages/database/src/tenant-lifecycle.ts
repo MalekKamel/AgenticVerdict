@@ -4,12 +4,12 @@ import { eq } from "drizzle-orm";
 
 import type { Database } from "./client";
 import { dbScoped } from "./db-scoped";
-import { companies } from "./schema/companies";
+import { tenants } from "./schema/tenants";
 
 /**
- * Sets `companies.active` for the tenant in the current security context.
+ * Sets `tenants.active` for the tenant in the current security context.
  */
-export async function setTenantCompanyActive(
+export async function setTenantTenantActive(
   db: Database,
   ctx: TenantContext,
   active: boolean,
@@ -17,9 +17,9 @@ export async function setTenantCompanyActive(
   await runWithTenantContext(ctx, async () =>
     dbScoped(db, async (tx) => {
       await tx
-        .update(companies)
+        .update(tenants)
         .set({ active, updatedAt: new Date() })
-        .where(eq(companies.id, ctx.tenantId));
+        .where(eq(tenants.id, ctx.tenantId));
     }),
   );
 }

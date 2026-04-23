@@ -2,7 +2,7 @@
 
 This guide explains how to move call sites from ad hoc `process.env.NODE_ENV` checks toward **build-time constants** for adapter selection and related guards, as described in the [implementation plan](../03-technology-research/compiler-driven-adapter-config-implementation-plan.md).
 
-**Company configuration JSON:** The tenant `CompanyConfig` schema and on-disk company JSON files are **unchanged**. This work does **not** introduce a discriminated union on `environment` or new `mockAdapters` / `debugMode` fields in company config. Adapter behavior is controlled by **build constants** and existing mock env vars (`AGENTICVERDICT_USE_MOCK_ADAPTERS`, per-platform overrides), not by extending the company JSON schema.
+**Tenant configuration JSON:** The tenant `TenantConfig` schema and on-disk tenant JSON files are **unchanged**. This work does **not** introduce a discriminated union on `environment` or new `mockAdapters` / `debugMode` fields in tenant config. Adapter behavior is controlled by **build constants** and existing mock env vars (`AGENTICVERDICT_USE_MOCK_ADAPTERS`, per-platform overrides), not by extending the tenant JSON schema.
 
 **Production bundles:** API and worker release artifacts are built with **Vite** library mode (`pnpm --filter @agenticverdict/api build:vite`, same for `worker`). Verification: **`pnpm run verify:production-bundle`**.
 
@@ -140,7 +140,7 @@ Continue to set `AGENTICVERDICT_USE_MOCK_ADAPTERS` and per-platform mock vars wh
 
 ## Breaking changes
 
-For most consumers, **none**: `createConnectorAdapter` keeps a compatible surface; company JSON and `CompanyConfig` types stay the same (no discriminated union).
+For most consumers, **none**: `createConnectorAdapter` keeps a compatible surface; tenant JSON and `TenantConfig` types stay the same (no discriminated union).
 
 Call sites that depended on **overriding** behavior purely by toggling `NODE_ENV` at runtime **after** a production build may need to use a non-production build or pass explicit options where the API allows it (for example `useMock: false` for forcing production adapters in a dev build).
 

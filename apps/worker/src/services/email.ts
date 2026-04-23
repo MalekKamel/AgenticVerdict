@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { ReportFormat } from "@agenticverdict/report-generator";
+import { isFeatureMockEnabled, resolveRuntimePolicy } from "@agenticverdict/config";
 
 export interface EmailAttachment {
   filename: string;
@@ -217,7 +218,8 @@ export function createEmailDeliveryServiceFromEnv(): EmailDeliveryService | null
 }
 
 export async function sendReportEmail(params: SendReportEmailParams): Promise<DeliveryResult> {
-  if (process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL === "1") {
+  const policy = resolveRuntimePolicy(process.env);
+  if (isFeatureMockEnabled(policy, "emailDelivery")) {
     return { success: true, messageId: "production_flow_email_mock" };
   }
   const svc = createEmailDeliveryServiceFromEnv();

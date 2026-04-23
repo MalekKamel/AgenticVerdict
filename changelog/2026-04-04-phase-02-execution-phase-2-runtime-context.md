@@ -9,7 +9,7 @@ This entry implements the agent runtime envelope: a single execution path with P
 
 ## Summary
 
-- Added **`runAgentJob`** as the canonical entry: **`runWithTenantContext`**, optional **`timeoutMs`** / **`AbortSignal`**, **LIFO `registerCleanup`**, and **`AgentJobError`** (`timeout` | `aborted` | `execution_failed`) without embedding **`CompanyConfig`** in errors.
+- Added **`runAgentJob`** as the canonical entry: **`runWithTenantContext`**, optional **`timeoutMs`** / **`AbortSignal`**, **LIFO `registerCleanup`**, and **`AgentJobError`** (`timeout` | `aborted` | `execution_failed`) without embedding **`TenantConfig`** in errors.
 - Extended **`AgentInvocationContext`** with **`tenantId`** and **`requestId`** (plus **`runId`**) for tool and agent correlation; full config remains on Phase 0 ALS via **`getTenantContext()`**.
 - Re-exported tenant propagation helpers from **`@agenticverdict/core`** through **`tenant-runtime.ts`** for consumers that already depend on **`@agenticverdict/agent-runtime`**.
 - Upgraded **`AgentLifecycleController`** with **`beginExecution` / `endExecution`**, in-flight tracking, and **`drain()`** that resolves when in-flight work reaches zero; **`stop()`** rejects new **`beginExecution`** calls.

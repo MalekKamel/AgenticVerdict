@@ -39,17 +39,17 @@ describe("CompositeFixtureLoader", () => {
       { relativePath: "base/tenants/default-en-ltr.json", priority: 1 },
       { relativePath: "scenarios/normal-operations/tenant-override.json", priority: 2 },
     ]);
-    expect(merged.companyName).toBe("Composed EN Tenant");
-    expect(merged.companyId).toBe("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
+    expect(merged.tenantName).toBe("Composed EN Tenant");
+    expect(merged.tenantId).toBe("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
     const loc = merged.localization as Record<string, unknown>;
     expect(loc.language).toBe("en");
     expect(loc.currency).toBe("EUR");
     expect(loc.timezone).toBe("America/New_York");
   });
 
-  it("loads existing company fixtures from companies/", async () => {
+  it("loads existing tenant fixtures from tenants/", async () => {
     const loader = new CompositeFixtureLoader(fixturesRoot);
-    const data = await loader.loadJsonRelative("companies/test-tenant-001.json");
-    expect(data.companyId).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    const data = await loader.loadJsonRelative("tenants/test-tenant-001.json");
+    expect(data.tenantId).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
   });
 });

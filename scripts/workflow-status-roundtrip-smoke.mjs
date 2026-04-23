@@ -6,14 +6,14 @@
  * - API running (default http://127.0.0.1:4000)
  * - Worker running
  * - REDIS_URL configured in API/worker environment
- * - ADMIN_BEARER_TOKEN: JWT whose `tenant_id` has company config (generate with
+ * - ADMIN_BEARER_TOKEN: JWT whose `tenant_id` has tenant config (generate with
  *   `scripts/generate-dev-jwt.mjs --tenant <uuid>`; default smoke tenant is the demo English tenant).
  * - Optional: SMOKE_TENANT_ID, SMOKE_MAX_POLLS (default 90), SMOKE_POLL_INTERVAL_MS (default 2000)
  */
 
 const baseUrl = process.env.API_BASE_URL ?? "http://127.0.0.1:4000";
 const token = process.env.ADMIN_BEARER_TOKEN;
-/** Must match a tenant with company config (e.g. `configs/companies/<id>.json`); see manual testing guide. */
+/** Must match a tenant with tenant config (e.g. `configs/tenants/<id>.json`); see manual testing guide. */
 const tenantId = process.env.SMOKE_TENANT_ID ?? "22222222-2222-4222-8222-222222222222";
 const maxPolls = Number.parseInt(process.env.SMOKE_MAX_POLLS ?? "90", 10);
 const pollIntervalMs = Number.parseInt(process.env.SMOKE_POLL_INTERVAL_MS ?? "2000", 10);

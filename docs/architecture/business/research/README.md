@@ -127,7 +127,7 @@ This research package synthesizes battle-tested patterns, competitive intelligen
 
 - Smart defaults by insight type (Marketing=Standard, Finance=Premium)
 - Max 4,096 tokens per generation (MVP)
-- Monthly quota: 100 generations per company
+- Monthly quota: 100 generations per tenant
 
 ---
 
@@ -138,7 +138,7 @@ This research package synthesizes battle-tested patterns, competitive intelligen
 - **PDF is standard** for executive reports, Excel for analysis
 - **Multi-channel delivery** based on urgency and role
 - **Relative scheduling** ("first Monday of month") preferred over fixed dates
-- **Template hierarchy**: System → Agency → Company levels
+- **Template hierarchy**: System → Agency → Tenant levels
 
 **Delivery Strategy:**
 
@@ -188,7 +188,7 @@ This research package synthesizes battle-tested patterns, competitive intelligen
 
 **Adapter Pattern** for connectors → Extensibility without core changes
 **Multi-Tenant First** → Complete tenant isolation with AsyncLocalStorage
-**Configuration-Driven** → No hardcoded company logic
+**Configuration-Driven** → No hardcoded tenant logic
 **Template-Based** → Fast setup with full override capability
 
 ### 4. Business Model
@@ -213,7 +213,7 @@ This research package synthesizes battle-tested patterns, competitive intelligen
 
 **Business Capabilities:**
 
-- Multi-company management (Direct + Agency Partner)
+- Multi-tenant management (Direct + Agency Partner)
 - Template-based Insight creation with full customization
 - Core marketing connectors (GA4, Meta, GSC, TikTok)
 - AI-generated insights with system defaults
@@ -274,7 +274,7 @@ This research package synthesizes battle-tested patterns, competitive intelligen
 **Product Metrics:**
 
 - 70%+ of Insights created from templates
-- 50%+ of companies using 2+ connector types
+- 50%+ of tenants using 2+ connector types
 - 90%+ of users customize template properties
 - <5 minutes average Insight creation time
 

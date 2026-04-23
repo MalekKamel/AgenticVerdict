@@ -31,7 +31,7 @@ Multi-tenant SaaS platforms that serve both direct customers and agency partners
 
 **Characteristics:**
 
-- Manage multiple client companies
+- Manage multiple client tenants
 - Need white-label or co-branded reporting
 - Focus on scalability and client service
 - Higher volume, require efficiency tools
@@ -48,9 +48,9 @@ Multi-tenant SaaS platforms that serve both direct customers and agency partners
 
 **Structure:**
 
-- Per-company pricing tiers based on features/data volume
+- Per-tenant pricing tiers based on features/data volume
 - Agency partners receive volume discounts
-- Separate pricing for additional client companies
+- Separate pricing for additional client tenants
 
 **Example:**
 
@@ -61,7 +61,7 @@ Direct Business:
   - Enterprise: Custom (unlimited connectors)
 
 Agency Partner:
-  - Agency Base: $199/month (includes 5 client companies)
+  - Agency Base: $199/month (includes 5 client tenants)
   - Additional Clients: $29/client/month
   - Volume Discount: 20% off for 25+ clients
 ```
@@ -111,7 +111,7 @@ Agency Partner:
 **Essential Capabilities:**
 
 - Multi-client dashboard with quick switching
-- Client company onboarding workflows
+- Client tenant onboarding workflows
 - Template library for rapid deployment
 - Client-facing report branding
 - Aggregate client performance view
@@ -168,7 +168,7 @@ Agency Partner:
 - Content marketing (SEO, thought leadership)
 - Direct sales for enterprise
 
-**Sales Cycle:** 2-8 weeks (varies by company size)
+**Sales Cycle:** 2-8 weeks (varies by tenant size)
 
 **Key Success Metrics:** Trial-to-paid conversion, MRR churn, expansion revenue
 
@@ -199,7 +199,7 @@ Agency Partner:
 
 **Business:**
 
-- Company-scoped configurations
+- Tenant-scoped configurations
 - Tenant-specific feature flags
 - Audit logging per tenant
 - SLA differentiation by tier

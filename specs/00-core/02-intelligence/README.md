@@ -112,12 +112,12 @@ packages/agent-runtime/
 **Agent Tools:**
 - Platform tools: `fetch_meta_metrics`, `fetch_ga4_metrics`, `fetch_gsc_metrics`, `fetch_gbp_metrics`, `fetch_tiktok_metrics`
 - Analysis tools: `calculate_metrics`, `analyze_trends`, `statistical_analysis`
-- Context tools: `get_company_profile`, `get_business_rules`, `get_config`
+- Context tools: `get_tenant_profile`, `get_business_rules`, `get_config`
 - B2B tools: `compute_b2b_kpis_from_snapshots`
 
 **Prompt System:**
 - Versioned prompt templates with semver
-- Company context injection (industry, region, goals, currency)
+- Tenant context injection (industry, region, goals, currency)
 - A/B testing framework for optimization
 
 **Data Quality:**
@@ -135,7 +135,7 @@ packages/agent-runtime/
 - ✅ 12 production-ready agent tools implemented and tested (exceeds minimum 10 target)
 - ✅ Three specialized agents operational
 - ✅ Agent orchestration workflow handles end-to-end marketing verdict generation
-- ✅ Prompt template system supports company context injection
+- ✅ Prompt template system supports tenant context injection
 - ✅ Retry mechanism handles transient LLM API failures
 - ✅ Mock LLM system enables deterministic unit testing
 
@@ -156,7 +156,7 @@ packages/agent-runtime/
 - ✅ Analysis prompt platform lists derived from enabled tenant channels
 - ✅ Workflow validation enforces requested platforms are enabled
 - ✅ Database queries retrieve normalized marketing metrics correctly
-- ✅ Company context propagates through agent workflows
+- ✅ Tenant context propagates through agent workflows
 - ✅ Agent telemetry integrates with Phase 0 logging system
 - ✅ LangSmith tracing captures all agent executions
 
@@ -254,7 +254,7 @@ Verdict parse failures return degraded status with raw text fallback instead of 
 
 **Completed Integration:**
 - Tenant context propagation via AsyncLocalStorage
-- Configuration management with CompanyConfig.marketing.b2bKpiProfile
+- Configuration management with TenantConfig.marketing.b2bKpiProfile
 - Database abstraction via Drizzle ORM
 - Logging infrastructure with Pino and LangSmith
 

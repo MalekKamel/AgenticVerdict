@@ -18,7 +18,7 @@ The foundation phase (`/specs/00-core/00-foundation/`) is complete, including:
 - Monorepo infrastructure with Turborepo + pnpm workspaces
 - Multi-tenancy core with AsyncLocalStorage context propagation
 - Database layer with Drizzle ORM and row-level security
-- Configuration management via CompanyConfig schema
+- Configuration management via TenantConfig schema
 - Basic web application structure with Next.js 15 and Mantine UI
 - Internationalization (i18n) system supporting English/Arabic with RTL/LTR
 - Testing infrastructure with Vitest and Playwright
@@ -88,7 +88,7 @@ All UI components must respect tenant isolation:
 // Tenant context must be available in UI
 interface UITenantContext {
   tenantId: string;
-  companyName: string;
+  tenantName: string;
   language: "ar" | "en"; // Extensible for more languages
   textDirection: "ltr" | "rtl";
   timezone: string;
@@ -100,7 +100,7 @@ interface AgencyContext extends UITenantContext {
   isAgency: true;
   managedTenants: Array<{
     tenantId: string;
-    companyName: string;
+    tenantName: string;
   }>;
   activeTenantId: string;
 }
@@ -108,11 +108,11 @@ interface AgencyContext extends UITenantContext {
 
 ### 2.2 Configuration-Driven UI
 
-The UI must be fully configuration-driven via CompanyConfig:
+The UI must be fully configuration-driven via TenantConfig:
 
 ```typescript
-// UI derives all behavior from CompanyConfig
-interface CompanyConfig {
+// UI derives all behavior from TenantConfig
+interface TenantConfig {
   localization: {
     language: "ar" | "en"; // Determines RTL/LTR, translations (extensible)
     region: string;

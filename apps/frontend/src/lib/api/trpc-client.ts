@@ -25,8 +25,7 @@ import superjson from "superjson";
 
 import type { AppRouter } from "@agenticverdict/api/trpc";
 
-import { getEffectiveTenantId } from "@/lib/tenant/tenant-resolution";
-import { authStore } from "@/stores/auth-store";
+import { getTenantIdForTrpcRequest } from "@/lib/tenant/trpc-tenant-bridge";
 
 import { shouldRetryTrpcMutation, shouldRetryTrpcQuery } from "./trpc-retry-policy";
 
@@ -52,10 +51,25 @@ function getDesktopApiBaseUrl(): string | undefined {
   return undefined;
 }
 
+export function inferDevApiBaseUrlFromBrowserLocation(input: {
+  protocol: string;
+  hostname: string;
+  port?: string;
+}): string {
+  const frontendPort = Number(input.port);
+  const pairedApiPort =
+    Number.isFinite(frontendPort) && frontendPort >= 3000 && frontendPort < 4000
+      ? frontendPort + 1000
+      : 4000;
+  return `${input.protocol}//${input.hostname}:${pairedApiPort}`;
+}
+
 /**
  * Get the API base URL from environment or default to localhost
  */
 function getBaseUrl(): string {
+  const runtimeEnv = process.env.AGENTICVERDICT_RUNTIME_ENV ?? process.env.NODE_ENV;
+  const isProductionLike = runtimeEnv === "production" || runtimeEnv === "staging";
   if (typeof window !== "undefined") {
     const fromDesktop = getDesktopApiBaseUrl();
     if (fromDesktop) {
@@ -68,8 +82,15 @@ function getBaseUrl(): string {
     if (fromVite) {
       return fromVite.replace(/\/$/, "");
     }
-    // Browser: use relative URL (works with proxy or same-origin)
-    return "";
+    // Browser fallback for local dev: frontend :300x pairs with API :400x.
+    if (isProductionLike) {
+      throw new Error("VITE_PUBLIC_API_URL is required in production-like runtime");
+    }
+    return inferDevApiBaseUrlFromBrowserLocation({
+      protocol: window.location.protocol,
+      hostname: window.location.hostname,
+      port: window.location.port,
+    });
   }
 
   const apiUrl =
@@ -80,17 +101,32 @@ function getBaseUrl(): string {
     return apiUrl;
   }
 
-  // Default to localhost for development
-  return "http://localhost:3001";
+  if (isProductionLike) {
+    throw new Error("API_URL or VITE_PUBLIC_API_URL must be set in production-like runtime");
+  }
+  // Default to local API service port during local development.
+  return "http://localhost:4000";
 }
 
 /** Included in tests to verify `x-tenant-id` alignment with `authStore`. */
 export function buildTrpcHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
-  const tenantId = getEffectiveTenantId({ authTenantId: authStore.state.tenantId });
+  const tenantId = getTenantIdForTrpcRequest();
   if (tenantId) {
     headers["x-tenant-id"] = tenantId;
   }
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    headers["x-request-id"] = crypto.randomUUID();
+  }
+  return headers;
+}
+
+/**
+ * Session probes must not send inferred tenant hints. Backend resolves tenant from
+ * the signed session JWT/cookie and rejects mismatched `x-tenant-id` headers.
+ */
+export function buildTrpcHeadersWithoutTenant(): Record<string, string> {
+  const headers: Record<string, string> = {};
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
     headers["x-request-id"] = crypto.randomUUID();
   }
@@ -155,4 +191,22 @@ export const trpcClientConfig = {
  */
 export const trpcClient = trpc.createClient({
   links,
+});
+
+export const trpcClientWithoutTenantHeader = trpc.createClient({
+  links: [
+    loggerLink({
+      enabled: (opts) =>
+        process.env.NODE_ENV === "development" ||
+        (opts.direction === "down" && opts.result instanceof Error),
+    }),
+    httpBatchLink({
+      url: `${getBaseUrl()}/api/v1/trpc`,
+      headers: () => buildTrpcHeadersWithoutTenant(),
+      transformer: superjson,
+      fetch(url, options) {
+        return fetch(url, { ...options, credentials: "include" });
+      },
+    }),
+  ],
 });

@@ -1,6 +1,6 @@
 # Docker quick start
 
-Minimal path from a clean clone to **Postgres + Redis + web + api + worker** running in Docker, with health checks. **Use the root `Makefile` as the default**; raw `docker compose` snippets below are for production-like stacks or custom `-f` merges. For full context (modes, mocks, observability), read [Getting started](./getting-started.md) and [Compose files](./compose-files.md).
+Minimal path from a clean clone to **Postgres + Redis + frontend + api + worker** running in Docker, with health checks. **Use the root `Makefile` as the default**; raw `docker compose` snippets below are for production-like stacks or custom `-f` merges. For full context (modes, mocks, observability), read [Getting started](./getting-started.md) and [Compose files](./compose-files.md).
 
 ## Prerequisites
 
@@ -75,7 +75,7 @@ make health
 Or manually:
 
 ```bash
-curl -fsS http://127.0.0.1:3000/api/health   # web
+curl -fsS http://127.0.0.1:3000/api/health   # frontend
 curl -fsS http://127.0.0.1:4000/health       # API
 ./scripts/health-check.sh
 ```
@@ -88,7 +88,15 @@ API_HEALTH_URL=http://127.0.0.1:4000/health \
 ./scripts/health-check.sh
 ```
 
-### 5. (Optional) Production-flow scenario tests (host)
+### 5. Optional pgAdmin
+
+```bash
+make pgadmin-up
+```
+
+Then open `http://127.0.0.1:5050` and sign in with your local `.env.docker` pgAdmin credentials.
+
+### 6. (Optional) Production-flow scenario tests (host)
 
 Orchestrator scenarios in **`tests/scripts`** exercise the running API (default **`http://127.0.0.1:4000`**). This path needs **Node.js**, **pnpm**, and workspace dependencies (**`pnpm install`**) on the host; it is not part of the container-only quick path.
 
@@ -126,5 +134,6 @@ For a fuller index (CI, backups, build context), see [Troubleshooting](./trouble
 
 - [Common operations](./common-operations.md) — **`make`** targets for logs, down, migrations, backups
 - [Compose files](./compose-files.md) — observability, backup sidecar, production example
+- [pgAdmin integration plan](./pgadmin-integration-implementation-plan.md) — execution plan for optional on-demand DB admin UI overlay
 - [Getting started](./getting-started.md) — BuildKit, optional image builds, production-shaped example
 - **[`tests/scripts/README.md`](../../tests/scripts/README.md)** — scenario runners and artifact scripts (also exposed as **`make test-scripts`** / **`test-scripts-*`**)

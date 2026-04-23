@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-As AI capabilities become table stakes for SaaS platforms, how companies configure, customize, and manage AI costs varies widely. This research synthesizes proven patterns for exposing AI configuration to end users while maintaining quality and cost control.
+As AI capabilities become table stakes for SaaS platforms, how tenants configure, customize, and manage AI costs varies widely. This research synthesizes proven patterns for exposing AI configuration to end users while maintaining quality and cost control.
 
 ---
 
@@ -368,7 +368,7 @@ interface TenantAIConfig {
 - Three quality levels: Basic/Standard/Premium
 - Cost estimates before generation
 - Optional detail level selector (Brief/Standard/Detailed)
-- Monthly AI quota per company
+- Monthly AI quota per tenant
 
 **Phase 3:**
 
@@ -415,15 +415,15 @@ interface InsightAIConfig {
 **Platform-Side Controls:**
 
 - Max 4,096 tokens per generation (MVP)
-- Monthly quota: 100 generations per company (MVP)
+- Monthly quota: 100 generations per tenant (MVP)
 - Automatic downgrade to Basic if quota exceeded
 - Admin alerts at 80% quota consumption
 
 **User-Side Controls (Phase 2):**
 
-- Company-level monthly AI budget setting
+- Tenant-level monthly AI budget setting
 - Per-Insight cost estimates
-- Usage dashboard by company and insight
+- Usage dashboard by tenant and insight
 - Optional hard limits at budget threshold
 
 ---

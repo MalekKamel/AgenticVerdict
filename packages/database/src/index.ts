@@ -7,19 +7,20 @@ export {
   type RetryOptions,
 } from "./client";
 export { dbScoped } from "./db-scoped";
+export { verifyTenantRlsSessionBinding } from "./tenant-rls-guard";
 export { createUpstashRedisFromEnv } from "./redis";
 export * from "./schema/index";
 export { tenantScopedCacheKey } from "./tenant-cache-keys";
-export { setTenantCompanyActive } from "./tenant-lifecycle";
-export { provisionTenantCompany, suggestSlugFromCompanyName } from "./tenant-provisioning";
+export { setTenantTenantActive } from "./tenant-lifecycle";
+export { provisionTenantTenant, suggestSlugFromTenantName } from "./tenant-provisioning";
 export {
-  type CompanyConfigSeedPayload,
-  deleteCompaniesByIds,
+  type TenantConfigSeedPayload,
+  deleteTenantsByIds,
   listJsonFilenamesInDir,
-  readCompanyPayloadsFromDir,
-  seedCompaniesFromJsonDir,
-  upsertCompanyFromConfigPayload,
-} from "./seeds/company-config-seed";
+  readTenantPayloadsFromDir,
+  seedTenantsFromJsonDir,
+  upsertTenantFromConfigPayload,
+} from "./seeds/tenant-config-seed";
 export { auditConfigChange, type AuditConfigChangeParams } from "./audit-config-change";
 export {
   FeatureFlagService,

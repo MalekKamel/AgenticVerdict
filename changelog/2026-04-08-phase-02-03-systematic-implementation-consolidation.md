@@ -198,7 +198,7 @@ This entry reflects **all staged changes in this session** as a single comprehen
   - returns executed tool steps in `AgentRunResult`.
 
 - **`src/specialized-marketing-agents.ts`**
-  - specialized agents now use `createAgentWithTools` with shared analysis/company/report-prep tool sets in test and production paths.
+  - specialized agents now use `createAgentWithTools` with shared analysis/tenant/report-prep tool sets in test and production paths.
 
 - **`src/index.ts`**
   - exports `executeToolWithResult`, `ToolResult`, and tool error typing.

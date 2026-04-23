@@ -28,7 +28,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### Constitution Compliance
 
 ✅ **No `any` types**: Translation types use strict TypeScript with Zod validation
-✅ **No hardcoded company logic**: Locale configuration is tenant-agnostic via CompanyConfig
+✅ **No hardcoded tenant logic**: Locale configuration is tenant-agnostic via TenantConfig
 ✅ **No database access without tenant context**: User preferences accessed via tRPC procedures with tenant context
 ✅ **No platform-specific code in core**: Translation system is generic across all business domains
 ✅ **No sensitive data in logs**: Translation keys and locale preferences are non-sensitive

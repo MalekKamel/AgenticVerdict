@@ -18,7 +18,7 @@ describe("API integration — workflows & secured reads", () => {
 
   beforeAll(async () => {
     process.env.JWT_SECRET = JWT_SECRET;
-    process.env.COMPANY_CONFIG_DIR = path.join(apiPackageRoot, "test-fixtures/company-configs");
+    process.env.TENANT_CONFIG_DIR = path.join(apiPackageRoot, "test-fixtures/tenant-configs");
     app = await buildApiServer();
     await app.ready();
     adminToken = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })

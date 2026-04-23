@@ -20,7 +20,7 @@
 **Changes in v1.9:**
 
 - **Compose LLM wiring:** `deploy/docker-compose.dev.override.yml` and root `docker-compose.dev.yml` pass optional `GLM_*` from the host (`.env` at repo root or `export` before `compose up`); avoids editing committed YAML for keys.
-- **Provenance SQL (§4.6):** Clarified that rows appear only after **`db:seed`** (tenant must exist in `companies` for the FK) and status polling; duplicate polls no longer insert extra rows (API idempotency).
+- **Provenance SQL (§4.6):** Clarified that rows appear only after **`db:seed`** (tenant must exist in `tenants` for the FK) and status polling; duplicate polls no longer insert extra rows (API idempotency).
 - **S12 / full pipeline:** Documented current worker behavior — `verdict-generation` runs the same **marketing agent pipeline** as `marketing-analysis` (`verdict-generation_processed`, `analysisId`, `insights`, `processingMetadata`); rebuild **`worker`** after pulling (`docker compose … up --build`) so jobs are not stuck on an older **`workflow_trigger_acknowledged`** stub. Log lines in §4.6 remain illustrative.
 - **§4.6 Stage 1:** Adapter entries often use **`status: "unknown"`** on Docker **web** (production adapters); do not require **`status == "ok"`** for a non-empty check.
 - **§4.6 Stage 5 / S10 metrics:** Fixed **`grep -E`** pattern for `report-delivery` queue depth (escaped `{` / `}` and closed string).
@@ -41,7 +41,7 @@
 - **S5 (`GET /api/v1/reports`):** Report list read access now includes **`admin`** (with **`analyst`** / **`reports:write`** unchanged for writes), matching the default **`scripts/generate-dev-jwt.mjs`** role set used elsewhere in this guide.
 - **S4 (marketing analysis):** Replaced non-existent `GET /api/v1/analyses/:id` with **`GET /api/v1/analysis-results/:id`**; obtain **`analysisId`** from **`GET /api/v1/workflows/status/:executionId`** → **`result.analysisId`** after the job completes (same **`executionId`** as S1 polling).
 - **§5.2 Grafana:** Dashboard URLs use the **observability stack** port **`http://localhost:3001`** (Grafana maps host **3001** → container **3000**), not the web app on **3000**.
-- **§5.3 / §5.4:** Database container name aligned to Compose service **`postgres`** (**`agenticverdict-postgres-1`**). SQL examples use Drizzle column names **`company_id`** on **`reports`**, **`platform_credentials`**, and **`audit_logs`**; added a note that **`GET /api/v1/reports`** is backed by an **in-process store** in the current API, so Postgres **`reports`** rows may be empty unless another component writes there.
+- **§5.3 / §5.4:** Database container name aligned to Compose service **`postgres`** (**`agenticverdict-postgres-1`**). SQL examples use Drizzle column names **`tenant_id`** on **`reports`**, **`platform_credentials`**, and **`audit_logs`**; added a note that **`GET /api/v1/reports`** is backed by an **in-process store** in the current API, so Postgres **`reports`** rows may be empty unless another component writes there.
 - **Worker health:** Documented that **`wget --spider`** uses **HTTP HEAD**; the worker health server supports **HEAD** on **`/healthz`** (and Compose probes use **`127.0.0.1`**).
 
 **Changes in v1.6:**
@@ -501,7 +501,7 @@ For day-to-day manual runs, keep using the dev Compose stack (**`NODE_ENV=develo
 
 **Preconditions**:
 
-- Arabic company config exists
+- Arabic tenant config exists
 - Font support for Arabic script
 
 **Steps**: Similar to S1 with Arabic tenant config
@@ -539,7 +539,7 @@ For day-to-day manual runs, keep using the dev Compose stack (**`NODE_ENV=develo
 
 **API contract (workflows):** `POST /api/v1/workflows/trigger` requires `workflowId`, `testMode: true`, a UUID `tenantId`, and `config`. Optional `config` fields include ISO-8601 `dateRange`, `platforms`, `mockData`, and `productionFlowScenarioId` (production-flow harness). JWT auth expects claims `sub`, `tenant_id` (must match `tenantId`), and `roles` including `admin` for these routes.
 
-Use a tenant that has a company config file at `configs/companies/<tenantId>.json`. For English / LTR PDF (scenario **R01**), the shipped demo tenant `22222222-2222-4222-8222-222222222222` is appropriate.
+Use a tenant that has a tenant config file at `configs/tenants/<tenantId>.json`. For English / LTR PDF (scenario **R01**), the shipped demo tenant `22222222-2222-4222-8222-222222222222` is appropriate.
 
 #### Step 1: Obtain Authentication Token
 
@@ -752,10 +752,10 @@ curl -s "http://localhost:4000/api/v1/workflows/status/$EXECUTION" \
 #### Step 1: Create Multiple Tenant Contexts
 
 ```bash
-# Tenant 1: demo EN tenant (configs/companies/2222….json)
+# Tenant 1: demo EN tenant (configs/tenants/2222….json)
 TOKEN_T1=$(node scripts/generate-dev-jwt.mjs --tenant 22222222-2222-4222-8222-222222222222 --sub user-1)
 
-# Tenant 2: demo AR tenant (configs/companies/1111….json)
+# Tenant 2: demo AR tenant (configs/tenants/1111….json)
 TOKEN_T2=$(node scripts/generate-dev-jwt.mjs --tenant 11111111-1111-4111-8111-111111111111 --sub user-2)
 ```
 
@@ -1065,7 +1065,7 @@ curl -s http://localhost:3000/api/health/adapters | jq '.components.circuitBreak
 
 ```bash
 # Provenance rows are inserted when GET /api/v1/workflows/status/:executionId runs on a completed analysis-like
-# result, and only if the tenant exists in companies (run db:seed per §2.2 — use AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1 if migrations already applied).
+# result, and only if the tenant exists in tenants (run db:seed per §2.2 — use AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1 if migrations already applied).
 docker exec -it agenticverdict-postgres-1 psql -U postgres -d agenticverdict -c \
   "SELECT COUNT(*) FROM provenance_records WHERE tenant_id = '22222222-2222-4222-8222-222222222222';"
 ```
@@ -1246,10 +1246,10 @@ docker exec -it agenticverdict-postgres-1 psql -U postgres -d agenticverdict
 Example SQL (column names match Drizzle schema in `@agenticverdict/database`):
 
 ```sql
--- Reports table (company_id references companies.id — same UUID as API tenantId for seeded companies)
-SELECT company_id, COUNT(*) FROM reports GROUP BY company_id;
+-- Reports table (tenant_id references tenants.id — same UUID as API tenantId for seeded tenants)
+SELECT tenant_id, COUNT(*) FROM reports GROUP BY tenant_id;
 
--- Provenance bundles (tenant_id is the company/tenant UUID)
+-- Provenance bundles (tenant_id is the tenant/tenant UUID)
 SELECT * FROM provenance_records ORDER BY captured_at DESC LIMIT 10;
 
 -- Platform credentials
@@ -1609,21 +1609,21 @@ docker exec agenticverdict-redis-1 redis-cli CLIENT LIST | grep 'bull:d29ya2Zsb3
 
 **Symptoms**: `POST /api/v1/workflows/trigger` responds with HTTP **403** and **`tenant_config_not_found`** even when the JSON body contains a valid UUID.
 
-**Diagnosis**: The JWT's `tenant_id` claim must match the `tenantId` in the JSON body, AND that tenant must have a valid company configuration file (e.g., `configs/companies/22222222-2222-4222-8222-222222222222.json` for the demo EN tenant).
+**Diagnosis**: The JWT's `tenant_id` claim must match the `tenantId` in the JSON body, AND that tenant must have a valid tenant configuration file (e.g., `configs/tenants/22222222-2222-4222-8222-222222222222.json` for the demo EN tenant).
 
 ```bash
 # Verify JWT includes correct tenant_id claim
 # The --tenant argument to generate-dev-jwt.mjs sets both sub and tenant_id
 node scripts/generate-dev-jwt.mjs --tenant 22222222-2222-4222-8222-222222222222
 
-# Check if company config exists for the tenant
-ls configs/companies/*.json
+# Check if tenant config exists for the tenant
+ls configs/tenants/*.json
 ```
 
 **Solutions**:
 
 1. Ensure the JWT `tenant_id` claim matches the `tenantId` in the workflow trigger JSON body.
-2. Verify the tenant has a company configuration file in `configs/companies/`.
+2. Verify the tenant has a tenant configuration file in `configs/tenants/`.
 3. Use the demo tenants included in the repo (e.g., `22222222-2222-4222-8222-222222222222` for EN, `11111111-1111-4111-8111-111111111111` for AR).
 
 ---
@@ -1638,15 +1638,15 @@ ls configs/companies/*.json
 # Check tenant context in logs
 docker logs agenticverdict-worker-1 --tail=100 | grep "tenantId"
 
-# Verify company config exists
-ls configs/companies/
+# Verify tenant config exists
+ls configs/tenants/
 ```
 
 **Solutions**:
 
-1. Ensure `tenantId` matches company config filename
+1. Ensure `tenantId` matches tenant config filename
 2. Check JWT token contains valid `tenant_id` claim (must match request `tenantId`)
-3. Verify `COMPANY_CONFIG_DIR` is set correctly
+3. Verify `TENANT_CONFIG_DIR` is set correctly
 4. Restart service after adding new config
 
 ---

@@ -46,7 +46,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - Prettier via `.prettierrc` (100 print width, double quotes, trailing commas).
 
 - **Environment and secrets hygiene**
-  - `.env.example` documenting `DATABASE_URL` and `COMPANY_CONFIG_DIR` for local development.
+  - `.env.example` documenting `DATABASE_URL` and `TENANT_CONFIG_DIR` for local development.
 
 #### @agenticverdict/types
 
@@ -57,8 +57,8 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 #### @agenticverdict/config
 
 - **Configuration schema (Zod)**
-  - `companyConfigSchema` / `CompanyConfig` aligned with project architecture docs:
-    - `companyId` (UUID), `companyName`, `localization` (`language` ar | en | fr, `region`, `timezone`, `currency`).
+  - `tenantConfigSchema` / `TenantConfig` aligned with project architecture docs:
+    - `tenantId` (UUID), `tenantName`, `localization` (`language` ar | en | fr, `region`, `timezone`, `currency`).
     - `marketing.channels` as `platformConfigSchema[]` (`platform`, `enabled`).
     - Optional `marketing.kpis` (`id`, `name`).
     - `ai` (`primaryModel`, `provider` anthropic | openai).
@@ -67,22 +67,22 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - `platformConfigSchema` / `PlatformConfig` for typed channel entries.
 
 - **ConfigManager-style loading**
-  - `loadCompanyConfig(companyId, options?)` reads `<companyId>.json` from a resolved config directory.
-  - In-memory cache keyed by `companyId`; `clearCompanyConfigCache()` for tests and hot reload scenarios.
-  - `LoadCompanyConfigOptions`: optional `configDir`, `bypassCache`.
-  - Validation that on-disk `companyId` matches the requested id (prevents mis-keyed files).
+  - `loadTenantConfig(tenantId, options?)` reads `<tenantId>.json` from a resolved config directory.
+  - In-memory cache keyed by `tenantId`; `clearTenantConfigCache()` for tests and hot reload scenarios.
+  - `LoadTenantConfigOptions`: optional `configDir`, `bypassCache`.
+  - Validation that on-disk `tenantId` matches the requested id (prevents mis-keyed files).
 
 - **Directory resolution**
-  - Explicit `configDir` or `COMPANY_CONFIG_DIR` (absolute or relative to `process.cwd()`).
-  - Fallback probe: `configs/companies` then `../../configs/companies` so `apps/frontend` dev cwd resolves the repo-level sample configs.
+  - Explicit `configDir` or `TENANT_CONFIG_DIR` (absolute or relative to `process.cwd()`).
+  - Fallback probe: `configs/tenants` then `../../configs/tenants` so `apps/frontend` dev cwd resolves the repo-level sample configs.
 
 - **Test suite**
-  - Vitest unit test for minimal valid `CompanyConfig` parsing (`src/schemas/company.test.ts`).
+  - Vitest unit test for minimal valid `TenantConfig` parsing (`src/schemas/tenant.test.ts`).
 
 #### @agenticverdict/core
 
 - **Tenant context propagation**
-  - `TenantContext` interface: `tenantId`, `config` (`CompanyConfig`), `requestId`, optional `userId`.
+  - `TenantContext` interface: `tenantId`, `config` (`TenantConfig`), `requestId`, optional `userId`.
   - `AsyncLocalStorage`-backed storage for request-scoped tenant context.
 
 - **Public API**
@@ -101,7 +101,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - `Database` type alias for consumers.
 
 - **Initial schema**
-  - `companies` table: `id` (UUID PK, default random), `name`, `slug` (unique), `createdAt` (timestamptz, default now).
+  - `tenants` table: `id` (UUID PK, default random), `name`, `slug` (unique), `createdAt` (timestamptz, default now).
   - Barrel export via `src/schema/index.ts`.
 
 - **Multi-tenancy hook**
@@ -129,7 +129,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - `src/i18n/routing.ts` — `defineRouting` with locales `en`, `ar`, default `en`, `localePrefix: "always"`.
   - `src/i18n/request.ts` — `getRequestConfig` loads `messages/<locale>.json`.
   - `src/middleware.ts` — `next-intl` middleware; matcher for `/` and `/(ar|en)/:path*`.
-  - Message catalogs: `messages/en.json`, `messages/ar.json` (home copy for title, subtitle, company/language/region labels).
+  - Message catalogs: `messages/en.json`, `messages/ar.json` (home copy for title, subtitle, tenant/language/region labels).
 
 - **RTL / LTR UI**
   - `@mantine/core` and `@mantine/hooks`.
@@ -137,7 +137,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
   - Locale layout `src/app/[locale]/layout.tsx` sets `lang` and `dir` on a wrapper `div`; `generateStaticParams` from routing locales.
 
 - **Pages and composition**
-  - `src/app/[locale]/page.tsx` — server component calling `loadCompanyConfig` for demo tenant UUID `11111111-1111-4111-8111-111111111111`.
+  - `src/app/[locale]/page.tsx` — server component calling `loadTenantConfig` for demo tenant UUID `11111111-1111-4111-8111-111111111111`.
   - `export const dynamic = "force-dynamic"` to avoid prerender-time filesystem assumptions during `next build`.
   - `src/app/[locale]/HomeContentClient.tsx` — client display using `useTranslations("Home")` and Mantine typography/layout primitives.
 
@@ -153,7 +153,7 @@ Phase 0 (Foundation): monorepo bootstrap, shared packages for configuration and 
 #### Sample data and documentation
 
 - **Sample tenant configuration**
-  - `configs/companies/11111111-1111-4111-8111-111111111111.json` — Masafh-oriented sample (Arabic localization, representative channels and business fields).
+  - `configs/tenants/11111111-1111-4111-8111-111111111111.json` — Masafh-oriented sample (Arabic localization, representative channels and business fields).
 
 - **Phase 0 documentation alignment**
   - New `specs/00-core/00-foundation/implementation-scope.md`:

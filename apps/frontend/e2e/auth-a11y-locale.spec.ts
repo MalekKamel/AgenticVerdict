@@ -1,5 +1,5 @@
-import { checkA11y, injectAxe } from "@axe-core/playwright";
-import { test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
 
 const authPaths = [
   "/auth/login",
@@ -16,14 +16,11 @@ test.describe("Auth locale accessibility smoke", () => {
     for (const authPath of authPaths) {
       test(`has no serious/critical axe issues: ${locale}${authPath}`, async ({ page }) => {
         await page.goto(`/${locale}${authPath}`);
-        await injectAxe(page);
-        await checkA11y(page, undefined, {
-          includedImpacts: ["serious", "critical"],
-          detailedReport: true,
-          rules: {
-            "color-contrast": { enabled: true },
-          },
-        });
+        const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+        const seriousOrCriticalViolations = results.violations.filter(
+          (violation) => violation.impact === "serious" || violation.impact === "critical",
+        );
+        expect(seriousOrCriticalViolations).toHaveLength(0);
       });
     }
   }

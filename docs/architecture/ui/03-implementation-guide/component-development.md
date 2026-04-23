@@ -1626,14 +1626,14 @@ import { Badge } from '../atoms/Badge';
 
 export interface TenantCardProps {
   tenantId: string;
-  companyName: string;
+  tenantName: string;
   status: 'active' | 'suspended' | 'trial';
   testId?: string;
 }
 
 export function TenantCard({
   tenantId,
-  companyName,
+  tenantName,
   status,
   testId,
 }: TenantCardProps) {
@@ -1657,13 +1657,13 @@ export function TenantCard({
         {config?.branding?.logo && (
           <img
             src={config.branding.logo}
-            alt={companyName}
+            alt={tenantName}
             className="w-12 h-12 object-contain"
           />
         )}
 
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">{companyName}</h3>
+          <h3 className="text-lg font-semibold">{tenantName}</h3>
 
           {/* Use tenant-specific currency */}
           {config?.localization?.currency && (

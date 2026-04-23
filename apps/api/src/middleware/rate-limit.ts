@@ -1,5 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Redis } from "@upstash/redis";
+import { recordTenantRateLimitHit } from "@agenticverdict/observability";
+
+import { getHttpAccessLogTenantId } from "./request-logging";
 
 export interface RateLimitOptions {
   windowMs: number;
@@ -64,8 +67,11 @@ export function rateLimit(redis: Redis | null, options: RateLimitOptions) {
     request: FastifyRequest,
     reply: FastifyReply,
   ): Promise<void> {
-    const tenantId = request.auth?.tenantId ?? "anonymous";
-    const keySuffix = options.perTenant === false ? "global" : tenantId;
+    const tenantId =
+      options.perTenant === false ? "global" : (getHttpAccessLogTenantId(request) ?? "anonymous");
+    const bucketType =
+      tenantId === "global" ? "global" : tenantId === "anonymous" ? "anonymous" : "tenant";
+    const keySuffix = tenantId;
     const key = `rl:${options.keyPrefix}:${keySuffix}`;
 
     const result = redis
@@ -73,6 +79,7 @@ export function rateLimit(redis: Redis | null, options: RateLimitOptions) {
       : memoryRateLimit(key, options.windowMs, options.maxRequests);
 
     if (!result.ok) {
+      recordTenantRateLimitHit(options.keyPrefix, bucketType);
       return reply
         .header("Retry-After", String(result.retryAfterSec))
         .status(429)

@@ -4,21 +4,23 @@ import { Suspense } from "react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { VerifyEmailClient } from "@/components/auth/VerifyEmailClient";
 import { useTranslations } from "@/i18n/react";
+import { Route as VerifyEmailRoute } from "./verify-email";
 
 export default function VerifyEmailPage() {
-  const t = useTranslations("auth.verifyEmail");
+  const t = useTranslations("auth");
+  const search = VerifyEmailRoute.useSearch();
 
   return (
     <AuthLayout
-      title={t("title")}
-      description={t("description")}
+      title={t("verifyEmail.title")}
+      description={t("verifyEmail.description")}
       navLinks={{
-        loginLabel: t("buttons.signIn"),
-        registerLabel: t("buttons.backToRegister"),
+        loginLabel: t("verifyEmail.buttons.signIn"),
+        registerLabel: t("verifyEmail.buttons.backToRegister"),
       }}
     >
       <Suspense fallback={<VerifyEmailFallback />}>
-        <VerifyEmailClient />
+        <VerifyEmailClient email={search.email} tenantId={search.tenantId} />
       </Suspense>
     </AuthLayout>
   );

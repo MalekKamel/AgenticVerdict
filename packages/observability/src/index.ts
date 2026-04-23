@@ -31,3 +31,4 @@ export {
   renderProductionFlowTestMetrics,
   type ScenarioOutcomeLabel,
 } from "./test-metrics";
+export { recordTenantRateLimitHit, recordTenantSecurityEvent } from "./tenant-security-metrics";

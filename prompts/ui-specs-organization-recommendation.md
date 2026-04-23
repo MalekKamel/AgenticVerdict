@@ -136,7 +136,7 @@ specs/01-ui/
 
 - User scenarios with priorities (P1-P5)
 - Functional requirements (FR-001 to FR-XXX)
-- Key entities (Insight, Connector, Template, Schedule, Delivery, Company)
+- Key entities (Insight, Connector, Template, Schedule, Delivery, Tenant)
 - Success criteria (measurable outcomes)
 - Assumptions and dependencies
 - Edge cases
@@ -439,7 +439,7 @@ specs/01-ui/
 **Implementation:**
 
 - Components are **domain-agnostic** by design; domain-specific behavior injected via props
-- Tenant branding applied via three-tier token system (no hardcoded company logic)
+- Tenant branding applied via three-tier token system (no hardcoded tenant logic)
 - Agency partner features documented (tenant switching, multi-client management)
 - Template system supports domain-specific initialization with full customization
 

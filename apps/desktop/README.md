@@ -24,7 +24,7 @@ Use the **same** `VITE_PUBLIC_*` variables as `apps/frontend` (e.g. in `apps/fro
 | Variable                    | Role                                                                                     |
 | --------------------------- | ---------------------------------------------------------------------------------------- |
 | `VITE_PUBLIC_API_URL`       | Fastify base when not using same-origin proxy (required for many static/offline builds). |
-| `VITE_PUBLIC_AUTH_API_MOCK` | Set to `"false"` when exercising real auth against the API (matches web).                |
+| `VITE_PUBLIC_AUTH_API_MODE` | `real` (default) or `mock` for local dev/test auth simulation (matches web contract).    |
 
 Electron-specific:
 

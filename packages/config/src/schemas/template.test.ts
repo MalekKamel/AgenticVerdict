@@ -25,7 +25,7 @@ describe("templateConfigSchema", () => {
       styling: {},
       variables: [
         {
-          name: "companyName",
+          name: "tenantName",
           type: "string",
           required: true,
         },
@@ -36,7 +36,7 @@ describe("templateConfigSchema", () => {
       },
       validation: {
         requiredSections: ["header"],
-        allowedVariables: ["companyName"],
+        allowedVariables: ["tenantName"],
       },
       metadata: {
         createdAt: new Date("2024-01-01"),

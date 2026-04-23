@@ -402,11 +402,11 @@ export function createTenantTestFactory(tenantId: string) {
       name: faker.person.fullName(),
       ...overrides,
     }),
-    createCompany: (overrides = {}) => ({
+    createTenant: (overrides = {}) => ({
       id: faker.string.uuid(),
       tenantId,
-      name: faker.company.name(),
-      industry: faker.company.buzzNoun(),
+      name: faker.tenant.name(),
+      industry: faker.tenant.buzzNoun(),
       ...overrides,
     }),
   };

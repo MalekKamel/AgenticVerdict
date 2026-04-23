@@ -222,7 +222,7 @@ This task breakdown documents the **actual work completed** in the Phase 03 impl
 
 - [x] T076 [COMPLETED] Implement wrapReportDocument function with HTML5 structure  
   File: `packages/report-generator/src/templates/document-shell.ts`
-- [x] T077 [COMPLETED] Implement cover page generation with company branding  
+- [x] T077 [COMPLETED] Implement cover page generation with tenant branding  
   File: `packages/report-generator/src/templates/cover-and-header.ts`
 - [x] T078 [COMPLETED] Implement table of contents generation with page numbers  
   File: `packages/report-generator/src/templates/table-of-contents.ts`
@@ -256,7 +256,7 @@ This task breakdown documents the **actual work completed** in the Phase 03 impl
   File: `packages/report-generator/src/storage/drizzle-reports.ts`
 - [x] T088 [COMPLETED] Implement insertReportRow function with tenant scoping  
   File: `packages/report-generator/src/storage/drizzle-reports.ts`
-- [x] T089 [COMPLETED] Implement selectReportForCompany function with row-level security  
+- [x] T089 [COMPLETED] Implement selectReportForTenant function with row-level security  
   File: `packages/report-generator/src/storage/drizzle-reports.ts`
 - [x] T090 [COMPLETED] Implement updateReportRowMetadata function with merge logic  
   File: `packages/report-generator/src/storage/drizzle-reports.ts`
@@ -454,7 +454,7 @@ This task breakdown documents the **actual work completed** in the Phase 03 impl
 ✅ **FR-004**: DOCX generation via HTML-to-DOCX  
 ✅ **FR-005**: Template-based rendering with composite engine  
 ✅ **FR-006**: Built-in templates (Executive Summary, Detailed Analysis, Technical Appendix)  
-✅ **FR-007**: Template variable injection for company-specific content  
+✅ **FR-007**: Template variable injection for tenant-specific content  
 ✅ **FR-008**: Text direction detection (RTL/LTR)  
 ✅ **FR-009**: RTL layout support for Arabic languages  
 ✅ **FR-010**: Locale-aware formatting (dates, currency, numbers)  

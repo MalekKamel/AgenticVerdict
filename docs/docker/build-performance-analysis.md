@@ -2,7 +2,7 @@
 
 **Analysis Date**: 2026-04-09
 **Analyzer**: Claude Code
-**Scope**: All application Dockerfiles (web, api, worker) and CI/CD workflows
+**Scope**: All application Dockerfiles (frontend, api, worker) and CI/CD workflows
 **Purpose**: Identify current bottlenecks and establish baseline metrics for optimization
 
 ## Executive Summary
@@ -24,7 +24,7 @@ The AgenticVerdict Docker implementation follows modern best practices with mult
 
 ## 1. Current Implementation Analysis
 
-### 1.1 Web Service (`apps/frontend/Dockerfile`)
+### 1.1 Frontend Service (`apps/frontend/Dockerfile`)
 
 **Current Structure** (52 lines):
 
@@ -59,7 +59,7 @@ COPY --from=builder /app/apps/frontend/.next/standalone ./
 | **Cache Mounts**   | Not implemented                              | No `RUN --mount=type=cache` for pnpm  | High - 60-80% performance loss                    |
 | **Base Image**     | bookworm-slim (builder), distroless (runner) | Appropriate choice                    | None - good pattern                               |
 | **Multi-Stage**    | Yes (base → deps → builder → runner)         | Properly implemented                  | None - good pattern                               |
-| **Build Args**     | `NODE_VERSION` only                          | No `TARGET_STAGE` variant             | N/A - web is production-only                      |
+| **Build Args**     | `NODE_VERSION` only                          | No `TARGET_STAGE` variant             | N/A - frontend is production-only                 |
 
 **Specific Issues**:
 
@@ -130,17 +130,17 @@ FROM base AS runner
 
 **Analysis**:
 
-| Aspect             | Current State               | Issue                                 | Impact           |
-| ------------------ | --------------------------- | ------------------------------------- | ---------------- |
-| **Layer Ordering** | Partially optimized         | Same full workspace copy issue as web | Medium           |
-| **Cache Mounts**   | Not implemented             | No pnpm cache mount                   | High             |
-| **TARGET_STAGE**   | Implemented                 | Good pattern for multi-env            | None - excellent |
-| **Multi-Stage**    | Yes (4 env stages + runner) | Properly implemented                  | None - good      |
-| **Runtime User**   | appuser (1001:1001)         | Non-root, good                        | None - good      |
+| Aspect             | Current State               | Issue                                      | Impact           |
+| ------------------ | --------------------------- | ------------------------------------------ | ---------------- |
+| **Layer Ordering** | Partially optimized         | Same full workspace copy issue as frontend | Medium           |
+| **Cache Mounts**   | Not implemented             | No pnpm cache mount                        | High             |
+| **TARGET_STAGE**   | Implemented                 | Good pattern for multi-env                 | None - excellent |
+| **Multi-Stage**    | Yes (4 env stages + runner) | Properly implemented                       | None - good      |
+| **Runtime User**   | appuser (1001:1001)         | Non-root, good                             | None - good      |
 
 **Specific Issues**:
 
-1. **Lines 20-26**: Same full workspace copy as web
+1. **Lines 20-26**: Same full workspace copy as frontend
 2. **Line 27**: No cache mount for pnpm store
 3. **Lines 32, 37, 42**: Redundant `COPY . .` after copying workspace in deps stage
 
@@ -210,17 +210,17 @@ steps:
     with:
       push: false
       load: true
-      cache: type=gha,scope=web # GitHub Actions cache only
+      cache: type=gha,scope=frontend # GitHub Actions cache only
 ```
 
 **Analysis**:
 
-| Aspect              | Current State      | Issue                          | Impact                             |
-| ------------------- | ------------------ | ------------------------------ | ---------------------------------- |
-| **Cache Type**      | GHA only           | No registry cache backend      | Medium - limited team-wide sharing |
-| **Cache Scope**     | Per service        | No cross-service cache sharing | Low - acceptable for isolation     |
-| **BuildKit**        | Enabled via buildx | Properly configured            | None - good                        |
-| **Parallel Builds** | Yes (matrix)       | web, api, worker in parallel   | None - excellent                   |
+| Aspect              | Current State      | Issue                             | Impact                             |
+| ------------------- | ------------------ | --------------------------------- | ---------------------------------- |
+| **Cache Type**      | GHA only           | No registry cache backend         | Medium - limited team-wide sharing |
+| **Cache Scope**     | Per service        | No cross-service cache sharing    | Low - acceptable for isolation     |
+| **BuildKit**        | Enabled via buildx | Properly configured               | None - good                        |
+| **Parallel Builds** | Yes (matrix)       | frontend, api, worker in parallel | None - excellent                   |
 
 **Recommendations**:
 
@@ -234,26 +234,26 @@ steps:
 
 Based on similar monorepo benchmarks:
 
-| Service | Cold Build | Warm Build (source change) | Hot Build (no change) | Cache Hit Rate |
-| ------- | ---------- | -------------------------- | --------------------- | -------------- |
-| Web     | 8-10 min   | 3-5 min                    | 30-60s                | ~65%           |
-| API     | 6-8 min    | 2-4 min                    | 20-45s                | ~68%           |
-| Worker  | 7-9 min    | 2.5-4.5 min                | 25-50s                | ~66%           |
+| Service  | Cold Build | Warm Build (source change) | Hot Build (no change) | Cache Hit Rate |
+| -------- | ---------- | -------------------------- | --------------------- | -------------- |
+| Frontend | 8-10 min   | 3-5 min                    | 30-60s                | ~65%           |
+| API      | 6-8 min    | 2-4 min                    | 20-45s                | ~68%           |
+| Worker   | 7-9 min    | 2.5-4.5 min                | 25-50s                | ~66%           |
 
 **Bottleneck Distribution**:
 
 - pnpm install (no cache mount): ~60-70% of build time
 - Full workspace copy invalidation: ~20-25% of cache misses
 - dockerPrebuild script: ~5-10% of build time
-- Next.js build (web only): ~15-20% of build time
+- Next.js build (frontend only): ~15-20% of build time
 
 ### 2.2 Projected Performance After Optimization
 
-| Service | Cold Build | Warm Build | Hot Build | Cache Hit Rate | Improvement |
-| ------- | ---------- | ---------- | --------- | -------------- | ----------- |
-| Web     | 8-10 min   | 1-1.5 min  | 15-30s    | ~92%           | **70-75%**  |
-| API     | 6-8 min    | 45-90s     | 10-20s    | ~94%           | **75-80%**  |
-| Worker  | 7-9 min    | 50-100s    | 12-25s    | ~93%           | **73-78%**  |
+| Service  | Cold Build | Warm Build | Hot Build | Cache Hit Rate | Improvement |
+| -------- | ---------- | ---------- | --------- | -------------- | ----------- |
+| Frontend | 8-10 min   | 1-1.5 min  | 15-30s    | ~92%           | **70-75%**  |
+| API      | 6-8 min    | 45-90s     | 10-20s    | ~94%           | **75-80%**  |
+| Worker   | 7-9 min    | 50-100s    | 12-25s    | ~93%           | **73-78%**  |
 
 **Optimization Impact Breakdown**:
 
@@ -265,7 +265,7 @@ Based on similar monorepo benchmarks:
 
 **Current CI Build Times** (estimated):
 
-- Matrix build (web + api + worker parallel): ~8-10 minutes
+- Matrix build (frontend + api + worker parallel): ~8-10 minutes
 - Sequential cache invalidation: ~10-15% cache miss rate
 - Total pipeline time: ~12-15 minutes (including tests, scans)
 
@@ -471,13 +471,13 @@ Best Practice: Registry cache
 
 ### 7.1 Performance Targets
 
-| Metric                   | Current     | Target    | Measurement           |
-| ------------------------ | ----------- | --------- | --------------------- |
-| Web cached build time    | 3-5 min     | 1-1.5 min | `time docker build`   |
-| API cached build time    | 2-4 min     | 45-90s    | `time docker build`   |
-| Worker cached build time | 2.5-4.5 min | 50-100s   | `time docker build`   |
-| Cache hit rate           | ~68%        | >90%      | BuildKit logs         |
-| CI build time (parallel) | 8-10 min    | 3-5 min   | GitHub Actions timing |
+| Metric                     | Current     | Target    | Measurement           |
+| -------------------------- | ----------- | --------- | --------------------- |
+| Frontend cached build time | 3-5 min     | 1-1.5 min | `time docker build`   |
+| API cached build time      | 2-4 min     | 45-90s    | `time docker build`   |
+| Worker cached build time   | 2.5-4.5 min | 50-100s   | `time docker build`   |
+| Cache hit rate             | ~68%        | >90%      | BuildKit logs         |
+| CI build time (parallel)   | 8-10 min    | 3-5 min   | GitHub Actions timing |
 
 ### 7.2 Quality Targets
 
@@ -494,7 +494,7 @@ Best Practice: Registry cache
 
 ```bash
 # Build each service with timing
-time docker build -f apps/frontend/Dockerfile -t agenticverdict/web:baseline .
+time docker build -f apps/frontend/Dockerfile -t agenticverdict/frontend:baseline .
 time docker build -f apps/api/Dockerfile -t agenticverdict/api:baseline .
 time docker build -f apps/worker/Dockerfile -t agenticverdict/worker:baseline .
 
@@ -509,7 +509,7 @@ docker images | grep agenticverdict
 
 ```bash
 # Same commands as baseline, compare results
-time docker build -f apps/frontend/Dockerfile -t agenticverdict/web:optimized .
+time docker build -f apps/frontend/Dockerfile -t agenticverdict/frontend:optimized .
 
 # Extract cache hit rate from build logs
 docker buildx build --progress=plain -f apps/frontend/Dockerfile . 2>&1 | grep -E "(CACHED|#\d)"
@@ -594,7 +594,7 @@ Add to CI/CD workflow:
 
 ## Appendix A: Detailed Dockerfile Comparisons
 
-### A.1 Web Dockerfile - Current vs. Optimized
+### A.1 Frontend Dockerfile - Current vs. Optimized
 
 **Current** (lines 16-27):
 

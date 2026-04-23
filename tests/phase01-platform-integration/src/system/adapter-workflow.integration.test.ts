@@ -11,7 +11,7 @@ const tenantA = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const tenantB = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 
 const baseConfig = {
-  companyName: "System test",
+  tenantName: "System test",
   localization: {
     language: "en" as const,
     region: "SA",
@@ -26,7 +26,7 @@ const baseConfig = {
 function tenantContext(tenantId: string, requestId: string): TenantContext {
   return {
     tenantId,
-    config: { ...baseConfig, companyId: tenantId },
+    config: { ...baseConfig, tenantId: tenantId },
     requestId,
   };
 }

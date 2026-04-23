@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const messagesDir = join(__dirname, "..", "messages");
+const localeConfigPath = join(__dirname, "..", "src", "i18n", "locales.config.json");
+const localeConfig = JSON.parse(readFileSync(localeConfigPath, "utf8"));
 
 /**
  * @param {unknown} obj
@@ -28,6 +30,8 @@ function collectLeafKeys(obj, prefix = "") {
   return keys.sort();
 }
 
-const en = JSON.parse(readFileSync(join(messagesDir, "en.json"), "utf8"));
-const keys = collectLeafKeys(en);
+const baseMessages = JSON.parse(
+  readFileSync(join(messagesDir, `${localeConfig.defaultLocale}.json`), "utf8"),
+);
+const keys = collectLeafKeys(baseMessages);
 console.log(keys.join("\n"));

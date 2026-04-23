@@ -603,7 +603,7 @@ module.exports = {
 - **Multi-Platform**: Generates for web, iOS, Android from single source
 - **Multi-Brand**: Built-in support for themes/brands
 - **Extensible**: Custom transforms and formats
-- **Industry Standard**: Battle-tested at large companies
+- **Industry Standard**: Battle-tested at large tenants
 
 **Cons:**
 
@@ -849,8 +849,8 @@ export function createMantineTheme(brand?: keyof typeof brandThemes, locale?: "e
 **Multi-Brand Strategy:**
 
 ```typescript
-// Tenant-specific theme from CompanyConfig
-export function getTenantTheme(config: CompanyConfig) {
+// Tenant-specific theme from TenantConfig
+export function getTenantTheme(config: TenantConfig) {
   return createMantineTheme(
     config.brandId as keyof typeof brandThemes,
     config.localization.language
@@ -1294,9 +1294,9 @@ test('Popover positions correctly in RTL', async ({ page }) => {
 ### 7.2 Multi-Brand Theme Architecture
 
 ```typescript
-// Tenant-specific theme from CompanyConfig
+// Tenant-specific theme from TenantConfig
 export class ThemeManager {
-  constructor(private config: CompanyConfig) {}
+  constructor(private config: TenantConfig) {}
 
   getTheme() {
     const brandTheme = brandThemes[this.config.brandId || "default"];

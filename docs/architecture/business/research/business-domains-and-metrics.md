@@ -388,7 +388,7 @@ interface Metric {
 
 **Benchmark Sources:**
 
-- Industry averages (by company size, vertical)
+- Industry averages (by tenant size, vertical)
 - Platform benchmarks (Google Analytics benchmarks)
 - Historical performance (period-over-period, year-over-year)
 

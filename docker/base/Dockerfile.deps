@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Shared pnpm install layer for api, worker, and web. Tag as agenticverdict/deps:local (see docs/docker/container-images.md).
 ARG NODE_VERSION=20
 
@@ -44,5 +43,5 @@ COPY eslint.config.mjs ./
 # Store cache uses a dedicated id so existing root-populated pnpm caches are not mass-chowned.
 RUN --mount=type=cache,target=/pnpm-cache,id=pnpm-appuser,sharing=shared \
     chown -R appuser:appuser /app \
-    && chmod 777 /pnpm-cache \
+    && chmod -R ugo+rwX /pnpm-cache \
     && runuser -u appuser -- pnpm install --frozen-lockfile --store-dir /pnpm-cache

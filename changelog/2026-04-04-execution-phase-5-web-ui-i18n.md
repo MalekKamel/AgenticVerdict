@@ -32,7 +32,7 @@
 ## Follow-ups
 
 - **Playwright** locale/RTL smoke tests — Execution Phase 6.
-- **Tenant-aware locale default** from `CompanyConfig` vs URL (wire when Next middleware integrates `resolveTenantContextFromHttp`).
+- **Tenant-aware locale default** from `TenantConfig` vs URL (wire when Next middleware integrates `resolveTenantContextFromHttp`).
 - **Locale policy:** **Arabic (`ar`)** and **English (`en`)** are the **only required** App Router locales; **`fr` is not required** and there is **no** default plan to add it unless product scope explicitly changes.
 - **Storybook** remains optional per acceptance criteria.
 

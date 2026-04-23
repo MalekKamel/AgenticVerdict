@@ -18,8 +18,8 @@ permissions:
   packages: write
 
 jobs:
-  web:
-    name: Image — web
+  frontend:
+    name: Image — frontend
     runs-on: ubuntu-latest
     timeout-minutes: 45
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'trigger:build-docker'))
@@ -48,21 +48,21 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: agenticverdict/web
+          images: agenticverdict/frontend
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=sha,prefix=sha-
           labels: |
-            org.opencontainers.image.title=AgenticVerdict Web
-            org.opencontainers.image.description=Next.js web application for AgenticVerdict
+            org.opencontainers.image.title=AgenticVerdict Frontend
+            org.opencontainers.image.description=Next.js frontend application for AgenticVerdict
             org.opencontainers.image.vendor=AgenticVerdict
             org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.revision=${{ github.sha }}
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: apps/web/Dockerfile
+          file: apps/frontend/Dockerfile
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -70,12 +70,14 @@ jobs:
           build-args: |
             BUILDKIT_INLINE_CACHE=1
             DEPS_IMAGE=agenticverdict/deps:ci
+            VITE_PUBLIC_API_URL=http://localhost:4000
+            VITE_PUBLIC_DEFAULT_TENANT_ID=11111111-1111-4111-8111-111111111111
           cache-from: |
-            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web
-            type=gha,scope=web
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:frontend
+            type=gha,scope=frontend
           cache-to: |
-            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web,mode=max
-            type=gha,mode=max,scope=web
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:frontend,mode=max
+            type=gha,mode=max,scope=frontend
 
   api:
     name: Image — api
@@ -218,7 +220,7 @@ jobs:
       - name: Run build performance measurement
         run: |
           chmod +x scripts/measure-build-performance.sh
-          scripts/measure-build-performance.sh web
+          scripts/measure-build-performance.sh frontend
           scripts/measure-build-performance.sh api
           scripts/measure-build-performance.sh worker
       - name: Upload build logs
@@ -232,7 +234,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Service | CACHED Lines | Step Lines | Heuristic Hit Rate |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---------|--------------|------------|--------------------|" >> "$GITHUB_STEP_SUMMARY"
-          for service in web api worker; do
+          for service in frontend api worker; do
             log_file="$(ls -1t .build-metrics/build-${service}-*.log | head -n 1)"
             cached="$(awk 'BEGIN { c=0 } /CACHED/ { c++ } END { print c+0 }' "$log_file")"
             total="$(awk 'BEGIN { t=0 } /^#/ { t++ } END { print t+0 }' "$log_file")"

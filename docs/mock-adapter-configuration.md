@@ -1,34 +1,32 @@
 # Mock adapter configuration
 
-This document describes how to run the AgenticVerdict API and worker with **mock platform adapters** and deterministic seed data, which is the default for local development and many integration tests.
+This document describes runtime-policy-driven mock adapter configuration.
 
-## Enable mock adapters globally
-
-When mock mode is on, connector fetches use **`@agenticverdict/data-connectors`** mock factories instead of live vendor APIs.
+## Core contract
 
 ```bash
-export AGENTICVERDICT_USE_MOCK_ADAPTERS=1
+export AGENTICVERDICT_RUNTIME_ENV=development
+export AGENTICVERDICT_MOCK_MODE=all
+export AGENTICVERDICT_MOCK_SCENARIO=normal
 ```
 
-## Per-platform toggles
-
-You can narrow mock usage by platform (exact variable names follow `@agenticverdict/config` / `ConfigurationService` — check `packages/config` for the current env map). Typical patterns include:
+## Selective connector mode
 
 ```bash
-export AGENTICVERDICT_MOCK_META=1
-export AGENTICVERDICT_MOCK_GA4=1
-export AGENTICVERDICT_MOCK_GSC=1
-export AGENTICVERDICT_MOCK_GBP=1
-export AGENTICVERDICT_MOCK_TIKTOK=1
+export AGENTICVERDICT_RUNTIME_ENV=development
+export AGENTICVERDICT_MOCK_MODE=selective
+export AGENTICVERDICT_MOCK_CONNECTORS=meta,ga4,gsc
 ```
 
-## Demo tenant company file
+When mock mode is active, connector fetches use `@agenticverdict/data-connectors` mock factories instead of live vendor APIs.
+
+## Demo tenant tenant file
 
 The demo tenant used in artifact verification lives at:
 
-`configs/companies/22222222-2222-4222-8222-222222222222.json`
+`configs/tenants/22222222-2222-4222-8222-222222222222.json`
 
-Ensure `marketing.channels` lists every platform you expect in `platformsAnalyzed`, with `"enabled": true` for each channel you want the worker to fetch. The worker loads this file via `ConfigManager` (`COMPANY_CONFIG_DIR` overrides the directory).
+Ensure `marketing.channels` lists every platform you expect in `platformsAnalyzed`, with `"enabled": true` for each channel you want the worker to fetch. The worker loads this file via `ConfigManager` (`TENANT_CONFIG_DIR` overrides the directory).
 
 ## Worker + BullMQ
 

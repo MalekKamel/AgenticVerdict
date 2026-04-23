@@ -4,8 +4,10 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { jwtVerify } from "jose";
 
 import { TenantSecurityError } from "@agenticverdict/core";
+import { recordTenantSecurityEvent } from "@agenticverdict/observability";
 
 import { parseSessionCookie } from "../lib/auth-session-cookie";
+import { getHttpAccessLogTenantId } from "./request-logging";
 
 const JWT_SECRET_MIN_LENGTH = 8;
 
@@ -205,17 +207,41 @@ export async function verifyBearerSessionFromRequest(
   }
 }
 
+/**
+ * tRPC pre-handler: when a valid session JWT is present (Bearer or `av_session` cookie), sets
+ * {@link FastifyRequest#auth} so {@link bindJwtTenantAsyncContext} can mirror REST + resolve
+ * `x-tenant-id` against JWT (SSOT §9 Q-3). Does not return 401 when absent.
+ */
+export function attachTrpcRequestAuth() {
+  return async function attachTrpcRequestAuthHandler(request: FastifyRequest): Promise<void> {
+    const session = await verifyBearerSessionFromRequest(request);
+    if (session) {
+      request.auth = session.auth;
+    }
+  };
+}
+
 export function tenantSecurityErrorReply(
+  request: FastifyRequest,
   reply: FastifyReply,
-  requestId: string,
   err: TenantSecurityError,
 ): void {
+  const tenantId = getHttpAccessLogTenantId(request);
+  request.log?.warn({
+    event: "http_tenant_security",
+    surface: "http",
+    code: err.code,
+    requestId: request.id,
+    ...(tenantId ? { tenantId } : {}),
+  });
+  recordTenantSecurityEvent("http", err.code);
+
   void reply.status(err.httpStatus).send({
     error: {
       code: err.code.toLowerCase(),
       message: err.message,
       details: {},
     },
-    requestId,
+    requestId: request.id,
   });
 }

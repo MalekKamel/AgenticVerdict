@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { createUpstashRedisFromEnv } from "@agenticverdict/database";
@@ -21,6 +23,7 @@ import { registerVerdictRoutes } from "./routes/v1/verdicts";
 import { registerWorkflowRoutes } from "./routes/v1/workflows";
 import "./middleware/jwt-tenant-context";
 import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
+import { runTenantRlsStartupCheck } from "./startup/tenant-rls-startup-check";
 import { registerTrpc } from "./trpc/register-fastify";
 
 /**
@@ -28,6 +31,7 @@ import { registerTrpc } from "./trpc/register-fastify";
  * for `loggerInstance`. Cast at the Swagger boundary only (see `@fastify/swagger` typings).
  */
 export async function buildApiServer(): Promise<FastifyInstance> {
+  await runTenantRlsStartupCheck();
   const redis = createUpstashRedisFromEnv();
   const app = Fastify({
     ...(process.env.VITEST === "true"
@@ -50,6 +54,37 @@ export async function buildApiServer(): Promise<FastifyInstance> {
   for (const mime of ["application/octet-stream", "application/pdf"] as const) {
     app.addContentTypeParser(mime, { parseAs: "buffer" }, binaryBodyParser);
   }
+
+  const explicitCorsOrigins = (process.env.CORS_ORIGIN ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
+  const localCorsOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://localhost:3000",
+    "https://127.0.0.1:3000",
+  ];
+  const allowlistedOrigins = new Set<string>([...localCorsOrigins, ...explicitCorsOrigins]);
+
+  await app.register(cors, {
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    origin(origin, callback) {
+      if (!origin || allowlistedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
+  });
+
+  await app.register(helmet, {
+    global: true,
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    hsts: process.env.NODE_ENV === "production" ? undefined : false,
+  });
 
   await registerSwagger(app as unknown as FastifyInstance);
 

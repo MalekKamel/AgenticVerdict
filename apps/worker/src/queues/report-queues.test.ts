@@ -138,11 +138,11 @@ describe("defaultWorkflowTriggerProcessor", () => {
 
 describe("defaultReportGenerationProcessor", () => {
   beforeEach(() => {
-    process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS = "1";
+    process.env.AGENTICVERDICT_STUB_REPORT_FORMATS = "1";
   });
 
   afterEach(() => {
-    delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
+    delete process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
   });
 
   it("runs stub pipeline without throwing", async () => {

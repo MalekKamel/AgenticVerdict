@@ -83,10 +83,10 @@ The AgenticVerdict system supports multiple languages with automatic RTL/LTR det
 
 ### Tenant Configuration
 
-Language and direction are configured per tenant via `CompanyConfig`:
+Language and direction are configured per tenant via `TenantConfig`:
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   localization: {
     language: "ar" | "en" | "fr";
     region: string; // e.g., "SA", "US", "FR"
@@ -98,10 +98,10 @@ interface CompanyConfig {
 
 ### Test Tenants
 
-| Tenant ID                              | Language | Direction | Config File                                                   |
-| -------------------------------------- | -------- | --------- | ------------------------------------------------------------- |
-| `22222222-2222-4222-8222-222222222222` | English  | LTR       | `configs/companies/22222222-2222-4222-8222-222222222222.json` |
-| `11111111-1111-4111-8111-111111111111` | Arabic   | RTL       | `configs/companies/11111111-1111-4111-8111-111111111111.json` |
+| Tenant ID                              | Language | Direction | Config File                                                 |
+| -------------------------------------- | -------- | --------- | ----------------------------------------------------------- |
+| `22222222-2222-4222-8222-222222222222` | English  | LTR       | `configs/tenants/22222222-2222-4222-8222-222222222222.json` |
+| `11111111-1111-4111-8111-111111111111` | Arabic   | RTL       | `configs/tenants/11111111-1111-4111-8111-111111111111.json` |
 
 ### Authentication Tokens
 

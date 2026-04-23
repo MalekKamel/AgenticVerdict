@@ -1,21 +1,14 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 import { getDefaultConfigManager } from "@agenticverdict/config";
-import { resolveTenantContextFromHttp, type TenantContext } from "@agenticverdict/core";
+import { resolveTenantContextFromHttp } from "@agenticverdict/core";
 
 import { tenantSecurityErrorReply } from "./auth";
-
-declare module "fastify" {
-  interface FastifyRequest {
-    /** Populated after {@link bindJwtTenantAsyncContext} when JWT auth succeeded. */
-    tenantContext?: TenantContext;
-  }
-}
 
 const configManager = getDefaultConfigManager();
 
 /**
- * Runs after {@link jwtAuth}: resolves tenant UUID + {@link CompanyConfig} and assigns
+ * Runs after {@link jwtAuth}: resolves tenant UUID + {@link TenantConfig} and assigns
  * {@link FastifyRequest#tenantContext}. Route handlers run inside `runWithTenantContext` when this
  * is set (see `registerTenantAlsRouteWrapping` in `tenant-route-als.ts`).
  */
@@ -29,17 +22,20 @@ export function bindJwtTenantAsyncContext() {
       return;
     }
 
+    const hostHeader = request.headers.host;
     const resolved = await resolveTenantContextFromHttp(
       configManager,
       {
         jwtClaims: { tenant_id: auth.tenantId, sub: auth.userId },
+        headers: request.headers as Record<string, string | string[] | undefined>,
+        host: typeof hostHeader === "string" ? hostHeader : undefined,
       },
       request.id,
       { userId: auth.userId },
     );
 
     if (!resolved.ok) {
-      tenantSecurityErrorReply(reply, request.id, resolved.error);
+      tenantSecurityErrorReply(request, reply, resolved.error);
       return;
     }
 

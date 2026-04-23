@@ -38,25 +38,25 @@ AgenticVerdict delivers:
 - **AI-Generated Insights:** Automated analysis with actionable recommendations, not just data
 - **Self-Service Configuration:** Business users create Insights without IT dependency
 - **Flexible Deployment:** Desktop, Web, Cloud, or self-hosted options
-- **Agency Partner Support:** Manage multiple client companies with tenant isolation
+- **Agency Partner Support:** Manage multiple client tenants with tenant isolation
 
 ---
 
 ## 2. Core Business Entities
 
-### 2.1 Company Model
+### 2.1 Tenant Model
 
-The platform supports two company types:
+The platform supports two tenant types:
 
-| Company Type        | Description                                 | Primary Use Case                         |
+| Tenant Type         | Description                                 | Primary Use Case                         |
 | ------------------- | ------------------------------------------- | ---------------------------------------- |
 | **Direct Business** | End consumer running their own intelligence | Masafh (GPS fleet tracking)              |
-| **Agency Partner**  | Managing multiple client companies          | Marketing agencies overseeing 20+ brands |
+| **Agency Partner**  | Managing multiple client tenants            | Marketing agencies overseeing 20+ brands |
 
 ### 2.2 Entity Relationships
 
 ```
-Company (1)
+Tenant (1)
 ├── Insights (0-N)
 │   ├── Connectors (1-N)
 │   ├── Metrics (0-N per connector)
@@ -131,7 +131,7 @@ COLLECT DATA → ANALYZE METRICS → GENERATE INTELLIGENCE → DELIVER INSIGHT
 
 Agency partners manage multiple clients through:
 
-- **Multi-Tenant Dashboard:** Switch between companies instantly
+- **Multi-Tenant Dashboard:** Switch between tenants instantly
 - **Client Onboarding:** Rapid provisioning with templates
 - **White-Label Reporting:** Agency branding on client reports
 - **Aggregate Oversight:** Monitor all client Insights from one interface
@@ -225,7 +225,7 @@ Agency partners manage multiple clients through:
 The platform implements complete tenant isolation through:
 
 - **Data Isolation:** Row-level security ensures tenants only access their own data
-- **Configuration Isolation:** Each tenant has independent CompanyConfig
+- **Configuration Isolation:** Each tenant has independent TenantConfig
 - **Resource Isolation:** Per-tenant rate limiting and quotas
 - **Visual Isolation:** Agencies can switch between clients without data mixing
 
@@ -236,7 +236,7 @@ The platform implements complete tenant isolation through:
 | Create/edit own Insights | ✓               | ✓              |
 | Manage data connectors   | ✓               | ✓              |
 | View own reports         | ✓               | ✓              |
-| Access client companies  | —               | ✓              |
+| Access client tenants    | —               | ✓              |
 | Create client Insights   | —               | ✓              |
 | View client reports      | —               | ✓              |
 | White-label reporting    | —               | ✓ (Phase 2)    |
@@ -257,9 +257,9 @@ The platform implements complete tenant isolation through:
 
 ### 7.2 For Agency Partners
 
-- **Multi-Tenant Management:** Oversee all client companies from one dashboard
+- **Multi-Tenant Management:** Oversee all client tenants from one dashboard
 - **Tenant Isolation:** Each client's data remains completely separate
-- **Client Onboarding:** Quickly provision new companies with templates
+- **Client Onboarding:** Quickly provision new tenants with templates
 - **Centralized Oversight:** Monitor all client Insights from one interface
 - **Self-Hosted Control:** Deploy on own infrastructure for data sovereignty
 
@@ -295,7 +295,7 @@ All deployment options share the same codebase and feature set — teams can swi
 ### 9.2 Product Metrics
 
 - 70%+ of Insights created from templates
-- 50%+ of companies using 2+ connector types
+- 50%+ of tenants using 2+ connector types
 - 90%+ of users customize template properties
 - <5 minutes average Insight creation time
 

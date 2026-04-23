@@ -6,7 +6,7 @@ import {
   buildB2bFunnelSnapshotFromNormalizedSnapshots,
   computeB2bMarketingKpisFromNormalizedSnapshots,
 } from "./b2b-funnel-from-snapshots";
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 
 const dateRange = { startInclusive: "2026-01-01", endInclusive: "2026-01-07" };
 
@@ -25,9 +25,9 @@ function metaSnapshotFromMock() {
   };
 }
 
-const baseCompany: CompanyConfig = {
-  companyId: "11111111-1111-4111-8111-111111111111",
-  companyName: "Test",
+const baseTenant: TenantConfig = {
+  tenantId: "11111111-1111-4111-8111-111111111111",
+  tenantName: "Test",
   localization: {
     language: "ar",
     region: "SA",
@@ -61,7 +61,7 @@ describe("buildB2bFunnelSnapshotFromNormalizedSnapshots", () => {
     const snap = metaSnapshotFromMock();
     const funnel = buildB2bFunnelSnapshotFromNormalizedSnapshots([snap], {
       spendCurrencyCode: "SAR",
-      funnelMetricMapping: baseCompany.marketing.b2bKpiProfile?.funnelMetricMapping,
+      funnelMetricMapping: baseTenant.marketing.b2bKpiProfile?.funnelMetricMapping,
     });
     expect(funnel.totalLeads).toBeGreaterThan(0);
     expect(funnel.qualifiedLeads).toBeGreaterThan(0);
@@ -73,10 +73,10 @@ describe("buildB2bFunnelSnapshotFromNormalizedSnapshots", () => {
     expect(funnel.engagementByLanguage?.ar ?? 0).toBeGreaterThan(0);
   });
 
-  it("computes KPI envelope via company config helper", () => {
+  it("computes KPI envelope via tenant config helper", () => {
     const { funnel, kpis } = computeB2bMarketingKpisFromNormalizedSnapshots(
       [metaSnapshotFromMock()],
-      baseCompany,
+      baseTenant,
     );
     expect(funnel.qualifiedLeads).toBeGreaterThan(0);
     expect(kpis.cpql).not.toBeNull();

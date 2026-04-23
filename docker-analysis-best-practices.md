@@ -794,7 +794,7 @@ version: "3.8"
 services:
   web:
     build:
-      context: ./apps/web
+      context: ./apps/frontend
       target: base
     environment:
       - NODE_ENV=${NODE_ENV:-development}
@@ -856,7 +856,7 @@ services:
     build:
       target: development
     volumes:
-      - ./apps/web:/app
+      - ./apps/frontend:/app
       - /app/node_modules
       - /app/.next
     environment:
@@ -941,7 +941,7 @@ RUN pnpm install --frozen-lockfile
 ```
 
 ```dockerfile
-# apps/web/Dockerfile
+# apps/frontend/Dockerfile
 FROM localhost/agenticverdict/base:latest AS base
 # ... web-specific setup ...
 ```
@@ -1428,9 +1428,9 @@ server {
 # Next.js static build
 FROM node:20-alpine AS web-builder
 WORKDIR /app/web
-COPY apps/web/package*.json ./
+COPY apps/frontend/package*.json ./
 RUN npm ci
-COPY apps/web ./
+COPY apps/frontend ./
 RUN npm run build
 
 # API build

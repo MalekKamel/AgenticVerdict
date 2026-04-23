@@ -32,7 +32,7 @@ export const defaultBrandTheme: BrandTokens = {
 
 /**
  * Masafh tenant theme
- * Primary client: B2B GPS fleet tracking company in Riyadh
+ * Primary client: B2B GPS fleet tracking tenant in Riyadh
  */
 export const masafhTheme: BrandTokens = {
   colors: {

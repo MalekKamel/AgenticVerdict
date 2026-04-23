@@ -1,5 +1,5 @@
 export { auditLogs } from "./audit-logs";
-export { companies } from "./companies";
+export { tenants } from "./tenants";
 export { connectorTagMappings, connectorTags, dataConnectors } from "./core/connectors";
 export { insights, insightConnectors } from "./core/insights";
 export { agencyPartners } from "./core/tenants";

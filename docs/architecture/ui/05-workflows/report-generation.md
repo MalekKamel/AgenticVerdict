@@ -135,7 +135,7 @@ Each step includes:
 
 **Smart Defaults:**
 
-- Name: "{{TemplateName}} - {{CompanyName}}" (if template selected)
+- Name: "{{TemplateName}} - {{TenantName}}" (if template selected)
 - Description: Template description (if template selected)
 - Domain: Template domain (if template selected)
 

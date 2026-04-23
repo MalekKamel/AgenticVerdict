@@ -21,7 +21,7 @@ docker compose down -v
 
 ```bash
 docker compose ps
-docker compose logs -f web
+docker compose logs -f frontend
 docker compose logs postgres --tail 50
 ```
 
@@ -29,8 +29,8 @@ When using multiple compose files, repeat the same `-f` list for `logs`, `exec`,
 
 ## Health verification
 
-- **Script:** `./scripts/health-check.sh` — HTTP checks for web `/api/health` and API `/health`; optional `docker compose exec` probes for Postgres/Redis when the default project is up.
-- **Containers:** Web and API Dockerfiles define `HEALTHCHECK`; `depends_on: condition: service_healthy` gates app start on Postgres/Redis.
+- **Script:** `./scripts/health-check.sh` — HTTP checks for frontend `/api/health` and API `/health`; optional `docker compose exec` probes for Postgres/Redis when the default project is up.
+- **Containers:** Frontend and API Dockerfiles define `HEALTHCHECK`; `depends_on: condition: service_healthy` gates app start on Postgres/Redis.
 
 ## Manual Postgres backup
 

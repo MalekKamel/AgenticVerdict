@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **AgenticVerdict** is a multi-business-domain intelligence platform that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates the collection, analysis, and reporting of business metrics through unified data integration, AI-powered analysis, and automated delivery of actionable insights.
 
-**Primary Client**: Masafh (Riyadh-based B2B GPS fleet tracking company)
+**Primary Client**: Masafh (Riyadh-based B2B GPS fleet tracking tenant)
 
 **Architecture Type**: Multi-tenant SaaS with dynamic configuration injection
 
 ## Key Architectural Principles
 
-1. **Multi-Tenancy First** — All code must support multiple companies with complete tenant isolation using AsyncLocalStorage for context propagation and row-level security for data isolation
-2. **Configuration-Driven** — No company-specific logic in code; all business rules injected via `CompanyConfig` schema
+1. **Multi-Tenancy First** — All code must support multiple tenants with complete tenant isolation using AsyncLocalStorage for context propagation and row-level security for data isolation
+2. **Configuration-Driven** — No tenant-specific logic in code; all business rules injected via `TenantConfig` schema
 3. **Plugin Architecture** — Data connectors (`ConnectorAdapter` in `@agenticverdict/data-connectors`) share a common interface; new connectors are added without core changes
 4. **Template-Based Reporting** — Report templates stored in database, supporting RTL/LTR and multiple languages
 5. **Don't Reinvent the Wheel** — Use battle-tested, production-proven tools documented in `/docs/03-technology-research/`
@@ -25,7 +25,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Monorepo**: Turborepo + pnpm workspaces
 - **Runtime**: Node.js 20 LTS, TypeScript 5.3+
-- **Bundling**: **Vite** — `apps/web` dev server and production builds; **`apps/api`** and **`apps/worker`** use **Vite library mode** (`pnpm build:vite` in each app) via shared `tools/build/vite-node-cli.config.mjs`, outputting `dist/cli.mjs`. CI and local hardening run `NODE_ENV=production pnpm run verify:production-bundle` (includes mock-adapter dead-code scan).
+- **Bundling**: **Vite** — `apps/frontend` dev server and production builds; **`apps/api`** and **`apps/worker`** use **Vite library mode** (`pnpm build:vite` in each app) via shared `tools/build/vite-node-cli.config.mjs`, outputting `dist/cli.mjs`. CI and local hardening run `NODE_ENV=production pnpm run verify:production-bundle` (includes mock-adapter dead-code scan).
 - **Frontend**: TanStack Start with Mantine UI v9 components — see `/docs/05-reference/frontend-development-guidelines.md`
 - **API**: tRPC v11 unified API layer with Fastify server runtime (serves web, mobile, and CLI clients)
 
@@ -108,6 +108,8 @@ agenticverdict/
 
 ## Multi-Tenancy Implementation Pattern
 
+**Tenant requirements (SSOT)**: `/docs/architecture/tenant-requirements-single-source-of-truth-2026-04-25.md`
+
 **CRITICAL**: All database operations must be tenant-scoped:
 
 ```typescript
@@ -119,14 +121,14 @@ const tenantContext = new AsyncLocalStorage<TenantContext>();
 // Middleware sets context (API routes, worker jobs)
 app.use((req, res, next) => {
   const tenantId = extractTenantId(req);
-  const config = await configManager.loadCompanyConfig(tenantId);
+  const config = await configManager.loadTenantConfig(tenantId);
   tenantContext.run({ tenantId, config, requestId }, next);
 });
 
 // Database operations require tenant context
 export async function dbScoped<T>(callback: (db: DB) => Promise<T>): Promise<T> {
   const context = tenantContext.getStore();
-  await db.execute(`SET LOCAL app.current_tenant_id = '${context.companyId}'`);
+  await db.execute(`SET LOCAL app.current_tenant_id = '${context.tenantId}'`);
   return callback(db);
 }
 ```
@@ -134,18 +136,18 @@ export async function dbScoped<T>(callback: (db: DB) => Promise<T>): Promise<T> 
 **Row-level security** is enforced at the database level via PostgreSQL policies:
 
 ```sql
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY company_isolation_policy ON companies
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL USING (id = current_setting('app.current_tenant_id')::uuid);
 ```
 
 ## Configuration Schema
 
-The `CompanyConfig` interface (defined in `packages/config/src/schemas/`) is the single source of truth for all company-specific behavior:
+The `TenantConfig` interface (defined in `packages/config/src/schemas/`) is the single source of truth for all tenant-specific behavior:
 
 ```typescript
-interface CompanyConfig {
-  companyId: string;
+interface TenantConfig {
+  tenantId: string;
   localization: {
     language: "ar" | "en" | "fr"; // Determines RTL/LTR
     region: string; // e.g., 'SA', 'US'
@@ -169,11 +171,11 @@ interface CompanyConfig {
 }
 ```
 
-**Never hardcode company-specific logic.** All customization must flow through configuration.
+**Never hardcode tenant-specific logic.** All customization must flow through configuration.
 
 ### Layered runtime and infrastructure configuration
 
-Beyond tenant **`CompanyConfig`**, the repo uses explicit layers for process-wide behavior:
+Beyond tenant **`TenantConfig`**, the repo uses explicit layers for process-wide behavior:
 
 1. **Build constants** — `@agenticverdict/config/build-constants` (`IS_PRODUCTION`, `BUILD_CONFIG`, …). Used for production-only guards and Vite `define` / tree-shaking friendly branching.
 2. **Runtime configuration** — `@agenticverdict/config/configuration` (`ConfigurationService`, `RuntimeConfig` via Zod, `isMockEnabledForPlatform`, `config`). Env-derived; safe to import from server/worker code; does **not** pull in the database package.
@@ -394,7 +396,7 @@ counter("platform_requests_total", {
 ## Important Constraints
 
 1. **No `any` types** — Use `unknown` or proper type definitions
-2. **No hardcoded company logic** — All customization via `CompanyConfig`
+2. **No hardcoded tenant logic** — All customization via `TenantConfig`
 3. **No direct database access without tenant context** — Use `dbScoped()` wrapper
 4. **No platform-specific code in core packages** — Use adapter pattern
 5. **No sensitive data in logs** — Mask credentials, PII
@@ -413,7 +415,7 @@ The system supports multiple languages with RTL/LTR rendering:
 
 Reports are generated from templates stored in the database:
 
-- Templates support variable injection (company info, metrics, insights)
+- Templates support variable injection (tenant info, metrics, insights)
 - PDF generation uses Puppeteer/Playwright
 - Excel export uses ExcelJS
 - Email delivery via Resend/SendGrid
@@ -434,6 +436,10 @@ Reports are generated from templates stored in the database:
 - **Business Architecture**: `/docs/architecture/business/business-architecture.md` — Business domain, entities, processes, and multi-tenancy model
 - **Technical Architecture**: `/docs/architecture/business/technical-architecture.md` — System architecture, components, data, security, and deployment
 - **Implementation Guide**: `/docs/architecture/business/implementation-guide.md` — Current status, patterns, and conventions
+- **Runtime Mocking Guide (Comprehensive)**: `/docs/architecture/runtime-mocking-comprehensive-guide.md` — Runtime env contract, fail-closed security rules, integration points, CI guardrails, and verification matrix
+- **Frontend Auth Architecture Reference**: `/docs/architecture/ui/04-pages/auth-architecture-reference-2026-04-26.md` — Auth state model, redirect policy, loop-prevention controls, and verification matrix
+- **Route Guards SSOT**: `/docs/architecture/ui/04-pages/route-guards-single-source-of-truth.md` — Single source of truth for route-guard ownership, decision matrix, redirect safety rules, and migration constraints
+- **Tenant requirements (SSOT)**: `/docs/architecture/tenant-requirements-single-source-of-truth-2026-04-25.md` — Authoritative tenant and cross-cutting requirements
 - **Architecture Research**: `/docs/architecture/business/research/` — Multi-tenant SaaS, connectors, AI configuration, report generation
 
 ### Project Documentation
@@ -449,6 +455,7 @@ Reports are generated from templates stored in the database:
 - **Testing Strategy**: `/docs/02-planning-and-methodology/testing-strategy.md`
 - **Technology Research**: `/docs/03-technology-research/research-overview.md`
 - **Frontend development guidelines**: `/docs/05-reference/frontend-development-guidelines.md`
+- **Frontend local storage architecture (SSOT)**: `/apps/frontend/src/lib/storage/README.md`
 
 ## Active Technologies
 

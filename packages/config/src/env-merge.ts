@@ -22,24 +22,24 @@ export function deepMergeConfig(
   return out;
 }
 
-export function sanitizeCompanyIdForEnv(companyId: string): string {
-  return companyId.replace(/-/g, "_");
+export function sanitizeTenantIdForEnv(tenantId: string): string {
+  return tenantId.replace(/-/g, "_");
 }
 
 /**
- * Env var suffix: `AGENTICVERDICT_COMPANY_MERGE_<uuid_with_underscores>` (case-insensitive on most platforms).
+ * Env var suffix: `AGENTICVERDICT_TENANT_MERGE_<uuid_with_underscores>` (case-insensitive on most platforms).
  */
-export function companyConfigMergeEnvKey(companyId: string): string {
-  return `AGENTICVERDICT_COMPANY_MERGE_${sanitizeCompanyIdForEnv(companyId)}`;
+export function tenantConfigMergeEnvKey(tenantId: string): string {
+  return `AGENTICVERDICT_TENANT_MERGE_${sanitizeTenantIdForEnv(tenantId)}`;
 }
 
 /**
  * Reads optional JSON merge patch from process.env for a tenant.
  */
-export function readCompanyConfigMergeFromEnv(
-  companyId: string,
+export function readTenantConfigMergeFromEnv(
+  tenantId: string,
 ): Record<string, unknown> | undefined {
-  const key = companyConfigMergeEnvKey(companyId);
+  const key = tenantConfigMergeEnvKey(tenantId);
   const raw = process.env[key];
   if (raw === undefined || raw.trim() === "") {
     return undefined;
@@ -49,12 +49,12 @@ export function readCompanyConfigMergeFromEnv(
     parsed = JSON.parse(raw) as unknown;
   } catch {
     throw new Error(
-      `Environment variable ${key} must contain valid JSON (merge patch for company ${companyId})`,
+      `Environment variable ${key} must contain valid JSON (merge patch for tenant ${tenantId})`,
     );
   }
   if (!isPlainObject(parsed)) {
     throw new Error(
-      `Environment variable ${key} must be a JSON object (merge patch for company ${companyId})`,
+      `Environment variable ${key} must be a JSON object (merge patch for tenant ${tenantId})`,
     );
   }
   return parsed;

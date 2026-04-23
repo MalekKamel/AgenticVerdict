@@ -6,14 +6,14 @@ import postgres from "postgres";
 
 import * as schema from "../src/schema/index";
 import { seedConnectorRegistry } from "../src/seed-connectors";
-import { seedCompaniesFromJsonDir } from "../src/seeds/company-config-seed";
+import { seedTenantsFromJsonDir } from "../src/seeds/tenant-config-seed";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(scriptDir, "..", "..", "..");
-const defaultTestFixturesDir = join(repoRoot, "tests", "fixtures", "companies");
+const defaultTestFixturesDir = join(repoRoot, "tests", "fixtures", "tenants");
 
 /**
- * Seeds the `companies` table from JSON under `tests/fixtures/companies` (or `COMPANY_CONFIG_DIR`).
+ * Seeds the `tenants` table from JSON under `tests/fixtures/tenants` (or `TENANT_CONFIG_DIR`).
  * Intended for Docker E2E / integration environments alongside static data injection.
  */
 async function main(): Promise<void> {
@@ -22,7 +22,7 @@ async function main(): Promise<void> {
     throw new Error("DATABASE_URL is required to run test seeds");
   }
 
-  const configDir = process.env.COMPANY_CONFIG_DIR ?? defaultTestFixturesDir;
+  const configDir = process.env.TENANT_CONFIG_DIR ?? defaultTestFixturesDir;
 
   const client = postgres(connectionString, { max: 2 });
   const db = drizzle(client, { schema });
@@ -31,11 +31,11 @@ async function main(): Promise<void> {
     await seedConnectorRegistry(db);
     console.info("test seed: connector registry upserted");
 
-    const count = await seedCompaniesFromJsonDir(db, configDir);
+    const count = await seedTenantsFromJsonDir(db, configDir);
     if (count === 0) {
       console.warn(`no json files in ${configDir}`);
     } else {
-      console.info(`test seed: upserted ${count} companies from ${configDir}`);
+      console.info(`test seed: upserted ${count} tenants from ${configDir}`);
     }
   } finally {
     await client.end({ timeout: 10 });

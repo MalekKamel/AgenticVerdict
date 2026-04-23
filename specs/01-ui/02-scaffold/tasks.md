@@ -158,7 +158,7 @@ description: "Task list for UI Scaffold (Phase 02) implementation"
 - [ ] T064 [US4] Implement RTL layout mirroring for SettingsLayout (automatic via Mantine + next-intl)
 - [ ] T065 [US4] Create settings routes structure at `apps/frontend/src/routes/[locale]/settings/`
 - [ ] T066 [US4] Create account settings route at `apps/frontend/src/routes/[locale]/settings/account.tsx`
-- [ ] T067 [US4] Create company settings route at `apps/frontend/src/routes/[locale]/settings/company.tsx`
+- [ ] T067 [US4] Create tenant settings route at `apps/frontend/src/routes/[locale]/settings/tenant.tsx`
 - [ ] T068 [US4] Create connectors settings route at `apps/frontend/src/routes/[locale]/settings/connectors.tsx`
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 4 should all work independently

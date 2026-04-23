@@ -127,7 +127,7 @@ packages/api/src/router/
 packages/database/src/schema/
 ├── tenants.ts                           # Existing tenant schema
 ├── agency_partners.ts                   # Agency partner relationships (if separate table needed)
-└── branding.ts                          # Branding configuration schema (if separate from CompanyConfig)
+└── branding.ts                          # Branding configuration schema (if separate from TenantConfig)
 ```
 
 **Structure Decision**: Following established TanStack Start conventions with file-based routing under `routes/agency/`. Agency-specific components organized in `components/agency/` to separate them from general dashboard components. tRPC router follows existing patterns in `packages/api/src/router/`.
@@ -216,7 +216,7 @@ interface ClientComparisonData {
 // Branding Configuration
 interface AgencyBranding {
   agencyId: string;
-  companyName: string;
+  tenantName: string;
   logoUrl: string;
   primaryColor: string;
   secondaryColor: string;

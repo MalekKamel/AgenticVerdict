@@ -75,7 +75,7 @@ Extensive research covering:
 - BuildKit GitHub repository
 - pnpm store best practices
 - Next.js/Vercel deployment patterns
-- Major tech company engineering blogs
+- Major tech tenant engineering blogs
 
 ### 3. Implementation record (post–phase-00)
 

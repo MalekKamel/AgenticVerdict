@@ -77,7 +77,7 @@
 - **`beforeLoad` / server-aware auth** for protected routes once session cookies or SSR session reads are defined (current guard is client/session-query SSOT with mock API).
 - **Raise `apps/frontend` coverage** with explicit globs/thresholds (Phase 3 **P3-6**) — re-include `apps/frontend` in coverage or add a package-local threshold.
 - **Storybook / Ladle** (plan open question): still optional per product; not started here.
-- **CompanyConfig-driven MFA** when backend exposes tenant MFA policy (beyond env flag).
+- **TenantConfig-driven MFA** when backend exposes tenant MFA policy (beyond env flag).
 
 ---
 

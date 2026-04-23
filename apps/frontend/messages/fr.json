@@ -69,8 +69,17 @@
     "invalidEmail": "Veuillez entrer une adresse email valide",
     "invalidPassword": "Le mot de passe doit contenir au moins 8 caractères",
     "requiredField": "Ce champ est obligatoire",
-    "minLength": "Doit contenir au moins {{min}} caractères",
-    "maxLength": "Ne doit pas dépasser {{max}} caractères"
+    "minLength": "Doit contenir au moins {min} caractères",
+    "maxLength": "Ne doit pas dépasser {max} caractères"
+  },
+  "Validation": {
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Veuillez entrer une adresse email valide",
+    "successTitle": "Merci pour votre intérêt",
+    "successBody": "Nous avons bien reçu vos informations et vous contacterons bientôt.",
+    "nameLabel": "Nom",
+    "emailLabel": "Email",
+    "submitDemo": "Demander une démo"
   },
   "errors": {
     "notFound": "Page non trouvée",
@@ -105,7 +114,7 @@
       "notImplemented": "Cette fonctionnalité n'est pas encore implémentée."
     },
     "rateLimit": {
-      "exceeded": "Vous avez dépassé la limite de taux. Veuillez réessayer dans {{retryAfter}} secondes.",
+      "exceeded": "Vous avez dépassé la limite de taux. Veuillez réessayer dans {retryAfter} secondes.",
       "tooManyRequests": "Trop de demandes. Veuillez ralentir et réessayer plus tard."
     },
     "common": {
@@ -157,7 +166,7 @@
     "breadcrumbHome": "Accueil",
     "title": "Bienvenue",
     "subtitle": "Intelligence multi-domaines pour votre organisation.",
-    "companyLabel": "Entreprise",
+    "tenantLabel": "Entreprise",
     "languageLabel": "Langue",
     "regionLabel": "Région",
     "previewTitle": "Aperçu",
@@ -176,6 +185,31 @@
     "login": {
       "title": "Connexion",
       "description": "Bon retour ! Veuillez vous connecter à votre compte.",
+      "session": {
+        "expiredTitle": "Session expirée",
+        "expiredMessage": "Veuillez vous reconnecter pour continuer en toute sécurité."
+      },
+      "oauth": {
+        "or": "ou continuer avec",
+        "continueWith": "Continuer avec {provider}",
+        "redirecting": "Redirection vers le fournisseur d’authentification unique...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "Impossible de lancer automatiquement l’authentification unique. Utilisez une option ci-dessous.",
+        "unavailable": "L’authentification unique est temporairement indisponible. Connectez-vous avec votre email et mot de passe."
+      },
+      "rateLimit": {
+        "title": "Trop de tentatives",
+        "message": "Trop de tentatives de connexion. Veuillez réessayer dans un instant.",
+        "retryAfter": "Trop de tentatives de connexion. Veuillez réessayer dans {seconds} secondes."
+      },
+      "lockout": {
+        "title": "Compte temporairement verrouillé",
+        "message": "Votre compte est temporairement verrouillé après plusieurs tentatives de connexion échouées."
+      },
       "successMessage": "Bon retour ! Redirection vers le tableau de bord...",
       "fields": {
         "email": "Email",
@@ -244,7 +278,9 @@
         "createAccount": "Créer un compte",
         "creatingAccount": "Création du compte...",
         "hasAccount": "Vous avez déjà un compte ?",
-        "signIn": "Se connecter"
+        "signIn": "Se connecter",
+        "next": "Next",
+        "back": "Back"
       },
       "errors": {
         "apiError": "Échec de l'inscription",
@@ -281,7 +317,53 @@
           "tooLong": "Le nom de famille ne doit pas dépasser 50 caractères"
         }
       },
-      "success": "Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte."
+      "success": "Compte créé avec succès. Veuillez vérifier votre email pour activer votre compte.",
+      "steps": {
+        "progress": "Step {current} of {total}",
+        "accountType": {
+          "title": "Choose account type",
+          "label": "Account type",
+          "options": {
+            "business": "Business account",
+            "individual": "Individual account"
+          },
+          "errors": {
+            "required": "Please choose an account type"
+          }
+        },
+        "tenant": {
+          "title": "Tenant information",
+          "fields": {
+            "tenantName": {
+              "label": "Tenant name"
+            },
+            "tenantSize": {
+              "label": "Tenant size",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "Tenant website (optional)"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "Tenant name is required",
+            "tenantNameTooLong": "Tenant name is too long",
+            "tenantSizeRequired": "Tenant size is required",
+            "tenantWebsiteInvalid": "Please enter a valid website URL"
+          }
+        },
+        "confirmation": {
+          "title": "Registration complete",
+          "description": "Your account has been created. Verify your email to continue.",
+          "checkEmail": "We sent a 6-digit code to {email}.",
+          "cta": "Verify email"
+        }
+      }
     },
     "forgotPassword": {
       "title": "Mot de passe oublié",
@@ -295,7 +377,11 @@
       "buttons": {
         "submit": "Envoyer le lien de réinitialisation",
         "submitting": "Envoi en cours...",
+        "retryCountdown": "Réessayer dans {seconds}s",
         "backToLogin": "Retour à la connexion"
+      },
+      "states": {
+        "rateLimited": "Trop de demandes de réinitialisation. Veuillez réessayer dans {seconds} secondes."
       },
       "errors": {
         "email": {
@@ -319,6 +405,9 @@
         "backToLogin": "Retour à la connexion",
         "resetting": "Réinitialisation...",
         "requestNew": "Demander un nouveau"
+      },
+      "states": {
+        "rateLimited": "Trop de tentatives de réinitialisation. Demandez un nouveau lien dans {seconds} secondes."
       },
       "errors": {
         "password": {
@@ -347,7 +436,7 @@
       "buttons": {
         "submit": "Vérifier",
         "resend": "Renvoyer le code",
-        "resendCountdown": "Renvoyer ({{seconds}}s)",
+        "resendCountdown": "Renvoyer ({seconds}s)",
         "signIn": "Se connecter",
         "backToRegister": "Retour à l'inscription"
       },
@@ -373,7 +462,9 @@
         "expiredMessage": "Ce lien de vérification a expiré. Veuillez en demander un nouveau.",
         "invalid": "Lien invalide",
         "invalidMessage": "Ce lien de vérification est invalide. Veuillez vous inscrire à nouveau.",
-        "resendSuccess": "Un nouvel email de vérification a été envoyé. Vérifiez votre boîte de réception."
+        "resendSuccess": "Un nouvel email de vérification a été envoyé. Vérifiez votre boîte de réception.",
+        "attemptsRemaining": "Attempts remaining: {count}",
+        "retryAfter": "Please wait {seconds} seconds before trying again."
       }
     },
     "password": {
@@ -406,10 +497,129 @@
         "commonPattern": "Veuillez choisir un mot de passe plus sécurisé"
       }
     },
+    "errors": {
+      "invalidCredentials": "Email ou mot de passe incorrect. Veuillez réessayer.",
+      "forbidden": "Vous n’avez pas la permission d’effectuer cette action.",
+      "notFound": "La ressource demandée est introuvable.",
+      "conflict": "La demande n’a pas pu aboutir en raison d’un conflit.",
+      "badRequest": "La demande n’a pas pu être traitée. Vérifiez vos informations et réessayez.",
+      "rateLimitExceeded": "Trop de requêtes. Veuillez patienter puis réessayer.",
+      "emailNotVerified": "Veuillez vérifier votre adresse e-mail avant de continuer.",
+      "weakPassword": "Choisissez un mot de passe plus fort conforme aux exigences.",
+      "tokenExpired": "Ce lien ou cette session a expiré. Veuillez recommencer.",
+      "internalError": "Une erreur s’est produite de notre côté. Veuillez réessayer plus tard.",
+      "networkError": "Impossible d’atteindre le serveur. Vérifiez votre connexion et réessayez.",
+      "accountLocked": "Votre compte a été verrouillé en raison de trop nombreuses tentatives.",
+      "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard.",
+      "tenantContextRequired": "Le contexte d’organisation est manquant. Actualisez la page ou ouvrez le lien d’invitation.",
+      "tenantMismatch": "L’organisation de cette requête ne correspond pas. Actualisez ou utilisez le bon lien d’espace de travail."
+    },
     "layout": {
       "mainContent": "Formulaire d'authentification",
       "footerNav": "Autres options de connexion",
-      "poweredBy": "Propulsé par AgenticVerdict"
+      "poweredBy": "Propulsé par AgenticVerdict",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "Aller à l’accueil {brand}",
+      "legalNavLabel": "Mentions légales et aide",
+      "terms": "Conditions d’utilisation",
+      "privacy": "Politique de confidentialité",
+      "help": "Aide",
+      "backToSignIn": "Retour à la connexion",
+      "forgotPasswordShort": "Mot de passe oublié ?"
+    },
+    "seo": {
+      "login": {
+        "title": "Connexion | {brand}",
+        "description": "Connectez-vous à votre compte {brand} pour accéder à votre espace de travail, aux données de flotte et aux analyses."
+      },
+      "register": {
+        "title": "Créer un compte | {brand}",
+        "description": "Créez un compte {brand} pour connecter des sources de données et explorer les analyses de flotte et d’activité."
+      },
+      "forgotPassword": {
+        "title": "Mot de passe oublié | {brand}",
+        "description": "Demandez un lien sécurisé pour réinitialiser le mot de passe de votre compte {brand}."
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe | {brand}",
+        "description": "Choisissez un nouveau mot de passe pour retrouver l’accès à votre compte {brand}."
+      },
+      "verifyEmail": {
+        "title": "Vérifier l’e-mail | {brand}",
+        "description": "Confirmez votre adresse e-mail pour terminer la configuration de votre compte {brand}."
+      },
+      "terms": {
+        "title": "Conditions d’utilisation | {brand}",
+        "description": "Conditions d’utilisation de la plateforme {brand} et des services associés."
+      },
+      "privacy": {
+        "title": "Politique de confidentialité | {brand}",
+        "description": "Comment {brand} collecte, utilise et protège les données personnelles et liées à la flotte."
+      },
+      "help": {
+        "title": "Aide et support | {brand}",
+        "description": "Obtenez de l’aide pour vous connecter, vérifier votre e-mail ou contacter le support {brand}."
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "Conditions d’utilisation",
+        "lastUpdated": "Dernière mise à jour : avril 2026. Page provisoire ; remplacez-la par des conditions validées juridiquement avant la mise en production.",
+        "section1Title": "Accord",
+        "section1Body": "En accédant ou en utilisant les services {brand}, vous acceptez ces conditions et les lois applicables. Si vous n’acceptez pas, n’utilisez pas le service.",
+        "section2Title": "Comptes et sécurité",
+        "section2Body": "Vous êtes responsable de la protection de vos identifiants et de l’activité sur votre compte. Prévenez le support en cas d’accès non autorisé suspecté.",
+        "section3Title": "Modifications",
+        "section3Body": "Nous pouvons mettre à jour ces conditions. Les changements importants seront communiqués dans le produit ou par e-mail le cas échéant.",
+        "footerNote": "Des questions sur ces conditions ?",
+        "backToSignIn": "Retour à la connexion"
+      },
+      "privacy": {
+        "title": "Politique de confidentialité",
+        "lastUpdated": "Dernière mise à jour : avril 2026. Page provisoire ; remplacez-la par une politique validée juridiquement avant la mise en production.",
+        "section1Title": "Informations traitées",
+        "section1Body": "Nous traitons les informations que vous fournissez (compte, flotte, etc.) pour exploiter, sécuriser et améliorer la plateforme. Les catégories figureront dans la version finale.",
+        "section2Title": "Conservation et sécurité",
+        "section2Body": "Nous appliquons des mesures administratives, techniques et organisationnelles pour protéger les données personnelles. La conservation dépend de votre configuration, des obligations légales et des besoins opérationnels.",
+        "section3Title": "Vos choix",
+        "section3Body": "Selon votre région, vous pouvez disposer de droits d’accès, de rectification, d’effacement ou d’export. Contactez le support pour les exercer.",
+        "footerNote": "Des questions sur la confidentialité ?",
+        "backToSignIn": "Retour à la connexion"
+      }
+    },
+    "help": {
+      "title": "Aide et support",
+      "description": "Besoin d’aide pour vous connecter, vérifier votre e-mail ou réinitialiser votre mot de passe ? Utilisez les options ci-dessous ou contactez notre équipe.",
+      "supportIntro": "E-mail :",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "Les horaires d’assistance et les objectifs de délai de réponse dépendent de votre abonnement et de votre région.",
+      "backToSignIn": "Retour à la connexion"
     }
+  },
+  "admin": {
+    "featureFlags": {
+      "title": "Indicateurs de fonctionnalité",
+      "liveTitle": "Aperçu en direct du tenant",
+      "liveDescription": "Les valeurs par défaut et résolues proviennent de Postgres via admin.featureFlags.list (createFeatureFlagService) pour votre tenant connecté.",
+      "columnKey": "Indicateur",
+      "columnType": "Type",
+      "columnDefault": "Par défaut",
+      "columnResolved": "Résolu"
+    }
+  },
+  "onboarding": {
+    "title": "Bienvenue",
+    "subtitle": "Un court parcours de configuration guidée pour votre espace de travail.",
+    "continue": "Continuer",
+    "finish": "Aller au tableau de bord",
+    "stepWelcomeLabel": "Bienvenue",
+    "stepWelcomeDescription": "Vue d'ensemble",
+    "stepWelcomeBody": "Vous pouvez maintenant connecter des sources de données et explorer les analyses.",
+    "stepPreferencesLabel": "Préférences",
+    "stepPreferencesDescription": "Paramètres régionaux",
+    "stepPreferencesBody": "La langue, la devise et les notifications seront pilotées par TenantConfig une fois connecté.",
+    "stepDoneLabel": "Terminé",
+    "stepDoneDescription": "Tout est prêt",
+    "stepDoneBody": "Vous pourrez revoir ces paramètres à tout moment depuis l'application."
   }
 }

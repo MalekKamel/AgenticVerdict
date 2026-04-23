@@ -12,7 +12,7 @@ import { useTranslations } from "@/i18n/react";
 export default function DashboardPage() {
   const tNav = useTranslations("navigation");
   const tCommon = useTranslations("common");
-  const { user, isLoading } = useRequireAuth();
+  const { user, isLoading } = useRequireAuth({ requireVerifiedEmail: true });
   useAppShellHeader({
     breadcrumbs: [{ label: tNav("dashboard"), href: "/dashboard" }],
   });

@@ -661,9 +661,9 @@ export const arabicSpacingOverrides = {
 
 ## 3. Multi-Tenant Token System
 
-### 3.1 CompanyConfig Integration
+### 3.1 TenantConfig Integration
 
-The design token system integrates with `CompanyConfig` from `/packages/config/src/schemas/` to support multi-tenant theming:
+The design token system integrates with `TenantConfig` from `/packages/config/src/schemas/` to support multi-tenant theming:
 
 ```typescript
 // packages/config/src/schemas/tenant-ui.schema.ts
@@ -720,8 +720,8 @@ export const TenantUITokensSchema = z.object({
 
 export type TenantUITokens = z.infer<typeof TenantUITokensSchema>;
 
-// Integration with CompanyConfig
-export const CompanyConfigSchema = z.object({
+// Integration with TenantConfig
+export const TenantConfigSchema = z.object({
   // ... existing fields
   ui: z
     .object({
@@ -934,7 +934,7 @@ export function Logo({ variant = "light", height = 32, className }: LogoProps) {
   return (
     <img
       src={logoUrl}
-      alt="Company Logo"
+      alt="Tenant Logo"
       height={height}
       width={height * 2} // Assume 2:1 aspect ratio
       className={className}

@@ -106,7 +106,7 @@ agenticverdict/
 │   │       │   ├── index.ts    # Root router
 │   │       │   ├── auth.ts
 │   │       │   ├── connectors.ts
-│   │       │   ├── companies.ts
+│   │       │   ├── tenants.ts
 │   │       │   └── reports.ts
 │   │       ├── middleware/     # tRPC middleware
 │   │       │   ├── tenant.ts   # Tenant context
@@ -144,15 +144,15 @@ agenticverdict/
 
 ### 2.3 Package Exports
 
-| Package              | Key Exports                                   | Purpose               |
-| -------------------- | --------------------------------------------- | --------------------- |
-| **core**             | `Tenant`, `TenantContext`, `CompanyConfig`    | Domain entities       |
-| **config**           | `CompanyConfigSchema`, `ConfigurationService` | Runtime configuration |
-| **database**         | `db`, `dbScoped()`, schema exports            | Data layer access     |
-| **data-connectors**  | `ConnectorAdapter`, platform adapters         | External integrations |
-| **agent-runtime**    | `AgentFactory`, `ChatModel`                   | AI orchestration      |
-| **report-generator** | `generateReport()`, formatters                | Report creation       |
-| **api**              | `t`, `protectedProcedure`, context types      | Shared tRPC utilities |
+| Package              | Key Exports                                  | Purpose               |
+| -------------------- | -------------------------------------------- | --------------------- |
+| **core**             | `Tenant`, `TenantContext`, `TenantConfig`    | Domain entities       |
+| **config**           | `TenantConfigSchema`, `ConfigurationService` | Runtime configuration |
+| **database**         | `db`, `dbScoped()`, schema exports           | Data layer access     |
+| **data-connectors**  | `ConnectorAdapter`, platform adapters        | External integrations |
+| **agent-runtime**    | `AgentFactory`, `ChatModel`                  | AI orchestration      |
+| **report-generator** | `generateReport()`, formatters               | Report creation       |
+| **api**              | `t`, `protectedProcedure`, context types     | Shared tRPC utilities |
 
 ---
 
@@ -325,7 +325,7 @@ async function generateReport() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       json: {
-        companyId: "masafh",
+        tenantId: "masafh",
         dateRange: {
           /* ... */
         },
@@ -349,7 +349,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 export interface TenantContext {
   tenantId: string;
   userId: string;
-  config: CompanyConfig;
+  config: TenantConfig;
 }
 
 const tenantContext = new AsyncLocalStorage<TenantContext>();
@@ -370,10 +370,10 @@ export const protectedProcedure = t.procedure.use(isAuthed);
 **Usage in procedures:**
 
 ```typescript
-export const companiesRouter = t.router({
+export const tenantsRouter = t.router({
   getConfig: protectedProcedure.query(async ({ ctx }) => {
     // ctx.tenantId is guaranteed to exist
-    return await db.companies.findById(ctx.tenantId);
+    return await db.tenants.findById(ctx.tenantId);
   }),
 });
 ```
@@ -384,11 +384,11 @@ export const companiesRouter = t.router({
 | ------------------ | -------------------------------------------------------- | ------------------------------------------ |
 | **Authentication** | `login`, `logout`, `refreshToken`, `me`                  | User authentication and session management |
 | **Connectors**     | `authenticate`, `fetchMetrics`, `testConnection`, `list` | Platform connector management              |
-| **Companies**      | `create`, `updateConfig`, `getConfig`, `list`            | Multi-tenant company management            |
+| **Tenants**        | `create`, `updateConfig`, `getConfig`, `list`            | Multi-tenant management                    |
 | **Reports**        | `generate`, `schedule`, `getHistory`, `cancel`           | Report generation and delivery             |
 | **Insights**       | `generate`, `list`, `getById`, `rate`                    | AI-powered insight generation              |
 | **Dashboards**     | `getData`, `updateLayout`, `list`                        | Dashboard configuration and data           |
-| **Users**          | `create`, `update`, `invite`, `remove`                   | User management within companies           |
+| **Users**          | `create`, `update`, `invite`, `remove`                   | User management within tenants             |
 
 ---
 
@@ -400,7 +400,7 @@ export const companiesRouter = t.router({
 
 ```
 packages/database/src/schema/
-├── companies/           # Multi-tenant company records
+├── tenants/             # Multi-tenant records
 ├── users/              # User accounts and authentication
 ├── insights/           # Insight configurations
 ├── connectors/         # Connector credentials and metadata
@@ -415,12 +415,12 @@ All tenant-owned tables enable RLS with `app.current_tenant_id` session variable
 
 ```sql
 -- Enable RLS
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE platform_credentials ENABLE ROW LEVEL SECURITY;
 
 -- Isolation policy
-CREATE POLICY tenant_isolation_policy ON companies
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL
   USING (id = current_setting('app.current_tenant_id')::uuid);
 ```
@@ -448,7 +448,7 @@ CREATE POLICY tenant_isolation_policy ON companies
    │
    ▼
 4. Worker Processing (apps/worker)
-   │ Load CompanyConfig from database
+   │ Load TenantConfig from database
    │
    ▼
 5. Fetch Connector Data (Parallel)
@@ -532,7 +532,7 @@ trpc.reports.onGenerationUpdate.useSubscription(
 │                                                                   │
 │  tenantContext.run({                                            │
 │    tenantId,                                                     │
-│    config: CompanyConfig,  ← Loaded from database               │
+│    config: TenantConfig,  ← Loaded from database               │
 │    requestId,                                                   │
 │    userId                                                       │
 │  }, callback)                                                   │
@@ -569,7 +569,7 @@ Client Request
 └────────┬────────┘
          │
          ▼
-    Load CompanyConfig
+    Load TenantConfig
          │
          ▼
 ┌─────────────────┐
@@ -866,12 +866,12 @@ async function generateReport(config) {
 
 ## Appendix A: Configuration System
 
-### A.1 CompanyConfig Schema
+### A.1 TenantConfig Schema
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   // Identification
-  companyId: string;
+  tenantId: string;
   name: string;
 
   // Localization

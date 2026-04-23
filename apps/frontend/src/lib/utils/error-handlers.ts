@@ -327,7 +327,21 @@ function getErrorLogLevel(
  * ```
  */
 export function useErrorHandler() {
-  const t = useTranslations();
+  const tErrors = useTranslations("errors");
+  const tAuth = useTranslations("auth");
+  type TranslationParams = Record<string, string | number | boolean | Date | null | undefined>;
+  const t = useCallback(
+    (key: string, params?: TranslationParams) => {
+      if (key.startsWith("auth.")) {
+        return tAuth(key.slice("auth.".length), params);
+      }
+      if (key.startsWith("errors.")) {
+        return tErrors(key.slice("errors.".length), params);
+      }
+      return tErrors(key, params);
+    },
+    [tAuth, tErrors],
+  );
 
   const handleErrorWithContext = useCallback(
     (error: AppError | Error | unknown, context?: Partial<ContextualError["context"]>) => {

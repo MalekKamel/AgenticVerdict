@@ -769,7 +769,7 @@ interface TOCItem {
 
 ### Purpose
 
-Settings page layout with navigation sidebar and form sections. Used for all settings pages (account, company, connectors, notifications).
+Settings page layout with navigation sidebar and form sections. Used for all settings pages (account, tenant, connectors, notifications).
 
 ### Props/Inputs
 
@@ -816,7 +816,7 @@ interface SettingsSection {
   title="Settings"
   sections={[
     { id: 'account', label: 'Account', icon: 'user', href: '/settings/account' },
-    { id: 'company', label: 'Company', icon: 'building', href: '/settings/company' },
+    { id: 'tenant', label: 'Tenant', icon: 'building', href: '/settings/tenant' },
     { id: 'connectors', label: 'Connectors', icon: 'plug', href: '/settings/connectors' },
   ]}
   activeSection="account"
@@ -836,7 +836,7 @@ interface SettingsSection {
 │ (sidebar)          │                   │                    │
 │                    │   [Section Title] │                    │
 │ - Account          │                   │                    │
-│ - Company          │   [Form Fields]   │                    │
+│ - Tenant          │   [Form Fields]   │                    │
 │ - Connectors       │                   │                    │
 │ - Notifications    │   [Actions]       │                    │
 │                    │                   │                    │
@@ -876,12 +876,12 @@ interface SettingsSection {
 </SettingsLayout>
 
 <SettingsLayout
-  title="Company Settings"
+  title="Tenant Settings"
   sections={settingsSections}
-  activeSection="company"
+  activeSection="tenant"
   actions={<Button onClick={saveSettings}>Save Changes</Button>}
 >
-  <CompanySettingsForm />
+  <TenantSettingsForm />
 </SettingsLayout>
 
 // ❌ Invalid compositions
@@ -954,7 +954,7 @@ interface SettingsSection {
 
 - `common.settings.title`: Settings
 - `common.settings.account`: Account
-- `common.settings.company`: Company
+- `common.settings.tenant`: Tenant
 - `common.settings.connectors`: Connectors
 - `common.settings.notifications`: Notifications
 - `common.settings.save`: Save Changes
@@ -970,7 +970,7 @@ interface SettingsSection {
   title="Account Settings"
   sections={[
     { id: 'account', label: 'Account', icon: 'user', href: '/settings/account' },
-    { id: 'company', label: 'Company', icon: 'building', href: '/settings/company' },
+    { id: 'tenant', label: 'Tenant', icon: 'building', href: '/settings/tenant' },
     { id: 'connectors', label: 'Connectors', icon: 'plug', href: '/settings/connectors' },
   ]}
   activeSection="account"
@@ -978,18 +978,18 @@ interface SettingsSection {
   <AccountSettingsForm />
 </SettingsLayout>
 
-// Company settings with actions
+// Tenant settings with actions
 <SettingsLayout
-  title="Company Settings"
+  title="Tenant Settings"
   sections={settingsSections}
-  activeSection="company"
+  activeSection="tenant"
   actions={
     <Button loading={saving} onClick={saveSettings}>
       {saving ? 'Saving...' : 'Save Changes'}
     </Button>
   }
 >
-  <CompanySettingsForm />
+  <TenantSettingsForm />
 </SettingsLayout>
 
 // With error/success messages
@@ -1029,7 +1029,7 @@ interface SettingsSection {
 
 - **Settings**: All settings pages
 - **Account**: User account settings
-- **Company**: Company profile settings
+- **Tenant**: Tenant profile settings
 - **Connectors**: Connector configuration
 
 ---

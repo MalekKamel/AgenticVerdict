@@ -5,13 +5,12 @@ import {
   loadLlmEnvFromProcess,
   runAgentJob,
   runMarketingAgentPipeline,
-  type CompanyContextToolDeps,
+  type TenantContextToolDeps,
   type MarketingPipelineState,
   type PlatformFetchToolDeps,
 } from "@agenticverdict/agent-runtime";
-import { ConfigManager, type CompanyConfig } from "@agenticverdict/config";
+import { buildTenantContextForJob } from "@agenticverdict/core";
 import { parseNormalizedConnectorSnapshot } from "@agenticverdict/data-connectors";
-import { createTestCompanyConfig, createTestTenantContext } from "@agenticverdict/testing";
 import {
   generatedInsightSchema,
   type DataSourceProvenance,
@@ -54,6 +53,7 @@ import {
   type WorkflowJobErrorCode,
 } from "./job-types";
 import { createJobLogger, getWorkerRootLogger } from "./logger";
+import { loadTenantConfigForJob, runWorkerJobWithTenantContext } from "../tenant/worker-tenant-als";
 import { enqueueScheduledReportGeneration } from "./report-schedule-enqueue";
 import { runProductionFlowScenario } from "./workflow-trigger-production-flow";
 import {
@@ -69,27 +69,6 @@ const defaultJobOptions: JobsOptions = {
   removeOnComplete: 1000,
   removeOnFail: 5000,
 };
-
-const workflowTenantConfigManager = new ConfigManager();
-
-async function loadCompanyConfigForWorkflowTenant(tenantId: string): Promise<CompanyConfig> {
-  try {
-    return await workflowTenantConfigManager.loadCompanyConfig(tenantId);
-  } catch {
-    return createTestCompanyConfig({
-      companyId: tenantId,
-      marketing: {
-        channels: [
-          { platform: "meta", enabled: true },
-          { platform: "ga4", enabled: true },
-          { platform: "gsc", enabled: true },
-          { platform: "gbp", enabled: true },
-          { platform: "tiktok", enabled: true },
-        ],
-      },
-    });
-  }
-}
 
 function periodFromWorkflowJobConfig(
   config: WorkflowTriggerJobData["config"],
@@ -206,11 +185,11 @@ async function runPipelineWorkflow(
   }
   const llmEnv = loadLlmEnvFromProcess();
   const factory = new AgentFactory({ llmEnv });
-  const companyConfig = await loadCompanyConfigForWorkflowTenant(validatedData.tenantId);
-  const tenant = createTestTenantContext({
+  const tenantConfig = await loadTenantConfigForJob(validatedData.tenantId);
+  const tenant = buildTenantContextForJob({
     tenantId: validatedData.tenantId,
-    requestId: validatedData.requestId,
-    companyConfig,
+    requestId: validatedData.requestId ?? `workflow-${validatedData.workflowId}`,
+    tenantConfig,
   });
   const enabledPlatforms = getEnabledTenantConnectors(tenant);
   const effectivePlatforms =
@@ -261,7 +240,7 @@ async function runPipelineWorkflow(
     mockScenario: validatedData.config.mockData?.scenario,
     mockSeed: validatedData.config.mockData?.seed,
   });
-  const companyContextDeps: CompanyContextToolDeps = {};
+  const tenantContextDeps: TenantContextToolDeps = {};
   const workflowId = randomUUID();
   // Enable production models when LLM credentials are available
   const useProductionModels = Boolean(
@@ -274,12 +253,12 @@ async function runPipelineWorkflow(
       workflowId,
       goal: `Workflow ${validatedData.workflowId} for tenant ${validatedData.tenantId}`,
       specialization: {
-        companyName: tenant.config.companyName,
+        tenantName: tenant.config.tenantName,
         promptVars: {
           platforms: effectivePlatforms.map((platform) => platform.toUpperCase()).join(", "),
         },
         platformDeps,
-        companyContextDeps,
+        tenantContextDeps,
       },
       tolerateVerdictParseFailure: true,
       useProductionModels,
@@ -715,12 +694,18 @@ export function registerReportWorkers(
     async (job) => {
       recordQueueJobWaitSeconds(REPORT_GENERATION_QUEUE, job);
       const log = createJobLogger(REPORT_GENERATION_QUEUE, String(job.id));
+      const data = job.data;
       log.info({
         event: "job_start",
-        tenantId: job.data.tenantId,
-        reportId: job.data.reportId,
+        tenantId: data.tenantId,
+        reportId: data.reportId,
       });
-      await runGeneration(job.data);
+      const requestId = `job:${REPORT_GENERATION_QUEUE}:${String(job.id)}:${randomUUID()}`;
+      await runWorkerJobWithTenantContext({
+        tenantId: data.tenantId,
+        requestId,
+        work: () => runGeneration(data),
+      });
     },
     { connection, concurrency: options.generationConcurrency ?? 2 },
   );
@@ -731,12 +716,18 @@ export function registerReportWorkers(
     async (job) => {
       recordQueueJobWaitSeconds(REPORT_DELIVERY_QUEUE, job);
       const log = createJobLogger(REPORT_DELIVERY_QUEUE, String(job.id));
+      const data = job.data;
       log.info({
         event: "job_start",
-        tenantId: job.data.tenantId,
-        reportId: job.data.reportId,
+        tenantId: data.tenantId,
+        reportId: data.reportId,
       });
-      await runDelivery(job.data);
+      const requestId = `job:${REPORT_DELIVERY_QUEUE}:${String(job.id)}:${randomUUID()}`;
+      await runWorkerJobWithTenantContext({
+        tenantId: data.tenantId,
+        requestId,
+        work: () => runDelivery(data),
+      });
     },
     { connection, concurrency: options.deliveryConcurrency ?? 4 },
   );
@@ -747,8 +738,14 @@ export function registerReportWorkers(
     async (job) => {
       recordQueueJobWaitSeconds(REPORT_SCHEDULE_QUEUE, job);
       const log = createJobLogger(REPORT_SCHEDULE_QUEUE, String(job.id));
-      log.info({ event: "job_start", tenantId: job.data.tenantId });
-      await runSchedule(job.data);
+      const data = job.data;
+      log.info({ event: "job_start", tenantId: data.tenantId });
+      const requestId = `job:${REPORT_SCHEDULE_QUEUE}:${String(job.id)}:${randomUUID()}`;
+      await runWorkerJobWithTenantContext({
+        tenantId: data.tenantId,
+        requestId,
+        work: () => runSchedule(data),
+      });
     },
     { connection, concurrency: 1 },
   );
@@ -759,12 +756,19 @@ export function registerReportWorkers(
     async (job) => {
       recordQueueJobWaitSeconds(WORKFLOW_TRIGGER_QUEUE, job);
       const log = createJobLogger(WORKFLOW_TRIGGER_QUEUE, String(job.id));
+      const data = job.data;
       log.info({
         event: "job_start",
-        tenantId: job.data.tenantId,
-        workflowId: job.data.workflowId,
+        tenantId: data.tenantId,
+        workflowId: data.workflowId,
       });
-      return runWorkflowTrigger(job.data);
+      const requestId =
+        data.requestId ?? `job:${WORKFLOW_TRIGGER_QUEUE}:${String(job.id)}:${randomUUID()}`;
+      return runWorkerJobWithTenantContext({
+        tenantId: data.tenantId,
+        requestId,
+        work: () => runWorkflowTrigger(data),
+      });
     },
     { connection, concurrency: options.workflowTriggerConcurrency ?? 2 },
   );

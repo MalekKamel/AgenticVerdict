@@ -1,16 +1,16 @@
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 
 import { TenantSecurityError } from "./tenant-security-error";
+import { createTenantContext, type TenantContext } from "./tenant-context";
 import {
   resolveTenantIdentity,
   type TenantResolutionOptions,
   type TenantResolutionSources,
 } from "./tenant-resolution";
-import type { TenantContext } from "./tenant-context";
 
 /** Avoid importing `ConfigManager` from `@agenticverdict/config` (prevents future circular imports). */
-export interface CompanyConfigLoader {
-  loadCompanyConfig(companyId: string): Promise<CompanyConfig>;
+export interface TenantConfigLoader {
+  loadTenantConfig(tenantId: string): Promise<TenantConfig>;
 }
 
 export interface ResolveTenantContextOptions extends TenantResolutionOptions {
@@ -21,10 +21,10 @@ export interface ResolveTenantContextOptions extends TenantResolutionOptions {
 }
 
 /**
- * Resolves tenant UUID, loads `CompanyConfig`, optionally checks `companies.active`, and builds `TenantContext`.
+ * Resolves tenant UUID, loads `TenantConfig`, optionally checks `tenants.active`, and builds `TenantContext`.
  */
 export async function resolveTenantContextFromHttp(
-  loader: CompanyConfigLoader,
+  loader: TenantConfigLoader,
   sources: TenantResolutionSources,
   requestId: string,
   options: ResolveTenantContextOptions = {},
@@ -34,9 +34,9 @@ export async function resolveTenantContextFromHttp(
     return idResult;
   }
 
-  let config: CompanyConfig;
+  let config: TenantConfig;
   try {
-    config = await loader.loadCompanyConfig(idResult.tenantId);
+    config = await loader.loadTenantConfig(idResult.tenantId);
   } catch {
     return {
       ok: false,
@@ -48,12 +48,12 @@ export async function resolveTenantContextFromHttp(
     };
   }
 
-  if (config.companyId !== idResult.tenantId) {
+  if (config.tenantId !== idResult.tenantId) {
     return {
       ok: false,
       error: new TenantSecurityError(
         "TENANT_MISMATCH",
-        "Configuration companyId does not match resolved tenant",
+        "Configuration tenantId does not match resolved tenant",
         403,
       ),
     };
@@ -70,11 +70,11 @@ export async function resolveTenantContextFromHttp(
     }
   }
 
-  const context: TenantContext = {
+  const context = createTenantContext({
     tenantId: idResult.tenantId,
-    config,
     requestId,
+    config,
     userId: options.userId,
-  };
+  });
   return { ok: true, context };
 }

@@ -39,13 +39,13 @@ describe("mergePhase2IntoReportModel", () => {
     });
 
     const merged = mergePhase2IntoReportModel(
-      { title: "Custom", companyName: "Acme" },
+      { title: "Custom", tenantName: "Acme" },
       { verdict, insights: [insight] },
       { maxInsights: 5 },
     );
 
     expect(merged.title).toBe("Custom");
-    expect(merged.companyName).toBe("Acme");
+    expect(merged.tenantName).toBe("Acme");
     expect(merged.verdictScorecard?.score).toBe(verdict.score);
     expect(merged.verdictRecommendations?.length).toBeGreaterThan(0);
     expect(merged.insightHighlights?.some((h) => h.title === "Test insight")).toBe(true);

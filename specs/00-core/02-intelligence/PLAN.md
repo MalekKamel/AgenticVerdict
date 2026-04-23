@@ -48,7 +48,7 @@ packages/agent-runtime/
 │   │   ├── platform-fetch-tools.ts  # Meta, GA4, GSC, GBP, TikTok
 │   │   ├── database-query-tools.ts  # Historical metrics queries
 │   │   ├── analysis-tools.ts        # Trends, statistics, calculations
-│   │   ├── company-context-tools.ts # Tenant context injection
+│   │   ├── tenant-context-tools.ts # Tenant context injection
 │   │   ├── b2b-kpi-tools.ts         # B2B funnel KPIs (CPQL, lead quality)
 │   │   ├── report-prep-tools.ts     # Report generation helpers
 │   │   └── phase4-tool-registry.ts  # Tool registry with auto-selection
@@ -64,7 +64,7 @@ packages/agent-runtime/
 │   │   ├── library.ts               # Production prompt definitions
 │   │   ├── registry.ts              # Template versioning and resolution
 │   │   ├── render.ts                # Template rendering with context injection
-│   │   ├── company-injection.ts     # Company context builder
+│   │   ├── tenant-injection.ts     # Tenant context builder
 │   │   └── ab-testing.ts            # A/B testing framework
 │   ├── provenance/                  # Provenance tracking
 │   │   └── tracker.ts               # Audit trail for transformations
@@ -81,7 +81,7 @@ packages/agent-runtime/
 
 ```
 agent-runtime
-├── @agenticverdict/config (CompanyConfig, B2bKpiProfile)
+├── @agenticverdict/config (TenantConfig, B2bKpiProfile)
 ├── @agenticverdict/core (TenantContext, requireTenantContext)
 ├── @agenticverdict/database (Drizzle, marketing_metrics table)
 ├── @agenticverdict/data-connectors (ConnectorAdapter, NormalizedConnectorSnapshot)
@@ -194,7 +194,7 @@ Goal → Analysis Agent (33%) → Insights Agent (67%) → Verdict Agent (100%) 
 - 12 production-ready tools organized by category:
   - **Platform tools:** `fetch_meta_metrics`, `fetch_ga4_metrics`, `fetch_gsc_metrics`, `fetch_gbp_metrics`, `fetch_tiktok_metrics`
   - **Analysis tools:** `calculate_metrics`, `analyze_trends`, `statistical_analysis`
-  - **Context tools:** `get_company_profile`, `get_business_rules`, `get_config`
+  - **Context tools:** `get_tenant_profile`, `get_business_rules`, `get_config`
   - **B2B tools:** `compute_b2b_kpis_from_snapshots`
 - `PlatformFetchToolDeps` interface for adapter dependency injection
 - `phase4-tool-registry.ts` defines auto-tools per agent role
@@ -203,7 +203,7 @@ Goal → Analysis Agent (33%) → Insights Agent (67%) → Verdict Agent (100%) 
 ```typescript
 const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string[]> = {
   analysis: [
-    "get_company_profile",
+    "get_tenant_profile",
     "get_business_rules",
     "get_config",
     "fetch_meta_metrics",
@@ -215,7 +215,7 @@ const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string
     "compute_b2b_kpis_from_snapshots",
   ],
   insights: ["get_config", "analyze_trends", "statistical_analysis"],
-  verdict: ["get_company_profile", "get_business_rules", "generate_summary", "format_report"],
+  verdict: ["get_tenant_profile", "get_business_rules", "generate_summary", "format_report"],
 };
 ```
 
@@ -224,13 +224,13 @@ const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string
 **Status:** ✅ IMPLEMENTED
 
 **Rationale:**
-- Multi-tenancy requires all customization flow through `CompanyConfig`
+- Multi-tenancy requires all customization flow through `TenantConfig`
 - B2B KPIs vary significantly across tenants (fleet size thresholds, CPQL targets)
 - Hard-coded tenant logic violates architectural principles
 - Configuration-driven approach enables tenant self-service
 
 **Implementation:**
-- `CompanyConfig.marketing.b2bKpiProfile` defines tenant-specific KPI settings:
+- `TenantConfig.marketing.b2bKpiProfile` defines tenant-specific KPI settings:
   - `enabled`: boolean
   - `minFleetVehicles`: number (default: 10)
   - `targetCpql`: number (cost per qualified lead target)
@@ -284,7 +284,7 @@ const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string
 - Prompt engineering requires iterative optimization
 - Version control enables rollback and comparison
 - A/B testing provides data-driven prompt selection
-- Template system supports company context injection
+- Template system supports tenant context injection
 
 **Implementation:**
 - `PromptTemplateRecord` with semver versioning
@@ -300,8 +300,8 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
     id: "analysis.cross_platform_overview",
     version: "1.0.0",
     type: "analysis",
-    template: "Analyze {platforms} performance for {companyName}...",
-    variables: ["companyName", "platforms", "currency", "dateRange"],
+    template: "Analyze {platforms} performance for {tenantName}...",
+    variables: ["tenantName", "platforms", "currency", "dateRange"],
     estimatedTokens: 800,
   },
   {
@@ -317,7 +317,7 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
     version: "1.0.0",
     type: "verdict",
     template: "Generate media verdict with budget allocation recommendations...",
-    variables: ["companyName", "platforms", "horizon"],
+    variables: ["tenantName", "platforms", "horizon"],
     estimatedTokens: 1200,
   },
 ];
@@ -462,9 +462,9 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
    - All agent operations scoped to tenant
 
 2. **Configuration Management:**
-   - Reads `CompanyConfig.marketing.b2bKpiProfile` for B2B KPIs
-   - Reads `CompanyConfig.localization.currency` for prompt rendering
-   - Reads `CompanyConfig.marketing.channels` for platform filtering
+   - Reads `TenantConfig.marketing.b2bKpiProfile` for B2B KPIs
+   - Reads `TenantConfig.localization.currency` for prompt rendering
+   - Reads `TenantConfig.marketing.channels` for platform filtering
 
 3. **Database Abstraction:**
    - Uses Drizzle ORM from `@agenticverdict/database`
@@ -566,7 +566,7 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
 │ - Need Meta data → fetch_meta_metrics                      │
 │ - Need GA4 data → fetch_ga4_metrics                        │
 │ - Need calculations → calculate_metrics                    │
-│ - Need company context → get_company_profile               │
+│ - Need tenant context → get_tenant_profile               │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -574,7 +574,7 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
 │ Agent executes tools in parallel (when possible)            │
 │ fetch_meta_metrics ─┐                                       │
 │ fetch_ga4_metrics ───┼──> Parallel execution                │
-│ get_company_profile ─┘                                       │
+│ get_tenant_profile ─┘                                       │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -582,7 +582,7 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
 │ Tools return results to agent                               │
 │ - Meta snapshot: { spend: 5000, impressions: 100000, ... } │
 │ - GA4 snapshot: { sessions: 5000, users: 3000, ... }       │
-│ - Company profile: { industry: "fleet tracking", ... }     │
+│ - Tenant profile: { industry: "fleet tracking", ... }     │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -590,7 +590,7 @@ const PRODUCTION_PROMPT_TEMPLATES: PromptTemplateRecord[] = [
 │ Agent synthesizes tool results into answer                  │
 │ "Meta Ads delivered 100k impressions with 2% CTR...        │
 │  GA4 recorded 5k sessions with 60% engagement rate...      │
-│  Compared to company benchmarks, Meta is performing..."    │
+│  Compared to tenant benchmarks, Meta is performing..."    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -743,7 +743,7 @@ buildLlmInvocationCacheKey({
    - Verdict JSON schema validation
 
 2. **Sanitization:**
-   - Company context variables sanitized before prompt injection
+   - Tenant context variables sanitized before prompt injection
    - Platform data normalized before agent consumption
    - PII filtered from agent outputs
 

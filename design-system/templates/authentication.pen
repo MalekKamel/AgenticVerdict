@@ -376,7 +376,7 @@
                           "content": "Email"
                         },
                         "6Cxeq": {
-                          "content": "name@company.com"
+                          "content": "name@tenant.com"
                         },
                         "JZulJ": {
                           "enabled": false
@@ -535,7 +535,7 @@
                           "content": "Work email"
                         },
                         "6Cxeq": {
-                          "content": "name@company.com"
+                          "content": "name@tenant.com"
                         },
                         "JZulJ": {
                           "enabled": false
@@ -712,7 +712,7 @@
                           "content": "Email"
                         },
                         "6Cxeq": {
-                          "content": "name@company.com"
+                          "content": "name@tenant.com"
                         },
                         "JZulJ": {
                           "enabled": false

@@ -10,21 +10,20 @@ import {
 } from "@tanstack/react-router";
 import { forwardRef, useMemo, type ComponentProps } from "react";
 
-import type { AppLocale } from "./routing";
-import { routing } from "./routing";
+import { defaultLocale, isSupportedLocale, supportedLocales, type AppLocale } from "./locales";
 
 function useLocaleParam(): AppLocale {
   const params = useParams({ strict: false }) as { locale?: string };
   const locale = params.locale;
-  if (locale && (routing.locales as readonly string[]).includes(locale)) {
+  if (locale && isSupportedLocale(locale)) {
     return locale as AppLocale;
   }
-  return routing.defaultLocale;
+  return defaultLocale;
 }
 
 function withLocalePrefix(locale: AppLocale, path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  const hasLocalePrefix = (routing.locales as readonly string[]).some(
+  const hasLocalePrefix = (supportedLocales as readonly string[]).some(
     (supportedLocale) =>
       normalized === `/${supportedLocale}` || normalized.startsWith(`/${supportedLocale}/`),
   );

@@ -1,19 +1,21 @@
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { useTranslations } from "@/i18n/react";
+import { Route as ForgotPasswordRoute } from "./forgot-password";
 
 export default function ForgotPasswordPage() {
-  const t = useTranslations("auth.forgotPassword");
+  const t = useTranslations("auth");
+  const search = ForgotPasswordRoute.useSearch();
 
   return (
     <AuthLayout
-      title={t("title")}
-      description={t("description")}
+      title={t("forgotPassword.title")}
+      description={t("forgotPassword.description")}
       navLinks={{
-        loginLabel: t("buttons.backToLogin"),
+        loginLabel: t("forgotPassword.buttons.backToLogin"),
       }}
     >
-      <ForgotPasswordForm />
+      <ForgotPasswordForm defaultEmail={search.email} />
     </AuthLayout>
   );
 }

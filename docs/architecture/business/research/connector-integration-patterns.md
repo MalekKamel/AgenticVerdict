@@ -88,7 +88,7 @@ Platform-Specific Implementations
 **Four-Level Strategy:**
 
 1. **Per-Connector Limits** — Platform-specific rate limits (e.g., Meta: 200 calls/hour)
-2. **Per-Tenant Limits** — Fair usage across all connectors per company
+2. **Per-Tenant Limits** — Fair usage across all connectors per tenant
 3. **Global Limits** — Platform-wide protection
 4. **Circuit Breakers** — Automatic pause on repeated failures
 

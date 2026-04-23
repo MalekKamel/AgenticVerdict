@@ -16,7 +16,7 @@ import {
   type MarketingMetricsRow,
   type MarketingMetricsStore,
 } from "./marketing-metrics-store";
-import { TenantScopedTtlCache } from "./company-context-tools";
+import { TenantScopedTtlCache } from "./tenant-context-tools";
 import { createPhase4ToolRegistry, registerPhase4AgentTools } from "./phase4-tool-registry";
 import { fetchNormalizedSnapshotsForPlatformsParallel } from "./platform-fetch-tools";
 
@@ -24,8 +24,8 @@ const TENANT: TenantContext = {
   tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   requestId: "req-test",
   config: {
-    companyId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-    companyName: "Fixture Co",
+    tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    tenantName: "Fixture Co",
     localization: {
       language: "en",
       region: "SA",
@@ -112,7 +112,7 @@ describe("Phase 4 agent tools", () => {
     expect(registry.get("query_historical_metrics")).toBeDefined();
     expect(registry.get("generate_summary")).toBeDefined();
     expect(registry.get("calculate_metrics")).toBeDefined();
-    expect(registry.get("get_company_profile")).toBeDefined();
+    expect(registry.get("get_tenant_profile")).toBeDefined();
     expect(registry.get("compute_b2b_kpis_from_snapshots")).toBeDefined();
   });
 
@@ -469,7 +469,7 @@ describe("Phase 4 agent tools", () => {
     expect(out).toEqual({ method: "min_max", normalized: [0, 0, 0] });
   });
 
-  it("get_company_profile rejects tenant id mismatch", async () => {
+  it("get_tenant_profile rejects tenant id mismatch", async () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
@@ -479,13 +479,13 @@ describe("Phase 4 agent tools", () => {
     await runWithTenantContext(TENANT, async () => {
       await expect(
         registry
-          .get("get_company_profile")!
+          .get("get_tenant_profile")!
           .execute({}, { ...INVOCATION, tenantId: "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb" }),
       ).rejects.toMatchObject({ code: "execution_failed" });
     });
   });
 
-  it("company context tools require matching tenant context", async () => {
+  it("tenant context tools require matching tenant context", async () => {
     const cache = new TenantScopedTtlCache<unknown>({
       ttlMs: 60_000,
       maxEntries: 10,
@@ -495,12 +495,12 @@ describe("Phase 4 agent tools", () => {
       platform: {
         getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
-      companyContext: { configCache: cache },
+      tenantContext: { configCache: cache },
     });
     await runWithTenantContext(TENANT, async () => {
-      const profile = await registry.get("get_company_profile")!.execute({}, INVOCATION);
+      const profile = await registry.get("get_tenant_profile")!.execute({}, INVOCATION);
       expect(profile).toMatchObject({
-        companyName: "Fixture Co",
+        tenantName: "Fixture Co",
         localization: { currency: "SAR" },
       });
 
@@ -514,18 +514,18 @@ describe("Phase 4 agent tools", () => {
     });
   });
 
-  it("get_company_profile fails outside tenant scope", async () => {
+  it("get_tenant_profile fails outside tenant scope", async () => {
     const registry = createPhase4ToolRegistry({
       metricsStore: memoryMetricsStore([]),
       platform: {
         getAdapter: (p) => new MockConnectorAdapter(p, { tenantId: testAdapterTenantId }),
       },
     });
-    await expect(
-      registry.get("get_company_profile")!.execute({}, INVOCATION),
-    ).rejects.toMatchObject({
-      code: "tenant_context_required",
-    });
+    await expect(registry.get("get_tenant_profile")!.execute({}, INVOCATION)).rejects.toMatchObject(
+      {
+        code: "tenant_context_required",
+      },
+    );
   });
 
   it("registerPhase4AgentTools refuses duplicate tool names", () => {

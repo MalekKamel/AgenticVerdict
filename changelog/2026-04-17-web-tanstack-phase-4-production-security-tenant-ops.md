@@ -13,7 +13,7 @@
 - **P4-2 Deployment:** CI already performs a **web production build** (Phase 3). Phase 4 does **not** introduce a separate deploy runtime: **rollback** remains “re-deploy prior successful **`main`** artifact / image” per your hosting orchestrator — operational expectation captured here for on-call alignment, not a new pipeline.
 - **P4-3 Security:** **Nitro** **`routeRules`** apply baseline headers on **`/**`**: **`X-Content-Type-Options: nosniff`**, **`Referrer-Policy: strict-origin-when-cross-origin`**, **`Permissions-Policy`** (camera/microphone/geolocation disabled). **`cache-control`** for **`/assets/**`** unchanged (Phase 3). CI runs **`pnpm audit`** as an **informational** step (**`continue-on-error: true`**) and uploads **`pnpm-audit-report.txt`** because the workspace currently reports outstanding advisories — findings must be triaged and upgraded on a separate security runway (no gate breakage).
 - **P4-4 Feature flags UI:** **`/$locale/dashboard/feature-flags`** (lazy) renders a Mantine **Table** from **`getMockFeatureFlagAdminRows()`**, typed alongside **`packages/database`** flag definitions. Gated by **`VITE_PUBLIC_ENABLE_FEATURE_FLAGS_ADMIN_UI`**. Direct navigation when disabled redirects to the dashboard.
-- **P4-5 White-label:** **`TenantBrandedThemeProvider`** wraps **`@agenticverdict/ui`** **`ThemeProvider`**, keying remounts by tenant and passing **`resolveBrandTokensForTenantId()`** — **Masafh** reference UUID (**`11111111-1111-4111-8111-111111111111`**) maps to packaged **`masafhTheme`**; other tenants use **`defaultBrandTheme`** until **CompanyConfig**-driven fetch lands in **`useTenantTheme`**.
+- **P4-5 White-label:** **`TenantBrandedThemeProvider`** wraps **`@agenticverdict/ui`** **`ThemeProvider`**, keying remounts by tenant and passing **`resolveBrandTokensForTenantId()`** — **Masafh** reference UUID (**`11111111-1111-4111-8111-111111111111`**) maps to packaged **`masafhTheme`**; other tenants use **`defaultBrandTheme`** until **TenantConfig**-driven fetch lands in **`useTenantTheme`**.
 - **P4-6 Onboarding:** **`/$locale/onboarding`** (lazy) uses Mantine **Stepper** and **`logOnboardingEvent`**. Gated by **`VITE_PUBLIC_ENABLE_ONBOARDING_WIZARD`**; when off, redirects to the dashboard. Dashboard shows links to onboarding / feature flags when the respective env flags are **`"true"`** (navigation copy added under **`navigation.onboarding`** / **`navigation.featureFlags`**).
 
 ---
@@ -74,7 +74,7 @@
 - **CSP** — content-security-policy not yet set (hash/nonce strategy needed for TanStack + Mantine); review with security before enabling.
 - **SAST/DAST & pen-test scheduling** — out of scope for this code change; track with security separately.
 - **`trpc.admin.featureFlags.list`** — replace **`getMockFeatureFlagAdminRows`** when **`createFeatureFlagService`** is exposed on the shared router with RBAC.
-- **CompanyConfig theme API** — replace UUID allowlist with server-driven **`BrandTokens`** (eliminate theme flash when backend lands).
+- **TenantConfig theme API** — replace UUID allowlist with server-driven **`BrandTokens`** (eliminate theme flash when backend lands).
 
 ---
 

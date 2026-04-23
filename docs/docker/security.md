@@ -2,7 +2,7 @@
 
 ## Container hardening (Compose defaults)
 
-### Application services (`web`, `api`, `worker` in `docker-compose.apps.yml`)
+### Application services (`frontend`, `api`, `worker` in `docker-compose.apps.yml`)
 
 - **`read_only: true`** on the container root filesystem
 - **`tmpfs`** for `/tmp` with `noexec,nosuid` and size limits
@@ -37,7 +37,7 @@ sudo install -m 0644 deploy/security/apparmor-profile /etc/apparmor.d/agenticver
 sudo apparmor_parser -r /etc/apparmor.d/agenticverdict-app
 ```
 
-Apply to **web**, **api**, **worker** via `deploy/docker-compose.security-linux.override.yml` (appends `apparmor=agenticverdict-app` to `security_opt`). Postgres/Redis are omitted because entrypoints need a shell.
+Apply to **frontend**, **api**, **worker** via `deploy/docker-compose.security-linux.override.yml` (appends `apparmor=agenticverdict-app` to `security_opt`). Postgres/Redis are omitted because entrypoints need a shell.
 
 Example with the production example compose:
 
@@ -52,7 +52,7 @@ docker compose -f deploy/docker-compose.production.example.yml \
 
 ## Image supply chain (CI)
 
-- **Trivy** SARIF upload (CRITICAL/HIGH) for `web`, `api`, `worker` on `main` pushes/PRs and weekly schedule — see [Continuous integration](./continuous-integration.md).
+- **Trivy** SARIF upload (CRITICAL/HIGH) for `frontend`, `api`, `worker` on `main` pushes/PRs and weekly schedule — see [Continuous integration](./continuous-integration.md).
 - **SBOM:** SPDX JSON artifacts from Anchore `sbom-action` per service.
 - **Release signing:** Cosign keyless signing after push to GHCR.
 

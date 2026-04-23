@@ -25,7 +25,7 @@ This catalog provides comprehensive documentation for all entities in the Agenti
 
 | Entity                | Documentation                                  | Description                                                             | Domains |
 | --------------------- | ---------------------------------------------- | ----------------------------------------------------------------------- | ------- |
-| **Tenant/Company**    | [tenant-company.md](./tenant-company.md)       | Multi-tenant organization container with localization and configuration | All     |
+| **Tenant/Tenant**     | [tenant-tenant.md](./tenant-tenant.md)         | Multi-tenant organization container with localization and configuration | All     |
 | **Users/Permissions** | [users-permissions.md](./users-permissions.md) | User accounts with role-based access control across tenants             | All     |
 
 ### Data Integration Entities
@@ -50,7 +50,7 @@ This catalog provides comprehensive documentation for all entities in the Agenti
 ### Primary Relationship Graph
 
 ```
-Tenant/Company (1)
+Tenant/Tenant (1)
 ├── Users (0-N)
 │   └── Permissions (Role-Based)
 │
@@ -110,7 +110,7 @@ The AgenticVerdict platform supports **multiple business domains** through a uni
 All entities operate within strict tenant boundaries:
 
 - **Data Isolation:** Row-level security at database level
-- **Configuration Isolation:** Each tenant has independent `CompanyConfig`
+- **Configuration Isolation:** Each tenant has independent `TenantConfig`
 - **Visual Isolation:** Agency partners switch between tenants without data mixing
 - **Resource Isolation:** Per-tenant rate limiting and quotas
 
@@ -118,15 +118,15 @@ All entities operate within strict tenant boundaries:
 
 Agency partners have enhanced capabilities:
 
-| Capability              | Direct Business | Agency Partner |
-| ----------------------- | --------------- | -------------- |
-| Manage own insights     | ✅              | ✅             |
-| Manage connectors       | ✅              | ✅             |
-| View own reports        | ✅              | ✅             |
-| Access client companies | ❌              | ✅             |
-| Create client insights  | ❌              | ✅             |
-| View client reports     | ❌              | ✅             |
-| White-label reporting   | ❌              | ✅ (Phase 2)   |
+| Capability             | Direct Business | Agency Partner |
+| ---------------------- | --------------- | -------------- |
+| Manage own insights    | ✅              | ✅             |
+| Manage connectors      | ✅              | ✅             |
+| View own reports       | ✅              | ✅             |
+| Access client tenants  | ❌              | ✅             |
+| Create client insights | ❌              | ✅             |
+| View client reports    | ❌              | ✅             |
+| White-label reporting  | ❌              | ✅ (Phase 2)   |
 
 ---
 
@@ -254,7 +254,7 @@ All entity operations use the **unified tRPC API** serving multiple client types
 
 ```
 api/
-├── tenants/         # Tenant/company management
+├── tenants/         # Tenant/tenant management
 ├── users/           # User and permission management
 ├── connectors/      # Data connector operations
 ├── insights/        # Insight configuration and management

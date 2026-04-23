@@ -25,7 +25,7 @@ describe("bindJwtTenantAsyncContext middleware", () => {
         return {
           tenantId: ctx?.tenantId,
           requestId: ctx?.requestId,
-          configCompanyId: ctx?.config.companyId,
+          configTenantId: ctx?.config.tenantId,
           matchesAuthTenant: ctx?.tenantId === request.auth?.tenantId,
         };
       },
@@ -65,16 +65,39 @@ describe("bindJwtTenantAsyncContext middleware", () => {
     const body = res.json() as {
       tenantId: string;
       requestId: string;
-      configCompanyId: string;
+      configTenantId: string;
       matchesAuthTenant: boolean;
     };
     expect(body.tenantId).toBe(TENANT);
-    expect(body.configCompanyId).toBe(TENANT);
+    expect(body.configTenantId).toBe(TENANT);
     expect(body.matchesAuthTenant).toBe(true);
     expect(body.requestId).toBe("req-tenant-ctx-1");
   });
 
-  it("returns 403 when company config is missing for the JWT tenant", async () => {
+  it("returns 403 when x-tenant-id header disagrees with JWT tenant_id", async () => {
+    const otherTenant = "bbbbbbbb-bbbb-4ccc-dddd-ffffffffffff";
+    const token = await new SignJWT({ tenant_id: TENANT, roles: ["analyst"] })
+      .setProtectedHeader({ alg: "HS256" })
+      .setSubject("sub-tenant-ctx")
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .sign(new TextEncoder().encode(JWT_SECRET));
+
+    const res = await app.inject({
+      method: "GET",
+      url: "/ctx",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "x-tenant-id": otherTenant,
+      },
+    });
+
+    expect(res.statusCode).toBe(403);
+    const body = res.json() as { error?: { code?: string } };
+    expect(body.error?.code).toBe("tenant_mismatch");
+  });
+
+  it("returns 403 when tenant config is missing for the JWT tenant", async () => {
     const unknownTenant = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
     const token = await new SignJWT({ tenant_id: unknownTenant, roles: ["analyst"] })
       .setProtectedHeader({ alg: "HS256" })

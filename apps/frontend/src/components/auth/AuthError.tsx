@@ -41,7 +41,9 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
     },
     ref,
   ) => {
-    const t = useTranslations();
+    const tErrors = useTranslations("errors");
+    const tAuth = useTranslations("auth");
+    const tCommon = useTranslations("common");
     const internalRef = useRef<HTMLDivElement>(null);
     const errorRef = (ref as React.RefObject<HTMLDivElement>) || internalRef;
 
@@ -52,14 +54,18 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
       appError = error as AppError;
       if (!customMessage) {
         const translationKey = getErrorTranslationKey(appError);
-        errorMessage = t(translationKey);
+        errorMessage = translationKey.startsWith("errors.")
+          ? tErrors(translationKey.slice("errors.".length))
+          : translationKey.startsWith("auth.")
+            ? tAuth(translationKey.slice("auth.".length))
+            : tErrors(translationKey);
       }
     } else if (error instanceof Error) {
       errorMessage = customMessage || error.message;
     } else if (typeof error === "string") {
       errorMessage = customMessage || error;
     } else if (!customMessage) {
-      errorMessage = t("errors.common.unknownError");
+      errorMessage = tErrors("common.unknownError");
     }
 
     useEffect(() => {
@@ -89,7 +95,7 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
       <div ref={errorRef} className={className} tabIndex={-1}>
         <Alert
           color={alertColor}
-          title={t("common.error")}
+          title={tCommon("error")}
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
@@ -102,8 +108,8 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
           {shouldShowRetry || shouldShowContact ? (
             <div className="mt-2 flex flex-wrap gap-2">
               {shouldShowRetry ? (
-                <Button variant="light" size="xs" onClick={onRetry} aria-label={t("common.retry")}>
-                  {t("common.retry") || t("errors.common.tryAgain")}
+                <Button variant="light" size="xs" onClick={onRetry} aria-label={tCommon("retry")}>
+                  {tCommon("retry") || tErrors("common.tryAgain")}
                 </Button>
               ) : null}
               {shouldShowContact ? (
@@ -111,9 +117,9 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
                   variant="transparent"
                   size="xs"
                   onClick={onContactSupport}
-                  aria-label={t("common.contactSupport")}
+                  aria-label={tCommon("contactSupport")}
                 >
-                  {t("common.contactSupport") || t("errors.common.contactSupport")}
+                  {tCommon("contactSupport") || tErrors("common.contactSupport")}
                 </Button>
               ) : null}
             </div>

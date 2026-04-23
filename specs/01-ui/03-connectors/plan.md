@@ -622,7 +622,7 @@ import { pgTable, uuid, text, timestamp, boolean, integer, jsonb, array } from '
 
 export const connectors = pgTable('connectors', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tenantId: uuid('tenant_id').references(() => companies.id).notNull(),
+  tenantId: uuid('tenant_id').references(() => tenants.id).notNull(),
   connector: text('connector').notNull(), // 'meta', 'ga4', 'gsc', 'gbp', 'tiktok'
   status: text('status').notNull().default('disconnected'), // 'disconnected', 'connected', 'error', 'paused'
   name: text('name').notNull(),

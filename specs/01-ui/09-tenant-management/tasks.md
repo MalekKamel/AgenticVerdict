@@ -47,7 +47,7 @@ Web application structure:
 
 - [ ] T004 Create `useTenantSwitch` hook in `apps/frontend/src/hooks/useTenantSwitch.ts` (depends on T001, T003)
 - [ ] T005 [P] Create `useTenantConfig` hook in `apps/frontend/src/hooks/useTenantConfig.ts`
-- [ ] T006 [P] Create `useCompanyBranding` hook in `apps/frontend/src/hooks/useCompanyBranding.ts`
+- [ ] T006 [P] Create `useTenantBranding` hook in `apps/frontend/src/hooks/useTenantBranding.ts`
 - [ ] T007 [P] Create `useTenantList` hook in `apps/frontend/src/hooks/useTenantList.ts`
 - [ ] T008 Create base form components in `apps/frontend/src/components/forms/` (BrandingSection, DomainSection, LocalizationSection)
 
@@ -90,19 +90,19 @@ Web application structure:
 
 ---
 
-## Phase 4: User Story 2 - Company Settings Page (Priority: P1)
+## Phase 4: User Story 2 - Tenant Settings Page (Priority: P1)
 
-**Goal**: Company administrators can manage branding, domain, and localization settings
+**Goal**: Tenant administrators can manage branding, domain, and localization settings
 
-**Independent Test**: Access `/settings/company` as admin, modify branding, save changes, verify UI updates
+**Independent Test**: Access `/settings/tenant` as admin, modify branding, save changes, verify UI updates
 
 ### E2E Tests for User Story 2 ⚠️
 
-- [ ] T023 [P] [US2] E2E test for company settings page load in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
-- [ ] T024 [P] [US2] E2E test for branding upload and save in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
-- [ ] T025 [P] [US2] E2E test for brand color customization in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
-- [ ] T026 [P] [US2] E2E test for custom domain configuration in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
-- [ ] T027 [P] [US2] E2E test for localization settings in `apps/frontend/src/tests/e2e/company-settings.spec.ts`
+- [ ] T023 [P] [US2] E2E test for tenant settings page load in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T024 [P] [US2] E2E test for branding upload and save in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T025 [P] [US2] E2E test for brand color customization in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T026 [P] [US2] E2E test for custom domain configuration in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
+- [ ] T027 [P] [US2] E2E test for localization settings in `apps/frontend/src/tests/e2e/tenant-settings.spec.ts`
 
 ### Unit Tests for User Story 2
 
@@ -111,8 +111,8 @@ Web application structure:
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Create company settings route in `apps/frontend/src/routes/settings/company.tsx`
-- [ ] T031 [US2] Create CompanySettingsForm component in `apps/frontend/src/components/tenant/CompanySettingsForm.tsx` (depends on T008)
+- [ ] T030 [US2] Create tenant settings route in `apps/frontend/src/routes/settings/tenant.tsx`
+- [ ] T031 [US2] Create TenantSettingsForm component in `apps/frontend/src/components/tenant/TenantSettingsForm.tsx` (depends on T008)
 - [ ] T032 [US2] Create BrandingSection form component in `apps/frontend/src/components/forms/BrandingSection.tsx`
 - [ ] T033 [US2] Create DomainSection form component in `apps/frontend/src/components/forms/DomainSection.tsx`
 - [ ] T034 [US2] Create LocalizationSection form component in `apps/frontend/src/components/forms/LocalizationSection.tsx`
@@ -214,7 +214,7 @@ Web application structure:
 
 - [ ] T074 [US5] Create onboarding route in `apps/frontend/src/routes/agency/onboarding.tsx`
 - [ ] T075 [US5] Create OnboardingWizard component in `apps/frontend/src/components/tenant/OnboardingWizard.tsx`
-- [ ] T076 [US5] Create OnboardingStep1 (Company Info) component
+- [ ] T076 [US5] Create OnboardingStep1 (Tenant Info) component
 - [ ] T077 [US5] Create OnboardingStep2 (Branding) component
 - [ ] T078 [US5] Create OnboardingStep3 (Business Domains) component
 - [ ] T079 [US5] Create OnboardingStep4 (Connectors) component
@@ -265,7 +265,7 @@ Web application structure:
 ### User Story Dependencies
 
 - **User Story 1 (P1) - Tenant Switcher**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1) - Company Settings**: Can start after Foundational (Phase 2) - No dependencies on other stories
+- **User Story 2 (P1) - Tenant Settings**: Can start after Foundational (Phase 2) - No dependencies on other stories
 - **User Story 3 (P2) - Tenant Settings**: Can start after Foundational (Phase 2) - No dependencies on other stories
 - **User Story 4 (P2) - Client Management**: Can start after Foundational (Phase 2) - No dependencies on other stories
 - **User Story 5 (P3) - Onboarding**: Can start after Foundational (Phase 2) - No dependencies on other stories
@@ -313,7 +313,7 @@ Task T015: Unit test for tenant switch utilities
 1. Complete Phase 1: Setup
 2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
 3. Complete Phase 3: User Story 1 (Tenant Switcher)
-4. Complete Phase 4: User Story 2 (Company Settings)
+4. Complete Phase 4: User Story 2 (Tenant Settings)
 5. **STOP and VALIDATE**: Test User Stories 1 & 2 independently
 6. Deploy/demo if ready
 
@@ -334,7 +334,7 @@ With multiple developers:
 1. Team completes Setup + Foundational together
 2. Once Foundational is done:
    - Developer A: User Story 1 (Tenant Switcher)
-   - Developer B: User Story 2 (Company Settings)
+   - Developer B: User Story 2 (Tenant Settings)
    - Developer C: User Story 3 (Tenant Settings)
 3. Stories complete and integrate independently
 4. Developers D & E: User Stories 4 & 5 (can start after US1-2 foundation established)

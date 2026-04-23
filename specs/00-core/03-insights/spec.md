@@ -31,7 +31,7 @@ The system implements comprehensive internationalization through:
 - **Locale-aware rendering**: Uses `@agenticverdict/i18n` package for text direction detection
 - **RTL document structure**: HTML documents include `dir="rtl"` attributes for Arabic and other RTL languages
 - **CSS-based layout**: Print styles handle bidirectional text automatically
-- **Template variable injection**: Company-specific content (branding, language, formatting) injected via configuration
+- **Template variable injection**: Tenant-specific content (branding, language, formatting) injected via configuration
 
 ## Deviations from Original Specifications
 
@@ -115,12 +115,12 @@ Marketing administrators customize report templates for branding, layout prefere
 **Acceptance Scenarios**:
 1. Given custom HTML template in database, When generating report, Then system uses custom template instead of built-in
 2. Given invalid custom template, When rendering fails, Then system falls back to built-in template and logs error
-3. Given template with company branding, When generating report, Then branding elements appear consistently across formats
+3. Given template with tenant branding, When generating report, Then branding elements appear consistently across formats
 
 ### Edge Cases
 
 - **Empty data scenarios**: Report generation when agent analysis returns no data or incomplete metrics
-- **Multi-tenant isolation**: Ensure template and data separation between companies in shared infrastructure
+- **Multi-tenant isolation**: Ensure template and data separation between tenants in shared infrastructure
 - **Large report handling**: Reports with extensive data (100+ pages, 1000s of metrics) may timeout or exceed memory limits
 - **Concurrent generation**: Multiple simultaneous report generation requests for same tenant
 - **Template versioning**: Handling template updates while reports are being generated
@@ -139,7 +139,7 @@ Marketing administrators customize report templates for branding, layout prefere
 - **FR-004**: System MUST support DOCX format generation via HTML-to-DOCX conversion
 - **FR-005**: System MUST render reports from templates using composite template engine with override capability
 - **FR-006**: System MUST provide built-in templates: Executive Summary, Detailed Analysis, Technical Appendix
-- **FR-007**: System MUST support template variable injection for company-specific content
+- **FR-007**: System MUST support template variable injection for tenant-specific content
 
 #### Internationalization
 - **FR-008**: System MUST detect text direction (LTR/RTL) from locale configuration
@@ -168,7 +168,7 @@ Marketing administrators customize report templates for branding, layout prefere
 
 #### Report
 - **Report ID**: Unique identifier for each generated report
-- **Company ID**: Tenant identifier for multi-tenancy
+- **Tenant ID**: Tenant identifier for multi-tenancy
 - **Title**: Report title and description
 - **Status**: Draft, generating, completed, failed
 - **Template ID**: Reference to template used for generation

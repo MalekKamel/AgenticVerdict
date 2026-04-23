@@ -3,7 +3,7 @@ import type { Database } from "@agenticverdict/database";
 import { ToolRegistry } from "../tools";
 import { createAnalysisTools } from "./analysis-tools";
 import { createB2bKpiTools } from "./b2b-kpi-tools";
-import { createCompanyContextTools, type CompanyContextToolDeps } from "./company-context-tools";
+import { createTenantContextTools, type TenantContextToolDeps } from "./tenant-context-tools";
 import { createDatabaseQueryTools } from "./database-query-tools";
 import {
   createDrizzleMarketingMetricsStore,
@@ -16,7 +16,7 @@ export interface Phase4AgentToolingDeps {
   /** Tenant-scoped metrics access (typically {@link createDrizzleMarketingMetricsStore}). */
   metricsStore: MarketingMetricsStore;
   platform: PlatformFetchToolDeps;
-  companyContext?: CompanyContextToolDeps;
+  tenantContext?: TenantContextToolDeps;
 }
 
 /**
@@ -41,7 +41,7 @@ export function registerPhase4AgentTools(
   for (const t of createB2bKpiTools()) {
     registry.register(t);
   }
-  for (const t of createCompanyContextTools(deps.companyContext)) {
+  for (const t of createTenantContextTools(deps.tenantContext)) {
     registry.register(t);
   }
 }
@@ -60,11 +60,11 @@ export function createPhase4ToolRegistry(deps: Phase4AgentToolingDeps): ToolRegi
  */
 export function createPhase4ToolRegistryWithDatabase(
   database: Database,
-  deps: Pick<Phase4AgentToolingDeps, "platform" | "companyContext">,
+  deps: Pick<Phase4AgentToolingDeps, "platform" | "tenantContext">,
 ): ToolRegistry {
   return createPhase4ToolRegistry({
     metricsStore: createDrizzleMarketingMetricsStore(database),
     platform: deps.platform,
-    companyContext: deps.companyContext,
+    tenantContext: deps.tenantContext,
   });
 }

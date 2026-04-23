@@ -34,9 +34,15 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml \
 
 Provisioned **Loki** datasource UID: `av-loki`. Dashboard **Testing & container logs** (`/d/av-testing-logs`) shows Promtail-captured Docker logs (including the E2E `test-runner`). See [Observability + testing](./observability-and-testing.md).
 
+## Tenant alerting
+
+- Prometheus rule file: `deploy/observability/prometheus/alerts/tenant-security.yml`
+- Grafana dashboard: `Tenant security and fairness` (`/d/av-tenant-security-fairness`)
+- Playbook: [`docs/05-reference/runbooks/tenant-security-alerts-playbook.md`](../05-reference/runbooks/tenant-security-alerts-playbook.md)
+
 ## Scraping application metrics
 
-`deploy/observability/prometheus.yml` includes **commented** example jobs for `api:4000` and `web:3000` when `/metrics` exists. Uncomment and ensure targets share the `agenticverdict` network.
+`deploy/observability/prometheus.yml` includes **commented** example jobs for `api:4000` and `frontend:3000` when `/metrics` exists. Uncomment and ensure targets share the `agenticverdict` network.
 
 ## Docker Desktop note
 

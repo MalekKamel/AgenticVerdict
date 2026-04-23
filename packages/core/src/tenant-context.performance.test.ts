@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { getTenantContext, runWithTenantContext, type TenantContext } from "./tenant-context";
 
 const sampleConfig = {
-  companyId: "11111111-1111-4111-8111-111111111111",
-  companyName: "Test",
+  tenantId: "11111111-1111-4111-8111-111111111111",
+  tenantName: "Test",
   localization: {
     language: "en" as const,
     region: "SA",
@@ -19,7 +19,7 @@ const sampleConfig = {
 describe("tenant context performance (migration plan Part 6)", () => {
   it("keeps amortized getTenantContext cost under 1ms per call inside active context", () => {
     const ctx: TenantContext = {
-      tenantId: sampleConfig.companyId,
+      tenantId: sampleConfig.tenantId,
       config: sampleConfig,
       requestId: "req-perf",
     };

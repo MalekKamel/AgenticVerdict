@@ -16,17 +16,17 @@ This batch implements connector-centric **database structure**, **package rename
 
 New tables under schema **`core`** (Drizzle `pgSchema("core")`):
 
-| Table                         | Purpose                                                                                           |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| `core.agency_partners`        | Agency resale / partner accounts (`slug`, `settings` JSONB).                                      |
-| `core.data_connectors`        | Connector registry rows with string primary keys (`ga4`, `meta`, …).                              |
-| `core.connector_tags`         | Domain tags (`marketing`, `seo`, …).                                                              |
-| `core.connector_tag_mappings` | Many-to-many connector ↔ tag.                                                                     |
-| `core.insights`               | Company-scoped insight configurations (business-facing successor to internal “pipeline” wording). |
-| `core.insight_connectors`     | Per-insight connector attachment, metrics, filters.                                               |
-| `core.usage_tracking`         | Billing / metering quantities by company and period.                                              |
+| Table                         | Purpose                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| `core.agency_partners`        | Agency resale / partner accounts (`slug`, `settings` JSONB).                                     |
+| `core.data_connectors`        | Connector registry rows with string primary keys (`ga4`, `meta`, …).                             |
+| `core.connector_tags`         | Domain tags (`marketing`, `seo`, …).                                                             |
+| `core.connector_tag_mappings` | Many-to-many connector ↔ tag.                                                                    |
+| `core.insights`               | Tenant-scoped insight configurations (business-facing successor to internal “pipeline” wording). |
+| `core.insight_connectors`     | Per-insight connector attachment, metrics, filters.                                              |
+| `core.usage_tracking`         | Billing / metering quantities by tenant and period.                                              |
 
-### 1.2 `public.companies` enhancement
+### 1.2 `public.tenants` enhancement
 
 - Nullable **`agency_partner_id`** foreign key to `core.agency_partners(id)` with `ON DELETE SET NULL`.
 
@@ -34,16 +34,16 @@ New tables under schema **`core`** (Drizzle `pgSchema("core")`):
 
 Enabled with **FORCE ROW LEVEL SECURITY** on:
 
-- `core.insights` — `company_id = current_setting('app.current_tenant_id', true)::uuid`
+- `core.insights` — `tenant_id = current_setting('app.current_tenant_id', true)::uuid`
 - `core.insight_connectors` — existence subquery on parent `insights` row for current tenant
-- `core.usage_tracking` — same tenant pattern as other company-scoped tables
+- `core.usage_tracking` — same tenant pattern as other tenant-scoped tables
 
 Global catalog tables (`data_connectors`, `connector_tags`, `connector_tag_mappings`, `agency_partners`) do **not** use RLS in this migration; treat writes as migration/admin-only unless a follow-up adds explicit policies.
 
 ### 1.4 Migrations
 
-- **`migrations/0004_connector_core_schema.sql`** — creates `core` tables, FKs, RLS policies, `companies.agency_partner_id`.
-- **`migrations/0005_sync_insight_usage_indexes.sql`** — btree indexes on `insights(company_id)` and `usage_tracking(company_id, period_start, period_end)` (aligned with Drizzle schema definitions).
+- **`migrations/0004_connector_core_schema.sql`** — creates `core` tables, FKs, RLS policies, `tenants.agency_partner_id`.
+- **`migrations/0005_sync_insight_usage_indexes.sql`** — btree indexes on `insights(tenant_id)` and `usage_tracking(tenant_id, period_start, period_end)` (aligned with Drizzle schema definitions).
 
 **Operational note:** If a local database already applied an earlier draft of `0004` that included these indexes inline, reconcile manually (drop duplicate indexes or skip `0005` statements) before re-running migrations.
 
@@ -62,7 +62,7 @@ New files under `packages/database/src/schema/core/`:
 ### 1.6 Connector registry seed
 
 - **`packages/database/src/seed-connectors.ts`** — `seedConnectorRegistry(db)` upserts GA4, GSC, Meta, TikTok, GBP connectors, domain tags, and tag mappings (idempotent).
-- Wired into **`scripts/seed.ts`** and **`scripts/seed-test.ts`** after migrations, before company JSON seeds.
+- Wired into **`scripts/seed.ts`** and **`scripts/seed-test.ts`** after migrations, before tenant JSON seeds.
 
 ### 1.7 Tests
 

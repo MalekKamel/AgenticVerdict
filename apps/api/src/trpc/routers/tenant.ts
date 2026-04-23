@@ -1,5 +1,5 @@
-import { companyBrandTokensSchema, getDefaultConfigManager } from "@agenticverdict/config";
-import { companies } from "@agenticverdict/database";
+import { tenantBrandTokensSchema, getDefaultConfigManager } from "@agenticverdict/config";
+import { tenants } from "@agenticverdict/database";
 import {
   getTenantBrandingInputSchema,
   getTenantBrandingOutputSchema,
@@ -26,9 +26,9 @@ export const tenantRouter = t.router({
         return { tenantId: null };
       }
       const rows = await db
-        .select({ id: companies.id })
-        .from(companies)
-        .where(sql`lower(${companies.slug}) = ${normalized}`)
+        .select({ id: tenants.id })
+        .from(tenants)
+        .where(sql`lower(${tenants.slug}) = ${normalized}`)
         .limit(1);
       const id = rows[0]?.id;
       return { tenantId: id ?? null };
@@ -39,9 +39,9 @@ export const tenantRouter = t.router({
     .output(getTenantBrandingOutputSchema)
     .query(async ({ input }) => {
       try {
-        const config = await configManager.loadCompanyConfig(input.tenantId);
+        const config = await configManager.loadTenantConfig(input.tenantId);
         if (config.ui?.brand) {
-          return { brand: companyBrandTokensSchema.parse(config.ui.brand) };
+          return { brand: tenantBrandTokensSchema.parse(config.ui.brand) };
         }
         return { brand: null };
       } catch {

@@ -68,19 +68,19 @@ Establish the foundational monorepo structure using Turborepo and pnpm workspace
 
 ### Overview
 
-Implement the configuration-driven architecture using Zod schemas, ensuring all company-specific behavior is injected dynamically without hardcoding.
+Implement the configuration-driven architecture using Zod schemas, ensuring all tenant-specific behavior is injected dynamically without hardcoding.
 
 ### Tasks
 
 | Task ID | Description | Complexity | Est. Effort | Actual Effort | Status | Notes |
 | ------- | ----------- | ---------- | ------------ | ------------- | ------ | ----- |
-| 2.1 | Create CompanyConfig Zod schema with all required fields | High | 6h | 7h | ✅ | Full schema with localization, marketing, AI, features |
+| 2.1 | Create TenantConfig Zod schema with all required fields | High | 6h | 7h | ✅ | Full schema with localization, marketing, AI, features |
 | 2.2 | Define PlatformConfig interface and KPIConfig schema | Medium | 4h | 5h | ✅ | Supports multiple platforms and KPI types |
 | 2.3 | Create localization configuration schemas | Medium | 3h | 3h | ✅ | Language, region, timezone, currency |
 | 2.4 | Implement ConfigManager class with caching layer | High | 6h | 7h | ✅ | File-based loading with hot-reload |
 | 2.5 | Create configuration validation middleware | Medium | 4h | 4h | ✅ | Prevents startup with invalid config |
 | 2.6 | Implement environment-based configuration loading | Medium | 4h | 4h | ✅ | Environment variable overrides for secrets |
-| 2.7 | Create sample company configurations | Medium | 3h | 3h | ✅ | Masafh (primary) + hypothetical examples |
+| 2.7 | Create sample tenant configurations | Medium | 3h | 3h | ✅ | Masafh (primary) + hypothetical examples |
 | 2.8 | Implement configuration hot-reload for development | Low | 3h | 3h | ✅ | File watcher updates config in < 1s |
 | 2.9 | Create configuration documentation generator | Medium | 4h | 4h | ⏭️ | Deferred to Phase 1 |
 | 2.10 | Add runtime configuration service | Medium | 4h | 5h | ✅ | Cross-package config access |
@@ -107,7 +107,7 @@ Set up the database layer using Drizzle ORM (not Prisma) with PostgreSQL, includ
 
 | Task ID | Description | Complexity | Est. Effort | Actual Effort | Status | Notes |
 | ------- | ----------- | ---------- | ------------ | ------------- | ------ | ----- |
-| 3.1 | Design database schema with ERD diagram | High | 6h | 7h | ✅ | Core tables: companies, users, platform_credentials, marketing_metrics, reports |
+| 3.1 | Design database schema with ERD diagram | High | 6h | 7h | ✅ | Core tables: tenants, users, platform_credentials, marketing_metrics, reports |
 | 3.2 | Set up Drizzle ORM with PostgreSQL connection | Medium | 4h | 4h | ✅ | PostgreSQL 16 with connection pooling |
 | 3.3 | Create core table schemas | High | 6h | 7h | ✅ | All tables with proper constraints and indexes |
 | 3.4 | Configure Drizzle Kit for migrations | Medium | 3h | 3h | ✅ | Migration system working |
@@ -143,7 +143,7 @@ Implement multi-tenant context propagation using AsyncLocalStorage, ensuring all
 | 4.1 | Configure AsyncLocalStorage for tenant context | Medium | 4h | 4h | ✅ | TenantContext interface defined |
 | 4.2 | Implement tenant context propagation utilities | High | 6h | 7h | ✅ | runWithTenantContext, getTenantContext, etc. |
 | 4.3 | Create tenant resolution middleware | High | 5h | 6h | ✅ | JWT, subdomain, header-based resolution |
-| 4.4 | Implement tenant data access guards | Medium | 4h | 5h | ✅ | assertResourceCompanyId helper |
+| 4.4 | Implement tenant data access guards | Medium | 4h | 5h | ✅ | assertResourceTenantId helper |
 | 4.5 | Create tenant provisioning API | Medium | 4h | 5h | ✅ | New tenant creation with default config |
 | 4.6 | Add tenant security error types | Low | 2h | 2h | ✅ | TenantSecurityError with proper codes |
 | 4.7 | Implement tenant lifecycle management | Medium | 4h | 4h | ✅ | Activation, deactivation, deletion |
@@ -360,7 +360,7 @@ Create comprehensive documentation and developer tooling to ensure smooth onboar
 | ------- | ----------- | ---------- | ------------ | ------------- | ------ | ----- |
 | 11.1 | Write CLAUDE.md with architectural guidance | High | 4h | 5h | ✅ | Comprehensive project instructions |
 | 11.2 | Create README for monorepo setup | Medium | 2h | 2h | ✅ | Getting started guide |
-| 11.3 | Document configuration schema | Medium | 3h | 3h | ✅ | CompanyConfig reference |
+| 11.3 | Document configuration schema | Medium | 3h | 3h | ✅ | TenantConfig reference |
 | 11.4 | Document multi-tenancy patterns | Medium | 3h | 4h | ✅ | Tenant context usage guide |
 | 11.5 | Create troubleshooting guide | Low | 2h | 2h | ✅ | Common issues and solutions |
 | 11.6 | Document Docker workflows | Medium | 3h | 3h | ✅ | Docker usage guide |

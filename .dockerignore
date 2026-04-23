@@ -1,0 +1,79 @@
+# Dependencies & caches
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+**/.pnpm-store
+**/.pnpm-store/**
+.pnpm-store
+**/.turbo
+**/.turbo/**
+.turbo
+**/pnpm-lock.yaml.patch
+
+# Build outputs (rebuilt in image; globs catch nested paths e.g. apps/web/.next)
+**/.next/
+**/out/
+**/build/
+**/dist/
+!tools/build/
+!tools/build/**
+
+# Tests & coverage
+**/coverage/
+coverage
+.nyc_output
+**/*.log
+**/*.sqlite
+**/*.db
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/__tests__
+**/e2e
+**/playwright-report
+**/test-results
+
+# Local env (never bake secrets)
+.env
+.env.*
+!.env.example
+
+# IDE & OS
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docs (not needed for runtime images)
+docs
+changelog
+*.md
+!README.md
+!packages/README.md
+
+# Local scratch / transcripts (large)
+ignored
+
+# CI (not needed inside image)
+.github
+
+# Agent / local tooling
+.cursor
+**/.cursor
+
+# Docker context (avoid nested contexts)
+**/Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Large optional fixtures
+**/agent-transcriptsdockerignore

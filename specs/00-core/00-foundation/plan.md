@@ -68,7 +68,7 @@ const tenantStorage = new AsyncLocalStorage<TenantContext>();
 // Middleware sets context
 tenantContext.run({ tenantId, config, requestId }, async () => {
   // All operations here have tenant context
-  const data = await dbScoped((db) => db.query.companies.findFirst());
+  const data = await dbScoped((db) => db.query.tenants.findFirst());
 });
 ```
 
@@ -81,8 +81,8 @@ tenantContext.run({ tenantId, config, requestId }, async () => {
 #### Database Isolation Strategy
 ```sql
 -- Row-level security policy example
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY company_isolation_policy ON companies
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL USING (id = current_setting('app.current_tenant_id')::uuid);
 ```
 
@@ -94,10 +94,10 @@ CREATE POLICY company_isolation_policy ON companies
 
 #### Configuration-Driven Architecture
 ```typescript
-// Zod schema for company configuration
-const companyConfigSchema = z.object({
-  companyId: z.string().uuid(),
-  companyName: z.string().min(1),
+// Zod schema for tenant configuration
+const tenantConfigSchema = z.object({
+  tenantId: z.string().uuid(),
+  tenantName: z.string().min(1),
   localization: localizationConfigSchema,
   marketing: z.object({
     channels: z.array(platformConfigSchema),
@@ -109,7 +109,7 @@ const companyConfigSchema = z.object({
 ```
 
 **Rationale**: Configuration-driven architecture chosen for:
-- No company-specific code in implementation
+- No tenant-specific code in implementation
 - Runtime behavior change without deployment
 - A/B testing and feature flag support
 - Multi-tenant scalability
@@ -291,7 +291,7 @@ const redisCache = createUpstashRedisFromEnv();
 
 #### Core Tables
 
-**companies**
+**tenants**
 ```sql
 id: UUID (primary key)
 name: TEXT NOT NULL
@@ -306,7 +306,7 @@ updated_at: TIMESTAMP DEFAULT NOW()
 **users**
 ```sql
 id: UUID (primary key)
-company_id: UUID (foreign key → companies)
+tenant_id: UUID (foreign key → tenants)
 email: TEXT NOT NULL
 name: TEXT
 role: TEXT NOT NULL
@@ -316,7 +316,7 @@ created_at: TIMESTAMP DEFAULT NOW()
 **platform_credentials**
 ```sql
 id: UUID (primary key)
-company_id: UUID (foreign key → companies)
+tenant_id: UUID (foreign key → tenants)
 platform: TEXT NOT NULL (enum: meta, google, tiktok)
 encrypted_credentials: BYTEA NOT NULL
 oauth_metadata: JSONB
@@ -327,7 +327,7 @@ created_at: TIMESTAMP DEFAULT NOW()
 **marketing_metrics**
 ```sql
 id: UUID (primary key)
-company_id: UUID (foreign key → companies)
+tenant_id: UUID (foreign key → tenants)
 platform: TEXT NOT NULL
 metric_type: TEXT NOT NULL
 date: DATE NOT NULL
@@ -339,7 +339,7 @@ created_at: TIMESTAMP DEFAULT NOW()
 **reports**
 ```sql
 id: UUID (primary key)
-company_id: UUID (foreign key → companies)
+tenant_id: UUID (foreign key → tenants)
 template_id: UUID
 status: TEXT NOT NULL (enum: queued, processing, completed, failed)
 date_range: JSONB NOT NULL
@@ -352,8 +352,8 @@ created_at: TIMESTAMP DEFAULT NOW()
 **Row-Level Security Policies**:
 ```sql
 -- All tenant-scoped tables have RLS enabled
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY tenant_isolation ON companies
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation ON tenants
   USING (id = current_setting('app.current_tenant_id')::uuid);
 
 -- Similar policies for users, platform_credentials, marketing_metrics, reports
@@ -382,11 +382,11 @@ interface ConnectorAdapter {
 }
 ```
 
-#### CompanyConfig Schema
+#### TenantConfig Schema
 ```typescript
-interface CompanyConfig {
-  companyId: string; // UUID
-  companyName: string;
+interface TenantConfig {
+  tenantId: string; // UUID
+  tenantName: string;
   localization: {
     language: "ar" | "en";
     region: string; // ISO 3166-1 alpha-2
@@ -419,8 +419,8 @@ interface CompanyConfig {
 #### TenantContext Interface
 ```typescript
 interface TenantContext {
-  tenantId: string; // Company UUID
-  config: CompanyConfig;
+  tenantId: string; // Tenant UUID
+  config: TenantConfig;
   requestId: string; // For distributed tracing
   userId?: string; // Optional user context
 }
@@ -436,7 +436,7 @@ async function dbScoped<T>(
 
 // Usage enforces tenant context
 const data = await dbScoped(db, async (tx) => {
-  return tx.query.companies.findFirst();
+  return tx.query.tenants.findFirst();
 });
 ```
 
@@ -462,13 +462,13 @@ make dev
 # Redis: localhost:6379
 ```
 
-#### Scenario 2: Adding a New Company
+#### Scenario 2: Adding a New Tenant
 ```bash
-# 1. Create company config file
-cat > config/companies/new-company.json << EOF
+# 1. Create tenant config file
+cat > config/tenants/new-tenant.json << EOF
 {
-  "companyId": "uuid-here",
-  "companyName": "Acme Corp",
+  "tenantId": "uuid-here",
+  "tenantName": "Acme Corp",
   "localization": {
     "language": "en",
     "region": "US",
@@ -494,8 +494,8 @@ EOF
 # 2. Restart services (config auto-reloads in dev)
 make dev
 
-# 3. Verify company can authenticate
-# New company users can now sign up and see their configuration
+# 3. Verify tenant can authenticate
+# New tenant users can now sign up and see their configuration
 ```
 
 #### Scenario 3: Running Tests
@@ -568,7 +568,7 @@ make apps-down
 #### Runtime Performance
 - **Configuration Caching**: 95%+ cache hit rate, < 100ms load time
 - **Multi-layer Caching**: L1 (memory) + L2 (Redis)
-- **Lazy Loading**: Load company configs on-demand
+- **Lazy Loading**: Load tenant configs on-demand
 - **Hot Reload**: Development config changes apply in < 1s
 
 ### Security Considerations
@@ -635,7 +635,7 @@ make format       # Format all code
 ### Architecture Validation
 
 ✅ **Multi-Tenancy**: Tenant isolation proven through security testing  
-✅ **Configuration-Driven**: Company behavior controlled via config, no code changes  
+✅ **Configuration-Driven**: Tenant behavior controlled via config, no code changes  
 ✅ **Plugin Architecture**: ConnectorAdapter interface established  
 ✅ **Type Safety**: Zero `any` types, strict TypeScript mode enforced  
 ✅ **Performance**: Build times, cache hit rates meet targets  

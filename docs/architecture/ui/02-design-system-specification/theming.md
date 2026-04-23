@@ -14,7 +14,7 @@ This document defines the comprehensive theming architecture for AgenticVerdict,
 **Key Capabilities:**
 
 - **Light/Dark Modes**: Automatic system preference detection with manual override
-- **Multi-Brand Theming**: CompanyConfig-driven branding for white-label agency partners
+- **Multi-Brand Theming**: TenantConfig-driven branding for white-label agency partners
 - **RTL/LTR Support**: Direction-aware theming with automatic layout mirroring
 - **CSS Custom Properties**: Runtime theme switching without page reload
 - **Component-Level Customization**: Granular theme overrides per component
@@ -447,14 +447,14 @@ export const brandRegistry: Record<string, BrandTheme> = {
 };
 ```
 
-### 3.2 CompanyConfig-Driven Branding
+### 3.2 TenantConfig-Driven Branding
 
-Branding is driven by the tenant's CompanyConfig:
+Branding is driven by the tenant's TenantConfig:
 
 ```typescript
-// packages/config/src/schemas/company-config.ts
-export interface CompanyConfig {
-  companyId: string;
+// packages/config/src/schemas/tenant-config.ts
+export interface TenantConfig {
+  tenantId: string;
   localization: {
     language: "ar" | "en" | "fr" | "es" | "ur" | "he"; // Extensible
     region: string;
@@ -474,8 +474,8 @@ export interface CompanyConfig {
   // ... other config
 }
 
-// Theme resolution from CompanyConfig
-export function resolveTheme(config: CompanyConfig): MantineTheme {
+// Theme resolution from TenantConfig
+export function resolveTheme(config: TenantConfig): MantineTheme {
   const baseBrand = brandRegistry[config.branding.themeId] || brandRegistry.default;
   const mode = useMantineColorScheme().colorScheme === "dark" ? darkTheme : lightTheme;
 
@@ -518,7 +518,7 @@ export function BrandLogo({
   return (
     <Image
       src={logoUrl}
-      alt={`${config.companyName} logo`}
+      alt={`${config.tenantName} logo`}
       height={variant === 'icon' ? 32 : 40}
       width={variant === 'icon' ? 32 : 160}
     />
@@ -586,10 +586,10 @@ export function AppFooter() {
   const config = useTenantConfig();
   const agencyConfig = useAgencyConfig();
 
-  if (agencyConfig?.clientOverrides[config.companyId]?.branding.hideAgenticVerdictBranding) {
+  if (agencyConfig?.clientOverrides[config.tenantId]?.branding.hideAgenticVerdictBranding) {
     return (
       <footer>
-        {agencyConfig.clientOverrides[config.companyId].branding.customFooter}
+        {agencyConfig.clientOverrides[config.tenantId].branding.customFooter}
       </footer>
     );
   }
@@ -1732,11 +1732,11 @@ const hebrewTheme = createTheme({
 
 ### 10.1 Common Issues
 
-**Issue: Theme not updating after CompanyConfig change**
+**Issue: Theme not updating after TenantConfig change**
 
 ```typescript
 // Solution: Force theme remount
-const key = `${config.companyId}-${config.branding.themeId}`;
+const key = `${config.tenantId}-${config.branding.themeId}`;
 <MantineProvider key={key} theme={theme}>
   {children}
 </MantineProvider>

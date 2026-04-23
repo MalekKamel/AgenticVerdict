@@ -45,7 +45,7 @@ export { DEFAULT_REPORT_PRINT_CSS } from "./pdf-print-styles";
 export { escapeAttr, escapeHtml, sanitizeDomId } from "./html-utils";
 export {
   insertReportRow,
-  selectReportForCompany,
+  selectReportForTenant,
   updateReportRowMetadata,
   updateReportRowStatus,
   type NewReportRow,

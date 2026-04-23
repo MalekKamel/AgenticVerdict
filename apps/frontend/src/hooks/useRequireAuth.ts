@@ -13,50 +13,84 @@ import type { AuthUserData } from "@/lib/api/auth-api";
 export type UseRequireAuthOptions = {
   /** Locale-stripped path (e.g. `/auth/login`). Default `/auth/login`. */
   redirectTo?: string;
+  verifyRedirectTo?: string;
+  requireVerifiedEmail?: boolean;
   /** When set, called instead of default redirect (e.g. custom router integration). */
   onUnauthorized?: () => void;
 };
 
 function normalizeOptions(input?: string | UseRequireAuthOptions): {
   redirectTo: string;
+  verifyRedirectTo: string;
+  requireVerifiedEmail: boolean;
   onUnauthorized?: () => void;
 } {
   if (input === undefined) {
-    return { redirectTo: "/auth/login" };
+    return {
+      redirectTo: "/auth/login",
+      verifyRedirectTo: "/auth/verify-email",
+      requireVerifiedEmail: false,
+    };
   }
   if (typeof input === "string") {
-    return { redirectTo: input };
+    return {
+      redirectTo: input,
+      verifyRedirectTo: "/auth/verify-email",
+      requireVerifiedEmail: false,
+    };
   }
   return {
     redirectTo: input.redirectTo ?? "/auth/login",
+    verifyRedirectTo: input.verifyRedirectTo ?? "/auth/verify-email",
+    requireVerifiedEmail: input.requireVerifiedEmail ?? false,
     onUnauthorized: input.onUnauthorized,
   };
 }
 
 /**
- * Protected route guard: uses **`useSessionQuery`** (not the auth store alone) for loading
- * so we do not redirect before the session request finishes or clear the store incorrectly.
- *
- * Skips redirect on `/auth/*` routes to avoid redirect loops.
+ * Protected route data hook. Redirect ownership belongs to route `beforeLoad` guards.
+ * Client-side redirects remain enabled as a reconciliation fallback when SSR probes defer/fail
+ * or when auth state changes after hydration.
  */
 export function useRequireAuth(input?: string | UseRequireAuthOptions) {
-  const { redirectTo, onUnauthorized } = normalizeOptions(input);
-  const { data: session, isPending, error } = useSessionQuery();
+  const { redirectTo, verifyRedirectTo, requireVerifiedEmail, onUnauthorized } =
+    normalizeOptions(input);
+  const { data: session, isPending, isFetching, error } = useSessionQuery();
   const router = useRouter();
   const pathname = usePathname();
   const redirectOnce = useRef(false);
 
   const user: AuthUserData | null = session?.user ?? null;
+  const isBlockingAuthResolution = isPending || (isFetching && !session);
 
   useEffect(() => {
-    if (isPending) {
+    /**
+     * Treat only first-load pending state as "blocking". Background refetches should not
+     * freeze protected routes once we already have a resolved session snapshot.
+     */
+    if (isBlockingAuthResolution) {
       redirectOnce.current = false;
       return;
     }
-    if (user) {
+    if (pathname === "/auth/login" || pathname.startsWith("/auth/")) {
       return;
     }
-    if (pathname === "/auth/login" || pathname.startsWith("/auth/")) {
+    if (user && requireVerifiedEmail && !user.emailVerified) {
+      const currentPath = pathname !== verifyRedirectTo ? pathname : undefined;
+      const query = new URLSearchParams();
+      if (currentPath) query.set("redirect", currentPath);
+      query.set("email", user.email);
+      if (user.tenantId) {
+        query.set("tenantId", user.tenantId);
+      }
+      const next = `${verifyRedirectTo}?${query.toString()}`;
+      if (!redirectOnce.current) {
+        redirectOnce.current = true;
+        router.push(next);
+      }
+      return;
+    }
+    if (user) {
       return;
     }
 
@@ -66,21 +100,30 @@ export function useRequireAuth(input?: string | UseRequireAuthOptions) {
     }
 
     const currentPath = pathname !== redirectTo ? pathname : undefined;
-    const redirectUrl = currentPath
+    const next = currentPath
       ? `${redirectTo}?redirect=${encodeURIComponent(currentPath)}`
       : redirectTo;
 
     if (!redirectOnce.current) {
       redirectOnce.current = true;
-      router.push(redirectUrl);
+      router.push(next);
     }
-  }, [isPending, user, pathname, redirectTo, router, onUnauthorized]);
+  }, [
+    isBlockingAuthResolution,
+    user,
+    pathname,
+    redirectTo,
+    router,
+    onUnauthorized,
+    requireVerifiedEmail,
+    verifyRedirectTo,
+  ]);
 
   return {
     user,
-    isLoading: isPending,
+    isLoading: isBlockingAuthResolution,
     isAuthenticated: !!user,
-    isReady: !isPending && !!user,
+    isReady: !isBlockingAuthResolution && !!user,
     error: error ?? null,
   };
 }

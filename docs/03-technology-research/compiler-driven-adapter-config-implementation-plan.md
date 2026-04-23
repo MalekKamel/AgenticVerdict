@@ -453,9 +453,9 @@ export function isMockEnabledForConnector(
 - [ ] Runtime security guard still works
 - [ ] All existing tests pass
 
-#### 2.2 Update Company Config Schema
+#### 2.2 Update Tenant Config Schema
 
-**File:** `packages/config/src/schemas/company.ts`
+**File:** `packages/config/src/schemas/tenant.ts`
 
 **Implementation:**
 
@@ -464,10 +464,10 @@ import { z } from "zod";
 import { BUILD_CONFIG } from "../build-constants";
 
 /**
- * Base company configuration schema
+ * Base tenant configuration schema
  */
-const baseCompanyConfigSchema = z.object({
-  companyId: z.string().uuid(),
+const baseTenantConfigSchema = z.object({
+  tenantId: z.string().uuid(),
   localization: z.object({
     language: z.enum(["en", "ar", "fr"]),
     region: z.string(),
@@ -495,7 +495,7 @@ const baseCompanyConfigSchema = z.object({
 /**
  * Development-specific configuration fields
  */
-const developmentCompanyConfigSchema = baseCompanyConfigSchema.extend({
+const developmentTenantConfigSchema = baseTenantConfigSchema.extend({
   environment: z.literal("development"),
   mockAdapters: z.boolean().default(true),
   debugMode: z.boolean().default(true),
@@ -504,44 +504,44 @@ const developmentCompanyConfigSchema = baseCompanyConfigSchema.extend({
 /**
  * Production-specific configuration fields
  */
-const productionCompanyConfigSchema = baseCompanyConfigSchema.extend({
+const productionTenantConfigSchema = baseTenantConfigSchema.extend({
   environment: z.literal("production"),
   mockAdapters: z.literal(false),
   debugMode: z.literal(false),
 });
 
 /**
- * Company configuration schema with environment discrimination
+ * Tenant configuration schema with environment discrimination
  */
-export const companyConfigSchema = z.discriminatedUnion("environment", [
-  developmentCompanyConfigSchema,
-  productionCompanyConfigSchema,
+export const tenantConfigSchema = z.discriminatedUnion("environment", [
+  developmentTenantConfigSchema,
+  productionTenantConfigSchema,
 ]);
 
-export type CompanyConfig = z.infer<typeof companyConfigSchema>;
+export type TenantConfig = z.infer<typeof tenantConfigSchema>;
 
 /**
- * Type guard for development company config
+ * Type guard for development tenant config
  */
-export function isDevelopmentCompanyConfig(
-  config: CompanyConfig,
-): config is z.infer<typeof developmentCompanyConfigSchema> {
+export function isDevelopmentTenantConfig(
+  config: TenantConfig,
+): config is z.infer<typeof developmentTenantConfigSchema> {
   return config.environment === "development";
 }
 
 /**
- * Type guard for production company config
+ * Type guard for production tenant config
  */
-export function isProductionCompanyConfig(
-  config: CompanyConfig,
-): config is z.infer<typeof productionCompanyConfigSchema> {
+export function isProductionTenantConfig(
+  config: TenantConfig,
+): config is z.infer<typeof productionTenantConfigSchema> {
   return config.environment === "production";
 }
 ```
 
 **Acceptance Criteria:**
 
-- [ ] Company config schema uses build constants
+- [ ] Tenant config schema uses build constants
 - [ ] Type guards correctly narrow types
 - [ ] Validation works for all environments
 - [ ] Existing configs remain valid
@@ -669,7 +669,7 @@ async function main() {
 ### Phase 2 Deliverables
 
 - [ ] Adapter factory updated with build constants
-- [ ] Company config schema enhanced
+- [ ] Tenant config schema enhanced
 - [ ] Workflow handler updated
 - [ ] Worker configuration updated
 - [ ] All tests pass
@@ -1253,7 +1253,7 @@ The platform uses compiler-driven configuration to ensure type safety and elimin
 ```
 packages/config/
   src/build-constants.ts              [NEW]
-  src/schemas/company.ts              [MODIFIED]
+  src/schemas/tenant.ts              [MODIFIED]
   src/index.ts                        [MODIFIED]
 
 packages/data-connectors/

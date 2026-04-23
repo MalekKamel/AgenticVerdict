@@ -1,0 +1,96 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (code) (rate(agenticverdict_tenant_security_events_total[5m]))",
+          "legendFormat": "{{code}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tenant security events by code (5m rate)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (surface) (rate(agenticverdict_tenant_security_events_total[5m]))",
+          "legendFormat": "{{surface}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Tenant security events by surface",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "ops" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum by (key_prefix, bucket_type) (rate(agenticverdict_tenant_rate_limit_hits_total[5m]))",
+          "legendFormat": "{{key_prefix}} / {{bucket_type}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Rate-limit hits by key prefix and bucket type",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "av-prometheus" },
+          "editorMode": "code",
+          "expr": "sum(rate(agenticverdict_tenant_rate_limit_hits_total{bucket_type=\"anonymous\"}[10m])) / clamp_min(sum(rate(agenticverdict_tenant_rate_limit_hits_total{bucket_type=\"tenant\"}[10m])), 0.01)",
+          "legendFormat": "anonymous_to_tenant_ratio",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Throttle fairness ratio (anonymous / tenant)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["agenticverdict", "tenant", "security", "fairness"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Tenant security and fairness",
+  "uid": "av-tenant-security-fairness",
+  "version": 1,
+  "weekStart": ""
+}

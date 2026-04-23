@@ -2,13 +2,13 @@ import { escapeHtml } from "../html-utils";
 
 export interface CoverHeaderInput {
   title: string;
-  companyName: string;
+  tenantName: string;
   periodLabel: string;
   accentColor: string;
 }
 
 export function renderCoverBlock(input: CoverHeaderInput): string {
-  const sub = [input.companyName, input.periodLabel].filter(Boolean).join(" · ");
+  const sub = [input.tenantName, input.periodLabel].filter(Boolean).join(" · ");
   return `<header class="report-cover" style="border-bottom:3px solid ${escapeHtml(input.accentColor)};padding-bottom:20px;margin-bottom:28px;">
   <p class="brand-accent" style="font-size:13px;letter-spacing:0.04em;text-transform:uppercase;margin:0 0 8px;">Marketing intelligence</p>
   <h1 style="font-size:28px;margin:0 0 8px;">${escapeHtml(input.title)}</h1>

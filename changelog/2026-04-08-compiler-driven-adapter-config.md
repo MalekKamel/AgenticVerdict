@@ -3,7 +3,7 @@
 **Supersession (2026-04-15):** Production bundling for API/worker moved from **esbuild** to **Vite** (`build:vite`, `tools/build/vite-node-cli.config.mjs`). Scripts **`build:esbuild`** and **`benchmark:esbuild`** were renamed to **`build:vite`** and **`benchmark:vite-bundles`**. See `changelog/2026-04-15-repository-wide-vite-migration.md`.
 
 **Date:** 2026-04-08  
-**Scope:** Execution of `docs/04-technology-research/compiler-driven-adapter-config-implementation-plan.md` — build-time constants for adapter selection, API/worker esbuild outputs, CI verification, tests, and documentation. Does **not** change the on-disk `CompanyConfig` JSON schema (no discriminated union on `environment`).
+**Scope:** Execution of `docs/04-technology-research/compiler-driven-adapter-config-implementation-plan.md` — build-time constants for adapter selection, API/worker esbuild outputs, CI verification, tests, and documentation. Does **not** change the on-disk `TenantConfig` JSON schema (no discriminated union on `environment`).
 
 This entry documents the shift toward **shared build constants** (`NODE_ENV`-derived) for mock vs production adapter paths, **production-only guards** for workflow test triggers and worker startup, and **automated checks** that production-oriented bundles do not retain mock adapter symbols where tree-shaking applies.
 
@@ -102,7 +102,7 @@ This entry documents the shift toward **shared build constants** (`NODE_ENV`-der
 ### Documentation
 
 - **`docs/06-reference/migration-guide-compiler-driven-config.md`**
-  - migration patterns, explicit note that **company JSON / `CompanyConfig` are unchanged**
+  - migration patterns, explicit note that **tenant JSON / `TenantConfig` are unchanged**
 
 - **`tests/docs/manual-testing-guide.md`**
   - **§2.7 Compiler-driven adapter configuration** — build constants, blocked workflow test trigger in production, worker startup check
@@ -144,7 +144,7 @@ This entry documents the shift toward **shared build constants** (`NODE_ENV`-der
 
 ## Intentionally not in this slice
 
-- **`CompanyConfig` discriminated union** (`environment` / `mockAdapters` / `debugMode`) from the plan — would invalidate existing tenant JSON; deferred with migration guide clarification.
+- **`TenantConfig` discriminated union** (`environment` / `mockAdapters` / `debugMode`) from the plan — would invalidate existing tenant JSON; deferred with migration guide clarification.
 - **`@esbuild/typescript-plugin`** — esbuild compiles TypeScript without it.
 - **TypeScript solution `references` overhaul** at repo root — avoided broad monorepo churn; Turbo and package `typecheck` remain the source of truth.
 - **`isMockEnabledForPlatform` throwing** when `BUILD_CONFIG.isProduction` — would break **`apps/frontend`** aggregated adapter health, which calls the helper per platform in production.

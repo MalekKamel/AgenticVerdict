@@ -8,7 +8,7 @@ export const resolveTenantSlugOutputSchema = z.object({
   tenantId: z.string().uuid().nullable(),
 });
 
-/** Public branding payload (mirrors `companyBrandTokensSchema` in `@agenticverdict/config`). */
+/** Public branding payload (mirrors `tenantBrandTokensSchema` in `@agenticverdict/config`). */
 export const tenantBrandingTokensSchema = z.object({
   colors: z.object({
     primary: z.string(),

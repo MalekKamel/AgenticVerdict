@@ -162,7 +162,7 @@ This document provides the final recommended directory structure for `/specs/01-
 │   ├── acceptance-criteria.md
 │   ├── pages/
 │   │   ├── tenant-switcher.md                 # P4: Multi-Tenant Tenant Switching
-│   │   ├── company-settings.md
+│   │   ├── tenant-settings.md
 │   │   ├── tenant-settings.md
 │   │   └── client-management.md               # Agency partner client management
 │   └── workflows/
@@ -417,7 +417,7 @@ Ongoing:    13-production-hardening
 | **Template**               | 06-templates                   | 04-insights (creation accelerator)      | Pre-built insight configurations      |
 | **Schedule**               | 07-scheduling                  | 04-insights (execution timing)          | Insight execution timing              |
 | **Delivery Configuration** | 07-scheduling                  | 08-settings (notification preferences)  | Report delivery settings              |
-| **Company (Tenant)**       | 09-tenant-management           | 10-agency (multi-tenant view)           | Multi-tenant management               |
+| **Tenant (Tenant)**        | 09-tenant-management           | 10-agency (multi-tenant view)           | Multi-tenant management               |
 | **Insight Report**         | 05-reports                     | 04-insights (output consumption)        | AI-generated output                   |
 | **User**                   | 01-authentication, 08-settings | 09-tenant-management (tenant access)    | User accounts and preferences         |
 | **Permissions**            | 11-administration              | 09-tenant-management (tenant-level)     | RBAC and access control               |
@@ -462,7 +462,7 @@ Ongoing:    13-production-hardening
 | Template Preview                                         | 06-templates         | pages/template-preview.md              |
 | Template Clone                                           | 06-templates         | pages/template-clone.md                |
 | **Settings Journey (7 pages)**                           |                      |                                        |
-| Company Settings                                         | 09-tenant-management | pages/company-settings.md              |
+| Tenant Settings                                          | 09-tenant-management | pages/tenant-settings.md               |
 | User Profile Settings                                    | 08-settings          | pages/user-profile.md                  |
 | Notification Settings                                    | 08-settings          | pages/notification-settings.md         |
 | Integration Settings                                     | 08-settings          | pages/integration-settings.md          |

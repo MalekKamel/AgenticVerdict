@@ -122,7 +122,7 @@ export class AgentFactory {
     const memory = this.createMemory(cfg);
     const defaultAutoToolsByRole: Record<AgentFactoryConfig["role"], readonly string[]> = {
       analysis: [
-        "get_company_profile",
+        "get_tenant_profile",
         "get_business_rules",
         "get_config",
         "fetch_meta_metrics",
@@ -134,7 +134,7 @@ export class AgentFactory {
         "compute_b2b_kpis_from_snapshots",
       ],
       insights: ["get_config", "analyze_trends", "statistical_analysis"],
-      verdict: ["get_company_profile", "get_business_rules", "generate_summary", "format_report"],
+      verdict: ["get_tenant_profile", "get_business_rules", "generate_summary", "format_report"],
     };
     const autoToolNames = defaultAutoToolsByRole[cfg.role];
     if (cfg.runtimeMode === "test") {

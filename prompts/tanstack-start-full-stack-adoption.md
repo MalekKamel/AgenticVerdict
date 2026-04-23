@@ -152,7 +152,7 @@ async function generateReport() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       json: {
-        companyId: "masafh",
+        tenantId: "masafh",
         dateRange: {
           /* ... */
         },
@@ -398,11 +398,11 @@ Based on current system requirements:
 | ------------------ | -------------------------------------------------------- | ------------------------------------------ |
 | **Authentication** | `login`, `logout`, `refreshToken`, `me`                  | User authentication and session management |
 | **Connectors**     | `authenticate`, `fetchMetrics`, `testConnection`, `list` | Platform connector management              |
-| **Companies**      | `create`, `updateConfig`, `getConfig`, `list`            | Multi-tenant company management            |
+| **Tenants**        | `create`, `updateConfig`, `getConfig`, `list`            | Multi-tenant management                    |
 | **Reports**        | `generate`, `schedule`, `getHistory`, `cancel`           | Report generation and delivery             |
 | **Insights**       | `generate`, `list`, `getById`, `rate`                    | AI-powered insight generation              |
 | **Dashboards**     | `getData`, `updateLayout`, `list`                        | Dashboard configuration and data           |
-| **Users**          | `create`, `update`, `invite`, `remove`                   | User management within companies           |
+| **Users**          | `create`, `update`, `invite`, `remove`                   | User management within tenants             |
 
 ---
 
@@ -512,10 +512,10 @@ export const protectedProcedure = t.procedure.use(isAuthed);
 **Usage in procedures:**
 
 ```typescript
-export const companiesRouter = t.router({
+export const tenantsRouter = t.router({
   getConfig: protectedProcedure.query(async ({ ctx }) => {
     // ctx.tenantId is guaranteed to exist
-    return await db.companies.findById(ctx.tenantId);
+    return await tenantRepository.findById(ctx.tenantId);
   }),
 });
 ```
@@ -532,8 +532,8 @@ import { generateReport } from "@agenticverdict/report-generator";
 // Worker imports domain logic, not tRPC procedures
 
 export default async (job: Job) => {
-  const { companyId, reportId } = job.data;
-  await generateReport(companyId, reportId);
+  const { tenantId, reportId } = job.data;
+  await generateReport(tenantId, reportId);
 };
 ```
 
@@ -650,7 +650,7 @@ agenticverdict/
 │   │       │   ├── index.ts          # Root router
 │   │       │   ├── auth.ts
 │   │       │   ├── connectors.ts
-│   │       │   ├── companies.ts
+│   │       │   ├── tenants.ts
 │   │       │   └── reports.ts
 │   │       ├── middleware/           # tRPC middleware
 │   │       │   ├── tenant.ts         # Tenant context

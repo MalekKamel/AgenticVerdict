@@ -58,7 +58,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### II. Configuration-Driven Architecture ✅ PASS
 
-**Requirement**: Company-specific behavior through CompanyConfig schema
+**Requirement**: Tenant-specific behavior through TenantConfig schema
 **Implementation**:
 - Three-tier design token system: global (brand-agnostic) → brand (tenant-specific) → component
 - Tenant branding applied via CSS custom properties at runtime

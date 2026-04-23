@@ -1,5 +1,7 @@
 export type TenantSecurityCode =
   | "MISSING_TENANT"
+  /** No tenant could be established when one is required (SSOT NFR-T3 / C-HTTP-3). */
+  | "TENANT_CONTEXT_REQUIRED"
   | "INVALID_TENANT_ID"
   | "TENANT_SLUG_UNRESOLVED"
   | "TENANT_CONFIG_NOT_FOUND"

@@ -2156,7 +2156,7 @@ function InsightDetail() {
 
 ### 5.3 Tenant Switcher (for Agencies)
 
-Dropdown component for agency users to switch between client companies quickly.
+Dropdown component for agency users to switch between client tenants quickly.
 
 **Use Cases:** Agency multi-client management, tenant switching
 
@@ -2205,7 +2205,7 @@ export function TenantSwitcher({
       <Menu.Dropdown>
         <Menu.Label>
           <Group justify="space-between">
-            <Text size="xs">Switch Company</Text>
+            <Text size="xs">Switch Tenant</Text>
             <Text size="xs" c="dimmed">
               {tenants.length} total
             </Text>
@@ -2238,11 +2238,8 @@ export function TenantSwitcher({
 
         <Divider />
 
-        <Menu.Item
-          leftSection={<IconPlus size="1rem" />}
-          onClick={() => navigate("/companies/new")}
-        >
-          Add New Company
+        <Menu.Item leftSection={<IconPlus size="1rem" />} onClick={() => navigate("/tenants/new")}>
+          Add New Tenant
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

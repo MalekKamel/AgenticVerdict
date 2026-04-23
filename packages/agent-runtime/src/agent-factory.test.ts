@@ -1,5 +1,5 @@
 import {
-  createTestCompanyConfig,
+  createTestTenantConfig,
   TEST_TENANT_ALPHA,
   TEST_TENANT_BETA,
 } from "@agenticverdict/testing";
@@ -48,7 +48,7 @@ describe("AgentFactory (Phase 6)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-factory-1",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA, companyName: "Alpha Co" }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Alpha Co" }),
     };
 
     const out = await runAgentJob({ tenant }, async () =>
@@ -71,7 +71,7 @@ describe("AgentFactory (Phase 6)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-mismatch",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
     };
 
     await expect(
@@ -130,7 +130,7 @@ describe("AgentFactory (Phase 6)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "r-rb",
-      config: createTestCompanyConfig(),
+      config: createTestTenantConfig(),
     };
     const r = await runAgentJob({ tenant }, async () =>
       agent.run(

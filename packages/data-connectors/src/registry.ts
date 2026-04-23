@@ -55,6 +55,16 @@ export function createAdapterRegistry<TContext = unknown>(): ConnectorAdapterReg
           `No adapter registered for connector "${connector}"`,
         );
       }
+      if (context && typeof context === "object" && "tenantId" in context) {
+        const raw = (context as { tenantId: unknown }).tenantId;
+        if (typeof raw !== "string" || raw.trim() === "") {
+          throw new PlatformError(
+            connector,
+            "missing_tenant_id",
+            `Connector resolve context must provide a non-empty string tenantId when the key is present (SSOT C-CONN-1)`,
+          );
+        }
+      }
       return factory(context);
     },
     has(connector) {

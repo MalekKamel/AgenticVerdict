@@ -25,7 +25,7 @@ Workflows are organized by business capability and reference specific UI compone
 | ------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------- | ---------- | ------------- |
 | **[Connector Onboarding](./connector-onboarding.md)**         | Connect external data platforms via OAuth                      | Business Users, Agency Account Managers | Medium     | 2-5 minutes   |
 | **[Report Generation](./report-generation.md)**               | Create scheduled AI-powered insights from templates or scratch | Business Users, Agency Account Managers | High       | 5-15 minutes  |
-| **[Tenant Onboarding](./tenant-onboarding.md)**               | New company/agency setup with initial configuration            | Agency Owners, Business Owners          | High       | 10-20 minutes |
+| **[Tenant Onboarding](./tenant-onboarding.md)**               | New tenant/agency setup with initial configuration             | Agency Owners, Business Owners          | High       | 10-20 minutes |
 | **[Multi-Language Switching](./multi-language-switching.md)** | Switch between supported languages with RTL/LTR transition     | All Users                               | Low        | <30 seconds   |
 
 ---
@@ -90,7 +90,7 @@ Workflows are organized by business capability and reference specific UI compone
 
 ### 6. Smart Defaults
 
-- Pre-fill fields with known information (company data, templates)
+- Pre-fill fields with known information (tenant data, templates)
 - Recommend options based on business domain and user role
 - Learn from user preferences over time
 

@@ -11,7 +11,7 @@
   - `vitest.config.ts` uses `test.projects` (monorepo packages + `apps/frontend`) with **`@vitest/coverage-v8`**, merged coverage, **70% line/statement** thresholds on **instrumented foundation code** (stub apps and DB connection-layer files excluded from coverage scope; see comments in config).
   - Root scripts: **`pnpm run test:unit`**, **`pnpm run test:coverage`**, **`pnpm run test:integration`** (Turbo → `@agenticverdict/database` Testcontainers suite), **`pnpm run test:e2e`** (Turbo → web Playwright).
 - **`@agenticverdict/testing`**
-  - Shared **`createTestCompanyConfig`**, **`createTestTenantContext`**, stable **tenant UUID constants** (including RLS test IDs), with unit tests.
+  - Shared **`createTestTenantConfig`**, **`createTestTenantContext`**, stable **tenant UUID constants** (including RLS test IDs), with unit tests.
 - **`docker-compose.yml`**
   - Postgres 16 + Redis 7 with healthchecks for local dev (aligned with `.env.example`).
 - **`.env.example`**
@@ -21,7 +21,7 @@
   - **E2E:** Playwright after quality; triggers when `apps/frontend/playwright.config.mjs` exists.
   - Concurrency group; push branches: `main`, `feature/**`.
 - **`apps/frontend`**
-  - **Playwright** (`playwright.config.mjs`, port **3333**, `webServer` sets **`COMPANY_CONFIG_DIR`** for `loadCompanyConfig`); **`e2e/locale-smoke.spec.ts`** (en LTR / ar RTL).
+  - **Playwright** (`playwright.config.mjs`, port **3333**, `webServer` sets **`TENANT_CONFIG_DIR`** for `loadTenantConfig`); **`e2e/locale-smoke.spec.ts`** (en LTR / ar RTL).
   - **`vitest.config.ts`** for future unit/component tests.
   - **Fix:** `[locale]/layout.tsx` wraps the shell in **`NextIntlClientProvider`** + **`setRequestLocale`** so client hooks (`useTranslations`, etc.) work under **`next start`** (production / E2E).
 - **README**

@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 
-import { getTenantContext } from "@agenticverdict/core";
+import { getTenantContext, TenantSecurityError } from "@agenticverdict/core";
 
 import type { Database } from "./client";
 
@@ -17,7 +17,11 @@ export async function dbScoped<T>(
 ): Promise<T> {
   const ctx = getTenantContext();
   if (!ctx) {
-    throw new Error("Tenant context is required for dbScoped database access");
+    throw new TenantSecurityError(
+      "TENANT_CONTEXT_REQUIRED",
+      "Tenant context is required for dbScoped database access",
+      500,
+    );
   }
 
   return db.transaction(async (tx) => {

@@ -1,5 +1,5 @@
 {
-  "companyName": "Composed EN Tenant",
+  "tenantName": "Composed EN Tenant",
   "localization": {
     "currency": "EUR"
   }

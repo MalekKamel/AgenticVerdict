@@ -1,7 +1,10 @@
+import { UI_COLOR_SCHEME_STORAGE_KEY } from "@agenticverdict/ui";
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 
 import { AppRouteError } from "@/components/errors/AppRouteError";
+import { getDirection, parseLocaleFromPathname } from "@/i18n/locales";
+import { getCspNonce } from "@web-csp-nonce";
 
 import "@mantine/core/styles.css";
 import "../styles/globals.css";
@@ -22,10 +25,19 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const locale = parseLocaleFromPathname(pathname);
+  const dir = getDirection(locale);
+  const cspNonce = getCspNonce();
+
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang={locale} dir={dir} {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript defaultColorScheme="auto" />
+        <ColorSchemeScript
+          defaultColorScheme="auto"
+          localStorageKey={UI_COLOR_SCHEME_STORAGE_KEY}
+          {...(cspNonce ? { nonce: cspNonce } : {})}
+        />
         <HeadContent />
       </head>
       <body>

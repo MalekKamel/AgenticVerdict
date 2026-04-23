@@ -28,11 +28,11 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 | Constitution Principle | Status | Notes |
 |----------------------|--------|-------|
 | Multi-Tenancy First | ✅ Pass | All settings operations scoped to tenant context via AsyncLocalStorage and row-level security |
-| Configuration-Driven | ✅ Pass | No company-specific logic; all customization via CompanyConfig schema |
+| Configuration-Driven | ✅ Pass | No tenant-specific logic; all customization via TenantConfig schema |
 | Plugin Architecture | ✅ Pass | Integration settings use existing ConnectorAdapter interface |
 | Don't Reinvent the Wheel | ✅ Pass | Uses Mantine v9 forms, tabs, and validation (no custom form logic) |
 | No `any` Types | ✅ Pass | Strict TypeScript mode with Zod validation schemas |
-| No Hardcoded Company Logic | ✅ Pass | All settings are tenant-scoped, no hardcoded values |
+| No Hardcoded Tenant Logic | ✅ Pass | All settings are tenant-scoped, no hardcoded values |
 | Tenant Context Required | ✅ Pass | All database operations use `dbScoped()` wrapper |
 | No Platform-Specific Code in Core | ✅ Pass | Integration settings use adapter pattern from Phase 03 |
 | No Blocking Operations in API Routes | ✅ Pass | Long-running operations (email sending) use background jobs |

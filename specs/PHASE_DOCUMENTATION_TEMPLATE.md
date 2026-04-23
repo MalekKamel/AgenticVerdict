@@ -124,8 +124,8 @@ Ensure the documentation addresses:
    - Row-level security for all data access
 
 2. **Configuration-Driven Design**
-   - No company-specific hardcoding
-   - All behavior via `CompanyConfig` injection
+   - No tenant-specific hardcoding
+   - All behavior via `TenantConfig` injection
    - Dynamic platform enablement
 
 3. **Type Safety & Validation**

@@ -9,7 +9,7 @@
 
 ## 1. Executive summary
 
-This plan operationalizes **every** numbered recommendation (1–10) from Section 7 of the research memo, using the memo’s **four-phase** timeline (Weeks 1–8) as a **baseline sequence** while splitting work into verifiable **work packages** with dependencies, risks, validation, and exit criteria tied to the memo’s **Success Metrics**. It assumes **[Decision 11](/docs/architecture/ui/04-decision-record.md#decision-11-trpc-as-unified-api-layer-for-multi-client-support)** (single tRPC contract for web, mobile, CLI), **multi-tenant isolation** via tenant context and `CompanyConfig`-driven behavior (no hardcoded tenant logic), and the existing stack described in [`CLAUDE.md`](../../../CLAUDE.md) (Turborepo, Vite, TanStack Start, Mantine v9, `@agenticverdict/ui`). Cross-cutting requirements—**tenant context**, **error boundaries**, **auth**, **tRPC client usage**, **RTL/LTR**, **WCAG 2.1 AA**, and **observability**—are explicit in each phase rather than left as implicit “quality bars.”
+This plan operationalizes **every** numbered recommendation (1–10) from Section 7 of the research memo, using the memo’s **four-phase** timeline (Weeks 1–8) as a **baseline sequence** while splitting work into verifiable **work packages** with dependencies, risks, validation, and exit criteria tied to the memo’s **Success Metrics**. It assumes **[Decision 11](/docs/architecture/ui/04-decision-record.md#decision-11-trpc-as-unified-api-layer-for-multi-client-support)** (single tRPC contract for web, mobile, CLI), **multi-tenant isolation** via tenant context and `TenantConfig`-driven behavior (no hardcoded tenant logic), and the existing stack described in [`CLAUDE.md`](../../../CLAUDE.md) (Turborepo, Vite, TanStack Start, Mantine v9, `@agenticverdict/ui`). Cross-cutting requirements—**tenant context**, **error boundaries**, **auth**, **tRPC client usage**, **RTL/LTR**, **WCAG 2.1 AA**, and **observability**—are explicit in each phase rather than left as implicit “quality bars.”
 
 **Phase alignment (memo baseline → this plan):** **Phase 1** focuses on framework completeness, tenant-aware wiring, and minimum viable error handling; **Phase 2** hardens authentication, design-system and RTL/a11y baselines, and test/E2E scaffolding; **Phase 3** optimizes performance (CWV, bundles, caching) and deepens automated quality (coverage, a11y automation); **Phase 4** delivers production operations (monitoring, security pipeline, deployment automation) and advanced tenant-facing capabilities where product-ready.
 
@@ -38,15 +38,15 @@ This plan operationalizes **every** numbered recommendation (1–10) from Sectio
 
 ### Cross-cutting concerns (all phases)
 
-| Concern              | How it is enforced                                                                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tenant context**   | Single context (or loader context) for `tenantId` / company config; tRPC links and query keys scoped; no silent cross-tenant cache reuse |
-| **Error boundaries** | Root + route `errorComponent`; map tRPC errors to UI; dev vs prod messaging                                                              |
-| **Auth**             | Router guards + session queries; tokens refreshed safely; protected routes documented                                                    |
-| **tRPC client**      | Only **public** procedures from shared router types; no parallel ad-hoc REST for domain operations                                       |
-| **RTL/LTR**          | `DirectionProvider` + logical CSS; locale from routing/i18n (`$locale`)                                                                  |
-| **Accessibility**    | WCAG 2.1 AA: keyboard, contrast, labels; eslint + axe + spot checks                                                                      |
-| **Observability**    | Correlation IDs, tenant id on logs, web vitals/RUM where applicable                                                                      |
+| Concern              | How it is enforced                                                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tenant context**   | Single context (or loader context) for `tenantId` / tenant config; tRPC links and query keys scoped; no silent cross-tenant cache reuse |
+| **Error boundaries** | Root + route `errorComponent`; map tRPC errors to UI; dev vs prod messaging                                                             |
+| **Auth**             | Router guards + session queries; tokens refreshed safely; protected routes documented                                                   |
+| **tRPC client**      | Only **public** procedures from shared router types; no parallel ad-hoc REST for domain operations                                      |
+| **RTL/LTR**          | `DirectionProvider` + logical CSS; locale from routing/i18n (`$locale`)                                                                 |
+| **Accessibility**    | WCAG 2.1 AA: keyboard, contrast, labels; eslint + axe + spot checks                                                                     |
+| **Observability**    | Correlation IDs, tenant id on logs, web vitals/RUM where applicable                                                                     |
 
 Default **owners** (assign in planning tool): _Web Platform_ (apps/frontend), _API Platform_ (apps/api), _Design Systems_ (`@agenticverdict/ui` + Pencil), _QA/CI_ (test infra).
 
@@ -146,7 +146,7 @@ Default **owners** (assign in planning tool): _Web Platform_ (apps/frontend), _A
 | P4-2 | **Deployment**        | Blue/green or canary; automated rollback; artifact promotion                   | P1-1         | Downtime             | 2               | Tabletop exercise    |
 | P4-3 | **Security**          | OWASP-oriented checks; pen-test scheduling; secrets hygiene                    | P4-2         | Finding backlog      | 3               | Scan reports         |
 | P4-4 | **Feature flags UI**  | Surface `createFeatureFlagService` capabilities to admin UI (if product scope) | P2-1         | UX complexity        | 4               | E2E with flag on/off |
-| P4-5 | **White-label**       | Logo/colors from `CompanyConfig`; SSR-safe theme                               | P2-3         | Flash of wrong theme | 5               | Visual + E2E         |
+| P4-5 | **White-label**       | Logo/colors from `TenantConfig`; SSR-safe theme                                | P2-3         | Flash of wrong theme | 5               | Visual + E2E         |
 | P4-6 | **Onboarding wizard** | Multi-step flow; analytics events                                              | P4-1         | Scope                | 6               | Product sign-off     |
 
 **Covers recommendations:** **8**, **9** (tooling hardening), **10**.

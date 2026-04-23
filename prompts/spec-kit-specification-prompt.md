@@ -32,7 +32,7 @@ The UI system encompasses a multi-tenant, internationalized **multi-business-dom
 
 ### System Overview
 
-AgenticVerdict is a **multi-business-domain intelligence platform** that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business), generates AI-powered cross-domain insights, and delivers actionable verdicts through automated reports. The UI system serves as the primary interface for users to configure connectors, view insights, manage reports, and switch between tenant companies.
+AgenticVerdict is a **multi-business-domain intelligence platform** that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business), generates AI-powered cross-domain insights, and delivers actionable verdicts through automated reports. The UI system serves as the primary interface for users to configure connectors, view insights, manage reports, and switch between tenant tenants.
 
 ### Current State
 
@@ -218,7 +218,7 @@ Use the following SpecKit commands sequentially to create the specification:
 **Command:**
 
 ```
-/speckit-specify Build a comprehensive multi-tenant multi-business-domain intelligence platform UI for AgenticVerdict, an intelligence platform that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business) through reusable connectors. The system must support full internationalization with first-class Arabic RTL support, WCAG 2.1 AA accessibility compliance, and atomic design component organization. The UI should enable users to configure data connectors across domains, visualize cross-domain insights through interactive dashboards, generate automated reports, and manage multiple tenant companies (for agency partners). Built on TanStack Start with Mantine UI v9, the system uses a three-tier design token architecture for multi-tenant branding flexibility while maintaining consistent user experience across all supported languages and regions.
+/speckit-specify Build a comprehensive multi-tenant multi-business-domain intelligence platform UI for AgenticVerdict, an intelligence platform that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business) through reusable connectors. The system must support full internationalization with first-class Arabic RTL support, WCAG 2.1 AA accessibility compliance, and atomic design component organization. The UI should enable users to configure data connectors across domains, visualize cross-domain insights through interactive dashboards, generate automated reports, and manage multiple tenant tenants (for agency partners). Built on TanStack Start with Mantine UI v9, the system uses a three-tier design token architecture for multi-tenant branding flexibility while maintaining consistent user experience across all supported languages and regions.
 ```
 
 **Expected Outputs:**

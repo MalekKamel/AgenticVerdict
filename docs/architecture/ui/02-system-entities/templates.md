@@ -424,7 +424,7 @@ ANY → DELETED (soft delete)
 
 - **[Insights](./insights-reports.md)** — Insights created from templates
 - **[Connectors](./connectors.md)** — Templates reference connectors
-- **[Tenant/Company](./tenant-company.md)** — Tenant templates scoped to company
+- **[Tenant/Tenant](./tenant-tenant.md)** — Tenant templates scoped to tenant
 
 ---
 
@@ -541,7 +541,7 @@ function CreateInsightFromTemplate({ templateId }: { templateId: string }) {
 ```typescript
 export const templates = pgTable("templates", {
   id: uuid("id").primaryKey().defaultRandom(),
-  tenantId: uuid("tenant_id").references(() => companies.id), // Null for system templates
+  tenantId: uuid("tenant_id").references(() => tenants.id), // Null for system templates
   name: text("name").notNull(),
   description: text("description").notNull(),
   domain: domainEnum("domain").notNull(),

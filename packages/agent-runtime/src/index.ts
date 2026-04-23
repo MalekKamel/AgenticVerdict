@@ -186,11 +186,11 @@ export {
 export { createReportPrepTools } from "./agent-tools/report-prep-tools";
 export { createAnalysisTools } from "./agent-tools/analysis-tools";
 export {
-  createCompanyContextTools,
+  createTenantContextTools,
   TenantScopedTtlCache,
-  type CompanyContextToolDeps,
+  type TenantContextToolDeps,
   type TenantCacheOptions,
-} from "./agent-tools/company-context-tools";
+} from "./agent-tools/tenant-context-tools";
 export {
   createPhase4ToolRegistry,
   createPhase4ToolRegistryWithDatabase,
@@ -206,7 +206,7 @@ export type {
   AbVariantAggregate,
   AbWinner,
   AssembledPromptLayersInput,
-  CompanyPromptContextOptions,
+  TenantPromptContextOptions,
   PairedAbStatisticalSummary,
   PromptAbTestReport,
   PromptContextSection,
@@ -218,8 +218,8 @@ export type {
 export {
   assemblePromptLayers,
   buildAbDecisionRecord,
-  buildCompanyPromptContext,
-  buildCompanyPromptContextSections,
+  buildTenantPromptContext,
+  buildTenantPromptContextSections,
   estimateApproximateTokenCount,
   getPromptTemplateHistory,
   listPromptTemplateIds,

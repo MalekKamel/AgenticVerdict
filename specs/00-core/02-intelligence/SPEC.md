@@ -28,7 +28,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 **✅ COMPLETED - Agent Tool Ecosystem**
 - Developed 12 production-ready agent tools (exceeding the minimum 10 planned):
   - **5 platform data tools:** `fetch_meta_metrics`, `fetch_ga4_metrics`, `fetch_gsc_metrics`, `fetch_gbp_metrics`, `fetch_tiktok_metrics`
-  - **7 analysis tools:** `get_company_profile`, `get_business_rules`, `get_config`, `calculate_metrics`, `compute_b2b_kpis_from_snapshots`, `analyze_trends`, `statistical_analysis`
+  - **7 analysis tools:** `get_tenant_profile`, `get_business_rules`, `get_config`, `calculate_metrics`, `compute_b2b_kpis_from_snapshots`, `analyze_trends`, `statistical_analysis`
 - Platform tools properly wired to specialized agents with dependency injection
 - Database query tools for historical marketing metrics retrieval
 - Insight generation tools for formatted output
@@ -36,7 +36,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 
 **✅ COMPLETED - Prompt Engineering System**
 - Designed reusable prompt templates for three marketing agent types
-- Created company context injection system (B2B industry, region, goals, currency)
+- Created tenant context injection system (B2B industry, region, goals, currency)
 - Implemented prompt versioning system with template registry
 - Built A/B testing framework for prompt optimization
 - Prompt optimization workflow with quality metrics
@@ -113,7 +113,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 
 **Implementation:** `packages/agent-runtime/src/b2b-marketing-kpis.ts`
 
-- **Configuration-driven:** `CompanyConfig.marketing.b2bKpiProfile` for tenant-specific KPIs
+- **Configuration-driven:** `TenantConfig.marketing.b2bKpiProfile` for tenant-specific KPIs
 - **KPIs computed:** CPQL, lead quality score (0-100), decision-maker rate, fleet quality rate, regional rate, Arabic/English engagement share
 - **Flexible funnel input:** `B2bLeadFunnelSnapshot` accepts normalized platform metrics
 - **Agent tool integration:** `compute_b2b_kpis_from_snapshots` tool in Phase 4 registry
@@ -143,7 +143,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 
 - **Template registry:** Versioned prompt templates with semver support
 - **Production templates:** 3 core templates (analysis.cross_platform_overview, insight.anomaly_scan, verdict.recommendation_synthesis)
-- **Company context injection:** Dynamic variable substitution (companyName, currency, platforms, dateRange)
+- **Tenant context injection:** Dynamic variable substitution (tenantName, currency, platforms, dateRange)
 - **A/B testing framework:** Paired statistical testing with winner selection
 - **Placeholder detection:** Automatic detection of template variables
 
@@ -213,7 +213,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 **Precondition:** Marketing campaigns running for B2B fleet tracking services
 
 **Flow:**
-1. System configures `b2bKpiProfile` in `CompanyConfig.marketing` (min fleet size: 10 vehicles, CPQL target: 50 SAR)
+1. System configures `b2bKpiProfile` in `TenantConfig.marketing` (min fleet size: 10 vehicles, CPQL target: 50 SAR)
 2. Agent calls `compute_b2b_kpis_from_snapshots` tool with normalized platform data
 3. Tool aggregates funnel metrics: total leads, qualified leads, decision-maker rate, fleet quality rate
 4. Tool computes CPQL (cost per qualified lead) and compares to target
@@ -233,7 +233,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 - ✅ 12 production-ready agent tools implemented and tested (exceeds minimum 10 target)
 - ✅ Three specialized agents (Cross-Platform Analysis, Insight Generation, Media Verdict) operational
 - ✅ Agent orchestration workflow handles end-to-end marketing verdict generation
-- ✅ Prompt template system supports company context injection with versioning
+- ✅ Prompt template system supports tenant context injection with versioning
 - ✅ Retry mechanism handles transient LLM API failures with exponential backoff
 - ✅ Mock LLM system enables deterministic unit testing with `AgentMockChatModel`
 
@@ -254,7 +254,7 @@ Phase 02 established the intelligence layer of AgenticVerdict, implementing a co
 - ✅ Analysis prompt platform lists derived from enabled tenant channels
 - ✅ Workflow validation enforces requested platforms are enabled for tenant
 - ✅ Database queries retrieve normalized marketing metrics correctly
-- ✅ Company context propagates through agent workflows (tenant ID, industry, region, goals)
+- ✅ Tenant context propagates through agent workflows (tenant ID, industry, region, goals)
 - ✅ Agent telemetry integrates with Phase 0 logging system via LangSmith
 - ✅ LangSmith tracing captures all agent executions with distributed tracing
 
@@ -338,7 +338,7 @@ interface ValidationResult {
 
 1. **LLM API Availability:** Claude, GPT-4, and optional GLM APIs are accessible from production environment
 2. **Platform Data Quality:** Phase 01 adapters provide valid normalized snapshots (data freshness < 24 hours)
-3. **Tenant Configuration:** `CompanyConfig.marketing.b2bKpiProfile` is configured for B2B tenants
+3. **Tenant Configuration:** `TenantConfig.marketing.b2bKpiProfile` is configured for B2B tenants
 4. **Network Connectivity:** Agent runtime can reach LangSmith for observability (graceful degradation if unavailable)
 5. **Database Performance:** PostgreSQL can handle agent execution logging and provenance tracking load
 
@@ -347,7 +347,7 @@ interface ValidationResult {
 **Critical Dependencies (Phase 01 - Platform Integration):**
 - ✅ `@agenticverdict/data-connectors` - Platform adapters (Meta, GA4, GSC, GBP, TikTok)
 - ✅ `@agenticverdict/core` - Tenant context propagation with AsyncLocalStorage
-- ✅ `@agenticverdict/config` - CompanyConfig schema with marketing.b2bKpiProfile
+- ✅ `@agenticverdict/config` - TenantConfig schema with marketing.b2bKpiProfile
 - ✅ `@agenticverdict/database` - Drizzle ORM for metrics storage and agent logging
 
 **External Dependencies:**

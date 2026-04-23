@@ -1,11 +1,13 @@
+import { defaultLocale, supportedLocales, type AppLocale } from "./locales";
+
 /**
  * Locale routing configuration (TanStack Router + prefix).
- * Previously used with next-intl; kept as the single source for supported locales.
+ * Delegates locale source-of-truth to `locales.ts`.
  */
 export const routing = {
-  locales: ["en", "ar"] as const,
-  defaultLocale: "en" as const,
+  locales: supportedLocales,
+  defaultLocale,
   localePrefix: "always" as const,
 };
 
-export type AppLocale = (typeof routing.locales)[number];
+export type { AppLocale };

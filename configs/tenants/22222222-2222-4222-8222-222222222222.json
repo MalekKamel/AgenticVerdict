@@ -1,0 +1,40 @@
+{
+  "tenantId": "22222222-2222-4222-8222-222222222222",
+  "tenantName": "Northwind Analytics (demo tenant)",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  },
+  "marketing": {
+    "channels": [
+      { "platform": "meta", "enabled": true, "label": "Paid social" },
+      { "platform": "ga4", "enabled": true },
+      { "platform": "gsc", "enabled": true },
+      { "platform": "gbp", "enabled": true },
+      { "platform": "tiktok", "enabled": true }
+    ],
+    "kpis": [
+      {
+        "id": "roas",
+        "name": "Return on ad spend",
+        "description": "Blended ROAS across paid channels",
+        "unit": "ratio"
+      }
+    ]
+  },
+  "ai": {
+    "primaryModel": "gpt-4o",
+    "provider": "openai"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true
+  },
+  "business": {
+    "products": ["Marketing analytics workspace"],
+    "valueProps": ["Cross-channel visibility"],
+    "differentiators": ["Hypothetical demo data only"]
+  }
+}

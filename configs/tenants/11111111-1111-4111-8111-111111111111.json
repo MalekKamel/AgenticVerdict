@@ -1,0 +1,72 @@
+{
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "tenantName": "Masafh",
+  "localization": {
+    "language": "ar",
+    "region": "SA",
+    "timezone": "Asia/Riyadh",
+    "currency": "SAR"
+  },
+  "marketing": {
+    "channels": [
+      { "platform": "ga4", "enabled": true },
+      { "platform": "gsc", "enabled": true },
+      { "platform": "gbp", "enabled": true }
+    ],
+    "kpis": [{ "id": "leads", "name": "Qualified leads" }],
+    "b2bKpiProfile": {
+      "enabled": true,
+      "minFleetVehiclesQualified": 10,
+      "weights": {
+        "decisionMakerSignal": 0.4,
+        "fleetSizeSignal": 0.4,
+        "regionalFitSignal": 0.2
+      },
+      "targetCpql": { "maxAmount": 500, "currencyCode": "SAR" },
+      "funnelMetricMapping": {
+        "totalLeadMetricSuffixes": ["mock.conversions", "conversions"],
+        "qualifiedLeadMetricSuffixes": ["mock.qualified_conversions"],
+        "spendMetricSuffixes": ["mock.spend", "spend"],
+        "decisionMakerLeadMetricSuffixes": ["mock.leads_dm"],
+        "fleetQualifiedLeadMetricSuffixes": ["mock.leads_fleet"],
+        "regionalQualifiedLeadMetricSuffixes": ["mock.leads_regional"],
+        "regionalDimension": { "key": "region", "value": "SA" },
+        "sessionsMetricSuffixes": ["mock.sessions"],
+        "sessionLanguageDimensionKey": "language"
+      }
+    }
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true
+  },
+  "ui": {
+    "brand": {
+      "colors": {
+        "primary": "#1976D2",
+        "secondary": "#616161",
+        "success": "#2E7D32",
+        "warning": "#F57C00",
+        "danger": "#C62828",
+        "info": "#0288D1"
+      },
+      "typography": {
+        "fontFamily": "Inter, system-ui, -apple-system, sans-serif"
+      },
+      "branding": {
+        "logoUrl": "/logos/masafh-logo.svg",
+        "logoHeight": "32px",
+        "appName": "Masafh"
+      }
+    }
+  },
+  "business": {
+    "products": ["GPS fleet tracking", "Fleet management SaaS"],
+    "valueProps": ["Real-time visibility", "Saudi market focus"],
+    "differentiators": ["Arabic-first support", "Regional compliance"]
+  }
+}

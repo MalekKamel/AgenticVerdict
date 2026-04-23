@@ -5,7 +5,7 @@
 
 ## Summary
 
-Phase 09 (Tenant Management) implements multi-tenant switching and management capabilities essential for agency partners and multi-organization users. The implementation builds on the TanStack Start + Mantine v9 foundation to deliver a tenant switcher component, company/tenant settings pages, client management for agency partners, and tenant onboarding workflows—all with full RTL support and proper tenant isolation via AsyncLocalStorage context propagation.
+Phase 09 (Tenant Management) implements multi-tenant switching and management capabilities essential for agency partners and multi-organization users. The implementation builds on the TanStack Start + Mantine v9 foundation to deliver a tenant switcher component, tenant/tenant settings pages, client management for agency partners, and tenant onboarding workflows—all with full RTL support and proper tenant isolation via AsyncLocalStorage context propagation.
 
 ## Technical Context
 
@@ -18,7 +18,7 @@ Phase 09 (Tenant Management) implements multi-tenant switching and management ca
   - tRPC v11 (type-safe API layer)
   - Zod (runtime validation)
 
-**Storage**: PostgreSQL 16 with Drizzle ORM (tenant, company, configuration tables)
+**Storage**: PostgreSQL 16 with Drizzle ORM (tenant, tenant, configuration tables)
 **Testing**: Playwright (E2E), Vitest (unit testing)
 **Target Platform**: Web (responsive design with mobile-first approach)
 **Project Type**: Multi-tenant SaaS web application
@@ -61,7 +61,7 @@ specs/01-ui/09-tenant-management/
 apps/frontend/src/
 ├── routes/
 │   ├── settings/
-│   │   ├── company.tsx          # Company settings page
+│   │   ├── tenant.tsx          # Tenant settings page
 │   │   └── tenant.tsx           # Tenant settings page
 │   ├── agency/
 │   │   ├── clients.tsx          # Client management list
@@ -71,7 +71,7 @@ apps/frontend/src/
 ├── components/
 │   ├── tenant/
 │   │   ├── TenantSwitcher.tsx       # Tenant switcher dropdown component
-│   │   ├── CompanySettingsForm.tsx  # Company branding settings form
+│   │   ├── TenantSettingsForm.tsx  # Tenant branding settings form
 │   │   ├── TenantSettingsForm.tsx   # Tenant configuration form
 │   │   ├── ClientList.tsx           # Agency client list with virtualization
 │   │   ├── ClientCard.tsx           # Client overview card
@@ -89,16 +89,16 @@ apps/frontend/src/
 └── hooks/
     ├── useTenantSwitch.ts       # Tenant switch hook with cache invalidation
     ├── useTenantConfig.ts       # Tenant configuration query hook
-    └── useCompanyBranding.ts    # Company branding query hook
+    └── useTenantBranding.ts    # Tenant branding query hook
 
 packages/database/src/schema/
 ├── tenant.ts                    # Tenant table schema
-├── company.ts                   # Company branding schema
+├── tenant.ts                   # Tenant branding schema
 └── tenant-config.ts             # Tenant configuration schema
 
 packages/api/src/routers/
 ├── tenant-router.ts             # Tenant operations (get, update, switch)
-├── company-router.ts            # Company branding operations
+├── tenant-router.ts            # Tenant branding operations
 └── agency-router.ts             # Agency partner client operations
 ```
 
@@ -141,7 +141,7 @@ import { createStore } from '@tanstack/react-store';
 interface TenantState {
   currentTenantId: string;
   tenantName: string;
-  branding: CompanyBranding;
+  branding: TenantBranding;
 }
 
 export const tenantStore = createStore<TenantState>({
@@ -226,14 +226,14 @@ export function TenantSwitcher() {
 
 ### Settings Pages Structure
 
-Both company and tenant settings use a similar tabbed form layout:
+Both tenant and tenant settings use a similar tabbed form layout:
 
 ```typescript
-// apps/frontend/src/routes/settings/company.tsx
+// apps/frontend/src/routes/settings/tenant.tsx
 import { Tabs, Container } from '@mantine/core';
-import { CompanySettingsForm } from '@/components/tenant/CompanySettingsForm';
+import { TenantSettingsForm } from '@/components/tenant/TenantSettingsForm';
 
-export default function CompanySettingsPage() {
+export default function TenantSettingsPage() {
   return (
     <Container size="lg">
       <Tabs defaultValue="branding">
@@ -244,15 +244,15 @@ export default function CompanySettingsPage() {
         </Tabs.List>
         
         <Tabs.Panel value="branding">
-          <CompanySettingsForm section="branding" />
+          <TenantSettingsForm section="branding" />
         </Tabs.Panel>
         
         <Tabs.Panel value="domain">
-          <CompanySettingsForm section="domain" />
+          <TenantSettingsForm section="domain" />
         </Tabs.Panel>
         
         <Tabs.Panel value="localization">
-          <CompanySettingsForm section="localization" />
+          <TenantSettingsForm section="localization" />
         </Tabs.Panel>
       </Tabs>
     </Container>
@@ -418,7 +418,7 @@ All tenant management components must meet WCAG 2.1 AA standards:
 
 ## Migration Notes
 
-No database migrations are required for this phase—tenant, company, and configuration schemas should already exist from earlier backend implementation. This phase focuses solely on UI implementation.
+No database migrations are required for this phase—tenant, tenant, and configuration schemas should already exist from earlier backend implementation. This phase focuses solely on UI implementation.
 
 ## Rollout Plan
 

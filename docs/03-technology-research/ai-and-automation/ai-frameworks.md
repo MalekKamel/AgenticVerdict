@@ -62,7 +62,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Klarna, Replit, Elastic, LinkedIn, Uber, GitLab
+- **Notable Tenants:** Klarna, Replit, Elastic, LinkedIn, Uber, GitLab
 - **Use Cases:** E-commerce AI, code generation, enterprise search, customer service
 - **Case Studies:** LangSmith shows production deployments at scale
 
@@ -155,7 +155,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Klarna, Replit, Elastic (LangChain ecosystem)
+- **Notable Tenants:** Klarna, Replit, Elastic (LangChain ecosystem)
 - **Use Cases:** Stateful workflows, long-running agents, human-in-the-loop
 - **Case Studies:** Production deployments for complex agent orchestration
 
@@ -248,7 +248,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Extensive Vercel/Next.js ecosystem adoption
+- **Notable Tenants:** Extensive Vercel/Next.js ecosystem adoption
 - **Use Cases:** Chatbots, content generation, AI-powered web apps
 - **Case Studies:** Thousands of Next.js applications
 
@@ -345,7 +345,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Microsoft internal teams, enterprise customers
+- **Notable Tenants:** Microsoft internal teams, enterprise customers
 - **Use Cases:** Multi-agent collaboration, complex task decomposition
 - **Case Studies:** Microsoft research papers, enterprise deployments
 
@@ -440,7 +440,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Widespread Claude adoption
+- **Notable Tenants:** Widespread Claude adoption
 - **Use Cases:** Chatbots, code generation, document analysis
 - **Case Studies:** Extensive production deployments
 
@@ -538,7 +538,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Universal OpenAI adoption
+- **Notable Tenants:** Universal OpenAI adoption
 - **Use Cases:** Every AI use case imaginable
 - **Case Studies:** Largest production deployment base
 
@@ -635,7 +635,7 @@
 
 **Production Adoption:**
 
-- **Notable Companies:** Google Cloud customers
+- **Notable Tenants:** Google Cloud customers
 - **Use Cases:** Enterprise AI, Google ecosystem integration
 - **Case Studies:** Google Cloud case studies
 

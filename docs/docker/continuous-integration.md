@@ -11,7 +11,7 @@ Workflows live under `.github/workflows/`. Runners are `ubuntu-latest` (amd64); 
 
 **PR gating:** jobs run on pull requests **only** when the PR has the label **`trigger:build-docker`**. Pushes to the branches above always run the jobs.
 
-**Jobs:** parallel builds for **web**, **api**, **worker** (45-minute timeout each):
+**Jobs:** parallel builds for **frontend**, **api**, **worker** (45-minute timeout each):
 
 - `docker/setup-buildx-action`
 - `docker/login-action` (GHCR auth for registry-backed cache)
@@ -19,12 +19,12 @@ Workflows live under `.github/workflows/`. Runners are `ubuntu-latest` (amd64); 
 - **Worker** job also builds **`docker/base/Dockerfile.chromium`** → **`agenticverdict/chromium-base:ci`** with scope **`chromium-base`**.
 - `docker/metadata-action` → tags (branch, PR ref, `sha-*`)
 - `docker/build-push-action` with **`push: false`**, **`load: true`**, `BUILDKIT_INLINE_CACHE=1`, **`DEPS_IMAGE=agenticverdict/deps:ci`** (and **`CHROMIUM_IMAGE`** for worker), and cache backends:
-  - Registry cache: `ghcr.io/<owner>/<repo>/build-cache:{web|api|worker}`
+  - Registry cache: `ghcr.io/<owner>/<repo>/build-cache:{frontend|api|worker}`
   - GHA cache fallback: `type=gha` with per-service scopes
 
 ### Build cache and performance metrics
 
-- Cache scopes are service-specific (`web`, `api`, `worker`) to reduce cross-service cache churn; **`monorepo-deps`** and **`chromium-base`** deduplicate expensive base layers across jobs on the same runner cache.
+- Cache scopes are service-specific (`frontend`, `api`, `worker`) to reduce cross-service cache churn; **`monorepo-deps`** and **`chromium-base`** deduplicate expensive base layers across jobs on the same runner cache.
 - First build for a service may be cold; later builds should reuse pnpm/deps layers and intermediate stages.
 - The same workflow includes a manual `workflow_dispatch` performance job that runs `scripts/measure-build-performance.sh` for all services, uploads logs, and writes a summary table.
 - For the implemented build architecture and cache semantics, see [Build optimization (implemented)](./build-optimization-implemented.md) and [`changelog/2026-04-09-docker-build-optimization.md`](../../changelog/2026-04-09-docker-build-optimization.md).
@@ -33,7 +33,7 @@ Workflows live under `.github/workflows/`. Runners are `ubuntu-latest` (amd64); 
 
 **Trigger:** GitHub **Release** `published`.
 
-**Registry:** `ghcr.io/<lowercase owner/repo>/{web,api,worker}`
+**Registry:** `ghcr.io/<lowercase owner/repo>/{frontend,api,worker}`
 
 **Tags:** semver (`{{version}}`, `{{major}}.{{minor}}`), `sha-*`, and **`latest`** when the release is **not** a prerelease.
 
@@ -50,7 +50,7 @@ Release builds also use inline cache and registry/GHA cache backends so publishe
 - Push and pull request targeting **`main`**
 - **Weekly** schedule (`cron: 0 6 * * 1` — Monday 06:00 UTC)
 
-**Matrix:** `web`, `api`, `worker`
+**Matrix:** `frontend`, `api`, `worker`
 
 **Steps:**
 
@@ -74,4 +74,4 @@ Release builds also use inline cache and registry/GHA cache backends so publishe
 
 ## Related CI
 
-Application linting and tests remain in the main CI workflow (e.g. `.github/workflows/ci.yml` when present). Docker image builds intentionally use `next build --no-lint` for web; ESLint is expected in non-Docker CI paths.
+Application linting and tests remain in the main CI workflow (e.g. `.github/workflows/ci.yml` when present). Docker image builds intentionally use `next build --no-lint` for frontend; ESLint is expected in non-Docker CI paths.

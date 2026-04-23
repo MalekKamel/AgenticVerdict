@@ -475,7 +475,7 @@ The API provides these tRPC routers:
 | -------------- | -------------------------------------- | ------------------- |
 | **auth**       | `login`, `logout`, `me`                | Authentication      |
 | **connectors** | `list`, `authenticate`, `fetchMetrics` | Platform connectors |
-| **companies**  | `getConfig`, `updateConfig`            | Company settings    |
+| **tenants**    | `getConfig`, `updateConfig`            | Tenant settings     |
 | **reports**    | `generate`, `list`, `getHistory`       | Report operations   |
 | **insights**   | `list`, `getById`                      | AI insights         |
 

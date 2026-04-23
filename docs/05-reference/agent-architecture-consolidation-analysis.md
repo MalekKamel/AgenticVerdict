@@ -13,7 +13,7 @@
 
 The AgenticVerdict agent initialization architecture is **functionally sound but structurally fragmented**. Agent creation logic spans **5 factory classes/functions**, **12 agent creation functions**, and **multiple tool registration patterns** across the codebase. While the system works, this fragmentation creates:
 
-1. **Dependency injection inconsistency** - LLM, platform, and company context deps passed differently
+1. **Dependency injection inconsistency** - LLM, platform, and tenant context deps passed differently
 2. **Tool registration gaps** - 8 platform/database tools exist but aren't used in production agents
 3. **Factory duplication** - AgentFactory created inline in worker and scripts
 4. **No single source of truth** - Agent initialization patterns scattered across packages
@@ -43,7 +43,7 @@ The AgenticVerdict agent initialization architecture is **functionally sound but
 | **Agent Creation Functions** | 2     | `createSpecializedMarketingTestAgent`, `createSpecializedMarketingProductionAgent` |
 | **Pipeline Orchestrators**   | 1     | `runMarketingAgentPipeline`                                                        |
 | **Job Executors**            | 1     | `runAgentJob`                                                                      |
-| **Tool Creation Functions**  | 6     | Platform, database, analysis, B2B KPI, company context, report prep                |
+| **Tool Creation Functions**  | 6     | Platform, database, analysis, B2B KPI, tenant context, report prep                 |
 | **Memory Factory Functions** | 2     | `createAgentMemory`, `createMemoryForMode`                                         |
 | **Chat Model Creators**      | 5     | Anthropic, OpenAI, GLM, preference-based, primary+fallback                         |
 
@@ -116,7 +116,7 @@ const factory = new AgentFactory({ llmEnv });
 | Database query | 3 | ❌ NO |
 | Analysis | 3 | ✅ YES |
 | B2B KPI | 1 | ❌ NO |
-| Company context | 3 | ✅ YES |
+| Tenant context | 3 | ✅ YES |
 | Report prep | 3 | ✅ YES |
 
 **Missing Tools in Production Agents:**
@@ -129,7 +129,7 @@ const factory = new AgentFactory({ llmEnv });
 
 ```typescript
 const sharedTools = [
-  ...createCompanyContextTools(),
+  ...createTenantContextTools(),
   ...createAnalysisTools(),
   ...createReportPrepTools(),
   // ❌ MISSING: Platform, database, B2B KPI tools
@@ -145,9 +145,9 @@ const sharedTools = [
 AgentFactoryDeps; // llmEnv
 PlatformFetchToolDeps; // getAdapter, authenticateAdapter
 DatabaseQueryToolDeps; // metricsStore
-CompanyContextToolDeps; // configCache
-Phase4AgentToolingDeps; // metricsStore, platform, companyContext
-CreateSpecializedMarketingAgentOptions; // companyName, promptVars
+TenantContextToolDeps; // configCache
+Phase4AgentToolingDeps; // metricsStore, platform, tenantContext
+CreateSpecializedMarketingAgentOptions; // tenantName, promptVars
 RunMarketingPipelineOptions; // factory, ctx, goal, specialization, ...
 ```
 
@@ -161,14 +161,14 @@ RunMarketingPipelineOptions; // factory, ctx, goal, specialization, ...
 const tenant = createTestTenantContext({
   tenantId,
   requestId,
-  companyConfig: undefined, // Uses test defaults!
+  tenantConfig: undefined, // Uses test defaults!
 });
 ```
 
 **Production Should:**
 
 ```typescript
-const config = await loadCompanyConfig(tenantId);
+const config = await loadTenantConfig(tenantId);
 const tenant = { tenantId, requestId, config };
 ```
 
@@ -195,7 +195,7 @@ export interface AgentSystemConfig {
   configCache?: TenantScopedTtlCache<unknown>;
 
   // Agent Defaults
-  defaultCompanyName?: string;
+  defaultTenantName?: string;
   defaultPromptVars?: Partial<SpecializedMarketingAgentPromptVars>;
   defaultMemoryMode?: AgentMemoryMode;
   defaultTemperature?: Record<AgentLlmRole, number>;
@@ -265,7 +265,7 @@ export class AgentSystem {
         ctx: scope.invocation,
         goal,
         specialization: {
-          companyName: this.config.defaultCompanyName ?? tenant.config.companyName,
+          tenantName: this.config.defaultTenantName ?? tenant.config.tenantName,
           promptVars: this.config.defaultPromptVars,
         },
         invocationCache: this.config.invocationCache,
@@ -286,9 +286,9 @@ export class AgentSystem {
   private buildToolRegistry(): ToolRegistry {
     const tools: ITool[] = [];
 
-    // Always include: analysis, company context, report prep
+    // Always include: analysis, tenant context, report prep
     tools.push(...createAnalysisTools());
-    tools.push(...createCompanyContextTools(this.buildCompanyContextDeps()));
+    tools.push(...createTenantContextTools(this.buildTenantContextDeps()));
     tools.push(...createReportPrepTools());
 
     // Conditionally include: platform fetch
@@ -325,7 +325,7 @@ export class AgentSystem {
     return { metricsStore: this.config.metricsStore };
   }
 
-  private buildCompanyContextDeps(): CompanyContextToolDeps {
+  private buildTenantContextDeps(): TenantContextToolDeps {
     return { configCache: this.config.configCache };
   }
 
@@ -334,7 +334,7 @@ export class AgentSystem {
     options: CreateSpecializedMarketingAgentOptions,
   ): IAgent {
     const cfg = buildSpecializedMarketingFactoryConfig(kind, {
-      companyName: this.config.defaultCompanyName ?? "",
+      tenantName: this.config.defaultTenantName ?? "",
       ...options,
     });
 
@@ -382,7 +382,7 @@ async function runPipelineWorkflow(data: WorkflowTriggerJobData) {
 
   const pipelineState = await agentSystem.runMarketingPipeline(
     tenant,
-    `Workflow ${data.workflowId} for ${tenant.config.companyName}`,
+    `Workflow ${data.workflowId} for ${tenant.config.tenantName}`,
     {
       workflowId: randomUUID(),
       useProductionModels: true,
@@ -521,14 +521,14 @@ export async function shutdownAgentSystem(): Promise<void> {
 #### `apps/worker/src/tenant-context-loader.ts` (NEW)
 
 ```typescript
-import { loadCompanyConfig } from "@agenticverdict/database";
+import { loadTenantConfig } from "@agenticverdict/database";
 import type { TenantContext } from "@agenticverdict/core";
 
 export async function loadTenantContext(
   tenantId: string,
   requestId: string,
 ): Promise<TenantContext> {
-  const config = await loadCompanyConfig(tenantId);
+  const config = await loadTenantConfig(tenantId);
   return {
     tenantId,
     requestId,
@@ -580,15 +580,15 @@ export async function loadTenantContext(
 -       factory,
 -       ctx: scope.invocation,
 -       workflowId,
--       goal: `Workflow ${validatedData.workflowId} for ${tenant.config.companyName}`,
--       specialization: { companyName: tenant.config.companyName },
+-       goal: `Workflow ${validatedData.workflowId} for ${tenant.config.tenantName}`,
+-       specialization: { tenantName: tenant.config.tenantName },
 -       tolerateVerdictParseFailure: true,
 -       useProductionModels,
 -     }),
 -   );
 +   const pipelineState = await agentSystem.runMarketingPipeline(
 +     tenant,
-+     `Workflow ${validatedData.workflowId} for ${tenant.config.companyName}`,
++     `Workflow ${validatedData.workflowId} for ${tenant.config.tenantName}`,
 +     {
 +       workflowId,
 +       useProductionModels: true,

@@ -18,7 +18,7 @@ The Foundation Phase establishes the core infrastructure for the AgenticVerdict 
 
 ### Primary Client & Use Case
 
-**Masafh** (Riyadh-based B2B GPS fleet tracking company) serves as the primary client and design partner. The platform must:
+**Masafh** (Riyadh-based B2B GPS fleet tracking tenant) serves as the primary client and design partner. The platform must:
 
 - Support multi-tenant SaaS operations with complete data isolation
 - Handle Arabic (RTL) and English (LTR) languages with proper localization
@@ -51,30 +51,30 @@ The foundation supports expansion across multiple business domains:
 2. **Given** the development environment is running, **When** developer accesses localhost:3000, **Then** the web application loads successfully
 3. **Given** services are running, **When** developer runs `make dev-stop`, **Then** all services stop gracefully
 
-### User Story 2 - Multi-Tenant Company Configuration (Priority: P1)
+### User Story 2 - Multi-Tenant Tenant Configuration (Priority: P1)
 
-**Description**: System administrators can configure multiple companies (tenants) with unique business rules, KPIs, and localization settings without code changes.
+**Description**: System administrators can configure multiple tenants with unique business rules, KPIs, and localization settings without code changes.
 
 **Why this priority**: Core to the business model - multi-tenancy must be built in from the start. Configuration-driven architecture is essential for scalability.
 
-**Independent Test**: Administrator creates a new company configuration file, system loads it, and that company's users see their customized experience.
+**Independent Test**: Administrator creates a new tenant configuration file, system loads it, and that tenant's users see their customized experience.
 
 **Acceptance Scenarios**:
-1. **Given** a new company configuration JSON file, **When** system loads the configuration, **Then** it validates against Zod schema and caches the config
-2. **Given** multiple company configurations exist, **When** users from different companies authenticate, **Then** each sees their company's specific KPIs, branding, and localization
-3. **Given** an invalid company configuration, **When** system attempts to load it, **Then** system rejects it with clear validation errors
+1. **Given** a new tenant configuration JSON file, **When** system loads the configuration, **Then** it validates against Zod schema and caches the config
+2. **Given** multiple tenant configurations exist, **When** users from different tenants authenticate, **Then** each sees their tenant's specific KPIs, branding, and localization
+3. **Given** an invalid tenant configuration, **When** system attempts to load it, **Then** system rejects it with clear validation errors
 
 ### User Story 3 - Tenant Data Isolation (Priority: P1)
 
-**Description**: Multiple companies can use the same platform while maintaining complete data isolation. Database queries automatically scope data to the authenticated tenant.
+**Description**: Multiple tenants can use the same platform while maintaining complete data isolation. Database queries automatically scope data to the authenticated tenant.
 
 **Why this priority**: Security and compliance requirement. Data leakage between tenants would be catastrophic. Must be proven to work before any data is stored.
 
-**Independent Test**: Create test data for two companies, verify that each company's queries only return their own data, and attempt cross-tenant access (which should fail).
+**Independent Test**: Create test data for two tenants, verify that each tenant's queries only return their own data, and attempt cross-tenant access (which should fail).
 
 **Acceptance Scenarios**:
-1. **Given** two companies with data in the same database, **When** Company A queries their data, **Then** results contain only Company A's records
-2. **Given** a user from Company A attempts to access Company B's data, **When** they run a query, **Then** database returns empty results (not an error - data simply doesn't exist for their tenant context)
+1. **Given** two tenants with data in the same database, **When** Tenant A queries their data, **Then** results contain only Tenant A's records
+2. **Given** a user from Tenant A attempts to access Tenant B's data, **When** they run a query, **Then** database returns empty results (not an error - data simply doesn't exist for their tenant context)
 3. **Given** a database operation without tenant context, **When** code attempts to query data, **Then** operation throws "Tenant context is required" error
 
 ### User Story 4 - Internationalization (Arabic/English) (Priority: P2)
@@ -132,7 +132,7 @@ The foundation supports expansion across multiple business domains:
 ## Edge Cases
 
 ### Configuration Management
-- **Invalid configuration schema**: System rejects malformed company configs with specific error messages indicating which field failed validation
+- **Invalid configuration schema**: System rejects malformed tenant configs with specific error messages indicating which field failed validation
 - **Missing required configuration fields**: System fails to start with clear error indicating missing required fields
 - **Configuration cache staleness**: Hot-reload mechanism detects file changes and reloads configuration within 1 second
 - **Conflicting configuration sources**: Environment variables override file-based config with precedence documented
@@ -169,12 +169,12 @@ System MUST organize code as a Turborepo monorepo with:
 #### FR-002: Multi-Tenant Context Propagation
 System MUST propagate tenant context through all async operations using AsyncLocalStorage with:
 - Tenant ID for data scoping
-- Loaded CompanyConfig for business rules
+- Loaded TenantConfig for business rules
 - Request ID for distributed tracing
 - Optional user ID for audit logging
 
 #### FR-003: Configuration-Driven Architecture
-System MUST load and validate company configurations with:
+System MUST load and validate tenant configurations with:
 - Zod schema validation for all configuration types
 - File-based configuration loading with hot-reload
 - Environment variable overrides for secrets
@@ -223,21 +223,21 @@ System MUST provide efficient development workflows with:
 
 ### Key Entities
 
-#### Company (Tenant)
+#### Tenant (Tenant)
 - **Purpose**: Represents a single customer organization in the multi-tenant system
-- **Key Attributes**: Company ID (UUID), name, localization preferences, business domain configuration
+- **Key Attributes**: Tenant ID (UUID), name, localization preferences, business domain configuration
 - **Relationships**: Has many users, has many platform credentials, has many reports
-- **Security**: All company data isolated via row-level security
+- **Security**: All tenant data isolated via row-level security
 
-#### CompanyConfig
-- **Purpose**: Configuration blob defining all company-specific behavior
+#### TenantConfig
+- **Purpose**: Configuration blob defining all tenant-specific behavior
 - **Key Attributes**: Localization settings, marketing channel configs, KPI definitions, AI model preferences, feature flags
 - **Storage**: Versioned JSON files loaded at runtime with validation
 - **Validation**: Zod schema ensures type safety and required fields
 
 #### TenantContext
 - **Purpose**: Runtime context propagated through async operations
-- **Key Attributes**: Tenant ID, loaded CompanyConfig, request ID, optional user ID
+- **Key Attributes**: Tenant ID, loaded TenantConfig, request ID, optional user ID
 - **Propagation**: AsyncLocalStorage ensures context survives await operations
 - **Lifetime**: Bounded to single request/job lifecycle
 
@@ -245,12 +245,12 @@ System MUST provide efficient development workflows with:
 - **Purpose**: Encrypted storage of third-party platform API credentials
 - **Key Attributes**: Platform type (Meta, Google, etc.), encrypted access tokens, OAuth metadata
 - **Security**: Credentials encrypted at rest, never logged
-- **Relationships**: Belongs to company, used by data connectors
+- **Relationships**: Belongs to tenant, used by data connectors
 
 #### Report
 - **Purpose**: Generated analytics reports for tenants
 - **Key Attributes**: Report type, date range, format (PDF/Excel), generation timestamp
-- **Relationships**: Belongs to company, uses template, contains metrics
+- **Relationships**: Belongs to tenant, uses template, contains metrics
 - **Status**: Tracks generation lifecycle (queued, processing, completed, failed)
 
 #### ReportTemplate

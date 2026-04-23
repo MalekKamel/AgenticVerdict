@@ -15,8 +15,8 @@ This document defines the business requirements for the User Interface layer of 
 
 AgenticVerdict is a multi-tenant SaaS platform that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business) and delivers AI-powered insights and actionable verdicts. The platform serves two primary customer segments:
 
-1. **Direct Businesses**: End consumers running their own intelligence operations (e.g., Masafh - GPS fleet tracking company)
-2. **Agency Partners**: Managing multiple client companies with complete tenant isolation
+1. **Direct Businesses**: End consumers running their own intelligence operations (e.g., Masafh - GPS fleet tracking tenant)
+2. **Agency Partners**: Managing multiple client tenants with complete tenant isolation
 
 The UI must enable self-service configuration without developer assistance while supporting complex multi-domain intelligence workflows.
 
@@ -35,7 +35,7 @@ The UI must enable users to perform all critical business operations:
 | **Scheduling**            | Set report generation frequency, delivery times                                 | Business Users                          |
 | **Delivery Management**   | Configure recipients, formats (PDF/Excel), channels                             | Business Users                          |
 | **Report Access**         | View historical reports, download formatted outputs                             | All Users                               |
-| **Tenant Switching**      | Switch between client companies (agency partners)                               | Agency Users                            |
+| **Tenant Switching**      | Switch between client tenants (agency partners)                                 | Agency Users                            |
 | **User Management**       | Invite users, assign roles, permissions                                         | Administrators                          |
 
 ---
@@ -80,7 +80,7 @@ The UI must enable users to perform all critical business operations:
 7. **Responsive Design**: Seamless experience across desktop, tablet, and mobile web
 8. **Real-Time Updates**: Live data refresh where applicable
 9. **Export Capabilities**: Download reports in multiple formats
-10. **Tenant Isolation**: Visual clarity when switching between client companies
+10. **Tenant Isolation**: Visual clarity when switching between client tenants
 
 ---
 

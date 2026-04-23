@@ -91,7 +91,7 @@ export function factoryConfigCacheFingerprint(cfg: AgentFactoryConfig): string {
   return JSON.stringify({
     role: cfg.role,
     memoryMode: cfg.memoryMode,
-    companyContextMaxApproxTokens: cfg.companyContextMaxApproxTokens,
+    tenantContextMaxApproxTokens: cfg.tenantContextMaxApproxTokens,
     maxAssembledPromptApproxTokens: cfg.maxAssembledPromptApproxTokens,
     temperature: cfg.temperature ?? null,
   });

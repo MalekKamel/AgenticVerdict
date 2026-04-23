@@ -27,6 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Runtime policy lint
+        run: bash scripts/runtime-policy-lint.sh
+
+      - name: Frontend runtime env contract
+        run: bash scripts/validate-frontend-runtime-env-contract.sh
+
       - name: Validate Compose files
         run: bash scripts/docker-validate.sh
 
@@ -46,5 +52,5 @@ jobs:
       - name: Build base images (deps + chromium)
         run: docker compose -f docker-compose.base-images.yml build
 
-      - name: Build application images (web, api, worker)
+      - name: Build application images (frontend, api, worker)
         run: docker compose -f docker-compose.yml -f docker-compose.apps.yml build

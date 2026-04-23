@@ -70,14 +70,14 @@ export function createConnectorAdapter(config: AdapterFactoryConfig): ConnectorA
 
 Based on AgenticVerdict's multi-tenant SaaS architecture:
 
-| Requirement                                             | Priority | Current Solution   | Gap                                                  |
-| ------------------------------------------------------- | -------- | ------------------ | ---------------------------------------------------- |
-| **Infrastructure toggles** (mock adapters, debug modes) | High     | Compiler-driven ✅ | None                                                 |
-| **Feature flags per tenant**                            | High     | None ❌            | Need runtime system                                  |
-| **A/B testing capabilities**                            | Medium   | None ❌            | Need experimentation                                 |
-| **Gradual rollouts**                                    | Medium   | None ❌            | Need deployment safety                               |
-| **Configuration without rebuilds**                      | High     | None ❌            | Need runtime config                                  |
-| **Database-driven config**                              | High     | Partial ⚠️         | CompanyConfig exists, needs feature flag integration |
+| Requirement                                             | Priority | Current Solution   | Gap                                                 |
+| ------------------------------------------------------- | -------- | ------------------ | --------------------------------------------------- |
+| **Infrastructure toggles** (mock adapters, debug modes) | High     | Compiler-driven ✅ | None                                                |
+| **Feature flags per tenant**                            | High     | None ❌            | Need runtime system                                 |
+| **A/B testing capabilities**                            | Medium   | None ❌            | Need experimentation                                |
+| **Gradual rollouts**                                    | Medium   | None ❌            | Need deployment safety                              |
+| **Configuration without rebuilds**                      | High     | None ❌            | Need runtime config                                 |
+| **Database-driven config**                              | High     | Partial ⚠️         | TenantConfig exists, needs feature flag integration |
 
 ---
 
@@ -112,7 +112,7 @@ const client = new LDClient("sdk-key-123abc", {
 const user = {
   key: `tenant-${tenantId}`,
   custom: {
-    companyId: tenantId,
+    tenantId: tenantId,
     plan: "enterprise",
     region: "SA",
   },
@@ -157,7 +157,7 @@ const uiVariant = await client.variation("dashboard-ui-variant", user, "control"
 **Production Use Cases:**
 
 - IBM, Atlassian, VMware, Comcast
-- Used by companies with 10M+ MAU
+- Used by tenants with 10M+ MAU
 
 ---
 
@@ -195,7 +195,7 @@ const maxReports = flags.getValue("max_reports_per_month", 10);
 
 // Identify user (tenant)
 await flagsmith.identify(`tenant-${tenantId}`, {
-  companyId: tenantId,
+  tenantId: tenantId,
   plan: "enterprise",
 });
 ```
@@ -223,7 +223,7 @@ await flagsmith.identify(`tenant-${tenantId}`, {
 
 **Production Use Cases:**
 
-- Used by startups and mid-sized companies
+- Used by startups and mid-sized tenants
 - Good balance of features and cost
 
 ---
@@ -320,7 +320,7 @@ const unleash = new Unleash({
 const context = {
   userId: `tenant-${tenantId}`,
   properties: {
-    companyId: tenantId,
+    tenantId: tenantId,
     plan: "enterprise",
     region: "SA",
   },
@@ -390,7 +390,7 @@ const flag = await client.evaluateBoolean({
   flagKey: "enable_verdict",
   entityId: `tenant-${tenantId}`,
   context: {
-    company_id: tenantId,
+    tenant_id: tenantId,
     plan: "enterprise",
   },
 });
@@ -477,8 +477,8 @@ config/
   production.json     # Production overrides
   development.json    # Development overrides
   tenants/
-    company-a.json    # Tenant-specific config
-    company-b.json    # Tenant-specific config
+    tenant-a.json    # Tenant-specific config
+    tenant-b.json    # Tenant-specific config
 ```
 
 **Pros:**
@@ -571,7 +571,7 @@ CREATE TABLE feature_flags (
 -- Tenant-specific flag overrides
 CREATE TABLE tenant_feature_flags (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL REFERENCES companies(id),
+  tenant_id UUID NOT NULL REFERENCES tenants(id),
   flag_id UUID NOT NULL REFERENCES feature_flags(id),
   enabled BOOLEAN,
   variant TEXT,
@@ -787,13 +787,13 @@ async function evaluateFeatureFlag(
 ```typescript
 // Global flag: enable_verdict_reports = true (50% rollout)
 // Plan rule: Enterprise plans = 100% enabled
-// Tenant override: Company A = disabled
+// Tenant override: Tenant A = disabled
 
 // Results:
-// Company A (enterprise): Disabled (tenant override)
-// Company B (enterprise): Enabled (plan rule)
-// Company C (basic): Enabled if in 50% rollout
-// Company D (basic): Disabled if not in rollout
+// Tenant A (enterprise): Disabled (tenant override)
+// Tenant B (enterprise): Enabled (plan rule)
+// Tenant C (basic): Enabled if in 50% rollout
+// Tenant D (basic): Disabled if not in rollout
 ```
 
 ---
@@ -1003,7 +1003,7 @@ consul
    - Leverage existing database
    - Full data control
    - Tenant-specific settings
-   - Works alongside CompanyConfig
+   - Works alongside TenantConfig
 
 3. **Keep compiler-driven constants** for:
    - Mock adapter selection
@@ -1079,7 +1079,7 @@ export class ConfigurationService {
 
 **Phase 2: Integration (Week 3-4)**
 
-1. Integrate with existing CompanyConfig
+1. Integrate with existing TenantConfig
 2. Add tenant-specific flags
 3. Update adapter factory
 4. Add A/B testing support
@@ -1140,7 +1140,7 @@ export class ConfigurationService {
 
 2. **Custom PostgreSQL solution**
    - For tenant-specific configuration
-   - Extend existing CompanyConfig schema
+   - Extend existing TenantConfig schema
    - Full data control
 
 3. **Keep compiler-driven constants**

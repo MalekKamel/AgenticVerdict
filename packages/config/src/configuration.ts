@@ -1,6 +1,7 @@
 import type { ConnectorType } from "@agenticverdict/types";
 
 import { IS_PRODUCTION, NODE_ENV } from "./build-constants";
+import { isFeatureMockEnabled, resolveRuntimePolicy, type RuntimePolicy } from "./runtime-policy";
 import {
   mockAdapterConnectorSchema,
   runtimeConfigSchema,
@@ -9,33 +10,14 @@ import {
 
 const ALL_MOCK_CONNECTORS = mockAdapterConnectorSchema.options as readonly ConnectorType[];
 
-function parseBinaryFlag(value: string | undefined, flagName: string): boolean | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === "0") {
-    return false;
-  }
-  if (value === "1") {
-    return true;
-  }
-  throw new Error(`[CONFIG] ${flagName} must be "0" or "1", received "${value}"`);
-}
-
 /**
  * Whether mock adapters may be toggled via env for this process (Layer 1 security).
  * Uses raw `NODE_ENV` so values like `staging` are visible even though
  * `build-constants` normalizes unknown envs to `development`.
  */
 export function canEnableMocksViaEnv(env: NodeJS.ProcessEnv = process.env): boolean {
-  const raw = String(env.NODE_ENV ?? "");
-  if (raw === "production" || raw === "staging") {
-    return false;
-  }
-  if (IS_PRODUCTION) {
-    return false;
-  }
-  return true;
+  const policy = resolveRuntimePolicy(env);
+  return policy.runtimeEnv === "development" || policy.runtimeEnv === "test";
 }
 
 /**
@@ -46,38 +28,23 @@ export function isMockEnabledForConnector(
   connector: ConnectorType,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  const nodeEnv = String(env.NODE_ENV ?? "");
-  const masterRaw = env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
-  const connectorKey = `AGENTICVERDICT_MOCK_${connector.toUpperCase()}`;
-  const connectorRaw = env[connectorKey];
-
-  const master = parseBinaryFlag(masterRaw, "AGENTICVERDICT_USE_MOCK_ADAPTERS");
-  const connectorOverride = parseBinaryFlag(connectorRaw, connectorKey);
-
-  if (nodeEnv === "production" || nodeEnv === "staging") {
-    if (master === true || connectorOverride === true) {
-      throw new Error(
-        `[SECURITY] Mock adapters cannot be enabled in ${nodeEnv} environment for connector "${connector}"`,
-      );
-    }
-    return false;
-  }
-
-  if (Object.prototype.hasOwnProperty.call(env, connectorKey)) {
-    return connectorOverride ?? false;
-  }
-  return master ?? false;
+  const policy = resolveRuntimePolicy(env);
+  return isFeatureMockEnabled(policy, "connectors", connector);
 }
 
 function mockEnabledConnectorsFromEnv(env: NodeJS.ProcessEnv): ConnectorType[] {
-  if (!canEnableMocksViaEnv(env)) {
-    return [];
+  const policy = resolveRuntimePolicy(env);
+  if (policy.mockMode === "all") {
+    return [...ALL_MOCK_CONNECTORS];
   }
-  return ALL_MOCK_CONNECTORS.filter((c) => isMockEnabledForConnector(c, env));
+  if (policy.mockMode === "selective") {
+    return ALL_MOCK_CONNECTORS.filter((connector) => policy.mockConnectors.includes(connector));
+  }
+  return [];
 }
 
-function readMockScenarioMap(env: NodeJS.ProcessEnv): Record<string, string> | undefined {
-  const scenario = env.AGENTICVERDICT_MOCK_SCENARIO;
+function readMockScenarioMap(policy: RuntimePolicy): Record<string, string> | undefined {
+  const scenario = policy.mockScenario;
   if (!scenario) {
     return undefined;
   }
@@ -85,13 +52,14 @@ function readMockScenarioMap(env: NodeJS.ProcessEnv): Record<string, string> | u
 }
 
 function buildRuntimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
+  const policy = resolveRuntimePolicy(env);
   const mockConnectors = mockEnabledConnectorsFromEnv(env);
   const config: RuntimeConfig = {
     adapters: {
       mocks: {
         enabled: mockConnectors.length > 0,
         connectors: [...mockConnectors],
-        scenarios: readMockScenarioMap(env),
+        scenarios: readMockScenarioMap(policy),
       },
     },
     features: {

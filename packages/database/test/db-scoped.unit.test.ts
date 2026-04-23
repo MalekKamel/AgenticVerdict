@@ -2,6 +2,14 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@agenticverdict/core", () => ({
   getTenantContext: vi.fn(),
+  TenantSecurityError: class TenantSecurityError extends Error {
+    readonly code: string;
+    constructor(code: string, message: string) {
+      super(message);
+      this.code = code;
+      this.name = "TenantSecurityError";
+    }
+  },
 }));
 
 import { getTenantContext } from "@agenticverdict/core";
@@ -13,7 +21,10 @@ describe("dbScoped", () => {
   it("throws when tenant context is missing", async () => {
     vi.mocked(getTenantContext).mockReturnValue(undefined);
     const db = { transaction: vi.fn() } as unknown as Database;
-    await expect(dbScoped(db, async () => "x")).rejects.toThrow(/Tenant context is required/);
+    await expect(dbScoped(db, async () => "x")).rejects.toMatchObject({
+      code: "TENANT_CONTEXT_REQUIRED",
+      name: "TenantSecurityError",
+    });
     expect(db.transaction).not.toHaveBeenCalled();
   });
 

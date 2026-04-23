@@ -1,11 +1,28 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
+import { buildAuthSeoHead } from "@/lib/auth/build-auth-seo-head";
+import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
+import { createPublicAuthBeforeLoad } from "@/lib/auth/route-guards";
+
 export const Route = createFileRoute("/$locale/auth/register")({
-  head: () => ({
-    meta: [
-      { title: "Create Account - AgenticVerdict" },
-      { name: "description", content: "Join AgenticVerdict to start gaining business insights." },
-    ],
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    type: search.type === "individual" || search.type === "business" ? search.type : undefined,
+    plan:
+      search.plan === "free" || search.plan === "pro" || search.plan === "enterprise"
+        ? search.plan
+        : undefined,
+    invite: typeof search.invite === "string" ? search.invite : undefined,
+    oauth:
+      search.oauth === "google" || search.oauth === "microsoft" || search.oauth === "apple"
+        ? search.oauth
+        : undefined,
+    tenantId:
+      typeof search.tenantId === "string" && isTenantUuid(search.tenantId)
+        ? search.tenantId
+        : undefined,
   }),
+  beforeLoad: createPublicAuthBeforeLoad(),
+  head: ({ matches }) => buildAuthSeoHead(matches, "register"),
   component: lazyRouteComponent(() => import("./-register.page")),
 });

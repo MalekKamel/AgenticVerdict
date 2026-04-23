@@ -139,7 +139,7 @@ _Note: Download statistics are approximate as of April 2026 and subject to chang
 
 **Production Users:**
 
-- Growing adoption in mid-market companies
+- Growing adoption in mid-market tenants
 - Popular in agencies and consultancies
 - Strong European adoption
 
@@ -223,7 +223,7 @@ _Note: Download statistics are approximate as of April 2026 and subject to chang
 
 - Alibaba, Ant Group, Tencent
 - Baidu, ByteDance, Meituan
-- Major Chinese tech companies
+- Major Chinese tech tenants
 - Growing global adoption
 
 **Verdict for AgenticVerdict:** **RECOMMENDED** for enterprise completeness
@@ -304,7 +304,7 @@ _Note: Download statistics are approximate as of April 2026 and subject to chang
 
 - Netflix, Spotify, Amazon
 - Microsoft, Google (internal tools)
-- Thousands of companies worldwide
+- Thousands of tenants worldwide
 
 **Verdict for AgenticVerdict:** **SOLID CHOICE** if Material Design fits brand
 
@@ -536,7 +536,7 @@ _Note: Download statistics are approximate as of April 2026 and subject to chang
 
 - Design system builders
 - Component library authors
-- Companies needing full control
+- Tenants needing full control
 
 **Verdict for AgenticVerdict:** **NOT RECOMMENDED** as primary library, use for building custom components
 

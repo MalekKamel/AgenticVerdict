@@ -4,16 +4,16 @@ import { fileURLToPath } from "node:url";
 
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-import { companyConfigSchema } from "../src/schemas/company";
+import { tenantConfigSchema } from "../src/schemas/tenant";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const jsonSchema = zodToJsonSchema(companyConfigSchema, {
-  name: "CompanyConfig",
+const jsonSchema = zodToJsonSchema(tenantConfigSchema, {
+  name: "TenantConfig",
   $refStrategy: "none",
 });
 
-const markdown = `# CompanyConfig schema (generated)
+const markdown = `# TenantConfig schema (generated)
 
 Do not edit by hand. Regenerate with \`pnpm --filter @agenticverdict/config run generate:schema-doc\`.
 
@@ -26,7 +26,7 @@ const outArgIdx = process.argv.indexOf("--out");
 const outPath =
   outArgIdx >= 0 && process.argv[outArgIdx + 1]
     ? path.resolve(process.cwd(), process.argv[outArgIdx + 1]!)
-    : path.join(__dirname, "..", "generated", "company-config.schema.md");
+    : path.join(__dirname, "..", "generated", "tenant-config.schema.md");
 
 mkdirSync(path.dirname(outPath), { recursive: true });
 writeFileSync(outPath, markdown, "utf-8");

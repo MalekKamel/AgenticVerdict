@@ -12,15 +12,15 @@ export type {
 export { buildAbDecisionRecord, runPairedPromptAbTest, selectPromptAbWinner } from "./ab-testing";
 export type {
   AssembledPromptLayersInput,
-  CompanyPromptContextOptions,
+  TenantPromptContextOptions,
   PromptContextSection,
   PromptContextSectionKey,
-} from "./company-injection";
+} from "./tenant-injection";
 export {
   assemblePromptLayers,
-  buildCompanyPromptContext,
-  buildCompanyPromptContextSections,
-} from "./company-injection";
+  buildTenantPromptContext,
+  buildTenantPromptContextSections,
+} from "./tenant-injection";
 export { PRODUCTION_PROMPT_TEMPLATES, PRODUCTION_PROMPT_TEMPLATE_COUNT } from "./library";
 export {
   getPromptTemplateHistory,

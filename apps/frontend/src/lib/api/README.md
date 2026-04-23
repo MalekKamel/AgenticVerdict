@@ -68,15 +68,18 @@ pnpm add --filter @agenticverdict/frontend \
 
 ### 2. Files Created
 
-| File                                           | Purpose                                 |
-| ---------------------------------------------- | --------------------------------------- |
-| `/packages/types/src/auth.ts`                  | Auth types and Zod schemas              |
-| `/apps/frontend/src/lib/api/trpc-client.ts`    | tRPC client configuration               |
-| `/apps/frontend/src/lib/api/auth-api.ts`       | Auth API wrapper with error handling    |
-| `/apps/frontend/src/components/Providers.tsx`  | App shell: tRPC + React Query + session |
-| `/apps/frontend/src/hooks/useAuthMutation.ts`  | Auth mutation hooks                     |
-| `/apps/frontend/src/hooks/useSessionQuery.ts`  | Session query hooks                     |
-| `/apps/frontend/src/lib/api/AUTH_API_USAGE.md` | Comprehensive usage guide               |
+| File                                                       | Purpose                                 |
+| ---------------------------------------------------------- | --------------------------------------- |
+| `/packages/types/src/auth.ts`                              | Auth types and Zod schemas              |
+| `/apps/frontend/src/lib/api/trpc-client.ts`                | tRPC client configuration               |
+| `/apps/frontend/src/lib/api/auth-api.ts`                   | Auth API wrapper with error handling    |
+| `/apps/frontend/src/components/Providers.tsx`              | App shell: tRPC + React Query + session |
+| `/apps/frontend/src/hooks/useLoginMutation.ts`             | Login mutation hook                     |
+| `/apps/frontend/src/hooks/useRegisterMutation.ts`          | Register mutation hook                  |
+| `/apps/frontend/src/hooks/useEmailVerificationMutation.ts` | Email verification mutation hooks       |
+| `/apps/frontend/src/hooks/usePasswordReset.ts`             | Password reset mutation hooks           |
+| `/apps/frontend/src/hooks/useSessionQuery.ts`              | Session query hooks                     |
+| `/apps/frontend/src/lib/api/AUTH_API_USAGE.md`             | Comprehensive usage guide               |
 
 ### 3. Files Modified
 
@@ -296,7 +299,7 @@ const auth = useAuth();
 
 ```tsx
 import { useForm } from "@mantine/form";
-import { useLoginMutation } from "@/hooks/useAuthMutation";
+import { useLoginMutation } from "@/hooks/useLoginMutation";
 
 export function LoginForm() {
   const login = useLoginMutation();
@@ -381,7 +384,7 @@ export function Dashboard() {
 ```typescript
 // Test mutation hooks
 import { renderHook, waitFor } from "@testing-library/react";
-import { useLoginMutation } from "@/hooks/useAuthMutation";
+import { useLoginMutation } from "@/hooks/useLoginMutation";
 
 test("login mutation updates auth store on success", async () => {
   const { result } = renderHook(() => useLoginMutation());
@@ -434,7 +437,7 @@ login: async (input: LoginInput) => {
 **To enable real tRPC calls:**
 
 1. Import `AppRouter` from `@agenticverdict/api/trpc` (already wired in `trpc-client.ts`)
-2. Extend `auth-api.ts` when new procedures ship (production uses `trpcClient`; dev can keep the mock via `VITE_PUBLIC_AUTH_API_MOCK`)
+2. Extend `auth-api.ts` when new procedures ship (production uses `trpcClient`; dev can opt into mock mode via `VITE_PUBLIC_AUTH_API_MODE=mock`)
 3. Run typecheck to verify types match
 
 ---
@@ -444,7 +447,7 @@ login: async (input: LoginInput) => {
 ### Immediate (Before Use)
 
 1. **Use `Providers`** (`src/components/Providers.tsx`) in the root layout (already the default)
-2. **Test mock implementations** in development (optional: set `VITE_PUBLIC_AUTH_API_MOCK=false` to hit the Fastify API)
+2. **Test mock implementations** in development (set `VITE_PUBLIC_AUTH_API_MODE=mock`; default `real` calls Fastify API)
 3. **Review error messages** for i18n compatibility
 4. **Add unit tests** for mutation/query hooks
 

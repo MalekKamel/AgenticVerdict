@@ -13,7 +13,7 @@
 
 This research document examines industry best practices for compiler-driven configuration enforcement in TypeScript applications, specifically addressing the need to move from runtime environment variables to compile-time adapter selection in the AgenticVerdict platform.
 
-**Key Finding:** The industry has converged on **build-time constant injection** combined with **dead code elimination** as the standard pattern for enforcing environment-specific behavior. Major frameworks (Next.js, NestJS, Vue, React) and companies (Vercel, Shopify, Airbnb, Microsoft) all use compiler-driven configuration to eliminate runtime configuration errors.
+**Key Finding:** The industry has converged on **build-time constant injection** combined with **dead code elimination** as the standard pattern for enforcing environment-specific behavior. Major frameworks (Next.js, NestJS, Vue, React) and tenants (Vercel, Shopify, Airbnb, Microsoft) all use compiler-driven configuration to eliminate runtime configuration errors.
 
 **Primary Recommendation:** Implement a **hybrid approach** combining TypeScript's type system with build-time constant injection via the production bundler (**Vite** in this repository for API/worker; concepts apply to esbuild or Turbopack as well), enabling true compile-time enforcement of adapter selection while maintaining excellent developer experience.
 

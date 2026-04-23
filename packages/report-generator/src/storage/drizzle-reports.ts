@@ -4,7 +4,7 @@ import type { Database } from "@agenticverdict/database";
 import { reports } from "@agenticverdict/database";
 
 export interface NewReportRow {
-  companyId: string;
+  tenantId: string;
   title: string;
   status?: string;
   metadata?: Record<string, unknown>;
@@ -21,7 +21,7 @@ export async function insertReportRow(db: Database, row: NewReportRow) {
   const [created] = await db
     .insert(reports)
     .values({
-      companyId: row.companyId,
+      tenantId: row.tenantId,
       title: row.title,
       status: row.status ?? "draft",
       metadata: row.metadata ?? {},
@@ -30,11 +30,11 @@ export async function insertReportRow(db: Database, row: NewReportRow) {
   return created;
 }
 
-export async function selectReportForCompany(db: Database, reportId: string, companyId: string) {
+export async function selectReportForTenant(db: Database, reportId: string, tenantId: string) {
   const [found] = await db
     .select()
     .from(reports)
-    .where(and(eq(reports.id, reportId), eq(reports.companyId, companyId)))
+    .where(and(eq(reports.id, reportId), eq(reports.tenantId, tenantId)))
     .limit(1);
   return found ?? null;
 }
@@ -42,10 +42,10 @@ export async function selectReportForCompany(db: Database, reportId: string, com
 export async function updateReportRowMetadata(
   db: Database,
   reportId: string,
-  companyId: string,
+  tenantId: string,
   metadataPatch: Record<string, unknown>,
 ) {
-  const current = await selectReportForCompany(db, reportId, companyId);
+  const current = await selectReportForTenant(db, reportId, tenantId);
   if (!current) {
     return null;
   }
@@ -56,7 +56,7 @@ export async function updateReportRowMetadata(
   const [updated] = await db
     .update(reports)
     .set({ metadata: nextMeta, updatedAt: new Date() })
-    .where(and(eq(reports.id, reportId), eq(reports.companyId, companyId)))
+    .where(and(eq(reports.id, reportId), eq(reports.tenantId, tenantId)))
     .returning();
   return updated ?? null;
 }
@@ -64,13 +64,13 @@ export async function updateReportRowMetadata(
 export async function updateReportRowStatus(
   db: Database,
   reportId: string,
-  companyId: string,
+  tenantId: string,
   status: string,
 ) {
   const [updated] = await db
     .update(reports)
     .set({ status, updatedAt: new Date() })
-    .where(and(eq(reports.id, reportId), eq(reports.companyId, companyId)))
+    .where(and(eq(reports.id, reportId), eq(reports.tenantId, tenantId)))
     .returning();
   return updated ?? null;
 }

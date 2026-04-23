@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 /**
- * Minimal company row shape aligned with `companies` (tenant) inserts in integration tests.
+ * Minimal tenant row shape aligned with `tenants` (tenant) inserts in integration tests.
  */
 export interface TestTenant {
   id: string;

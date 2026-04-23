@@ -37,8 +37,8 @@
 
 ### `apps/api`
 
-- **`src/integration/api-health-metrics.integration.test.ts`** — `/health`, `/metrics` inject tests; sets `COMPANY_CONFIG_DIR` relative to package root for monorepo-wide Vitest runs.
-- **`src/integration/api-validation-workflows.integration.test.ts`** — Workflow trigger 401/503 (no Redis), secured GET `/api/v1/reports` 401; same `COMPANY_CONFIG_DIR` pattern.
+- **`src/integration/api-health-metrics.integration.test.ts`** — `/health`, `/metrics` inject tests; sets `TENANT_CONFIG_DIR` relative to package root for monorepo-wide Vitest runs.
+- **`src/integration/api-validation-workflows.integration.test.ts`** — Workflow trigger 401/503 (no Redis), secured GET `/api/v1/reports` 401; same `TENANT_CONFIG_DIR` pattern.
 
 ### `packages/platform-adapters`
 
@@ -47,7 +47,7 @@
 ### `tests/integration`
 
 - **`vitest.config.ts`** — `root` = `tests/integration` so the workspace Vitest project only runs files in this directory.
-- **`company-config-cross-package.integration.test.ts`** — Parses API company JSON fixtures with `companyConfigSchema`.
+- **`tenant-config-cross-package.integration.test.ts`** — Parses API tenant JSON fixtures with `tenantConfigSchema`.
 
 ### `deploy/observability`
 

@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useDirection } from "./DirectionProvider";
 import { useTheme } from "./ThemeProvider";
+import { UI_COLOR_SCHEME_STORAGE_KEY } from "./color-scheme-storage";
 
 /**
  * Props for MantineProvider
@@ -20,6 +21,11 @@ export interface MantineProviderProps {
   children: ReactNode;
   /** Additional CSS to inject */
   cssVariablesResolver?: () => Record<string, string>;
+  /**
+   * When the host app uses CSP `style-src` nonces, pass the same value used for
+   * `Content-Security-Policy` so Mantine-injected `<style>` tags are allowed.
+   */
+  cspNonce?: string;
 }
 
 /**
@@ -247,13 +253,13 @@ function createMantineTheme(direction: "ltr" | "rtl") {
  * MantineProvider component
  * Wraps children with Mantine's ThemeProvider and applies design tokens
  */
-export function MantineProvider({ children }: MantineProviderProps) {
+export function MantineProvider({ children, cspNonce }: MantineProviderProps) {
   const { direction } = useDirection();
   useTheme(); // Ensure theme context is available
 
   const mantineTheme = createMantineTheme(direction);
   const colorSchemeManager = localStorageColorSchemeManager({
-    key: "agenticverdict-color-scheme",
+    key: UI_COLOR_SCHEME_STORAGE_KEY,
   });
 
   return (
@@ -261,6 +267,7 @@ export function MantineProvider({ children }: MantineProviderProps) {
       theme={mantineTheme}
       defaultColorScheme="auto"
       colorSchemeManager={colorSchemeManager}
+      getStyleNonce={cspNonce ? () => cspNonce : undefined}
     >
       {children}
     </MantineCoreProvider>

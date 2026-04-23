@@ -10,6 +10,9 @@
 
 import { z } from "zod";
 
+/** Optional tenant UUID for pre-session `auth.*` procedures (body channel per SSOT C-HTTP-1). */
+export const optionalAuthTenantIdSchema = z.string().uuid().optional();
+
 /**
  * Login input schema
  *
@@ -19,6 +22,7 @@ export const loginInputSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address").toLowerCase().trim(),
   password: z.string().min(1, "Password is required"),
   rememberMe: z.boolean().optional().default(false),
+  tenantId: optionalAuthTenantIdSchema,
 });
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
@@ -69,7 +73,11 @@ export const registerInputSchema = z.object({
     .min(2, "Last name must be at least 2 characters")
     .max(50, "Last name must be at most 50 characters")
     .trim(),
-  tenantId: z.string().uuid().optional(), // For multi-tenant signup
+  tenantId: optionalAuthTenantIdSchema, // For multi-tenant signup
+  accountType: z.enum(["individual", "business"]).optional(),
+  tenantName: z.string().trim().min(1).max(120).optional(),
+  tenantWebsite: z.string().trim().url().optional().or(z.literal("")),
+  tenantSize: z.enum(["1-10", "11-50", "51-250", "251+"]).optional(),
 });
 
 export type RegisterInput = z.infer<typeof registerInputSchema>;
@@ -126,7 +134,13 @@ export type GetSessionOutput = z.infer<typeof getSessionOutputSchema>;
  * Validates verification token from email.
  */
 export const verifyEmailInputSchema = z.object({
-  token: z.string().min(1, "Token is required"),
+  email: z.string().min(1, "Email is required").email("Invalid email address").toLowerCase().trim(),
+  tenantId: optionalAuthTenantIdSchema,
+  code: z
+    .string()
+    .min(1, "Verification code is required")
+    .length(6, "Verification code must be 6 digits")
+    .regex(/^\d+$/, "Verification code must contain only numbers"),
 });
 
 export type VerifyEmailInput = z.infer<typeof verifyEmailInputSchema>;
@@ -139,9 +153,31 @@ export type VerifyEmailInput = z.infer<typeof verifyEmailInputSchema>;
 export const verifyEmailOutputSchema = z.object({
   success: z.boolean(),
   message: z.string(), // "Email verified successfully"
+  attemptsRemaining: z.number().int().min(0).optional(),
 });
 
 export type VerifyEmailOutput = z.infer<typeof verifyEmailOutputSchema>;
+
+/**
+ * Resend email verification input schema
+ */
+export const resendEmailVerificationInputSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email address").toLowerCase().trim(),
+  tenantId: optionalAuthTenantIdSchema,
+});
+
+export type ResendEmailVerificationInput = z.infer<typeof resendEmailVerificationInputSchema>;
+
+/**
+ * Resend email verification output schema
+ */
+export const resendEmailVerificationOutputSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  retryAfterSeconds: z.number().int().min(0).optional(),
+});
+
+export type ResendEmailVerificationOutput = z.infer<typeof resendEmailVerificationOutputSchema>;
 
 /**
  * Request password reset input schema
@@ -150,6 +186,7 @@ export type VerifyEmailOutput = z.infer<typeof verifyEmailOutputSchema>;
  */
 export const requestPasswordResetInputSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address").toLowerCase().trim(),
+  tenantId: optionalAuthTenantIdSchema,
 });
 
 export type RequestPasswordResetInput = z.infer<typeof requestPasswordResetInputSchema>;
@@ -173,6 +210,7 @@ export type RequestPasswordResetOutput = z.infer<typeof requestPasswordResetOutp
  */
 export const confirmPasswordResetInputSchema = z.object({
   token: z.string().min(1, "Token is required"),
+  tenantId: optionalAuthTenantIdSchema,
   newPassword: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -226,7 +264,9 @@ export type AuthErrorCode =
   | "WEAK_PASSWORD"
   | "GONE"
   | "INTERNAL_ERROR"
-  | "NETWORK_ERROR";
+  | "NETWORK_ERROR"
+  | "TENANT_CONTEXT_REQUIRED"
+  | "TENANT_MISMATCH";
 
 /**
  * Auth error response

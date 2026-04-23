@@ -16,7 +16,7 @@ This entry records work executed against **Part 3: Testing Strategy** in `docs/a
 
 - **Dependencies**: `workspace:*` on `@agenticverdict/data-connectors` and `@agenticverdict/types` so fixtures can import `ConnectorAdapter` and `ConnectorType` with correct TypeScript resolution.
 - **`src/fixtures/connectors.ts`**: New `mockConnector()` — Vitest `vi.fn`-based `ConnectorAdapter` double for unit tests outside `data-connectors`. Documented when to prefer `createSyntheticAdapter` from `data-connectors` instead.
-- **`src/factories/tenant.ts`**: New `createTenant()` and `TestTenant` type — minimal shape aligned with `companies` (tenant) rows for DB/integration scenarios.
+- **`src/factories/tenant.ts`**: New `createTenant()` and `TestTenant` type — minimal shape aligned with `tenants` (tenant) rows for DB/integration scenarios.
 - **`src/connector-test-support.test.ts`**: Tests for the above.
 - **`src/index.ts`**: Re-exports `mockConnector`, `createTenant`, `TestTenant`.
 - **`src/index.test.ts`**: Public API smoke checks for the new exports.

@@ -176,7 +176,7 @@ import {
 ```typescript
 export const marketingMetrics = pgTable("marketing_metrics", {
   id: uuid("id").primaryKey().defaultRandom(),
-  companyId: uuid("company_id").notNull(),
+  tenantId: uuid("tenant_id").notNull(),
   platform: varchar("platform", { length: 64 }).notNull(),
   metricDate: date("metric_date", { mode: "string" }).notNull(),
   payload: jsonb("payload").notNull().$type<Record<string, unknown>>(),
@@ -278,13 +278,13 @@ export interface MarketingMetricsStore {
 
 ## 3. Configuration Schema - Marketing Channel Configuration
 
-### 3.1 Company Config - Marketing Channels Structure
+### 3.1 Tenant Config - Marketing Channels Structure
 
-**File**: `packages/config/src/schemas/company.ts`
+**File**: `packages/config/src/schemas/tenant.ts`
 **Lines**: 13-17
 **Severity**: Medium
 
-**Description**: Company config has hardcoded marketing structure:
+**Description**: Tenant config has hardcoded marketing structure:
 
 ```typescript
 marketing: z.object({
@@ -296,7 +296,7 @@ marketing: z.object({
 
 **Why It Doesn't Fit**:
 
-- Assumes all companies use marketing channels
+- Assumes all tenants use marketing channels
 - Should support multiple domain types (marketing, financial, operations)
 - KPI structure is marketing-specific
 
@@ -305,7 +305,7 @@ marketing: z.object({
 - Create domain-specific config sections
 - Use `connectors: z.array(connectorConfigSchema)` at top level
 - Move KPI definitions into connector-specific configuration
-- Support multiple business domains in single company config
+- Support multiple business domains in single tenant config
 
 ---
 
@@ -628,7 +628,7 @@ workflowId: "marketing-analysis";
 
 1. Platform credentials table naming
 2. Worker platform adapter factory - marketing config access
-3. Company config - marketing channels structure
+3. Tenant config - marketing channels structure
 4. No connector metric definitions
 5. No domain tagging system
 6. Missing connector metadata system
@@ -692,7 +692,7 @@ workflowId: "marketing-analysis";
 
 ### Phase 3: Configuration (Weeks 5-6)
 
-1. Restructure CompanyConfig for multi-domain
+1. Restructure TenantConfig for multi-domain
 2. Add connector registry configuration
 3. Implement connector metric definitions
 4. Add domain tagging system

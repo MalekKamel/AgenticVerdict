@@ -38,7 +38,7 @@ export default defineConfig({
     timeout: 180_000,
     env: {
       ...process.env,
-      COMPANY_CONFIG_DIR: path.resolve(rootDir, "../../configs/companies"),
+      TENANT_CONFIG_DIR: path.resolve(rootDir, "../../configs/tenants"),
     },
   },
 });

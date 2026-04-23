@@ -298,7 +298,7 @@ Use **multiple agents** when:
 
 ---
 
-### 8.2 Tenant branding — CompanyConfig-driven theme
+### 8.2 Tenant branding — TenantConfig-driven theme
 
 **Replace** reference UUID mapping in [`tenant-branding.ts`](../../../apps/frontend/src/lib/tenant/tenant-branding.ts) with config from API; mitigate **theme flash** (review finding).
 

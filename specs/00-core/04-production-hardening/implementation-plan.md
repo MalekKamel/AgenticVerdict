@@ -46,7 +46,7 @@ This implementation plan documents the **actual work completed** for Production 
   - Throughput tests
   - SLA validation tests
   - Chaos tests
-- **Company Config**: Cross-package integration tests
+- **Tenant Config**: Cross-package integration tests
 
 #### Scenario Orchestration
 - **Scenarios**: R01-R12 automated end-to-end scenarios
@@ -302,15 +302,15 @@ This implementation plan documents the **actual work completed** for Production 
   - Audit logging for flag changes
 - **Why in Database**: Zero-downtime changes, tenant-specific customization
 
-#### Tenant Configuration (CompanyConfig)
-- **Schema**: `CompanyConfig` interface
+#### Tenant Configuration (TenantConfig)
+- **Schema**: `TenantConfig` interface
 - **Scope**: Business rules per tenant
 - **Features**:
   - Localization (language, region, timezone, currency)
   - Business context (industry, products, value propositions)
   - AI configuration (primary model, provider)
   - Feature toggles (insights, verdict, etc.)
-- **Principle**: No hardcoded company logic
+- **Principle**: No hardcoded tenant logic
 
 **Why Layered Configuration**:
 - **Separation of Concerns**: Build vs runtime vs tenant

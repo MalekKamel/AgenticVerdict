@@ -6,11 +6,13 @@
 
 import { Card, Text, Title } from "@mantine/core";
 import { IconMapRoute } from "@tabler/icons-react";
+import { useRouterState } from "@tanstack/react-router";
 import { useTranslations } from "@/i18n/react";
 import { forwardRef, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
 import { AUTH_TEXT_LINK_CLASS } from "@/components/auth/authUi";
+import { resolveAuthBrandName } from "@/lib/auth/resolve-auth-brand-name";
 
 interface AuthNavLinks {
   registerLabel?: string;
@@ -25,17 +27,33 @@ export interface AuthLayoutProps {
   navLinks?: AuthNavLinks;
   className?: string;
   showSkipLink?: boolean;
+  /** When true, shows Terms / Privacy / Help links below optional account navigation. */
+  showLegalFooter?: boolean;
 }
 
 export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
-  ({ children, title, description, navLinks, className, showSkipLink = true }, ref) => {
-    const t = useTranslations();
+  (
+    {
+      children,
+      title,
+      description,
+      navLinks,
+      className,
+      showSkipLink = true,
+      showLegalFooter = true,
+    },
+    ref,
+  ) => {
+    const t = useTranslations("accessibility");
+    const tLayout = useTranslations("auth");
+    const matches = useRouterState({ select: (s) => s.matches });
+    const brandName = resolveAuthBrandName(matches);
 
     return (
       <div ref={ref} className={`auth-shell${className ? ` ${className}` : ""}`}>
         {showSkipLink ? (
           <a href="#main-content" className="skip-link">
-            {t("accessibility.skipToContent")}
+            {t("skipToContent")}
           </a>
         ) : null}
 
@@ -45,7 +63,7 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
               <Link
                 href="/"
                 className="group inline-flex flex-col items-center justify-center gap-2 no-underline"
-                aria-label="Masafh home"
+                aria-label={tLayout("layout.homeAriaLabel", { brand: brandName })}
               >
                 <span
                   className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--mantine-primary-color-light)] text-[var(--mantine-primary-color-light-color)] transition-transform duration-150 group-hover:scale-[1.02] group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[var(--mantine-primary-color-filled)]"
@@ -60,7 +78,7 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
                   component="span"
                   className="tracking-tight"
                 >
-                  Masafh
+                  {brandName}
                 </Text>
               </Link>
             </div>
@@ -87,7 +105,7 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
             <main
               id="main-content"
               tabIndex={-1}
-              aria-label={t("auth.layout.mainContent")}
+              aria-label={tLayout("layout.mainContent")}
               className="flex flex-col gap-5"
             >
               {children}
@@ -97,7 +115,7 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
               <div className="mt-8 border-t border-[var(--av-color-border-subtle)] pt-5">
                 <nav
                   className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-x-6"
-                  aria-label={t("auth.layout.footerNav")}
+                  aria-label={tLayout("layout.footerNav")}
                 >
                   {navLinks.registerLabel ? (
                     <Link href="/auth/register" className={AUTH_TEXT_LINK_CLASS}>
@@ -114,6 +132,30 @@ export const AuthLayout = forwardRef<HTMLDivElement, AuthLayoutProps>(
                       {navLinks.forgotPasswordLabel}
                     </Link>
                   ) : null}
+                </nav>
+              </div>
+            ) : null}
+
+            {showLegalFooter ? (
+              <div className="mt-6 border-t border-[var(--av-color-border-subtle)] pt-4">
+                <nav aria-label={tLayout("layout.legalNavLabel")}>
+                  <ul className="m-0 flex list-none flex-wrap items-center justify-center gap-x-4 gap-y-2 p-0 text-center">
+                    <li>
+                      <Link href="/auth/terms" className={AUTH_TEXT_LINK_CLASS}>
+                        {tLayout("layout.terms")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/auth/privacy" className={AUTH_TEXT_LINK_CLASS}>
+                        {tLayout("layout.privacy")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/auth/help" className={AUTH_TEXT_LINK_CLASS}>
+                        {tLayout("layout.help")}
+                      </Link>
+                    </li>
+                  </ul>
                 </nav>
               </div>
             ) : null}

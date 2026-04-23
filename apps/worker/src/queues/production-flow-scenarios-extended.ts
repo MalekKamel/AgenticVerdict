@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 
 import { HumanMessage } from "@langchain/core/messages";
 import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
+import { isFeatureMockEnabled, resolveRuntimePolicy } from "@agenticverdict/config";
 import { AgentMockChatModel } from "@agenticverdict/testing";
 import { tenantScopedCacheKey } from "@agenticverdict/database";
 import { recordReportGenerationDurationSeconds } from "@agenticverdict/observability";
@@ -13,7 +14,8 @@ import {
   HtmlDocxFormatGenerator,
   mergePhase2IntoReportModel,
 } from "@agenticverdict/report-generator";
-import { createTestTenantContext, RLS_TENANT_A, RLS_TENANT_B } from "@agenticverdict/testing";
+import { buildTenantContextForJob } from "@agenticverdict/core";
+import { createTestTenantConfig, RLS_TENANT_A, RLS_TENANT_B } from "@agenticverdict/testing";
 import { generatedInsightSchema } from "@agenticverdict/types";
 import ExcelJS from "exceljs";
 import Redis from "ioredis";
@@ -246,7 +248,7 @@ async function runR05(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
   const merged = mergePhase2IntoReportModel(
     {
       title: "Unified marketing readout",
-      companyName: "Scenario Retail Co.",
+      tenantName: "Scenario Retail Co.",
       executiveSummary: "Multi-channel snapshot for the scenario suite.",
     },
     { verdict, insights: [insight] },
@@ -287,13 +289,21 @@ async function runR07(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
   const a = tenantScopedCacheKey(RLS_TENANT_A, "metrics", "k1");
   const b = tenantScopedCacheKey(RLS_TENANT_B, "metrics", "k1");
   const cacheDistinct = a !== b && a.startsWith(`t:${RLS_TENANT_A}:`);
-  const ctxA = createTestTenantContext({ tenantId: RLS_TENANT_A });
-  const ctxB = createTestTenantContext({ tenantId: RLS_TENANT_B });
+  const ctxA = buildTenantContextForJob({
+    tenantId: RLS_TENANT_A,
+    requestId: "r07-a",
+    tenantConfig: createTestTenantConfig({ tenantId: RLS_TENANT_A }),
+  });
+  const ctxB = buildTenantContextForJob({
+    tenantId: RLS_TENANT_B,
+    requestId: "r07-b",
+    tenantConfig: createTestTenantConfig({ tenantId: RLS_TENANT_B }),
+  });
   const tenantContextsOk =
     ctxA.tenantId === RLS_TENANT_A &&
     ctxB.tenantId === RLS_TENANT_B &&
-    ctxA.config.companyId === RLS_TENANT_A &&
-    ctxB.config.companyId === RLS_TENANT_B;
+    ctxA.config.tenantId === RLS_TENANT_A &&
+    ctxB.config.tenantId === RLS_TENANT_B;
   if (!cacheDistinct || !tenantContextsOk) {
     throw new Error("production_flow_r07:isolation_failed");
   }
@@ -333,7 +343,8 @@ async function runR08(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
 
 async function runR09(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobResult> {
   const started = Date.now();
-  if (process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL !== "1") {
+  const policy = resolveRuntimePolicy(process.env);
+  if (!isFeatureMockEnabled(policy, "emailDelivery")) {
     throw new Error("production_flow_r09:mock_email_env_unset");
   }
   const reportId = randomUUID();

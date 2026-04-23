@@ -12,7 +12,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 
 **What It Is:**
 
-- CompanyConfig interface with all nested types
+- TenantConfig interface with all nested types
 - PlatformConfig interface
 - KPIConfig interface
 - PlatformData and NormalizedData interfaces
@@ -64,7 +64,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 
 **What It Is:**
 
-- Core tables: companies, platform_data, reports
+- Core tables: tenants, platform_data, reports
 - JSONB columns for flexible configuration
 - Row-Level Security policies
 - Proper indexes for JSONB queries
@@ -101,7 +101,7 @@ Based on comprehensive analysis of PROJECT_INIT_CONTEXT.md, this report identifi
 
 - LangChain integration
 - Tool interface definitions
-- Agent creation pattern with company context injection
+- Agent creation pattern with tenant context injection
 - Prompt template loading system
 - Retry and fallback strategies
 

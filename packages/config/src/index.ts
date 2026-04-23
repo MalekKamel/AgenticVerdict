@@ -15,33 +15,43 @@ export {
   config,
   isMockEnabledForConnector,
 } from "./configuration";
+export {
+  assertProductionSafeRuntimePolicy,
+  isFeatureMockEnabled,
+  resolveRuntimePolicy,
+  type FrontendAuthApiMode,
+  type RuntimeEnv,
+  type RuntimeMockMode,
+  type RuntimePolicy,
+  type RuntimePolicyFeature,
+} from "./runtime-policy";
 export { runtimeConfigSchema, type RuntimeConfig } from "./schemas/runtime-config";
 export {
-  clearCompanyConfigCache,
+  clearTenantConfigCache,
   ConfigManager,
   getDefaultConfigManager,
-  loadCompanyConfig,
+  loadTenantConfig,
   resolveConfigDir,
   type ConfigManagerOptions,
-  type LoadCompanyConfigOptions,
+  type LoadTenantConfigOptions,
 } from "./config-manager";
 export { ConfigValidationError, configValidationErrorFromZod } from "./config-errors";
 export {
-  companyConfigMergeEnvKey,
+  tenantConfigMergeEnvKey,
   deepMergeConfig,
-  readCompanyConfigMergeFromEnv,
-  sanitizeCompanyIdForEnv,
+  readTenantConfigMergeFromEnv,
+  sanitizeTenantIdForEnv,
 } from "./env-merge";
-export { watchCompanyConfigDirectory } from "./hot-reload";
-export { assertValidCompanyConfig, parseCompanyConfigPayload } from "./middleware";
+export { watchTenantConfigDirectory } from "./hot-reload";
+export { assertValidTenantConfig, parseTenantConfigPayload } from "./middleware";
 export { aiConfigSchema, type AiConfig } from "./schemas/ai";
-export { companyConfigSchema, type CompanyConfig } from "./schemas/company";
+export { tenantConfigSchema, type TenantConfig } from "./schemas/tenant";
 export {
-  companyBrandTokensSchema,
-  companyUiSchema,
-  type CompanyBrandTokens,
-  type CompanyUi,
-} from "./schemas/company-ui";
+  tenantBrandTokensSchema,
+  tenantUiSchema,
+  type TenantBrandTokens,
+  type TenantUi,
+} from "./schemas/tenant-ui";
 export { featureFlagsConfigSchema, type FeatureFlagsConfig } from "./schemas/feature-flags";
 export { localizationConfigSchema, type LocalizationConfig } from "./schemas/localization";
 export {

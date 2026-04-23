@@ -61,7 +61,7 @@
 - **`arabic-locale-quality.ts`** — `assertArabicStructuralLocaleQuality`.
 - **`index.ts`** — Re-exports BLEU API.
 
-### `configs/companies` & `apps/api/test-fixtures/company-configs`
+### `configs/tenants` & `apps/api/test-fixtures/tenant-configs`
 
 - Masafh fixture **`funnelMetricMapping`** aligned with mock metric suffixes.
 

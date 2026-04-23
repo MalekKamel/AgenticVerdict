@@ -21,13 +21,19 @@ interface ImportMetaEnv {
   readonly VITE_PUBLIC_TELEMETRY_SAMPLE_RATE?: string;
   /** When `"true"`, `/dashboard/feature-flags` admin snapshot is available (default off). */
   readonly VITE_PUBLIC_ENABLE_FEATURE_FLAGS_ADMIN_UI?: string;
+  /** When `"true"`, OAuth login provider actions are enabled (default off). */
+  readonly VITE_PUBLIC_ENABLE_OAUTH_LOGIN?: string;
   /**
    * Comma-separated hostnames used with `extractTenantSlugFromHost` (e.g. `localhost` for `acme.localhost`).
    * When unset, slug-based tenant resolution is disabled.
    */
   readonly VITE_PUBLIC_TENANT_BASE_DOMAINS?: string;
+  /** Optional fallback tenant UUID used when request-scoped tenant is unavailable. */
+  readonly VITE_PUBLIC_DEFAULT_TENANT_ID?: string;
   /** When `"true"`, multi-step onboarding at `/onboarding` is available (default off). */
   readonly VITE_PUBLIC_ENABLE_ONBOARDING_WIZARD?: string;
+  /** Public support mailbox for auth help pages (falls back to `auth.help.supportEmailDefault` in messages). */
+  readonly VITE_PUBLIC_SUPPORT_EMAIL?: string;
 }
 
 interface ImportMeta {

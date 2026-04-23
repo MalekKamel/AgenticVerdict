@@ -188,18 +188,18 @@
 
 ### 3.3 Context Tools (3 tools)
 
-- [x] T028 Create company profile tool
-  - File: `packages/agent-runtime/src/agent-tools/company-context-tools.ts`
-  - Tool: `get_company_profile`
+- [x] T028 Create tenant profile tool
+  - File: `packages/agent-runtime/src/agent-tools/tenant-context-tools.ts`
+  - Tool: `get_tenant_profile`
   - Status: Complete with tenant context injection
 
 - [x] T029 Create business rules tool
-  - File: `packages/agent-runtime/src/agent-tools/company-context-tools.ts`
+  - File: `packages/agent-runtime/src/agent-tools/tenant-context-tools.ts`
   - Tool: `get_business_rules`
-  - Status: Complete with company config integration
+  - Status: Complete with tenant config integration
 
 - [x] T030 Create configuration tool
-  - File: `packages/agent-runtime/src/agent-tools/company-context-tools.ts`
+  - File: `packages/agent-runtime/src/agent-tools/tenant-context-tools.ts`
   - Tool: `get_config`
   - Status: Complete with tenant config access
 
@@ -343,11 +343,11 @@
   - Function: `renderPromptTemplate()`
   - Status: Complete with variable substitution
 
-### 5.2 Company Context Injection
+### 5.2 Tenant Context Injection
 
-- [x] T053 Create company context builder
-  - File: `packages/agent-runtime/src/prompts/company-injection.ts`
-  - Function: `buildCompanyPromptContext()`
+- [x] T053 Create tenant context builder
+  - File: `packages/agent-runtime/src/prompts/tenant-injection.ts`
+  - Function: `buildTenantPromptContext()`
   - Context: Industry, region, goals, currency, platforms
   - Status: Complete with multi-tenant context
 
@@ -626,7 +626,7 @@
 
 7. **Prompt System** (2 tests)
    - `prompts.test.ts`
-   - `company-injection.test.ts` (integrated in prompts tests)
+   - `tenant-injection.test.ts` (integrated in prompts tests)
 
 8. **Performance & Observability** (3 tests)
    - `agent-performance-metrics.test.ts`
@@ -645,7 +645,7 @@
 
 ### Internal Dependencies (All Satisfied)
 
-- ✅ `@agenticverdict/config` - CompanyConfig with B2bKpiProfile
+- ✅ `@agenticverdict/config` - TenantConfig with B2bKpiProfile
 - ✅ `@agenticverdict/core` - TenantContext, AsyncLocalStorage
 - ✅ `@agenticverdict/database` - Drizzle ORM, marketing_metrics table
 - ✅ `@agenticverdict/data-connectors` - ConnectorAdapter, NormalizedConnectorSnapshot
@@ -679,7 +679,7 @@
 ### Phase 00 Integration (Foundation)
 
 - ✅ Tested tenant context propagation via AsyncLocalStorage
-- ✅ Tested CompanyConfig.marketing.b2bKpiProfile integration
+- ✅ Tested TenantConfig.marketing.b2bKpiProfile integration
 - ✅ Tested database queries via Drizzle ORM
 - ✅ Tested logging integration with Pino
 - ✅ Tested LangSmith observability integration

@@ -26,7 +26,7 @@ Pages are organized by user journey to reflect how users interact with the platf
 | Page                       | Purpose                                          | Document                                                             |
 | -------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
 | **Login**                  | User authentication with email/password or OAuth | [authentication.md](./authentication.md#login-page)                  |
-| **Registration**           | New company and user account setup               | [authentication.md](./authentication.md#registration-page)           |
+| **Registration**           | New tenant and user account setup                | [authentication.md](./authentication.md#registration-page)           |
 | **Password Reset Request** | Initiate password recovery flow                  | [authentication.md](./authentication.md#password-reset-request-page) |
 | **Password Reset Confirm** | Set new password with token                      | [authentication.md](./authentication.md#password-reset-confirm-page) |
 | **Email Verification**     | Confirm email ownership with code                | [authentication.md](./authentication.md#email-verification-page)     |
@@ -47,17 +47,17 @@ Pages are organized by user journey to reflect how users interact with the platf
 
 ### 2. Dashboard Journey
 
-| Page                         | Purpose                                               | Document                                                  |
-| ---------------------------- | ----------------------------------------------------- | --------------------------------------------------------- |
-| **Home Dashboard**           | Company overview with key metrics and recent insights | [dashboard.md](./dashboard.md#home-dashboard)             |
-| **Marketing Dashboard**      | Marketing-specific metrics and campaign performance   | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **Finance Dashboard**        | Financial metrics and revenue tracking                | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **Operations Dashboard**     | Operational KPIs and performance monitoring           | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **SEO Dashboard**            | Search performance and keyword rankings               | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **Social Media Dashboard**   | Social engagement and audience growth                 | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **Local Business Dashboard** | Local presence and customer interactions              | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
-| **Agency Partner Dashboard** | Multi-client overview and client switcher             | [dashboard.md](./dashboard.md#agency-partner-dashboard)   |
-| **Dashboard Customization**  | Drag-and-drop layout editor with saved layouts        | [dashboard.md](./dashboard.md#dashboard-customization)    |
+| Page                         | Purpose                                              | Document                                                  |
+| ---------------------------- | ---------------------------------------------------- | --------------------------------------------------------- |
+| **Home Dashboard**           | Tenant overview with key metrics and recent insights | [dashboard.md](./dashboard.md#home-dashboard)             |
+| **Marketing Dashboard**      | Marketing-specific metrics and campaign performance  | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **Finance Dashboard**        | Financial metrics and revenue tracking               | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **Operations Dashboard**     | Operational KPIs and performance monitoring          | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **SEO Dashboard**            | Search performance and keyword rankings              | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **Social Media Dashboard**   | Social engagement and audience growth                | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **Local Business Dashboard** | Local presence and customer interactions             | [dashboard.md](./dashboard.md#domain-specific-dashboards) |
+| **Agency Partner Dashboard** | Multi-client overview and client switcher            | [dashboard.md](./dashboard.md#agency-partner-dashboard)   |
+| **Dashboard Customization**  | Drag-and-drop layout editor with saved layouts       | [dashboard.md](./dashboard.md#dashboard-customization)    |
 
 **Entry Points:**
 
@@ -156,7 +156,7 @@ Pages are organized by user journey to reflect how users interact with the platf
 
 | Page                       | Purpose                                          | Document                                                |
 | -------------------------- | ------------------------------------------------ | ------------------------------------------------------- |
-| **Company Settings**       | Company name, logo, localization, branding       | [settings.md](./settings.md#company-settings-page)      |
+| **Tenant Settings**        | Tenant name, logo, localization, branding        | [settings.md](./settings.md#tenant-settings-page)       |
 | **User Profile**           | User name, email, password, preferences          | [settings.md](./settings.md#user-profile-settings-page) |
 | **Notification Settings**  | Email preferences, alert types, frequency        | [settings.md](./settings.md#notification-settings-page) |
 | **Integration Settings**   | API keys, webhooks, connected platforms          | [settings.md](./settings.md#integration-settings-page)  |
@@ -290,7 +290,7 @@ All user-facing strings use namespaced keys:
 
 ### Agency Partner Permissions
 
-- **Access Client Switcher:** Switch between client companies
+- **Access Client Switcher:** Switch between client tenants
 - **Create Client Insights:** Provision insights for any client
 - **White-Label Reports:** Apply agency branding to client reports
 - **Tenant Settings:** Configure client-specific preferences

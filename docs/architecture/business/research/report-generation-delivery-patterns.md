@@ -253,11 +253,11 @@ interface DeliveryCondition {
 - Reusable across all agency clients
 - Managed by agency admins
 
-**Company Templates** (Company-level):
+**Tenant Templates** (Tenant-level):
 
-- Custom templates for specific company
+- Custom templates for specific tenant
 - Branded and configured for their needs
-- Managed by company admins
+- Managed by tenant admins
 
 ### 5.2 Template Components
 
@@ -310,7 +310,7 @@ interface ReportTemplate {
 **Implementation Approach:**
 
 1. **Externalized strings** — All text in translation files
-2. **Language detection** — Auto-detect from company config
+2. **Language detection** — Auto-detect from tenant config
 3. **RTL/LTR rendering** — Automatic layout direction
 4. **Localized formats** — Dates, currency, numbers per locale
 
@@ -382,7 +382,7 @@ interface ReportWebhookPayload {
   timestamp: string;
   reportId: string;
   insightId: string;
-  companyId: string;
+  tenantId: string;
   format: ReportFormat;
   downloadUrl: string; // Presigned URL
   metadata: Record<string, unknown>;
@@ -484,7 +484,7 @@ interface DeliveryConfig {
 **Template Customization:**
 
 - All template properties editable after creation
-- Save as company template for reuse
+- Save as tenant template for reuse
 - Agency-level template library (Phase 2)
 
 ### 9.4 Internationalization

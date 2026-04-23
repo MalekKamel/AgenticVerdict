@@ -11,6 +11,7 @@ For Docker-related operations, use this directory. Non-Docker operational notes 
 | Document                                                                   | What it covers                                                                       |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [Getting started](./getting-started.md)                                    | Prerequisites, first-time secrets; **Makefile-first** and raw `docker compose` flows |
+| [Local development with Docker](./local-development-with-docker.md)        | End-to-end local dev workflow with watch/rebuild inner loop                          |
 | [Quick start](./quick-start.md)                                            | Shortest path: **`make`** + health checks                                            |
 | [Compose files](./compose-files.md)                                        | What each `docker-compose*.yml` and `deploy/*` overlay contains                      |
 | [Common operations](./common-operations.md)                                | Makefile targets, logs, rebuilds, migrations, backups                                |
@@ -24,6 +25,7 @@ For Docker-related operations, use this directory. Non-Docker operational notes 
 | [Continuous integration](./continuous-integration.md)                      | `docker-build`, `docker-release`, `docker-scan`, Cosign                              |
 | [Appendix](./appendix.md)                                                  | Command cheat sheet, file index, glossary                                            |
 | [Health verification plan](./docker-health-verification-execution-plan.md) | Phased runbook: builds, services, volumes, networking, optional stacks               |
+| [pgAdmin integration plan](./pgadmin-integration-implementation-plan.md)   | Step-by-step rollout plan for optional pgAdmin Compose overlay                       |
 | **Phase 0: Build Optimization**                                            | **Performance analysis, research, implemented architecture**                         |
 | [Build performance analysis](./build-performance-analysis.md)              | Current state assessment, bottleneck identification, metrics                         |
 | [Build optimization research](./build-optimization-research.md)            | BuildKit patterns, cache strategies, production examples                             |
@@ -47,6 +49,16 @@ curl -fsS http://127.0.0.1:4000/health
 ```
 
 Production-like app images (no dev overlay): **`make apps-up`** then **`make health`**.
+
+Optional database admin UI:
+
+```bash
+make pgadmin-up
+make pgadmin-logs
+make pgadmin-down
+```
+
+See [pgAdmin integration plan](./pgadmin-integration-implementation-plan.md) for implementation details and rollout rationale.
 
 Equivalent raw Compose (no Makefile): `./scripts/generate-secrets.sh`, `docker compose -f docker-compose.base-images.yml build`, `docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --build` (add `-f docker-compose.dev.yml` or `-f deploy/docker-compose.dev.override.yml` for mock-friendly api/worker—see [Getting started](./getting-started.md#environment-modes-and-manual-testing)).
 

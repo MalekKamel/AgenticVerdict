@@ -96,7 +96,7 @@ export class DetailedAnalysisTemplate extends BaseReportTemplate {
 
     const body = `${renderCoverBlock({
       title: vm.title,
-      companyName: vm.companyName,
+      tenantName: vm.tenantName,
       periodLabel: vm.periodLabel,
       accentColor: vm.brandAccentColor,
     })}

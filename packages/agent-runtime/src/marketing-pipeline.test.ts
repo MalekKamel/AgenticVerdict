@@ -1,4 +1,4 @@
-import { createTestCompanyConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
+import { createTestTenantConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
@@ -47,7 +47,7 @@ describe("marketing-pipeline (Phase 7)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-pipeline-1",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA, companyName: "Pipeline Co" }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Pipeline Co" }),
     };
 
     const progress = vi.fn();
@@ -59,7 +59,7 @@ describe("marketing-pipeline (Phase 7)", () => {
         ctx: scope.invocation,
         goal: "PIPELINE_E2E_MARKER: Summarize last month.",
         workflowId: "11111111-1111-4111-8111-111111111111",
-        specialization: { companyName: "Pipeline Co" },
+        specialization: { tenantName: "Pipeline Co" },
         mockModels: {
           analysis: pipelineMock,
           insights: pipelineMock,
@@ -100,7 +100,7 @@ describe("marketing-pipeline (Phase 7)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-fail",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
     };
 
     const state = await runAgentJob({ tenant }, async (scope) =>
@@ -108,7 +108,7 @@ describe("marketing-pipeline (Phase 7)", () => {
         factory,
         ctx: scope.invocation,
         goal: "FAIL_STAGE",
-        specialization: { companyName: "Co" },
+        specialization: { tenantName: "Co" },
         mockModels: { analysis: boom, insights: boom, verdict: boom },
       }),
     );
@@ -135,7 +135,7 @@ describe("marketing-pipeline (Phase 7)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-degraded",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
     };
 
     const state = await runAgentJob({ tenant }, async (scope) =>
@@ -143,7 +143,7 @@ describe("marketing-pipeline (Phase 7)", () => {
         factory,
         ctx: scope.invocation,
         goal: "DEGRADED_MARKER",
-        specialization: { companyName: "Co" },
+        specialization: { tenantName: "Co" },
         mockModels: {
           analysis: badVerdictMock,
           insights: badVerdictMock,
@@ -176,7 +176,7 @@ describe("marketing-pipeline (Phase 7)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-throw",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
     };
 
     await expect(
@@ -185,7 +185,7 @@ describe("marketing-pipeline (Phase 7)", () => {
           factory,
           ctx: scope.invocation,
           goal: "THROW_MARKER",
-          specialization: { companyName: "Co" },
+          specialization: { tenantName: "Co" },
           mockModels: {
             analysis: badVerdictMock,
             insights: badVerdictMock,

@@ -93,10 +93,10 @@
 
 This document presents a comprehensive business roadmap for the Minimum Viable Product (MVP) of **AgenticVerdict**, a multi-business-domain intelligence platform that aggregates data from multiple business domains (Marketing, Finance, Operations, SEO, Social Media, Local Business), generates AI-powered cross-domain insights, and delivers actionable verdicts through automated reports.
 
-The MVP delivers the **full intelligence pipeline** — all initial domain connectors, AI analysis engine, and professional report generation — but scoped to **a single company (Masafh)** with simplified user access and no administrative management tools. This approach proves the product's core value before investing in multi-tenant infrastructure and management features.
+The MVP delivers the **full intelligence pipeline** — all initial domain connectors, AI analysis engine, and professional report generation — but scoped to **a single tenant (Masafh)** with simplified user access and no administrative management tools. This approach proves the product's core value before investing in multi-tenant infrastructure and management features.
 
 **Total Estimated Duration:** 14 weeks
-**Primary Deliverable:** A production-ready multi-domain intelligence system serving one company with scheduled report delivery via email and a read-only web viewer.
+**Primary Deliverable:** A production-ready multi-domain intelligence system serving one tenant with scheduled report delivery via email and a read-only web viewer.
 **Investment Rationale:** By validating the core product with a real client first, we minimize risk, gather actionable feedback, and establish a proven foundation for scalable growth across multiple business domains.
 
 ---
@@ -122,7 +122,7 @@ The system operates through a four-step value chain:
 
 ### 1.2 Primary Client: Masafh
 
-**Masafh** is the launch client for the MVP — a Riyadh-based B2B company providing GPS fleet tracking devices and a SaaS fleet management platform serving logistics, transport, car rental, and educational institution clients across Saudi Arabia.
+**Masafh** is the launch client for the MVP — a Riyadh-based B2B tenant providing GPS fleet tracking devices and a SaaS fleet management platform serving logistics, transport, car rental, and educational institution clients across Saudi Arabia.
 
 **Why Masafh as the MVP Client:**
 
@@ -153,8 +153,8 @@ The MVP is **not a simpler technology** — it is a **simpler product scope**. T
 
 1. **Same Core Engine** — The intelligence pipeline (collect → normalize → analyze → deliver) is identical between MVP and full system
 2. **Foundation First** — Infrastructure that enables multi-tenancy is built from day one, avoiding rework when scaling
-3. **Prove Value Before Scaling** — Demonstrate the product works and delivers value for one company before adding management complexity
-4. **No Company-Specific Code** — All customization is driven by configuration files, ensuring the system is reusable for any client
+3. **Prove Value Before Scaling** — Demonstrate the product works and delivers value for one tenant before adding management complexity
+4. **No Tenant-Specific Code** — All customization is driven by configuration files, ensuring the system is reusable for any client
 
 ---
 
@@ -171,7 +171,7 @@ The MVP encompasses the complete intelligence pipeline with simplified access an
 | **Data Connectors (5 Platforms)** | Meta (Facebook/Instagram Ads), Google Analytics 4, Google Search Console, Google Business Profile, TikTok Ads      | All marketing data sources unified in one system                      |
 | **AI Analyst Engine**             | Claude 3.5 Sonnet with GPT-4o fallback; cross-platform correlation analysis; pattern detection; verdict generation | Insights that a human analyst would produce, automated                |
 | **Report Generator**              | PDF generation with Arabic RTL support; professional formatting; template-based output                             | Client-ready reports delivered on schedule                            |
-| **Company Configuration**         | Pre-seeded configuration files for Masafh (identity, localization, platforms, KPIs, AI preferences)                | No code changes needed to define how the system works for this client |
+| **Tenant Configuration**          | Pre-seeded configuration files for Masafh (identity, localization, platforms, KPIs, AI preferences)                | No code changes needed to define how the system works for this client |
 | **Tenant Isolation Foundation**   | Database-level row-level security; tenant context propagation; isolated cache keys                                 | Architecture ready for multi-tenant from day one                      |
 
 #### Delivery Layer (Simplified)
@@ -193,10 +193,10 @@ The following capabilities are **intentionally deferred** to post-MVP phases:
 
 | Excluded Feature                 | Reason for Deferral                             | Planned Phase |
 | -------------------------------- | ----------------------------------------------- | ------------- |
-| Admin Dashboard                  | Not needed for single-company validation        | Phase 02+     |
-| Tenant Management / Onboarding   | Only one company in MVP                         | Phase 02+     |
+| Admin Dashboard                  | Not needed for single-tenant validation         | Phase 02+     |
+| Tenant Management / Onboarding   | Only one tenant in MVP                          | Phase 02+     |
 | UI-Based Configuration Editor    | Configuration managed via seed files in MVP     | Phase 02+     |
-| Multi-Tenant Operation           | MVP serves one company only                     | Phase 02+     |
+| Multi-Tenant Operation           | MVP serves one tenant only                      | Phase 02+     |
 | Admin API                        | No external system integration needed in MVP    | Phase 02+     |
 | Audit Logging                    | Single-user environment reduces audit need      | Phase 02+     |
 | Role-Based Access Control (RBAC) | Simplified single-role access in MVP            | Phase 02+     |
@@ -204,16 +204,16 @@ The following capabilities are **intentionally deferred** to post-MVP phases:
 
 ### 2.3 MVP vs. Full System Comparison
 
-| Aspect                       | MVP (Current Scope)                    | Full System (Future Phases)                           |
-| ---------------------------- | -------------------------------------- | ----------------------------------------------------- |
-| **Number of Companies**      | One (Masafh)                           | Many, each fully isolated                             |
-| **Settings Management**      | Pre-seeded configuration files         | Web-based configuration editor                        |
-| **Admin Tools**              | None — operators update seed files     | Full admin dashboard with tenant management           |
-| **Web Experience**           | Read-only: view reports, download PDF  | Same viewing + admin management pages                 |
-| **User Access**              | One operational user, simplified login | Multiple roles (Admin, Viewer, etc.) with permissions |
-| **External API**             | None                                   | Admin API for provisioning and configuration          |
-| **Activity Tracking**        | Not required                           | Full audit log of all admin actions                   |
-| **Onboarding New Companies** | Manual (developer updates seed)        | Self-service or admin-driven through the product      |
+| Aspect                     | MVP (Current Scope)                    | Full System (Future Phases)                           |
+| -------------------------- | -------------------------------------- | ----------------------------------------------------- |
+| **Number of Tenants**      | One (Masafh)                           | Many, each fully isolated                             |
+| **Settings Management**    | Pre-seeded configuration files         | Web-based configuration editor                        |
+| **Admin Tools**            | None — operators update seed files     | Full admin dashboard with tenant management           |
+| **Web Experience**         | Read-only: view reports, download PDF  | Same viewing + admin management pages                 |
+| **User Access**            | One operational user, simplified login | Multiple roles (Admin, Viewer, etc.) with permissions |
+| **External API**           | None                                   | Admin API for provisioning and configuration          |
+| **Activity Tracking**      | Not required                           | Full audit log of all admin actions                   |
+| **Onboarding New Tenants** | Manual (developer updates seed)        | Self-service or admin-driven through the product      |
 
 **Critical Insight:** The intelligence pipeline does NOT change between MVP and full system. What changes is **who can use it** and **how they manage it**.
 
@@ -233,16 +233,16 @@ Establish the critical infrastructure and architectural patterns that will suppo
 
 #### Key Activities
 
-| Activity                           | Business Description                                                                    | Outcome                                                            |
-| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Monorepo Setup**                 | Configure Turborepo + pnpm workspace for organized, efficient development               | Structured codebase with build pipeline and caching                |
-| **Configuration Management**       | Implement CompanyConfig schema with validation; create Masafh seed configuration        | System can load and validate company settings without code changes |
-| **Database Infrastructure**        | Set up PostgreSQL with Drizzle ORM; implement row-level security for tenant isolation   | Database ready to store company data with guaranteed separation    |
-| **Multi-Tenancy Architecture**     | Implement AsyncLocalStorage for tenant context propagation throughout the system        | Every operation is automatically scoped to the correct company     |
-| **Internationalization Framework** | Set up i18n infrastructure with Arabic and English support; implement RTL layout system | System can render in any supported language from day one           |
-| **Base UI Components**             | Create reusable component library with Mantine UI; ensure RTL/LTR compatibility         | Consistent, accessible user interface foundation                   |
-| **Development Tooling**            | Configure ESLint, Prettier, TypeScript strict mode, Vitest testing framework            | Quality standards enforced from the first line of code             |
-| **Security Infrastructure**        | Set up JWT authentication, encrypted credential storage, input validation               | System protected against common security threats                   |
+| Activity                           | Business Description                                                                    | Outcome                                                           |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Monorepo Setup**                 | Configure Turborepo + pnpm workspace for organized, efficient development               | Structured codebase with build pipeline and caching               |
+| **Configuration Management**       | Implement TenantConfig schema with validation; create Masafh seed configuration         | System can load and validate tenant settings without code changes |
+| **Database Infrastructure**        | Set up PostgreSQL with Drizzle ORM; implement row-level security for tenant isolation   | Database ready to store tenant data with guaranteed separation    |
+| **Multi-Tenancy Architecture**     | Implement AsyncLocalStorage for tenant context propagation throughout the system        | Every operation is automatically scoped to the correct tenant     |
+| **Internationalization Framework** | Set up i18n infrastructure with Arabic and English support; implement RTL layout system | System can render in any supported language from day one          |
+| **Base UI Components**             | Create reusable component library with Mantine UI; ensure RTL/LTR compatibility         | Consistent, accessible user interface foundation                  |
+| **Development Tooling**            | Configure ESLint, Prettier, TypeScript strict mode, Vitest testing framework            | Quality standards enforced from the first line of code            |
+| **Security Infrastructure**        | Set up JWT authentication, encrypted credential storage, input validation               | System protected against common security threats                  |
 
 #### Deliverables
 
@@ -382,7 +382,7 @@ Build the report generation and delivery system that transforms AI analysis into
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | **PDF Report Generation**      | Implement PDF generation engine with template-based layout; ensure generation completes under 60 seconds   | Professional PDF reports ready for client delivery                   |
 | **Arabic RTL Support**         | Ensure proper right-to-left text rendering for Arabic reports; validate font support for Arabic characters | Arabic reports render correctly with professional typography         |
-| **Report Template System**     | Create configurable templates that inject company branding, data, insights, and verdicts automatically     | Reports can be restyled without code changes                         |
+| **Report Template System**     | Create configurable templates that inject tenant branding, data, insights, and verdicts automatically      | Reports can be restyled without code changes                         |
 | **Excel Report Generation**    | Implement Excel output for clients who want raw data alongside analysis                                    | Alternative format for data-heavy clients                            |
 | **Email Delivery System**      | Integrate with email service (Resend/SendGrid); configure scheduled delivery with PDF attachments          | Reports arrive in inbox on schedule, every time                      |
 | **Report Scheduling**          | Implement job queue (BullMQ) for reliable scheduled report generation and delivery                         | Reports generated and delivered automatically on configured schedule |
@@ -683,13 +683,13 @@ Upon successful MVP delivery, the system is positioned for rapid expansion into 
 
 ### Phase 02: Multi-Tenant Expansion (Weeks 15–18)
 
-| Feature                       | Description                                                               |
-| ----------------------------- | ------------------------------------------------------------------------- |
-| **Admin Dashboard**           | Web-based interface for system operators to manage all companies          |
-| **Tenant Onboarding**         | Process to add new companies through the product (not code changes)       |
-| **Configuration Editor**      | UI for managing company settings without touching configuration files     |
-| **Multi-Company Support**     | System serves multiple companies simultaneously with guaranteed isolation |
-| **Role-Based Access Control** | Multiple user roles (Admin, Viewer) with granular permissions             |
+| Feature                       | Description                                                             |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| **Admin Dashboard**           | Web-based interface for system operators to manage all tenants          |
+| **Tenant Onboarding**         | Process to add new tenants through the product (not code changes)       |
+| **Configuration Editor**      | UI for managing tenant settings without touching configuration files    |
+| **Multi-Tenant Support**      | System serves multiple tenants simultaneously with guaranteed isolation |
+| **Role-Based Access Control** | Multiple user roles (Admin, Viewer) with granular permissions           |
 
 ### Phase 03: Advanced Management (Weeks 19–22)
 
@@ -697,14 +697,14 @@ Upon successful MVP delivery, the system is positioned for rapid expansion into 
 | ----------------------- | ---------------------------------------------------------- |
 | **Admin API**           | RESTful API for external system integration and automation |
 | **Audit Logging**       | Complete activity log of all administrative actions        |
-| **User Management**     | Self-service team management for company administrators    |
-| **Enhanced Monitoring** | Per-company metrics, usage analytics, health dashboards    |
+| **User Management**     | Self-service team management for tenant administrators     |
+| **Enhanced Monitoring** | Per-tenant metrics, usage analytics, health dashboards     |
 
 ### Phase 04: Production Excellence (Weeks 23–26)
 
 | Feature                      | Description                                                   |
 | ---------------------------- | ------------------------------------------------------------- |
-| **Performance Optimization** | System tuned for production scale with multiple companies     |
+| **Performance Optimization** | System tuned for production scale with multiple tenants       |
 | **Security Hardening**       | SOC 2 readiness, penetration testing, security certifications |
 | **Comprehensive Testing**    | Extended test coverage for multi-tenant scenarios             |
 | **Operational Excellence**   | Runbooks, incident response, disaster recovery procedures     |
@@ -714,7 +714,7 @@ Upon successful MVP delivery, the system is positioned for rapid expansion into 
 ```
 MVP (Weeks 1-14)          Phase 02 (Weeks 15-18)     Phase 03 (Weeks 19-22)     Phase 04 (Weeks 23-26)
 ┌─────────────────┐       ┌────────────────────┐     ┌────────────────────┐     ┌────────────────────┐
-│ One Company     │  ──▶  │ Many Companies     │ ──▶ │ Self-Service       │ ──▶ │ Production         │
+│ One Tenant     │  ──▶  │ Many Tenants     │ ──▶ │ Self-Service       │ ──▶ │ Production         │
 │ Full Pipeline   │       │ Admin Dashboard    │     │ Admin API          │     │ Excellence         │
 │ Simple Viewer   │       │ Config Editor      │     │ Audit Logging      │     │ SOC 2 Ready        │
 │ No Admin Tools  │       │ RBAC               │     │ User Management    │     │ Operational Ready  │
@@ -731,7 +731,7 @@ MVP (Weeks 1-14)          Phase 02 (Weeks 15-18)     Phase 03 (Weeks 19-22)     
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **MVP (Minimum Viable Product)** | The simplest version of the product that delivers core value and validates the concept                             |
 | **Multi-Tenant**                 | A system architecture where a single instance serves multiple organizations (tenants) with complete data isolation |
-| **Tenant Isolation**             | The guarantee that one company's data is never accessible to or from another company                               |
+| **Tenant Isolation**             | The guarantee that one tenant's data is never accessible to or from another tenant                                 |
 | **Row-Level Security (RLS)**     | A database-level enforcement mechanism that filters data access based on tenant identity                           |
 | **Platform Adapter**             | A connector that translates a specific marketing platform's API into the system's common data format               |
 | **Normalization**                | The process of converting data from different platforms into a consistent format for comparison                    |

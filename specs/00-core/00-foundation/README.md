@@ -150,7 +150,7 @@ await runWithTenantContext(
   async () => {
     // All operations here have tenant context
     const data = await dbScoped(db, async (tx) => {
-      return tx.query.companies.findFirst();
+      return tx.query.tenants.findFirst();
     });
   }
 );
@@ -159,10 +159,10 @@ await runWithTenantContext(
 ### Configuration-Driven Architecture
 
 ```typescript
-// Company configuration loaded from JSON files
-import { loadCompanyConfig } from "@agenticverdict/config";
+// Tenant configuration loaded from JSON files
+import { loadTenantConfig } from "@agenticverdict/config";
 
-const config = await loadCompanyConfig("masafh");
+const config = await loadTenantConfig("masafh");
 // Config includes: localization, marketing channels, KPIs, AI settings, features
 ```
 
@@ -170,8 +170,8 @@ const config = await loadCompanyConfig("masafh");
 
 ```sql
 -- Row-level security policies enforce tenant isolation
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY company_isolation_policy ON companies
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL USING (id = current_setting('app.current_tenant_id')::uuid);
 ```
 
@@ -248,7 +248,7 @@ pnpm build
 ### Architecture & Design
 
 1. **Multi-Tenancy First**: Tenant isolation built in from the start using AsyncLocalStorage + RLS
-2. **Configuration-Driven**: No company-specific code; all behavior injected via configuration
+2. **Configuration-Driven**: No tenant-specific code; all behavior injected via configuration
 3. **Plugin Architecture**: Shared adapter pattern for platform integrations
 4. **Type Safety**: Zero `any` types, strict TypeScript mode enforced
 
@@ -287,7 +287,7 @@ pnpm build
 
 ### Challenge 2: Configuration-Driven Architecture
 
-**Problem**: How to support multiple companies with different business rules without code changes?
+**Problem**: How to support multiple tenants with different business rules without code changes?
 
 **Solution**: Zod schemas define configuration structure, file-based loading with hot-reload, environment variable overrides for secrets.
 
@@ -350,7 +350,7 @@ pnpm build
 ### Foundation Capabilities Available for Phase 1
 
 1. **Tenant Isolation**: Connectors can safely access tenant-specific data
-2. **Configuration Loading**: Connector configs loaded from CompanyConfig
+2. **Configuration Loading**: Connector configs loaded from TenantConfig
 3. **Database Operations**: dbScoped() wrapper ensures tenant-scoped queries
 4. **Testing Utilities**: Test factories and utilities for connector testing
 5. **Background Jobs**: BullMQ ready for async data fetching tasks

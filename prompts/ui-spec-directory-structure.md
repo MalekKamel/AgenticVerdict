@@ -45,7 +45,7 @@ Review the initial directory proposals and provide:
 1. **Recommended Structure**: A final directory structure that best serves the development lifecycle
 2. **Rationale**: Justification for each directory and its placement in the sequence
 3. **Development Sequence**: Optimal ordering for implementation based on dependencies
-4. **Entity Mapping**: Alignment between directories and key entities (Insight, Connector, Template, Schedule, Delivery, Company)
+4. **Entity Mapping**: Alignment between directories and key entities (Insight, Connector, Template, Schedule, Delivery, Tenant)
 5. **Consistency Check**: How the structure aligns with `/docs/architecture/ui/00-overview.md` and `/specs/01-ui/spec.md`
 
 ## Key Entities from UI Architecture
@@ -57,7 +57,7 @@ Based on `/specs/01-ui/spec.md`, the following entities drive the UI:
 - **Template**: Pre-built insight configurations
 - **Schedule**: Insight execution timing
 - **Delivery Configuration**: Report delivery settings
-- **Company (Tenant)**: Multi-tenant management
+- **Tenant (Tenant)**: Multi-tenant management
 - **Insight Report**: AI-generated output consumption
 
 ## Key Pages from User Stories

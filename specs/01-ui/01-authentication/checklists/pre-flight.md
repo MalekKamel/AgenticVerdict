@@ -81,7 +81,7 @@ This checklist MUST be completed before beginning implementation of Phase 01 (Au
 
 ## Design System Assets
 
-- [ ] Company logo is available in SVG format (`/public/logos/masafh.svg`)
+- [ ] Tenant logo is available in SVG format (`/public/logos/masafh.svg`)
 - [ ] Brand colors are defined in design tokens
 - [ ] Typography scale is defined in design tokens
 - [ ] Spacing scale is defined in design tokens

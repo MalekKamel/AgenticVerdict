@@ -1,5 +1,5 @@
 # Development override for mock adapter testing (NODE_ENV=development).
-# Adapter aggregate health is served by the Web app (Next.js); include `web` when using mocks.
+# Adapter aggregate health is served by the Frontend app (Next.js); include `frontend` when using mocks.
 #
 # Usage:
 #   docker compose -f docker-compose.base-images.yml build
@@ -8,7 +8,7 @@
 #
 # NOTE: API/worker images should be built with TARGET_STAGE=development (see apps/*/Dockerfile)
 # so the copied tree matches a non-production NODE_ENV. This file sets the same via build args.
-# Web service cannot use mock adapters in Docker due to Next.js standalone limitations.
+# Frontend service cannot use mock adapters in Docker due to Next.js standalone limitations.
 # For production-flow scenarios (R01/R02), mock adapters are not needed as they use fixed HTML.
 
 services:
@@ -40,5 +40,5 @@ services:
       GLM_MODEL: ${GLM_MODEL:-glm-4.5}
       GLM_TIMEOUT: ${GLM_TIMEOUT:-30000}
 
-  # Web service uses production build (mock adapters not supported in Docker)
+  # Frontend service uses production build (mock adapters not supported in Docker)
   # For mock adapter testing, use local `pnpm dev` instead

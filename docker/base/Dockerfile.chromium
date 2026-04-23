@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Pre-installed Chromium stack for worker PDF/Playwright. Tag as agenticverdict/chromium-base:local (see docs/docker/container-images.md).
 ARG NODE_VERSION=20
 

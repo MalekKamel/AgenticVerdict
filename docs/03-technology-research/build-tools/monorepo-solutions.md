@@ -608,7 +608,7 @@ rush clean
 - Google (internal monorepo)
 - Uber (certain teams)
 - Stripe (certain teams)
-- Very large tech companies
+- Very large tech tenants
 
 #### Strengths
 

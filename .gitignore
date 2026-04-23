@@ -139,7 +139,9 @@ scripts/clerk-to-betterauth/prod/*.json
 # Misc
 ./packages/lobe-ui
 *.ppt*
-*.doc*
+*.doc
+*.docx
+*.docm
 *.xls*
 e2e/reports
 out

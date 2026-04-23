@@ -3,7 +3,7 @@
 **Date:** 2026-04-04  
 **Scope:** Phase 2 — [Execution Phase 6 — Agent factory, context integration, and memory](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **4.1**, **4.2**, and **4.3**.
 
-This entry adds a **Zod-validated** agent factory configuration, a **production vs test** creation path, **per-turn company context** assembly from Phase 0 tenant ALS (aligned with Phase 5 `assemblePromptLayers` / `buildCompanyPromptContext`), a **LangChain-backed** `IAgent` with optional provider **fallback**, and **memory modes** with **buffer limits**, **rolling long-term summary**, lightweight **snippet retrieval** (keyword overlap, no embeddings), and **ENTITY:** line capture for structured notes. Multi-tenant safety is enforced by matching **invocation** `tenantId` to **active** tenant context; separate memory instances prevent cross-tenant buffer sharing. **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.7.0**.
+This entry adds a **Zod-validated** agent factory configuration, a **production vs test** creation path, **per-turn tenant context** assembly from Phase 0 tenant ALS (aligned with Phase 5 `assemblePromptLayers` / `buildTenantPromptContext`), a **LangChain-backed** `IAgent` with optional provider **fallback**, and **memory modes** with **buffer limits**, **rolling long-term summary**, lightweight **snippet retrieval** (keyword overlap, no embeddings), and **ENTITY:** line capture for structured notes. Multi-tenant safety is enforced by matching **invocation** `tenantId` to **active** tenant context; separate memory instances prevent cross-tenant buffer sharing. **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.7.0**.
 
 ---
 

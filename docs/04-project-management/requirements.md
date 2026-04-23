@@ -4,9 +4,9 @@
 
 This document outlines the technical implementation requirements for **AgenticVerdict** — a configurable, multi-domain intelligence platform that aggregates business metrics across marketing, finance, operations, and other domains through unified data integration, generates reports with cross-domain insights, and delivers actionable verdicts.
 
-**Note**: The system must be architected for reusability across different companies, industries, regions, and languages. Company-specific data, language preferences, regional settings, and connector configurations should be injected dynamically via configuration, not hardcoded.
+**Note**: The system must be architected for reusability across different tenants, industries, regions, and languages. Tenant-specific data, language preferences, regional settings, and connector configurations should be injected dynamically via configuration, not hardcoded.
 
-**Implementation Context**: This project is a technical implementation of an AI agent system. For this implementation, the system will be configured for **Masafh**, a Riyadh-based B2B company providing GPS fleet tracking devices and a SaaS fleet management platform.
+**Implementation Context**: This project is a technical implementation of an AI agent system. For this implementation, the system will be configured for **Masafh**, a Riyadh-based B2B tenant providing GPS fleet tracking devices and a SaaS fleet management platform.
 
 ---
 
@@ -18,7 +18,7 @@ This document outlines the technical implementation requirements for **AgenticVe
 4. [Data Connector Integration Requirements](#data-connector-integration-requirements)
 5. [Security & Authentication (Requirements)](#security--authentication-requirements)
 6. [Technology Stack](#technology-stack)
-7. [Sample Company Configuration: Masafh](#sample-company-configuration-masafh)
+7. [Sample Tenant Configuration: Masafh](#sample-tenant-configuration-masafh)
 8. [Evaluation Criteria](#evaluation-criteria)
 9. [Deliverables](#deliverables)
 
@@ -30,13 +30,13 @@ This document outlines the technical implementation requirements for **AgenticVe
 
 | Principle                    | Implementation Requirement                                                                                                                                                                                                                                                                |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-Tenant Capable**     | System must support multiple company configurations simultaneously with complete tenant isolation                                                                                                                                                                                         |
-| **Dynamic Configuration**    | All company-specific data injected via configuration files or environment variables                                                                                                                                                                                                       |
+| **Multi-Tenant Capable**     | System must support multiple tenant configurations simultaneously with complete tenant isolation                                                                                                                                                                                          |
+| **Dynamic Configuration**    | All tenant-specific data injected via configuration files or environment variables                                                                                                                                                                                                        |
 | **Language Agnostic**        | Report language determined by configuration; supports RTL/LTR rendering                                                                                                                                                                                                                   |
-| **Region Aware**             | Currency, date formats, time zones configurable per company                                                                                                                                                                                                                               |
+| **Region Aware**             | Currency, date formats, time zones configurable per tenant                                                                                                                                                                                                                                |
 | **Connector Extensible**     | New data connectors can be added using plugin architecture across any business domain (Marketing, Finance, SEO, Social, Local, Operations)                                                                                                                                                |
 | **Template Driven**          | Report templates are external, customizable files stored in database                                                                                                                                                                                                                      |
-| **Separation of Concerns**   | Core logic separate from company-specific implementations                                                                                                                                                                                                                                 |
+| **Separation of Concerns**   | Core logic separate from tenant-specific implementations                                                                                                                                                                                                                                  |
 | **Fault Tolerant**           | System degrades gracefully when connectors fail or rate limits are hit                                                                                                                                                                                                                    |
 | **Observable**               | Comprehensive logging, metrics, and tracing for all operations                                                                                                                                                                                                                            |
 | **Don't Reinvent the Wheel** | All implementations must use battle-tested, production-proven tools and packages rather than custom implementations. See [`docs/04-technology-research/research-overview.md`](../04-technology-research/research-overview.md) for technology research with justifications and trade-offs. |
@@ -56,10 +56,10 @@ Comprehensive research on all technology categories is available under [`docs/04
 ### Configuration Schema
 
 ```typescript
-interface CompanyConfig {
-  // Company Identity
-  companyId: string;
-  companyName: string;
+interface TenantConfig {
+  // Tenant Identity
+  tenantId: string;
+  tenantName: string;
   website: string;
   industry: string;
 
@@ -94,7 +94,7 @@ interface CompanyConfig {
     targetMarkets: string[];
     valuePropositions: string[];
     differentiators: string[];
-    domains: BusinessDomain[]; // Active business domains for this company
+    domains: BusinessDomain[]; // Active business domains for this tenant
   };
 
   // Data Connectors (domain-tagged)
@@ -340,18 +340,18 @@ packages:
 
 ```sql
 -- Enable row-level security
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE platform_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
 
--- Policy: Users can only access their company's data
-CREATE POLICY company_isolation_policy ON companies
+-- Policy: Users can only access their tenant's data
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL
-  USING (company_id = current_setting('app.current_tenant_id')::uuid);
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
 
 CREATE POLICY platform_data_isolation_policy ON platform_data
   FOR ALL
-  USING (company_id = current_setting('app.current_tenant_id')::uuid);
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
 ```
 
 ### Tenant Context Propagation
@@ -364,7 +364,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 interface TenantContext {
   /** Stable tenant key (UUID in this codebase; must align with RLS session variable). */
   tenantId: string;
-  config: CompanyConfig;
+  config: TenantConfig;
   requestId: string;
 }
 
@@ -374,7 +374,7 @@ const tenantContext = new AsyncLocalStorage<TenantContext>();
 export function tenantContextMiddleware() {
   return async (req: Request, res: Response, next: NextFunction) => {
     const tenantId = extractTenantId(req);
-    const config = await configManager.loadCompanyConfig(tenantId);
+    const config = await configManager.loadTenantConfig(tenantId);
 
     tenantContext.run(
       {
@@ -461,14 +461,14 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 
 ---
 
-## Sample Company Configuration: Masafh
+## Sample Tenant Configuration: Masafh
 
-### config/seed/companies/masafh.json
+### config/seed/tenants/masafh.json
 
 ```json
 {
-  "companyId": "masafh",
-  "companyName": "Masafh",
+  "tenantId": "masafh",
+  "tenantName": "Masafh",
   "website": "https://masafh.net",
   "industry": "Fleet Management & GPS Tracking",
 
@@ -502,8 +502,8 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
     ],
 
     "targetMarkets": [
-      "Logistics and Transport Companies",
-      "Car Rental Companies",
+      "Logistics and Transport Tenants",
+      "Car Rental Tenants",
       "Educational Institutions"
     ],
 
@@ -581,7 +581,7 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 | **Insight Quality**              | 25%    | • Genuine cross-domain analysis<br>• Data-backed with specific numbers<br>• Actionable recommendations<br>• Minimum 3 unique insights per run<br>• Context-aware for business domain                             |
 | **Code Quality**                 | 20%    | • End-to-end TypeScript<br>• Comprehensive tests (70%+ coverage)<br>• Clean architecture<br>• Proper separation of concerns<br>• Industry-standard patterns                                                      |
 | **Report Output**                | 15%    | • Professional formatting<br>• Configurable language/region<br>• All required KPIs<br>• Proper RTL/LTR support<br>• Working PDF/Word generation                                                                  |
-| **Architecture Explanation**     | 10%    | • Clear design decisions<br>• Multi-company support demonstrated<br>• Scalability considerations<br>• Security considerations                                                                                    |
+| **Architecture Explanation**     | 10%    | • Clear design decisions<br>• Multi-tenant support demonstrated<br>• Scalability considerations<br>• Security considerations                                                                                     |
 
 ---
 
@@ -592,8 +592,8 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 **Structure:**
 
 - Complete source code with comprehensive README
-- Configuration structure showing multi-company support
-- Sample configurations for Masafh and one hypothetical company
+- Configuration structure showing multi-tenant support
+- Sample configurations for Masafh and one hypothetical tenant
 - Working CI/CD pipeline
 - Comprehensive test suite
 
@@ -602,7 +602,7 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 - Project overview and objectives
 - Setup and installation instructions
 - Architecture diagram
-- Configuration guide for adding new companies
+- Configuration guide for adding new tenants
 - Model choice rationale
 - Known limitations and future improvements
 - Development guidelines
@@ -614,9 +614,9 @@ These rules apply to `@agenticverdict/data-connectors` and any service that cons
 - Configuration loading for Masafh
 - Agent initialization and context injection
 - Data fetching from configured connectors
-- Insight generation with company context
+- Insight generation with tenant context
 - Report generation in Arabic with proper RTL
-- Demonstration of switching to different company/language
+- Demonstration of switching to different tenant/language
 - Error handling when connectors fail
 
 ### 3. Documentation

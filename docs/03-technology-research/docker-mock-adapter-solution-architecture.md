@@ -468,7 +468,7 @@ CREATE TABLE feature_flags (
 CREATE INDEX idx_feature_flags_key ON feature_flags(key);
 
 CREATE TABLE tenant_feature_flags (
-  tenant_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   flag_id UUID NOT NULL REFERENCES feature_flags(id) ON DELETE CASCADE,
   value JSONB NOT NULL,
   override_type TEXT NOT NULL CHECK (override_type IN ('explicit', 'inherited', 'disabled')),

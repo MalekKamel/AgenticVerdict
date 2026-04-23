@@ -26,17 +26,17 @@
 
 ---
 
-## SLIDE 2: Multiple Companies
+## SLIDE 2: Multiple Tenants
 
-### The System Serves Many Companies
+### The System Serves Many Tenants
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         MULTIPLE DYNAMIC COMPANIES                          │
+│                          MULTIPLE DYNAMIC TENANTS                           │
 │                                                                             │
 │    ┌─────────────┐       ┌─────────────┐       ┌─────────────┐              │
 │    │             │       │             │       │             │              │
-│    │  COMPANY A  │       │  COMPANY B  │       │  COMPANY C  │              │
+│    │  TENANT A  │       │  TENANT B  │       │  TENANT C  │              │
 │    │  Masafh     │       │  Retail Co  │       │  Startup X  │              │
 │    │             │       │             │       │             │              │
 │    │  Riyadh     │       │  Dubai      │       │  Cairo      │              │
@@ -53,7 +53,7 @@
 │                   ┌─────────────────────────────┐                           │
 │                   │      COMPLETE SEPARATION    │                           │
 │                   │                             │                           │
-│                   │  Each company's data:       │                           │
+│                   │  Each tenant's data:       │                           │
 │                   │  • Stays private            │                           │
 │                   │  • Never mixes              │                           │
 │                   │  • Fully protected          │                           │
@@ -63,15 +63,15 @@
 
 **Why It Matters:**
 
-- Trust — Your data is never visible to other companies
-- Flexibility — Each company has different settings, languages, platforms
-- Growth — Add new companies without changing the system
+- Trust — Your data is never visible to other tenants
+- Flexibility — Each tenant has different settings, languages, platforms
+- Growth — Add new tenants without changing the system
 
 ---
 
 ## SLIDE 3: Management Layer
 
-### How Companies Are Managed
+### How Tenants Are Managed
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -80,13 +80,13 @@
 │    ┌──────────────────────────────────────────────────────────────────┐     │
 │    │                        ADMIN DASHBOARD                           │     │
 │    │                                                                  │     │
-│    │    See all companies • Monitor health • Manage users             │     │
+│    │    See all tenants • Monitor health • Manage users               │     │
 │    └────────────────────────────────┬─────────────────────────────────┘     │
 │                                     │                                       │
 │    ┌────────────────────────────────▼─────────────────────────────────┐     │
-│    │                       COMPANY ONBOARDING                         │     │
+│    │                       TENANT ONBOARDING                         │     │
 │    │                                                                  │     │
-│    │   Add new companies • Set up their profile • Configure platforms │     │
+│    │   Add new tenants • Set up profile • Configure platforms          │     │
 │    └────────────────────────────────┬─────────────────────────────────┘     │
 │                                     │                                       │
 │    ┌────────────────────────────────▼─────────────────────────────────┐     │
@@ -120,7 +120,7 @@
 │  Collect          Normalize        Analyze            Deliver               │
 │                                                                             │
 │  ┌──────┐        ┌──────┐       ┌───────┐            ┌───────┐              │
-│  │ Meta │        │      │   ┌──▶│Company│        ┌──▶│ PDF   │              │
+│  │ Meta │        │      │   ┌──▶│Tenant│        ┌──▶│ PDF   │              │
 │  │ GA4  │──────▶ │Make  │   │   │Context│        │   │ Email │              │
 │  │ GSC  │        │same  │───┘   │Apply  │        │   │ Web   │              │
 │  │ GBP  │        │format│       └───┬───┘        │   └───────┘              │
@@ -152,9 +152,9 @@
 │  │         START WITH MVP       │              THEN ADD                   │  │
 │  ├──────────────────────────────┼─────────────────────────────────────────┤  │
 │  │                              │                                         │  │
-│  │  • One company (Masafh)      │  • More companies                       │  │
+│  │  • One tenant (Masafh)      │  • More tenants                         │  │
 │  │  • Full AI analysis          │  • Admin dashboard                      │  │
-│  │  • Scheduled reports         │  • Company management                   │  │
+│  │  • Scheduled reports         │  • Tenant management                   │  │
 │  │  • Simple viewing page       │  • Configuration editor                 │  │
 │  │                              │  • User management                      │  │
 │  │                              │                                         │  │
@@ -162,7 +162,7 @@
 │                                                                              │
 │  KEY INSIGHT:                                                                │
 │  The intelligence pipeline stays the SAME. What changes is                   │
-│  how companies are managed and how many can use the system.                  │
+│  how tenants are managed and how many can use the system.                    │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -189,10 +189,10 @@
 │  ┌──────────────────────────────────────────────────────────────────────┐   │
 │  │  THE APPROACH                                                        │   │
 │  │                                                                      │   │
-│  │  • Start with one company to prove value                             │   │
-│  │  • Each company has its own settings, language, platforms            │   │
-│  │  • All company data stays completely separate                        │   │
-│  │  • Grow to many companies without rewrites                           │   │
+│  │  • Start with one tenant to prove value                             │   │
+│  │  • Each tenant has its own settings, language, platforms            │   │
+│  │  • All tenant data stays completely separate                        │   │
+│  │  • Grow to many tenants without rewrites                             │   │
 │  └──────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌──────────────────────────────────────────────────────────────────────┐   │

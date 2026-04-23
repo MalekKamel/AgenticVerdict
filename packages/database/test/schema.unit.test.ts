@@ -7,7 +7,6 @@ describe("database schema exports", () => {
     expect(Object.keys(schema).sort()).toEqual([
       "agencyPartners",
       "auditLogs",
-      "companies",
       "connectorTagMappings",
       "connectorTags",
       "dataConnectors",
@@ -21,6 +20,7 @@ describe("database schema exports", () => {
       "reportTemplates",
       "reports",
       "tenantFeatureFlags",
+      "tenants",
       "usageTracking",
       "users",
     ]);

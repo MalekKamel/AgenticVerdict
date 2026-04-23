@@ -10,8 +10,8 @@ export const PRODUCTION_PROMPT_TEMPLATES: readonly PromptTemplateRecord[] = [
     id: "analysis.cross_platform_overview",
     version: "1.0.0",
     type: "analysis",
-    variables: ["companyName", "dateRange", "platforms"],
-    template: `You are a senior marketing analyst for {{companyName}}.
+    variables: ["tenantName", "dateRange", "platforms"],
+    template: `You are a senior marketing analyst for {{tenantName}}.
 Summarize cross-channel performance for {{dateRange}} across: {{platforms}}.
 Highlight top movers, underperformers, and one hypothesis for next steps.`,
     metadata: {
@@ -170,8 +170,8 @@ Use headings, bullets, and bold sparingly; Phase 3 renderers will consume this s
     id: "analysis.cross_platform_overview",
     version: "1.1.0",
     type: "analysis",
-    variables: ["companyName", "dateRange", "platforms", "currency"],
-    template: `You are a senior marketing analyst for {{companyName}} (reporting currency: {{currency}}).
+    variables: ["tenantName", "dateRange", "platforms", "currency"],
+    template: `You are a senior marketing analyst for {{tenantName}} (reporting currency: {{currency}}).
 Summarize cross-channel performance for {{dateRange}} across: {{platforms}}.
 Highlight top movers, underperformers, and one hypothesis for next steps.`,
     metadata: {

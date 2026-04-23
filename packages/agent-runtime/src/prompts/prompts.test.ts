@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { buildAbDecisionRecord, runPairedPromptAbTest, selectPromptAbWinner } from "./ab-testing";
 import {
   assemblePromptLayers,
-  buildCompanyPromptContext,
-  buildCompanyPromptContextSections,
-} from "./company-injection";
+  buildTenantPromptContext,
+  buildTenantPromptContextSections,
+} from "./tenant-injection";
 import { PRODUCTION_PROMPT_TEMPLATES, PRODUCTION_PROMPT_TEMPLATE_COUNT } from "./library";
 import { getPromptTemplateHistory, listPromptTemplateIds, resolvePromptTemplate } from "./registry";
 import {
@@ -14,11 +14,11 @@ import {
   renderPromptTemplate,
 } from "./render";
 import { promptTemplateRecordSchema } from "./types";
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 
-const sampleCompany: CompanyConfig = {
-  companyId: "00000000-0000-4000-8000-000000000001",
-  companyName: "Acme Fleet",
+const sampleTenant: TenantConfig = {
+  tenantId: "00000000-0000-4000-8000-000000000001",
+  tenantName: "Acme Fleet",
   localization: {
     language: "en",
     region: "SA",
@@ -92,27 +92,27 @@ describe("prompt template library", () => {
   });
 });
 
-describe("company prompt injection", () => {
+describe("tenant prompt injection", () => {
   it("includes high-priority sections and drops low-priority under a tiny budget", () => {
-    const full = buildCompanyPromptContext(sampleCompany, { maxApproxTokens: 10_000 });
+    const full = buildTenantPromptContext(sampleTenant, { maxApproxTokens: 10_000 });
     expect(full.sectionsDropped).toEqual([]);
     expect(full.text).toContain("Acme Fleet");
 
-    const tight = buildCompanyPromptContext(sampleCompany, { maxApproxTokens: 12 });
+    const tight = buildTenantPromptContext(sampleTenant, { maxApproxTokens: 12 });
     expect(tight.sectionsIncluded).toContain("identity");
     expect(tight.sectionsDropped.length).toBeGreaterThan(0);
   });
 
   it("exposes section blocks for inspection tests", () => {
-    const sections = buildCompanyPromptContextSections(sampleCompany);
+    const sections = buildTenantPromptContextSections(sampleTenant);
     expect(sections.find((s) => s.key === "identity")?.text).toContain("Acme Fleet");
   });
 
-  it("assembles layers and trims tool context before company context", () => {
+  it("assembles layers and trims tool context before tenant context", () => {
     const longTool = "x".repeat(400);
     const assembled = assemblePromptLayers({
       systemPolicy: "Be concise.",
-      companyContext: "Company block here.",
+      tenantContext: "Tenant block here.",
       userTask: "Do the thing.",
       toolContext: longTool,
       maxApproxTokensTotal: 40,

@@ -6,6 +6,7 @@
 export * from "./ThemeProvider";
 export * from "./DirectionProvider";
 export * from "./MantineProvider";
+export * from "./color-scheme-storage";
 
 /**
  * UIProvider - Combined provider for convenience

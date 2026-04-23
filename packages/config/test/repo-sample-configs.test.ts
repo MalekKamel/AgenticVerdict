@@ -10,7 +10,7 @@ const repoConfigsDir = path.join(
   "..",
   "..",
   "configs",
-  "companies",
+  "tenants",
 );
 
 describe("versioned repo configs", () => {
@@ -19,11 +19,11 @@ describe("versioned repo configs", () => {
       configDir: repoConfigsDir,
       defaultTtlMs: 0,
     });
-    const masafh = await manager.loadCompanyConfig("11111111-1111-4111-8111-111111111111", {
+    const masafh = await manager.loadTenantConfig("11111111-1111-4111-8111-111111111111", {
       bypassCache: true,
     });
-    expect(masafh.companyName).toBe("Masafh");
-    const demo = await manager.loadCompanyConfig("22222222-2222-4222-8222-222222222222", {
+    expect(masafh.tenantName).toBe("Masafh");
+    const demo = await manager.loadTenantConfig("22222222-2222-4222-8222-222222222222", {
       bypassCache: true,
     });
     expect(demo.localization.language).toBe("en");

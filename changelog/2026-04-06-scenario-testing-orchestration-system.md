@@ -43,7 +43,7 @@ All items below reflect **the current Git staged index** for this workstream (sc
 
 ### Fixtures (`tests/fixtures/`)
 
-- Company JSON fixtures (default, Arabic, multilingual) and **`scenario-templates.json`**.
+- Tenant JSON fixtures (default, Arabic, multilingual) and **`scenario-templates.json`**.
 
 ### Root tooling
 

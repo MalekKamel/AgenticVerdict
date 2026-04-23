@@ -13,7 +13,7 @@ import { resolveBrandTokensForTenantId } from "@/lib/tenant/tenant-branding";
 import { useTenant } from "@/providers/TenantProvider";
 
 /**
- * Applies CompanyConfig `ui.brand` when available via `tenant.getBranding`, otherwise packaged
+ * Applies TenantConfig `ui.brand` when available via `tenant.getBranding`, otherwise packaged
  * reference-tenant tokens from {@link resolveBrandTokensForTenantId}.
  */
 export function TenantBrandedThemeProvider({ children }: { children: ReactNode }) {

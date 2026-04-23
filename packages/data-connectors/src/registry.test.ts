@@ -21,6 +21,14 @@ describe("createAdapterRegistry", () => {
     expect(() => registry.resolve("meta", undefined)).toThrow(/No adapter registered/);
   });
 
+  it("rejects context with empty string tenantId when the key is present (C-CONN-1)", () => {
+    const registry = createAdapterRegistry<{ tenantId: string }>();
+    registry.register("ga4", (ctx) =>
+      createSyntheticAdapter("ga4", { fetchImpl: async () => ({ tenant: ctx.tenantId }) }),
+    );
+    expect(() => registry.resolve("ga4", { tenantId: "  " })).toThrow(/tenantId/);
+  });
+
   it("lists registered connectors", () => {
     const registry = createAdapterRegistry();
     registry.register("meta", () => createSyntheticAdapter("meta"));

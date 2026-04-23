@@ -4,7 +4,7 @@
 #   docker compose -f docker-compose.yml -f docker-compose.apps.yml \
 #     -f docker-compose.observability.yml up -d
 #
-# Grafana: http://localhost:3001 (web app stays on :3000). Prometheus: :9090. Loki: :3100.
+# Grafana: http://localhost:3001 (frontend app stays on :3000). Prometheus: :9090. Loki: :3100.
 #
 # Linux hosts only — add Falco (privileged, kernel driver / eBPF):
 #   docker compose -f docker-compose.yml -f docker-compose.apps.yml \

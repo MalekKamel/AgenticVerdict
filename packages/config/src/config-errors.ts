@@ -21,5 +21,5 @@ export class ConfigValidationError extends Error {
 
 export function configValidationErrorFromZod(zodError: ZodError): ConfigValidationError {
   const detail = formatZodIssues(zodError);
-  return new ConfigValidationError(`Invalid company configuration:\n${detail}`, zodError);
+  return new ConfigValidationError(`Invalid tenant configuration:\n${detail}`, zodError);
 }

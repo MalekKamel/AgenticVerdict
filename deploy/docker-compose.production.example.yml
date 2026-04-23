@@ -81,8 +81,8 @@ services:
       timeout: 5s
       retries: 5
 
-  web:
-    image: ${REGISTRY:-agenticverdict}/web:${VERSION:-latest}
+  frontend:
+    image: ${REGISTRY:-agenticverdict}/frontend:${VERSION:-latest}
     restart: unless-stopped
     read_only: true
     tmpfs:

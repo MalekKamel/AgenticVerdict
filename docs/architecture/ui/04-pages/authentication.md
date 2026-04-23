@@ -357,11 +357,11 @@ AuthLayout (Template)
 
 ### Overview
 
-Multi-step registration flow for new companies and users. Collects company information, user details, and authentication credentials. Supports both direct businesses and agency partners.
+Multi-step registration flow for new tenants and users. Collects tenant information, user details, and authentication credentials. Supports both direct businesses and agency partners.
 
 ### User Goal
 
-- **Primary Goal:** Create a new company account and user credentials
+- **Primary Goal:** Create a new tenant account and user credentials
 - **Secondary Goals:** Select plan type, understand feature differences, complete onboarding
 
 ### Page Layout
@@ -369,10 +369,10 @@ Multi-step registration flow for new companies and users. Collects company infor
 **Multi-Step Flow:**
 
 ```
-Step 1: Account Type → Step 2: Company Info → Step 3: User Account → Step 4: Confirmation
+Step 1: Account Type → Step 2: Tenant Info → Step 3: User Account → Step 4: Confirmation
 ```
 
-**Wireframe Description (Step 2 - Company Info):**
+**Wireframe Description (Step 2 - Tenant Info):**
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -384,10 +384,10 @@ Step 1: Account Type → Step 2: Company Info → Step 3: User Account → Step 
 │  │ ✓  │   │ ●  │   │    │   │    │                 │
 │  └────┘   └────┘   └────┘   └────┘                 │
 │                                                       │
-│  Step 2 of 4: Company Information                    │
+│  Step 2 of 4: Tenant Information                    │
 │                                                       │
 │  ┌─────────────────────────────────────────────┐   │
-│  │  Company Name                                │   │
+│  │  Tenant Name                                │   │
 │  │  [input field]                               │   │
 │  └─────────────────────────────────────────────┘   │
 │                                                       │
@@ -397,7 +397,7 @@ Step 1: Account Type → Step 2: Company Info → Step 3: User Account → Step 
 │  └─────────────────────────────────────────────┘   │
 │                                                       │
 │  ┌─────────────────────────────────────────────┐   │
-│  │  Company Size                                │   │
+│  │  Tenant Size                                │   │
 │  │  ○ 1-10 employees   ○ 11-50 employees       │   │
 │  │  ○ 51-200 employees ○ 200+ employees        │   │
 │  └─────────────────────────────────────────────┘   │
@@ -430,14 +430,14 @@ AuthLayout (Template)
 │   ├── Logo (Atom)
 │   ├── ProgressStepper (Molecule)
 │   │   ├── Step (Atom) - Account Type (completed)
-│   │   ├── Step (Atom) - Company Info (current)
+│   │   ├── Step (Atom) - Tenant Info (current)
 │   │   ├── Step (Atom) - User Account (upcoming)
 │   │   └── Step (Atom) - Confirmation (upcoming)
 │   ├── Typography (Atom) - Step title
 │   ├── Form (Organism)
-│   │   ├── FormField (Molecule) - Company Name
+│   │   ├── FormField (Molecule) - Tenant Name
 │   │   ├── FormField (Molecule) - Industry (Select)
-│   │   ├── RadioGroup (Molecule) - Company Size
+│   │   ├── RadioGroup (Molecule) - Tenant Size
 │   │   │   ├── Radio (Atom) - 1-10 employees
 │   │   │   ├── Radio (Atom) - 11-50 employees
 │   │   │   ├── Radio (Atom) - 51-200 employees
@@ -486,7 +486,7 @@ AuthLayout (Template)
 - **Loading:** Continue button disabled, spinner
 - **Error:** Error toast if type selection fails
 
-**Step 2 (Company Info):**
+**Step 2 (Tenant Info):**
 
 - **Initial:** All fields empty, back button enabled
 - **Validation:** Real-time validation, continue disabled until valid
@@ -544,19 +544,19 @@ AuthLayout (Template)
 **Desktop (>1024px):**
 
 - Progress stepper horizontal
-- Company type cards side-by-side
+- Tenant type cards side-by-side
 - File upload dropzone with preview
 
 **Tablet (768-1024px):**
 
 - Progress stepper horizontal
 - Slightly reduced padding
-- Company type cards stacked if needed
+- Tenant type cards stacked if needed
 
 **Mobile (<768px):**
 
 - Progress stepper vertical (numbered list)
-- Company type cards stacked
+- Tenant type cards stacked
 - File upload simplified (button only)
 - Single column layout
 
@@ -602,7 +602,7 @@ AuthLayout (Template)
   aria-valuemax="4"
   aria-label="Registration progress: Step 2 of 4"
 >
-  <span aria-current="step">Company Information</span>
+  <span aria-current="step">Tenant Information</span>
 </div>
 ```
 
@@ -613,14 +613,14 @@ AuthLayout (Template)
 ```typescript
 'auth.register.title': 'Create Your Account'
 'auth.register.steps.accountType': 'Account Type'
-'auth.register.steps.companyInfo': 'Company Information'
+'auth.register.steps.tenantInfo': 'Tenant Information'
 'auth.register.steps.userAccount': 'User Account'
 'auth.register.steps.confirmation': 'Confirmation'
 'auth.register.types.direct': 'Direct Business'
 'auth.register.types.agency': 'Agency Partner'
-'auth.register.company.name': 'Company Name'
-'auth.register.company.industry': 'Industry'
-'auth.register.company.size': 'Company Size'
+'auth.register.tenant.name': 'Tenant Name'
+'auth.register.tenant.industry': 'Industry'
+'auth.register.tenant.size': 'Tenant Size'
 'auth.register.user.fullName': 'Full Name'
 'auth.register.user.email': 'Email Address'
 'auth.register.user.password': 'Password'

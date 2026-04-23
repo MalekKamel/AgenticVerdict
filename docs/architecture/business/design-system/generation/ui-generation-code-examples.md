@@ -713,7 +713,7 @@ const variables = await mcp__pencil__get_variables({
  *
  * Tier 1: Base tokens (primitive values)
  * Tier 2: Semantic tokens (component-specific)
- * Tier 3: Tenant tokens (can be overridden per company)
+ * Tier 3: Tenant tokens (can be overridden per tenant)
  */
 
 // Tier 1: Base tokens

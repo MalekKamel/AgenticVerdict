@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { parseCompanyConfigPayload } from "../src/index";
+import { parseTenantConfigPayload } from "../src/index";
 
-describe("parseCompanyConfigPayload", () => {
+describe("parseTenantConfigPayload", () => {
   it("returns validated config", () => {
     const raw = {
-      companyId: "11111111-1111-4111-8111-111111111111",
-      companyName: "X",
+      tenantId: "11111111-1111-4111-8111-111111111111",
+      tenantName: "X",
       localization: {
         language: "en",
         region: "SA",
@@ -17,11 +17,11 @@ describe("parseCompanyConfigPayload", () => {
       ai: { primaryModel: "gpt-4o", provider: "openai" },
       features: { enableInsights: true, enableVerdict: true },
     };
-    expect(parseCompanyConfigPayload(raw).companyName).toBe("X");
+    expect(parseTenantConfigPayload(raw).tenantName).toBe("X");
   });
 
   it("throws ConfigValidationError on invalid payload", () => {
-    expect(() => parseCompanyConfigPayload({})).toThrowError(
+    expect(() => parseTenantConfigPayload({})).toThrowError(
       expect.objectContaining({ name: "ConfigValidationError" }),
     );
   });

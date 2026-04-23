@@ -1,6 +1,6 @@
 {
-  "companyId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-  "companyName": "سيناريو تجريبي",
+  "tenantId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "tenantName": "سيناريو تجريبي",
   "localization": {
     "language": "ar",
     "region": "SA",

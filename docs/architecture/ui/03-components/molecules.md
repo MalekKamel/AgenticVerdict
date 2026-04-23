@@ -251,7 +251,7 @@ interface FormFieldProps {
 
 - **Insight Creation**: Name, description, domain fields
 - **Connector Setup**: API key, credentials fields
-- **Settings**: Company name, timezone, language fields
+- **Settings**: Tenant name, timezone, language fields
 - **Authentication**: Email, password fields
 
 ---

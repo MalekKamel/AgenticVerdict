@@ -138,7 +138,7 @@ packages/api/src/router/
 // Template table
 export const templates = pgTable('templates', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tenantId: uuid('tenant_id').notNull().references(() => companies.id),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
   ownerId: uuid('owner_id').notNull().references(() => users.id),
   previewImageUrl: text('preview_image_url'),
   isSystemTemplate: boolean('is_system_template').default(false),

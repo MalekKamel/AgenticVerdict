@@ -17,7 +17,7 @@
 
 ## 1. Executive summary
 
-The repository is a **working Turborepo + pnpm monorepo** with foundational packages (`types`, `config`, `core`, `database`), a **Next.js 15 web app** (Mantine, next-intl, `/en` and `/ar`), **sample company JSON**, **GitHub Actions CI**, and expanded **Drizzle schema / migrations** (including RLS-oriented work — verify against phase acceptance checklists).
+The repository is a **working Turborepo + pnpm monorepo** with foundational packages (`types`, `config`, `core`, `database`), a **Next.js 15 web app** (Mantine, next-intl, `/en` and `/ar`), **sample tenant JSON**, **GitHub Actions CI**, and expanded **Drizzle schema / migrations** (including RLS-oriented work — verify against phase acceptance checklists).
 
 **Phase 01 (platform integration)** is largely implemented in code: `@agenticverdict/data-connectors` ships Meta, GA4, GSC, GBP, and TikTok adapters with shared normalization, caching (memory + optional Upstash), rate limiting, circuit breaking, health helpers, and **Next.js `/api/health*` routes**. Operational documentation lives under [`01-connectors/operations/`](../../specs/00-core/01-connectors/operations/README.md), including **[SECURITY.md](../../specs/00-core/01-connectors/operations/SECURITY.md)**. Cross-package integration tests run from `tests/phase01-platform-integration/`.
 
@@ -40,7 +40,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 | ESLint (flat)        | Done   | `eslint.config.mjs`                                                                   |
 | Prettier             | Done   | `.prettierrc`                                                                         |
 | Lockfile policy      | Done   | `pnpm-lock.yaml` no longer gitignored                                                 |
-| Environment template | Done   | `.env.example` (`DATABASE_URL`, `COMPANY_CONFIG_DIR`)                                 |
+| Environment template | Done   | `.env.example` (`DATABASE_URL`, `TENANT_CONFIG_DIR`)                                  |
 | CI                   | Done   | `.github/workflows/ci.yml` — install, lint, test, build (see workflow for exact jobs) |
 
 ### 2.2 Packages
@@ -48,7 +48,7 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 | Package                           | Status | Highlights                                                                                                                                       |
 | --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `@agenticverdict/types`           | In use | `ConnectorType` union                                                                                                                            |
-| `@agenticverdict/config`          | In use | Zod `CompanyConfig`, `loadCompanyConfig`, cache, directory resolution, tests                                                                     |
+| `@agenticverdict/config`          | In use | Zod `TenantConfig`, `loadTenantConfig`, cache, directory resolution, tests                                                                       |
 | `@agenticverdict/core`            | In use | `AsyncLocalStorage` tenant context API; expanded unit tests (propagation, isolation)                                                             |
 | `@agenticverdict/database`        | In use | Drizzle + `postgres`, expanded schema, migrations, `dbScoped`, `createDatabaseClient`, unit tests + RLS integration tests (Docker-backed)        |
 | `@agenticverdict/data-connectors` | In use | Five vendor adapters, normalization pipeline, cache, resilience, metrics/DLQ; **requires `tenantId` on adapter options** (see `requirements.md`) |
@@ -73,10 +73,10 @@ Remaining work spans **full phase exit criteria** (coverage targets, `apps/api` 
 
 ### 2.6 Data and samples
 
-| Item                                                          | Status                        |
-| ------------------------------------------------------------- | ----------------------------- |
-| `configs/companies/11111111-1111-4111-8111-111111111111.json` | Done (Masafh-oriented sample) |
-| Second hypothetical company config (`tasks.md` 0.20)          | Optional / not added          |
+| Item                                                        | Status                        |
+| ----------------------------------------------------------- | ----------------------------- |
+| `configs/tenants/11111111-1111-4111-8111-111111111111.json` | Done (Masafh-oriented sample) |
+| Second hypothetical tenant config (`tasks.md` 0.20)         | Optional / not added          |
 
 ### 2.7 Documentation
 
@@ -117,7 +117,7 @@ Severity is **blocking** for formal phase exit vs **important** vs **later**. Li
 - **Sections 1–6, 9–10**: many granular tasks still open (Husky, Docker Compose, etc.) — treat `implementation-scope.md` as the deferral guide.
 - **Section 7 (platform adapters)**: **largely implemented** in `@agenticverdict/data-connectors` (see `changelog/2026-04-04-phase-01-*.md`).
 - **Section 8 (agent runtime)**: still **deferred** until Phase 02 focus.
-- **Task 0.20** (second sample company): optional gap.
+- **Task 0.20** (second sample tenant): optional gap.
 - **Upstash Redis**: optional path for distributed cache in adapters when env vars are set; not required for all dev flows.
 
 ### 3.3 Relative to suggested waves (`implementation-scope.md`)

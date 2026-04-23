@@ -6,7 +6,7 @@
 
 ## Project Overview
 
-**AgenticVerdict** is a configurable, multi-platform marketing analytics agent system designed to aggregate data from multiple platforms, generate cross-platform insights, and deliver actionable verdicts. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple companies, industries, regions, and languages without code modifications.
+**AgenticVerdict** is a configurable, multi-platform marketing analytics agent system designed to aggregate data from multiple platforms, generate cross-platform insights, and deliver actionable verdicts. The system is architected as a multi-tenant solution with dynamic configuration injection, supporting multiple tenants, industries, regions, and languages without code modifications.
 
 ## Primary Objective
 

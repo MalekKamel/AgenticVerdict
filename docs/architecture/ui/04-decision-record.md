@@ -285,11 +285,11 @@ Component Tokens (Specific)
 
 ---
 
-## Decision 5: Multi-Tenant Theming via CompanyConfig
+## Decision 5: Multi-Tenant Theming via TenantConfig
 
 ### Decision
 
-**Selected:** Runtime theme injection through `CompanyConfig` schema integration, using CSS custom properties for tenant-specific design token overrides.
+**Selected:** Runtime theme injection through `TenantConfig` schema integration, using CSS custom properties for tenant-specific design token overrides.
 
 ### Context
 
@@ -300,7 +300,7 @@ Component Tokens (Specific)
 
 ### Options Considered
 
-1. **Runtime Theme Injection (CompanyConfig + CSS Custom Properties)** ✅ Selected
+1. **Runtime Theme Injection (TenantConfig + CSS Custom Properties)** ✅ Selected
 2. **Build-Time Themed Builds (Docker images per tenant)**
 3. **Database-Driven Theme Generation**
 4. **iframe-Based Tenant Isolation**
@@ -309,10 +309,10 @@ Component Tokens (Specific)
 
 **Runtime theme injection** was selected to maximize flexibility while minimizing operational overhead:
 
-**CompanyConfig Integration:** Leverage existing `CompanyConfig` schema for theme metadata:
+**TenantConfig Integration:** Leverage existing `TenantConfig` schema for theme metadata:
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   localization: {
     language: "ar" | "en";
   };
@@ -328,7 +328,7 @@ interface CompanyConfig {
 
 ```typescript
 // app/layout.tsx
-const tenantConfig = await configManager.loadCompanyConfig(tenantId);
+const tenantConfig = await configManager.loadTenantConfig(tenantId);
 
 <style jsx global>{`
   :root {
@@ -348,7 +348,7 @@ const tenantConfig = await configManager.loadCompanyConfig(tenantId);
 
 - **Runtime Overhead:** CSS variable resolution has minimal cost (<1ms), acceptable for flexibility gained
 - **Testing Complexity:** Must validate layouts across multiple tenant themes (mitigated by automated visual regression testing)
-- **Design Consistency:** Risk of tenants breaking accessibility with custom colors (mitigated by validation in `CompanyConfig` schema)
+- **Design Consistency:** Risk of tenants breaking accessibility with custom colors (mitigated by validation in `TenantConfig` schema)
 
 **Avoided:**
 
@@ -881,7 +881,7 @@ export function ConnectorStatusCard({ connector }: Props) {
 | UI-002      | 2026-04-11 | CSS-in-JS as primary styling approach              | ✅ Active  | High   |
 | UI-003      | 2026-04-11 | Three-tier design token system                     | ✅ Active  | Medium |
 | UI-004      | 2026-04-11 | Radix UI augmentation for accessibility gaps       | 🔄 Phase 2 | Low    |
-| UI-005      | 2026-04-11 | Multi-tenant theming via CompanyConfig             | ✅ Active  | High   |
+| UI-005      | 2026-04-11 | Multi-tenant theming via TenantConfig              | ✅ Active  | High   |
 | UI-006      | 2026-04-11 | RTL/LTR support via DirectionProvider              | ✅ Active  | High   |
 | UI-007      | 2026-04-11 | Accessibility target: WCAG 2.1 AA                  | ✅ Active  | High   |
 | UI-008      | 2026-04-11 | Performance targets and optimization strategy      | ✅ Active  | High   |

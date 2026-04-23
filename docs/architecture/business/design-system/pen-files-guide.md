@@ -201,8 +201,8 @@ Design System Frame (reusable container)
 #### Tenant-Specific Configuration
 
 ```typescript
-// Runtime Theme Injection via CompanyConfig
-interface CompanyConfig {
+// Runtime Theme Injection via TenantConfig
+interface TenantConfig {
   localization: {
     language: "ar" | "en" | "fr";
     direction: "rtl" | "ltr";
@@ -1504,11 +1504,11 @@ const getContrastRatio = (foreground: string, background: string) => {
 
 #### Configuration Injection
 
-**CompanyConfig Schema:**
+**TenantConfig Schema:**
 
 ```typescript
-interface CompanyConfig {
-  companyId: string;
+interface TenantConfig {
+  tenantId: string;
   branding: {
     primaryColor: string;
     secondaryColor: string;
@@ -1530,7 +1530,7 @@ interface CompanyConfig {
 
 ```typescript
 // Load tenant configuration
-const tenantConfig = await configManager.loadCompanyConfig(tenantId);
+const tenantConfig = await configManager.loadTenantConfig(tenantId);
 
 // Apply to .pen file variables
 await mcp__pencil__set_variables({

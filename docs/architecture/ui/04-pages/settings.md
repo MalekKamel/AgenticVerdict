@@ -13,7 +13,7 @@
 
 ## Table of Contents
 
-1. [Company Settings Page](#company-settings-page)
+1. [Tenant Settings Page](#tenant-settings-page)
 2. [User Profile Settings Page](#user-profile-settings-page)
 3. [Notification Settings Page](#notification-settings-page)
 4. [Integration Settings Page](#integration-settings-page)
@@ -23,15 +23,15 @@
 
 ---
 
-## Company Settings Page
+## Tenant Settings Page
 
 ### Overview
 
-Configure company-wide settings including name, logo, localization, branding, and business information. These settings affect how the company appears in reports and across the platform.
+Configure tenant-wide settings including name, logo, localization, branding, and business information. These settings affect how the tenant appears in reports and across the platform.
 
 ### User Goal
 
-- **Primary Goal:** Manage company identity and branding
+- **Primary Goal:** Manage tenant identity and branding
 - **Secondary Goals:** Update localization, configure business details
 
 ### Page Layout
@@ -40,16 +40,16 @@ Configure company-wide settings including name, logo, localization, branding, an
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ ☰    Settings > Company              [Save] [Cancel]           │
+│ ☰    Settings > Tenant              [Save] [Cancel]           │
 ├────────┬────────────────────────────────────────────────────────┤
 │        │                                                        │
-│        │  Company Settings                                     │
-│        │  Manage your company information and branding         │
+│        │  Tenant Settings                                     │
+│        │  Manage your tenant information and branding         │
 │        │                                                        │
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ General Information                             │  │
 │        │  │                                                 │  │
-│        │  │ Company Name                                    │  │
+│        │  │ Tenant Name                                    │  │
 │        │  │ [Masafh]                                        │  │
 │        │  │                                                 │  │
 │        │  │ Industry                                        │  │
@@ -58,7 +58,7 @@ Configure company-wide settings including name, logo, localization, branding, an
 │        │  │ Website                                         │  │
 │        │  │ [https://masafh.com]                            │  │
 │        │  │                                                 │  │
-│        │  │ Company Size                                    │  │
+│        │  │ Tenant Size                                    │  │
 │        │  │ ○ 1-10 employees   ○ 11-50 employees            │  │
 │        │  │ ◉ 51-200 employees ○ 200+ employees             │  │
 │        │  └─────────────────────────────────────────────────┘  │
@@ -66,7 +66,7 @@ Configure company-wide settings including name, logo, localization, branding, an
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ Branding                                        │  │
 │        │  │                                                 │  │
-│        │  │ Company Logo                                    │  │
+│        │  │ Tenant Logo                                    │  │
 │        │  │ ┌─────────┐                                     │  │
 │        │  │ │ [Logo]  │  [Upload New Logo]                 │  │
 │        │  │ │  Preview │                                     │  │
@@ -122,7 +122,7 @@ Configure company-wide settings including name, logo, localization, branding, an
 SettingsLayout (Template)
 ├── SettingsSidebar (Organism)
 │   ├── Navigation (Molecule)
-│   │   ├── NavItem (Atom) - Company (active)
+│   │   ├── NavItem (Atom) - Tenant (active)
 │   │   ├── NavItem (Atom) - Profile
 │   │   ├── NavItem (Atom) - Notifications
 │   │   ├── NavItem (Atom) - Integrations
@@ -134,17 +134,17 @@ SettingsLayout (Template)
 │       └── Link (Atom) - Contact Support
 └── MainContent (Organism)
     ├── PageHeader (Molecule)
-    │   ├── Typography (Atom) - "Company Settings"
+    │   ├── Typography (Atom) - "Tenant Settings"
     │   ├── Typography (Atom) - Description
     │   └── ActionButtons (Molecule)
     │       ├── Button (Atom) - Save
     │       └── Button (Atom) - Cancel
     └── SettingsForm (Organism)
         ├── GeneralInfoSection (Molecule)
-        │   ├── FormField (Molecule) - Company Name
+        │   ├── FormField (Molecule) - Tenant Name
         │   ├── FormField (Molecule) - Industry
         │   ├── FormField (Molecule) - Website
-        │   └── RadioGroup (Molecule) - Company Size
+        │   └── RadioGroup (Molecule) - Tenant Size
         ├── BrandingSection (Molecule)
         │   ├── LogoUpload (Molecule)
         │   │   ├── LogoPreview (Atom)
@@ -167,7 +167,7 @@ SettingsLayout (Template)
 
 **1. Loading State**
 
-- Fetch current company settings
+- Fetch current tenant settings
 - Populate form fields
 - Show loading spinner
 
@@ -199,9 +199,9 @@ SettingsLayout (Template)
 
 **Entry Points:**
 
-- Settings sidebar "Company" navigation
-- User menu → Settings → Company
-- Direct URL: `/settings/company`
+- Settings sidebar "Tenant" navigation
+- User menu → Settings → Tenant
+- Direct URL: `/settings/tenant`
 
 **Exits:**
 
@@ -212,7 +212,7 @@ SettingsLayout (Template)
 **Breadcrumb Hierarchy:**
 
 ```
-Settings > Company
+Settings > Tenant
 ```
 
 ### Permissions
@@ -314,9 +314,9 @@ Manage individual user profile including name, email, password, avatar, and pers
 
 ```
 SettingsLayout (Template)
-├── SettingsSidebar (Organism) - [same as company settings]
+├── SettingsSidebar (Organism) - [same as tenant settings]
 └── MainContent (Organism)
-    ├── PageHeader (Molecule) - [similar to company settings]
+    ├── PageHeader (Molecule) - [similar to tenant settings]
     └── SettingsForm (Organism)
         ├── AvatarSection (Molecule)
         │   ├── AvatarPreview (Atom)
@@ -1078,11 +1078,11 @@ Settings > Billing
 
 ### Overview
 
-Agency partner settings for managing client companies. Configure client branding, white-label options, and tenant-specific preferences. Only available to agency partners.
+Agency partner settings for managing client tenants. Configure client branding, white-label options, and tenant-specific preferences. Only available to agency partners.
 
 ### User Goal
 
-- **Primary Goal:** Configure client company settings
+- **Primary Goal:** Configure client tenant settings
 - **Secondary Goals:** White-label branding, manage client access
 
 ### Page Layout
@@ -1095,12 +1095,12 @@ Agency partner settings for managing client companies. Configure client branding
 ├────────┬────────────────────────────────────────────────────────┤
 │        │                                                        │
 │        │  Tenant Settings                                      │
-│        │  Configure client company (Masafh) settings           │
+│        │  Configure client tenant (Masafh) settings           │
 │        │                                                        │
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ Client Overview                                 │  │
 │        │  │                                                 │  │
-│        │  │ Company Name: Masafh                            │  │
+│        │  │ Tenant Name: Masafh                            │  │
 │        │  │ Industry: GPS Fleet Tracking                    │  │
 │        │  │ Plan: Pro (5 connectors, 50 insights)           │  │
 │        │  │ Status: Active  Created: Jan 15, 2026            │  │
@@ -1135,7 +1135,7 @@ Agency partner settings for managing client companies. Configure client branding
 │        │  │ ☑ Create and edit insights                     │  │
 │        │  │ ☑ Manage connectors                            │  │
 │        │  │ ☑ View reports and data                        │  │
-│        │  │ ☐ Modify company settings                      │  │
+│        │  │ ☐ Modify tenant settings                      │  │
 │        │  │ ☐ Manage team members                          │  │
 │        │  │                                                 │  │
 │        │  │ Team Member Visibility                          │  │

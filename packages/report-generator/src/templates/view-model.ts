@@ -66,7 +66,7 @@ export interface DataQualityIndicatorView {
 
 export interface ReportTemplateViewModel {
   title: string;
-  companyName: string;
+  tenantName: string;
   periodLabel: string;
   brandAccentColor: string;
   executiveSummary: string;
@@ -342,7 +342,7 @@ export function coerceReportTemplateViewModel(model: unknown): ReportTemplateVie
 
   return {
     title: asString(m.title, "Report"),
-    companyName: asString(m.companyName, ""),
+    tenantName: asString(m.tenantName, ""),
     periodLabel: asString(m.periodLabel, ""),
     brandAccentColor: asString(m.brandAccentColor, "#2563eb"),
     executiveSummary: asString(m.executiveSummary, ""),

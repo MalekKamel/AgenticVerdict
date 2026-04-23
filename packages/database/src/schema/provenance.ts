@@ -1,6 +1,6 @@
 import { index, jsonb, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 
-import { companies } from "./companies";
+import { tenants } from "./tenants";
 
 /**
  * Stored provenance bundle for an analysis (remediation R-11).
@@ -13,7 +13,7 @@ export const provenanceRecords = pgTable(
     analysisId: uuid("analysis_id").notNull(),
     tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => companies.id, { onDelete: "cascade" }),
+      .references(() => tenants.id, { onDelete: "cascade" }),
     capturedAt: timestamp("captured_at", { withTimezone: true }).notNull().defaultNow(),
     record: jsonb("record").$type<Record<string, unknown>>().notNull(),
   },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { suggestSlugFromCompanyName, tenantScopedCacheKey } from "../src/index";
+import { suggestSlugFromTenantName, tenantScopedCacheKey } from "../src/index";
 
 describe("tenantScopedCacheKey", () => {
   it("prefixes tenant and escapes colons in segments", () => {
@@ -8,8 +8,8 @@ describe("tenantScopedCacheKey", () => {
   });
 });
 
-describe("suggestSlugFromCompanyName", () => {
+describe("suggestSlugFromTenantName", () => {
   it("slugifies names", () => {
-    expect(suggestSlugFromCompanyName("Northwind Analytics!")).toBe("northwind-analytics");
+    expect(suggestSlugFromTenantName("Northwind Analytics!")).toBe("northwind-analytics");
   });
 });

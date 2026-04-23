@@ -48,7 +48,7 @@ No dedicated report-template admin or editor routes were found under `apps/front
 ### Packages
 
 - **`@agenticverdict/report-generator`** — Catalog, view-model coercion, format generators, and template engine integration (UI should treat view-model JSON as the contract for “live data” preview where applicable).
-- **`@agenticverdict/config`** — Company and template-related schemas remain the source of truth for **configuration-driven** behavior; UI must not hardcode tenant-specific rules.
+- **`@agenticverdict/config`** — Tenant and template-related schemas remain the source of truth for **configuration-driven** behavior; UI must not hardcode tenant-specific rules.
 
 ---
 

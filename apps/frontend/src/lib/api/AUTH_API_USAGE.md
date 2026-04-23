@@ -7,7 +7,7 @@ This guide explains how to use the authentication API integration pattern in the
 The auth API integration uses **tRPC v11** with **React Query** for type-safe, cache-enabled authentication operations. The pattern consists of:
 
 1. **API Client** (`/lib/api/auth-api.ts`) - Type-safe API wrapper
-2. **Mutation Hooks** (`/hooks/useAuthMutation.ts`) - React Query mutations
+2. **Mutation Hooks** (`/hooks/useLoginMutation.ts`, `/hooks/useRegisterMutation.ts`, `/hooks/useEmailVerificationMutation.ts`, `/hooks/usePasswordReset.ts`) - React Query mutations
 3. **Query Hooks** (`/hooks/useSessionQuery.ts`) - Session management
 4. **Auth Store** (`/stores/auth-store.ts`) - TanStack Store for state
 5. **App shell** (`/components/Providers.tsx`) — `QueryClientProvider`, `trpc.Provider`, `SessionProvider`, and tenant/theme providers
@@ -23,8 +23,8 @@ The auth API integration uses **tRPC v11** with **React Query** for type-safe, c
 │           │                            │                     │
 │           ▼                            ▼                     │
 │  ┌──────────────────┐         ┌──────────────────┐         │
-│  │ useAuthMutations │         │ useSessionQuery  │         │
-│  │   (useLogin...)  │         │ (getSession...)  │         │
+│  │ useLoginMutation │         │ useSessionQuery  │         │
+│  │ useLogoutMutation│         │ (getSession...)  │         │
 │  └────────┬─────────┘         └────────┬─────────┘         │
 │           │                            │                     │
 │           ▼                            ▼                     │
@@ -63,7 +63,7 @@ import { Providers } from "@/components/Providers";
 ### 2. Import Auth Hooks
 
 ```tsx
-import { useLoginMutation } from "@/hooks/useAuthMutation";
+import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { useSessionQuery } from "@/hooks/useSessionQuery";
 import { useAuth } from "@/hooks/useAuth";
 ```
@@ -74,7 +74,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 ```tsx
 import { useForm } from "@mantine/form";
-import { useLoginMutation } from "@/hooks/useAuthMutation";
+import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { useRouter } from "@tanstack/react-router";
 
 export function LoginForm() {
@@ -122,7 +122,7 @@ export function LoginForm() {
 
 ```tsx
 import { useForm } from "@mantine/form";
-import { useRegisterMutation } from "@/hooks/useAuthMutation";
+import { useRegisterMutation } from "@/hooks/useRegisterMutation";
 
 export function RegisterForm() {
   const register = useRegisterMutation();
@@ -197,7 +197,7 @@ export function Dashboard() {
 ### Logout Button
 
 ```tsx
-import { useLogoutMutation } from "@/hooks/useAuthMutation";
+import { useLogoutMutation } from "@/hooks/useLogoutMutation";
 
 export function LogoutButton() {
   const logout = useLogoutMutation();
@@ -223,10 +223,10 @@ export function LogoutButton() {
 
 ```tsx
 import { useForm } from "@mantine/form";
-import { useRequestPasswordResetMutation } from "@/hooks/useAuthMutation";
+import { useRequestPasswordReset } from "@/hooks/usePasswordReset";
 
 export function ForgotPasswordForm() {
-  const requestReset = useRequestPasswordResetMutation();
+  const requestReset = useRequestPasswordReset();
 
   const form = useForm({
     initialValues: { email: "" },
@@ -258,7 +258,7 @@ export function ForgotPasswordForm() {
 ### Email Verification
 
 ```tsx
-import { useVerifyEmailMutation } from "@/hooks/useAuthMutation";
+import { useVerifyEmailMutation } from "@/hooks/useEmailVerificationMutation";
 import { useSearchParams } from "@tanstack/react-router";
 
 export function VerifyEmailPage() {
@@ -409,7 +409,7 @@ Mock the auth API in tests:
 
 ```tsx
 import { renderHook, waitFor } from '@testing-library/react'
-import { useLoginMutation } from '@/hooks/useAuthMutation'
+import { useLoginMutation } from '@/hooks/useLoginMutation'
 
 vi.mock('@/lib/api/auth-api', () => ({
   authApi: {

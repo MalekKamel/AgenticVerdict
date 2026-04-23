@@ -350,7 +350,7 @@
 - **Security Response:** Enterprise-grade SLA
 - **Support:** 24/7 support for paid tiers
 - **Documentation:** Excellent with interactive examples
-- **Company Status:** Stable, growing
+- **Tenant Status:** Stable, growing
 
 **Security Track Record:**
 
@@ -400,7 +400,7 @@
 - **GitHub Stars:** ~8,500+
 - **NPM Weekly Downloads:** ~1-2 million
 - **License:** Proprietary (service-based)
-- **Company:** Okta (acquired 2021)
+- **Tenant:** Okta (acquired 2021)
 
 **OAuth Providers Supported:**
 
@@ -483,7 +483,7 @@
 - **Security Response:** Enterprise-grade
 - **Support:** 24/7 support for paid tiers
 - **Documentation:** Comprehensive, industry-leading
-- **Company Status:** Stable (owned by Okta)
+- **Tenant Status:** Stable (owned by Okta)
 
 **Security Track Record:**
 
@@ -600,7 +600,7 @@
 - **Security Response:** Active community and team
 - **Support:** Pro support for paid tiers
 - **Documentation:** Excellent, comprehensive
-- **Company Status:** Well-funded, stable
+- **Tenant Status:** Well-funded, stable
 
 **Security Track Record:**
 
@@ -818,7 +818,7 @@
 - **Security Response:** Enterprise-grade
 - **Support:** Free tier support, paid support available
 - **Documentation:** Excellent, comprehensive
-- **Company Status:** Stable (Google product)
+- **Tenant Status:** Stable (Google product)
 
 **Security Track Record:**
 
@@ -1481,7 +1481,7 @@
 
 1. **Modern TypeScript Support:** Excellent type safety for AgenticVerdict's TypeScript stack
 2. **Comprehensive OAuth:** Extensive provider ecosystem for social authentication
-3. **Production Proven:** Battle-tested by thousands of companies
+3. **Production Proven:** Battle-tested by thousands of tenants
 4. **Cost Effective:** Open-source with no recurring costs
 5. **Flexibility:** Works with AgenticVerdict's existing or future database
 6. **Security Focus:** Regular security updates and best practices

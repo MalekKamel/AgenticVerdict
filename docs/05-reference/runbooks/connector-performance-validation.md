@@ -16,16 +16,16 @@ Operational companion to [Part 6: Performance Validation](../../architecture/con
 
 ## Database checks
 
-Run against a database that matches current Drizzle schema (`public.companies`, `core.data_connectors`, `core.connector_tag_mappings`, index `connector_tag_mappings_tag_idx` on `connector_tag_id`).
+Run against a database that matches current Drizzle schema (`public.tenants`, `core.data_connectors`, `core.connector_tag_mappings`, index `connector_tag_mappings_tag_idx` on `connector_tag_id`).
 
-Replace `<company_uuid>` with a real tenant id from your environment.
+Replace `<tenant_uuid>` with a real tenant id from your environment.
 
 ```sql
 -- RLS-aware tenant fetch (requires session var as your app sets via dbScoped)
-SET LOCAL app.current_tenant_id = '<company_uuid>';
+SET LOCAL app.current_tenant_id = '<tenant_uuid>';
 \timing on
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM companies WHERE id = '<company_uuid>'::uuid;
+SELECT * FROM tenants WHERE id = '<tenant_uuid>'::uuid;
 
 -- Connector tag lookup (index: connector_tag_mappings_tag_idx)
 EXPLAIN (ANALYZE, BUFFERS)

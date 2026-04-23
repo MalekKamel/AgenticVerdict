@@ -4,11 +4,11 @@
 
 ## Project Overview
 
-**AgenticVerdict** is a configurable, multi-business-domain intelligence platform that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates the collection, analysis, and reporting of business metrics through unified data integration, AI-powered analysis, and automated delivery of actionable insights. The system is architected for reusability across different companies, industries, regions, and languages through dynamic configuration injection.
+**AgenticVerdict** is a configurable, multi-business-domain intelligence platform that transforms how organizations understand their performance across marketing, finance, operations, and other domains. The platform automates the collection, analysis, and reporting of business metrics through unified data integration, AI-powered analysis, and automated delivery of actionable insights. The system is architected for reusability across different tenants, industries, regions, and languages through dynamic configuration injection.
 
 ### Key Characteristics
 
-- **Multi-Tenant Capable**: Supports multiple company configurations with complete tenant isolation
+- **Multi-Tenant Capable**: Supports multiple tenant configurations with complete tenant isolation
 - **Multi-Domain Intelligence**: Aggregates data from marketing, finance, operations, SEO, social media, and local business connectors
 - **Language Agnostic**: Report language determined by configuration; supports RTL/LTR rendering
 - **Connector Extensible**: New data connectors can be added using plugin architecture across any business domain
@@ -35,7 +35,7 @@ This project follows a **Hybrid Incremental Approach** that combines:
 | Principle                    | Implementation                                                 |
 | ---------------------------- | -------------------------------------------------------------- |
 | **Don't Reinvent the Wheel** | Use battle-tested, production-proven tools and packages        |
-| **Configuration Over Code**  | All company-specific logic injected via configuration          |
+| **Configuration Over Code**  | All tenant-specific logic injected via configuration           |
 | **Test-Driven Development**  | Comprehensive testing at unit, integration, and E2E levels     |
 | **Observability First**      | Logging, metrics, and tracing built into every component       |
 | **Security by Design**       | Authentication, authorization, and data isolation from day one |
@@ -240,7 +240,7 @@ The project will be considered successful when:
    - Required marketing platforms (Meta, GA4, GSC, GBP, TikTok per product scope) are integrated with tenant-safe adapter usage
    - AI agent generates actionable insights and verdicts
    - Reports are generated and delivered automatically via email
-   - System supports multiple companies with different configurations
+   - System supports multiple tenants with different configurations
 
 2. **Quality Standards Achieved**
    - 80%+ test coverage across all packages
@@ -259,7 +259,7 @@ The project will be considered successful when:
 4. **Maintainability**
    - Code follows established patterns and conventions
    - Architecture supports adding new platforms with minimal changes
-   - Configuration system works for new companies
+   - Configuration system works for new tenants
    - Debugging and troubleshooting are straightforward
 
 ### Quality Gates

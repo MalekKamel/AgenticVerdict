@@ -5,12 +5,12 @@ import { MockConnectorAdapter, createConnectorAdapter } from "@agenticverdict/da
 describe("mock mode integration", () => {
   afterEach(() => {
     delete process.env.NODE_ENV;
-    delete process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
+    delete process.env.AGENTICVERDICT_MOCK_MODE;
   });
 
   it("uses mock adapters end-to-end when env flag is enabled", async () => {
     process.env.NODE_ENV = "test";
-    process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS = "1";
+    process.env.AGENTICVERDICT_MOCK_MODE = "all";
 
     const adapter = createConnectorAdapter({
       connector: "meta",

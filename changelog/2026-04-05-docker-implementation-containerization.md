@@ -52,7 +52,7 @@ This slice delivers **container images** for web, API, and worker; **Postgres an
 - **Build:** **`web`**, **`api`**, **`worker`** from repo root with root-relative Dockerfiles.
 - **Depends on:** Postgres and Redis with **`condition: service_healthy`**.
 - **Ports:** Web **`3000:3000`**, API **`4000:4000`**.
-- **Environment:** **`DATABASE_URL`**, **`REDIS_URL`**, **`COMPANY_CONFIG_DIR`**; worker stub generators flag; **`TMPDIR`** / **`XDG_CACHE_HOME`** under **`/tmp`** for read-only rootfs with **`tsx`**.
+- **Environment:** **`DATABASE_URL`**, **`REDIS_URL`**, **`TENANT_CONFIG_DIR`**; worker stub generators flag; **`TMPDIR`** / **`XDG_CACHE_HOME`** under **`/tmp`** for read-only rootfs with **`tsx`**.
 - **Secrets:** **`./secrets/jwt_secret.txt`** → **`jwt_secret`**; API **`JWT_SECRET_FILE: /run/secrets/jwt_secret`**. Run **`scripts/generate-secrets.sh`** before first **`up`**.
 - **Hardening (web / api / worker):** **`read_only: true`**, **`tmpfs`** on **`/tmp`**, **`cap_drop: [ALL]`**, seccomp path **`deploy/security/seccomp-profile.json`**, **`deploy.resources`**.
 

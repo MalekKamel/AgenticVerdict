@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web:
-    name: Push image — web
+  frontend:
+    name: Push image — frontend
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -43,15 +43,15 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ${{ steps.ghcr.outputs.base }}/web
+          images: ${{ steps.ghcr.outputs.base }}/frontend
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=sha-
             type=raw,value=latest,enable=${{ github.event.release.prerelease == false }}
           labels: |
-            org.opencontainers.image.title=AgenticVerdict Web
-            org.opencontainers.image.description=Next.js web application for AgenticVerdict
+            org.opencontainers.image.title=AgenticVerdict Frontend
+            org.opencontainers.image.description=Next.js frontend application for AgenticVerdict
             org.opencontainers.image.vendor=AgenticVerdict
             org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -59,26 +59,28 @@ jobs:
         id: build
         with:
           context: .
-          file: apps/web/Dockerfile
+          file: apps/frontend/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BUILDKIT_INLINE_CACHE=1
             DEPS_IMAGE=agenticverdict/deps:ci
+            VITE_PUBLIC_API_URL=http://localhost:4000
+            VITE_PUBLIC_DEFAULT_TENANT_ID=11111111-1111-4111-8111-111111111111
           cache-from: |
-            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web
-            type=gha,scope=web
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:frontend
+            type=gha,scope=frontend
           cache-to: |
-            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:web,mode=max
-            type=gha,mode=max,scope=web
+            type=registry,ref=${{ steps.ghcr.outputs.base }}/build-cache:frontend,mode=max
+            type=gha,mode=max,scope=frontend
       - uses: sigstore/cosign-installer@v3.8.0
         with:
           cosign-release: v2.4.1
       - name: Cosign sign image (keyless / OIDC)
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
-        run: cosign sign --yes "${{ steps.ghcr.outputs.base }}/web@${DIGEST}"
+        run: cosign sign --yes "${{ steps.ghcr.outputs.base }}/frontend@${DIGEST}"
 
   api:
     name: Push image — api

@@ -123,7 +123,7 @@ Runtime theme application without rebuilds:
 
 | Feature          | Implementation                       | Status        |
 | ---------------- | ------------------------------------ | ------------- |
-| Theme Loading    | Runtime via `CompanyConfig`          | ✅ Complete   |
+| Theme Loading    | Runtime via `TenantConfig`           | ✅ Complete   |
 | Theme Isolation  | Tenant-specific brand tokens         | ✅ Complete   |
 | Theme Validation | Invalid values fall back to defaults | ✅ Complete   |
 | Theme Caching    | Cached for performance               | ✅ Documented |

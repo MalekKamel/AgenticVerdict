@@ -281,7 +281,7 @@ Create custom insight templates. Define template name, description, connectors, 
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ Visibility                                     │  │
 │        │  │ ◉ Private (Only you can use this template)     │  │
-│        │  │ ○ Team (Anyone in your company can use)        │  │
+│        │  │ ○ Team (Anyone in your tenant can use)        │  │
 │        │  │ ○ Agency (Available to all agency clients)     │  │
 │        │  └─────────────────────────────────────────────────┘  │
 │        │                                                        │

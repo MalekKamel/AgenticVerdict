@@ -1,14 +1,14 @@
 import { index, jsonb, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { companies } from "./companies";
+import { tenants } from "./tenants";
 
 export const auditLogs = pgTable(
   "audit_logs",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    companyId: uuid("company_id")
+    tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => companies.id, { onDelete: "cascade" }),
+      .references(() => tenants.id, { onDelete: "cascade" }),
     actorUserId: uuid("actor_user_id"),
     action: varchar("action", { length: 128 }).notNull(),
     resourceType: varchar("resource_type", { length: 128 }).notNull(),
@@ -16,5 +16,5 @@ export const auditLogs = pgTable(
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("audit_logs_company_id_created_at_idx").on(t.companyId, t.createdAt)],
+  (t) => [index("audit_logs_tenant_id_created_at_idx").on(t.tenantId, t.createdAt)],
 );

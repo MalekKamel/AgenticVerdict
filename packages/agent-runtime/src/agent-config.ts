@@ -20,11 +20,11 @@ export const agentFactoryConfigSchema = z.object({
   temperature: z.number().min(0).max(2).optional(),
   memoryMode: agentMemoryModeSchema.default("buffer"),
   memoryLimits: agentFactoryMemoryLimitsSchema.default({}),
-  /** Passed to {@link buildCompanyPromptContext} as `maxApproxTokens`. */
-  companyContextMaxApproxTokens: z.number().int().min(50).max(8192).default(1024),
+  /** Passed to {@link buildTenantPromptContext} as `maxApproxTokens`. */
+  tenantContextMaxApproxTokens: z.number().int().min(50).max(8192).default(1024),
   /** Total approximate token budget for assembled system + user layers (see {@link assemblePromptLayers}). */
   maxAssembledPromptApproxTokens: z.number().int().min(400).max(32_000).default(6000),
-  /** High-authority system policy; company context is appended per documented precedence. */
+  /** High-authority system policy; tenant context is appended per documented precedence. */
   systemPolicy: z.string().max(16_000).optional(),
 });
 

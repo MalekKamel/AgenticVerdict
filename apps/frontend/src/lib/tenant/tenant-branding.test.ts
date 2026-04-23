@@ -1,4 +1,4 @@
-import { companyConfigSchema } from "@agenticverdict/config";
+import { tenantConfigSchema } from "@agenticverdict/config";
 import { brandTokensSchema, defaultBrandTheme, masafhTheme } from "@agenticverdict/ui";
 import { describe, expect, it } from "vitest";
 
@@ -16,10 +16,10 @@ describe("tenant-branding", () => {
     );
   });
 
-  it("parses CompanyConfig ui.brand as Mantine brand tokens", () => {
-    const cfg = companyConfigSchema.parse({
-      companyId: "11111111-1111-4111-8111-111111111111",
-      companyName: "TestCo",
+  it("parses TenantConfig ui.brand as Mantine brand tokens", () => {
+    const cfg = tenantConfigSchema.parse({
+      tenantId: "11111111-1111-4111-8111-111111111111",
+      tenantName: "TestCo",
       localization: { language: "en", region: "SA", timezone: "Asia/Riyadh", currency: "SAR" },
       marketing: { channels: [{ platform: "ga4", enabled: false }] },
       ai: { primaryModel: "claude-3-5-sonnet-20241022", provider: "anthropic" },

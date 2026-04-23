@@ -86,7 +86,7 @@
   - `/packages/agent-runtime/src/agent-tools/database-query-tools.ts` - 3 DB tools
   - `/packages/agent-runtime/src/agent-tools/report-prep-tools.ts` - 3 report tools
   - `/packages/agent-runtime/src/agent-tools/analysis-tools.ts` - 3 analysis tools
-  - `/packages/agent-runtime/src/agent-tools/company-context-tools.ts` - 3 context tools
+  - `/packages/agent-runtime/src/agent-tools/tenant-context-tools.ts` - 3 context tools
   - `/packages/agent-runtime/src/agent-tools/phase4-tool-registry.ts` - Registry
 
 **Acceptance Criteria Met**:
@@ -95,7 +95,7 @@
 - ✅ 1.2.6-1.2.8: Database query tools operational (historical, trends, comparison)
 - ✅ 1.2.9-1.2.11: Report generation tools operational
 - ✅ 1.2.12-1.2.13: Calculation and statistical analysis tools operational
-- ✅ 1.2.14-1.2.15: Company context tools operational with tenant isolation
+- ✅ 1.2.14-1.2.15: Tenant context tools operational with tenant isolation
 - ✅ 1.2.16: All tools have ≥85% unit test coverage (agent-tools directory ~86%)
 
 **Verification**:
@@ -117,14 +117,14 @@
   - `/packages/agent-runtime/src/prompts/library.ts` - 13 production templates
   - `/packages/agent-runtime/src/prompts/registry.ts` - Version resolution
   - `/packages/agent-runtime/src/prompts/render.ts` - Template rendering
-  - `/packages/agent-runtime/src/prompts/company-injection.ts` - Context injection
+  - `/packages/agent-runtime/src/prompts/tenant-injection.ts` - Context injection
   - `/packages/agent-runtime/src/prompts/ab-testing.ts` - A/B framework
 
 **Acceptance Criteria Met**:
 
 - ✅ 1.3.1: Base prompt template library with ≥10 production-ready templates (13 implemented)
 - ✅ 1.3.2: Template versioning system operational with history tracking
-- ✅ 1.3.3: Company context injection system operational
+- ✅ 1.3.3: Tenant context injection system operational
 - ✅ 1.3.4: Context injection validated for token limit compliance
 - ✅ 1.3.5: A/B testing framework implemented with metrics collection
 - ✅ 1.3.6: Prompt optimization workflow documented
@@ -156,7 +156,7 @@
 
 - ✅ 1.4.1: Agent factory pattern implemented with TypeScript generics
 - ✅ 1.4.2: Standard agent configuration schema defined and validated
-- ✅ 1.4.3: Company context integration pattern operational
+- ✅ 1.4.3: Tenant context integration pattern operational
 - ✅ 1.4.4: Multi-tenant isolation validated for all agents
 - ✅ 1.4.5: Agent memory system operational with state persistence
 - ✅ 1.4.6: Short-term memory maintaining conversation context

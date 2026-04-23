@@ -1,11 +1,11 @@
 import { configValidationErrorFromZod } from "./config-errors";
-import { companyConfigSchema, type CompanyConfig } from "./schemas/company";
+import { tenantConfigSchema, type TenantConfig } from "./schemas/tenant";
 
 /**
- * Validates an untrusted payload (e.g. request body or admin import) against {@link companyConfigSchema}.
+ * Validates an untrusted payload (e.g. request body or admin import) against {@link tenantConfigSchema}.
  */
-export function parseCompanyConfigPayload(raw: unknown): CompanyConfig {
-  const result = companyConfigSchema.safeParse(raw);
+export function parseTenantConfigPayload(raw: unknown): TenantConfig {
+  const result = tenantConfigSchema.safeParse(raw);
   if (!result.success) {
     throw configValidationErrorFromZod(result.error);
   }
@@ -15,8 +15,8 @@ export function parseCompanyConfigPayload(raw: unknown): CompanyConfig {
 /**
  * Framework-agnostic guard: run before app listen / job start when config is assembled at runtime.
  */
-export function assertValidCompanyConfig(raw: unknown): asserts raw is CompanyConfig {
-  const result = companyConfigSchema.safeParse(raw);
+export function assertValidTenantConfig(raw: unknown): asserts raw is TenantConfig {
+  const result = tenantConfigSchema.safeParse(raw);
   if (!result.success) {
     throw configValidationErrorFromZod(result.error);
   }

@@ -8,8 +8,8 @@
 ## Summary
 
 - Authored **[multi-tenancy-architecture.md](specs/00-core/00-foundation/multi-tenancy-architecture.md)** describing AsyncLocalStorage + RLS defense in depth, resolution order (headers → JWT → subdomain), cache key namespacing, and threat notes.
-- Extended **`@agenticverdict/core`** with **`TenantSecurityError`**, **`resolveTenantIdentity`** / **`extractTenantSlugFromHost`**, **`resolveTenantContextFromHttp`** (config load + optional active check via injected `isTenantActive`), **`continueWithTenantContext`** / **`bindTenantContext`** / **`runWithCapturedTenantContext`**, and **`assertResourceCompanyId`** / **`tenantContextMatches`** for application-layer routing checks.
-- Extended **`@agenticverdict/database`** with migration **`0001_companies_active`** (`companies.active` default true), **`provisionTenantCompany`** + **`suggestSlugFromCompanyName`**, **`setTenantCompanyActive`**, and **`tenantScopedCacheKey`** for Redis-style isolation.
+- Extended **`@agenticverdict/core`** with **`TenantSecurityError`**, **`resolveTenantIdentity`** / **`extractTenantSlugFromHost`**, **`resolveTenantContextFromHttp`** (config load + optional active check via injected `isTenantActive`), **`continueWithTenantContext`** / **`bindTenantContext`** / **`runWithCapturedTenantContext`**, and **`assertResourceTenantId`** / **`tenantContextMatches`** for application-layer routing checks.
+- Extended **`@agenticverdict/database`** with migration **`0001_tenants_active`** (`tenants.active` default true), **`provisionTenantTenant`** + **`suggestSlugFromTenantName`**, **`setTenantTenantActive`**, and **`tenantScopedCacheKey`** for Redis-style isolation.
 - Added **unit tests** in `packages/core` (`tenant-isolation.test.ts`) and `packages/database` (`tenant-helpers.unit.test.ts`).
 
 ---
@@ -25,7 +25,7 @@
 ## Follow-ups
 
 - **HTTP servers:** Wire `resolveTenantContextFromHttp` into Fastify/Next middleware in later execution phases; keep trusted-header behavior behind gateways in production.
-- **Tenant provisioning API:** Expose admin HTTP routes with authz; persist new company JSON via ops workflow or a future `ConfigManager` write path.
+- **Tenant provisioning API:** Expose admin HTTP routes with authz; persist new tenant JSON via ops workflow or a future `ConfigManager` write path.
 - **E2E:** Playwright multi-tenant isolation scenarios deferred to Execution Phase 6 per plan.
 
 ---

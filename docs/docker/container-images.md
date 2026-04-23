@@ -26,7 +26,7 @@ docker compose -f docker-compose.base-images.yml build
 
 - **`DEPS_IMAGE`** — image containing `/app` after `pnpm install` (default `agenticverdict/deps:local`).
 - **`CHROMIUM_IMAGE`** — worker only (default `agenticverdict/chromium-base:local`).
-- **`USE_TURBOPACK`** — web `builder` only; `true` runs `next build --turbopack` (default `false` for reproducible standalone output).
+- **`USE_TURBOPACK`** — frontend `builder` only; `true` runs `next build --turbopack` (default `false` for reproducible standalone output).
 
 **Layer size checks (troubleshooting slow export/push):**
 
@@ -43,7 +43,7 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 - **API** runner extends **`${DEPS_IMAGE}`** so **`node_modules`** is inherited as **`appuser`** (no giant **`COPY`**). **Worker** copies **`node_modules`** from **deps** without **`--chown`** (root-owned, readable **`appuser`**).
 - For the full implemented architecture, see [Build optimization (implemented)](./build-optimization-implemented.md) and [Build best practices](./build-best-practices.md).
 
-## Web (`apps/frontend/Dockerfile`)
+## Frontend (`apps/frontend/Dockerfile`)
 
 | Stage     | Purpose                                                                                                                                             |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -57,6 +57,16 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 - `NODE_OPTIONS=--dns-result-order=ipv4first --tls-min-v1.2`
 - **HEALTHCHECK:** distroless Node `fetch` to `http://127.0.0.1:3000/api/health`
 - **CMD:** `apps/frontend/server.js` (Next.js **standalone** output)
+
+### Frontend runtime env contract (production-like)
+
+The frontend service requires all three variables in production/staging runtime:
+
+- **`API_URL`**: SSR/internal API base URL (inside Compose network, e.g. `http://api:4000`)
+- **`VITE_PUBLIC_API_URL`**: browser-visible API base URL (host/browser reachable, e.g. `http://localhost:4000`)
+- **`VITE_PUBLIC_DEFAULT_TENANT_ID`**: default tenant UUID used by current `/$locale` loader contract
+
+Startup-time contract validation fails fast when these are missing or invalid, and CI validates Compose wiring for this contract.
 
 **Monorepo alignment:** `apps/frontend/next.config.ts` sets `output: "standalone"` and `outputFileTracingRoot` to the monorepo root so workspace packages trace into `.next/standalone`.
 
@@ -84,11 +94,9 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
 
 **Runtime:**
 
-- `NODE_OPTIONS` same as web.
+- `NODE_OPTIONS` same as frontend.
 - **HEALTHCHECK:** `wget --spider` to `http://127.0.0.1:4000/health` (45s start period).
-- **CMD:** `node --import tsx src/cli.ts` (no pnpm at runtime — avoids Corepack download as non-root).
-
-`tsx` is a **production** dependency of `@agenticverdict/api` for this entry pattern.
+- **CMD:** `node dist/cli.mjs` (runtime executes the verified production Vite bundle artifact).
 
 ## Worker (`apps/worker/Dockerfile`)
 
@@ -98,7 +106,7 @@ Same **multi-stage** pattern as API: **`source`** on **`${CHROMIUM_IMAGE}`**, **
 
 - **`deps`:** **`FROM ${DEPS_IMAGE}`** (shared install).
 - **`runner`:** **`FROM ${CHROMIUM_IMAGE}`**; **`COPY --from=deps`** for **`node_modules`** and root manifests **without `--chown`**; **`COPY --from=app_build`** for **`packages/`**, **`apps/worker/`**, **`configs/`**, **`scripts/`**, toolchain files; **`USER appuser`**; `WORKDIR /app/apps/worker`.
-- **CMD:** `node --import tsx src/cli.ts`
+- **CMD:** `node dist/cli.mjs`
 - **No exposed ports** in the Dockerfile; worker consumes Redis from the network.
 - **PDF/Chromium:** system Chromium and fonts live in the **chromium base image** (apt cache mounts apply when rebuilding that image locally).
 

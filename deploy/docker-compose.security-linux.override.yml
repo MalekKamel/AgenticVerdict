@@ -7,7 +7,7 @@
 # Postgres/Redis are omitted (entrypoints need /bin/sh; profile targets Node app containers).
 
 services:
-  web:
+  frontend:
     security_opt:
       - apparmor=agenticverdict-app
 

@@ -14,7 +14,7 @@ This guide provides actionable implementation patterns for making complex analyt
 
 - **Universal Design**: Build accessibility in from the start, not as an afterthought
 - **Progressive Enhancement**: Ensure core functionality works without JavaScript
-- **Tenant-Aware Accessibility**: Respect company-specific accessibility configurations
+- **Tenant-Aware Accessibility**: Respect tenant-specific accessibility configurations
 - **Continuous Testing**: Integrate accessibility into the development lifecycle
 
 ## 1. WCAG 2.1 AA Compliance Checklist

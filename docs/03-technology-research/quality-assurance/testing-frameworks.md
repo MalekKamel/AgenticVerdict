@@ -48,7 +48,7 @@
 - Nuxt.js
 - Solid.js
 - Element Plus
-- Modern TypeScript-first companies
+- Modern TypeScript-first tenants
 
 **Performance Characteristics:**
 
@@ -126,7 +126,7 @@
 - Airbnb
 - Shopify
 - Atlassian
-- Thousands of companies worldwide
+- Thousands of tenants worldwide
 
 **Performance Characteristics:**
 
@@ -206,8 +206,8 @@
 - Microsoft (extensive internal use)
 - Adobe
 - Salesforce
-- dozens of Fortune 500 companies
-- Modern TypeScript-first companies
+- dozens of Fortune 500 tenants
+- Modern TypeScript-first tenants
 
 **Performance Characteristics:**
 

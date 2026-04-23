@@ -125,18 +125,18 @@ describe("SendGridEmailDeliveryService (mocked HTTP)", () => {
 });
 
 describe("sendReportEmail (production-flow mock)", () => {
-  const originalMock = process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL;
+  const originalStub = process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY;
 
   afterEach(() => {
-    if (originalMock === undefined) {
-      delete process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL;
+    if (originalStub === undefined) {
+      delete process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY;
     } else {
-      process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL = originalMock;
+      process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY = originalStub;
     }
   });
 
-  it("returns success when AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL=1", async () => {
-    process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL = "1";
+  it("returns success when AGENTICVERDICT_STUB_EMAIL_DELIVERY=1", async () => {
+    process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY = "1";
     const result = await sendReportEmail({
       to: ["ops@example.test"],
       subject: "Your PDF report is ready",

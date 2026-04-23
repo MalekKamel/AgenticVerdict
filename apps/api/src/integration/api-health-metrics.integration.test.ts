@@ -11,7 +11,7 @@ describe("API integration — health & metrics", () => {
   let app: Awaited<ReturnType<typeof buildApiServer>>;
 
   beforeAll(async () => {
-    process.env.COMPANY_CONFIG_DIR = path.join(apiPackageRoot, "test-fixtures/company-configs");
+    process.env.TENANT_CONFIG_DIR = path.join(apiPackageRoot, "test-fixtures/tenant-configs");
     app = await buildApiServer();
     await app.ready();
   });
@@ -23,6 +23,9 @@ describe("API integration — health & metrics", () => {
   it("GET /health returns 200 with ok payload", async () => {
     const res = await app.inject({ method: "GET", url: "/health" });
     expect(res.statusCode).toBe(200);
+    expect(res.headers["x-content-type-options"]).toBe("nosniff");
+    expect(res.headers["x-frame-options"]).toBe("SAMEORIGIN");
+    expect(typeof res.headers["referrer-policy"]).toBe("string");
     const body = res.json() as { ok: boolean; service: string };
     expect(body.ok).toBe(true);
     expect(body.service).toBe("@agenticverdict/api");

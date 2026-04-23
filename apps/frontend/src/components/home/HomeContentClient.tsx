@@ -9,7 +9,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 import { createLocalizationFormatters, type AppLocale } from "@agenticverdict/i18n/formatters";
 
 import { DemoLeadForm } from "@/components/forms/DemoLeadForm";
@@ -21,7 +21,7 @@ function toAppLocale(code: string): AppLocale {
   return code === "ar" ? "ar" : "en";
 }
 
-export function HomeContentClient({ config }: { config: CompanyConfig }) {
+export function HomeContentClient({ config }: { config: TenantConfig }) {
   const t = useTranslations("Home");
   const code = useLocale();
   const appLocale = toAppLocale(code);
@@ -47,7 +47,7 @@ export function HomeContentClient({ config }: { config: CompanyConfig }) {
           style={{ alignSelf: "flex-start" }}
         />
         <Text>
-          {t("companyLabel")}: {config.companyName}
+          {t("tenantLabel")}: {config.tenantName}
         </Text>
         <Text>
           {t("languageLabel")}: {config.localization.language.toUpperCase()}

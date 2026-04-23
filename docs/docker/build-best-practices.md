@@ -48,7 +48,7 @@ Recommended order:
 
 - Keep the existing API/worker `TARGET_STAGE` pattern (`development|test|production`) for environment-correct runner images.
 - Prefer low-risk artifact movement for runtime-stage TypeScript+tsx execution (`COPY --from=app_build /app /app`) unless moving to compiled/bundled runtime output.
-- For web, copy only standalone runtime artifacts to final image (`.next/standalone`, `.next/static`, `public`).
+- For frontend, copy only standalone runtime artifacts to final image (`.next/standalone`, `.next/static`, `public`).
 
 ## 4) CI/CD cache integration
 
@@ -65,7 +65,7 @@ Use the script from the repository root:
 
 ```bash
 chmod +x scripts/measure-build-performance.sh
-scripts/measure-build-performance.sh web
+scripts/measure-build-performance.sh frontend
 scripts/measure-build-performance.sh api
 scripts/measure-build-performance.sh worker
 ```

@@ -19,7 +19,7 @@ This directory contains the authoritative architecture documentation for the Age
 Defines the business domain, value proposition, and business entity relationships:
 
 - **Business Domain** — Problem statement and value proposition
-- **Core Entities** — Companies, Insights, Data Connectors, Templates
+- **Core Entities** — Tenants, Insights, Data Connectors, Templates
 - **Business Processes** — Intelligence pipeline and workflows
 - **Stakeholder Requirements** — User roles and needs
 - **Business Metrics Framework** — Domain-specific metrics

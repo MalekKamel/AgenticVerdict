@@ -174,7 +174,7 @@ Frontend-relevant runtime variables include:
 
 - `VITE_PUBLIC_API_URL`
 - `VITE_PUBLIC_TRPC_API_URL`
-- `VITE_PUBLIC_AUTH_API_MOCK`
+- `VITE_PUBLIC_AUTH_API_MODE`
 - `VITE_PUBLIC_ENABLE_AUTH`
 - `VITE_PUBLIC_ENABLE_MFA_UI`
 - `VITE_PUBLIC_ENABLE_FEATURE_FLAGS_ADMIN_UI`
@@ -261,13 +261,13 @@ Example references:
 Frequent checks:
 
 - API connectivity errors: verify `VITE_PUBLIC_API_URL`/`API_URL` and API server availability
-- Auth redirect issues: inspect protected route session logic and mock toggle (`VITE_PUBLIC_AUTH_API_MOCK`)
+- Auth redirect issues: inspect protected route session logic and auth mode (`VITE_PUBLIC_AUTH_API_MODE`)
 - Missing translations: run i18n extract/validate scripts and inspect message files
 - Layout regressions: always test both `/en` and `/ar`
 
 Known pitfalls in current repo context:
 
-- Some docs/workflows still reference legacy `apps/web`; the active frontend package is `apps/frontend`
+- Some docs/workflows still reference legacy `apps/frontend`; the active frontend package is `apps/frontend`
 - Prefer `apps/frontend/package.json` scripts as source of truth for executable commands
 
 ## 10) Testing Strategy And Quality Expectations

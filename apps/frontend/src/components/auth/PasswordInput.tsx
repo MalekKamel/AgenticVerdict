@@ -23,7 +23,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, AppPasswordInputProps>
     },
     ref,
   ) => {
-    const t = useTranslations("auth.password");
+    const t = useTranslations("auth");
     const [internalRevealed, setInternalRevealed] = useState(!!defaultVisible);
     const revealed = visible !== undefined ? !!visible : internalRevealed;
 
@@ -48,7 +48,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, AppPasswordInputProps>
         visibilityToggleButtonProps={{
           tabIndex: 0,
           "aria-pressed": revealed,
-          "aria-label": revealed ? t("hidePassword") : t("showPassword"),
+          "aria-label": revealed ? t("password.hidePassword") : t("password.showPassword"),
           ...userVisToggleProps,
         }}
         {...rest}

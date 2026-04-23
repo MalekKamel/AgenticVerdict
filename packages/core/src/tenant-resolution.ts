@@ -2,12 +2,7 @@ import { TenantSecurityError } from "./tenant-security-error";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const JWT_TENANT_CLAIM_KEYS = [
-  "tenant_id",
-  "company_id",
-  "https://agenticverdict.dev/tenant_id",
-  "https://agenticverdict.dev/company_id",
-] as const;
+const JWT_TENANT_CLAIM_KEYS = ["tenant_id", "https://agenticverdict.dev/tenant_id"] as const;
 
 export interface TenantResolutionSources {
   /** Raw request headers (any casing). */
@@ -25,13 +20,17 @@ export interface TenantResolutionOptions {
    */
   trustedBaseDomains?: string[];
   /**
-   * Maps the first subdomain label to a tenant UUID (e.g. lookup `companies.slug`).
+   * Maps the first subdomain label to a tenant UUID (e.g. lookup `tenants.slug`).
    */
   resolveSlugToTenantId?: (slug: string) => Promise<string | undefined>;
 }
 
 function isUuid(value: string): boolean {
   return UUID_RE.test(value);
+}
+
+export function isTenantUuid(value: string | null | undefined): value is string {
+  return typeof value === "string" && isUuid(value.trim());
 }
 
 function normalizeHeaders(
@@ -54,11 +53,7 @@ function tenantIdFromHeaders(headers: Record<string, string | undefined>): strin
   if (fromTenant && isUuid(fromTenant)) {
     return fromTenant;
   }
-  const fromCompany = headers["x-company-id"]?.trim();
-  if (fromCompany && isUuid(fromCompany)) {
-    return fromCompany;
-  }
-  if (fromTenant || fromCompany) {
+  if (fromTenant) {
     throw new TenantSecurityError(
       "INVALID_TENANT_ID",
       "Tenant header must contain a valid UUID",
@@ -120,7 +115,10 @@ export function extractTenantSlugFromHost(
 /**
  * Resolves a tenant UUID from headers, JWT claims, and optionally subdomain → slug mapping.
  *
- * **Priority:** `x-tenant-id` / `x-company-id` → JWT claims → subdomain (requires `resolveSlugToTenantId`).
+ * **Agreement (SSOT §9 Q-3):** When both a header-derived UUID and a JWT claim UUID are present,
+ * they **must** match or resolution fails with **`TENANT_MISMATCH`**.
+ *
+ * **Priority after agreement:** combined header/JWT hint → subdomain (requires `resolveSlugToTenantId`).
  */
 export async function resolveTenantIdentity(
   sources: TenantResolutionSources,
@@ -128,16 +126,42 @@ export async function resolveTenantIdentity(
 ): Promise<{ ok: true; tenantId: string } | { ok: false; error: TenantSecurityError }> {
   try {
     const headers = normalizeHeaders(sources.headers);
-    const fromHeader = tenantIdFromHeaders(headers);
-    if (fromHeader) {
-      return { ok: true, tenantId: fromHeader };
+    let fromHeader: string | undefined;
+    try {
+      fromHeader = tenantIdFromHeaders(headers);
+    } catch (err) {
+      if (err instanceof TenantSecurityError) {
+        return { ok: false, error: err };
+      }
+      throw err;
     }
 
+    let fromJwt: string | undefined;
     if (sources.jwtClaims) {
-      const fromJwt = tenantIdFromJwtClaims(sources.jwtClaims);
-      if (fromJwt) {
-        return { ok: true, tenantId: fromJwt };
+      try {
+        fromJwt = tenantIdFromJwtClaims(sources.jwtClaims);
+      } catch (err) {
+        if (err instanceof TenantSecurityError) {
+          return { ok: false, error: err };
+        }
+        throw err;
       }
+    }
+
+    if (fromHeader && fromJwt && fromHeader !== fromJwt) {
+      return {
+        ok: false,
+        error: new TenantSecurityError(
+          "TENANT_MISMATCH",
+          "x-tenant-id header does not match JWT tenant claim",
+          403,
+        ),
+      };
+    }
+
+    const fromAuth = fromHeader ?? fromJwt;
+    if (fromAuth) {
+      return { ok: true, tenantId: fromAuth };
     }
 
     const bases = options.trustedBaseDomains ?? [];
@@ -179,9 +203,9 @@ export async function resolveTenantIdentity(
     return {
       ok: false,
       error: new TenantSecurityError(
-        "MISSING_TENANT",
+        "TENANT_CONTEXT_REQUIRED",
         "No tenant could be resolved from the request",
-        401,
+        400,
       ),
     };
   } catch (err) {

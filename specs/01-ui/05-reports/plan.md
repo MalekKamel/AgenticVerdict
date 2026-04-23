@@ -67,9 +67,9 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### II. Configuration-Driven Architecture ✅ PASS
 
-**Requirement**: Company-specific behavior through CompanyConfig schema
+**Requirement**: Tenant-specific behavior through TenantConfig schema
 **Implementation**:
-- Report language and locale from CompanyConfig.localization
+- Report language and locale from TenantConfig.localization
 - Date/currency formatting respects tenant settings
 - Export format options based on tenant preferences
 - Share link defaults from tenant security settings

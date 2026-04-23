@@ -390,7 +390,7 @@ describe("api v1 integration (remediation R-13)", () => {
       method: "POST",
       url: "/api/v1/report-templates/executive-summary/preview",
       headers: { authorization: `Bearer ${tokenA}`, "content-type": "application/json" },
-      payload: { integratePhase2: true, model: { title: "Integrated", companyName: "Tenant A" } },
+      payload: { integratePhase2: true, model: { title: "Integrated", tenantName: "Tenant A" } },
     });
     expect(integrated.statusCode).toBe(200);
     const intHtml = (integrated.json() as { html: string }).html;

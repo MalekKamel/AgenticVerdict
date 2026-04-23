@@ -69,8 +69,17 @@
     "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صالح",
     "invalidPassword": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
     "requiredField": "هذا الحقل مطلوب",
-    "minLength": "يجب أن يكون {{min}} أحرف على الأقل",
-    "maxLength": "يجب أن يكون {{max}} أحرف على الأكثر"
+    "minLength": "يجب أن يكون {min} أحرف على الأقل",
+    "maxLength": "يجب أن يكون {max} أحرف على الأكثر"
+  },
+  "Validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صالح",
+    "successTitle": "شكرًا لاهتمامك",
+    "successBody": "تم استلام بياناتك وسنتواصل معك قريبًا.",
+    "nameLabel": "الاسم",
+    "emailLabel": "البريد الإلكتروني",
+    "submitDemo": "طلب عرض توضيحي"
   },
   "errors": {
     "notFound": "الصفحة غير موجودة",
@@ -105,7 +114,7 @@
       "notImplemented": "هذه الميزة غير مطبقة بعد."
     },
     "rateLimit": {
-      "exceeded": "لقد تجاوزت حد المعدل. يرجى المحاولة مرة أخرى خلال {{retryAfter}} ثانية.",
+      "exceeded": "لقد تجاوزت حد المعدل. يرجى المحاولة مرة أخرى خلال {retryAfter} ثانية.",
       "tooManyRequests": "طلبات كثيرة جداً. يرجى التباطؤ والمحاولة مرة أخرى لاحقاً."
     },
     "common": {
@@ -157,7 +166,7 @@
     "breadcrumbHome": "الرئيسية",
     "title": "مرحباً",
     "subtitle": "ذكاء متعدد المجالات لمؤسستك.",
-    "companyLabel": "الشركة",
+    "tenantLabel": "الشركة",
     "languageLabel": "اللغة",
     "regionLabel": "المنطقة",
     "previewTitle": "معاينة",
@@ -176,6 +185,31 @@
     "login": {
       "title": "تسجيل الدخول",
       "description": "مرحباً بعودتك! يرجى تسجيل الدخول إلى حسابك.",
+      "session": {
+        "expiredTitle": "انتهت الجلسة",
+        "expiredMessage": "يرجى تسجيل الدخول مرة أخرى للمتابعة بأمان."
+      },
+      "oauth": {
+        "or": "أو المتابعة عبر",
+        "continueWith": "المتابعة عبر {provider}",
+        "redirecting": "جارٍ إعادة التوجيه إلى موفّر تسجيل الدخول الموحد...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "تعذر بدء تسجيل الدخول الموحد تلقائياً. استخدم أحد الخيارات التالية.",
+        "unavailable": "تسجيل الدخول الموحد غير متاح مؤقتاً. يرجى تسجيل الدخول بالبريد الإلكتروني وكلمة المرور."
+      },
+      "rateLimit": {
+        "title": "محاولات كثيرة",
+        "message": "محاولات تسجيل دخول كثيرة جداً. يرجى المحاولة بعد قليل.",
+        "retryAfter": "محاولات تسجيل دخول كثيرة جداً. يرجى المحاولة بعد {seconds} ثانية."
+      },
+      "lockout": {
+        "title": "تم قفل الحساب مؤقتاً",
+        "message": "تم قفل حسابك مؤقتاً بعد تكرار محاولات تسجيل الدخول الفاشلة."
+      },
       "successMessage": "مرحباً بعودتك! جاري التوجيه إلى لوحة التحكم...",
       "fields": {
         "email": "البريد الإلكتروني",
@@ -244,7 +278,9 @@
         "createAccount": "إنشاء حساب",
         "creatingAccount": "جارٍ إنشاء الحساب...",
         "hasAccount": "لديك حساب بالفعل؟",
-        "signIn": "تسجيل الدخول"
+        "signIn": "تسجيل الدخول",
+        "next": "Next",
+        "back": "Back"
       },
       "errors": {
         "apiError": "فشل إنشاء الحساب",
@@ -281,7 +317,53 @@
           "tooLong": "يجب ألا يتجاوز اسم العائلة 50 حرفاً"
         }
       },
-      "success": "تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك."
+      "success": "تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.",
+      "steps": {
+        "progress": "Step {current} of {total}",
+        "accountType": {
+          "title": "Choose account type",
+          "label": "Account type",
+          "options": {
+            "business": "Business account",
+            "individual": "Individual account"
+          },
+          "errors": {
+            "required": "Please choose an account type"
+          }
+        },
+        "tenant": {
+          "title": "Tenant information",
+          "fields": {
+            "tenantName": {
+              "label": "Tenant name"
+            },
+            "tenantSize": {
+              "label": "Tenant size",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "Tenant website (optional)"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "Tenant name is required",
+            "tenantNameTooLong": "Tenant name is too long",
+            "tenantSizeRequired": "Tenant size is required",
+            "tenantWebsiteInvalid": "Please enter a valid website URL"
+          }
+        },
+        "confirmation": {
+          "title": "Registration complete",
+          "description": "Your account has been created. Verify your email to continue.",
+          "checkEmail": "We sent a 6-digit code to {email}.",
+          "cta": "Verify email"
+        }
+      }
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور",
@@ -295,7 +377,11 @@
       "buttons": {
         "submit": "إرسال رابط إعادة التعيين",
         "submitting": "جارٍ الإرسال...",
+        "retryCountdown": "أعد المحاولة بعد {seconds}ث",
         "backToLogin": "العودة إلى تسجيل الدخول"
+      },
+      "states": {
+        "rateLimited": "طلبات إعادة تعيين كثيرة جداً. يرجى المحاولة بعد {seconds} ثانية."
       },
       "errors": {
         "email": {
@@ -319,6 +405,9 @@
         "backToLogin": "العودة إلى تسجيل الدخول",
         "resetting": "جاري إعادة التعيين...",
         "requestNew": "طلب رابط جديد"
+      },
+      "states": {
+        "rateLimited": "محاولات إعادة تعيين كثيرة جداً. يرجى طلب رابط جديد بعد {seconds} ثانية."
       },
       "errors": {
         "password": {
@@ -347,7 +436,7 @@
       "buttons": {
         "submit": "التحقق",
         "resend": "إعادة إرسال الرمز",
-        "resendCountdown": "إعادة الإرسال ({{seconds}}ث)",
+        "resendCountdown": "إعادة الإرسال ({seconds}ث)",
         "signIn": "تسجيل الدخول",
         "backToRegister": "العودة إلى التسجيل"
       },
@@ -373,7 +462,9 @@
         "expiredMessage": "انتهت صلاحية رابط التحقق هذا. يرجى طلب رابط جديد.",
         "invalid": "رابط غير صالح",
         "invalidMessage": "رابط التحقق هذا غير صالح. يرجى إعادة التسجيل.",
-        "resendSuccess": "تم إرسال رسالة تحقق جديدة. يرجى التحقق من صندوق الوارد."
+        "resendSuccess": "تم إرسال رسالة تحقق جديدة. يرجى التحقق من صندوق الوارد.",
+        "attemptsRemaining": "Attempts remaining: {count}",
+        "retryAfter": "Please wait {seconds} seconds before trying again."
       }
     },
     "password": {
@@ -406,10 +497,103 @@
         "commonPattern": "يرجى اختيار كلمة مرور أكثر أماناً"
       }
     },
+    "errors": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+      "forbidden": "ليست لديك صلاحية لتنفيذ هذا الإجراء.",
+      "notFound": "لم يُعثر على المورد المطلوب.",
+      "conflict": "تعذر إكمال الطلب بسبب تعارض.",
+      "badRequest": "تعذر معالجة الطلب. تحقق من المدخلات وحاول مرة أخرى.",
+      "rateLimitExceeded": "طلبات كثيرة جداً. يرجى الانتظار ثم المحاولة.",
+      "emailNotVerified": "يرجى التحقق من بريدك الإلكتروني قبل المتابعة.",
+      "weakPassword": "يرجى اختيار كلمة مرور أقوى تستوفي المتطلبات.",
+      "tokenExpired": "انتهت صلاحية هذا الرابط أو الجلسة. يرجى البدء من جديد.",
+      "internalError": "حدث خطأ من جهتنا. يرجى المحاولة لاحقاً.",
+      "networkError": "تعذر الوصول إلى الخادم. تحقق من اتصالك وحاول مرة أخرى.",
+      "accountLocked": "تم إيقاف حسابك بسبب محاولات فاشلة كثيرة.",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
+      "tenantContextRequired": "سياق المؤسسة غير متوفر. حدّث الصفحة أو افتح الرابط من الدعوة.",
+      "tenantMismatch": "المؤسسة في هذا الطلب غير متطابقة. حدّث أو استخدم رابط مساحة العمل الصحيح."
+    },
     "layout": {
       "mainContent": "نموذج المصادقة",
       "footerNav": "خيارات تسجيل الدخول الأخرى",
-      "poweredBy": "مدعوم من AgenticVerdict"
+      "poweredBy": "مدعوم من AgenticVerdict",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "الانتقال إلى الصفحة الرئيسية لـ {brand}",
+      "legalNavLabel": "قانوني ومساعدة",
+      "terms": "شروط الخدمة",
+      "privacy": "سياسة الخصوصية",
+      "help": "المساعدة",
+      "backToSignIn": "العودة إلى تسجيل الدخول",
+      "forgotPasswordShort": "نسيت كلمة المرور؟"
+    },
+    "seo": {
+      "login": {
+        "title": "تسجيل الدخول | {brand}",
+        "description": "سجّل الدخول إلى حساب {brand} للوصول إلى مساحة العمل وبيانات الأسطول والرؤى."
+      },
+      "register": {
+        "title": "إنشاء حساب | {brand}",
+        "description": "أنشئ حساب {brand} لربط مصادر البيانات واستكشاف رؤى الأسطول والأعمال."
+      },
+      "forgotPassword": {
+        "title": "نسيت كلمة المرور | {brand}",
+        "description": "اطلب رابطاً آمناً لإعادة تعيين كلمة مرور حساب {brand}."
+      },
+      "resetPassword": {
+        "title": "إعادة تعيين كلمة المرور | {brand}",
+        "description": "اختر كلمة مرور جديدة لاستعادة الوصول إلى حساب {brand}."
+      },
+      "verifyEmail": {
+        "title": "التحقق من البريد | {brand}",
+        "description": "أكد عنوان بريدك الإلكتروني لإكمال إعداد حساب {brand}."
+      },
+      "terms": {
+        "title": "شروط الخدمة | {brand}",
+        "description": "شروط استخدام منصة {brand} والخدمات ذات الصلة."
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية | {brand}",
+        "description": "كيف تجمع {brand} وتستخدم وتؤمّن البيانات الشخصية والمتعلقة بالأسطول."
+      },
+      "help": {
+        "title": "المساعدة والدعم | {brand}",
+        "description": "احصل على مساعدة في تسجيل الدخول أو التحقق من البريد أو التواصل مع دعم {brand}."
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "شروط الخدمة",
+        "lastUpdated": "آخر تحديث: أبريل 2026. هذه صفحة مبدئية؛ استبدلها بشروط معتمدة قانونياً قبل الإطلاق التجاري.",
+        "section1Title": "الموافقة",
+        "section1Body": "باستخدامك لخدمات {brand} فإنك توافق على هذه الشروط والقوانين المعمول بها. إذا لم توافق، فلا تستخدم الخدمة.",
+        "section2Title": "الحسابات والأمان",
+        "section2Body": "أنت مسؤول عن حماية بيانات الدخول وعن النشاط الذي يتم عبر حسابك. أبلغ الدعم فوراً إذا اشتبهت في وصول غير مصرح به.",
+        "section3Title": "التغييرات",
+        "section3Body": "قد نحدّث هذه الشروط من وقت لآخر. سيتم إبلاغك بالتغييرات الجوهرية عبر المنتج أو البريد الإلكتروني عند الاقتضاء.",
+        "footerNote": "أسئلة حول الشروط؟",
+        "backToSignIn": "العودة إلى تسجيل الدخول"
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية",
+        "lastUpdated": "آخر تحديث: أبريل 2026. هذه صفحة مبدئية؛ استبدلها بإفصاحات خصوصية معتمدة قانونياً قبل الإطلاق التجاري.",
+        "section1Title": "المعلومات التي نعالجها",
+        "section1Body": "نعالج المعلومات التي تقدمها (مثل بيانات الحساس والأسطول) لتشغيل المنصة وتأمينها وتحسينها. ستُفصَّل الفئات والأغراض في السياسة النهائية.",
+        "section2Title": "الاحتفاظ والأمان",
+        "section2Body": "نطبق تدابير إدارية وتقنية وتنظيمية لحماية البيانات الشخصية. يتبع الاحتفاظ إعداداتك والالتزامات القانونية واحتياجات التشغيل.",
+        "section3Title": "خياراتك",
+        "section3Body": "بحسب منطقتك قد يكون لديك حقوق في الوصول أو التصحيح أو الحذف أو التصدير. تواصل مع الدعم لممارسة الحقوق المعمول بها.",
+        "footerNote": "أسئلة حول الخصوصية؟",
+        "backToSignIn": "العودة إلى تسجيل الدخول"
+      }
+    },
+    "help": {
+      "title": "المساعدة والدعم",
+      "description": "تحتاج مساعدة في تسجيل الدخول أو التحقق من البريد أو إعادة تعيين كلمة المرور؟ استخدم الخيارات أدناه أو تواصل مع فريقنا.",
+      "supportIntro": "البريد الإلكتروني:",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "تختلف ساعات الدعم وأهداف زمن الاستجابة حسب اشتراكك ومنطقتك.",
+      "backToSignIn": "العودة إلى تسجيل الدخول"
     }
   },
   "admin": {
@@ -433,7 +617,7 @@
     "stepWelcomeBody": "يمكنك الآن ربط مصادر البيانات واستكشاف الرؤى.",
     "stepPreferencesLabel": "التفضيلات",
     "stepPreferencesDescription": "الإعدادات الإقليمية",
-    "stepPreferencesBody": "ستُحدَّد اللغة والعملة والإشعارات عبر CompanyConfig عند الربط.",
+    "stepPreferencesBody": "ستُحدَّد اللغة والعملة والإشعارات عبر TenantConfig عند الربط.",
     "stepDoneLabel": "تم",
     "stepDoneDescription": "جاهز",
     "stepDoneBody": "يمكنك مراجعة الإعدادات في أي وقت من التطبيق."

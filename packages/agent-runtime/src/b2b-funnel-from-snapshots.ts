@@ -1,4 +1,4 @@
-import type { B2bFunnelMetricMapping, CompanyConfig } from "@agenticverdict/config";
+import type { B2bFunnelMetricMapping, TenantConfig } from "@agenticverdict/config";
 import type {
   NormalizedMetricRecord,
   NormalizedConnectorSnapshot,
@@ -152,7 +152,7 @@ export function buildB2bFunnelSnapshotFromNormalizedSnapshots(
 
 export function computeB2bMarketingKpisFromNormalizedSnapshots(
   snapshots: readonly NormalizedConnectorSnapshot[],
-  config: CompanyConfig,
+  config: TenantConfig,
 ): { funnel: B2bLeadFunnelSnapshot; kpis: B2bMarketingKpiResult } {
   const funnel = buildB2bFunnelSnapshotFromNormalizedSnapshots(snapshots, {
     spendCurrencyCode: config.localization.currency,

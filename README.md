@@ -12,7 +12,7 @@
 
 **AgenticVerdict** is a sophisticated multi-platform marketing analytics system that aggregates data from multiple marketing platforms, generates AI-powered cross-platform insights, and delivers actionable verdicts through automated reports.
 
-Built as a **multi-tenant SaaS platform**, AgenticVerdict serves multiple companies across different industries, regions, and languages without requiring code modifications—all powered by dynamic configuration injection and a plugin-based architecture.
+Built as a **multi-tenant SaaS platform**, AgenticVerdict serves multiple tenants across different industries, regions, and languages without requiring code modifications—all powered by dynamic configuration injection and a plugin-based architecture.
 
 **What makes AgenticVerdict different:**
 
@@ -87,7 +87,7 @@ The system not only aggregates data but **generates intelligent verdicts**—spe
 
 ### Primary Client: Masafh
 
-**Masafh** is a Riyadh-based B2B GPS fleet tracking and SaaS fleet management company serving logistics, transport, car rental, and educational institution clients across Saudi Arabia.
+**Masafh** is a Riyadh-based B2B GPS fleet tracking and SaaS fleet management tenant serving logistics, transport, car rental, and educational institution clients across Saudi Arabia.
 
 **Why AgenticVerdict for Masafh:**
 
@@ -187,7 +187,7 @@ Every operation in AgenticVerdict is tenant-scoped through a comprehensive isola
 ```
 1. Request received → Extract tenantId from JWT
 2. AsyncLocalStorage → Set tenant context for entire request lifecycle
-3. CompanyConfig → Load tenant-specific configuration
+3. TenantConfig → Load tenant-specific configuration
 4. Database → Row-level security filters all queries
 5. Cache → Tenant-prefixed cache keys
 6. Logs → Structured logging with tenant metadata
@@ -204,14 +204,14 @@ const tenantContext = new AsyncLocalStorage<TenantContext>();
 // Middleware sets context
 app.use((req, res, next) => {
   const tenantId = extractTenantId(req);
-  const config = await configManager.loadCompanyConfig(tenantId);
+  const config = await configManager.loadTenantConfig(tenantId);
   tenantContext.run({ tenantId, config, requestId }, next);
 });
 
 // Database operations require tenant context
 export async function dbScoped<T>(callback: (db: DB) => Promise<T>): Promise<T> {
   const context = tenantContext.getStore();
-  await db.execute(`SET LOCAL app.current_tenant_id = '${context.companyId}'`);
+  await db.execute(`SET LOCAL app.current_tenant_id = '${context.tenantId}'`);
   return callback(db);
 }
 ```
@@ -240,11 +240,11 @@ interface ConnectorAdapter {
 
 ### Configuration-Driven Design
 
-No company-specific logic in code. All customization via `CompanyConfig` schema:
+No tenant-specific logic in code. All customization via `TenantConfig` schema:
 
 ```typescript
-interface CompanyConfig {
-  companyId: string;
+interface TenantConfig {
+  tenantId: string;
   localization: {
     language: "ar" | "en" | "fr";
     region: string; // e.g., 'SA', 'US'
@@ -375,7 +375,8 @@ Set these flags in `.env.local`:
 
 ```bash
 NODE_ENV=development
-AGENTICVERDICT_USE_MOCK_ADAPTERS=1
+AGENTICVERDICT_RUNTIME_ENV=development
+AGENTICVERDICT_MOCK_MODE=all
 AGENTICVERDICT_MOCK_SEED=42001
 AGENTICVERDICT_MOCK_SCENARIO=normal
 ```
@@ -383,8 +384,8 @@ AGENTICVERDICT_MOCK_SCENARIO=normal
 Optional per-platform overrides:
 
 ```bash
-AGENTICVERDICT_MOCK_META=1
-AGENTICVERDICT_MOCK_GA4=0
+AGENTICVERDICT_MOCK_MODE=selective
+AGENTICVERDICT_MOCK_CONNECTORS=meta,gsc
 ```
 
 Then start the app and verify:
@@ -642,7 +643,7 @@ AgenticVerdict welcomes contributions! Please follow these guidelines:
 ## Important Constraints
 
 1. **No `any` types** — Use `unknown` or proper type definitions
-2. **No hardcoded company logic** — All customization via `CompanyConfig`
+2. **No hardcoded tenant logic** — All customization via `TenantConfig`
 3. **No direct database access without tenant context** — Use `dbScoped()` wrapper
 4. **No platform-specific code in core packages** — Use adapter pattern
 5. **No sensitive data in logs** — Mask credentials, PII

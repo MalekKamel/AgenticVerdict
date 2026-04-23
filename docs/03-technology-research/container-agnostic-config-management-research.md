@@ -1040,7 +1040,7 @@ export function loadFeatureFlags(): FeatureFlags {
 }
 
 // Tier 3: External configuration (loaded at startup)
-export async function loadExternalConfig(): Promise<Partial<CompanyConfig>> {
+export async function loadExternalConfig(): Promise<Partial<TenantConfig>> {
   const overrides: Record<string, unknown> = {};
 
   // Load from parameter store in production
@@ -1064,7 +1064,7 @@ export async function loadExternalConfig(): Promise<Partial<CompanyConfig>> {
 export async function loadCompleteConfig(): Promise<{
   buildSecurity: typeof BUILD_SECURITY;
   featureFlags: FeatureFlags;
-  runtimeConfig: CompanyConfig;
+  runtimeConfig: TenantConfig;
 }> {
   const featureFlags = loadFeatureFlags();
   const externalOverrides = await loadExternalConfig();
@@ -1076,7 +1076,7 @@ export async function loadCompleteConfig(): Promise<{
   const runtimeConfig = deepMerge(baseConfig, externalOverrides);
 
   // Validate final config
-  const validatedConfig = companyConfigSchema.parse(runtimeConfig);
+  const validatedConfig = tenantConfigSchema.parse(runtimeConfig);
 
   return {
     buildSecurity: BUILD_SECURITY,
@@ -1290,7 +1290,7 @@ The **hybrid layered configuration** approach provides the best balance of:
 - **Type Safety:** TypeScript validation throughout
 - **Developer Experience:** Easy local development and testing
 
-This approach is battle-tested at scale by companies like Vercel, Shopify, and Airbnb, and provides a clear migration path from the current compiler-driven implementation.
+This approach is battle-tested at scale by tenants like Vercel, Shopify, and Airbnb, and provides a clear migration path from the current compiler-driven implementation.
 
 ---
 

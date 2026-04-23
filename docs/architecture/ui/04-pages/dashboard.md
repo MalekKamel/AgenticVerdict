@@ -24,11 +24,11 @@
 
 ### Overview
 
-Primary landing page after login. Provides company-wide overview with key metrics across all business domains, recent insights, quick actions, and system health indicators. Designed for executive-level users needing cross-domain visibility.
+Primary landing page after login. Provides tenant-wide overview with key metrics across all business domains, recent insights, quick actions, and system health indicators. Designed for executive-level users needing cross-domain visibility.
 
 ### User Goal
 
-- **Primary Goal:** Understand overall company performance at a glance
+- **Primary Goal:** Understand overall tenant performance at a glance
 - **Secondary Goals:** Access detailed dashboards, create insights, manage connectors, review recent reports
 
 ### Page Layout
@@ -42,7 +42,7 @@ Primary landing page after login. Provides company-wide overview with key metric
 │        │                                                        │
 │ Home   │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ Welcome back, [User Name]!                      │  │
-│        │  │ Here's what's happening with [Company Name]     │  │
+│        │  │ Here's what's happening with [Tenant Name]     │  │
 │        │  └─────────────────────────────────────────────────┘  │
 │        │                                                        │
 │ Dash.  │  ┌───────────┐  ┌───────────┐  ┌───────────┐        │
@@ -117,7 +117,7 @@ DashboardLayout (Template)
 └── MainContent (Organism)
     ├── WelcomeBanner (Molecule)
     │   ├── Typography (Atom) - Greeting
-    │   └── Typography (Atom) - Company name
+    │   └── Typography (Atom) - Tenant name
     ├── KPICardsGrid (Organism)
     │   ├── KPICard (Molecule) - Total Insights
     │   │   ├── Icon (Atom)
@@ -327,7 +327,7 @@ Home
 ```typescript
 // Page structure
 'dashboard.home.welcome': 'Welcome back, {name}!'
-'dashboard.home.subtitle': "Here's what's happening with {company}"
+'dashboard.home.subtitle': "Here's what's happening with {tenant}"
 'dashboard.home.kpi.totalInsights': 'Total Insights'
 'dashboard.home.kpi.activeConnectors': 'Active Connectors'
 'dashboard.home.kpi.reportsThisMonth': 'Reports This Month'
@@ -567,11 +567,11 @@ Home > Dashboards > [Domain Name]
 
 ### Overview
 
-Multi-tenant overview for agency partners managing multiple client companies. Provides aggregate metrics, client switcher, cross-client insights, and client management capabilities.
+Multi-tenant overview for agency partners managing multiple client tenants. Provides aggregate metrics, client switcher, cross-client insights, and client management capabilities.
 
 ### User Goal
 
-- **Primary Goal:** Monitor all client companies from single interface
+- **Primary Goal:** Monitor all client tenants from single interface
 - **Secondary Goals:** Switch between clients, view aggregate metrics, create client insights
 
 ### Page Layout

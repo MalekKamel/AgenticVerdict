@@ -22,7 +22,7 @@
 | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Unified API surface (Decision 11)** | **MUST** use **tRPC v11** on `apps/api` (Fastify) for **business** queries and mutations. **MUST NOT** introduce ad-hoc REST/fetch clients for domain operations parallel to tRPC.                   |
 | **Server functions boundary**         | `createServerFn` and similar **MUST NOT** be the platform RPC surface for **domain** operations. Non-domain edge cases (e.g. progressive enhancement) **SHOULD** be rare, documented, and justified. |
-| **Multi-tenancy**                     | **MUST** keep tenant isolation: tenant id and config flow through established providers/middleware; **MUST NOT** hardcode tenant-specific product logic—use `CompanyConfig` and feature flags.       |
+| **Multi-tenancy**                     | **MUST** keep tenant isolation: tenant id and config flow through established providers/middleware; **MUST NOT** hardcode tenant-specific product logic—use `TenantConfig` and feature flags.        |
 | **Errors**                            | **MUST** surface user-safe messages; **MUST NOT** leak stack traces or internal details in production UI. Map tRPC errors through shared mappers.                                                    |
 | **Accessibility**                     | **MUST** meet **WCAG 2.1 AA** for new and materially changed UI (keyboard, contrast, labels, focus).                                                                                                 |
 | **Localization**                      | **MUST** support **RTL and LTR** via logical CSS and theme/locale from routing and tenant config—not hardcoded `left`/`right` for layout.                                                            |
@@ -56,7 +56,7 @@ Cross-cutting concerns (tenant, errors, auth, tRPC, RTL, a11y, observability) ap
 - **`apps/frontend`:** TanStack Start, route tree, UI, client tRPC, browser observability, i18n/locale routing.
 - **`apps/api`:** Fastify, tRPC routers, auth, tenant middleware, telemetry ingest—**contract owner** for types shared with the web client.
 - **`packages/ui` / `@agenticverdict/ui`:** Reusable components aligned with design tokens; **MUST NOT** embed tenant business rules (pass config/props).
-- **`packages/config`:** `CompanyConfig` and schemas—tenant-facing defaults and validation.
+- **`packages/config`:** `TenantConfig` and schemas—tenant-facing defaults and validation.
 - **`packages/database` + `apps/api`:** Feature flags and admin surfaces **MUST** use the established services; web **MUST NOT** bypass API tenancy rules.
 
 ---

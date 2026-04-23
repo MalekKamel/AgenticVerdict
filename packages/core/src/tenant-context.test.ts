@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildTenantContextForJob,
   getTenantContext,
   requireTenantContext,
   runWithTenantContext,
@@ -8,8 +9,8 @@ import {
 } from "./tenant-context";
 
 const sampleConfig = {
-  companyId: "11111111-1111-4111-8111-111111111111",
-  companyName: "Test",
+  tenantId: "11111111-1111-4111-8111-111111111111",
+  tenantName: "Test",
   localization: {
     language: "en" as const,
     region: "SA",
@@ -22,9 +23,20 @@ const sampleConfig = {
 };
 
 describe("tenant context", () => {
+  it("buildTenantContextForJob maps id, request, and config", () => {
+    const ctx = buildTenantContextForJob({
+      tenantId: sampleConfig.tenantId,
+      requestId: "job-1",
+      tenantConfig: sampleConfig,
+    });
+    expect(ctx.tenantId).toBe(sampleConfig.tenantId);
+    expect(ctx.requestId).toBe("job-1");
+    expect(ctx.config.tenantId).toBe(sampleConfig.tenantId);
+  });
+
   it("propagates context inside runWithTenantContext", async () => {
     const ctx: TenantContext = {
-      tenantId: sampleConfig.companyId,
+      tenantId: sampleConfig.tenantId,
       config: sampleConfig,
       requestId: "req-1",
     };
@@ -35,12 +47,17 @@ describe("tenant context", () => {
   });
 
   it("requireTenantContext throws outside of a run", () => {
-    expect(() => requireTenantContext()).toThrow(/Tenant context is not set/);
+    expect(() => requireTenantContext()).toThrow(
+      expect.objectContaining({
+        code: "TENANT_CONTEXT_REQUIRED",
+        name: "TenantSecurityError",
+      }),
+    );
   });
 
   it("requireTenantContext returns the active context inside runWithTenantContext", async () => {
     const ctx: TenantContext = {
-      tenantId: sampleConfig.companyId,
+      tenantId: sampleConfig.tenantId,
       config: sampleConfig,
       requestId: "req-2",
     };
@@ -52,14 +69,14 @@ describe("tenant context", () => {
 
   it("restores outer tenant after nested runWithTenantContext", async () => {
     const outer: TenantContext = {
-      tenantId: sampleConfig.companyId,
+      tenantId: sampleConfig.tenantId,
       config: sampleConfig,
       requestId: "outer",
     };
     const innerTenant = "22222222-2222-4222-8222-222222222222";
     const inner: TenantContext = {
       tenantId: innerTenant,
-      config: { ...sampleConfig, companyId: innerTenant },
+      config: { ...sampleConfig, tenantId: innerTenant },
       requestId: "inner",
     };
     await runWithTenantContext(outer, async () => {
@@ -75,7 +92,7 @@ describe("tenant context", () => {
   it("keeps tenant contexts isolated across concurrent async branches", async () => {
     const makeCtx = (id: string, requestId: string): TenantContext => ({
       tenantId: id,
-      config: { ...sampleConfig, companyId: id },
+      config: { ...sampleConfig, tenantId: id },
       requestId,
     });
     const a = makeCtx("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "ra");

@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "@/i18n/react";
+import { useLocale, useTranslations } from "@/i18n/react";
 import { Alert, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMailForward } from "@tabler/icons-react";
 
 import { useRequestPasswordReset } from "@/hooks/usePasswordReset";
+import { AuthMutationError } from "@/hooks/usePasswordReset";
 import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validations/auth";
+import { getDirection } from "@/i18n/locales";
+import { getDirectionalSectionProps } from "@/components/auth/authUi";
 
 interface ForgotPasswordFormProps {
   onSuccess?: (message: string) => void;
   onError?: (error: string) => void;
+  defaultEmail?: string;
 }
 
 function forgotPasswordFieldError(
@@ -25,19 +29,29 @@ function forgotPasswordFieldError(
   return t(key);
 }
 
-export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormProps) {
-  const t = useTranslations("auth.forgotPassword");
+function localizeForgotPasswordError(raw: string, t: (key: string) => string): string {
+  if (raw.startsWith("auth.")) {
+    return t(raw.slice("auth.".length));
+  }
+  return t("errors.internalError");
+}
+
+export function ForgotPasswordForm({ onSuccess, onError, defaultEmail }: ForgotPasswordFormProps) {
+  const t = useTranslations("auth");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
+  const isRtl = getDirection(locale) === "rtl";
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const requestReset = useRequestPasswordReset();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number | null>(null);
 
   const form = useForm<ForgotPasswordFormData>({
     mode: "uncontrolled",
     initialValues: {
-      email: "",
+      email: defaultEmail ?? "",
     },
     validate: (values) => {
       const result = forgotPasswordSchema.safeParse(values);
@@ -58,17 +72,41 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
     emailInputRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    if (!retryAfterSeconds || retryAfterSeconds <= 0) {
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setRetryAfterSeconds((current) => {
+        if (!current || current <= 1) {
+          window.clearInterval(timer);
+          return null;
+        }
+        return current - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [retryAfterSeconds]);
+
   const handleSubmit = async (values: ForgotPasswordFormData) => {
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
       await requestReset.mutateAsync(values);
-      const message = t("success");
+      const message = t("forgotPassword.success");
       setSuccessMessage(message);
       onSuccess?.(message);
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("errors.email.required");
+      const message =
+        error instanceof Error
+          ? localizeForgotPasswordError(error.message, t)
+          : t("errors.internalError");
+      const retryAfter =
+        error instanceof AuthMutationError && error.code === "RATE_LIMIT_EXCEEDED"
+          ? error.retryAfterSeconds
+          : null;
+      setRetryAfterSeconds(retryAfter);
       setErrorMessage(message);
       onError?.(message);
     }
@@ -84,7 +122,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
     <div>
       {successMessage ? (
         <div className="mb-4" role="status" aria-live="polite">
-          <Alert color="green" title={t("alerts.successTitle")} variant="light">
+          <Alert color="green" title={t("forgotPassword.alerts.successTitle")} variant="light">
             {successMessage}
           </Alert>
         </div>
@@ -94,11 +132,16 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
         <div className="mb-4" role="alert" aria-live="assertive">
           <Alert color="red" title={tCommon("error")} variant="light">
             {errorMessage}
+            {retryAfterSeconds ? (
+              <div className="mt-2 text-sm">
+                {t("forgotPassword.states.rateLimited", { seconds: String(retryAfterSeconds) })}
+              </div>
+            ) : null}
           </Alert>
         </div>
       ) : null}
 
-      <form onSubmit={form.onSubmit(handleSubmit)} aria-label={t("title")}>
+      <form onSubmit={form.onSubmit(handleSubmit)} aria-label={t("forgotPassword.title")}>
         <div className="flex flex-col gap-5">
           <TextInput
             ref={emailInputRef}
@@ -106,7 +149,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
             type="email"
             autoComplete="email"
             key={form.key("email")}
-            label={t("fields.email")}
+            label={t("forgotPassword.fields.email")}
             required
             radius="md"
             w="100%"
@@ -121,24 +164,33 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
             }}
             aria-required
             aria-invalid={!!form.errors.email}
-            aria-describedby={form.errors.email ? "email-error" : "email-description"}
           />
 
           <Button
             type="submit"
             fullWidth
             loading={requestReset.isPending}
-            disabled={requestReset.isPending}
+            disabled={requestReset.isPending || Boolean(retryAfterSeconds)}
             size="md"
             radius="md"
             aria-busy={requestReset.isPending}
-            leftSection={
+            {...getDirectionalSectionProps(
               !requestReset.isPending ? (
-                <IconMailForward size={20} stroke={1.75} aria-hidden />
-              ) : undefined
-            }
+                <IconMailForward
+                  size={20}
+                  stroke={1.75}
+                  aria-hidden
+                  style={isRtl ? { transform: "scaleX(-1)" } : undefined}
+                />
+              ) : undefined,
+              isRtl,
+            )}
           >
-            {requestReset.isPending ? t("buttons.submitting") : t("buttons.submit")}
+            {requestReset.isPending
+              ? t("forgotPassword.buttons.submitting")
+              : retryAfterSeconds
+                ? t("forgotPassword.buttons.retryCountdown", { seconds: String(retryAfterSeconds) })
+                : t("forgotPassword.buttons.submit")}
           </Button>
         </div>
       </form>

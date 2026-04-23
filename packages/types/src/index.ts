@@ -13,6 +13,8 @@ export type {
   GetSessionOutput,
   VerifyEmailInput,
   VerifyEmailOutput,
+  ResendEmailVerificationInput,
+  ResendEmailVerificationOutput,
   RequestPasswordResetInput,
   RequestPasswordResetOutput,
   ConfirmPasswordResetInput,
@@ -22,6 +24,7 @@ export type {
   AuthErrorResponse,
 } from "./auth";
 export {
+  optionalAuthTenantIdSchema,
   loginInputSchema,
   loginOutputSchema,
   registerInputSchema,
@@ -30,6 +33,8 @@ export {
   getSessionOutputSchema,
   verifyEmailInputSchema,
   verifyEmailOutputSchema,
+  resendEmailVerificationInputSchema,
+  resendEmailVerificationOutputSchema,
   requestPasswordResetInputSchema,
   requestPasswordResetOutputSchema,
   confirmPasswordResetInputSchema,

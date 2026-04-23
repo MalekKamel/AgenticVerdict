@@ -8,7 +8,7 @@
 
 import { randomUUID } from "node:crypto";
 
-import { createTestCompanyConfig } from "../packages/testing/src/create-test-company-config.ts";
+import { createTestTenantConfig } from "../packages/testing/src/create-test-tenant-config.ts";
 import { TEST_TENANT_ALPHA } from "../packages/testing/src/tenant-ids.ts";
 import { AgentFactory } from "../packages/agent-runtime/src/agent-factory.ts";
 import { runAgentJob } from "../packages/agent-runtime/src/agent-job.ts";
@@ -57,17 +57,17 @@ async function main() {
   const tenant = {
     tenantId: TEST_TENANT_ALPHA,
     requestId: `req-live-${randomUUID()}`,
-    config: createTestCompanyConfig({
-      companyId: TEST_TENANT_ALPHA,
-      companyName: "Live LLM Test Company",
+    config: createTestTenantConfig({
+      tenantId: TEST_TENANT_ALPHA,
+      tenantName: "Live LLM Test Tenant",
     }),
   };
 
   const workflowId = randomUUID();
-  const goal = `PIPELINE_E2E_MARKER: Analyze marketing performance for Masafh GPS fleet tracking company.
+  const goal = `PIPELINE_E2E_MARKER: Analyze marketing performance for Masafh GPS fleet tracking tenant.
 
 Context:
-- Company: Masafh (Riyadh-based B2B GPS fleet tracking)
+- Tenant: Masafh (Riyadh-based B2B GPS fleet tracking)
 - Target Period: Last 30 days
 - Platforms: Meta Ads, GA4, GSC, GBP, TikTok
 - Key Metrics: CTR, CPC, Conversions, ROAS, Engagement
@@ -97,7 +97,7 @@ Provide:
       goal,
       workflowId,
       specialization: {
-        companyName: "Masafh",
+        tenantName: "Masafh",
         promptVars: {
           currency: "SAR",
           region: "SA",

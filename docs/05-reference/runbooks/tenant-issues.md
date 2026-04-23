@@ -8,8 +8,8 @@
 
 ## Diagnosis
 
-1. Confirm **JWT** claims (`tenant_id`, `sub`) match the intended company.
-2. Validate **CompanyConfig** load path for that UUID (`configs/companies` or DB).
+1. Confirm **JWT** claims (`tenant_id`, `sub`) match the intended tenant.
+2. Validate **TenantConfig** load path for that UUID (`configs/tenants` or DB).
 3. Review **AsyncLocalStorage** / `runWithTenantContext` wiring on the code path (API + worker jobs).
 4. For isolation suspicion, run **tenant isolation** Vitest matrix locally with the same route pattern — never query prod without approval.
 
@@ -28,3 +28,4 @@
 
 - Mandatory code review for routes touching `tenantId`.
 - Periodic isolation matrix runs in CI.
+- Follow dedicated alert triage for mismatch/context incidents: [tenant-security-alerts-playbook.md](tenant-security-alerts-playbook.md).

@@ -498,7 +498,7 @@ DELIVERING → FAILED (delivery error)
 
 - **[Templates](./templates.md)** — Insights initialized from templates
 - **[Connectors](./connectors.md)** — Insights consume connector data
-- **[Tenant/Company](./tenant-company.md)** — Insights are tenant-scoped
+- **[Tenant/Tenant](./tenant-tenant.md)** — Insights are tenant-scoped
 
 ---
 
@@ -622,7 +622,7 @@ function ReportGenerationProgress({ reportId }: { reportId: string }) {
 export const insights = pgTable("insights", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id")
-    .references(() => companies.id)
+    .references(() => tenants.id)
     .notNull(),
   templateId: uuid("template_id").references(() => templates.id),
   name: text("name").notNull(),
@@ -677,7 +677,7 @@ export const reports = pgTable("reports", {
     .references(() => insights.id)
     .notNull(),
   tenantId: uuid("tenant_id")
-    .references(() => companies.id)
+    .references(() => tenants.id)
     .notNull(),
   status: reportStatusEnum("status").notNull().default("pending"),
   format: reportFormatEnum("format").notNull(),

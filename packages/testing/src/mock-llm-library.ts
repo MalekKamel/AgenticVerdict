@@ -241,7 +241,7 @@ export const MOCK_LLM_LIBRARY: readonly MockLlmLibraryEntry[] = [
   {
     id: "m50",
     matchSubstring: "tenant",
-    response: "MOCK_TENANT: Scoped answers only; no cross-company leakage.",
+    response: "MOCK_TENANT: Scoped answers only; no cross-tenant leakage.",
   },
   {
     id: "m51",

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { assertResourceCompanyId, tenantContextMatches } from "./tenant-data-access";
+import { assertResourceTenantId, tenantContextMatches } from "./tenant-data-access";
 import { bindTenantContext, continueWithTenantContext } from "./tenant-propagation";
 import { resolveTenantContextFromHttp } from "./tenant-request-context";
 import {
@@ -15,8 +15,8 @@ const TENANT = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
 
 const sampleConfig = {
-  companyId: TENANT,
-  companyName: "Test Co",
+  tenantId: TENANT,
+  tenantName: "Test Co",
   localization: {
     language: "en" as const,
     region: "SA",
@@ -29,13 +29,16 @@ const sampleConfig = {
 };
 
 describe("resolveTenantIdentity", () => {
-  it("reads x-tenant-id first", async () => {
+  it("rejects x-tenant-id that disagrees with JWT tenant_id", async () => {
     const sources: TenantResolutionSources = {
       headers: { "x-tenant-id": TENANT },
       jwtClaims: { tenant_id: OTHER },
     };
     const r = await resolveTenantIdentity(sources);
-    expect(r.ok && r.tenantId).toBe(TENANT);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error.code).toBe("TENANT_MISMATCH");
+    }
   });
 
   it("falls back to JWT tenant_id", async () => {
@@ -54,13 +57,21 @@ describe("resolveTenantIdentity", () => {
     expect(r.ok && r.tenantId).toBe(TENANT);
   });
 
-  it("returns MISSING_TENANT when nothing matches", async () => {
+  it("returns TENANT_CONTEXT_REQUIRED when nothing matches", async () => {
     const r = await resolveTenantIdentity({});
     expect(r.ok).toBe(false);
     if (!r.ok) {
-      expect(r.error.code).toBe("MISSING_TENANT");
-      expect(r.error.httpStatus).toBe(401);
+      expect(r.error.code).toBe("TENANT_CONTEXT_REQUIRED");
+      expect(r.error.httpStatus).toBe(400);
     }
+  });
+
+  it("accepts header and JWT when both carry the same tenant id", async () => {
+    const r = await resolveTenantIdentity({
+      headers: { "x-tenant-id": TENANT },
+      jwtClaims: { tenant_id: TENANT },
+    });
+    expect(r.ok && r.tenantId).toBe(TENANT);
   });
 
   it("rejects invalid header UUID", async () => {
@@ -85,7 +96,7 @@ describe("extractTenantSlugFromHost", () => {
 describe("resolveTenantContextFromHttp", () => {
   it("loads config and checks active", async () => {
     const loader = {
-      loadCompanyConfig: vi.fn().mockResolvedValue(sampleConfig),
+      loadTenantConfig: vi.fn().mockResolvedValue(sampleConfig),
     };
     const isTenantActive = vi.fn().mockResolvedValue(true);
 
@@ -105,7 +116,7 @@ describe("resolveTenantContextFromHttp", () => {
   });
 
   it("returns TENANT_INACTIVE when active check fails", async () => {
-    const loader = { loadCompanyConfig: vi.fn().mockResolvedValue(sampleConfig) };
+    const loader = { loadTenantConfig: vi.fn().mockResolvedValue(sampleConfig) };
     const r = await resolveTenantContextFromHttp(
       loader,
       { headers: { "x-tenant-id": TENANT } },
@@ -119,7 +130,7 @@ describe("resolveTenantContextFromHttp", () => {
   });
 
   it("returns TENANT_CONFIG_NOT_FOUND when loader throws", async () => {
-    const loader = { loadCompanyConfig: vi.fn().mockRejectedValue(new Error("missing file")) };
+    const loader = { loadTenantConfig: vi.fn().mockRejectedValue(new Error("missing file")) };
     const r = await resolveTenantContextFromHttp(
       loader,
       { headers: { "x-tenant-id": TENANT } },
@@ -162,22 +173,22 @@ describe("tenant propagation", () => {
 });
 
 describe("tenant data access", () => {
-  it("assertResourceCompanyId allows matching company id", () => {
+  it("assertResourceTenantId allows matching tenant id", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
       config: sampleConfig,
       requestId: "r",
     };
-    expect(() => runWithTenantContext(ctx, () => assertResourceCompanyId(TENANT))).not.toThrow();
+    expect(() => runWithTenantContext(ctx, () => assertResourceTenantId(TENANT))).not.toThrow();
   });
 
-  it("assertResourceCompanyId throws on mismatch", () => {
+  it("assertResourceTenantId throws on mismatch", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
       config: sampleConfig,
       requestId: "r",
     };
-    expect(() => runWithTenantContext(ctx, () => assertResourceCompanyId(OTHER))).toThrow(
+    expect(() => runWithTenantContext(ctx, () => assertResourceTenantId(OTHER))).toThrow(
       TenantSecurityError,
     );
   });

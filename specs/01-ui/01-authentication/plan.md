@@ -32,7 +32,7 @@ Phase 01 (Authentication) implements the complete user authentication flow for A
 **Target Platform**: Web browsers (Chrome, Firefox, Safari, Edge - current and previous 2 versions), Mobile browsers (iOS Safari, Chrome Mobile)  
 **Project Type**: Web application (TanStack Start with file-based routing)  
 **Performance Goals**: <1.5s page load on 3G, <2s form submission, <300KB initial bundle gzipped  
-**Constraints**: WCAG 2.1 AA compliance required, zero `any` types, no hardcoded company logic, all strings externalized for i18n  
+**Constraints**: WCAG 2.1 AA compliance required, zero `any` types, no hardcoded tenant logic, all strings externalized for i18n  
 **Scale/Scope**: 7 routes (login, register, verify-email, forgot-password, reset-password, auth layout wrapper), 10+ form components, 5+ custom hooks, 70%+ test coverage target (80%+ for auth logic)
 
 ---
@@ -43,7 +43,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ✅ **Type Safety**: All components use TypeScript strict mode, Zod schemas for validation, tRPC for end-to-end type safety  
 ✅ **Multi-Tenancy**: Auth operations are tenant-aware via tRPC context, user sessions include tenantId  
-✅ **Configuration-Driven**: Auth flows inject company branding via design tokens, no hardcoded company-specific logic  
+✅ **Configuration-Driven**: Auth flows inject tenant branding via design tokens, no hardcoded tenant-specific logic  
 ✅ **Accessibility**: WCAG 2.1 AA compliance is non-negotiable, all forms tested with axe-core and screen readers  
 ✅ **Internationalization**: RTL/LTR support from day one, all strings externalized, locale-aware date/currency formatting  
 ✅ **Performance**: Bundle size budgets enforced, route-based code splitting automatic with TanStack Start  
@@ -925,7 +925,7 @@ const PasswordStrengthMeter = lazy(() =>
 ### Image Optimization
 
 ```typescript
-// Optimize company logo
+// Optimize tenant logo
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/auth/$authType')({

@@ -4,9 +4,9 @@ import { AgentMockChatModel } from "@agenticverdict/testing";
 import type { AgentFactoryConfig } from "./agent-config";
 import { createAnalysisTools } from "./agent-tools/analysis-tools";
 import {
-  createCompanyContextTools,
-  type CompanyContextToolDeps,
-} from "./agent-tools/company-context-tools";
+  createTenantContextTools,
+  type TenantContextToolDeps,
+} from "./agent-tools/tenant-context-tools";
 import {
   createPlatformFetchTools,
   type PlatformFetchToolDeps,
@@ -55,7 +55,7 @@ const KIND_TEMPLATE_ID: Record<SpecializedMarketingAgentKind, string> = {
 };
 
 export interface SpecializedMarketingAgentPromptVars {
-  companyName: string;
+  tenantName: string;
   dateRange?: string;
   platforms?: string;
   /** Reporting currency label for cross-platform analysis template (e.g. SAR, USD). */
@@ -68,8 +68,8 @@ export interface SpecializedMarketingAgentPromptVars {
 }
 
 export interface CreateSpecializedMarketingAgentOptions {
-  /** Display name for prompt rendering (never substitute real PII beyond company marketing name). */
-  companyName: string;
+  /** Display name for prompt rendering (never substitute real PII beyond tenant marketing name). */
+  tenantName: string;
   promptVars?: Partial<SpecializedMarketingAgentPromptVars>;
   /** Pin a template semver; latest when omitted. */
   templateVersion?: string;
@@ -80,13 +80,13 @@ export interface CreateSpecializedMarketingAgentOptions {
   invocationCache?: LlmInvocationCache;
   /** Optional platform adapter dependency contract for fetch_* tools. */
   platformDeps?: PlatformFetchToolDeps;
-  /** Optional cache/dependency controls for company context tools. */
-  companyContextDeps?: CompanyContextToolDeps;
+  /** Optional cache/dependency controls for tenant context tools. */
+  tenantContextDeps?: TenantContextToolDeps;
 }
 
 function renderBasePolicy(
   kind: SpecializedMarketingAgentKind,
-  companyName: string,
+  tenantName: string,
   vars: Partial<SpecializedMarketingAgentPromptVars>,
   templateVersion: string | undefined,
 ): string {
@@ -95,7 +95,7 @@ function renderBasePolicy(
 
   if (kind === "cross_platform_analysis") {
     return renderPromptTemplate(record, {
-      companyName,
+      tenantName,
       dateRange: vars.dateRange ?? "last 30 days",
       platforms: vars.platforms ?? "Meta, GA4, GSC, GBP, TikTok",
       currency: vars.currency ?? "USD",
@@ -116,11 +116,11 @@ function renderBasePolicy(
 
 function buildSpecializedSystemPolicy(
   kind: SpecializedMarketingAgentKind,
-  companyName: string,
+  tenantName: string,
   vars: Partial<SpecializedMarketingAgentPromptVars>,
   templateVersion: string | undefined,
 ): string {
-  const base = renderBasePolicy(kind, companyName, vars, templateVersion);
+  const base = renderBasePolicy(kind, tenantName, vars, templateVersion);
   const specialization =
     kind === "cross_platform_analysis"
       ? "\n\nSpecialization: cross-platform marketing analysis — correlate channels, call out data gaps, and summarize blended KPIs."
@@ -141,9 +141,9 @@ export function buildSpecializedMarketingFactoryConfig(
   kind: SpecializedMarketingAgentKind,
   options: CreateSpecializedMarketingAgentOptions,
 ): AgentFactoryConfig {
-  const { companyName, promptVars = {}, templateVersion, factoryConfig = {} } = options;
+  const { tenantName, promptVars = {}, templateVersion, factoryConfig = {} } = options;
   const role = KIND_ROLE[kind];
-  const systemPolicy = buildSpecializedSystemPolicy(kind, companyName, promptVars, templateVersion);
+  const systemPolicy = buildSpecializedSystemPolicy(kind, tenantName, promptVars, templateVersion);
   return parseAgentFactoryConfig({
     ...factoryConfig,
     role,
@@ -162,7 +162,7 @@ export function createSpecializedMarketingTestAgent(
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
   const sharedTools = [
-    ...createCompanyContextTools(options.companyContextDeps),
+    ...createTenantContextTools(options.tenantContextDeps),
     ...(options.platformDeps ? createPlatformFetchTools(options.platformDeps) : []),
     ...createAnalysisTools(),
     ...createReportPrepTools(),
@@ -183,7 +183,7 @@ export function createSpecializedMarketingProductionAgent(
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
   const sharedTools = [
-    ...createCompanyContextTools(options.companyContextDeps),
+    ...createTenantContextTools(options.tenantContextDeps),
     ...(options.platformDeps ? createPlatformFetchTools(options.platformDeps) : []),
     ...createAnalysisTools(),
     ...createReportPrepTools(),

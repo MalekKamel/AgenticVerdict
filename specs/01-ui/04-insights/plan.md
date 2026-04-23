@@ -65,9 +65,9 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### II. Configuration-Driven Architecture ✅ PASS
 
-**Requirement**: Company-specific behavior through CompanyConfig schema
+**Requirement**: Tenant-specific behavior through TenantConfig schema
 **Implementation**:
-- Template availability based on tenant's business domains from CompanyConfig
+- Template availability based on tenant's business domains from TenantConfig
 - AI model options filtered by tenant's AI provider configuration
 - Connector options filtered by tenant's connected connectors
 - Schedule and delivery defaults from tenant settings

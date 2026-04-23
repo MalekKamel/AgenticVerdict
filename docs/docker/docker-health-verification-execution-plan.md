@@ -18,13 +18,13 @@ This document is a **development and operations runbook** for verifying that Age
 
 ## 1. Prerequisites
 
-| Requirement                | Verification                                                                                                    |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Docker Engine + Compose v2 | `docker version`, `docker compose version`                                                                      |
-| Node.js 20 + pnpm          | `node -v`, `pnpm -v` (host builds/tests; `pnpm db:up` uses base Compose only)                                   |
-| Sufficient disk and RAM    | Rough guide: ≥ 10 GB free disk for images/build cache; ≥ 4 GB RAM for full stack (more for observability / E2E) |
-| Ports available (defaults) | `5432`, `6379`; with apps: `3000`, `4000`; observability: `9090`, `3001`, `127.0.0.1:3100`                      |
-| Clone + read access        | Repository matches current `docs/docker/` and compose paths                                                     |
+| Requirement                | Verification                                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Docker Engine + Compose v2 | `docker version`, `docker compose version`                                                                            |
+| Node.js 20 + pnpm          | `node -v`, `pnpm -v` (host builds/tests; `pnpm db:up` uses base Compose only)                                         |
+| Sufficient disk and RAM    | Rough guide: ≥ 10 GB free disk for images/build cache; ≥ 4 GB RAM for full stack (more for observability / E2E)       |
+| Ports available (defaults) | `5432`, `6379`; with apps: `3000`, `4000`; observability: `9090`, `3001`, `127.0.0.1:3100`; pgAdmin: `127.0.0.1:5050` |
+| Clone + read access        | Repository matches current `docs/docker/` and compose paths                                                           |
 
 ---
 
@@ -48,6 +48,7 @@ Complete before first `up` or after a major environment reset.
 | Base infrastructure       | `docker-compose.yml` (includes `docker-compose.networks.yml`)                                                   |
 | Apps on top of base       | `-f docker-compose.yml -f docker-compose.apps.yml`                                                              |
 | + Observability           | Add `-f docker-compose.observability.yml`                                                                       |
+| + pgAdmin                 | Add `-f docker-compose.pgadmin.yml`                                                                             |
 | + Falco (Linux)           | Same as observability, add `--profile security`                                                                 |
 | + Scheduled DB backups    | `-f docker-compose.yml -f deploy/docker-compose.backup.yml`                                                     |
 | Production-shaped example | `deploy/docker-compose.production.example.yml` (+ optional `deploy/docker-compose.security-linux.override.yml`) |
@@ -58,6 +59,7 @@ Define shell variables to avoid mistakes:
 export COMPOSE_BASE="-f docker-compose.yml"
 export COMPOSE_APPS="-f docker-compose.yml -f docker-compose.apps.yml"
 export COMPOSE_FULL_OBS="$COMPOSE_APPS -f docker-compose.observability.yml"
+export COMPOSE_PGADMIN="-f docker-compose.yml -f docker-compose.pgadmin.yml"
 ```
 
 ---
@@ -78,12 +80,12 @@ export COMPOSE_FULL_OBS="$COMPOSE_APPS -f docker-compose.observability.yml"
 
 Run when Dockerfiles, `package.json`, lockfile, or `scripts/dockerPrebuild.mjs` change.
 
-| Step | Action                                                                          | Pass criteria                                                                                                                             |
-| ---- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| B.1  | `docker compose $COMPOSE_APPS build --no-cache` (or `up -d --build` in Phase C) | All images build; Node 20 / `dockerPrebuild` gate passes                                                                                  |
-| B.2  | Optional standalone builds                                                      | Per [getting-started](./getting-started.md): `docker build -f apps/frontend/Dockerfile -t agenticverdict/web:local .` (repeat api/worker) |
+| Step | Action                                                                          | Pass criteria                                                                                                                                  |
+| ---- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| B.1  | `docker compose $COMPOSE_APPS build --no-cache` (or `up -d --build` in Phase C) | All images build; Node 20 / `dockerPrebuild` gate passes                                                                                       |
+| B.2  | Optional standalone builds                                                      | Per [getting-started](./getting-started.md): `docker build -f apps/frontend/Dockerfile -t agenticverdict/frontend:local .` (repeat api/worker) |
 
-**Notes:** Web image uses Next standalone + distroless runner; API/worker use `tsx` at runtime. Worker expects `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1` in Compose unless the image is extended for Chromium/PDF.
+**Notes:** Frontend image uses Next standalone + distroless runner; API/worker use `tsx` at runtime. Worker runtime policy uses `AGENTICVERDICT_STUB_REPORT_FORMATS=1` only for dev/test stub runs, and `0` in production-like stacks.
 
 ---
 
@@ -102,14 +104,14 @@ Run when Dockerfiles, `package.json`, lockfile, or `scripts/dockerPrebuild.mjs` 
 
 ---
 
-### Phase D — Application overlay: web, API, worker
+### Phase D — Application overlay: frontend, API, worker
 
 | Step | Action                                       | Pass criteria                                                                                                                                |
 | ---- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | D.0  | `./scripts/generate-secrets.sh`              | `secrets/jwt_secret.txt` exists                                                                                                              |
 | D.1  | `docker compose $COMPOSE_APPS up -d --build` | All services **running**; postgres/redis **healthy** first                                                                                   |
-| D.2  | `docker compose $COMPOSE_APPS ps`            | `web`, `api`, `worker` running (worker has no published ports)                                                                               |
-| D.3  | HTTP — web                                   | `curl -fsS http://127.0.0.1:3000/api/health` succeeds                                                                                        |
+| D.2  | `docker compose $COMPOSE_APPS ps`            | `frontend`, `api`, `worker` running (worker has no published ports)                                                                          |
+| D.3  | HTTP — frontend                              | `curl -fsS http://127.0.0.1:3000/api/health` succeeds                                                                                        |
 | D.4  | HTTP — API                                   | `curl -fsS http://127.0.0.1:4000/health` succeeds                                                                                            |
 | D.5  | **Scripted check**                           | `WEB_HEALTH_URL=http://127.0.0.1:3000/api/health API_HEALTH_URL=http://127.0.0.1:4000/health ./scripts/health-check.sh` exits **0**          |
 | D.6  | Worker                                       | `docker compose $COMPOSE_APPS logs worker --tail 80` shows clean startup (no fatal Redis/DB errors; process stays up). Adjust tail as needed |
@@ -117,7 +119,7 @@ Run when Dockerfiles, `package.json`, lockfile, or `scripts/dockerPrebuild.mjs` 
 
 **Important:** Compose does **not** automatically run DB migrations or seeds. If health endpoints require schema, run Drizzle against `DATABASE_URL` per [testing](./testing.md) before expecting full application behavior.
 
-**Image HEALTHCHECK:** Web and API Dockerfiles define container health checks; `docker inspect --format='{{.State.Health.Status}}' <container>` should trend to `healthy` after start periods.
+**Image HEALTHCHECK:** Frontend and API Dockerfiles define container health checks; `docker inspect --format='{{.State.Health.Status}}' <container>` should trend to `healthy` after start periods.
 
 ---
 
@@ -131,6 +133,18 @@ Run when Dockerfiles, `package.json`, lockfile, or `scripts/dockerPrebuild.mjs` 
 | E.4  | Falco (Linux only)                       | `docker compose $COMPOSE_FULL_OBS --profile security up -d`; container running; review Falco logs for driver errors                     |
 
 Volumes: `prometheus_tsdb`, `loki_data`, `grafana_data` should exist for the project.
+
+---
+
+### Phase E2 — pgAdmin overlay (optional)
+
+| Step | Action                                  | Pass criteria                                                                                     |
+| ---- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| E2.1 | `docker compose $COMPOSE_PGADMIN up -d` | `pgadmin` container running                                                                       |
+| E2.2 | UI reachability                         | `http://127.0.0.1:5050` responds (or overridden `PGADMIN_PORT`)                                   |
+| E2.3 | DB connectivity from pgAdmin            | Can register/connect to server host `postgres`, port `5432`, DB `agenticverdict` over the network |
+
+Volume `pgadmin_data` should exist for the project after first startup.
 
 ---
 
@@ -190,7 +204,7 @@ Aligns with defaults documented in [security](./security.md).
 | `jwt_secret` / file not found                                                 | Secrets not generated                                             | Run `./scripts/generate-secrets.sh`; confirm `./secrets/jwt_secret.txt`                                      |
 | Port already allocated                                                        | Host conflict                                                     | Stop conflicting service or change published ports in a local override (document deviations)                 |
 | API unhealthy / 5xx                                                           | DB not migrated, bad `DATABASE_URL`, JWT unreadable               | Check `docker compose ... logs api`; verify secret mount and DB readiness                                    |
-| Web unhealthy                                                                 | Next build/runtime error                                          | `docker compose ... logs web`; verify `postgres`/`redis` healthy first                                       |
+| Frontend unhealthy                                                            | Next build/runtime error                                          | `docker compose ... logs frontend`; verify `postgres`/`redis` healthy first                                  |
 | Worker exits / restarts                                                       | Missing `REDIS_URL`, Redis unreachable                            | Confirm `docker-compose.apps.yml` env and `redis` health                                                     |
 | `seccomp` / permission errors                                                 | Profile path or engine support                                    | Confirm `deploy/security/seccomp-profile.json` path relative to compose invocation cwd                       |
 | Promtail no logs                                                              | Docker socket on Desktop VM                                       | See [observability](./observability.md) Docker Desktop note                                                  |
@@ -199,12 +213,14 @@ Aligns with defaults documented in [security](./security.md).
 | Postgres exits (1); logs show `chmod` / `Operation not permitted` on data dir | `cap_drop: [ALL]` (or similar) on Postgres                        | Default `docker-compose.yml` omits cap drop on Postgres; see [security](./security.md)                       |
 | Redis exits (1); logs show `failed switching to "redis"`                      | `no-new-privileges` and/or stock entrypoint + strict caps/seccomp | Default stack runs `redis-server` as `999:999`; see [security](./security.md)                                |
 | Redis AOF errors after changing user/volume                                   | Old `redis_data` owned by root                                    | `docker compose down -v` (data loss) or fix volume ownership for UID 999                                     |
+| pgAdmin port bind fails                                                       | Port `5050` already in use                                        | Set `PGADMIN_PORT` in `.env.docker` and restart `docker compose $COMPOSE_PGADMIN up -d`                      |
+| pgAdmin cannot connect to DB                                                  | Incorrect host (using localhost) or base stack not running        | Use host `postgres` in pgAdmin server config; ensure base stack is healthy                                   |
 
 **Diagnostic snippets**
 
 ```bash
 docker compose $COMPOSE_APPS ps -a
-docker compose $COMPOSE_APPS logs --tail 200 web api worker
+docker compose $COMPOSE_APPS logs --tail 200 frontend api worker
 docker inspect "$(docker compose $COMPOSE_APPS ps -q api)" --format '{{json .State.Health}}'
 ```
 

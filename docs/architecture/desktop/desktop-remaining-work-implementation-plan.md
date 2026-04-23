@@ -93,7 +93,7 @@
 | -------- | ---------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | P3       | **Shared IPC types package**       | Plan §7.4: extract when multiple consumers exist. | If preload surface grows beyond `agenticDesktop`, add **`packages/desktop-ipc`** (or similar) with **Zod** or TS types shared by main/preload. |
 | P3       | **Secure storage / keychain**      | Some products store refresh tokens natively.      | Only if product requires: use **Electron** safe APIs; **no** secrets in `localStorage` without threat model.                                   |
-| P3       | **Notifications, tray, shortcuts** | Lobe-style polish.                                | Product backlog; each feature behind **feature flags** in `CompanyConfig` or build flags.                                                      |
+| P3       | **Notifications, tray, shortcuts** | Lobe-style polish.                                | Product backlog; each feature behind **feature flags** in `TenantConfig` or build flags.                                                       |
 
 ---
 

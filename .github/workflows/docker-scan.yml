@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [web, api, worker]
+        service: [frontend, api, worker]
     steps:
       - uses: actions/checkout@v4
       - name: Clean local build artifacts (Docker context)
@@ -40,11 +40,11 @@ jobs:
       - name: Build image
         run: |
           case "${{ matrix.service }}" in
-            web)
+            frontend)
               docker build \
                 --build-arg DEPS_IMAGE=agenticverdict/deps:local \
-                -t "agenticverdict/web:scan" \
-                -f apps/web/Dockerfile \
+                -t "agenticverdict/frontend:scan" \
+                -f apps/frontend/Dockerfile \
                 .
               ;;
             api)
@@ -71,7 +71,7 @@ jobs:
           format: sarif
           output: "trivy-${{ matrix.service }}.sarif"
           severity: CRITICAL,HIGH
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3

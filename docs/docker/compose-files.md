@@ -53,11 +53,11 @@ Equivalent via pnpm: `pnpm run db:up` / `pnpm run db:down` (see root `package.js
 
 ## `docker-compose.base-images.yml`
 
-|                  |                                                                                                                                                    |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Purpose**      | Build **shared layers** consumed by app Dockerfiles: workspace deps image and Chromium base for the worker.                                        |
-| **Key services** | `deps-base` → `agenticverdict/deps:local`; `chromium-base` → `agenticverdict/chromium-base:local`.                                                 |
-| **Typical use**  | Run **before** building `web` / `api` / `worker` when using Compose; `docker-compose.apps.yml` sets `DEPS_IMAGE` / `CHROMIUM_IMAGE` to these tags. |
+|                  |                                                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Purpose**      | Build **shared layers** consumed by app Dockerfiles: workspace deps image and Chromium base for the worker.                                             |
+| **Key services** | `deps-base` → `agenticverdict/deps:local`; `chromium-base` → `agenticverdict/chromium-base:local`.                                                      |
+| **Typical use**  | Run **before** building `frontend` / `api` / `worker` when using Compose; `docker-compose.apps.yml` sets `DEPS_IMAGE` / `CHROMIUM_IMAGE` to these tags. |
 
 **Example (repo root):**
 
@@ -71,11 +71,11 @@ See [Getting started](./getting-started.md#common-stacks) and [Build optimizatio
 
 ## `docker-compose.apps.yml`
 
-|                  |                                                                                        |
-| ---------------- | -------------------------------------------------------------------------------------- |
-| **Purpose**      | **Application services:** build and run `web`, `api`, `worker` against the base stack. |
-| **Key services** | `web` (port 3000), `api` (4000), `worker` (no published port).                         |
-| **Depends on**   | Healthy `postgres` and `redis` from `docker-compose.yml`.                              |
+|                  |                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| **Purpose**      | **Application services:** build and run `frontend`, `api`, `worker` against the base stack. |
+| **Key services** | `frontend` (port 3000), `api` (4000), `worker` (no published port).                         |
+| **Depends on**   | Healthy `postgres` and `redis` from `docker-compose.yml`.                                   |
 
 **Example (repo root, production-like `NODE_ENV=production` on apps):**
 
@@ -93,10 +93,10 @@ JWT material: Compose secret from `secrets/jwt_secret.txt` (create with `./scrip
 
 ## `docker-compose.dev.yml`
 
-|                  |                                                                                                                                                                        |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Purpose**      | **Development overlay** for **api** and **worker:** `TARGET_STAGE=development`, `NODE_ENV=development`, mock-friendly env (e.g. `AGENTICVERDICT_USE_MOCK_ADAPTERS=1`). |
-| **Key services** | Overrides `api` and `worker` build args and environment only.                                                                                                          |
+|                  |                                                                                                                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Purpose**      | **Development overlay** for **api** and **worker:** `TARGET_STAGE=development`, `NODE_ENV=development`, runtime-policy mock env (e.g. `AGENTICVERDICT_RUNTIME_ENV=development`, `AGENTICVERDICT_MOCK_MODE=all`). |
+| **Key services** | Overrides `api` and `worker` build args and environment only.                                                                                                                                                    |
 
 **Example (repo root):**
 
@@ -109,16 +109,16 @@ docker compose \
   up -d --build
 ```
 
-**Web** remains a production-standalone image in Docker; use host `pnpm dev` for Next.js with mocks if needed. See [Getting started](./getting-started.md#environment-modes-and-manual-testing).
+**Frontend** remains a production-standalone image in Docker; use host `pnpm dev` for Next.js with mocks if needed. See [Getting started](./getting-started.md#environment-modes-and-manual-testing).
 
 ---
 
 ## `docker-compose.test.yml`
 
-|                  |                                                                                                                                            |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Purpose**      | **Test overlay** for **api** and **worker:** `TARGET_STAGE=test`, `NODE_ENV=test`, mock adapters for deterministic integration-style runs. |
-| **Key services** | Overrides `api` and `worker` only (same pattern as `docker-compose.dev.yml`).                                                              |
+|                  |                                                                                                                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Purpose**      | **Test overlay** for **api** and **worker:** `TARGET_STAGE=test`, `NODE_ENV=test`, `AGENTICVERDICT_RUNTIME_ENV=test` with controlled mock mode for deterministic integration-style runs. |
+| **Key services** | Overrides `api` and `worker` only (same pattern as `docker-compose.dev.yml`).                                                                                                            |
 
 **Example (repo root):**
 
@@ -162,6 +162,37 @@ docker compose \
 ```
 
 Details: [Observability](./observability.md), [Getting started](./getting-started.md#add-observability-metrics-logs-grafana).
+
+---
+
+## `docker-compose.pgadmin.yml`
+
+|                  |                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| **Purpose**      | **Optional local DB admin UI** via `pgAdmin`, composed only when needed.             |
+| **Key services** | `pgadmin`.                                                                           |
+| **Depends on**   | Base Postgres service from `docker-compose.yml` and shared `agenticverdict` network. |
+
+Usage pattern:
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.pgadmin.yml \
+  up -d
+```
+
+Makefile wrappers:
+
+```bash
+make pgadmin-up
+make pgadmin-logs
+make pgadmin-down
+```
+
+Defaults come from `.env.docker` / `.env.docker.example`: `PGADMIN_PORT=5050`, `PGADMIN_DEFAULT_EMAIL`, `PGADMIN_DEFAULT_PASSWORD`.
+
+Implementation details and rationale are in [pgAdmin integration plan](./pgadmin-integration-implementation-plan.md).
 
 ---
 
@@ -210,7 +241,7 @@ One-off host backups (gzip SQL under `./backups`) use `./scripts/backup-postgres
 |                  |                                                                                                                                                                                                    |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Purpose**      | **Example** production-oriented stack: image tags via `REGISTRY` / `VERSION`, stricter env expectations, project name `agenticverdict-prod`. **Not** wired by default; adapt for your environment. |
-| **Key services** | `postgres`, `redis`, `web`, `api`, `worker` (image refs via `REGISTRY` / `VERSION`).                                                                                                               |
+| **Key services** | `postgres`, `redis`, `frontend`, `api`, `worker` (image refs via `REGISTRY` / `VERSION`).                                                                                                          |
 
 **Requirements (typical):** set `POSTGRES_PASSWORD` in the environment; JWT file at repo `secrets/jwt_secret.txt` (path relative to `deploy/` inside the file); seccomp under `deploy/security/`. See [Compose and networking](./compose-and-networking.md#production-example-deploydocker-composeproductionexampleyml) and [Security](./security.md).
 
@@ -249,10 +280,11 @@ See [Security](./security.md).
 | `docker-compose.networks.yml`                       | Shared network (included by base)                    |
 | `docker-compose.yml`                                | Postgres + Redis + volumes                           |
 | `docker-compose.base-images.yml`                    | Build deps + Chromium base images                    |
-| `docker-compose.apps.yml`                           | web, api, worker                                     |
+| `docker-compose.apps.yml`                           | frontend, api, worker                                |
 | `docker-compose.dev.yml`                            | Dev stage + mocks (api/worker)                       |
 | `docker-compose.test.yml`                           | Test stage + mocks (api/worker)                      |
 | `docker-compose.observability.yml`                  | Prometheus, Loki, Promtail, Grafana; Falco (profile) |
+| `docker-compose.pgadmin.yml`                        | Optional local pgAdmin overlay                       |
 | `deploy/docker-compose.dev.override.yml`            | Same role as dev overlay, `deploy/` path             |
 | `deploy/docker-compose.backup.yml`                  | Scheduled Postgres sidecar                           |
 | `deploy/docker-compose.production.example.yml`      | Example prod-style stack                             |

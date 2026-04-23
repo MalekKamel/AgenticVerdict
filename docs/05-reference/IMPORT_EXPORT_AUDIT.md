@@ -241,7 +241,7 @@ Based on frequency analysis across the codebase:
 | Rank | Pattern                                                                              | Count | Status     |
 | ---- | ------------------------------------------------------------------------------------ | ----- | ---------- |
 | 1    | `import type { ConnectorType } from "@agenticverdict/types"`                         | 34    | ✅ Correct |
-| 2    | `import type { CompanyConfig } from "@agenticverdict/config"`                        | 9     | ✅ Correct |
+| 2    | `import type { TenantConfig } from "@agenticverdict/config"`                         | 9     | ✅ Correct |
 | 3    | `import { AgentMockChatModel } from "@agenticverdict/testing"`                       | 7     | ✅ Correct |
 | 4    | `import { marketingVerdictSchema } from "@agenticverdict/types"`                     | 5     | ✅ Correct |
 | 5    | `import { getTenantContext } from "@agenticverdict/core"`                            | 5     | ✅ Correct |

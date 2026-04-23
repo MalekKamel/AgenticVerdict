@@ -19,7 +19,7 @@ const testProjects = [
   "packages/data-connectors",
   "apps/api",
   "apps/worker",
-  "apps/web",
+  "apps/frontend",
 ];
 
 export default defineConfig({
@@ -38,11 +38,7 @@ export default defineConfig({
         "**/node_modules/**",
         "**/dist/**",
         "**/.next/**",
-        // Stubs / shells — covered in later phases; keep coverage focused on exercised foundation code.
-        // data-connectors + agent-runtime are Phase 7 foundation interfaces (included in coverage).
-        "apps/api/**",
-        "apps/worker/**",
-        "apps/web/**",
+        // App-layer coverage is enforced by package-level Vitest configs in apps/*.
         "packages/report-generator/**",
         "packages/types/**",
         // DB runtime wiring — integration tests excluded from unit coverage.

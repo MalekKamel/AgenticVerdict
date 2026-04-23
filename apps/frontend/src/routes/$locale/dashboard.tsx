@@ -1,32 +1,8 @@
-import {
-  createFileRoute,
-  defaultStringifySearch,
-  lazyRouteComponent,
-  redirect,
-} from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-import { fetchProtectedRouteSession } from "@/lib/auth/protected-route-session";
+import { createProtectedBeforeLoad } from "@/lib/auth/route-guards";
 
 export const Route = createFileRoute("/$locale/dashboard")({
-  beforeLoad: async ({ params, location }) => {
-    /** SPA builds: no SSR `createServerFn` session probe; `useRequireAuth` on pages enforces client-side. */
-    if (import.meta.env.MODE === "spa") {
-      return;
-    }
-
-    const result = await fetchProtectedRouteSession();
-    if (result.skipSsrGuard || result.authenticated) {
-      return;
-    }
-
-    const locale = params.locale;
-    const pathAfterLocale = location.pathname.replace(/^\/[^/]+/, "") || "/";
-    const search = defaultStringifySearch(location.search);
-    const redirectTarget = encodeURIComponent(`${pathAfterLocale}${search}`);
-
-    throw redirect({
-      href: `/${locale}/auth/login?redirect=${redirectTarget}`,
-    });
-  },
+  beforeLoad: createProtectedBeforeLoad(),
   component: lazyRouteComponent(() => import("./-dashboard.page")),
 });

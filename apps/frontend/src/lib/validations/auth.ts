@@ -124,6 +124,39 @@ export const registerSchema = z
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
+export const registerStepAccountTypeSchema = z.object({
+  accountType: z.enum(["individual", "business"], {
+    required_error: "auth.register.steps.accountType.errors.required",
+  }),
+});
+
+export const registerStepTenantSchema = z.object({
+  tenantName: z
+    .string({ required_error: "auth.register.steps.tenant.errors.tenantNameRequired" })
+    .min(2, { message: "auth.register.steps.tenant.errors.tenantNameRequired" })
+    .max(120, { message: "auth.register.steps.tenant.errors.tenantNameTooLong" })
+    .trim(),
+  tenantWebsite: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (value) => !value || /^https?:\/\/.+/i.test(value),
+      "auth.register.steps.tenant.errors.tenantWebsiteInvalid",
+    ),
+  tenantSize: z.enum(["1-10", "11-50", "51-250", "251+"], {
+    required_error: "auth.register.steps.tenant.errors.tenantSizeRequired",
+  }),
+});
+
+export const registerStepUserAccountSchema = registerSchema;
+
+export type RegisterStepAccountTypeData = z.infer<typeof registerStepAccountTypeSchema>;
+export type RegisterStepTenantData = z.infer<typeof registerStepTenantSchema>;
+export type RegisterMultiStepData = RegisterStepAccountTypeData &
+  RegisterStepTenantData &
+  RegisterFormData;
+
 /**
  * Forgot password form schema
  *

@@ -429,7 +429,7 @@ AgenticVerdict currently uses:
 ```
 tests/
 ├── fixtures/
-│   ├── companies/
+│   ├── tenants/
 │   │   ├── test-tenant-001.json
 │   │   ├── test-tenant-arabic.json
 │   │   └── test-tenant-multilingual.json
@@ -438,7 +438,7 @@ tests/
 └── scenarios/
     ├── R01-pdf-generation-en-ltr/
     │   ├── fixtures/
-    │   │   ├── company-config.json
+    │   │   ├── tenant-config.json
     │   │   └── report-data.json
     │   └── validation/
     │       └── expected-output.json
@@ -453,7 +453,7 @@ tests/
 
 **Strengths:**
 
-- ✅ Clear separation between company fixtures and scenario fixtures
+- ✅ Clear separation between tenant fixtures and scenario fixtures
 - ✅ Scenario-based organization aligns with testing methodology
 - ✅ Validation expectations stored alongside fixtures
 
@@ -635,8 +635,8 @@ export class FixtureVersionManager {
     "schema": "tenant-config",
     "migrations": ["add-localization-defaults", "add-feature-flags"]
   },
-  "companyId": "...",
-  "companyName": "...",
+  "tenantId": "...",
+  "tenantName": "...",
   "localization": { ... }
 }
 ```
@@ -767,19 +767,19 @@ Generate realistic tenant configurations:
 ```typescript
 // tests/factories/tenant-factory.ts
 import { faker } from "@faker-js/faker";
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 
 export class TenantFactory {
   /**
    * Generate a tenant with realistic defaults
    */
-  static build(overrides: Partial<CompanyConfig> = {}): CompanyConfig {
+  static build(overrides: Partial<TenantConfig> = {}): TenantConfig {
     const locale = faker.helpers.arrayElement(["en", "ar", "fr"]);
     const region = locale === "ar" ? "SA" : locale === "fr" ? "FR" : "US";
 
     return {
-      companyId: faker.string.uuid(),
-      companyName: faker.company.name(),
+      tenantId: faker.string.uuid(),
+      tenantName: faker.tenant.name(),
       localization: {
         language: locale,
         region,
@@ -804,11 +804,11 @@ export class TenantFactory {
   /**
    * Generate multiple tenants with variety
    */
-  static buildBatch(count: number): CompanyConfig[] {
+  static buildBatch(count: number): TenantConfig[] {
     return Array.from({ length: count }, (_, i) =>
       this.build({
         // Ensure unique names
-        companyName: `Test Company ${i + 1}`,
+        tenantName: `Test Tenant ${i + 1}`,
       }),
     );
   }
@@ -816,7 +816,7 @@ export class TenantFactory {
   /**
    * Generate an Arabic-speaking tenant (for RTL testing)
    */
-  static buildArabicTenant(overrides: Partial<CompanyConfig> = {}): CompanyConfig {
+  static buildArabicTenant(overrides: Partial<TenantConfig> = {}): TenantConfig {
     return this.build({
       localization: {
         language: "ar",
@@ -824,7 +824,7 @@ export class TenantFactory {
         timezone: "Asia/Riyadh",
         currency: "SAR",
       },
-      companyName: "شركة اختبار", // "Test Company" in Arabic
+      tenantName: "شركة اختبار", // "Test Tenant" in Arabic
       ...overrides,
     });
   }
@@ -832,9 +832,9 @@ export class TenantFactory {
   /**
    * Generate an enterprise tenant
    */
-  static buildEnterpriseTenant(overrides: Partial<CompanyConfig> = {}): CompanyConfig {
+  static buildEnterpriseTenant(overrides: Partial<TenantConfig> = {}): TenantConfig {
     return this.build({
-      companyName: `${faker.company.name()} (Enterprise)`,
+      tenantName: `${faker.tenant.name()} (Enterprise)`,
       features: {
         enableInsights: true,
         enableVerdict: true,
@@ -900,7 +900,7 @@ export class MetaDataFactory {
 
     return {
       id: `act_${faker.string.alphanumeric({ length: 16 })}`,
-      name: faker.company.catchPhrase() + " Campaign",
+      name: faker.tenant.catchPhrase() + " Campaign",
       status: faker.helpers.arrayElement(["active", "paused", "completed"]),
       daily_budget: faker.number.int({ min: 100, max: 10000 }),
       lifetime_budget: faker.number.int({ min: 5000, max: 500000 }),
@@ -1033,7 +1033,7 @@ export class ReportModelBuilder {
   private model: Partial<ReportModel> = {
     reportId: faker.string.uuid(),
     generatedAt: new Date().toISOString(),
-    companyInfo: {},
+    tenantInfo: {},
     platformData: [],
     verdictScorecard: undefined,
     insightHighlights: [],
@@ -1044,8 +1044,8 @@ export class ReportModelBuilder {
     return this;
   }
 
-  withCompanyInfo(info: CompanyInfo): this {
-    this.model.companyInfo = info;
+  withTenantInfo(info: TenantInfo): this {
+    this.model.tenantInfo = info;
     return this;
   }
 
@@ -1070,8 +1070,8 @@ export class ReportModelBuilder {
   }
 
   build(): ReportModel {
-    if (!this.model.companyInfo || !this.model.platformData) {
-      throw new Error("ReportModel requires companyInfo and platformData");
+    if (!this.model.tenantInfo || !this.model.platformData) {
+      throw new Error("ReportModel requires tenantInfo and platformData");
     }
     return this.model as ReportModel;
   }
@@ -1080,7 +1080,7 @@ export class ReportModelBuilder {
 // Usage in tests:
 const report = new ReportModelBuilder()
   .withReportId("test-report-001")
-  .withCompanyInfo(TenantFactory.build())
+  .withTenantInfo(TenantFactory.build())
   .withPlatformData([MetaDataFactory.buildCampaign(), GA4DataFactory.buildSessionData()])
   .withVerdict(VerdictFactory.buildVerdict())
   .withInsights(InsightFactory.buildInsights(5))
@@ -1100,8 +1100,8 @@ const report = new ReportModelBuilder()
 
 AgenticVerdict has a basic seed script in `/packages/database/scripts/seed.ts` that:
 
-- Reads company JSON files from `configs/companies/`
-- Inserts or updates companies in the database
+- Reads tenant JSON files from `configs/tenants/`
+- Inserts or updates tenants in the database
 - Handles slug generation
 - Supports idempotent runs
 
@@ -1116,7 +1116,7 @@ AgenticVerdict has a basic seed script in `/packages/database/scripts/seed.ts` t
 - ❌ No support for related data (platform credentials, templates, etc.)
 - ❌ No test-specific seeds
 - ❌ No seed composition
-- ❌ Limited to companies table
+- ❌ Limited to tenants table
 
 ### 4.2 Enhanced Database Seeding
 
@@ -1128,11 +1128,11 @@ Separate base seeds from test-specific seeds:
 packages/database/
 ├── seeds/
 │   ├── base/
-│   │   ├── companies.seed.ts
+│   │   ├── tenants.seed.ts
 │   │   ├── templates.seed.ts
 │   │   └── permissions.seed.ts
 │   ├── test/
-│   │   ├── test-companies.seed.ts
+│   │   ├── test-tenants.seed.ts
 │   │   ├── test-platform-credentials.seed.ts
 │   │   └── test-reports.seed.ts
 │   └── scenarios/
@@ -1146,31 +1146,31 @@ packages/database/
 Create test-specific seeds with deterministic data:
 
 ```typescript
-// packages/database/seeds/test/test-companies.seed.ts
+// packages/database/seeds/test/test-tenants.seed.ts
 import { faker } from "@faker-js/faker";
 import { db } from "../src/db";
-import { companies } from "../src/schema/companies";
+import { tenants } from "../src/schema/tenants";
 
-export async function seedTestCompanies(count: number = 10) {
-  const testCompanies = [];
+export async function seedTestTenants(count: number = 10) {
+  const testTenants = [];
 
   for (let i = 0; i < count; i++) {
-    const companyId = `test-tenant-${String(i + 1).padStart(3, "0")}`;
-    const companyName = `Test Company ${i + 1}`;
-    const slug = `test-company-${i + 1}`;
+    const tenantId = `test-tenant-${String(i + 1).padStart(3, "0")}`;
+    const tenantName = `Test Tenant ${i + 1}`;
+    const slug = `test-tenant-${i + 1}`;
 
-    testCompanies.push({
-      id: companyId,
-      name: companyName,
+    testTenants.push({
+      id: tenantId,
+      name: tenantName,
       slug,
       createdAt: new Date("2026-01-01T00:00:00Z"), // Fixed date for determinism
       updatedAt: new Date("2026-01-01T00:00:00Z"),
     });
   }
 
-  await db.insert(companies).values(testCompanies).onConflictDoNothing();
+  await db.insert(tenants).values(testTenants).onConflictDoNothing();
 
-  return testCompanies;
+  return testTenants;
 }
 
 export async function seedTestTenant(type: "default" | "arabic" | "multilingual") {
@@ -1195,7 +1195,7 @@ export async function seedTestTenant(type: "default" | "arabic" | "multilingual"
   const config = configs[type];
 
   await db
-    .insert(companies)
+    .insert(tenants)
     .values({
       id: config.id,
       name: config.name,
@@ -1215,7 +1215,7 @@ Combine multiple seeds for complete test scenarios:
 
 ```typescript
 // packages/database/seeds/scenarios/multi-platform-report.seed.ts
-import { seedTestTenant } from "../test/test-companies.seed";
+import { seedTestTenant } from "../test/test-tenants.seed";
 import { seedConnectorCredentials } from "../test/test-platform-credentials.seed";
 import { seedReportTemplates } from "../base/templates.seed";
 
@@ -1256,7 +1256,7 @@ export async function cleanupTestDatabase() {
   await db.execute(sql`DELETE FROM reports WHERE tenant_id LIKE 'test-%'`);
   await db.execute(sql`DELETE FROM platform_credentials WHERE tenant_id LIKE 'test-%'`);
   await db.execute(sql`DELETE FROM templates WHERE tenant_id LIKE 'test-%'`);
-  await db.execute(sql`DELETE FROM companies WHERE id LIKE 'test-%'`);
+  await db.execute(sql`DELETE FROM tenants WHERE id LIKE 'test-%'`);
 }
 
 // Usage in test setup:
@@ -1281,7 +1281,7 @@ Use tenant IDs for isolation:
 export async function seedIsolatedTenant(suffix: string) {
   const tenantId = `test-tenant-${suffix}-${Date.now()}`;
 
-  await db.insert(companies).values({
+  await db.insert(tenants).values({
     id: tenantId,
     name: `Isolated Test Tenant ${suffix}`,
     slug: `isolated-test-tenant-${suffix}`,
@@ -1318,7 +1318,7 @@ export class SeedTransaction {
 
   async seed(data: any) {
     // Run seed within transaction
-    await seedTestCompanies(data.count, this.client);
+    await seedTestTenants(data.count, this.client);
   }
 
   async commit() {
@@ -1825,7 +1825,7 @@ export class PresetBuilders {
   static completeReport() {
     return new ReportModelBuilder()
       .withReportId("test-report-complete")
-      .withCompanyInfo(TenantFactory.build())
+      .withTenantInfo(TenantFactory.build())
       .withVerdict(this.positiveVerdict().build())
       .withPlatformData([MetaDataFactory.buildCampaign(), GA4DataFactory.buildSessionData()])
       .withInsights(InsightFactory.buildInsights(5))
@@ -2046,7 +2046,7 @@ describe("Multi-Platform Report Generation", () => {
 
   it("generates report with all platforms", async () => {
     // Arrange: Use preset builder for complete report
-    const report = PresetBuilders.completeReport().withCompanyInfo(TenantFactory.build()).build();
+    const report = PresetBuilders.completeReport().withTenantInfo(TenantFactory.build()).build();
 
     // Act: Generate report
     const generated = await generateReport(report);
@@ -2087,7 +2087,7 @@ describe("Multi-Platform Report Generation", () => {
     const report = await generateReport(tenantConfig);
 
     // Assert: Config applied correctly
-    expect(report.companyInfo).toMatchObject({
+    expect(report.tenantInfo).toMatchObject({
       localization: {
         language: "en",
         // ... merged properties

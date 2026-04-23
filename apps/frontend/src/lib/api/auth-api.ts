@@ -27,6 +27,8 @@
 import type {
   LoginInput,
   RegisterInput,
+  ResendEmailVerificationInput,
+  ResendEmailVerificationOutput,
   VerifyEmailInput,
   RequestPasswordResetInput,
   ConfirmPasswordResetInput,
@@ -36,19 +38,84 @@ import type {
 import type { AppRouter } from "@agenticverdict/api/trpc";
 import type { TRPCClientError } from "@trpc/client";
 
-import { trpcClient } from "./trpc-client";
+import { isFrontendAuthApiMockEnabled } from "@/lib/auth/frontend-runtime-policy";
+import { mergePreSessionTenantInput } from "@/lib/tenant/merge-pre-session-tenant-input";
+import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
+
+import { trpcClient, trpcClientWithoutTenantHeader } from "./trpc-client";
 
 /** Dev-only in-memory session when {@link isAuthApiMockEnabled} is true. */
 let mockBrowserSession: { user: AuthUserData; sessionExpiresAt: string } | null = null;
 
 const MOCK_DEFAULT_TENANT_ID = "11111111-1111-4111-8111-111111111111";
+const MOCK_DEFAULT_VERIFICATION_CODE = "123456";
+const MOCK_VERIFICATION_CODE_EXPIRY_MS = 15 * 60 * 1000;
+const MOCK_VERIFICATION_MAX_ATTEMPTS = 5;
+const MOCK_VERIFICATION_LOCK_MS = 10 * 60 * 1000;
+const MOCK_VERIFICATION_RESEND_COOLDOWN_SECONDS = 60;
 
-/** When true, auth flows use the in-browser mock instead of the Fastify tRPC API. */
-function isAuthApiMockEnabled(): boolean {
-  if (import.meta.env.PROD) {
-    return false;
+type MockVerificationState = {
+  code: string;
+  expiresAtMs: number;
+  attempts: number;
+  lockedUntilMs: number | null;
+  resendCooldownUntilSeconds: number;
+  verified: boolean;
+};
+
+const mockVerificationStateByKey = new Map<string, MockVerificationState>();
+
+function resolveMockTenantId(inputTenantId?: string): string {
+  return isTenantUuid(inputTenantId) ? inputTenantId : MOCK_DEFAULT_TENANT_ID;
+}
+
+function buildMockVerificationKey(email: string, tenantId?: string): string {
+  return `${resolveMockTenantId(tenantId)}:${email.trim().toLowerCase()}`;
+}
+
+function upsertMockVerificationState(
+  key: string,
+  options?: {
+    resetAttempts?: boolean;
+    forceCode?: string;
+    overrideCooldownUntilSeconds?: number;
+  },
+): MockVerificationState {
+  const nowMs = Date.now();
+  const nowSeconds = Math.floor(nowMs / 1000);
+  const existing = mockVerificationStateByKey.get(key);
+  const state: MockVerificationState = {
+    code: options?.forceCode ?? existing?.code ?? MOCK_DEFAULT_VERIFICATION_CODE,
+    expiresAtMs: nowMs + MOCK_VERIFICATION_CODE_EXPIRY_MS,
+    attempts: options?.resetAttempts ? 0 : (existing?.attempts ?? 0),
+    lockedUntilMs: options?.resetAttempts ? null : (existing?.lockedUntilMs ?? null),
+    resendCooldownUntilSeconds:
+      options?.overrideCooldownUntilSeconds ??
+      existing?.resendCooldownUntilSeconds ??
+      nowSeconds + MOCK_VERIFICATION_RESEND_COOLDOWN_SECONDS,
+    verified: false,
+  };
+  mockVerificationStateByKey.set(key, state);
+  return state;
+}
+
+function getFreshMockVerificationState(key: string): MockVerificationState {
+  const current = mockVerificationStateByKey.get(key);
+  if (!current) {
+    return upsertMockVerificationState(key, {
+      resetAttempts: true,
+      forceCode: MOCK_DEFAULT_VERIFICATION_CODE,
+    });
   }
-  return import.meta.env.VITE_PUBLIC_AUTH_API_MOCK !== "false";
+
+  if (!current.verified && current.expiresAtMs <= Date.now()) {
+    return upsertMockVerificationState(key, {
+      resetAttempts: true,
+      forceCode: MOCK_DEFAULT_VERIFICATION_CODE,
+    });
+  }
+
+  return current;
 }
 
 /**
@@ -117,7 +184,14 @@ function extractErrorCode(error: TRPCClientError<AppRouter>): AuthErrorCode {
   if (error.message === "EMAIL_NOT_VERIFIED") {
     return "EMAIL_NOT_VERIFIED";
   }
-  const errorData = error.data as { httpStatus?: number; code?: string } | undefined;
+  const errorData = error.data as
+    | { httpStatus?: number; code?: string; tenantSecurityCode?: string }
+    | undefined;
+
+  const tenantCode = errorData?.tenantSecurityCode;
+  if (tenantCode === "TENANT_CONTEXT_REQUIRED" || tenantCode === "TENANT_MISMATCH") {
+    return tenantCode;
+  }
 
   // Handle HTTP status codes
   if (errorData?.httpStatus) {
@@ -158,6 +232,8 @@ function extractErrorCode(error: TRPCClientError<AppRouter>): AuthErrorCode {
         "WEAK_PASSWORD",
         "GONE",
         "INTERNAL_ERROR",
+        "TENANT_CONTEXT_REQUIRED",
+        "TENANT_MISMATCH",
       ].includes(upperCode)
     ) {
       return upperCode;
@@ -184,14 +260,9 @@ function extractErrorCode(error: TRPCClientError<AppRouter>): AuthErrorCode {
 
 function extractErrorMessage(error: TRPCClientError<AppRouter>): string {
   const code = extractErrorCode(error);
+  const errorData = error.data as { message?: string; code?: string } | undefined;
 
-  // Check for custom error message from backend
-  const errorData = error.data as { message?: string } | undefined;
-  if (errorData?.message) {
-    return errorData.message;
-  }
-
-  // Fallback to code-based messages
+  // Fallback map used for unknown/raw backend messages.
   const messages: Record<AuthErrorCode, string> = {
     UNAUTHORIZED: "auth.errors.invalidCredentials",
     FORBIDDEN: "auth.errors.forbidden",
@@ -204,7 +275,44 @@ function extractErrorMessage(error: TRPCClientError<AppRouter>): string {
     GONE: "auth.errors.tokenExpired",
     INTERNAL_ERROR: "auth.errors.internalError",
     NETWORK_ERROR: "auth.errors.networkError",
+    TENANT_CONTEXT_REQUIRED: "auth.errors.tenantContextRequired",
+    TENANT_MISMATCH: "auth.errors.tenantMismatch",
   };
+
+  const rawMessage = errorData?.message ?? error.message;
+  if (rawMessage.startsWith("auth.")) {
+    return rawMessage;
+  }
+
+  const normalizedRaw = rawMessage.toLowerCase();
+  const rawCode = (errorData?.code ?? "").toLowerCase();
+  if (
+    normalizedRaw.includes("account_locked") ||
+    normalizedRaw.includes("account locked") ||
+    rawCode.includes("account_locked")
+  ) {
+    return "auth.errors.accountLocked";
+  }
+  if (
+    normalizedRaw.includes("too_many_attempts") ||
+    normalizedRaw.includes("too many attempts") ||
+    rawCode.includes("too_many_attempts")
+  ) {
+    return "auth.errors.tooManyAttempts";
+  }
+  if (
+    normalizedRaw.includes("already exists") ||
+    normalizedRaw.includes("email already exists") ||
+    rawCode.includes("already_exists")
+  ) {
+    return "auth.register.errors.email.alreadyExists";
+  }
+
+  const upperRaw = rawMessage.toUpperCase();
+  const codeFromMessage = upperRaw as AuthErrorCode;
+  if (codeFromMessage in messages) {
+    return messages[codeFromMessage];
+  }
 
   return messages[code];
 }
@@ -272,15 +380,17 @@ export const authApi = {
       sessionExpiresAt: string;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
+    if (isFrontendAuthApiMockEnabled()) {
       const sessionExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      const merged = mergePreSessionTenantInput(input);
+      const mockTenant = isTenantUuid(merged.tenantId) ? merged.tenantId : MOCK_DEFAULT_TENANT_ID;
       const user: AuthUserData = {
         id: "mock-user-id",
         email: input.email,
         firstName: "Mock",
         lastName: "User",
         emailVerified: true,
-        tenantId: MOCK_DEFAULT_TENANT_ID,
+        tenantId: mockTenant,
       };
       mockBrowserSession = { user, sessionExpiresAt };
       return wrapMutation(
@@ -294,7 +404,7 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.login.mutate(input).then((out) => ({
+      trpcClient.auth.login.mutate(mergePreSessionTenantInput(input)).then((out) => ({
         data: {
           user: out.user,
           sessionExpiresAt: out.sessionExpiresAt,
@@ -334,13 +444,17 @@ export const authApi = {
       userId: string;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
-      void input;
+    if (isFrontendAuthApiMockEnabled()) {
+      const key = buildMockVerificationKey(input.email, input.tenantId);
+      upsertMockVerificationState(key, {
+        resetAttempts: true,
+        forceCode: MOCK_DEFAULT_VERIFICATION_CODE,
+      });
       return wrapMutation(
         Promise.resolve({
           data: {
             success: true,
-            message: "Verification email sent",
+            message: "Verification code sent",
             userId: "new-user-id",
           },
         }),
@@ -348,7 +462,7 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.register.mutate(input).then((out) => ({
+      trpcClient.auth.register.mutate(mergePreSessionTenantInput(input)).then((out) => ({
         data: {
           success: out.success,
           message: out.message,
@@ -380,7 +494,7 @@ export const authApi = {
       message: string;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
+    if (isFrontendAuthApiMockEnabled()) {
       mockBrowserSession = null;
       return wrapMutation(
         Promise.resolve({
@@ -431,7 +545,7 @@ export const authApi = {
       sessionExpiresAt: string | null;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
+    if (isFrontendAuthApiMockEnabled()) {
       return wrapMutation(
         Promise.resolve({
           data: {
@@ -443,7 +557,7 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.getSession.query().then((data) => ({
+      trpcClientWithoutTenantHeader.auth.getSession.query().then((data) => ({
         data: {
           user: data.user,
           sessionExpiresAt: data.sessionExpiresAt,
@@ -455,18 +569,16 @@ export const authApi = {
   /**
    * Verify email address
    *
-   * Verifies a user's email using a token from the verification email.
+   * Verifies a user's email using the one-time verification code.
    *
-   * @param input - Verification token
+   * @param input - Verification email + code payload
    * @returns Success message
    *
    * @example
    * ```tsx
    * // In verify-email route loader
    * const searchParams = new URLSearchParams(window.location.search)
-   * const token = searchParams.get('token') || ''
-   *
-   * const result = await authApi.verifyEmail({ token })
+   * const result = await authApi.verifyEmail({ email: "user@example.com", code: "123456" })
    *
    * if (result.success) {
    *   console.log('Email verified successfully')
@@ -479,10 +591,60 @@ export const authApi = {
     AuthApiResponse<{
       success: boolean;
       message: string;
+      attemptsRemaining?: number;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
-      void input;
+    if (isFrontendAuthApiMockEnabled()) {
+      const key = buildMockVerificationKey(input.email, input.tenantId);
+      const nowMs = Date.now();
+      const state = getFreshMockVerificationState(key);
+
+      if (state.lockedUntilMs && state.lockedUntilMs > nowMs) {
+        return {
+          success: false,
+          error: {
+            code: "RATE_LIMIT_EXCEEDED",
+            message: "auth.verifyEmail.errors.tooManyAttempts",
+            details: { retryAfterSeconds: Math.ceil((state.lockedUntilMs - nowMs) / 1000) },
+          },
+        };
+      }
+
+      if (state.expiresAtMs <= nowMs) {
+        return {
+          success: false,
+          error: {
+            code: "GONE",
+            message: "auth.verifyEmail.errors.expiredCode",
+          },
+        };
+      }
+
+      if (input.code !== state.code) {
+        const attempts = state.attempts + 1;
+        const lockReached = attempts >= MOCK_VERIFICATION_MAX_ATTEMPTS;
+        mockVerificationStateByKey.set(key, {
+          ...state,
+          attempts,
+          lockedUntilMs: lockReached ? nowMs + MOCK_VERIFICATION_LOCK_MS : null,
+        });
+        return {
+          success: false,
+          error: {
+            code: "BAD_REQUEST",
+            message: "auth.verifyEmail.errors.invalidCode",
+            details: {
+              attemptsRemaining: Math.max(0, MOCK_VERIFICATION_MAX_ATTEMPTS - attempts),
+            },
+          },
+        };
+      }
+      mockVerificationStateByKey.set(key, {
+        ...state,
+        verified: true,
+        attempts: 0,
+        lockedUntilMs: null,
+      });
       return wrapMutation(
         Promise.resolve({
           data: {
@@ -494,12 +656,60 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.verifyEmail.mutate(input).then((out) => ({
+      trpcClient.auth.verifyEmail.mutate(mergePreSessionTenantInput(input)).then((out) => ({
         data: {
           success: out.success,
           message: out.message,
+          attemptsRemaining: out.attemptsRemaining,
         },
       })),
+    );
+  },
+
+  resendEmailVerification: async (
+    input: ResendEmailVerificationInput,
+  ): Promise<AuthApiResponse<ResendEmailVerificationOutput>> => {
+    if (isFrontendAuthApiMockEnabled()) {
+      const key = buildMockVerificationKey(input.email, input.tenantId);
+      const nowMs = Date.now();
+      const nowSeconds = Math.floor(nowMs / 1000);
+      const state = mockVerificationStateByKey.get(key);
+      if (state?.resendCooldownUntilSeconds && state.resendCooldownUntilSeconds > nowSeconds) {
+        return {
+          success: false,
+          error: {
+            code: "RATE_LIMIT_EXCEEDED",
+            message: "auth.errors.rateLimitExceeded",
+            details: { retryAfterSeconds: state.resendCooldownUntilSeconds - nowSeconds },
+          },
+        };
+      }
+      upsertMockVerificationState(key, {
+        resetAttempts: true,
+        forceCode: MOCK_DEFAULT_VERIFICATION_CODE,
+        overrideCooldownUntilSeconds: nowSeconds + MOCK_VERIFICATION_RESEND_COOLDOWN_SECONDS,
+      });
+      return wrapMutation(
+        Promise.resolve({
+          data: {
+            success: true,
+            message: "Verification code resent",
+            retryAfterSeconds: MOCK_VERIFICATION_RESEND_COOLDOWN_SECONDS,
+          },
+        }),
+      );
+    }
+
+    return wrapMutation(
+      trpcClient.auth.resendEmailVerification
+        .mutate(mergePreSessionTenantInput(input))
+        .then((out) => ({
+          data: {
+            success: out.success,
+            message: out.message,
+            retryAfterSeconds: out.retryAfterSeconds,
+          },
+        })),
     );
   },
 
@@ -530,7 +740,7 @@ export const authApi = {
       message: string;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
+    if (isFrontendAuthApiMockEnabled()) {
       void input;
       return wrapMutation(
         Promise.resolve({
@@ -543,12 +753,14 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.requestPasswordReset.mutate(input).then((out) => ({
-        data: {
-          success: out.success,
-          message: out.message,
-        },
-      })),
+      trpcClient.auth.requestPasswordReset
+        .mutate(mergePreSessionTenantInput(input))
+        .then((out) => ({
+          data: {
+            success: out.success,
+            message: out.message,
+          },
+        })),
     );
   },
 
@@ -583,7 +795,7 @@ export const authApi = {
       message: string;
     }>
   > => {
-    if (isAuthApiMockEnabled()) {
+    if (isFrontendAuthApiMockEnabled()) {
       void input;
       return wrapMutation(
         Promise.resolve({
@@ -596,12 +808,14 @@ export const authApi = {
     }
 
     return wrapMutation(
-      trpcClient.auth.confirmPasswordReset.mutate(input).then((out) => ({
-        data: {
-          success: out.success,
-          message: out.message,
-        },
-      })),
+      trpcClient.auth.confirmPasswordReset
+        .mutate(mergePreSessionTenantInput(input))
+        .then((out) => ({
+          data: {
+            success: out.success,
+            message: out.message,
+          },
+        })),
     );
   },
 };

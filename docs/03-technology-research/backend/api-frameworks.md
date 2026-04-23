@@ -57,7 +57,7 @@
 - **Bundle Size:** ~50KB minified
 - **Maintainability:** Active, frequent releases
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - Vercel (creators)
 - Notion
@@ -135,7 +135,7 @@
 - **Bundle Size:** ~200KB (server + client)
 - **GraphQL Yoga:** ~8k stars, lighter alternative
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - Facebook (creators)
 - GitHub (v4 API)
@@ -239,9 +239,9 @@
 - **Bundle Size:** ~150KB
 - **Age:** Mature, stable, minimal changes
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
-- Almost every major Node.js company historically
+- Almost every major Node.js tenant historically
 - IBM, Uber (historically), PayPal (historically)
 - Still heavily used in legacy systems
 
@@ -293,7 +293,7 @@
 - **Bundle Size:** ~180KB (with dependencies)
 - **Performance:** 2-3x faster than Express
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - NearForm (creators)
 - Platform.sh
@@ -369,7 +369,7 @@
 - **Bundle Size:** ~13KB (tiny!)
 - **Performance:** Fastest for edge runtimes
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - Growing adoption in serverless/edge space
 - Cloudflare Workers users
@@ -446,7 +446,7 @@
 - **Bundle Size:** ~30KB
 - **Performance:** Claims to be fastest
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - Early adopters in Bun ecosystem
 - Growing community
@@ -501,7 +501,7 @@
 - **Bundle Size:** Protocol buffers are very efficient
 - **Performance:** Fastest for service-to-service communication
 
-**Major Companies Using:**
+**Major Tenants Using:**
 
 - Google (creators)
 - Netflix (massive gRPC adoption)

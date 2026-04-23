@@ -52,7 +52,7 @@ This work **complements** compiler-driven `build-constants` (see `changelog/2026
   - `featureFlags`, `tenantFeatureFlags` (Drizzle)
 
 - **`migrations/0003_feature_flags.sql`**
-  - `feature_flags`, `tenant_feature_flags`, indexes, FKs to `companies` / `feature_flags`
+  - `feature_flags`, `tenant_feature_flags`, indexes, FKs to `tenants` / `feature_flags`
 
 - **`migrations/meta/_journal.json`** (+ **`0003_snapshot.json`**)
   - Drizzle journal entry for the new migration

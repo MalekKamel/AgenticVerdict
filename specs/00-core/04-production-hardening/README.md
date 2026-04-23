@@ -21,7 +21,7 @@ Phase 04 Production Hardening transformed AgenticVerdict from a development envi
 - **Playwright** for E2E testing with critical path coverage
 - **Multi-level test organization**:
   - Unit tests (646+ test files across packages/apps)
-  - Integration tests (Phase 01 platform integration, company config cross-package)
+  - Integration tests (Phase 01 platform integration, tenant config cross-package)
   - Scenario orchestration tests (R01-R12)
   - Load and performance testing
   - Chaos engineering tests
@@ -166,10 +166,10 @@ Phase 04 Production Hardening transformed AgenticVerdict from a development envi
   - `feature_flags` and `tenant_feature_flags` tables
   - `createFeatureFlagService(db)` from `@agenticverdict/database`
   - Kept out of `config` package to avoid circular dependencies
-- **Tenant Configuration** (`CompanyConfig`):
+- **Tenant Configuration** (`TenantConfig`):
   - Multi-tenant business rules injected at runtime
   - Localization, AI models, feature toggles
-  - No hardcoded company logic
+  - No hardcoded tenant logic
 
 **Why Layered Configuration**:
 - Separates concerns (build vs runtime vs tenant)

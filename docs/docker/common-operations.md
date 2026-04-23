@@ -25,6 +25,8 @@ The repository root **Makefile** wraps the commands below. Copy **`.env.docker.e
 | `make logs`                                  | Alias for dev stack log follow                               | `make dev-logs`                                                                                                                                                         |
 | `make ps` / `make ps-apps`                   | `docker compose ps` for dev or prod-like stack               | Repeat the same `-f` list as your `up`                                                                                                                                  |
 | `make apps-logs` / `make ps-apps`            | Prod-like stack                                              | `docker-compose.yml` + `docker-compose.apps.yml` only                                                                                                                   |
+| `make pgadmin-up` / `make pgadmin-down`      | Optional pgAdmin overlay on base stack                       | `docker-compose.yml` + `docker-compose.pgadmin.yml`                                                                                                                     |
+| `make pgadmin-logs`                          | Follow optional pgAdmin logs                                 | Same `-f` list as pgadmin `up`, then `logs -f pgadmin`                                                                                                                  |
 | `make infra-logs`                            | Postgres + Redis logs                                        | `docker compose -f docker-compose.yml logs -f`                                                                                                                          |
 | `make db-dump`                               | Postgres-only backup script                                  | `./scripts/backup-postgres.sh`                                                                                                                                          |
 | `make db-reset`                              | Destructive DB reset (local)                                 | `pnpm --filter @agenticverdict/database db:reset`                                                                                                                       |
@@ -77,6 +79,20 @@ docker compose \
   -f docker-compose.apps.yml \
   -f docker-compose.dev.yml \
   down
+```
+
+**Optional pgAdmin overlay:**
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.pgadmin.yml \
+  up -d
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.pgadmin.yml \
+  logs -f pgadmin
 ```
 
 ## Logs, status, and single-service rebuilds

@@ -35,9 +35,13 @@ Optional smoke tests (`LIVE_ADAPTER_VALIDATION=1`): `META_LIVE_ACCESS_TOKEN`, `M
 
 ## Mock / safety
 
-| Variable                           | Purpose                                                                 |
-| ---------------------------------- | ----------------------------------------------------------------------- |
-| `AGENTICVERDICT_USE_MOCK_ADAPTERS` | `1` enables mocks in non-production only; blocked in production builds. |
+| Variable                             | Purpose                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------- |
+| `AGENTICVERDICT_RUNTIME_ENV`         | Runtime policy axis: `development \| test \| staging \| production`.         |
+| `AGENTICVERDICT_MOCK_MODE`           | Mock policy mode: `off \| selective \| all` (production-like must be `off`). |
+| `AGENTICVERDICT_MOCK_CONNECTORS`     | Comma-separated connector IDs used when mode is `selective`.                 |
+| `AGENTICVERDICT_STUB_REPORT_FORMATS` | `0 \| 1` report-format stubs toggle (forbidden in staging/production).       |
+| `AGENTICVERDICT_STUB_EMAIL_DELIVERY` | `0 \| 1` email delivery stubs toggle (forbidden in staging/production).      |
 
 ## Generating this list in CI
 

@@ -100,7 +100,7 @@ All authentication-related pages (login, registration, password reset) need a co
 
 **Acceptance Scenarios**:
 
-1. **Given** a user visits any auth page, **When** the page loads, **Then** they should see a centered card layout with the company logo, proper spacing, and no navigation elements
+1. **Given** a user visits any auth page, **When** the page loads, **Then** they should see a centered card layout with the tenant logo, proper spacing, and no navigation elements
 2. **Given** a user visits an auth page on mobile, **When** the page loads, **Then** the layout should be responsive with proper padding and readable font sizes
 3. **Given** a user visits an auth page with Arabic language, **When** the page loads, **Then** the layout should be RTL with proper mirroring of all elements
 4. **Given** a user visits an auth page, **When** they view the page, **Then** the design should match the brand guidelines with consistent colors, typography, and spacing

@@ -8,6 +8,7 @@ import { type ReactNode, useState } from "react";
 import { DesktopDeepLinkBridge } from "@/components/desktop/DesktopDeepLinkBridge";
 import { TenantBrandedThemeProvider } from "@/components/providers/TenantBrandedThemeProvider";
 import { WebVitalsReporter } from "@/components/observability/WebVitalsReporter";
+import { getCspNonce } from "@web-csp-nonce";
 import { trpc, trpcClient } from "@/lib/api/trpc-client";
 import { getQueryClient } from "@/lib/query-client";
 import { SessionProvider } from "@/providers/SessionProvider";
@@ -19,6 +20,7 @@ import { TenantProvider } from "@/providers/TenantProvider";
  */
 export function Providers({ children }: { children: ReactNode }) {
   const locale = useLocale();
+  const cspNonce = getCspNonce();
   const [queryClient] = useState(() => getQueryClient());
 
   return (
@@ -30,7 +32,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <TenantProvider>
             <TenantBrandedThemeProvider>
               <DirectionProvider initialLocale={locale}>
-                <MantineProvider>{children}</MantineProvider>
+                <MantineProvider cspNonce={cspNonce}>{children}</MantineProvider>
               </DirectionProvider>
             </TenantBrandedThemeProvider>
           </TenantProvider>

@@ -5,6 +5,9 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 
 import { buildContentSecurityPolicy } from "@/lib/csp";
 import { runWithCspNonce } from "@/lib/csp-nonce.server";
+import { validateFrontendRuntimeEnvContract } from "@/lib/runtime/validate-frontend-runtime-env";
+
+validateFrontendRuntimeEnvContract();
 
 const cspNonceMiddleware = createMiddleware().server(async ({ next, request }) => {
   if (process.env.NODE_ENV !== "production") {
@@ -17,7 +20,9 @@ const cspNonceMiddleware = createMiddleware().server(async ({ next, request }) =
   }
 
   const nonce = randomBytes(16).toString("base64url");
-  const policy = buildContentSecurityPolicy(nonce);
+  const policy = buildContentSecurityPolicy(nonce, {
+    requestOrigin: request.url,
+  });
 
   return runWithCspNonce(nonce, () => {
     setResponseHeader("Content-Security-Policy", policy);

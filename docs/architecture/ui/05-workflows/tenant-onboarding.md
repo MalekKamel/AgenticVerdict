@@ -13,7 +13,7 @@
 
 ## Overview
 
-The Tenant Onboarding workflow guides new users through setting up their company or agency account on the AgenticVerdict platform. This comprehensive workflow captures essential business information, configures localization preferences, creates the first admin user, connects initial data platforms, generates the first insight from a recommended template, invites team members (optional), and completes with an interactive tutorial. The workflow is designed for both direct businesses and agency partners, with conditional paths for each user type.
+The Tenant Onboarding workflow guides new users through setting up their tenant or agency account on the AgenticVerdict platform. This comprehensive workflow captures essential business information, configures localization preferences, creates the first admin user, connects initial data platforms, generates the first insight from a recommended template, invites team members (optional), and completes with an interactive tutorial. The workflow is designed for both direct businesses and agency partners, with conditional paths for each user type.
 
 **Business Context:** Tenant onboarding is the critical first impression that determines user activation and long-term retention. The workflow must balance comprehensive setup with frictionless progress, offering "skip for later" options while ensuring sufficient configuration for immediate value.
 
@@ -21,11 +21,11 @@ The Tenant Onboarding workflow guides new users through setting up their company
 
 ## User Goal
 
-Set up a new company or agency account on AgenticVerdict with sufficient configuration to start receiving AI-powered insights within the first session.
+Set up a new tenant or agency account on AgenticVerdict with sufficient configuration to start receiving AI-powered insights within the first session.
 
 **Primary Users:**
 
-- **Direct Business Owners**: Setting up their own company account
+- **Direct Business Owners**: Setting up their own tenant account
 - **Agency Owners**: Setting up agency account to manage multiple clients
 - **IT Administrators**: Configuring platform on behalf of business users
 
@@ -45,14 +45,14 @@ Set up a new company or agency account on AgenticVerdict with sufficient configu
 │ Step 1: Agency/Business Registration                            │
 │ - Select account type (Agency or Direct Business)              │
 │ - Agency: Upload verification documents                        │
-│ - Business: Company information entry                          │
+│ - Business: Tenant information entry                          │
 └──────┬──────────────────────────────────────────────────────────┘
        │
        ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Step 2: Company Information                                     │
-│ - Company name, industry, region                               │
-│ - Website URL, company size                                    │
+│ Step 2: Tenant Information                                     │
+│ - Tenant name, industry, region                               │
+│ - Website URL, tenant size                                    │
 └──────┬──────────────────────────────────────────────────────────┘
        │
        ▼
@@ -127,14 +127,14 @@ Set up a new company or agency account on AgenticVerdict with sufficient configu
 - `AccountTypeSelector` - Card-based selection (Agency vs. Direct Business)
 - `AccountTypeCard` - Details about each type with benefits
 - `AgencyVerificationForm` - Document upload for agencies (conditional)
-- `BusinessInfoForm` - Basic company information (conditional)
+- `BusinessInfoForm` - Basic tenant information (conditional)
 
 **Actions:**
 
 - User views account type options with explanations
 - User selects account type (Agency or Direct Business)
 - **If Agency:** Uploads verification documents (business license, etc.)
-- **If Business:** Enters basic company info
+- **If Business:** Enters basic tenant info
 - User clicks "Continue"
 
 **Exit Criteria:** Account type selected, required fields entered
@@ -159,39 +159,39 @@ Set up a new company or agency account on AgenticVerdict with sufficient configu
   "tenant.onboarding.step1.agency.description": "Manage multiple client accounts with advanced reporting",
   "tenant.onboarding.step1.business.description": "Connect your own business data and insights",
   "tenant.onboarding.step1.agency.verification": "Upload verification documents",
-  "tenant.onboarding.step1.business.info": "Company Information",
+  "tenant.onboarding.step1.business.info": "Tenant Information",
   "tenant.onboarding.step1.continue": "Continue"
 }
 ```
 
 ---
 
-### Step 2: Company Information
+### Step 2: Tenant Information
 
 **Entry Criteria:** Account type selected and verified
 
 **UI Components:**
 
-- `CompanyInfoForm` - Company details form
+- `TenantInfoForm` - Tenant details form
 - `IndustrySelector` - Dropdown with industry options
 - `RegionSelector` - Country/region dropdown
-- `SizeSelector` - Company size (employees, revenue)
+- `SizeSelector` - Tenant size (employees, revenue)
 - `WebsiteInput` - URL validation
 
 **Actions:**
 
-- User enters company name
+- User enters tenant name
 - User selects industry from dropdown
 - User selects country/region
-- User selects company size (optional)
+- User selects tenant size (optional)
 - User enters website URL (optional)
 - User clicks "Continue"
 
-**Exit Criteria:** Company name, industry, and region entered
+**Exit Criteria:** Tenant name, industry, and region entered
 
 **Validation:**
 
-- Company name required (2-100 characters)
+- Tenant name required (2-100 characters)
 - Industry required
 - Region required
 - Website URL valid format (if entered)
@@ -205,11 +205,11 @@ Set up a new company or agency account on AgenticVerdict with sufficient configu
 
 ```typescript
 {
-  "tenant.onboarding.step2.title": "Tell Us About Your Company",
-  "tenant.onboarding.step2.companyName": "Company Name",
+  "tenant.onboarding.step2.title": "Tell Us About Your Tenant",
+  "tenant.onboarding.step2.tenantName": "Tenant Name",
   "tenant.onboarding.step2.industry": "Industry",
   "tenant.onboarding.step2.region": "Country/Region",
-  "tenant.onboarding.step2.size": "Company Size (Optional)",
+  "tenant.onboarding.step2.size": "Tenant Size (Optional)",
   "tenant.onboarding.step2.website": "Website URL (Optional)",
   "tenant.onboarding.step2.continue": "Continue"
 }
@@ -219,7 +219,7 @@ Set up a new company or agency account on AgenticVerdict with sufficient configu
 
 ### Step 3: Localization Preferences
 
-**Entry Criteria:** Company information entered
+**Entry Criteria:** Tenant information entered
 
 **UI Components:**
 
@@ -431,7 +431,7 @@ const recommendConnectors = (answers) => {
 - User views recommended template with preview
 - User clicks "Use This Template" or "Choose Different Template"
 - System pre-fills insight configuration:
-  - Name: "{{TemplateName}} - {{CompanyName}}"
+  - Name: "{{TemplateName}} - {{TenantName}}"
   - Connectors: Pre-selected from Step 5
   - Metrics: Recommended defaults
   - Schedule: Weekly, Monday 9:00 AM
@@ -642,7 +642,7 @@ const recommendConnectors = (answers) => {
 | Step              | Skip Available? | Consequence                               |
 | ----------------- | --------------- | ----------------------------------------- |
 | 1 (Registration)  | No              | Cannot proceed                            |
-| 2 (Company Info)  | No              | Cannot proceed                            |
+| 2 (Tenant Info)   | No              | Cannot proceed                            |
 | 3 (Localization)  | No              | Cannot proceed                            |
 | 4 (Admin Setup)   | No              | Cannot proceed                            |
 | 5 (Connectors)    | Yes             | Warning: Add connectors later             |
@@ -670,7 +670,7 @@ If users skip critical steps (5-6), send guided emails:
 ### Components
 
 - **`AccountTypeSelector`**: Agency vs. business selection (Step 1)
-- **`CompanyInfoForm`**: Company information (Step 2)
+- **`TenantInfoForm`**: Tenant information (Step 2)
 - **`LanguageSelector`**: Language/localization (Step 3)
 - **`AdminUserForm`**: Admin account creation (Step 4)
 - **`BusinessNeedQuestionnaire`**: Connector recommendations (Step 5)

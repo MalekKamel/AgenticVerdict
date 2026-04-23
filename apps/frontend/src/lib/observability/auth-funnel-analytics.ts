@@ -22,7 +22,7 @@ export type AuthFunnelEventName =
   | "auth.verify_email.result"
   | "auth.verify_email.resend_click";
 
-export type AuthFunnelOutcome = "success" | "failure";
+export type AuthFunnelOutcome = "success" | "failure" | "capability_unavailable";
 
 function tenantPayload(): Pick<TelemetryEnvelope, "tenantId"> {
   const tenantId = getEffectiveTenantId({ authTenantId: authStore.state.tenantId });

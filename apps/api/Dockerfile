@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Fastify API — runs TypeScript via tsx (workspace packages are noEmit). See docs/docker/container-images.md
 # Multi-stage `TARGET_STAGE` selects NODE_ENV at copy time (development | test | production).
 # Source is layered separately from deps. Runner extends the deps image so /app/node_modules stays 1001:1001 (COPY --from does not preserve ownership).
@@ -27,6 +26,7 @@ COPY --chown=appuser:appuser apps/api ./apps/api
 COPY --chown=appuser:appuser apps/worker/package.json ./apps/worker/
 COPY --chown=appuser:appuser apps/worker/src ./apps/worker/src
 COPY --chown=appuser:appuser configs ./configs
+COPY --chown=appuser:appuser tools ./tools
 COPY --chown=appuser:appuser scripts ./scripts
 COPY --chown=appuser:appuser eslint.config.mjs ./
 COPY --chown=appuser:appuser tsconfig.json ./
@@ -47,6 +47,7 @@ ENV NODE_ENV=test
 
 FROM buildenv AS production
 ENV NODE_ENV=production
+RUN pnpm --filter @agenticverdict/api build:vite
 
 FROM ${TARGET_STAGE} AS app_build
 
@@ -64,6 +65,7 @@ COPY --from=app_build /app/packages /app/packages
 COPY --from=app_build /app/apps/api /app/apps/api
 COPY --from=app_build /app/apps/worker/src /app/apps/worker/src
 COPY --from=app_build /app/configs /app/configs
+COPY --from=app_build /app/tools /app/tools
 COPY --from=app_build /app/scripts /app/scripts
 COPY --from=app_build /app/eslint.config.mjs /app/
 COPY --from=app_build /app/tsconfig.json /app/
@@ -76,4 +78,4 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
   CMD wget --spider -q http://127.0.0.1:4000/health || exit 1
 
-CMD ["node", "--import", "tsx", "src/cli.ts"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then exec node dist/cli.mjs; else exec node --import tsx src/cli.ts; fi"]

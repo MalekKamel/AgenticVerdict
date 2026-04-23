@@ -21,8 +21,8 @@ describe("FormatGeneratorRegistry", () => {
   });
 
   it("default registry uses Playwright PDF and HTML DOCX when stubs env is unset", () => {
-    const prev = process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
-    delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
+    const prev = process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
+    delete process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
     try {
       const r = createDefaultFormatRegistry();
       expect(r.get("pdf")).toBeInstanceOf(PlaywrightPdfFormatGenerator);
@@ -32,16 +32,16 @@ describe("FormatGeneratorRegistry", () => {
       expect(r.get("json")).toBeInstanceOf(JsonFormatGenerator);
     } finally {
       if (prev === undefined) {
-        delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
+        delete process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
       } else {
-        process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS = prev;
+        process.env.AGENTICVERDICT_STUB_REPORT_FORMATS = prev;
       }
     }
   });
 
-  it("default registry uses stubs when AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1", () => {
-    const prev = process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
-    process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS = "1";
+  it("default registry uses stubs when AGENTICVERDICT_STUB_REPORT_FORMATS=1", () => {
+    const prev = process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
+    process.env.AGENTICVERDICT_STUB_REPORT_FORMATS = "1";
     try {
       const r = createDefaultFormatRegistry();
       expect(r.get("pdf")).toBeInstanceOf(StubFormatGenerator);
@@ -50,9 +50,9 @@ describe("FormatGeneratorRegistry", () => {
       expect(r.get("json")).toBeInstanceOf(StubFormatGenerator);
     } finally {
       if (prev === undefined) {
-        delete process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS;
+        delete process.env.AGENTICVERDICT_STUB_REPORT_FORMATS;
       } else {
-        process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS = prev;
+        process.env.AGENTICVERDICT_STUB_REPORT_FORMATS = prev;
       }
     }
   });

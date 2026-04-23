@@ -399,7 +399,7 @@ INVITED → REMOVED (invitation cancelled)
   "user.action.changeRole": "Change Role",
   "user.action.suspend": "Suspend",
   "user.action.reinstate": "Reinstate",
-  "user.action.switchTenant": "Switch Company",
+  "user.action.switchTenant": "Switch Tenant",
   "user.action.acceptInvitation": "Accept Invitation",
   "user.action.updateProfile": "Update Profile",
   "user.action.changePassword": "Change Password",
@@ -477,7 +477,7 @@ INVITED → REMOVED (invitation cancelled)
 
 ### Cross-References
 
-- **[Tenant/Company](./tenant-company.md)** — Users belong to tenants
+- **[Tenant/Tenant](./tenant-tenant.md)** — Users belong to tenants
 - **[Insights](./insights-reports.md)** — Users create and manage insights
 - **[Connectors](./connectors.md)** — Users manage connectors
 
@@ -638,7 +638,7 @@ export const users = pgTable("users", {
 export const tenantUsers = pgTable("tenant_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id")
-    .references(() => companies.id)
+    .references(() => tenants.id)
     .notNull(),
   userId: uuid("user_id")
     .references(() => users.id)

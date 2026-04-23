@@ -20,7 +20,7 @@ function formatJson(value: unknown): string {
 }
 
 export default function FeatureFlagsAdminPage() {
-  const t = useTranslations("admin.featureFlags");
+  const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const tNav = useTranslations("navigation");
   const { user, isLoading } = useRequireAuth();
@@ -64,10 +64,10 @@ export default function FeatureFlagsAdminPage() {
   return (
     <Container py="xl">
       <Stack gap="md">
-        <Title order={1}>{t("title")}</Title>
+        <Title order={1}>{t("featureFlags.title")}</Title>
         <Text>{user?.email}</Text>
-        <Alert color="blue" title={t("liveTitle")}>
-          {t("liveDescription")}
+        <Alert color="blue" title={t("featureFlags.liveTitle")}>
+          {t("featureFlags.liveDescription")}
         </Alert>
         {rowsQuery.error ? (
           <Alert color="red" title={tCommon("error")}>
@@ -77,10 +77,10 @@ export default function FeatureFlagsAdminPage() {
         <Table striped highlightOnHover withTableBorder>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>{t("columnKey")}</Table.Th>
-              <Table.Th>{t("columnType")}</Table.Th>
-              <Table.Th>{t("columnDefault")}</Table.Th>
-              <Table.Th>{t("columnResolved")}</Table.Th>
+              <Table.Th>{t("featureFlags.columnKey")}</Table.Th>
+              <Table.Th>{t("featureFlags.columnType")}</Table.Th>
+              <Table.Th>{t("featureFlags.columnDefault")}</Table.Th>
+              <Table.Th>{t("featureFlags.columnResolved")}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>

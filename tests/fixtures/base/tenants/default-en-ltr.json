@@ -1,6 +1,6 @@
 {
-  "companyId": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
-  "companyName": "Base EN Tenant",
+  "tenantId": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  "tenantName": "Base EN Tenant",
   "localization": {
     "language": "en",
     "region": "US",

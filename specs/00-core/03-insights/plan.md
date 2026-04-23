@@ -17,7 +17,7 @@ This implementation plan documents the **actual technical implementation** of th
 ### Architectural Alignment
 
 - ✅ **Multi-tenancy**: Report generation scoped by tenant ID with row-level security
-- ✅ **Configuration-driven**: Template selection and formatting driven by company configuration
+- ✅ **Configuration-driven**: Template selection and formatting driven by tenant configuration
 - ✅ **Plugin architecture**: Format generators implement common interface, extensible for new formats
 - ✅ **Template-based**: No hardcoded report layouts, all structure defined in templates
 - ✅ **Internationalization**: Full RTL/LTR support with locale-aware formatting
@@ -241,7 +241,7 @@ This implementation plan documents the **actual technical implementation** of th
    - Technical Appendix: Methodology and data quality
 
 5. **Document Shell**
-   - Cover page with company branding
+   - Cover page with tenant branding
    - Table of contents with page numbers
    - Headers, footers, and page numbering
    - Section dividers and formatting
@@ -269,7 +269,7 @@ This implementation plan documents the **actual technical implementation** of th
    - Metadata storage (file size, page count, generation time)
 
 3. **Internationalization**
-   - Locale detection from company configuration
+   - Locale detection from tenant configuration
    - Text direction resolution (RTL/LTR)
    - Date, currency, and number formatting
    - CSS direction attributes for RTL languages
@@ -319,7 +319,7 @@ This implementation plan documents the **actual technical implementation** of th
 ```typescript
 interface Report {
   id: string;
-  companyId: string;  // Tenant identifier
+  tenantId: string;  // Tenant identifier
   title: string;
   status: 'draft' | 'generating' | 'completed' | 'failed';
   templateId: string;
@@ -371,7 +371,7 @@ interface ReportTemplateViewModel {
   };
   
   metadata: {
-    company: CompanyInfo;
+    tenant: TenantInfo;
     reportDate: Date;
     dataRange: DateRange;
     generatedAt: Date;
@@ -420,10 +420,10 @@ interface IFormatGenerator {
 - `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS`: Use stub generators for testing (default: "0")
 - `PLAYWRIGHT_CHROMIUM_PATH`: Override Playwright Chromium executable path
 
-### Company Configuration
+### Tenant Configuration
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   localization: {
     language: 'ar' | 'en' | 'fr';
     region: string;
@@ -476,7 +476,7 @@ RUN apt-get update && apt-get install -y \
 -- Reports table
 CREATE TABLE reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  company_id UUID NOT NULL REFERENCES companies(id),
+  tenant_id UUID NOT NULL REFERENCES tenants(id),
   title VARCHAR(500) NOT NULL,
   status VARCHAR(50) NOT NULL DEFAULT 'draft',
   template_id VARCHAR(100) NOT NULL,
@@ -489,11 +489,11 @@ CREATE TABLE reports (
 
 -- Row-level security
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
-CREATE POLICY reports_company_isolation ON reports
-  FOR ALL USING (company_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY reports_tenant_isolation ON reports
+  FOR ALL USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
 
 -- Indexes
-CREATE INDEX idx_reports_company_id ON reports(company_id);
+CREATE INDEX idx_reports_tenant_id ON reports(tenant_id);
 CREATE INDEX idx_reports_status ON reports(status);
 CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
 ```
@@ -525,7 +525,7 @@ CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
 
 ### Tenant Isolation
 
-- All database queries scoped by company ID
+- All database queries scoped by tenant ID
 - Row-level security enforced at database level
 - Template overrides scoped to tenant
 - Report access control via tenant context
@@ -541,7 +541,7 @@ CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
 
 - Template ID validation against allowed templates
 - Format validation against supported formats
-- Locale validation against company configuration
+- Locale validation against tenant configuration
 - View model coercion with Zod schemas
 
 ## Error Handling

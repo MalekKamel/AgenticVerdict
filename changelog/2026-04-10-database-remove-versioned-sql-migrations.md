@@ -15,7 +15,7 @@ The team will drop existing databases and recreate from scratch; maintaining a m
 - **Deleted** `packages/database/migrations/` (all `000*_*.sql` and `meta/` journal snapshots).
 - **Removed** `packages/database/src/migrate.ts` and exports `runMigrations`, `runMigrationsSafe`, `migrationsFolder` from `@agenticverdict/database`.
 - **`scripts/seed.ts`** / **`scripts/seed-test.ts`** — no longer run migrations; they assume schema is already applied (typically via `db:push`).
-- **`scripts/reset-db.ts`** — after dropping schemas, runs **`pnpm exec drizzle-kit push --force`** from the package directory, then seeds connector registry and companies (aligned with `db:seed`).
+- **`scripts/reset-db.ts`** — after dropping schemas, runs **`pnpm exec drizzle-kit push --force`** from the package directory, then seeds connector registry and tenants (aligned with `db:seed`).
 - **`package.json`** — removed `db:migrate` and `db:seed:unsafe` scripts.
 - **`drizzle.config.ts`** — `out` set to **`./.drizzle-out`** (gitignored) for optional `drizzle-kit generate` output.
 - **`Makefile`** — `db-migrate` target now runs **`db:push`** (same env expectations as before: `DATABASE_URL`).

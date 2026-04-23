@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 import type IORedis from "ioredis";
 
 import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
+import { assertProductionSafeRuntimePolicy, resolveRuntimePolicy } from "@agenticverdict/config";
 import { renderProductionFlowTestMetrics } from "@agenticverdict/observability";
 
 import { startHealthServer } from "./health";
@@ -29,10 +30,12 @@ log.info({
   mockAdaptersEnabled: BUILD_CONFIG.mockAdaptersEnabled,
 });
 
-if (BUILD_CONFIG.isProduction && process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS === "1") {
+try {
+  assertProductionSafeRuntimePolicy(resolveRuntimePolicy(process.env));
+} catch (error) {
   log.fatal(
-    { event: "worker_config_invalid" },
-    "Mock adapters cannot be enabled in production builds (AGENTICVERDICT_USE_MOCK_ADAPTERS)",
+    { event: "worker_config_invalid", error },
+    "Runtime policy validation failed for worker startup",
   );
   process.exit(1);
 }

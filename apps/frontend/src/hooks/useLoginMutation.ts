@@ -23,18 +23,35 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouterState } from "@tanstack/react-router";
 
 import { useRouter } from "@/i18n/navigation";
 import { authActions } from "@/stores/auth-store";
 import { authApi } from "@/lib/api/auth-api";
+import {
+  classifyAuthRedirectTarget,
+  sanitizeAuthRedirectTarget,
+} from "@/lib/auth/safe-auth-redirect";
 import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
+import { getTenantIdForTrpcRequest } from "@/lib/tenant/trpc-tenant-bridge";
+import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
+import { applySuccessfulLoginSession } from "@/lib/auth/auth-session-transition";
 import type { LoginInput } from "@agenticverdict/types";
 import { useCallback, useState } from "react";
+
+export type LoginOAuthProvider = "google" | "microsoft" | "apple";
+export type LoginMutationState =
+  | "idle"
+  | "submitting"
+  | "oauth_redirecting"
+  | "error"
+  | "rate_limited"
+  | "locked_out";
 
 export interface UseLoginMutationReturn {
   /** Login mutation function */
   login: (credentials: LoginInput) => Promise<void>;
+  /** OAuth login action (provider redirect if available) */
+  loginWithOAuth: (provider: LoginOAuthProvider) => Promise<void>;
 
   /** Loading state */
   isLoading: boolean;
@@ -42,35 +59,68 @@ export interface UseLoginMutationReturn {
   /** Error message */
   error: string | null;
 
+  /** Structured status for specialized auth UI states. */
+  state: LoginMutationState;
+  /** Active OAuth provider during redirect attempt. */
+  oauthLoadingProvider: LoginOAuthProvider | null;
+  /** Retry-after hint (seconds) for rate-limited states. */
+  retryAfterSeconds: number | null;
+
   /** Clear error state */
   clearError: () => void;
 }
 
-export function resolvePostLoginRedirect(redirectFromSearch: string | null): string {
-  if (!redirectFromSearch || !redirectFromSearch.startsWith("/")) {
-    return "/dashboard";
-  }
-
-  if (redirectFromSearch.startsWith("/auth")) {
-    return "/dashboard";
-  }
-
-  return redirectFromSearch;
+export function isOAuthCapabilityEnabled(): boolean {
+  return import.meta.env.VITE_PUBLIC_ENABLE_OAUTH_LOGIN === "true";
 }
 
-function classifyRedirectTarget(redirectFromSearch: string | null): {
-  target: string;
-  redirectClass: "dashboard_default" | "safe_internal" | "auth_loop_blocked";
-} {
-  if (!redirectFromSearch || !redirectFromSearch.startsWith("/")) {
-    return { target: "/dashboard", redirectClass: "dashboard_default" };
-  }
+export function resolvePostLoginRedirect(redirectFromSearch: string | null): string {
+  return sanitizeAuthRedirectTarget(redirectFromSearch);
+}
 
-  if (redirectFromSearch.startsWith("/auth")) {
-    return { target: "/dashboard", redirectClass: "auth_loop_blocked" };
+export function buildVerifyEmailRedirect(
+  email: string,
+  tenantId?: string,
+  redirectFromSearch?: string,
+): string {
+  const params = new URLSearchParams({ email: email.trim().toLowerCase() });
+  if (tenantId && isTenantUuid(tenantId)) {
+    params.set("tenantId", tenantId);
   }
+  if (typeof redirectFromSearch === "string" && redirectFromSearch.length > 0) {
+    params.set("redirect", resolvePostLoginRedirect(redirectFromSearch));
+  }
+  return `/auth/verify-email?${params.toString()}`;
+}
 
-  return { target: redirectFromSearch, redirectClass: "safe_internal" };
+function getRetryAfterSeconds(details: unknown): number | null {
+  if (!details || typeof details !== "object") {
+    return null;
+  }
+  const candidate = (details as { retryAfter?: unknown }).retryAfter;
+  if (typeof candidate === "number" && Number.isFinite(candidate) && candidate > 0) {
+    return Math.round(candidate);
+  }
+  if (typeof candidate === "string") {
+    const parsed = Number(candidate);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return Math.round(parsed);
+    }
+  }
+  return null;
+}
+
+export function resolveLoginErrorState(errorMessage: string): LoginMutationState {
+  if (
+    errorMessage === "auth.errors.accountLocked" ||
+    errorMessage === "auth.errors.tooManyAttempts"
+  ) {
+    return "locked_out";
+  }
+  if (errorMessage === "auth.errors.rateLimitExceeded") {
+    return "rate_limited";
+  }
+  return "error";
 }
 
 /**
@@ -82,20 +132,20 @@ function classifyRedirectTarget(redirectFromSearch: string | null): {
  * - Auth state management
  * - Automatic redirect on success
  */
-export function useLoginMutation(): UseLoginMutationReturn {
+export function useLoginMutation(redirectFromSearch?: string): UseLoginMutationReturn {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const search = useRouterState({ select: (s) => s.location.search });
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, setState] = useState<LoginMutationState>("idle");
+  const [oauthLoadingProvider, setOauthLoadingProvider] = useState<LoginOAuthProvider | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const redirectFromSearch = new URLSearchParams(search).get("redirect");
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number | null>(null);
 
   const login = useCallback(
     async (credentials: LoginInput) => {
       const startedAt = performance.now();
-      setIsLoading(true);
+      setState("submitting");
       setError(null);
+      setRetryAfterSeconds(null);
       authActions.setLoading(true);
       authActions.clearError();
       logAuthFunnelEvent("auth.login.submit", { flow: "login" });
@@ -105,17 +155,18 @@ export function useLoginMutation(): UseLoginMutationReturn {
         const latencyMs = Math.round(performance.now() - startedAt);
 
         if (result.success) {
-          // Update auth store
-          const { user } = result.data;
-          authActions.setAuth(true, user, user.tenantId);
-          await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+          const { user, sessionExpiresAt } = result.data;
+          applySuccessfulLoginSession(queryClient, {
+            user,
+            sessionExpiresAt,
+          });
 
           // Clear loading states
-          setIsLoading(false);
+          setState("idle");
           authActions.setLoading(false);
 
           // Keep locale-aware redirect destination while preventing auth-route loops.
-          const { target, redirectClass } = classifyRedirectTarget(redirectFromSearch);
+          const { target, redirectClass } = classifyAuthRedirectTarget(redirectFromSearch);
           logAuthFunnelEvent("auth.login.result", {
             flow: "login",
             outcome: "success",
@@ -124,12 +175,31 @@ export function useLoginMutation(): UseLoginMutationReturn {
           });
           router.push(target);
         } else {
-          // Handle error - use generic message for security
-          const genericError = "Invalid email or password";
-          setError(genericError);
+          if (
+            result.error.code === "EMAIL_NOT_VERIFIED" ||
+            result.error.message === "auth.errors.emailNotVerified"
+          ) {
+            const tenantId = isTenantUuid(credentials.tenantId)
+              ? credentials.tenantId
+              : getTenantIdForTrpcRequest();
+            const verifyEmailHref = buildVerifyEmailRedirect(
+              credentials.email,
+              tenantId,
+              redirectFromSearch,
+            );
+            setState("idle");
+            authActions.setLoading(false);
+            router.push(verifyEmailHref);
+            return;
+          }
+
+          setError(result.error.message);
+          const nextState = resolveLoginErrorState(result.error.message);
+          setState(nextState);
+          setRetryAfterSeconds(getRetryAfterSeconds(result.error.details));
           authActions.setError({
             code: result.error.code,
-            message: genericError,
+            message: result.error.message,
           });
           logAuthFunnelEvent("auth.login.result", {
             flow: "login",
@@ -137,13 +207,13 @@ export function useLoginMutation(): UseLoginMutationReturn {
             errorCode: result.error.code,
             latencyMs,
           });
-          setIsLoading(false);
           authActions.setLoading(false);
         }
       } catch {
         // Handle unexpected errors
-        const genericError = "An error occurred. Please try again.";
+        const genericError = "auth.errors.internalError";
         setError(genericError);
+        setState("error");
         authActions.setError({
           code: "INTERNAL_ERROR",
           message: genericError,
@@ -154,22 +224,57 @@ export function useLoginMutation(): UseLoginMutationReturn {
           errorCode: "INTERNAL_ERROR",
           latencyMs: Math.round(performance.now() - startedAt),
         });
-        setIsLoading(false);
         authActions.setLoading(false);
       }
     },
     [queryClient, redirectFromSearch, router],
   );
 
+  const loginWithOAuth = useCallback(async (provider: LoginOAuthProvider) => {
+    if (!isOAuthCapabilityEnabled()) {
+      setError("auth.login.oauth.unavailable");
+      setState("idle");
+      logAuthFunnelEvent("auth.login.result", {
+        flow: "login",
+        outcome: "capability_unavailable",
+        errorCode: `OAUTH_${provider.toUpperCase()}_DISABLED`,
+      });
+      return;
+    }
+
+    setOauthLoadingProvider(provider);
+    setState("oauth_redirecting");
+    setError(null);
+    setRetryAfterSeconds(null);
+    logAuthFunnelEvent("auth.login.submit", { flow: "login" });
+
+    // OAuth contract is wired as part of login alignment, but provider endpoints are pending.
+    setError("auth.login.oauth.unavailable");
+    setState("error");
+    setOauthLoadingProvider(null);
+    logAuthFunnelEvent("auth.login.result", {
+      flow: "login",
+      outcome: "capability_unavailable",
+      errorCode: "OAUTH_UNAVAILABLE",
+    });
+  }, []);
+
   const clearError = useCallback(() => {
     setError(null);
+    setState("idle");
+    setRetryAfterSeconds(null);
+    setOauthLoadingProvider(null);
     authActions.clearError();
   }, []);
 
   return {
     login,
-    isLoading,
+    loginWithOAuth,
+    isLoading: state === "submitting" || state === "oauth_redirecting",
     error,
+    state,
+    oauthLoadingProvider,
+    retryAfterSeconds,
     clearError,
   };
 }

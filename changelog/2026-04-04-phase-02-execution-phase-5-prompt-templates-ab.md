@@ -1,18 +1,18 @@
-# Changelog entry: Phase 2 — Execution Phase 5 (Prompt templates, company injection, A/B framework)
+# Changelog entry: Phase 2 — Execution Phase 5 (Prompt templates, tenant injection, A/B framework)
 
 **Date:** 2026-04-04  
-**Scope:** Phase 2 — [Execution Phase 5 — Prompt templates, company injection, and A/B framework](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **3.1**, **3.2**, and **3.3**.
+**Scope:** Phase 2 — [Execution Phase 5 — Prompt templates, tenant injection, and A/B framework](specs/00-core/02-intelligence/EXECUTION-PLAN.md), mapping to `tasks.md` **3.1**, **3.2**, and **3.3**.
 
-This entry adds a **versioned, Zod-validated** prompt catalog (≥10 production templates), a **company context** builder with **approximate token budgeting** and **layered assembly** (documented precedence: system policy → company context → user task → tool context), and a **paired A/B harness** with aggregate metrics, paired **Student _t_** significance, winner selection, and an audit-friendly **decision record** helper. All templates are covered by **golden** and **registry** tests; injection and A/B paths are unit-tested without live LLMs.
+This entry adds a **versioned, Zod-validated** prompt catalog (≥10 production templates), a **tenant context** builder with **approximate token budgeting** and **layered assembly** (documented precedence: system policy → tenant context → user task → tool context), and a **paired A/B harness** with aggregate metrics, paired **Student _t_** significance, winner selection, and an audit-friendly **decision record** helper. All templates are covered by **golden** and **registry** tests; injection and A/B paths are unit-tested without live LLMs.
 
 ---
 
 ## Summary
 
 - New **`packages/agent-runtime/src/prompts/`** module: **`types`** (`PromptTemplateRecord`, Zod schemas, **`PromptTemplateError`**), **`library`** (**13** records / **12** unique ids including **`analysis.cross_platform_overview@1.1.0`** history), **`registry`** (**`resolvePromptTemplate`**, **`getPromptTemplateHistory`**, **`listPromptTemplateIds`**, **`listPromptTemplatesByType`**), **`render`** (**`renderPromptTemplate`**, **`listTemplatePlaceholders`**, **`estimateApproximateTokenCount`**).
-- **`company-injection`**: **`buildCompanyPromptContextSections`**, **`buildCompanyPromptContext`** (priority-ordered inclusion, **compact** identity/localization when the budget is tight), **`assemblePromptLayers`** (trims **tool** then **company** text; does not truncate caller system policy or user task).
+- **`tenant-injection`**: **`buildTenantPromptContextSections`**, **`buildTenantPromptContext`** (priority-ordered inclusion, **compact** identity/localization when the budget is tight), **`assemblePromptLayers`** (trims **tool** then **tenant** text; does not truncate caller system policy or user task).
 - **`ab-testing`**: **`runPairedPromptAbTest`**, **`selectPromptAbWinner`**, **`buildAbDecisionRecord`** (paired quality diff, optional significance at 95%, token/latency/efficiency aggregates).
-- **`@agenticverdict/config`** dependency on **`agent-runtime`** for **`CompanyConfig`** typing; **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.6.0**; root **`prompts/index.ts`** + package **`index.ts`** re-exports.
+- **`@agenticverdict/config`** dependency on **`agent-runtime`** for **`TenantConfig`** typing; **`AGENT_RUNTIME_PACKAGE_VERSION`** → **0.6.0**; root **`prompts/index.ts`** + package **`index.ts`** re-exports.
 
 ---
 
@@ -24,7 +24,7 @@ This entry adds a **versioned, Zod-validated** prompt catalog (≥10 production 
 - **`library.ts`** — **`PRODUCTION_PROMPT_TEMPLATES`**, **`PRODUCTION_PROMPT_TEMPLATE_COUNT`**.
 - **`registry.ts`** — semver-ordered history and resolution helpers.
 - **`render.ts`** — placeholder validation and rendering; token **heuristic** (~4 chars per token).
-- **`company-injection.ts`** — tenant-safe **`CompanyConfig`** serialization and budgeting.
+- **`tenant-injection.ts`** — tenant-safe **`TenantConfig`** serialization and budgeting.
 - **`ab-testing.ts`** — paired fixture runner and winner selection.
 - **`index.ts`** — barrel exports.
 
@@ -55,7 +55,7 @@ Commands run successfully after the changes:
 ## Usage notes
 
 - **Templates:** Call **`resolvePromptTemplate(id, version?)`** (omit **`version`** for latest). Render with **`renderPromptTemplate(record, values)`**; placeholders must match declared **`variables`**.
-- **Company context:** Use **`buildCompanyPromptContext(config, { maxApproxTokens })`** for a single system-friendly block; combine with **`assemblePromptLayers`** when separating **system** vs **user** and optional **tool** blob.
+- **Tenant context:** Use **`buildTenantPromptContext(config, { maxApproxTokens })`** for a single system-friendly block; combine with **`assemblePromptLayers`** when separating **system** vs **user** and optional **tool** blob.
 - **A/B:** Pass deterministic **`invoke`** (for example **`AgentMockChatModel`**) in CI; use **`buildAbDecisionRecord`** for structured logging or trace metadata (**no PII**).
 
 ---

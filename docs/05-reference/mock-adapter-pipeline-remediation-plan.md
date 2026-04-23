@@ -98,7 +98,7 @@ export function createSpecializedMarketingProductionAgent(
 ): IAgent {
   const cfg = buildSpecializedMarketingFactoryConfig(kind, options);
   const sharedTools = [
-    ...createCompanyContextTools(),
+    ...createTenantContextTools(),
     ...createAnalysisTools(),
     ...createReportPrepTools(),
     // ❌ MISSING: Platform fetch tools!
@@ -150,7 +150,7 @@ async function runPipelineWorkflow(
 platforms: vars.platforms ?? "Meta, GA4, GSC, GBP, TikTok",
 ```
 
-**Problem:** The analysis template uses a hardcoded platform list instead of dynamically listing enabled platforms from company configuration.
+**Problem:** The analysis template uses a hardcoded platform list instead of dynamically listing enabled platforms from tenant configuration.
 
 ---
 
@@ -190,11 +190,11 @@ The Phase 4 agent tool ecosystem includes **18 tools** organized into categories
 - Platform fetch tools (5): `fetch_meta_metrics`, `fetch_ga4_metrics`, etc.
 - Database query tools (3): `query_historical_metrics`, etc.
 - Analysis tools (3): `calculate_metrics`, `analyze_trends`, etc.
-- Company context tools (2): `get_company_profile`, etc.
+- Tenant context tools (2): `get_tenant_profile`, etc.
 - B2B KPI tools (2): `compute_b2b_kpis_from_snapshots`, etc.
 - Report prep tools (3): `generate_summary`, etc.
 
-**Current State:** Specialized marketing agents only register tools from 3 categories (company context, analysis, report prep), completely missing platform fetch tools.
+**Current State:** Specialized marketing agents only register tools from 3 categories (tenant context, analysis, report prep), completely missing platform fetch tools.
 
 **Expected State:** All Phase 4 tools should be available to marketing agents, especially platform fetch tools.
 
@@ -348,7 +348,7 @@ export class AgentSystem {
   private buildToolRegistry(config: AgentSystemConfig): ToolRegistry {
     const tools: ITool[] = [
       ...createAnalysisTools(),
-      ...createCompanyContextTools({ configCache: config.configCache }),
+      ...createTenantContextTools({ configCache: config.configCache }),
       ...createReportPrepTools(),
     ];
 
@@ -454,19 +454,19 @@ _Note: This section preserves the original incremental remediation plan. For the
 // Add new import
 import type { PlatformFetchToolDeps } from "./agent-tools/platform-fetch-tools";
 import { createPlatformFetchTools } from "./agent-tools/platform-fetch-tools";
-import type { CompanyContextToolDeps } from "./agent-tools/company-context-tools";
+import type { TenantContextToolDeps } from "./agent-tools/tenant-context-tools";
 
 // Update interface
 export interface CreateSpecializedMarketingAgentOptions {
-  companyName: string;
+  tenantName: string;
   promptVars?: Partial<SpecializedMarketingAgentPromptVars>;
   templateVersion?: string;
   factoryConfig?: Partial<AgentFactoryConfig>;
   mockLlm?: BaseChatModel;
   invocationCache?: LlmInvocationCache;
-  // ✅ NEW: Platform and company context dependencies
+  // ✅ NEW: Platform and tenant context dependencies
   platformDeps?: PlatformFetchToolDeps;
-  companyContextDeps?: CompanyContextToolDeps;
+  tenantContextDeps?: TenantContextToolDeps;
 }
 ```
 
@@ -489,7 +489,7 @@ export function createSpecializedMarketingProductionAgent(
     // Database query tools (should be added)
     // ...(options.metricsStore ? createDatabaseQueryTools({ metricsStore: options.metricsStore }) : []),
     // Existing tools
-    ...createCompanyContextTools(options.companyContextDeps),
+    ...createTenantContextTools(options.tenantContextDeps),
     ...createAnalysisTools(),
     ...createReportPrepTools(),
   ];
@@ -508,7 +508,7 @@ export function createSpecializedMarketingProductionAgent(
 
 ```typescript
 import type { PlatformFetchToolDeps } from "./agent-tools/platform-fetch-tools";
-import type { CompanyContextToolDeps } from "./agent-tools/company-context-tools";
+import type { TenantContextToolDeps } from "./agent-tools/tenant-context-tools";
 
 export interface RunMarketingPipelineOptions {
   factory: AgentFactory;
@@ -517,7 +517,7 @@ export interface RunMarketingPipelineOptions {
   workflowId?: string;
   specialization: Pick<
     CreateSpecializedMarketingAgentOptions,
-    "companyName" | "promptVars" | "templateVersion" | "factoryConfig"
+    "tenantName" | "promptVars" | "templateVersion" | "factoryConfig"
   >;
   useProductionModels?: boolean;
   mockModels?: Partial<Record<MarketingPipelineStageName, BaseChatModel>>;
@@ -526,9 +526,9 @@ export interface RunMarketingPipelineOptions {
   tolerateVerdictParseFailure?: boolean;
   invocationCache?: LlmInvocationCache;
   onPipelineTiming?: (fields: ReturnType<typeof marketingPipelineTimingToLogFields>) => void;
-  // ✅ NEW: Platform and company context dependencies
+  // ✅ NEW: Platform and tenant context dependencies
   platformDeps?: PlatformFetchToolDeps;
-  companyContextDeps?: CompanyContextToolDeps;
+  tenantContextDeps?: TenantContextToolDeps;
 }
 ```
 
@@ -546,9 +546,9 @@ const createAgent = (
     ...specialization,
     mockLlm: mock,
     invocationCache: options.invocationCache,
-    // ✅ Pass platform and company context dependencies
+    // ✅ Pass platform and tenant context dependencies
     platformDeps: options.platformDeps,
-    companyContextDeps: options.companyContextDeps,
+    tenantContextDeps: options.tenantContextDeps,
   };
   if (options.useProductionModels) {
     return createSpecializedMarketingProductionAgent(options.factory, kind, spec);
@@ -596,9 +596,9 @@ async function runPipelineWorkflow(
   // ✅ Create platform adapter dependencies
   const platformDeps = createWorkerPlatformFetchToolDeps({ tenant });
 
-  // ✅ Create company context dependencies
-  const companyContextDeps = {
-    loadCompanyConfig: async (tenantId: string) => tenant.config,
+  // ✅ Create tenant context dependencies
+  const tenantContextDeps = {
+    loadTenantConfig: async (tenantId: string) => tenant.config,
   };
 
   const pipelineState = await runAgentJob({ tenant, runId: `run-${workflowId}` }, async (scope) =>
@@ -607,12 +607,12 @@ async function runPipelineWorkflow(
       ctx: scope.invocation,
       workflowId,
       goal: `Workflow ${validatedData.workflowId} for tenant ${validatedData.tenantId}`,
-      specialization: { companyName: tenant.config.companyName },
+      specialization: { tenantName: tenant.config.tenantName },
       tolerateVerdictParseFailure: true,
       useProductionModels,
-      // ✅ Pass platform and company context dependencies
+      // ✅ Pass platform and tenant context dependencies
       platformDeps,
-      companyContextDeps,
+      tenantContextDeps,
     }),
   );
 
@@ -756,7 +756,7 @@ export class MockAdapterFactory {
 ```typescript
 function renderBasePolicy(
   kind: SpecializedMarketingAgentKind,
-  companyName: string,
+  tenantName: string,
   vars: Partial<SpecializedMarketingAgentPromptVars>,
   templateVersion: string | undefined,
 ): string {
@@ -764,7 +764,7 @@ function renderBasePolicy(
   const record = resolvePromptTemplate(templateId, templateVersion);
 
   if (kind === "cross_platform_analysis") {
-    // ✅ Use platform list from company config
+    // ✅ Use platform list from tenant config
     const tenant = requireTenantContext();
     const enabledPlatforms =
       tenant.config.marketing.channels
@@ -773,7 +773,7 @@ function renderBasePolicy(
         .join(", ") || "No platforms enabled";
 
     return renderPromptTemplate(record, {
-      companyName,
+      tenantName,
       dateRange: vars.dateRange ?? "last 30 days",
       platforms: vars.platforms ?? enabledPlatforms, // ✅ Dynamic!
       currency: vars.currency ?? "USD",
@@ -897,7 +897,7 @@ describe("Specialized Marketing Agents with Platform Tools", () => {
     };
 
     const agent = createSpecializedMarketingProductionAgent(factory, "cross_platform_analysis", {
-      companyName: "Test Co",
+      tenantName: "Test Co",
       platformDeps,
     });
 
@@ -916,7 +916,7 @@ describe("Specialized Marketing Agents with Platform Tools", () => {
   it("production agent excludes platform fetch tools when platformDeps omitted", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const agent = createSpecializedMarketingProductionAgent(factory, "cross_platform_analysis", {
-      companyName: "Test Co",
+      tenantName: "Test Co",
     });
 
     expect(agent.tools).not.toContainEqual(
@@ -1122,14 +1122,14 @@ interface PlatformFetchToolDeps {
 interface RunMarketingPipelineOptions {
   // ... existing fields
   platformDeps?: PlatformFetchToolDeps;
-  companyContextDeps?: CompanyContextToolDeps;
+  tenantContextDeps?: TenantContextToolDeps;
 }
 
 // Agent creation options (updated)
 interface CreateSpecializedMarketingAgentOptions {
   // ... existing fields
   platformDeps?: PlatformFetchToolDeps;
-  companyContextDeps?: CompanyContextToolDeps;
+  tenantContextDeps?: TenantContextToolDeps;
 }
 ```
 

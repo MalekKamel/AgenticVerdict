@@ -9,7 +9,7 @@
 
 ### User Story 1 - Tenant Switcher Component (Priority: P1)
 
-Users need to quickly switch between multiple tenants (companies) they have access to, especially agency partners managing multiple client accounts. The switcher should be accessible from the topbar and provide immediate context change.
+Users need to quickly switch between multiple tenants (tenants) they have access to, especially agency partners managing multiple client accounts. The switcher should be accessible from the topbar and provide immediate context change.
 
 **Why this priority**: Without tenant switching, users belonging to multiple organizations cannot effectively use the platform. This is the foundational feature for all multi-tenant workflows.
 
@@ -17,7 +17,7 @@ Users need to quickly switch between multiple tenants (companies) they have acce
 
 **Acceptance Scenarios**:
 
-1. **Given** a user with access to multiple tenants, **When** they click the tenant switcher in the topbar, **Then** they should see a dropdown list of all accessible tenants with company names and logos
+1. **Given** a user with access to multiple tenants, **When** they click the tenant switcher in the topbar, **Then** they should see a dropdown list of all accessible tenants with tenant names and logos
 2. **Given** a user viewing data from Tenant A, **When** they select Tenant B from the switcher, **Then** the application should update all data contexts to Tenant B (tRPC queries, UI theme, navigation state)
 3. **Given** a user with only one tenant, **When** they view the topbar, **Then** the tenant switcher should display the current tenant name without a dropdown (no unnecessary interaction)
 4. **Given** a user switching tenants, **When** the new tenant data loads, **Then** the active tenant indicator should reflect the new tenant (name, logo, branding colors)
@@ -26,22 +26,22 @@ Users need to quickly switch between multiple tenants (companies) they have acce
 
 ---
 
-### User Story 2 - Company Settings Page (Priority: P1)
+### User Story 2 - Tenant Settings Page (Priority: P1)
 
-Company administrators need to manage branding, domain configuration, and company-level settings. This page controls how their tenant appears to users and integrates with custom domains.
+Tenant administrators need to manage branding, domain configuration, and tenant-level settings. This page controls how their tenant appears to users and integrates with custom domains.
 
-**Why this priority**: Brand customization is critical for white-label agency partners and for companies maintaining their identity. This is core to the multi-tenant value proposition.
+**Why this priority**: Brand customization is critical for white-label agency partners and for tenants maintaining their identity. This is core to the multi-tenant value proposition.
 
-**Independent Test**: Can be tested by accessing `/settings/company` as a company admin, modifying branding settings (logo, colors, domain), saving changes, and verifying that the UI updates reflect the new branding across the application.
+**Independent Test**: Can be tested by accessing `/settings/tenant` as a tenant admin, modifying branding settings (logo, colors, domain), saving changes, and verifying that the UI updates reflect the new branding across the application.
 
 **Acceptance Scenarios**:
 
-1. **Given** a company administrator, **When** they navigate to `/settings/company`, **Then** they should see the company settings form with branding, domain, and localization sections
-2. **Given** a company administrator viewing the branding section, **When** they upload a new logo and save, **Then** the new logo should appear in the topbar and login screen
-3. **Given** a company administrator viewing the branding section, **When** they modify brand colors (primary, secondary) and save, **Then** the UI theme should update with the new colors immediately
-4. **Given** a company administrator viewing the domain section, **When** they configure a custom domain and verify DNS, **Then** the platform should be accessible via the custom domain
-5. **Given** a company administrator, **When** they save company settings, **Then** changes should persist to the database and be visible to all users in the tenant
-6. **Given** a company administrator, **When** they view the localization section, **Then** they should see configurable options for default language, timezone, and currency
+1. **Given** a tenant administrator, **When** they navigate to `/settings/tenant`, **Then** they should see the tenant settings form with branding, domain, and localization sections
+2. **Given** a tenant administrator viewing the branding section, **When** they upload a new logo and save, **Then** the new logo should appear in the topbar and login screen
+3. **Given** a tenant administrator viewing the branding section, **When** they modify brand colors (primary, secondary) and save, **Then** the UI theme should update with the new colors immediately
+4. **Given** a tenant administrator viewing the domain section, **When** they configure a custom domain and verify DNS, **Then** the platform should be accessible via the custom domain
+5. **Given** a tenant administrator, **When** they save tenant settings, **Then** changes should persist to the database and be visible to all users in the tenant
+6. **Given** a tenant administrator, **When** they view the localization section, **Then** they should see configurable options for default language, timezone, and currency
 
 ---
 
@@ -94,7 +94,7 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 **Acceptance Scenarios**:
 
 1. **Given** a newly created tenant, **When** an admin first accesses the platform, **Then** they should be redirected to the onboarding wizard
-2. **Given** an admin in the onboarding wizard, **When** they complete step 1 (company info), **Then** company name, logo, and basic details should be saved
+2. **Given** an admin in the onboarding wizard, **When** they complete step 1 (tenant info), **Then** tenant name, logo, and basic details should be saved
 3. **Given** an admin in the onboarding wizard, **When** they complete step 2 (branding), **Then** brand colors, fonts, and visual preferences should be saved
 4. **Given** an admin in the onboarding wizard, **When** they complete step 3 (business domains), **Then** enabled domains should be configured
 5. **Given** an admin in the onboarding wizard, **When** they complete step 4 (connectors), **Then** initial connector setup should be initiated
@@ -133,10 +133,10 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 - **FR-002**: System MUST update all data contexts (tRPC queries, UI state, navigation) when tenant switch occurs
 - **FR-003**: System MUST display current tenant branding (logo, colors, name) in the topbar and relevant UI areas
 - **FR-004**: System MUST invalidate all cached queries when switching tenants to prevent data leakage
-- **FR-005**: System MUST provide a company settings page for branding and domain configuration
+- **FR-005**: System MUST provide a tenant settings page for branding and domain configuration
 - **FR-006**: System MUST support logo upload and brand color customization with immediate UI updates
 - **FR-007**: System MUST provide a tenant settings page for AI, feature flag, and business domain configuration
-- **FR-008**: System MUST persist all tenant and company settings to the database with proper validation
+- **FR-008**: System MUST persist all tenant and tenant settings to the database with proper validation
 - **FR-009**: System MUST support agency partner client management with portfolio view and client onboarding
 - **FR-010**: System MUST provide a guided onboarding workflow for new tenant setup
 - **FR-011**: System MUST handle RTL layout correctly for all tenant management components
@@ -147,8 +147,8 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 
 ### Key Entities
 
-- **Tenant**: Represents a single company or organization in the multi-tenant system. Contains ID, name, settings, and relationships to users, connectors, and business domains.
-- **Company**: Contains branding information (logo, colors, domain) and localization settings (language, timezone, currency) that control how the tenant appears visually.
+- **Tenant**: Represents a single tenant or organization in the multi-tenant system. Contains ID, name, settings, and relationships to users, connectors, and business domains.
+- **Tenant**: Contains branding information (logo, colors, domain) and localization settings (language, timezone, currency) that control how the tenant appears visually.
 - **TenantConfiguration**: Runtime configuration including AI model selection, feature flags, enabled business domains, and platform behavior settings.
 - **AgencyPartner**: A special tenant type that manages multiple client tenants, with additional permissions for client management and cross-client reporting.
 - **ClientTenant**: A tenant owned by an agency partner, with configurable branding and domain settings while maintaining data isolation.
@@ -170,7 +170,7 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 ## Assumptions
 
 - **Multi-tenant Infrastructure**: The existing AsyncLocalStorage-based tenant context propagation system is functional and properly configured at the API layer
-- **Database Schema**: Tenant, company, and configuration tables exist with proper relationships and row-level security policies
+- **Database Schema**: Tenant, tenant, and configuration tables exist with proper relationships and row-level security policies
 - **Authentication System**: User authentication and authorization are implemented, with user-tenant relationship tracking
 - **tRPC Integration**: The unified tRPC API layer provides tenant-scoped procedures for all data operations
 - **Design System**: Mantine v9 component library and design tokens are configured and support RTL layouts
@@ -178,7 +178,7 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 - **DNS Infrastructure**: Custom domain validation requires access to DNS verification tools and domain management APIs
 - **Async Context**: Tenant context propagation via AsyncLocalStorage is implemented server-side and accessible via tRPC procedures
 - **Cache Invalidation**: Query cache invalidation mechanisms exist for tenant switches (TanStack Query queryClient)
-- **Permission System**: Role-based access control distinguishes between company admins, tenant admins, and agency partners
+- **Permission System**: Role-based access control distinguishes between tenant admins, tenant admins, and agency partners
 
 ## Dependencies
 
@@ -186,5 +186,5 @@ New tenant setup requires a guided onboarding flow that collects essential infor
 - **Phase 01 (Authentication)**: User authentication and authorization must be functional
 - **Phase 02 (Scaffold)**: Topbar component, navigation structure, and layout frameworks must exist
 - **Backend API**: tRPC procedures for tenant operations must be implemented
-- **Database**: Tenant, company, and configuration schemas must be migrated
+- **Database**: Tenant, tenant, and configuration schemas must be migrated
 - **Multi-tenant Infrastructure**: AsyncLocalStorage tenant context propagation must be operational

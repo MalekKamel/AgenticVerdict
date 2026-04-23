@@ -13,7 +13,7 @@ Delivered operational performance guidance, automated micro-benchmark guardrails
 
 - Added [`docs/06-reference/runbooks/connector-performance-validation.md`](docs/06-reference/runbooks/connector-performance-validation.md) with:
   - Target table mapped to concrete measurement methods
-  - PostgreSQL `EXPLAIN (ANALYZE, BUFFERS)` examples using current schema names (`public.companies`, `core.connector_tag_mappings`, index `connector_tag_mappings_tag_idx`)
+  - PostgreSQL `EXPLAIN (ANALYZE, BUFFERS)` examples using current schema names (`public.tenants`, `core.connector_tag_mappings`, index `connector_tag_mappings_tag_idx`)
   - Shell timing commands (`turbo run build` / `test`, API cold start)
   - Pointers to [`database-performance.md`](docs/06-reference/runbooks/database-performance.md) and [`performance-baselines.md`](docs/06-reference/performance-baselines.md)
 

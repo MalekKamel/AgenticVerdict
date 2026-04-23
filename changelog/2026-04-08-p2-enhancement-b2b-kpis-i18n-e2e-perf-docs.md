@@ -7,7 +7,7 @@
 
 ## Summary
 
-- **Business KPI tracking:** Added `marketing.b2bKpiProfile` to `CompanyConfig` (`b2bKpiProfileSchema`) and `computeB2bMarketingKpis` in `@agenticverdict/agent-runtime` for CPQL, decision-maker / fleet-quality / regional rates, Arabic vs English engagement share, and a weighted composite score when `enabled: true`. Example profile is set on the Masafh fixture configs.
+- **Business KPI tracking:** Added `marketing.b2bKpiProfile` to `TenantConfig` (`b2bKpiProfileSchema`) and `computeB2bMarketingKpis` in `@agenticverdict/agent-runtime` for CPQL, decision-maker / fleet-quality / regional rates, Arabic vs English engagement share, and a weighted composite score when `enabled: true`. Example profile is set on the Masafh fixture configs.
 - **Arabic validation:** Added `analyzeArabicLocaleQuality` and `computeLexicalOverlapDiagnostic` in `@agenticverdict/i18n` for placeholder parity, Arabic script presence, and a mean token-overlap diagnostic (not a BLEU substitute).
 - **E2E:** Added `apps/frontend/e2e/critical-path-smoke.spec.ts` (English home then Arabic RTL) alongside existing locale and a11y specs.
 - **Performance baselines:** Added `scripts/performance-baseline.mjs`, root script `pnpm benchmark:performance-baseline`, and `docs/06-reference/performance-baselines.md` (instructions plus optional dated append via `PERFBASELINE_WRITE=1`).
@@ -54,7 +54,7 @@
 
 ### `packages/config`
 
-- **`src/schemas/company.ts`** — Optional `marketing.b2bKpiProfile`.
+- **`src/schemas/tenant.ts`** — Optional `marketing.b2bKpiProfile`.
 - **`src/index.ts`** — Re-exports B2B KPI schema types.
 
 ### `packages/agent-runtime`
@@ -66,7 +66,7 @@
 
 - **`src/index.ts`** — Re-exports Arabic locale quality API.
 
-### `configs/companies` & `apps/api/test-fixtures/company-configs`
+### `configs/tenants` & `apps/api/test-fixtures/tenant-configs`
 
 - **Masafh `11111111-…` JSON** — Sample `b2bKpiProfile` with SAR CPQL target and default weights.
 

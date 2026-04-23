@@ -9,11 +9,11 @@ This entry records Drizzle/PostgreSQL schema, initial migration with row-level s
 
 ## Summary
 
-- Defined **eight tables** aligned with acceptance criteria §3: `companies`, `users`, `platform_credentials`, `marketing_metrics`, `reports`, `report_templates`, `i18n_strings`, `audit_logs`, each tenant-scoped via `company_id` (except `companies`, keyed by `id`).
+- Defined **eight tables** aligned with acceptance criteria §3: `tenants`, `users`, `platform_credentials`, `marketing_metrics`, `reports`, `report_templates`, `i18n_strings`, `audit_logs`, each tenant-scoped via `tenant_id` (except `tenants`, keyed by `id`).
 - Added **`migrations/0000_initial_schema.sql`** (Drizzle-generated DDL plus **ENABLE/FORCE RLS** and per-table policies using `current_setting('app.current_tenant_id', true)::uuid`).
 - Extended **`createDatabaseClient`** with pool size, connect/idle timeouts, **30s `statement_timeout`**, and optional Drizzle SQL debug logging; added **`waitForDatabase`** (exponential backoff) and **`pingDatabase`**.
 - Exported **`runMigrations`** / **`migrationsFolder`** for programmatic migrate; **`createUpstashRedisFromEnv`** when `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` are set.
-- **`pnpm run db:seed`** reads `configs/companies/*.json` (or `COMPANY_CONFIG_DIR`), runs migrations, upserts companies by `companyId`.
+- **`pnpm run db:seed`** reads `configs/tenants/*.json` (or `TENANT_CONFIG_DIR`), runs migrations, upserts tenants by `tenantId`.
 - **`dbScoped`** continues to set `app.current_tenant_id` inside a transaction using `@agenticverdict/core` tenant context.
 - **Integration tests** (`test/rls.integration.test.ts`) use Testcontainers PostgreSQL 16 and a **non-superuser** role to assert cross-tenant reads/inserts are blocked; default `pnpm test` runs a small unit test only — use **`pnpm run test:integration`** in `packages/database` when Docker is available.
 
@@ -23,14 +23,14 @@ This entry records Drizzle/PostgreSQL schema, initial migration with row-level s
 
 ```mermaid
 erDiagram
-  companies ||--o{ users : has
-  companies ||--o{ platform_credentials : has
-  companies ||--o{ marketing_metrics : has
-  companies ||--o{ reports : has
-  companies ||--o{ report_templates : has
-  companies ||--o{ i18n_strings : has
-  companies ||--o{ audit_logs : has
-  companies {
+  tenants ||--o{ users : has
+  tenants ||--o{ platform_credentials : has
+  tenants ||--o{ marketing_metrics : has
+  tenants ||--o{ reports : has
+  tenants ||--o{ report_templates : has
+  tenants ||--o{ i18n_strings : has
+  tenants ||--o{ audit_logs : has
+  tenants {
     uuid id PK
     varchar name
     varchar slug UK
@@ -39,7 +39,7 @@ erDiagram
   }
   users {
     uuid id PK
-    uuid company_id FK
+    uuid tenant_id FK
     varchar email
     varchar display_name
   }
@@ -60,7 +60,7 @@ erDiagram
 | Variable                                              | Purpose                                                                                       |
 | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | `DATABASE_URL`                                        | PostgreSQL connection string (seeds, migrate, app)                                            |
-| `COMPANY_CONFIG_DIR`                                  | Optional override for company JSON directory used by `db:seed`                                |
+| `TENANT_CONFIG_DIR`                                   | Optional override for tenant JSON directory used by `db:seed`                                 |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | When both set, `createUpstashRedisFromEnv()` returns an Upstash REST client; otherwise `null` |
 
 ---

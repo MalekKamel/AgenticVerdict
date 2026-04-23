@@ -571,7 +571,7 @@ Tenants can configure retention within plan limits:
 
 - **[Connectors](./connectors.md)** — Snapshots come from connectors
 - **[Insights](./insights-reports.md)** — Insights analyze snapshots
-- **[Tenant/Company](./tenant-company.md)** — Snapshots are tenant-scoped
+- **[Tenant/Tenant](./tenant-tenant.md)** — Snapshots are tenant-scoped
 
 ---
 
@@ -681,7 +681,7 @@ function MetricComparison({ snapshotIds }: { snapshotIds: string[] }) {
 export const connectorSnapshots = pgTable("connector_snapshots", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id")
-    .references(() => companies.id)
+    .references(() => tenants.id)
     .notNull(),
   connectorId: uuid("connector_id")
     .references(() => connectors.id)

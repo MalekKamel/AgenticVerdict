@@ -79,7 +79,7 @@ Comprehensive internationalization through:
 - Locale-aware rendering via `@agenticverdict/i18n`
 - RTL document structure (dir="rtl" attributes)
 - CSS-based bidirectional text layout
-- Template variable injection for company-specific content
+- Template variable injection for tenant-specific content
 
 ### Plugin Architecture
 

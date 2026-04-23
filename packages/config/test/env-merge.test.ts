@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { companyConfigMergeEnvKey, deepMergeConfig } from "../src/index";
+import { tenantConfigMergeEnvKey, deepMergeConfig } from "../src/index";
 
 describe("deepMergeConfig", () => {
   it("merges nested objects", () => {
@@ -22,10 +22,10 @@ describe("deepMergeConfig", () => {
   });
 });
 
-describe("companyConfigMergeEnvKey", () => {
+describe("tenantConfigMergeEnvKey", () => {
   it("uses underscores for uuid segments", () => {
-    expect(companyConfigMergeEnvKey("11111111-1111-4111-8111-111111111111")).toBe(
-      "AGENTICVERDICT_COMPANY_MERGE_11111111_1111_4111_8111_111111111111",
+    expect(tenantConfigMergeEnvKey("11111111-1111-4111-8111-111111111111")).toBe(
+      "AGENTICVERDICT_TENANT_MERGE_11111111_1111_4111_8111_111111111111",
     );
   });
 });

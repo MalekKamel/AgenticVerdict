@@ -81,7 +81,7 @@ Client Request
 │                                                                   │
 │  tenantContext.run({                                            │
 │    tenantId,                                                     │
-│    config: CompanyConfig,  ← Loaded from database               │
+│    config: TenantConfig,  ← Loaded from database               │
 │    requestId,                                                   │
 │    user                                                          │
 │  }, callback)                                                   │
@@ -191,18 +191,18 @@ Input Data
 
 ### 3.2 Packages
 
-| Package              | Purpose                   | Key Exports                                    |
-| -------------------- | ------------------------- | ---------------------------------------------- |
-| **core**             | Domain logic, entities    | `Tenant`, `Report`, `Company`, `CompanyConfig` |
-| **config**           | Configuration schemas     | `CompanyConfig`, Zod schemas                   |
-| **database**         | Drizzle ORM, migrations   | `db`, `dbScoped()`, schema exports             |
-| **data-connectors**  | Multi-domain integrations | `ConnectorAdapter` implementations             |
-| **agent-runtime**    | AI orchestration          | `AgentFactory`, `ChatModel`                    |
-| **report-generator** | Report generation         | `generateReport()`, formatters                 |
-| **ui**               | Shared UI components      | Mantine-based components                       |
-| **i18n**             | Internationalization      | `useLocale()`, RTL utilities                   |
-| **types**            | TypeScript types          | Shared type definitions                        |
-| **testing**          | Test utilities            | Mock factories, test helpers                   |
+| Package              | Purpose                   | Key Exports                                  |
+| -------------------- | ------------------------- | -------------------------------------------- |
+| **core**             | Domain logic, entities    | `Tenant`, `Report`, `Tenant`, `TenantConfig` |
+| **config**           | Configuration schemas     | `TenantConfig`, Zod schemas                  |
+| **database**         | Drizzle ORM, migrations   | `db`, `dbScoped()`, schema exports           |
+| **data-connectors**  | Multi-domain integrations | `ConnectorAdapter` implementations           |
+| **agent-runtime**    | AI orchestration          | `AgentFactory`, `ChatModel`                  |
+| **report-generator** | Report generation         | `generateReport()`, formatters               |
+| **ui**               | Shared UI components      | Mantine-based components                     |
+| **i18n**             | Internationalization      | `useLocale()`, RTL utilities                 |
+| **types**            | TypeScript types          | Shared type definitions                      |
+| **testing**          | Test utilities            | Mock factories, test helpers                 |
 
 ### 3.3 Directory Structure
 
@@ -241,7 +241,7 @@ agenticverdict/
 │   ├── config/                 # Configuration
 │   │   └── src/
 │   │       └── schemas/        # Zod schemas
-│   │           ├── company.ts
+│   │           ├── tenant.ts
 │   │           └── platform.ts
 │   │
 │   ├── database/               # Data layer
@@ -321,7 +321,7 @@ agenticverdict/
    │
    ▼
 2. Fetch Tenant Configuration
-   │ Load CompanyConfig from database
+   │ Load TenantConfig from database
    │
    ▼
 3. Fetch connector data (parallel)
@@ -343,7 +343,7 @@ agenticverdict/
    │
    ▼
 6. Generate Report
-   ├── Select template (from CompanyConfig)
+   ├── Select template (from TenantConfig)
    ├── Inject data and insights
    ├── Format (PDF/Excel/DOCX)
    └── Apply i18n (language, RTL/LTR)
@@ -489,14 +489,14 @@ apps/
 
 ## 6. Configuration System
 
-### 6.1 CompanyConfig Schema
+### 6.1 TenantConfig Schema
 
 The single source of truth for tenant-specific behavior:
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   // Identification
-  companyId: string;
+  tenantId: string;
   name: string;
 
   // Localization
@@ -539,16 +539,16 @@ interface CompanyConfig {
 
 ```typescript
 // Config loading flow
-export async function loadCompanyConfig(tenantId: string): Promise<CompanyConfig> {
+export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
   // 1. Check cache
   const cached = await cache.get(`config:${tenantId}`);
   if (cached) return cached;
 
   // 2. Load from database
-  const config = await db.query.companies.findFirst({ where: eq(companies.id, tenantId) });
+  const config = await db.query.tenants.findFirst({ where: eq(tenants.id, tenantId) });
 
   // 3. Validate with Zod
-  const validated = CompanyConfigSchema.parse(config);
+  const validated = TenantConfigSchema.parse(config);
 
   // 4. Cache for 1 hour
   await cache.set(`config:${tenantId}`, validated, 3600);
@@ -578,7 +578,7 @@ OPENAI_API_KEY=sk-openai-...
 RESEND_API_KEY=re_...
 
 # Report Generation
-AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=0
+AGENTICVERDICT_STUB_REPORT_FORMATS=0
 ```
 
 ---
@@ -627,12 +627,12 @@ AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=0
 
 ```sql
 -- Enable RLS on tenant tables
-ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE platform_credentials ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Only access own tenant's data
-CREATE POLICY tenant_isolation_policy ON companies
+CREATE POLICY tenant_isolation_policy ON tenants
   FOR ALL
   USING (id = current_setting('app.current_tenant_id')::uuid);
 
@@ -640,7 +640,7 @@ CREATE POLICY tenant_isolation_policy ON companies
 SET LOCAL app.current_tenant_id = '<tenant_id>';
 
 -- All queries automatically filtered
-SELECT * FROM companies;  -- Only returns tenant's row
+SELECT * FROM tenants;  -- Only returns tenant's row
 ```
 
 ### 7.3 Credential Management

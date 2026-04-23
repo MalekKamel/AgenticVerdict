@@ -5,35 +5,22 @@
  * Configures language detection, fallbacks, and message loading.
  */
 
-import { LOCALES, type LocaleCode, type TextDirection } from "./types";
-
-/**
- * Supported locales
- */
-export const supportedLocales: LocaleCode[] = ["en", "ar"];
-
-/**
- * Default locale
- */
-export const defaultLocale: LocaleCode = "en";
+import {
+  defaultLocale,
+  getDirection,
+  getLocaleName,
+  isSupportedLocale,
+  localeMeta,
+  supportedLocales,
+  type LocaleCode,
+} from "./locales";
+import { getPreferredLocale } from "@/lib/storage/locale-storage";
 
 /**
  * Get direction for a locale
  */
-export function getDirection(locale: LocaleCode): TextDirection {
-  return LOCALES[locale]?.direction ?? "ltr";
-}
+export { defaultLocale, getDirection, getLocaleName, supportedLocales };
 
-/**
- * Get locale display name
- */
-export function getLocaleName(locale: LocaleCode): string {
-  return LOCALES[locale]?.name ?? locale;
-}
-
-/**
- * Load messages for a locale
- */
 export async function loadMessages(locale: LocaleCode): Promise<Record<string, unknown>> {
   try {
     // JSON lives at `apps/frontend/messages/`; this module is under `src/i18n/`.
@@ -57,11 +44,16 @@ export function detectLocale(): LocaleCode {
     return defaultLocale;
   }
 
+  const persistedLocale = getPreferredLocale();
+  if (persistedLocale && isSupportedLocale(persistedLocale)) {
+    return persistedLocale;
+  }
+
   const browserLanguages = navigator.languages || [navigator.language];
 
   for (const lang of browserLanguages) {
     const code = lang.split("-")[0] as LocaleCode;
-    if (supportedLocales.includes(code)) {
+    if (isSupportedLocale(code)) {
       return code;
     }
   }
@@ -77,11 +69,7 @@ export function formatDate(
   locale: LocaleCode,
   options?: Intl.DateTimeFormatOptions,
 ): string {
-  const localeMap: Record<LocaleCode, string> = {
-    en: "en-US",
-    ar: "ar-SA",
-  };
-  return new Intl.DateTimeFormat(localeMap[locale], options).format(date);
+  return new Intl.DateTimeFormat(localeMeta[locale]?.intlLocale ?? "en-US", options).format(date);
 }
 
 /**
@@ -92,28 +80,19 @@ export function formatNumber(
   locale: LocaleCode,
   options?: Intl.NumberFormatOptions,
 ): string {
-  const localeMap: Record<LocaleCode, string> = {
-    en: "en-US",
-    ar: "ar-SA",
-  };
-  return new Intl.NumberFormat(localeMap[locale], options).format(value);
+  return new Intl.NumberFormat(localeMeta[locale]?.intlLocale ?? "en-US", options).format(value);
 }
 
 /**
  * Format currency according to locale
  */
 export function formatCurrency(value: number, locale: LocaleCode, currency?: string): string {
-  const localeConfig = LOCALES[locale];
-  const curr = currency ?? localeConfig.currencyFormat.currency;
-  const symbol = localeConfig.currencyFormat.symbol;
-  const position = localeConfig.currencyFormat.position;
+  const localeConfig = localeMeta[locale];
+  const curr = currency ?? localeConfig.currency;
+  const symbol = localeConfig.currencySymbol;
+  const position = localeConfig.currencySymbolPosition;
 
-  const localeMap: Record<LocaleCode, string> = {
-    en: "en-US",
-    ar: "ar-SA",
-  };
-
-  const formatted = new Intl.NumberFormat(localeMap[locale], {
+  const formatted = new Intl.NumberFormat(localeConfig.intlLocale, {
     style: "currency",
     currency: curr,
   }).format(value);

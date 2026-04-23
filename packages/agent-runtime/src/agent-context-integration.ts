@@ -1,7 +1,7 @@
 import { requireTenantContext } from "@agenticverdict/core";
 
 import type { AgentInvocationContext } from "./interfaces";
-import { assemblePromptLayers, buildCompanyPromptContext } from "./prompts/index";
+import { assemblePromptLayers, buildTenantPromptContext } from "./prompts/index";
 import type { AgentFactoryConfig } from "./agent-config";
 
 export class AgentTenantContextError extends Error {
@@ -32,15 +32,15 @@ export interface BuildFactoryTurnPromptInput {
 }
 
 /**
- * Builds trimmed system + user messages for one agent turn using tenant `CompanyConfig` from ALS
+ * Builds trimmed system + user messages for one agent turn using tenant `TenantConfig` from ALS
  * and the factory-level policy and token budgets.
  */
 export function buildFactoryTurnPromptLayers(
   input: BuildFactoryTurnPromptInput,
 ): ReturnType<typeof assemblePromptLayers> {
   const tenant = requireTenantContext();
-  const company = buildCompanyPromptContext(tenant.config, {
-    maxApproxTokens: input.factoryConfig.companyContextMaxApproxTokens,
+  const tenantPromptContext = buildTenantPromptContext(tenant.config, {
+    maxApproxTokens: input.factoryConfig.tenantContextMaxApproxTokens,
   });
 
   const defaultPolicy =
@@ -48,7 +48,7 @@ export function buildFactoryTurnPromptLayers(
 
   return assemblePromptLayers({
     systemPolicy: input.factoryConfig.systemPolicy ?? defaultPolicy,
-    companyContext: company.text,
+    tenantContext: tenantPromptContext.text,
     userTask: input.goal,
     toolContext: input.toolContext,
     maxApproxTokensTotal: input.factoryConfig.maxAssembledPromptApproxTokens,

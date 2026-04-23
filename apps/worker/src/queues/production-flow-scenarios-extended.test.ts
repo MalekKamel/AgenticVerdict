@@ -19,11 +19,11 @@ function job(scenarioId: ProductionFlowScenarioId): WorkflowTriggerJobData {
 
 describe("runExtendedProductionFlowScenario", () => {
   beforeEach(() => {
-    process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL = "1";
+    process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY = "1";
   });
 
   afterEach(() => {
-    delete process.env.AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL;
+    delete process.env.AGENTICVERDICT_STUB_EMAIL_DELIVERY;
   });
 
   it("R03 produces valid DOCX packages", async () => {

@@ -28,7 +28,7 @@ The verification of test artifacts revealed **2 critical gaps**, **3 medium-prio
 
 **Severity**: CRITICAL
 **Category**: Data Completeness Gap
-**Location**: `configs/companies/22222222-2222-4222-8222-222222222222.json:10-15`
+**Location**: `configs/tenants/22222222-2222-4222-8222-222222222222.json:10-15`
 
 #### Observation
 
@@ -220,7 +220,7 @@ function calculateDataQualityScore(result: WorkflowResult): number {
 **Locations**:
 
 - `apps/worker/src/queues/report-queues.ts:137-143`
-- `configs/companies/22222222-2222-4222-8222-222222222222.json`
+- `configs/tenants/22222222-2222-4222-8222-222222222222.json`
 
 #### Observation
 
@@ -229,7 +229,7 @@ Two sources define platform enablement inconsistently:
 1. **Workflow Code** (hardcoded):
 
 ```typescript
-companyConfig: {
+tenantConfig: {
   marketing: {
     channels: [
       { platform: "meta", enabled: true },
@@ -360,8 +360,8 @@ export AGENTICVERDICT_MOCK_TIKTOK=1
 
 **Files**:
 
-- `configs/companies/22222222-2222-4222-8222-222222222222.json`
-- `packages/testing/src/create-test-company-config.ts`
+- `configs/tenants/22222222-2222-4222-8222-222222222222.json`
+- `packages/testing/src/create-test-tenant-config.ts`
 
 **Changes required.**
 
@@ -413,10 +413,10 @@ export AGENTICVERDICT_MOCK_TIKTOK=1
 
 ### Phase 1: Critical Fixes (Immediate)
 
-| Priority | Task                                       | File                                                          | Est. Effort |
-| -------- | ------------------------------------------ | ------------------------------------------------------------- | ----------- |
-| P0       | Enable all platforms in demo tenant config | `configs/companies/22222222-2222-4222-8222-222222222222.json` | 5 min       |
-| P0       | Implement metrics extraction               | `apps/api/src/services/analysis-store.ts`                     | 30 min      |
+| Priority | Task                                       | File                                                        | Est. Effort |
+| -------- | ------------------------------------------ | ----------------------------------------------------------- | ----------- |
+| P0       | Enable all platforms in demo tenant config | `configs/tenants/22222222-2222-4222-8222-222222222222.json` | 5 min       |
+| P0       | Implement metrics extraction               | `apps/api/src/services/analysis-store.ts`                   | 30 min      |
 
 ### Phase 2: High-Priority (This Sprint)
 
@@ -467,7 +467,7 @@ tests/test-output/archive/latest/
 - `tests/scripts/verify-artifacts.sh` - Verification script
 - `apps/worker/src/queues/report-queues.ts` - Workflow processing
 - `apps/api/src/services/analysis-store.ts` - Result persistence
-- `configs/companies/22222222-2222-4222-8222-222222222222.json` - Tenant config
+- `configs/tenants/22222222-2222-4222-8222-222222222222.json` - Tenant config
 - `packages/platform-adapters/src/mock-adapter-factory.ts` - Mock adapters
 
 **Related Documentation**:

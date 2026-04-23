@@ -105,7 +105,7 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     );
   });
 
-  describe("200 analyst access with valid JWT + company config", () => {
+  describe("200 analyst access with valid JWT + tenant config", () => {
     it.each(ANALYST_GET_ROUTES)(
       "GET %s (%s) succeeds for tenant A analyst",
       async (_label, url) => {
@@ -448,7 +448,7 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
       await ctxApp.close();
     });
 
-    it("returns 403 when tenant UUID is valid JWT but no company JSON exists", async () => {
+    it("returns 403 when tenant UUID is valid JWT but no tenant JSON exists", async () => {
       const orphan = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
       const token = await signToken(orphan, ["analyst"], "orphan-user");
       const res = await ctxApp.inject({

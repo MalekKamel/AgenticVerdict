@@ -108,10 +108,10 @@ Component: --button-primary-bg: var(--brand-color-primary)
 
 ### Theme Configuration
 
-Tenant themes are applied at runtime via the `CompanyConfig` interface:
+Tenant themes are applied at runtime via the `TenantConfig` interface:
 
 ```typescript
-interface CompanyConfig {
+interface TenantConfig {
   localization: {
     language: "ar" | "en" | "fr";
     direction: "rtl" | "ltr";

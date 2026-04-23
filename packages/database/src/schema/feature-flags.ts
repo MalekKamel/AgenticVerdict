@@ -10,7 +10,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { companies } from "./companies";
+import { tenants } from "./tenants";
 
 export const featureFlags = pgTable(
   "feature_flags",
@@ -35,7 +35,7 @@ export const tenantFeatureFlags = pgTable(
   {
     tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => companies.id, { onDelete: "cascade" }),
+      .references(() => tenants.id, { onDelete: "cascade" }),
     flagId: uuid("flag_id")
       .notNull()
       .references(() => featureFlags.id, { onDelete: "cascade" }),

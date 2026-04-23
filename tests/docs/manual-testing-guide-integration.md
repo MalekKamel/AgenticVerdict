@@ -83,7 +83,7 @@ Poll **`GET /api/v1/workflows/status/:executionId`** until `completed` or `faile
 
 With **API + worker + Redis** running:
 
-Use the **same tenant UUID** for the JWT as for the workflow body (must have company config, e.g. shipped demo **`22222222-2222-4222-8222-222222222222`** — see **`configs/companies/`**). The API resolves the JWT’s `tenant_id` before enqueue; a token for an unconfigured tenant returns **`403`** (`tenant_config_not_found`).
+Use the **same tenant UUID** for the JWT as for the workflow body (must have tenant config, e.g. shipped demo **`22222222-2222-4222-8222-222222222222`** — see **`configs/tenants/`**). The API resolves the JWT’s `tenant_id` before enqueue; a token for an unconfigured tenant returns **`403`** (`tenant_config_not_found`).
 
 ```bash
 export ADMIN_BEARER_TOKEN="$(node scripts/generate-dev-jwt.mjs --tenant 22222222-2222-4222-8222-222222222222)"
@@ -165,12 +165,12 @@ Do **not** run `./scripts/archive_complete_test_run.sh` or `./scripts/test_scena
 
 ## Troubleshooting
 
-| Issue                                     | What to check                                                                                                                                                                                                                                      |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`401` / `403` on `/workflows/trigger`** | Token from `generate-dev-jwt.mjs`; JWT must include `roles` including `admin`. For **`403`** with **`tenant_config_not_found`**, the JWT’s `tenant_id` must be a tenant that has valid company configuration (not only the UUID in the JSON body). |
-| **`503` on trigger**                      | BullMQ / Redis not configured for API (`isBullmqConfigured`).                                                                                                                                                                                      |
-| **`400` test triggers disabled**          | Production build gate: `testMode` triggers require non-production workflow test gate (see **`manual-testing-guide.md`** and `isWorkflowTestTriggerAllowed`).                                                                                       |
-| Archive path confusion                    | Use **`test-output/`** consistently; ignore older drafts that mentioned **`test-reports/`**.                                                                                                                                                       |
+| Issue                                     | What to check                                                                                                                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`401` / `403` on `/workflows/trigger`** | Token from `generate-dev-jwt.mjs`; JWT must include `roles` including `admin`. For **`403`** with **`tenant_config_not_found`**, the JWT’s `tenant_id` must be a tenant that has valid tenant configuration (not only the UUID in the JSON body). |
+| **`503` on trigger**                      | BullMQ / Redis not configured for API (`isBullmqConfigured`).                                                                                                                                                                                     |
+| **`400` test triggers disabled**          | Production build gate: `testMode` triggers require non-production workflow test gate (see **`manual-testing-guide.md`** and `isWorkflowTestTriggerAllowed`).                                                                                      |
+| Archive path confusion                    | Use **`test-output/`** consistently; ignore older drafts that mentioned **`test-reports/`**.                                                                                                                                                      |
 
 ---
 

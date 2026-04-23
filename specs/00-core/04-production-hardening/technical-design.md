@@ -61,7 +61,7 @@
                               │
 ┌─────────────────────────────────────────────────────────────┐
 │                 Tenant Configuration                         │
-│              (CompanyConfig schema)                          │
+│              (TenantConfig schema)                          │
 │  Business rules | Localization | AI models | Features       │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -264,7 +264,7 @@ export default defineConfig({
 
 **Test Organization**:
 - **Unit Tests**: 646+ test files across all packages/apps
-- **Integration Tests**: Phase 01 platform integration, company config
+- **Integration Tests**: Phase 01 platform integration, tenant config
 - **Scenario Tests**: R01-R12 orchestration scenarios
 - **Load Tests**: Concurrent report generation matrix
 - **Chaos Tests**: Adapter failure injection

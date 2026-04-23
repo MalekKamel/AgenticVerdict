@@ -57,7 +57,7 @@ For each business entity defined in the Business Architecture, document:
 
 **Required Entities (Minimum):**
 
-- Company/Tenant
+- Tenant/Tenant
 - Connectors (all platform types)
 - Insights/Reports
 - Templates
@@ -103,7 +103,7 @@ For each complete page/view in the application:
 - Connector management (list, add, configure, remove)
 - Insight/report viewing (list, detail, export, schedule)
 - Template management (list, create, edit, preview)
-- Settings (company, user, notifications, integrations)
+- Settings (tenant, user, notifications, integrations)
 - Onboarding (first-time setup, guided tours)
 
 ### 4. Workflow Documentation
@@ -120,7 +120,7 @@ For multi-page user workflows:
 - Connector onboarding (OAuth → configuration → verification)
 - Report generation (template selection → data configuration → preview → delivery)
 - Multi-language switching (language change → RTL transition → content reload)
-- Tenant onboarding (company setup → user invitation → connector configuration)
+- Tenant onboarding (tenant setup → user invitation → connector configuration)
 
 ### 5. Interaction Patterns
 
@@ -144,7 +144,7 @@ docs/architecture/ui/
 ├── 01-research-findings/             # Already exists - research documents
 ├── 02-system-entities/               # NEW - Entity specifications
 │   ├── README.md                     # Entity catalog index
-│   ├── tenant-company.md             # Tenant and company entity
+│   ├── tenant-tenant.md             # Tenant and tenant entity
 │   ├── connectors.md                 # All connector entities
 │   ├── insights-reports.md           # Insights and report entities
 │   ├── templates.md                  # Template entity

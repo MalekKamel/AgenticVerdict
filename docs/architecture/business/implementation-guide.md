@@ -67,7 +67,7 @@ packages/
 │   └── exports: ConnectorType, MetricDefinition, ...
 │
 ├── config/             # Configuration management
-│   └── exports: CompanyConfig, loadCompanyConfig, ...
+│   └── exports: TenantConfig, loadTenantConfig, ...
 │
 ├── core/               # Domain logic and entities
 │   ├── tenant-context.ts    # AsyncLocalStorage setup
@@ -179,7 +179,7 @@ const tenantContext = new AsyncLocalStorage<TenantContext>();
 
 export interface TenantContext {
   tenantId: string;
-  config: CompanyConfig;
+  config: TenantConfig;
   requestId: string;
   userId?: string;
 }
@@ -192,6 +192,8 @@ export function getTenantContext(): TenantContext | undefined {
   return tenantContext.getStore();
 }
 ```
+
+**Normative cross-links (2026-04-25):** Product and engineering requirements for multi-tenancy, transport, and compliance PR checks are in [`/docs/architecture/tenant-requirements-single-source-of-truth-2026-04-25.md`](../tenant-requirements-single-source-of-truth-2026-04-25.md) (SSOT). The phased delivery plan and traceability are in [`/docs/architecture/tenant-requirements-implementation-plan-2026-04-25.md`](../tenant-requirements-implementation-plan-2026-04-25.md). **NFR-T5 (observability):** the API and worker Pino loggers in `@agenticverdict/observability` merge `tenantId` and `requestId` from `getTenantContext()` when in ALS; `apps/api` HTTP `http_access` logs and rate-limit key material also use the same request-derived tenant resolution where applicable. **§11 PR checklist** in the SSOT is the default gate for PRs that touch tenant behavior (tests for missing/mismatch, stable error codes, no production silent tenant defaults).
 
 ### 3.3 Database Access Pattern
 
@@ -215,8 +217,8 @@ Configuration uses Zod for runtime validation:
 ```typescript
 import { z } from "zod";
 
-export const CompanyConfigSchema = z.object({
-  companyId: z.string().uuid(),
+export const TenantConfigSchema = z.object({
+  tenantId: z.string().uuid(),
   name: z.string(),
   localization: z.object({
     language: z.enum(["ar", "en", "fr"]),
@@ -227,10 +229,10 @@ export const CompanyConfigSchema = z.object({
   // ... additional fields
 });
 
-export async function loadCompanyConfig(tenantId: string): Promise<CompanyConfig> {
-  const configPath = path.join(COMPANY_CONFIG_DIR, `${tenantId}.json`);
+export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
+  const configPath = path.join(TENANT_CONFIG_DIR, `${tenantId}.json`);
   const raw = await fs.readFile(configPath, "utf-8");
-  return CompanyConfigSchema.parse(JSON.parse(raw));
+  return TenantConfigSchema.parse(JSON.parse(raw));
 }
 ```
 
@@ -341,7 +343,7 @@ async function generateReport() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       json: {
-        companyId: "masafh",
+        tenantId: "masafh",
         dateRange: {
           /* ... */
         },
@@ -535,10 +537,10 @@ TIKTOK_APP_ID=...
 TIKTOK_APP_SECRET=...
 
 # Finance domain (planned)
-# Finance connector credentials configured per-company
+# Finance connector credentials configured per-tenant
 
 # Operations domain (planned)
-# Operations connector credentials configured per-company
+# Operations connector credentials configured per-tenant
 ```
 
 **Required for AI Features:**
@@ -677,7 +679,7 @@ jobs:
 
 **Configuration Backups:**
 
-- Company configs in git
+- Tenant configs in git
 - Database configuration dumps
 - Template versioning
 

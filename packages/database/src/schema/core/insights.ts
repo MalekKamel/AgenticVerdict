@@ -1,21 +1,21 @@
 import { sql } from "drizzle-orm";
 import { boolean, index, jsonb, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { companies } from "../companies";
+import { tenants } from "../tenants";
 import { dataConnectors } from "./connectors";
 import { coreSchema } from "./schema";
 
 /**
  * Business-facing insight configuration (successor to internal-only “pipeline” terminology).
- * Scoped to a company; links to connectors via {@link insightConnectors}.
+ * Scoped to a tenant; links to connectors via {@link insightConnectors}.
  */
 export const insights = coreSchema.table(
   "insights",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    companyId: uuid("company_id")
+    tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => companies.id, { onDelete: "cascade" }),
+      .references(() => tenants.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
     templateId: varchar("template_id", { length: 100 }),
@@ -34,7 +34,7 @@ export const insights = coreSchema.table(
       .default(sql`'{}'::jsonb`),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("insights_company_id_idx").on(t.companyId)],
+  (t) => [index("insights_tenant_id_idx").on(t.tenantId)],
 );
 
 export const insightConnectors = coreSchema.table(

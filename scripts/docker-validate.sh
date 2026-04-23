@@ -39,6 +39,8 @@ run_config "docker-compose.apps.yml (+ docker-compose.yml for networks/deps)" \
 run_config "docker-compose.dev.yml" docker compose -f docker-compose.dev.yml config
 run_config "docker-compose.test.yml" docker compose -f docker-compose.test.yml config
 run_config "docker-compose.observability.yml" docker compose -f docker-compose.observability.yml config
+run_config "docker-compose.pgadmin.yml (+ docker-compose.yml for networks/deps)" \
+  docker compose -f docker-compose.yml -f docker-compose.pgadmin.yml config
 
 POSTGRES_PASSWORD=ci_validate_dummy \
   run_config "deploy/docker-compose.production.example.yml (POSTGRES_PASSWORD set)" \
@@ -65,6 +67,9 @@ POSTGRES_PASSWORD=ci_validate_dummy \
 
 run_config "merge: observability (yml + apps + observability)" \
   docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.observability.yml config
+
+run_config "merge: pgadmin (yml + pgadmin)" \
+  docker compose -f docker-compose.yml -f docker-compose.pgadmin.yml config
 
 run_config "merge: backup overlay (yml + deploy/docker-compose.backup.yml)" \
   docker compose -f docker-compose.yml -f deploy/docker-compose.backup.yml config

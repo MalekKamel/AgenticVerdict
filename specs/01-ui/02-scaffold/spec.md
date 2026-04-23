@@ -93,7 +93,7 @@ As a user viewing an AI-generated report, I need a dedicated report layout with 
 
 ### User Story 4 - Settings Layout (Priority: P2)
 
-As a user managing my account or company settings, I need a dedicated settings layout with section navigation and form areas so that I can efficiently configure different aspects of my account without visual clutter.
+As a user managing my account or tenant settings, I need a dedicated settings layout with section navigation and form areas so that I can efficiently configure different aspects of my account without visual clutter.
 
 **Why this priority**: Settings pages are configuration-heavy and require a focused layout that separates navigation from form content. This improves usability for complex configuration tasks.
 
@@ -103,11 +103,11 @@ As a user managing my account or company settings, I need a dedicated settings l
 
 1. **Given** a user navigates to any settings page, **When** the page loads, **Then** the settings layout should display with:
    - Header containing settings title and description
-   - Left sidebar (LTR) or right sidebar (RTL) with section navigation (Account, Company, Connectors, Notifications)
+   - Left sidebar (LTR) or right sidebar (RTL) with section navigation (Account, Tenant, Connectors, Notifications)
    - Main content area with the active section's form
    - Save/Cancel actions button in the header or footer
 
-2. **Given** a user is on the Account settings page, **When** they click on "Company" in the section nav, **Then** the browser should navigate to `/en/settings/company` and the "Company" item should be visually highlighted
+2. **Given** a user is on the Account settings page, **When** they click on "Tenant" in the section nav, **Then** the browser should navigate to `/en/settings/tenant` and the "Tenant" item should be visually highlighted
 
 3. **Given** a user is editing settings, **When** they click "Save Changes", **Then** a saving indicator should display, followed by a success message when complete
 
@@ -149,7 +149,7 @@ As a user switching between English and Arabic, I need all navigation labels, bu
 - What happens when the sidebar navigation has more than 20 items? → Should implement scrollable sidebar with sticky headers
 - What happens when a user is on a very small mobile screen (320px width)? → Should hide sidebar entirely and show hamburger menu only
 - What happens when breadcrumbs exceed the viewport width? → Should truncate with ellipsis and show full breadcrumb on hover
-- What happens when a user has a very long company name in the tenant switcher? → Should truncate with tooltip showing full name
+- What happens when a user has a very long tenant name in the tenant switcher? → Should truncate with tooltip showing full name
 - What happens when JavaScript is disabled? → Should render server-side with basic navigation (no collapsible sidebar)
 
 ---
@@ -183,7 +183,7 @@ As a user switching between English and Arabic, I need all navigation labels, bu
 
 - **NavigationItem**: Represents a single navigation link with label, href, icon, optional badge, and optional children (for nested navigation)
 - **BreadcrumbItem**: Represents a breadcrumb segment with label and href (last segment has no href)
-- **Tenant**: Represents a tenant/company in the tenant switcher with tenantId, companyName, and logo
+- **Tenant**: Represents a tenant/tenant in the tenant switcher with tenantId, tenantName, and logo
 - **UserMenuItem**: Represents an item in the user menu dropdown with label, icon, onClick handler, and dangerous flag for destructive actions
 - **SettingsSection**: Represents a settings page section with id, label, icon, href, disabled state, and optional badge
 - **TOCItem**: Represents a table of contents item for reports with id, label, page number, and optional children

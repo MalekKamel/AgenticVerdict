@@ -4,6 +4,7 @@ import { JsonFormatGenerator } from "./json-format-generator";
 import { PlaywrightPdfFormatGenerator } from "./pdf-playwright-generator";
 import type { FormatGeneratorInput, IFormatGenerator, ReportFormat } from "./types";
 import { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
+import { isFeatureMockEnabled, resolveRuntimePolicy } from "@agenticverdict/config";
 
 /** Deterministic stub output for fast tests and environments without Chromium. */
 export class StubFormatGenerator implements IFormatGenerator {
@@ -54,10 +55,11 @@ export function createStubFormatRegistry(): FormatGeneratorRegistry {
 
 /**
  * Production registry: PDF (Playwright/Chromium), DOCX (html → docx), XLSX (ExcelJS).
- * Set `AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS=1` to use {@link createStubFormatRegistry} instead.
+ * Set `AGENTICVERDICT_STUB_REPORT_FORMATS=1` to use {@link createStubFormatRegistry} instead.
  */
 export function createDefaultFormatRegistry(): FormatGeneratorRegistry {
-  if (process.env.AGENTICVERDICT_USE_STUB_FORMAT_GENERATORS === "1") {
+  const policy = resolveRuntimePolicy(process.env);
+  if (isFeatureMockEnabled(policy, "reportFormats")) {
     return createStubFormatRegistry();
   }
   const r = new FormatGeneratorRegistry();

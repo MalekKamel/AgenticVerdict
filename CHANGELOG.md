@@ -58,12 +58,12 @@ Phase 0 foundation: monorepo scaffold, core packages, web shell, and phase docum
 - Turborepo + pnpm workspace at the repository root (`turbo.json`, `pnpm-workspace.yaml`, shared tooling).
 - Shared TypeScript and ESLint configuration for the workspace (`tsconfig.json`, `eslint.config.mjs`, Prettier).
 - Package `@agenticverdict/types` with shared platform type aliases.
-- Package `@agenticverdict/config` with Zod `CompanyConfig` schema, file-based `loadCompanyConfig` with in-memory cache and monorepo-friendly config directory resolution.
+- Package `@agenticverdict/config` with Zod `TenantConfig` schema, file-based `loadTenantConfig` with in-memory cache and monorepo-friendly config directory resolution.
 - Package `@agenticverdict/core` with `AsyncLocalStorage` tenant context helpers (`runWithTenantContext`, `getTenantContext`, `requireTenantContext`) and unit tests.
-- Package `@agenticverdict/database` with Drizzle ORM, initial `companies` schema, `createDatabaseClient`, and `dbScoped` helper using PostgreSQL `set_config` for tenant session state.
-- Application `@agenticverdict/frontend` (Next.js 15, App Router): Mantine with `DirectionProvider` for RTL/LTR, `next-intl` with `/en` and `/ar`, demo home page loading validated company config from disk.
-- Sample company configuration at `configs/companies/11111111-1111-4111-8111-111111111111.json`.
-- Environment template at `.env.example` (`DATABASE_URL`, `COMPANY_CONFIG_DIR`).
+- Package `@agenticverdict/database` with Drizzle ORM, initial `tenants` schema, `createDatabaseClient`, and `dbScoped` helper using PostgreSQL `set_config` for tenant session state.
+- Application `@agenticverdict/frontend` (Next.js 15, App Router): Mantine with `DirectionProvider` for RTL/LTR, `next-intl` with `/en` and `/ar`, demo home page loading validated tenant config from disk.
+- Sample tenant configuration at `configs/tenants/11111111-1111-4111-8111-111111111111.json`.
+- Environment template at `.env.example` (`DATABASE_URL`, `TENANT_CONFIG_DIR`).
 - Phase 0 developer scope document `specs/00-core/00-foundation/implementation-scope.md` (waves, deferred work vs `tasks.md`, config source of truth).
 
 ### Changed

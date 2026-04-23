@@ -2,7 +2,7 @@ import { createSyntheticAdapter } from "@agenticverdict/data-connectors";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
-import { TenantScopedTtlCache } from "./agent-tools/company-context-tools";
+import { TenantScopedTtlCache } from "./agent-tools/tenant-context-tools";
 import {
   buildSpecializedMarketingFactoryConfig,
   createSpecializedMarketingTestAgent,
@@ -11,20 +11,20 @@ import {
 describe("specialized-marketing-agents", () => {
   it("maps kinds to LLM roles and embeds specialization hints", () => {
     const analysisCfg = buildSpecializedMarketingFactoryConfig("cross_platform_analysis", {
-      companyName: "Demo Co",
+      tenantName: "Demo Co",
     });
     expect(analysisCfg.role).toBe("analysis");
     expect(analysisCfg.systemPolicy).toContain("cross-platform");
     expect(analysisCfg.systemPolicy).toContain("Demo Co");
 
     const insightCfg = buildSpecializedMarketingFactoryConfig("marketing_insight_generation", {
-      companyName: "Demo Co",
+      tenantName: "Demo Co",
     });
     expect(insightCfg.role).toBe("insights");
     expect(insightCfg.systemPolicy).toContain("insight generation");
 
     const verdictCfg = buildSpecializedMarketingFactoryConfig("media_verdict", {
-      companyName: "Demo Co",
+      tenantName: "Demo Co",
     });
     expect(verdictCfg.role).toBe("verdict");
     expect(verdictCfg.systemPolicy).toContain("media verdict");
@@ -34,7 +34,7 @@ describe("specialized-marketing-agents", () => {
   it("createSpecializedMarketingTestAgent runs under factory", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const agent = createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
-      companyName: "Acme",
+      tenantName: "Acme",
     });
     expect(agent.run).toBeTypeOf("function");
   });
@@ -43,7 +43,7 @@ describe("specialized-marketing-agents", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const createSpy = vi.spyOn(factory, "createAgentWithTools");
     createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
-      companyName: "Acme",
+      tenantName: "Acme",
       platformDeps: {
         getAdapter: (platform) => createSyntheticAdapter(platform),
       },
@@ -61,7 +61,7 @@ describe("specialized-marketing-agents", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const createSpy = vi.spyOn(factory, "createAgentWithTools");
     createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
-      companyName: "Acme",
+      tenantName: "Acme",
     });
     const calledTools = createSpy.mock.calls.at(0)?.[1] ?? [];
     const toolNames = calledTools.map((tool) => tool.name);
@@ -69,24 +69,24 @@ describe("specialized-marketing-agents", () => {
     expect(toolNames).not.toContain("fetch_ga4_metrics");
   });
 
-  it("passes company context deps to company context tools", () => {
+  it("passes tenant context deps to tenant context tools", () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const createSpy = vi.spyOn(factory, "createAgentWithTools");
     const configCache = new TenantScopedTtlCache<unknown>({ ttlMs: 5_000, maxEntries: 10 });
     createSpecializedMarketingTestAgent(factory, "cross_platform_analysis", {
-      companyName: "Acme",
-      companyContextDeps: { configCache },
+      tenantName: "Acme",
+      tenantContextDeps: { configCache },
     });
     const calledTools = createSpy.mock.calls.at(0)?.[1] ?? [];
     const toolNames = calledTools.map((tool) => tool.name);
-    expect(toolNames).toContain("get_company_profile");
+    expect(toolNames).toContain("get_tenant_profile");
     expect(toolNames).toContain("get_business_rules");
     expect(toolNames).toContain("get_config");
   });
 
   it("media verdict policy encodes strict schema constraints", () => {
     const verdictCfg = buildSpecializedMarketingFactoryConfig("media_verdict", {
-      companyName: "Demo Co",
+      tenantName: "Demo Co",
     });
     expect(verdictCfg.systemPolicy).toContain('"sentiment" ("positive"|"neutral"|"negative")');
     expect(verdictCfg.systemPolicy).toContain('"impact" ("high"|"medium"|"low" lowercase only)');

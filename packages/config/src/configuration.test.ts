@@ -9,8 +9,8 @@ import {
 describe("ConfigurationService", () => {
   afterEach(() => {
     delete process.env.NODE_ENV;
-    delete process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
-    delete process.env.AGENTICVERDICT_MOCK_GA4;
+    delete process.env.AGENTICVERDICT_MOCK_MODE;
+    delete process.env.AGENTICVERDICT_MOCK_CONNECTORS;
     delete process.env.ENABLE_NEW_REPORT_GENERATOR;
   });
 
@@ -21,16 +21,16 @@ describe("ConfigurationService", () => {
     expect(cfg.features.enableNewReportGenerator).toBe(true);
   });
 
-  it("marks mocks enabled when master flag is on in development", () => {
+  it("marks mocks enabled when mode=all in development", () => {
     process.env.NODE_ENV = "development";
-    process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS = "1";
+    process.env.AGENTICVERDICT_MOCK_MODE = "all";
     expect(ConfigurationService.areMockAdaptersEnabled()).toBe(true);
   });
 
-  it("marks mocks enabled when only a per-platform flag is set", () => {
+  it("marks mocks enabled when selective connectors are provided", () => {
     process.env.NODE_ENV = "development";
-    delete process.env.AGENTICVERDICT_USE_MOCK_ADAPTERS;
-    process.env.AGENTICVERDICT_MOCK_GA4 = "1";
+    process.env.AGENTICVERDICT_MOCK_MODE = "selective";
+    process.env.AGENTICVERDICT_MOCK_CONNECTORS = "ga4";
     const cfg = ConfigurationService.load();
     expect(cfg.adapters.mocks.enabled).toBe(true);
     expect(cfg.adapters.mocks.connectors).toEqual(["ga4"]);
@@ -51,8 +51,8 @@ describe("isMockEnabledForConnector (config package)", () => {
   it("matches platform-specific override semantics", () => {
     const env = {
       NODE_ENV: "development",
-      AGENTICVERDICT_USE_MOCK_ADAPTERS: "1",
-      AGENTICVERDICT_MOCK_META: "0",
+      AGENTICVERDICT_MOCK_MODE: "selective",
+      AGENTICVERDICT_MOCK_CONNECTORS: "ga4",
     } as NodeJS.ProcessEnv;
     expect(isMockEnabledForConnector("meta", env)).toBe(false);
     expect(isMockEnabledForConnector("ga4", env)).toBe(true);

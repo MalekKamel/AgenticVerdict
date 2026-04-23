@@ -144,7 +144,7 @@ agenticverdict/
 
 ### 1.3 Service Definitions
 
-**Web Application (apps/web)**
+**Web Application (apps/frontend)**
 
 - **Purpose:** Next.js 15 frontend with Mantine UI
 - **Runtime:** Node.js 20 distroless
@@ -226,7 +226,7 @@ FROM node:latest  # ❌ WORSE
 
 ### 2.2 Web Application Dockerfile
 
-**File:** `apps/web/Dockerfile`
+**File:** `apps/frontend/Dockerfile`
 
 ```dockerfile
 # syntax=docker/dockerfile:1.7
@@ -252,7 +252,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Copy application source
-COPY --chown=1001:1001 apps/web ./apps/web
+COPY --chown=1001:1001 apps/frontend ./apps/frontend
 COPY --chown=1001:1001 packages ./packages
 COPY --chown=1001:1001 configs ./configs
 COPY --chown=1001:1001 scripts ./scripts
@@ -288,9 +288,9 @@ ENV NODE_ENV=production \
 WORKDIR /app
 
 # Copy standalone artifacts from Next.js build
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=65532:65532 /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=65532:65532 /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/.next/static ./apps/frontend/.next/static
+COPY --from=builder --chown=65532:65532 /app/apps/frontend/public ./apps/frontend/public
 
 # Security: Run as non-root user
 USER 65532:65532
@@ -306,7 +306,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 EXPOSE 3000
 
 # Start Next.js server
-CMD ["apps/web/server.js"]
+CMD ["apps/frontend/server.js"]
 ```
 
 **Key Features:**
@@ -606,7 +606,7 @@ LABEL org.agenticverdict.deps.lockfile-hash="${LOCKFILE_HASH}"
 
 # Copy package files for all workspaces
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
-COPY apps/web/package.json ./apps/web/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY apps/worker/package.json ./apps/worker/
 COPY packages/agent-runtime/package.json ./packages/agent-runtime/
@@ -955,7 +955,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: apps/frontend/Dockerfile
       args:
         USE_TURBOPACK: ${USE_TURBOPACK:-false}
       cache_from:
@@ -1787,7 +1787,7 @@ RUN --mount=type=cache,target=/app/.next/cache,id=nextjs \
       --cache-to=type=gha,mode=max,scope=web \
       --target=runner \
       -t agenticverdict/web:latest \
-      -f apps/web/Dockerfile \
+      -f apps/frontend/Dockerfile \
       .
 ```
 
@@ -1883,7 +1883,7 @@ variable "VERSION" {
 }
 
 target "web" {
-  dockerfile = "apps/web/Dockerfile"
+  dockerfile = "apps/frontend/Dockerfile"
   context = "."
   tags = [
     "${REGISTRY}/web:${VERSION}",
@@ -1951,7 +1951,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
 **Health Check Endpoints:**
 
 ```typescript
-// apps/web/src/app/api/health/route.ts
+// apps/frontend/src/app/api/health/route.ts
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -2649,7 +2649,7 @@ process.on("SIGTERM", () => {
 **Evidence:**
 
 - Lobe-Chat's 11-service stack is complex to operate
-- Most companies use managed observability (Datadog, New Relic)
+- Most tenants use managed observability (Datadog, New Relic)
 - Self-hosted observability requires dedicated team
 
 **Decision 5: TypeScript Execution via tsx**

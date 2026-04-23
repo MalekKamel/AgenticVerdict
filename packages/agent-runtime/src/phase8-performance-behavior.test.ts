@@ -1,4 +1,4 @@
-import { createTestCompanyConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
+import { createTestTenantConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
@@ -49,7 +49,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-cache-1",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA, companyName: "Cache Co" }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Cache Co" }),
     };
 
     const goal = "CACHE_MARKER: Summarize last month.";
@@ -62,7 +62,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
           ctx: scope.invocation,
           goal,
           workflowId,
-          specialization: { companyName: "Cache Co" },
+          specialization: { tenantName: "Cache Co" },
           mockModels: {
             analysis: pipelineMock,
             insights: pipelineMock,
@@ -107,7 +107,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-time-1",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA, companyName: "Timing Co" }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Timing Co" }),
     };
 
     await runAgentJob({ tenant, runId: "run-t1" }, async (scope) =>
@@ -115,7 +115,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
         factory,
         ctx: scope.invocation,
         goal: "TIMING_MARKER: Go.",
-        specialization: { companyName: "Timing Co" },
+        specialization: { tenantName: "Timing Co" },
         mockModels: {
           analysis: pipelineMock,
           insights: pipelineMock,
@@ -153,7 +153,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
     const tenant = {
       tenantId: TEST_TENANT_ALPHA,
       requestId: "req-bench-1",
-      config: createTestCompanyConfig({ companyId: TEST_TENANT_ALPHA, companyName: "Bench Co" }),
+      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Bench Co" }),
     };
 
     for (let i = 0; i < 5; i += 1) {
@@ -163,7 +163,7 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
           factory,
           ctx: scope.invocation,
           goal: "BENCH_MARKER: Run.",
-          specialization: { companyName: "Bench Co" },
+          specialization: { tenantName: "Bench Co" },
           mockModels: {
             analysis: pipelineMock,
             insights: pipelineMock,

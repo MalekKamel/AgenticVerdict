@@ -443,7 +443,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "
 - **Authentication**: Email, password inputs
 - **Insight Creation**: Name, description inputs
 - **Connector Setup**: API key, credentials inputs
-- **Settings**: Company name, timezone, language inputs
+- **Settings**: Tenant name, timezone, language inputs
 
 ---
 

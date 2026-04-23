@@ -9,30 +9,30 @@ This entry records the configuration package work that satisfies Phase 0 accepta
 
 ## Summary
 
-- Split **Zod schemas** into focused modules: localization, platform/KPI, AI, feature flags, and composed `CompanyConfig`.
+- Split **Zod schemas** into focused modules: localization, platform/KPI, AI, feature flags, and composed `TenantConfig`.
 - Introduced a **`ConfigManager`** class with **per-instance TTL cache**, directory resolution (unchanged discovery rules), and **deep JSON merge** from per-tenant environment variables before validation.
-- Added **`ConfigValidationError`**, **`parseCompanyConfigPayload` / `assertValidCompanyConfig`**, optional **filesystem watch** for dev hot reload (`AGENTICVERDICT_CONFIG_HOT_RELOAD=1`), and a **`generate:schema-doc`** script (JSON Schema via `zod-to-json-schema`).
+- Added **`ConfigValidationError`**, **`parseTenantConfigPayload` / `assertValidTenantConfig`**, optional **filesystem watch** for dev hot reload (`AGENTICVERDICT_CONFIG_HOT_RELOAD=1`), and a **`generate:schema-doc`** script (JSON Schema via `zod-to-json-schema`).
 - Added a **second sample tenant** (`22222222-2222-4222-8222-222222222222.json`) alongside the existing Masafh file; **Vitest** coverage for manager, merge, middleware, schema edges, and repo configs.
 
 ---
 
 ## Environment variables
 
-| Variable                                          | Purpose                                                                                 |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `COMPANY_CONFIG_DIR`                              | Override directory for `<uuid>.json` company files                                      |
-| `AGENTICVERDICT_COMPANY_MERGE_<uuid_underscores>` | JSON object merged on top of the file config before validation                          |
-| `AGENTICVERDICT_CONFIG_HOT_RELOAD`                | When `1` or `true`, `watchCompanyConfigDirectory` invalidates cache on `*.json` changes |
+| Variable                                         | Purpose                                                                                |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `TENANT_CONFIG_DIR`                              | Override directory for `<uuid>.json` tenant files                                      |
+| `AGENTICVERDICT_TENANT_MERGE_<uuid_underscores>` | JSON object merged on top of the file config before validation                         |
+| `AGENTICVERDICT_CONFIG_HOT_RELOAD`               | When `1` or `true`, `watchTenantConfigDirectory` invalidates cache on `*.json` changes |
 
 ---
 
 ## Added
 
-- `packages/config/src/schemas/localization.ts`, `platform.ts`, `ai.ts`, `feature-flags.ts` (refactored `company.ts`).
+- `packages/config/src/schemas/localization.ts`, `platform.ts`, `ai.ts`, `feature-flags.ts` (refactored `tenant.ts`).
 - `packages/config/src/config-errors.ts`, `env-merge.ts`, `middleware.ts`, `hot-reload.ts`.
-- `packages/config/scripts/generate-schema-reference.ts` → output `packages/config/generated/company-config.schema.md`.
-- `packages/config/test/*.test.ts`, `packages/config/test/fixtures/companies/*.json`.
-- `configs/companies/22222222-2222-4222-8222-222222222222.json`.
+- `packages/config/scripts/generate-schema-reference.ts` → output `packages/config/generated/tenant-config.schema.md`.
+- `packages/config/test/*.test.ts`, `packages/config/test/fixtures/tenants/*.json`.
+- `configs/tenants/22222222-2222-4222-8222-222222222222.json`.
 
 ## Changed
 
@@ -56,7 +56,7 @@ This entry records the configuration package work that satisfies Phase 0 accepta
 
 - Acceptance **§2** asks for **90%** coverage on config logic; current tests are substantial but not yet at that threshold across all branches (e.g. hot-reload paths, invalid env JSON).
 - **E2E “app fails on invalid config”** belongs with `apps/api` / `apps/frontend` bootstrap once those apps load `ConfigManager` at startup.
-- **`packages/types`**: `PlatformType` remains the shared enum source; `CompanyConfig` stays on `@agenticverdict/config` to avoid a dependency cycle with Zod.
+- **`packages/types`**: `PlatformType` remains the shared enum source; `TenantConfig` stays on `@agenticverdict/config` to avoid a dependency cycle with Zod.
 
 ---
 

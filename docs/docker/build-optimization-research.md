@@ -1069,7 +1069,7 @@ CMD ["node", "--import", "tsx", "src/cli.ts"]
 - **Pros**: Faster iteration during development, no build artifacts to manage, no `noEmit` complications
 - **Cons**: Slight runtime overhead (negligible with tsx's native ESM loader), larger node_modules footprint
 
-**When to use**: API services, background workers, internal tools. For customer-facing web apps, use Next.js standalone output (see Section 2.1).
+**When to use**: API services, background workers, internal tools. For customer-facing frontend apps, use Next.js standalone output (see Section 2.1).
 
 ### 1.4 Shared Prebuild Validation
 
@@ -1099,7 +1099,7 @@ This fails fast before wasting time on invalid builds.
 
 Next.js 15's standalone output mode produces a minimal bundle containing only necessary files, enabling dramatically smaller images.
 
-**Implementation from AgenticVerdict web service**:
+**Implementation from AgenticVerdict frontend service**:
 
 ```dockerfile
 # apps/frontend/Dockerfile
@@ -1175,7 +1175,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, worker]
+        service: [frontend, api, worker]
     steps:
       - uses: actions/checkout@v4
 
@@ -1204,7 +1204,7 @@ jobs:
 **Benefits**:
 
 - **Parallel builds**: 3 services build simultaneously instead of sequentially
-- **Service-scoped caching**: Changes to web Dockerfile don't invalidate api cache
+- **Service-scoped caching**: Changes to frontend Dockerfile don't invalidate api cache
 - **Fast PR feedback**: Only affected services rebuild
 
 ### 2.3 Shopify-Style Selective Package Building
@@ -1230,7 +1230,7 @@ turbo run build --filter=@agenticverdict/frontend
 # In CI, run selective builds before Docker build
 RUN pnpm install --frozen-lockfile
 RUN turbo run build --filter=@agenticverdict/frontend
-# Only web artifacts included in final image
+# Only frontend artifacts included in final image
 ```
 
 ### 2.4 Nx/Turborepo Official Recommendations
@@ -1323,7 +1323,7 @@ GitHub Actions matrix strategy enables parallel service builds:
 # .github/workflows/docker-build.yml
 strategy:
   matrix:
-    service: [web, api, worker]
+    service: [frontend, api, worker]
   fail-fast: false # Don't cancel other builds if one fails
 
 steps:
@@ -1333,7 +1333,7 @@ steps:
 
 **Performance comparison**:
 
-- Sequential builds (web → api → worker): ~8 minutes total
+- Sequential builds (frontend → api → worker): ~8 minutes total
 - Parallel builds (3 runners): ~3 minutes total (limited by slowest service)
 - **Speedup: 2.67x**
 
@@ -1409,11 +1409,11 @@ docker buildx build \
 
 **Measured from AgenticVerdict CI (GitHub Actions)**:
 
-| Service | Cold Build | Cached Build | Cache Hit Rate |
-| ------- | ---------- | ------------ | -------------- |
-| web     | 3m 45s     | 45s          | 88%            |
-| api     | 2m 30s     | 38s          | 85%            |
-| worker  | 2m 55s     | 42s          | 87%            |
+| Service  | Cold Build | Cached Build | Cache Hit Rate |
+| -------- | ---------- | ------------ | -------------- |
+| frontend | 3m 45s     | 45s          | 88%            |
+| api      | 2m 30s     | 38s          | 85%            |
+| worker   | 2m 55s     | 42s          | 87%            |
 
 **Cache configuration**:
 
@@ -1540,7 +1540,7 @@ For self-hosted runners or team environments, use registry cache backend:
 
 **Recommendation from AgenticVerdict**:
 
-- **Customer-facing services** (web): Use distroless for minimal attack surface
+- **Customer-facing services** (frontend): Use distroless for minimal attack surface
 - **Internal services** (api, worker): Use slim for easier debugging
 - **Infrastructure tools** (postgres, redis): Use official Alpine images
 
@@ -1595,7 +1595,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, worker]
+        service: [frontend, api, worker]
     steps:
       - uses: actions/checkout@v4
 
@@ -1692,7 +1692,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, worker]
+        service: [frontend, api, worker]
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
     steps:
@@ -1737,7 +1737,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, worker]
+        service: [frontend, api, worker]
     steps:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -1894,7 +1894,7 @@ services:
 ### Phase 3: Security (Week 3)
 
 - [ ] Add Trivy vulnerability scanning to CI
-- [ ] Implement distroless runtime for web service
+- [ ] Implement distroless runtime for frontend service
 - [ ] Add security hardening to Compose files (read_only, cap_drop)
 - [ ] Generate SBOM for all services
 
@@ -1938,7 +1938,7 @@ services:
 - [Cosign](https://github.com/sigstore/cosign) - Container signing and verification
 - [Trivy](https://github.com/aquasecurity/trivy) - Comprehensive vulnerability scanner
 - [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/) - Extended build capabilities
-- [Vite](https://vite.dev/) - Bundler for the web app (`apps/frontend`) and production library builds for API/worker CLIs (`build:vite`), consistent with the rest of the monorepo
+- [Vite](https://vite.dev/) - Bundler for the frontend app (`apps/frontend`) and production library builds for API/worker CLIs (`build:vite`), consistent with the rest of the monorepo
 
 ---
 

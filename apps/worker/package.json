@@ -18,6 +18,7 @@
   "dependencies": {
     "@agenticverdict/agent-runtime": "workspace:*",
     "@agenticverdict/config": "workspace:*",
+    "@agenticverdict/core": "workspace:*",
     "@agenticverdict/database": "workspace:*",
     "@agenticverdict/observability": "workspace:*",
     "@agenticverdict/data-connectors": "workspace:*",

@@ -34,10 +34,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Policy: docs/05-reference/dependency-audit-policy.md — informational until critical backlog is cleared.
-      - name: Dependency audit (informational)
-        continue-on-error: true
-        run: pnpm audit 2>&1 | tee pnpm-audit-report.txt
+      - name: Runtime policy lint
+        run: bash scripts/runtime-policy-lint.sh
+
+      - name: Frontend runtime env contract
+        run: bash scripts/validate-frontend-runtime-env-contract.sh
+
+      - name: Validate vulnerability waivers
+        run: node scripts/validate-vulnerability-waivers.mjs
+
+      - name: Dependency audit (enforced high/critical)
+        run: pnpm audit --audit-level=high 2>&1 | tee pnpm-audit-report.txt
 
       - name: Upload dependency audit report
         if: always()
@@ -62,22 +69,26 @@ jobs:
       - name: Circular dependency check
         run: pnpm run check:cycles
 
+      - name: Tenant architecture boundary check
+        run: pnpm run check:tenant-boundaries
+
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
 
       - name: Web app unit coverage (scoped hooks + tRPC modules)
         run: pnpm --filter @agenticverdict/frontend exec vitest run --coverage
 
+      - name: API unit coverage (auth/tenant critical paths)
+        run: pnpm --filter @agenticverdict/api exec vitest run --coverage
+
+      - name: Worker unit coverage (tenant/queue critical paths)
+        run: pnpm --filter @agenticverdict/worker exec vitest run --coverage
+
       - name: Web production build
         run: pnpm --filter @agenticverdict/frontend build
 
       - name: Verify build constants
         run: pnpm run verify:build-config
-
-      - name: Production Vite bundles (mock-code scan)
-        env:
-          NODE_ENV: production
-        run: pnpm run verify:production-bundle
 
       - name: Scenario orchestration tests (R01–R12)
         env:
@@ -98,12 +109,44 @@ jobs:
       - name: OpenAPI lint (Phase 01 health spec)
         run: pnpm run lint:openapi
 
+  bundle-gate:
+    name: Production Bundle Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify production bundles
+        env:
+          NODE_ENV: production
+        run: pnpm run verify:production-bundle
+
+      - name: Assert API/worker CLI artifacts exist
+        run: |
+          test -f apps/api/dist/cli.mjs
+          test -f apps/worker/dist/cli.mjs
+
   e2e:
     name: E2E (Playwright)
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    needs: quality
-    if: hashFiles('apps/web/playwright.config.mjs') != ''
+    needs: [quality, bundle-gate]
+    if: hashFiles('apps/frontend/playwright.config.mjs') != ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -132,7 +175,7 @@ jobs:
     name: Desktop (unit + Electron smoke)
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    needs: quality
+    needs: [quality, bundle-gate]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

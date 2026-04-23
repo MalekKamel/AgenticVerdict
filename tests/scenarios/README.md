@@ -19,5 +19,5 @@ The **`@agenticverdict/scenarios`** workspace package is a **stub**; use the com
 
 ## Environment (worker / Docker)
 
-- **`AGENTICVERDICT_PRODUCTION_FLOW_MOCK_EMAIL=1`** — required for **R09** when no Resend/SendGrid keys are set.
+- **`AGENTICVERDICT_STUB_EMAIL_DELIVERY=1`** — required for **R09** when no Resend/SendGrid keys are set.
 - **`SKIP_PLAYWRIGHT_PDF_TESTS=1`** — skips **R01/R02** PDF jobs in the worker when Chromium is unavailable.

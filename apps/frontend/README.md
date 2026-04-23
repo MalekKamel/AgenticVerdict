@@ -70,20 +70,19 @@ pnpm start
 Create a `.env.local` file (Vite exposes variables prefixed with `VITE_` to the client):
 
 ```bash
-# API URL (server-side / SSR; optional client mirror below)
-API_URL=http://localhost:3001
+# Frontend runtime env contract (required in production/staging):
+# - API_URL: SSR/internal API base URL used by web server-side loaders/actions.
+# - VITE_PUBLIC_API_URL: browser-visible API base URL used by client tRPC calls.
+# - VITE_PUBLIC_DEFAULT_TENANT_ID: required by /$locale home loader contract.
+API_URL=http://localhost:4000
+VITE_PUBLIC_API_URL=http://localhost:4000
+VITE_PUBLIC_DEFAULT_TENANT_ID=11111111-1111-4111-8111-111111111111
 
-# Client-accessible API URL (when needed in the browser bundle)
-VITE_PUBLIC_API_URL=http://localhost:3001
-
-# Set to "false" to call the real Fastify tRPC auth API during local dev (default: mock in-memory session)
-# VITE_PUBLIC_AUTH_API_MOCK=false
+# Auth API mode (default is real; set to mock only for dev/test local flows)
+# VITE_PUBLIC_AUTH_API_MODE=mock
 
 # Feature flags (example — wire in app as needed)
 # VITE_PUBLIC_ENABLE_AUTH=true
-
-# Optional: default tenant UUID for local/dev when not yet authenticated (must be a valid UUID)
-# VITE_PUBLIC_DEFAULT_TENANT_ID=11111111-1111-4111-8111-111111111111
 
 # Optional: browser telemetry → POST JSON to this URL (e.g. https://api.example.com/api/v1/telemetry/ingest)
 # VITE_PUBLIC_TELEMETRY_INGEST_URL=
@@ -106,7 +105,7 @@ The authentication system provides:
 - **Email/Password Login** - Secure login with remember-me functionality
 - **Registration** - User registration with email verification
 - **Password Reset** - Self-service password recovery flow
-- **Multi-language** - Full support for English, Arabic (RTL), and French
+- **Multi-language** - Shipping support for English, Arabic (RTL), and French
 - **Accessibility** - WCAG 2.1 AA compliant with keyboard navigation
 - **Error Handling** - User-friendly error messages with screen reader support
 
@@ -124,7 +123,7 @@ The authentication system provides:
 ### Protected routes (SSR vs client)
 
 - **`/$locale/dashboard`** (and nested routes such as **`/dashboard/feature-flags`**) use **`beforeLoad`** plus `fetchProtectedRouteSession` (`src/lib/auth/protected-route-session.ts`). The server forwards `Authorization`, `Cookie`, and `x-tenant-id` to the Fastify **`auth.getSession`** tRPC procedure so anonymous users are sent to **`/{locale}/auth/login?redirect=…`** before the dashboard shell renders.
-- **Default dev auth mock** (`VITE_PUBLIC_AUTH_API_MOCK` not set to `"false"`): the SSR gate is **skipped** because the in-memory mock exists only in the browser; **`useRequireAuth`** still guards after hydration.
+- **Dev auth mock** (`VITE_PUBLIC_AUTH_API_MODE=mock`): the SSR gate is **skipped** because the in-memory mock exists only in the browser; **`useRequireAuth`** still guards after hydration.
 - **Production and Playwright E2E** (production build): the mock is off; see `e2e/protected-routes.spec.ts`.
 
 ### Using Auth Components
@@ -444,6 +443,14 @@ pnpm build
 - Verify API is running on correct port
 - Check `API_URL` / `VITE_PUBLIC_API_URL` in `.env.local`
 - Ensure CORS is configured on API server
+
+### Runtime env misconfigurations (production-like)
+
+| Symptom                                            | Likely missing or invalid variable                  | Exact fix                                                                                           |
+| -------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `/$locale` returns `500` with tenant loader error  | `VITE_PUBLIC_DEFAULT_TENANT_ID` missing or non-UUID | Set `VITE_PUBLIC_DEFAULT_TENANT_ID` to a valid tenant UUID                                          |
+| SSR auth/session probe fails to reach API          | `API_URL` missing or invalid                        | Set `API_URL` to absolute internal URL (Docker example: `http://api:4000`)                          |
+| Browser tRPC calls fail in production-like runtime | `VITE_PUBLIC_API_URL` missing or invalid            | Set `VITE_PUBLIC_API_URL` to absolute browser-reachable URL (local Docker: `http://localhost:4000`) |
 
 **Translation keys missing:**
 

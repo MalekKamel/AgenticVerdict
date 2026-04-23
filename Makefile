@@ -6,12 +6,14 @@ export
 DC := docker compose
 BASE := -f docker-compose.yml
 APPS := $(BASE) -f docker-compose.apps.yml
-DEV_STACK := $(APPS) -f docker-compose.dev.yml
+DEV_STACK := $(APPS) -f docker-compose.dev.yml -f docker-compose.observability.yml -f docker-compose.pgadmin.yml
 PROD_LIKE := $(APPS)
+PGADMIN_STACK := $(BASE) -f docker-compose.pgadmin.yml
 
 .PHONY: help preflight validate setup build-base build-apps build dev dev-build dev-stop dev-logs \
-	apps-up apps-down infra-up infra-down infra-logs dev-logs apps-logs logs ps ps-apps \
-	health health-web health-api health-worker backup db-dump restore restore-latest \
+	dev-up dev-watch apps-up apps-down infra-up infra-down infra-logs dev-logs apps-logs logs ps ps-apps \
+	pgadmin-up pgadmin-down pgadmin-logs \
+	health health-frontend health-api health-worker backup db-dump restore restore-latest \
 	db-migrate db-seed db-reset shell-db test test-integration test-e2e test-scripts test-scripts-all \
 	test-scripts-scenario test-scripts-group test-scripts-validate test-scripts-verify-artifacts \
 	test-scripts-capture clean clean-volumes clean-all \
@@ -33,7 +35,7 @@ setup: ## Secrets, dirs, optional .env.docker
 build-base: ## Build deps + chromium base images
 	$(DC) -f docker-compose.base-images.yml build
 
-build-apps: ## Build web, api, worker against local base images
+build-apps: ## Build frontend, api, worker against local base images
 	$(DC) $(APPS) build
 
 build: build-base build-apps ## build-base + build-apps
@@ -41,8 +43,14 @@ build: build-base build-apps ## build-base + build-apps
 dev: build-base ## Infra + apps with api/worker dev stage and mock-friendly env
 	$(DC) $(DEV_STACK) up -d --build
 
+dev-up: build-base ## Start/update dev stack without forcing image rebuild
+	$(DC) $(DEV_STACK) up -d
+
 dev-build: build ## Rebuild all images then recreate dev stack containers
 	$(DC) $(DEV_STACK) up -d --build
+
+dev-watch: ## Start compose watch loop for rebuild-on-change
+	$(DC) $(DEV_STACK) watch
 
 dev-stop: ## Stop dev stack (containers only; keeps volumes)
 	$(DC) $(DEV_STACK) down
@@ -70,6 +78,15 @@ infra-logs: ## Follow logs for Postgres + Redis
 apps-logs: ## Follow logs for production-like stack
 	$(DC) $(PROD_LIKE) logs -f
 
+pgadmin-up: ## Optional local pgAdmin UI on top of base stack
+	$(DC) $(PGADMIN_STACK) up -d
+
+pgadmin-down: ## Stop optional pgAdmin overlay
+	$(DC) $(PGADMIN_STACK) down
+
+pgadmin-logs: ## Follow optional pgAdmin logs
+	$(DC) $(PGADMIN_STACK) logs -f pgadmin
+
 ps: ## docker compose ps for dev stack
 	$(DC) $(DEV_STACK) ps
 
@@ -79,8 +96,10 @@ ps-apps: ## docker compose ps for prod-like stack
 health: ## HTTP checks + scripts/health-check.sh
 	./scripts/health-check.sh
 
-health-web: ## curl web /api/health
+health-frontend: ## curl frontend /api/health
 	curl -fsS http://127.0.0.1:3000/api/health && echo
+
+health-web: health-frontend ## Backward-compatible alias for health-frontend
 
 health-api: ## curl API /health
 	curl -fsS http://127.0.0.1:4000/health && echo
@@ -186,6 +205,6 @@ sbom: ## SPDX JSON SBOM under sboms/ (requires syft)
 	syft scan dir:. -o spdx-json=sboms/sbom-$$(date +%Y%m%d-%H%M%S).json
 
 verify-image: ## Cosign verify IMAGE=repo/name@sha256:... (requires cosign)
-	@test -n "$(IMAGE)" || (echo "Usage: make verify-image IMAGE=ghcr.io/org/repo/web@sha256:..." && exit 1)
+	@test -n "$(IMAGE)" || (echo "Usage: make verify-image IMAGE=ghcr.io/org/repo/frontend@sha256:..." && exit 1)
 	@command -v cosign >/dev/null 2>&1 || (echo "Install Cosign (https://docs.sigstore.dev/cosign/install/); release images are signed in docker-release.yml"; exit 1)
 	cosign verify "$(IMAGE)"

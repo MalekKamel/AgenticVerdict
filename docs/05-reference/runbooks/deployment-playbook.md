@@ -6,7 +6,7 @@ Step-by-step guide for releasing **API**, **worker**, and related configuration 
 
 - [ ] All **P0** remediation items closed (security docs accuracy, Grafana provisioning verified).
 - [ ] Database backup or snapshot policy confirmed for the target environment.
-- [ ] Feature flags and tenant configs reviewed (`configs/companies/*.json` or your live config source).
+- [ ] Feature flags and tenant configs reviewed (`configs/tenants/*.json` or your live config source).
 - [ ] Observability stack reachable: Prometheus scrapes `api:4000` and `worker:9464`; Grafana dashboards provisioned (including **Production SLA overview** and **Circuit breaker & retry health**).
 - [ ] Image tags / Git revision recorded for rollback.
 

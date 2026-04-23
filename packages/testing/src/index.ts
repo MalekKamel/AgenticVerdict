@@ -1,5 +1,5 @@
 export { createTenant, type TestTenant } from "./factories/tenant";
-export { createTestCompanyConfig } from "./create-test-company-config";
+export { createTestTenantConfig } from "./create-test-tenant-config";
 export {
   createTestTenantContext,
   type CreateTestTenantContextOptions,

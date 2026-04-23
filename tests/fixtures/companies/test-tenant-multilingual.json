@@ -1,6 +1,6 @@
 {
-  "companyId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
-  "companyName": "Multilingual Scenario Co.",
+  "tenantId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  "tenantName": "Multilingual Scenario Co.",
   "localization": {
     "language": "en",
     "region": "SA",

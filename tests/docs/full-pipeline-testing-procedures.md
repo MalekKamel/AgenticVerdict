@@ -99,7 +99,7 @@ The AgenticVerdict marketing analytics pipeline consists of five sequential stag
 
 - **Mock Mode**: Ensure mock adapters are enabled (`AGENTICVERDICT_USE_MOCK_ADAPTERS=1`)
 - **Date Range**: Use consistent test date ranges
-- **Tenant Context**: Verify company configs exist
+- **Tenant Context**: Verify tenant configs exist
 
 ---
 

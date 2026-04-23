@@ -275,7 +275,7 @@
 
 - [ ] T116 [P] Run bundle analysis and ensure <300KB initial bundle
 - [ ] T117 [P] Run Lighthouse audit and ensure <1.5s load time on 3G
-- [ ] T118 [P] Implement image optimization for company logo (if not already optimized)
+- [ ] T118 [P] Implement image optimization for tenant logo (if not already optimized)
 - [ ] T119 [P] Verify route-based code splitting is working (check network tab)
 
 ### Security Hardening

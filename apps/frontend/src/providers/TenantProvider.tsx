@@ -3,6 +3,7 @@
 import { trpc } from "@/lib/api/trpc-client";
 import { extractTenantSlugFromHost } from "@/lib/tenant/extract-tenant-slug";
 import { getEffectiveTenantId, isTenantUuid } from "@/lib/tenant/tenant-resolution";
+import { publishTenantIdForTrpcHeaders } from "@/lib/tenant/trpc-tenant-bridge";
 import { useAuthStore } from "@/stores/auth-store";
 import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -67,6 +68,10 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     }),
     [auth.tenantId, slugResolve?.tenantId],
   );
+
+  useEffect(() => {
+    publishTenantIdForTrpcHeaders(value.tenantId);
+  }, [value.tenantId]);
 
   return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
 }

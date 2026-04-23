@@ -51,7 +51,7 @@ Commands run successfully after the changes:
 
 ## Usage notes
 
-- **Pipeline (inside `runAgentJob`):** `runMarketingAgentPipeline({ factory, ctx: scope.invocation, goal, specialization: { companyName: tenant.config.companyName } })` — currency defaults from **`requireTenantContext().config.localization.currency`** unless **`specialization.promptVars.currency`** is set.
+- **Pipeline (inside `runAgentJob`):** `runMarketingAgentPipeline({ factory, ctx: scope.invocation, goal, specialization: { tenantName: tenant.config.tenantName } })` — currency defaults from **`requireTenantContext().config.localization.currency`** unless **`specialization.promptVars.currency`** is set.
 - **Handoffs / tracing:** subscribe with **`onMessage`**; each notification uses **`correlationId === ctx.requestId`** for LangSmith/log correlation.
 - **Strict verdict parsing:** omit **`tolerateVerdictParseFailure`** (default false) so bad JSON surfaces as **`VerdictParseError`** wrapped in **`AgentJobError`** from **`runAgentJob`**.
 

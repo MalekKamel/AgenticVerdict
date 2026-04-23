@@ -24,28 +24,28 @@ Follow-up TODOs: None
 
 ### I. Multi-Tenancy First
 
-All code MUST support multiple companies with complete tenant isolation. Tenant context MUST be propagated via AsyncLocalStorage and enforced at the database level through row-level security policies.
+All code MUST support multiple tenants with complete tenant isolation. Tenant context MUST be propagated via AsyncLocalStorage and enforced at the database level through row-level security policies.
 
-**Rationale**: As a multi-tenant SaaS platform, tenant isolation is a security-critical requirement that prevents data leakage between companies. Without strict isolation, a single bug could expose one customer's data to another.
+**Rationale**: As a multi-tenant SaaS platform, tenant isolation is a security-critical requirement that prevents data leakage between tenants. Without strict isolation, a single bug could expose one customer's data to another.
 
 **Requirements**:
 
 - All database operations MUST use `dbScoped()` wrapper
 - Row-level security MUST be enabled on all multi-tenant tables
 - Tenant context MUST be present in all async operations
-- No hardcoded company-specific logic in code
+- No hardcoded tenant-specific logic in code
 
 ### II. Configuration-Driven Architecture
 
-All company-specific behavior MUST be injected through the `CompanyConfig` schema. No business rules or platform-specific logic MAY be hardcoded.
+All tenant-specific behavior MUST be injected through the `TenantConfig` schema. No business rules or platform-specific logic MAY be hardcoded.
 
 **Rationale**: Configuration-driven architecture enables rapid onboarding of new customers without code changes. It also ensures the system remains maintainable as the customer base grows.
 
 **Requirements**:
 
-- All customization flows through `CompanyConfig` interface
+- All customization flows through `TenantConfig` interface
 - Use layered configuration: build constants, runtime config, feature flags, and tenant config
-- No if-statements checking for specific companies
+- No if-statements checking for specific tenants
 - Feature flags stored in PostgreSQL, evaluated via `createFeatureFlagService(db)`
 
 ### III. Plugin Architecture

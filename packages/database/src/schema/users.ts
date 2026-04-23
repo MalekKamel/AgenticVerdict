@@ -1,14 +1,14 @@
 import { boolean, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { companies } from "./companies";
+import { tenants } from "./tenants";
 
 export const users = pgTable(
   "users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    companyId: uuid("company_id")
+    tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => companies.id, { onDelete: "cascade" }),
+      .references(() => tenants.id, { onDelete: "cascade" }),
     email: varchar("email", { length: 320 }).notNull(),
     displayName: varchar("display_name", { length: 256 }),
     /** Scrypt-hashed password; null for legacy or externally provisioned accounts. */
@@ -22,5 +22,5 @@ export const users = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [unique("users_company_id_email_unique").on(t.companyId, t.email)],
+  (t) => [unique("users_tenant_id_email_unique").on(t.tenantId, t.email)],
 );

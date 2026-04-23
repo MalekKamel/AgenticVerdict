@@ -518,7 +518,7 @@ describe("Error handling with mocked tRPC", () => {
   });
 
   it("displays tenant context error", () => {
-    (trpc.companies.getConfig.useQuery as vi.Mock).mockReturnValue({
+    (trpc.tenants.getConfig.useQuery as vi.Mock).mockReturnValue({
       data: undefined,
       isLoading: false,
       error: {
@@ -549,7 +549,7 @@ const TestWrapper = ({ children, tenantContext }) => (
 describe("with tenant context", () => {
   it("uses tenant-specific config", () => {
     const tenantContext = createTestTenantContext({
-      companyConfig: {
+      tenantConfig: {
         localization: { language: "ar", region: "SA" }
       }
     });
@@ -1018,7 +1018,7 @@ describe("multi-tenant context", () => {
 
   it("displays tenant-specific branding", () => {
     const tenantContext = createTestTenantContext({
-      companyConfig: {
+      tenantConfig: {
         branding: {
           logoUrl: "/logos/tenant-alpha.svg",
           primaryColor: "#FF6B35",
@@ -1028,7 +1028,7 @@ describe("multi-tenant context", () => {
 
     renderWithTenant(<Dashboard />, tenantContext);
 
-    const logo = screen.getByRole("img", { name: /company logo/i });
+    const logo = screen.getByRole("img", { name: /tenant logo/i });
     expect(logo).toHaveAttribute("src", "/logos/tenant-alpha.svg");
   });
 
@@ -1373,7 +1373,7 @@ test.describe("multi-tenant workflows", () => {
     await page.fill("input[name='password']", "password");
     await page.click('button:has-text("Sign In")');
 
-    const logo = page.locator("img[alt='Company Logo']");
+    const logo = page.locator("img[alt='Tenant Logo']");
     await expect(logo).toHaveAttribute("src", /tenant-alpha/);
   });
 });
@@ -1495,7 +1495,7 @@ export const tenantFixtures = {
   masafh: () =>
     createTestTenantContext({
       tenantId: "masafh",
-      companyConfig: {
+      tenantConfig: {
         branding: { primaryColor: "#FF6B35" },
         localization: { language: "ar", region: "SA" },
       },
@@ -1504,7 +1504,7 @@ export const tenantFixtures = {
   defaultTenant: () =>
     createTestTenantContext({
       tenantId: "default-tenant",
-      companyConfig: {
+      tenantConfig: {
         branding: { primaryColor: "#228BE6" },
         localization: { language: "en", region: "US" },
       },

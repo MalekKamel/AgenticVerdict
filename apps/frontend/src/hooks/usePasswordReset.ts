@@ -9,13 +9,56 @@
  */
 
 import { useMutation } from "@tanstack/react-query";
-import { useRouterState } from "@tanstack/react-router";
 
 import { useRouter } from "@/i18n/navigation";
 
 import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
 import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
 import type { RequestPasswordResetInput, ConfirmPasswordResetInput } from "@agenticverdict/types";
+
+export interface AuthMutationErrorDetails {
+  retryAfter?: number | string;
+  retryAfterSeconds?: number | string;
+  [key: string]: unknown;
+}
+
+export class AuthMutationError extends Error {
+  code: string;
+  details?: AuthMutationErrorDetails;
+  retryAfterSeconds: number | null;
+
+  constructor(message: string, code: string, details?: AuthMutationErrorDetails) {
+    super(message);
+    this.name = "AuthMutationError";
+    this.code = code;
+    this.details = details;
+    this.retryAfterSeconds = getRetryAfterSeconds(details);
+  }
+}
+
+function getRetryAfterSeconds(details?: AuthMutationErrorDetails): number | null {
+  const raw = details?.retryAfterSeconds ?? details?.retryAfter;
+  if (typeof raw === "number" && Number.isFinite(raw) && raw > 0) {
+    return Math.round(raw);
+  }
+  if (typeof raw === "string") {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return Math.round(parsed);
+    }
+  }
+  return null;
+}
+
+function toAuthMutationError(error: unknown, fallbackCode: string): AuthMutationError {
+  if (error instanceof AuthMutationError) {
+    return error;
+  }
+  if (error instanceof Error) {
+    return new AuthMutationError(error.message, fallbackCode);
+  }
+  return new AuthMutationError("auth.errors.internalError", fallbackCode);
+}
 
 /**
  * T068: Request password reset mutation hook
@@ -59,18 +102,16 @@ export function useRequestPasswordReset() {
       const result = await authApi.requestPasswordReset(input);
 
       if (!isAuthSuccess(result)) {
-        throw new Error(result.error.message);
+        throw new AuthMutationError(
+          result.error.message,
+          result.error.code,
+          result.error.details as AuthMutationErrorDetails | undefined,
+        );
       }
 
       return result.data;
     },
-    onSuccess: (data) => {
-      // Log success for debugging
-      console.log("Password reset request successful:", data.message);
-
-      // Note: We show the same success message for both existing and non-existing emails
-      // This prevents email enumeration attacks
-      // The backend should return a generic message
+    onSuccess: () => {
       logAuthFunnelEvent("auth.forgot_password.result", {
         flow: "forgot_password",
         outcome: "success",
@@ -78,12 +119,11 @@ export function useRequestPasswordReset() {
       });
     },
     onError: (error) => {
-      // Log error for debugging
-      console.error("Password reset request failed:", error.message);
+      const authError = toAuthMutationError(error, "REQUEST_RESET_FAILED");
       logAuthFunnelEvent("auth.forgot_password.result", {
         flow: "forgot_password",
         outcome: "failure",
-        errorCode: "REQUEST_RESET_FAILED",
+        errorCode: authError.code,
         latencyMs: Math.round(performance.now() - startedAt),
       });
     },
@@ -130,21 +170,19 @@ type ConfirmPasswordResetPayload =
 
 export function useConfirmPasswordReset(tokenOverride?: string) {
   const router = useRouter();
-  const search = useRouterState({ select: (s) => s.location.search });
-  const tokenFromSearch = new URLSearchParams(search).get("token") || "";
   let startedAt = 0;
 
   return useMutation({
     onMutate: (input) => {
       startedAt = performance.now();
-      const token = "token" in input ? input.token : (tokenOverride ?? tokenFromSearch);
+      const token = "token" in input ? input.token : (tokenOverride ?? "");
       logAuthFunnelEvent("auth.reset_password.submit", {
         flow: "reset_password",
         tokenPresent: Boolean(token),
       });
     },
     mutationFn: async (input: ConfirmPasswordResetPayload) => {
-      const token = "token" in input ? input.token : (tokenOverride ?? tokenFromSearch);
+      const token = "token" in input ? input.token : (tokenOverride ?? "");
 
       // Validate token exists
       if (!token) {
@@ -163,7 +201,11 @@ export function useConfirmPasswordReset(tokenOverride?: string) {
       });
 
       if (!isAuthSuccess(result)) {
-        throw new Error(result.error.message);
+        throw new AuthMutationError(
+          result.error.message,
+          result.error.code,
+          result.error.details as AuthMutationErrorDetails | undefined,
+        );
       }
 
       return result.data;
@@ -179,12 +221,12 @@ export function useConfirmPasswordReset(tokenOverride?: string) {
       router.push("/auth/login");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "";
-      const invalidToken = message.includes("invalidToken");
+      const authError = toAuthMutationError(error, "RESET_PASSWORD_FAILED");
+      const invalidToken = authError.message.includes("invalidToken");
       logAuthFunnelEvent("auth.reset_password.result", {
         flow: "reset_password",
         outcome: "failure",
-        errorCode: invalidToken ? "INVALID_TOKEN" : "RESET_PASSWORD_FAILED",
+        errorCode: invalidToken ? "INVALID_TOKEN" : authError.code,
         tokenPresent: !invalidToken,
         latencyMs: Math.round(performance.now() - startedAt),
       });

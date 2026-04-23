@@ -69,11 +69,16 @@ export function useAppShellHeader(options: {
 
       return isSame ? prev : breadcrumbs;
     });
-    return () => setBreadcrumbs([]);
   }, [breadcrumbs, setBreadcrumbs]);
 
   useEffect(() => {
     setHeaderContext(headerContext);
-    return () => setHeaderContext(null);
   }, [headerContext, setHeaderContext]);
+
+  useEffect(() => {
+    return () => {
+      setBreadcrumbs([]);
+      setHeaderContext(null);
+    };
+  }, [setBreadcrumbs, setHeaderContext]);
 }

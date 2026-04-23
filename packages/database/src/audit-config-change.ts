@@ -2,7 +2,7 @@ import type { Database } from "./client";
 import { auditLogs } from "./schema/audit-logs";
 
 export interface AuditConfigChangeParams {
-  companyId: string;
+  tenantId: string;
   actorUserId?: string;
   layer: "build" | "runtime" | "tenant";
   key: string;
@@ -15,7 +15,7 @@ export async function auditConfigChange(
   change: AuditConfigChangeParams,
 ): Promise<void> {
   await db.insert(auditLogs).values({
-    companyId: change.companyId,
+    tenantId: change.tenantId,
     actorUserId: change.actorUserId ?? null,
     action: "config_change",
     resourceType: change.layer,

@@ -277,7 +277,7 @@
 
 #### Major Production Users
 
-- Growing adoption in EU (GDPR-focused companies)
+- Growing adoption in EU (GDPR-focused tenants)
 - Privacy-conscious organizations
 - Cost-sensitive startups
 

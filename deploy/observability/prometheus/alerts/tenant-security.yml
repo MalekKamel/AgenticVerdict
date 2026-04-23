@@ -1,0 +1,37 @@
+# Tenant mismatch/context and fairness anomaly alerts.
+groups:
+  - name: agenticverdict_tenant_security
+    rules:
+      - alert: AgenticVerdictTenantMismatchSpike
+        expr: |
+          sum(rate(agenticverdict_tenant_security_events_total{code="TENANT_MISMATCH"}[10m])) > 0.25
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tenant mismatch spike detected"
+          description: "TENANT_MISMATCH events exceeded 0.25/s for 10m across HTTP/tRPC surfaces."
+
+      - alert: AgenticVerdictTenantContextMissingSpike
+        expr: |
+          sum(rate(agenticverdict_tenant_security_events_total{code="TENANT_CONTEXT_REQUIRED"}[10m])) > 0.25
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tenant context missing spike detected"
+          description: "TENANT_CONTEXT_REQUIRED events exceeded 0.25/s for 10m. Check header/session propagation and middleware ordering."
+
+      - alert: AgenticVerdictTenantThrottleAnomaly
+        expr: |
+          (
+            sum(rate(agenticverdict_tenant_rate_limit_hits_total{bucket_type="anonymous"}[10m]))
+            /
+            clamp_min(sum(rate(agenticverdict_tenant_rate_limit_hits_total{bucket_type="tenant"}[10m])), 0.01)
+          ) > 3
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tenant throttle fairness anomaly detected"
+          description: "Anonymous bucket throttles are disproportionately higher than tenant buckets for 15m."

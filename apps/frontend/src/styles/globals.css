@@ -90,6 +90,12 @@ a {
 
 /* Auth routes — full-viewport shell: subtle brand wash + rhythm (tokens; RTL layout-neutral) */
 .auth-shell {
+  --mantine-primary-color-filled: var(--mantine-primary-color-8);
+  --mantine-primary-color-filled-hover: var(--mantine-primary-color-9);
+  --mantine-color-dimmed: var(--mantine-color-gray-7);
+  --av-color-text-secondary: var(--mantine-color-gray-7);
+  --av-color-primary: var(--brand-color-primary, var(--mantine-primary-color-8));
+  --av-color-primary-600: var(--mantine-primary-color-9);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;

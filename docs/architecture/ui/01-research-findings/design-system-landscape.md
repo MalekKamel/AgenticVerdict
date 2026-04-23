@@ -662,7 +662,7 @@ export function Logo({ variant = "light", height = 32 }: Props) {
   return (
     <Image
       src={logoUrl}
-      alt="Company Logo"
+      alt="Tenant Logo"
       height={height}
       width={height * 2} // Assume 2:1 aspect ratio
     />

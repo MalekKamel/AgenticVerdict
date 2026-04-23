@@ -1,11 +1,8 @@
-import { useRouterState } from "@tanstack/react-router";
-
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { useConfirmPasswordReset } from "@/hooks/usePasswordReset";
+import { AuthMutationError } from "@/hooks/usePasswordReset";
 
-export function ResetPasswordFormClient() {
-  const search = useRouterState({ select: (s) => s.location.search });
-  const token = new URLSearchParams(search).get("token") || "";
+export function ResetPasswordFormClient({ token }: { token: string }) {
   const resetMutation = useConfirmPasswordReset(token);
   const isPending = resetMutation.isPending;
   const error = resetMutation.error;
@@ -15,7 +12,7 @@ export function ResetPasswordFormClient() {
       token={token}
       onSubmit={(data) => resetMutation.mutate({ token: data.token, newPassword: data.password })}
       isLoading={isPending}
-      error={error?.message}
+      error={error instanceof AuthMutationError ? error : null}
     />
   );
 }

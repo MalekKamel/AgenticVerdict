@@ -69,8 +69,17 @@
     "invalidEmail": "Please enter a valid email address",
     "invalidPassword": "Password must be at least 8 characters",
     "requiredField": "This field is required",
-    "minLength": "Must be at least {{min}} characters",
-    "maxLength": "Must be at most {{max}} characters"
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be at most {max} characters"
+  },
+  "Validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "successTitle": "Thanks for your interest",
+    "successBody": "We received your details and will contact you soon.",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "submitDemo": "Request demo"
   },
   "errors": {
     "notFound": "Page not found",
@@ -105,7 +114,7 @@
       "notImplemented": "This feature is not yet implemented."
     },
     "rateLimit": {
-      "exceeded": "You've exceeded the rate limit. Please try again in {{retryAfter}} seconds.",
+      "exceeded": "You've exceeded the rate limit. Please try again in {retryAfter} seconds.",
       "tooManyRequests": "Too many requests. Please slow down and try again later."
     },
     "common": {
@@ -157,7 +166,7 @@
     "breadcrumbHome": "Home",
     "title": "Welcome",
     "subtitle": "Multi-business-domain intelligence for your organization.",
-    "companyLabel": "Company",
+    "tenantLabel": "Tenant",
     "languageLabel": "Language",
     "regionLabel": "Region",
     "previewTitle": "Preview",
@@ -176,6 +185,31 @@
     "login": {
       "title": "Sign In",
       "description": "Welcome back! Please sign in to your account.",
+      "session": {
+        "expiredTitle": "Session expired",
+        "expiredMessage": "Please sign in again to continue securely."
+      },
+      "oauth": {
+        "or": "or continue with",
+        "continueWith": "Continue with {provider}",
+        "redirecting": "Redirecting to single sign-on provider...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "We could not start single sign-on automatically. Use one of the options below.",
+        "unavailable": "Single sign-on is temporarily unavailable. Please sign in with email and password."
+      },
+      "rateLimit": {
+        "title": "Too many attempts",
+        "message": "Too many sign-in attempts. Please try again shortly.",
+        "retryAfter": "Too many sign-in attempts. Please try again in {seconds} seconds."
+      },
+      "lockout": {
+        "title": "Account temporarily locked",
+        "message": "Your account is temporarily locked after repeated failed sign-in attempts."
+      },
       "successMessage": "Welcome back! Redirecting to dashboard...",
       "fields": {
         "email": "Email",
@@ -244,7 +278,9 @@
         "createAccount": "Create Account",
         "creatingAccount": "Creating Account...",
         "hasAccount": "Already have an account?",
-        "signIn": "Sign in"
+        "signIn": "Sign in",
+        "next": "Next",
+        "back": "Back"
       },
       "errors": {
         "apiError": "Registration failed",
@@ -281,7 +317,53 @@
           "tooLong": "Last name must not exceed 50 characters"
         }
       },
-      "success": "Account created successfully. Please check your email to verify your account."
+      "success": "Account created successfully. Please check your email to verify your account.",
+      "steps": {
+        "progress": "Step {current} of {total}",
+        "accountType": {
+          "title": "Choose account type",
+          "label": "Account type",
+          "options": {
+            "business": "Business account",
+            "individual": "Individual account"
+          },
+          "errors": {
+            "required": "Please choose an account type"
+          }
+        },
+        "tenant": {
+          "title": "Tenant information",
+          "fields": {
+            "tenantName": {
+              "label": "Tenant name"
+            },
+            "tenantSize": {
+              "label": "Tenant size",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "Tenant website (optional)"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "Tenant name is required",
+            "tenantNameTooLong": "Tenant name is too long",
+            "tenantSizeRequired": "Tenant size is required",
+            "tenantWebsiteInvalid": "Please enter a valid website URL"
+          }
+        },
+        "confirmation": {
+          "title": "Registration complete",
+          "description": "Your account has been created. Verify your email to continue.",
+          "checkEmail": "We sent a 6-digit code to {email}.",
+          "cta": "Verify email"
+        }
+      }
     },
     "forgotPassword": {
       "title": "Forgot Password",
@@ -295,7 +377,11 @@
       "buttons": {
         "submit": "Send Reset Link",
         "submitting": "Sending...",
+        "retryCountdown": "Try again in {seconds}s",
         "backToLogin": "Back to Sign In"
+      },
+      "states": {
+        "rateLimited": "Too many reset requests. Please try again in {seconds} seconds."
       },
       "errors": {
         "email": {
@@ -319,6 +405,9 @@
         "backToLogin": "Back to Sign In",
         "resetting": "Resetting...",
         "requestNew": "Request a new one"
+      },
+      "states": {
+        "rateLimited": "Too many reset attempts. Please request a new link in {seconds} seconds."
       },
       "errors": {
         "password": {
@@ -347,7 +436,7 @@
       "buttons": {
         "submit": "Verify",
         "resend": "Resend",
-        "resendCountdown": "Resend ({{seconds}}s)",
+        "resendCountdown": "Resend ({seconds}s)",
         "signIn": "Sign In",
         "backToRegister": "Back to Register"
       },
@@ -373,7 +462,9 @@
         "expiredMessage": "This verification link has expired. Please request a new one.",
         "invalid": "Invalid Link",
         "invalidMessage": "This verification link is invalid. Please try registering again.",
-        "resendSuccess": "A new verification email has been sent. Please check your inbox."
+        "resendSuccess": "A new verification email has been sent. Please check your inbox.",
+        "attemptsRemaining": "Attempts remaining: {count}",
+        "retryAfter": "Please wait {seconds} seconds before trying again."
       }
     },
     "password": {
@@ -406,10 +497,103 @@
         "commonPattern": "Please choose a more secure password"
       }
     },
+    "errors": {
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "forbidden": "You do not have permission to perform this action.",
+      "notFound": "The requested resource was not found.",
+      "conflict": "This request could not be completed due to a conflict.",
+      "badRequest": "The request could not be processed. Please check your input and try again.",
+      "rateLimitExceeded": "Too many requests. Please wait and try again.",
+      "emailNotVerified": "Please verify your email address before continuing.",
+      "weakPassword": "Please choose a stronger password that meets the requirements.",
+      "tokenExpired": "This link or session has expired. Please start again.",
+      "internalError": "Something went wrong on our side. Please try again later.",
+      "networkError": "We could not reach the server. Check your connection and try again.",
+      "accountLocked": "Your account has been locked due to too many failed attempts.",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "tenantContextRequired": "Organization context is missing. Refresh the page or open the link from your invitation again.",
+      "tenantMismatch": "The organization in this request does not match. Refresh or use the correct workspace link."
+    },
     "layout": {
       "mainContent": "Authentication form",
       "footerNav": "Other sign-in options",
-      "poweredBy": "Powered by AgenticVerdict"
+      "poweredBy": "Powered by AgenticVerdict",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "Go to {brand} home",
+      "legalNavLabel": "Legal and help",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "help": "Help",
+      "backToSignIn": "Back to sign in",
+      "forgotPasswordShort": "Forgot password?"
+    },
+    "seo": {
+      "login": {
+        "title": "Sign in | {brand}",
+        "description": "Sign in to your {brand} account to access your workspace, fleet data, and insights."
+      },
+      "register": {
+        "title": "Create account | {brand}",
+        "description": "Create a {brand} account to connect data sources and explore fleet and business insights."
+      },
+      "forgotPassword": {
+        "title": "Forgot password | {brand}",
+        "description": "Request a secure link to reset your {brand} account password."
+      },
+      "resetPassword": {
+        "title": "Reset password | {brand}",
+        "description": "Choose a new password to regain access to your {brand} account."
+      },
+      "verifyEmail": {
+        "title": "Verify email | {brand}",
+        "description": "Confirm your email address to finish setting up your {brand} account."
+      },
+      "terms": {
+        "title": "Terms of Service | {brand}",
+        "description": "Terms of Service for using the {brand} platform and related services."
+      },
+      "privacy": {
+        "title": "Privacy Policy | {brand}",
+        "description": "How {brand} collects, uses, and protects personal and fleet-related data."
+      },
+      "help": {
+        "title": "Help & support | {brand}",
+        "description": "Get help signing in, verifying your email, or contacting {brand} support."
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "Terms of Service",
+        "lastUpdated": "Last updated: April 2026. This page is a placeholder; replace with counsel-approved terms before production launch.",
+        "section1Title": "Agreement",
+        "section1Body": "By accessing or using {brand} services, you agree to follow these terms and all applicable laws. If you do not agree, do not use the service.",
+        "section2Title": "Accounts and security",
+        "section2Body": "You are responsible for safeguarding your credentials and for activity under your account. Notify support immediately if you suspect unauthorized access.",
+        "section3Title": "Changes",
+        "section3Body": "We may update these terms from time to time. Material changes will be communicated through the product or by email where appropriate.",
+        "footerNote": "Questions about these terms?",
+        "backToSignIn": "Back to sign in"
+      },
+      "privacy": {
+        "title": "Privacy Policy",
+        "lastUpdated": "Last updated: April 2026. This page is a placeholder; replace with counsel-approved privacy disclosures before production launch.",
+        "section1Title": "Information we process",
+        "section1Body": "We process information you provide (such as account and fleet data) to operate, secure, and improve the platform. Categories and purposes will be detailed in your final policy.",
+        "section2Title": "Retention and security",
+        "section2Body": "We apply administrative, technical, and organizational measures designed to protect personal data. Retention follows your configuration, legal obligations, and operational needs.",
+        "section3Title": "Your choices",
+        "section3Body": "Depending on your region, you may have rights to access, correct, delete, or export personal data. Contact support to exercise applicable rights.",
+        "footerNote": "Questions about privacy?",
+        "backToSignIn": "Back to sign in"
+      }
+    },
+    "help": {
+      "title": "Help & support",
+      "description": "Need help signing in, verifying your email, or resetting your password? Use the options below or contact our team.",
+      "supportIntro": "Email:",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "Support hours and response targets depend on your subscription and region.",
+      "backToSignIn": "Back to sign in"
     }
   },
   "admin": {
@@ -433,7 +617,7 @@
     "stepWelcomeBody": "You are ready to connect data sources and explore insights.",
     "stepPreferencesLabel": "Preferences",
     "stepPreferencesDescription": "Regional defaults",
-    "stepPreferencesBody": "Locale, currency, and notifications will be driven by CompanyConfig once connected.",
+    "stepPreferencesBody": "Locale, currency, and notifications will be driven by TenantConfig once connected.",
     "stepDoneLabel": "Done",
     "stepDoneDescription": "All set",
     "stepDoneBody": "You can revisit settings anytime from the app."

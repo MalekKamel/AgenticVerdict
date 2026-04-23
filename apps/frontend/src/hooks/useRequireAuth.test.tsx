@@ -26,6 +26,11 @@ function Harness() {
   return <div data-testid="harness" />;
 }
 
+function VerifiedHarness() {
+  useRequireAuth({ requireVerifiedEmail: true });
+  return <div data-testid="harness" />;
+}
+
 describe("useRequireAuth", () => {
   beforeEach(() => {
     mockedPush.mockClear();
@@ -36,6 +41,7 @@ describe("useRequireAuth", () => {
     mockedSession.mockReturnValue({
       data: undefined,
       isPending: true,
+      isFetching: false,
       error: null,
     } as ReturnType<typeof useSessionQuery>);
 
@@ -47,6 +53,7 @@ describe("useRequireAuth", () => {
     mockedSession.mockReturnValue({
       data: { user: null, sessionExpiresAt: null },
       isPending: false,
+      isFetching: false,
       error: null,
     } as ReturnType<typeof useSessionQuery>);
 
@@ -61,10 +68,51 @@ describe("useRequireAuth", () => {
     mockedSession.mockReturnValue({
       data: { user: null, sessionExpiresAt: null },
       isPending: false,
+      isFetching: false,
       error: null,
     } as ReturnType<typeof useSessionQuery>);
 
     render(<Harness />);
     expect(mockedPush).not.toHaveBeenCalled();
+  });
+
+  it("redirects authenticated but unverified users to verify-email when required", async () => {
+    mockedSession.mockReturnValue({
+      data: {
+        user: {
+          id: "user-1",
+          email: "user@example.com",
+          firstName: "Test",
+          lastName: "User",
+          emailVerified: false,
+          tenantId: "11111111-1111-4111-8111-111111111111",
+        },
+        sessionExpiresAt: "2099-01-01T00:00:00.000Z",
+      },
+      isPending: false,
+      isFetching: false,
+      error: null,
+    } as ReturnType<typeof useSessionQuery>);
+
+    render(<VerifiedHarness />);
+    await waitFor(() =>
+      expect(mockedPush).toHaveBeenCalledWith(
+        "/auth/verify-email?redirect=%2Fdashboard&email=user%40example.com&tenantId=11111111-1111-4111-8111-111111111111",
+      ),
+    );
+  });
+
+  it("redirects unauthenticated users even while session is refetching with a settled snapshot", async () => {
+    mockedSession.mockReturnValue({
+      data: { user: null, sessionExpiresAt: null },
+      isPending: false,
+      isFetching: true,
+      error: null,
+    } as ReturnType<typeof useSessionQuery>);
+
+    render(<Harness />);
+    await waitFor(() =>
+      expect(mockedPush).toHaveBeenCalledWith("/auth/login?redirect=%2Fdashboard"),
+    );
   });
 });

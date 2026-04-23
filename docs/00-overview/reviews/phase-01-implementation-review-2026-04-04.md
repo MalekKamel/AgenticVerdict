@@ -102,8 +102,8 @@ Based on original requirements in `/specs/00-core/01-connectors/README.md`:
 
 **Configuration-Driven Architecture**:
 
-- ✅ No hardcoded company logic found
-- ✅ `CompanyConfig` schema properly utilized
+- ✅ No hardcoded tenant logic found
+- ✅ `TenantConfig` schema properly utilized
 - ✅ Platform-specific options properly abstracted
 
 **Plugin Architecture**:

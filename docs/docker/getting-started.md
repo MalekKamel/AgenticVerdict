@@ -11,16 +11,16 @@
 
 For day-to-day Docker work, use **`make`** so the same `-f` file lists are used as in [Common operations](./common-operations.md) and CI:
 
-| Goal                                                             | Command                                                                          |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| First-time bootstrap (secrets, dirs, optional `.env.docker`)     | `make setup`                                                                     |
-| Host / port checks before `up`                                   | `make preflight`                                                                 |
-| Validate compose after editing YAML                              | `make validate`                                                                  |
-| Postgres + Redis only                                            | `make infra-up` / `make infra-down`                                              |
-| Full stack, production-like app images                           | `make apps-up` / `make apps-down`                                                |
-| Full stack, api/worker **development** stage + mock-friendly env | `make dev` / `make dev-stop`                                                     |
-| Logs                                                             | `make dev-logs`, `make apps-logs`, or `make infra-logs`                          |
-| Health probes                                                    | `make health` (and `make health-web` / `make health-api` / `make health-worker`) |
+| Goal                                                             | Command                                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| First-time bootstrap (secrets, dirs, optional `.env.docker`)     | `make setup`                                                                          |
+| Host / port checks before `up`                                   | `make preflight`                                                                      |
+| Validate compose after editing YAML                              | `make validate`                                                                       |
+| Postgres + Redis only                                            | `make infra-up` / `make infra-down`                                                   |
+| Full stack, production-like app images                           | `make apps-up` / `make apps-down`                                                     |
+| Full stack, api/worker **development** stage + mock-friendly env | `make dev` / `make dev-stop`                                                          |
+| Logs                                                             | `make dev-logs`, `make apps-logs`, or `make infra-logs`                               |
+| Health probes                                                    | `make health` (and `make health-frontend` / `make health-api` / `make health-worker`) |
 
 The sections below document the underlying **`docker compose`** invocations for custom merges (observability, backup sidecar, production example) and for operators who prefer the CLI directly.
 
@@ -30,13 +30,13 @@ The default application Compose overlay (`docker-compose.yml` + `docker-compose.
 
 To run **API** and **worker** with **`NODE_ENV=development`** and mock adapters enabled in Docker, use one of:
 
-- **Deploy override (documented in the manual testing guide):** add [`deploy/docker-compose.dev.override.yml`](../../deploy/docker-compose.dev.override.yml) — sets **`TARGET_STAGE=development`** and **`NODE_ENV=development`** build args for **api** and **worker** (multi-stage Dockerfiles), plus `AGENTICVERDICT_USE_MOCK_ADAPTERS=1`.
+- **Deploy override (documented in the manual testing guide):** add [`deploy/docker-compose.dev.override.yml`](../../deploy/docker-compose.dev.override.yml) — sets **`TARGET_STAGE=development`** and **`NODE_ENV=development`** build args for **api** and **worker** (multi-stage Dockerfiles), plus `AGENTICVERDICT_RUNTIME_ENV=development` and `AGENTICVERDICT_MOCK_MODE=all`.
 - **Root overlay (same intent):** add [`docker-compose.dev.yml`](../../docker-compose.dev.yml) at the repo root — merges the same **api** / **worker** build args and env; compose with  
   `docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.dev.yml up --build`.
 
 For **integration-style runs** with **`NODE_ENV=test`** on API/worker, see [`docker-compose.test.yml`](../../docker-compose.test.yml).
 
-**Web (Next.js)** in Docker stays a **production standalone** image: it does **not** load mock adapter code at runtime. Use **`pnpm dev`** on the host for web flows that need mocks, or rely on **API/worker** mocks for pipeline testing. See [Container images](./container-images.md) and [Manual testing guide](../../tests/docs/manual-testing-guide.md) (§2.1.1, §2.6).
+**Frontend frontend** in Docker runs the production server output of `@agenticverdict/frontend`. Mock adapter toggles still apply to API/worker in the dev overlay. See [Container images](./container-images.md) and [Manual testing guide](../../tests/docs/manual-testing-guide.md) (§2.1.1, §2.6).
 
 **Configuration layers:** Runtime mock toggles and validated env-derived settings live in `@agenticverdict/config` (`configuration` export / `ConfigurationService`); build-time boundaries remain in `build-constants`. See `changelog/2026-04-08-layered-runtime-config-docker-mock-adapters.md`.
 
@@ -54,7 +54,7 @@ This also generates `db_password.txt`, `redis_password.txt`, and `encryption_key
 
 ## Common stacks
 
-Application images (**web**, **api**, **worker**) expect pre-built **workspace deps** and (for **worker**) **Chromium** layers. **`make dev`** and **`make apps-up`** run **`make build-base`** first; **`make build`** builds bases plus app images without starting containers.
+Application images (**frontend**, **api**, **worker**) expect pre-built **workspace deps** and (for **worker**) **Chromium** layers. **`make dev`** and **`make apps-up`** run **`make build-base`** first; **`make build`** builds bases plus app images without starting containers.
 
 `docker-compose.apps.yml` sets **`DEPS_IMAGE=agenticverdict/deps:local`** and **`CHROMIUM_IMAGE=agenticverdict/chromium-base:local`** for you.
 
@@ -70,7 +70,7 @@ docker compose ps
 docker compose down
 ```
 
-### Full application stack (web + API + worker + Postgres + Redis)
+### Full application stack (frontend + API + worker + Postgres + Redis)
 
 **Recommended:** `make apps-up` (stops with `make apps-down`).
 
@@ -100,6 +100,16 @@ docker compose \
 ```
 
 Equivalent **deploy/** override: `-f deploy/docker-compose.dev.override.yml` instead of `docker-compose.dev.yml`.
+
+### Watch/rebuild inner loop (Docker Compose watch)
+
+After `make dev` starts the stack, run watch mode in a separate terminal:
+
+```bash
+make dev-watch
+```
+
+This uses `develop.watch` rules from `docker-compose.dev.yml` to rebuild/restart containers when relevant files change (frontend, api, worker, shared packages, config, and lock/workspace metadata).
 
 If **postgres** or **redis** exit immediately, check logs (`docker compose ... logs postgres redis`) and compare with the troubleshooting table in [Docker health verification](./docker-health-verification-execution-plan.md#troubleshooting) and [Security](./security.md) (infrastructure hardening).
 
@@ -136,7 +146,7 @@ docker compose \
 ## Health checks
 
 ```bash
-curl -fsS http://127.0.0.1:3000/api/health   # web
+curl -fsS http://127.0.0.1:3000/api/health   # frontend
 curl -fsS http://127.0.0.1:4000/health       # API
 ./scripts/health-check.sh
 ```
@@ -157,7 +167,7 @@ Build shared layers first (same tags as Compose defaults), then pass **`DEPS_IMA
 docker build -f docker/base/Dockerfile.deps -t agenticverdict/deps:local .
 docker build -f docker/base/Dockerfile.chromium -t agenticverdict/chromium-base:local .
 
-docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/frontend/Dockerfile -t agenticverdict/web:local .
+docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/frontend/Dockerfile -t agenticverdict/frontend:local .
 docker build --build-arg DEPS_IMAGE=agenticverdict/deps:local -f apps/api/Dockerfile -t agenticverdict/api:local .
 docker build \
   --build-arg DEPS_IMAGE=agenticverdict/deps:local \
@@ -182,7 +192,7 @@ For local performance tracking:
 
 ```bash
 chmod +x scripts/measure-build-performance.sh
-scripts/measure-build-performance.sh web
+scripts/measure-build-performance.sh frontend
 scripts/measure-build-performance.sh api
 scripts/measure-build-performance.sh worker
 ```
@@ -198,3 +208,31 @@ docker builder prune -f
 ## Production-shaped example (advanced)
 
 `deploy/docker-compose.production.example.yml` is a **starting point** for image-based deployment (not wired by default). It expects `POSTGRES_PASSWORD`, image tags via `REGISTRY` / `VERSION`, and paths relative to `deploy/` for seccomp. See [Compose and networking](./compose-and-networking.md) and [Security](./security.md).
+
+## Optional pgAdmin overlay
+
+Use pgAdmin as an on-demand local database admin UI without changing default stacks.
+
+Makefile-first:
+
+```bash
+make pgadmin-up
+make pgadmin-logs
+make pgadmin-down
+```
+
+Raw Compose:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.pgadmin.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.pgadmin.yml logs -f pgadmin
+docker compose -f docker-compose.yml -f docker-compose.pgadmin.yml down
+```
+
+Defaults are sourced from `.env.docker`:
+
+- `PGADMIN_PORT=5050`
+- `PGADMIN_DEFAULT_EMAIL`
+- `PGADMIN_DEFAULT_PASSWORD`
+
+For architecture and rollout rationale, see [pgAdmin integration plan](./pgadmin-integration-implementation-plan.md).

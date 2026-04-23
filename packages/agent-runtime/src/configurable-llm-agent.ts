@@ -73,7 +73,7 @@ export interface ConfigurableLlmAgentOptions {
 }
 
 /**
- * LangChain-backed {@link IAgent} with per-turn company context from tenant ALS, optional provider
+ * LangChain-backed {@link IAgent} with per-turn tenant context from tenant ALS, optional provider
  * fallback, and pluggable memory strategies from the factory.
  */
 export class ConfigurableLlmAgent implements IAgent {

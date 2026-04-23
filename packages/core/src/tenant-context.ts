@@ -1,12 +1,46 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
+
+import { TenantSecurityError } from "./tenant-security-error";
 
 export interface TenantContext {
   tenantId: string;
-  config: CompanyConfig;
+  config: TenantConfig;
   requestId: string;
   userId?: string;
+}
+
+/**
+ * Canonical constructor for tenant context objects used by HTTP, tRPC, and worker adapters.
+ */
+export function createTenantContext(params: {
+  tenantId: string;
+  requestId: string;
+  config: TenantConfig;
+  userId?: string;
+}): TenantContext {
+  return {
+    tenantId: params.tenantId,
+    requestId: params.requestId,
+    config: params.config,
+    userId: params.userId,
+  };
+}
+
+/**
+ * Backward-compatible worker helper that delegates to {@link createTenantContext}.
+ */
+export function buildTenantContextForJob(params: {
+  tenantId: string;
+  requestId: string;
+  tenantConfig: TenantConfig;
+}): TenantContext {
+  return createTenantContext({
+    tenantId: params.tenantId,
+    requestId: params.requestId,
+    config: params.tenantConfig,
+  });
 }
 
 const tenantStorage =
@@ -19,7 +53,11 @@ export function getTenantContext(): TenantContext | undefined {
 export function requireTenantContext(): TenantContext {
   const ctx = getTenantContext();
   if (!ctx) {
-    throw new Error("Tenant context is not set for this async execution");
+    throw new TenantSecurityError(
+      "TENANT_CONTEXT_REQUIRED",
+      "Tenant context is not set for this async execution",
+      500,
+    );
   }
   return ctx;
 }
@@ -30,14 +68,14 @@ export function requireTenantContext(): TenantContext {
  * Downstream synchronous code and `await` continuations scheduled from `fn` see the same context
  * until the outer `run` completes.
  *
- * @param context - Active tenant, loaded {@link CompanyConfig}, and request correlation id.
+ * @param context - Active tenant, loaded {@link TenantConfig}, and request correlation id.
  * @param fn - Callback to execute inside the storage scope.
  * @returns The value or promise returned by `fn`.
  *
  * @example
  * ```ts
  * await runWithTenantContext(
- *   { tenantId: companyId, config, requestId: req.id },
+ *   { tenantId: tenantId, config, requestId: req.id },
  *   async () => {
  *     const row = await db.query.users.findFirst();
  *     return row;

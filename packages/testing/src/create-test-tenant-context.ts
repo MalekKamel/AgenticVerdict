@@ -1,24 +1,24 @@
-import type { CompanyConfig } from "@agenticverdict/config";
+import type { TenantConfig } from "@agenticverdict/config";
 import type { TenantContext } from "@agenticverdict/core";
 
-import { createTestCompanyConfig } from "./create-test-company-config";
+import { createTestTenantConfig } from "./create-test-tenant-config";
 import { TEST_TENANT_ALPHA } from "./tenant-ids";
 
 export interface CreateTestTenantContextOptions {
   tenantId?: string;
   requestId?: string;
   userId?: string;
-  companyConfig?: Partial<CompanyConfig>;
+  tenantConfig?: Partial<TenantConfig>;
 }
 
-/** Constructs a {@link TenantContext} with a validated {@link CompanyConfig}. */
+/** Constructs a {@link TenantContext} with a validated {@link TenantConfig}. */
 export function createTestTenantContext(
   options: CreateTestTenantContextOptions = {},
 ): TenantContext {
   const tenantId = options.tenantId ?? TEST_TENANT_ALPHA;
-  const config = createTestCompanyConfig({
-    ...options.companyConfig,
-    companyId: tenantId,
+  const config = createTestTenantConfig({
+    ...options.tenantConfig,
+    tenantId: tenantId,
   });
   return {
     tenantId,
