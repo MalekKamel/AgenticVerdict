@@ -72,9 +72,11 @@ export function registerInsightRoutes(app: FastifyInstance, redis: Redis | null)
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid query parameters",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -83,7 +85,7 @@ export function registerInsightRoutes(app: FastifyInstance, redis: Redis | null)
       const tenantId = request.auth?.tenantId;
       if (!tenantId) {
         return reply.status(401).send({
-          error: { code: "unauthorized", message: "Unauthorized", details: {} },
+          error: { code: "AUTH_UNAUTHORIZED", message: "errors.auth.unauthorized", details: {} },
           requestId: request.id,
         });
       }

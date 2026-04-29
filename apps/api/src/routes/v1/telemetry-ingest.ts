@@ -75,7 +75,7 @@ export function registerTelemetryIngestRoutes(app: FastifyInstance, redis: Redis
       const secret = getIngestSecret();
       if (isNodeProduction() && !secret) {
         return reply.status(503).send({
-          error: { code: "telemetry_unconfigured", message: "Telemetry ingest is not configured" },
+          error: { code: "RUNTIME_UNAVAILABLE", message: "errors.server.serviceUnavailable" },
           requestId: request.id,
         });
       }
@@ -89,7 +89,7 @@ export function registerTelemetryIngestRoutes(app: FastifyInstance, redis: Redis
         const presented = bearer ?? headerToken;
         if (presented !== secret) {
           return reply.status(401).send({
-            error: { code: "unauthorized", message: "Invalid or missing telemetry credentials" },
+            error: { code: "AUTH_UNAUTHORIZED", message: "errors.auth.unauthorized" },
             requestId: request.id,
           });
         }
@@ -99,7 +99,7 @@ export function registerTelemetryIngestRoutes(app: FastifyInstance, redis: Redis
       const serialized = JSON.stringify(raw ?? null);
       if (serialized.length > MAX_BODY_BYTES) {
         return reply.status(413).send({
-          error: { code: "payload_too_large", message: "Telemetry body exceeds size limit" },
+          error: { code: "VALIDATION_FAILED", message: "errors.validation.failed" },
           requestId: request.id,
         });
       }
@@ -108,9 +108,11 @@ export function registerTelemetryIngestRoutes(app: FastifyInstance, redis: Redis
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid telemetry envelope",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { jwtVerify } from "jose";
 
-import { TenantSecurityError } from "@agenticverdict/core";
+import { AppFault, TenantSecurityError, toHttpErrorResponse } from "@agenticverdict/core";
 import { recordTenantSecurityEvent } from "@agenticverdict/observability";
 
 import { parseSessionCookie } from "../lib/auth-session-cookie";
@@ -13,6 +13,16 @@ const JWT_SECRET_MIN_LENGTH = 8;
 
 let jwtSecretFileContentLoaded = false;
 let jwtSecretFromFile: string | undefined;
+
+function toLegacyRestAuthCode(code: string): string {
+  if (code === "AUTH_UNAUTHORIZED") {
+    return "unauthorized";
+  }
+  if (code === "AUTH_FORBIDDEN") {
+    return "forbidden";
+  }
+  return code.toLowerCase();
+}
 
 /**
  * Clears the lazy cache used when `JWT_SECRET_FILE` is set. Call between tests that
@@ -90,23 +100,44 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       if (!required) {
         return;
       }
-      await reply.status(401).send({
-        error: { code: "unauthorized", message: "Missing bearer token", details: {} },
-        requestId: request.id,
+      const response = toHttpErrorResponse(
+        new AppFault({
+          code: "AUTH_UNAUTHORIZED",
+          category: "authentication",
+          httpStatus: 401,
+          retryable: false,
+          safeMessage: "errors.auth.unauthorized",
+        }),
+        request.id,
+      );
+      await reply.status(response.statusCode).send({
+        ...response.body,
+        error: {
+          ...response.body.error,
+          code: toLegacyRestAuthCode(response.body.error.code),
+        },
       });
       return;
     }
 
     const secret = resolveJwtSecret();
     if (!secret) {
-      await reply.status(500).send({
+      const response = toHttpErrorResponse(
+        new AppFault({
+          code: "INTERNAL_ERROR",
+          category: "internal",
+          httpStatus: 500,
+          retryable: false,
+          safeMessage: "errors.common.unknownError",
+        }),
+        request.id,
+      );
+      await reply.status(response.statusCode).send({
+        ...response.body,
         error: {
-          code: "internal_error",
-          message:
-            "JWT secret is not configured (set JWT_SECRET or JWT_SECRET_FILE with value length ≥ 8)",
-          details: {},
+          ...response.body.error,
+          code: toLegacyRestAuthCode(response.body.error.code),
         },
-        requestId: request.id,
       });
       return;
     }
@@ -116,9 +147,22 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       const verified = await jwtVerify(token, new TextEncoder().encode(secret));
       payload = verified.payload as Record<string, unknown>;
     } catch {
-      await reply.status(401).send({
-        error: { code: "unauthorized", message: "Invalid or expired token", details: {} },
-        requestId: request.id,
+      const response = toHttpErrorResponse(
+        new AppFault({
+          code: "AUTH_UNAUTHORIZED",
+          category: "authentication",
+          httpStatus: 401,
+          retryable: false,
+          safeMessage: "errors.auth.tokenInvalid",
+        }),
+        request.id,
+      );
+      await reply.status(response.statusCode).send({
+        ...response.body,
+        error: {
+          ...response.body.error,
+          code: toLegacyRestAuthCode(response.body.error.code),
+        },
       });
       return;
     }
@@ -131,26 +175,44 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       : [];
 
     if (!sub || !tenantId) {
-      await reply.status(401).send({
+      const response = toHttpErrorResponse(
+        new AppFault({
+          code: "AUTH_UNAUTHORIZED",
+          category: "authentication",
+          httpStatus: 401,
+          retryable: false,
+          safeMessage: "errors.auth.tokenInvalid",
+        }),
+        request.id,
+      );
+      await reply.status(response.statusCode).send({
+        ...response.body,
         error: {
-          code: "unauthorized",
-          message: "Token must include sub and tenant_id claims",
-          details: {},
+          ...response.body.error,
+          code: toLegacyRestAuthCode(response.body.error.code),
         },
-        requestId: request.id,
       });
       return;
     }
 
     for (const role of rolesRequired) {
       if (!roles.includes(role)) {
-        await reply.status(403).send({
+        const response = toHttpErrorResponse(
+          new AppFault({
+            code: "AUTH_FORBIDDEN",
+            category: "authorization",
+            httpStatus: 403,
+            retryable: false,
+            safeMessage: "errors.auth.forbidden",
+          }),
+          request.id,
+        );
+        await reply.status(response.statusCode).send({
+          ...response.body,
           error: {
-            code: "forbidden",
-            message: `Required role missing: ${role}`,
-            details: {},
+            ...response.body.error,
+            code: toLegacyRestAuthCode(response.body.error.code),
           },
-          requestId: request.id,
         });
         return;
       }
@@ -236,10 +298,21 @@ export function tenantSecurityErrorReply(
   });
   recordTenantSecurityEvent("http", err.code);
 
+  const messageKeyByTenantCode: Record<string, string> = {
+    MISSING_TENANT: "errors.tenantRequired",
+    TENANT_CONTEXT_REQUIRED: "errors.tenantRequired",
+    INVALID_TENANT_ID: "errors.tenantRequired",
+    TENANT_SLUG_UNRESOLVED: "errors.tenantNotFound",
+    TENANT_CONFIG_NOT_FOUND: "errors.tenantNotFound",
+    TENANT_INACTIVE: "errors.tenantNotFound",
+    TENANT_MISMATCH: "errors.tenantMismatch",
+  };
+  const messageKey = messageKeyByTenantCode[err.code] ?? "errors.common.unknownError";
+
   void reply.status(err.httpStatus).send({
     error: {
       code: err.code.toLowerCase(),
-      message: err.message,
+      message: messageKey,
       details: {},
     },
     requestId: request.id,

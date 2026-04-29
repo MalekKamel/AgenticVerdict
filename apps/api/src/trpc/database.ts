@@ -23,7 +23,7 @@ export function requireTrpcDatabase() {
   if (!db) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Database is not configured (DATABASE_URL)",
+      message: "errors.server.serviceUnavailable",
     });
   }
   return db;

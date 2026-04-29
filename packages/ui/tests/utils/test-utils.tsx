@@ -4,6 +4,7 @@
 
 import React, { ReactElement } from "react";
 import { render, RenderOptions } from "@testing-library/react";
+import { vi } from "vitest";
 import { ThemeProvider } from "../src/providers/ThemeProvider";
 import { DirectionProvider } from "../src/providers/DirectionProvider";
 import { MantineProvider } from "../src/providers/MantineProvider";

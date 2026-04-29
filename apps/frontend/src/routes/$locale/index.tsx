@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 
 import { AppRouteError } from "@/components/errors/AppRouteError";
-import { HomeContentClient } from "@/components/home/HomeContentClient";
+import { HomeContentClient } from "@/features/home/ui/HomeContentClient";
 
 function resolveHomeTenantIdFromEnv(): string {
   const fromVite =

@@ -4,5 +4,5 @@ import { buildAuthSeoHead } from "@/lib/auth/build-auth-seo-head";
 
 export const Route = createFileRoute("/$locale/auth/help")({
   head: ({ matches }) => buildAuthSeoHead(matches, "help"),
-  component: lazyRouteComponent(() => import("./-help.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/HelpPage")),
 });

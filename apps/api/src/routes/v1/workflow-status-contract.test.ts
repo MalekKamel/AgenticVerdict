@@ -6,9 +6,11 @@ import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
 const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee66";
+const OTHER_TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee67";
 
 const completedSnapshot: WorkflowTriggerStatusPayload = {
   executionId: "status-contract-exec-1",
+  tenantId: TENANT,
   status: "completed",
   bullmqState: "completed",
   queuedAtMs: 1,
@@ -57,13 +59,33 @@ vi.mock("../../services/report-bullmq", async () => {
       if (executionId === "pending-with-null-result") {
         return {
           executionId,
+          tenantId: TENANT,
           status: "waiting" as const,
           bullmqState: "waiting",
           result: null,
         };
       }
+      if (executionId === "foreign-tenant-exec") {
+        return {
+          executionId,
+          tenantId: OTHER_TENANT,
+          status: "failed" as const,
+          bullmqState: "failed",
+          error: "raw secret token leaked",
+        };
+      }
+      if (executionId === "own-failed-exec") {
+        return {
+          executionId,
+          tenantId: TENANT,
+          status: "failed" as const,
+          bullmqState: "failed",
+          error: "raw secret token leaked",
+        };
+      }
       return {
         executionId,
+        tenantId: TENANT,
         status: "failed" as const,
         bullmqState: "failed",
         error: "simulated failure",
@@ -122,8 +144,8 @@ describe("workflow status endpoint contract", () => {
     });
     expect(res.statusCode).toBe(404);
     const body = res.json() as { error: { code: string; message: string } };
-    expect(body.error.code).toBe("not_found");
-    expect(body.error.message).toBe("Execution not found");
+    expect(body.error.code).toBe("RESOURCE_NOT_FOUND");
+    expect(body.error.message).toBe("errors.common.notFound");
   });
 
   it("returns 200 when result is temporarily null", async () => {
@@ -137,5 +159,28 @@ describe("workflow status endpoint contract", () => {
     expect(body.status).toBe("waiting");
     expect(body.bullmqState).toBe("waiting");
     expect(body.result).toBeUndefined();
+  });
+
+  it("returns 403 for execution IDs owned by a different tenant", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/workflows/status/foreign-tenant-exec",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect(res.statusCode).toBe(403);
+    const body = res.json() as { error: { code: string } };
+    expect(body.error.code).toBe("TENANT_MISMATCH");
+  });
+
+  it("sanitizes workflow failure error text in status responses", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/workflows/status/own-failed-exec",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { error?: string };
+    expect(body.error).toBe("errors.common.unknownError");
+    expect(body.error).not.toContain("secret");
   });
 });

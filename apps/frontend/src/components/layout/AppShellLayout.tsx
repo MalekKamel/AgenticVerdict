@@ -32,8 +32,8 @@ import {
   APP_SHELL_NAV_ITEMS,
   type AppShellNavRole,
 } from "./app-shell-navigation";
-import { useShellBootstrap } from "@/hooks/useShellBootstrap";
-import { useAppShellPreferences } from "@/hooks/useAppShellPreferences";
+import { useShellBootstrap } from "@/features/shell/hooks/useShellBootstrap";
+import { useAppShellPreferences } from "@/features/shell/hooks/useAppShellPreferences";
 import { logRouteTransition, logShellInteraction } from "@/lib/observability/shell-analytics";
 import {
   AppShellContextProvider,

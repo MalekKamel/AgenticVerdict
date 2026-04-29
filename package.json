@@ -5,6 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "check:cycles": "madge --circular --extensions ts,tsx packages/types/src/index.ts packages/config/src/index.ts packages/core/src/index.ts packages/database/src/index.ts packages/data-connectors/src/index.ts packages/agent-runtime/src/index.ts packages/report-generator/src/index.ts packages/i18n/src/index.ts packages/testing/src/index.ts apps/api/src/index.ts apps/worker/src/index.ts",
+    "check:error-governance": "node scripts/error-system/verify-error-governance.mjs",
+    "check:error-translator-coverage": "pnpm --filter @agenticverdict/core exec vitest run src/error-translators.test.ts --coverage",
     "check:tenant-boundaries": "node scripts/tenant/verify-tenant-boundaries.mjs",
     "db:down": "docker compose down",
     "db:seed:test": "pnpm --filter @agenticverdict/database db:seed:test",

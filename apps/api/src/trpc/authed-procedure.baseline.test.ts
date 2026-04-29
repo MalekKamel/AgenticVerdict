@@ -66,7 +66,7 @@ describe("authedProcedure baseline contracts", () => {
     });
     await expect(caller.probe()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
-      message: "Not authenticated",
+      message: "errors.auth.unauthorized",
     });
   });
 
@@ -75,7 +75,7 @@ describe("authedProcedure baseline contracts", () => {
 
     await expect(caller.probe()).rejects.toMatchObject({
       code: "FORBIDDEN",
-      message: "Tenant context is required for this operation",
+      message: "errors.tenantRequired",
     });
 
     try {
@@ -95,7 +95,7 @@ describe("authedProcedure baseline contracts", () => {
 
     await expect(caller.probe()).rejects.toMatchObject({
       code: "FORBIDDEN",
-      message: "Session tenant does not match resolved tenant context",
+      message: "errors.tenantMismatch",
     });
 
     try {

@@ -607,6 +607,128 @@
       "columnResolved": "Résolu"
     }
   },
+  "dashboard": {
+    "actions": {
+      "retry": "Réessayer la section"
+    },
+    "async": {
+      "loadingHome": "Chargement des sections du tableau de bord",
+      "readyHome": "Les données du tableau de bord sont prêtes",
+      "errorHome": "Certaines sections du tableau de bord n’ont pas pu se charger",
+      "loadingSection": "Chargement…"
+    },
+    "toolbar": {
+      "preset": "Plage de dates",
+      "comparison": "Comparer à la période précédente",
+      "refresh": "Actualiser les données",
+      "freshness": "Dernière mise à jour à {time}",
+      "presets": {
+        "last7": "7 derniers jours",
+        "last30": "30 derniers jours",
+        "thisMonth": "Ce mois-ci",
+        "lastMonth": "Mois dernier"
+      }
+    },
+    "errors": {
+      "generic": "Une erreur s’est produite lors du chargement de ce tableau de bord.",
+      "sectionTitle": "Cette section n’a pas pu être chargée",
+      "tenantRequired": "Le contexte tenant est requis avant de charger les données du tableau de bord.",
+      "tenantMismatch": "Votre session ne correspond pas au périmètre tenant demandé.",
+      "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+      "validation": "La réponse du tableau de bord ne correspond pas au contrat attendu.",
+      "invalidDomain": "Ce domaine de tableau de bord n’est pas disponible."
+    },
+    "domains": {
+      "marketing": "Marketing",
+      "finance": "Finance",
+      "operations": "Opérations",
+      "seo": "SEO",
+      "social": "Réseaux sociaux",
+      "local": "Local"
+    },
+    "connectorStatus": {
+      "healthy": "Sain",
+      "degraded": "À surveiller",
+      "disconnected": "Déconnecté"
+    },
+    "home": {
+      "title": "Tableau de bord",
+      "subtitle": "Connecté en tant que {email}",
+      "ariaMain": "Tableau de bord d’accueil",
+      "kpi": {
+        "title": "Indicateurs clés",
+        "emptyTitle": "Aucun indicateur",
+        "emptyDescription": "Connectez des sources de données pour afficher les indicateurs.",
+        "totalInsights": "Total des analyses",
+        "activeConnectors": "Connecteurs actifs",
+        "reportsThisMonth": "Rapports ce mois-ci",
+        "deltaUp": "+2 vs semaine précédente",
+        "connectorsHealthy": "Tous les connecteurs sont sains",
+        "deltaPercent": "+12% vs période précédente"
+      },
+      "insights": {
+        "title": "Analyses récentes",
+        "emptyTitle": "Aucune analyse",
+        "emptyDescription": "Créez une analyse pour voir des résumés ici.",
+        "sampleTitle": "Instantané performance marketing",
+        "sampleBody": "Le ROAS s’est amélioré avec une efficience des dépenses stable.",
+        "sampleTime": "Mis à jour il y a environ 2 heures"
+      },
+      "connectors": {
+        "title": "État des connecteurs",
+        "emptyTitle": "Aucun connecteur",
+        "emptyDescription": "Ajoutez un connecteur pour surveiller l’ingestion.",
+        "ga4": "GA4",
+        "meta": "Meta Ads",
+        "gsc": "Google Search Console"
+      },
+      "quickActions": {
+        "title": "Actions rapides",
+        "domainSample": "Ouvrir le tableau de bord marketing",
+        "createInsight": "Créer une analyse",
+        "export": "Exporter un rapport",
+        "customize": "Personnaliser la mise en page",
+        "agency": "Vue agence"
+      }
+    },
+    "domain": {
+      "title": "Tableau de bord {domain}",
+      "subtitle": "Les filtres partagés restent alignés avec l’accueil.",
+      "primaryKpi": "Signal principal du domaine",
+      "ariaMain": "Tableau de bord domaine"
+    },
+    "agency": {
+      "title": "Vue agence",
+      "subtitle": "Les agrégats n’utilisent que les clients autorisés.",
+      "clientContext": "Contexte client : {id}",
+      "ariaMain": "Tableau de bord agence",
+      "clientList": "Clients",
+      "viewTenant": "Ouvrir le tableau de bord client",
+      "blocked": "Ce client n’est pas dans votre périmètre autorisé.",
+      "kpi": {
+        "clients": "Clients actifs",
+        "insights": "Analyses (clients autorisés)"
+      }
+    },
+    "widgets": {
+      "kpi_grid": "Vue d’ensemble KPI",
+      "insights": "Résumé des analyses",
+      "connectors": "État des connecteurs",
+      "quick_actions": "Actions rapides"
+    },
+    "customize": {
+      "title": "Personnaliser le tableau de bord",
+      "subtitle": "Réorganisez les widgets, puis enregistrez ou réinitialisez. L’édition nécessite un accès administrateur dans cette préversion.",
+      "ariaMain": "Personnalisation du tableau de bord",
+      "editMode": "Modifier la mise en page",
+      "viewMode": "Mode consultation",
+      "save": "Enregistrer la mise en page",
+      "reset": "Rétablir la disposition par défaut",
+      "palette": "Widgets disponibles",
+      "hint": "Les poignées de glissement ne sont pas activées sur petit écran ; utilisez ajouter/supprimer sur bureau.",
+      "noPermission": "Vous n’avez pas la permission de modifier cette mise en page."
+    }
+  },
   "onboarding": {
     "title": "Bienvenue",
     "subtitle": "Un court parcours de configuration guidée pour votre espace de travail.",

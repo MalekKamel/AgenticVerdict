@@ -213,22 +213,22 @@ async function runPipelineWorkflow(
         stagesCompleted: 0,
         pipelineStatus: "failed",
         platformsAnalyzed: requestedPlatformsRaw,
-        errorCode: "platform_fetch_failed",
+        errorCode: "CONNECTOR_UPSTREAM_FAILURE",
         partialFailure: true,
         platformFailures: [
           ...invalidPlatforms.map((platform) => ({
             platform,
-            code: "platform_fetch_failed" as const,
-            message: `Unsupported platform "${platform}"`,
+            code: "CONNECTOR_UPSTREAM_FAILURE" as const,
+            message: "errors.validation.failed",
             retryable: false,
-            recoveryHint: "Use one of: meta, ga4, gsc, gbp, tiktok.",
+            recoveryHint: "errors.validation.failed",
           })),
           ...disabledRequestedPlatforms.map((platform) => ({
             platform,
-            code: "platform_fetch_failed" as const,
-            message: `Platform "${platform}" is not enabled for this tenant`,
+            code: "CONNECTOR_UPSTREAM_FAILURE" as const,
+            message: "errors.validation.failed",
             retryable: false,
-            recoveryHint: "Enable the platform in tenant marketing channels and retry.",
+            recoveryHint: "errors.validation.failed",
           })),
         ],
       },
@@ -299,8 +299,8 @@ async function runPipelineWorkflow(
     pipelineState.status === "completed"
       ? undefined
       : validatedData.workflowId === "marketing-analysis"
-        ? "analysis_failed"
-        : "verdict_synthesis_failed";
+        ? "INTERNAL_ERROR"
+        : "INTERNAL_ERROR";
   let deliveryMessage: string | undefined;
   if (validatedData.config.deliveryEnabled && validatedData.config.recipientEmail) {
     const deliveryFormat = validatedData.config.outputFormat ?? "pdf";
@@ -312,7 +312,7 @@ async function runPipelineWorkflow(
       attachments: [],
     });
     if (!deliveryResult.success) {
-      errorCode = "delivery_queue_failed";
+      errorCode = "QUEUE_JOB_FAILED";
       deliveryMessage = deliveryResult.error ?? "delivery_failed";
     }
   }
@@ -322,10 +322,10 @@ async function runPipelineWorkflow(
       : [
           {
             platform: platformsAnalyzed[0] ?? "unknown",
-            code: "platform_fetch_failed" as const,
-            message: "One or more platform fetches failed during pipeline execution",
+            code: "CONNECTOR_UPSTREAM_FAILURE" as const,
+            message: "errors.server.serviceUnavailable",
             retryable: true,
-            recoveryHint: "Retry the workflow or reduce platform count for isolation.",
+            recoveryHint: "errors.server.serviceUnavailable",
           },
         ];
 

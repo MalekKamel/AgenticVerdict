@@ -64,9 +64,11 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -84,12 +86,12 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
               {
                 field: `insights[${i}]`,
                 code: "SCHEMA_VIOLATION",
-                message: asInsight.error.message,
+                message: "errors.validation.failed",
                 severity: "critical",
               },
             ],
             warnings: [],
-            recommendations: ["Fix insight schema before validation."],
+            recommendations: ["errors.validation.failed"],
             metadata: { validatedAt: new Date(), validatorVersion: "1.0.0" },
           });
           continue;
@@ -139,9 +141,11 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -151,9 +155,14 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
       if (!verdictParsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Verdict failed schema validation",
-            details: verdictParsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: verdictParsed.error.issues.map((issue) => ({
+                code: issue.code,
+                path: issue.path,
+              })),
+            },
           },
           requestId: request.id,
         });

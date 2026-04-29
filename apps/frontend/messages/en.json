@@ -607,6 +607,128 @@
       "columnResolved": "Resolved"
     }
   },
+  "dashboard": {
+    "actions": {
+      "retry": "Retry section"
+    },
+    "async": {
+      "loadingHome": "Loading dashboard sections",
+      "readyHome": "Dashboard data is ready",
+      "errorHome": "Some dashboard sections failed to load",
+      "loadingSection": "Loading…"
+    },
+    "toolbar": {
+      "preset": "Date range",
+      "comparison": "Compare to previous period",
+      "refresh": "Refresh data",
+      "freshness": "Last updated at {time}",
+      "presets": {
+        "last7": "Last 7 days",
+        "last30": "Last 30 days",
+        "thisMonth": "This month",
+        "lastMonth": "Last month"
+      }
+    },
+    "errors": {
+      "generic": "Something went wrong while loading this dashboard.",
+      "sectionTitle": "This section could not be loaded",
+      "tenantRequired": "Tenant context is required before dashboard data can load.",
+      "tenantMismatch": "Your session does not match the requested tenant scope.",
+      "network": "We could not reach the server. Check your connection and try again.",
+      "validation": "The dashboard response did not match the expected contract.",
+      "invalidDomain": "That dashboard domain is not available."
+    },
+    "domains": {
+      "marketing": "Marketing",
+      "finance": "Finance",
+      "operations": "Operations",
+      "seo": "SEO",
+      "social": "Social",
+      "local": "Local"
+    },
+    "connectorStatus": {
+      "healthy": "Healthy",
+      "degraded": "Needs attention",
+      "disconnected": "Disconnected"
+    },
+    "home": {
+      "title": "Dashboard",
+      "subtitle": "Signed in as {email}",
+      "ariaMain": "Home dashboard",
+      "kpi": {
+        "title": "Key metrics",
+        "emptyTitle": "No KPIs yet",
+        "emptyDescription": "Connect data sources to populate metrics.",
+        "totalInsights": "Total insights",
+        "activeConnectors": "Active connectors",
+        "reportsThisMonth": "Reports this month",
+        "deltaUp": "+2 vs prior week",
+        "connectorsHealthy": "All connectors healthy",
+        "deltaPercent": "+12% vs prior period"
+      },
+      "insights": {
+        "title": "Recent insights",
+        "emptyTitle": "No insights yet",
+        "emptyDescription": "Create an insight to see summaries here.",
+        "sampleTitle": "Marketing performance snapshot",
+        "sampleBody": "ROAS improved with stable spend efficiency.",
+        "sampleTime": "Updated about 2 hours ago"
+      },
+      "connectors": {
+        "title": "Connector health",
+        "emptyTitle": "No connectors",
+        "emptyDescription": "Add a connector to monitor ingestion health.",
+        "ga4": "GA4",
+        "meta": "Meta Ads",
+        "gsc": "Google Search Console"
+      },
+      "quickActions": {
+        "title": "Quick actions",
+        "domainSample": "Open marketing dashboard",
+        "createInsight": "Create insight",
+        "export": "Export report",
+        "customize": "Customize layout",
+        "agency": "Agency overview"
+      }
+    },
+    "domain": {
+      "title": "{domain} dashboard",
+      "subtitle": "Shared filters stay in sync with your home dashboard.",
+      "primaryKpi": "Primary domain signal",
+      "ariaMain": "Domain dashboard"
+    },
+    "agency": {
+      "title": "Agency overview",
+      "subtitle": "Aggregate metrics use only permitted client tenants.",
+      "clientContext": "Client context: {id}",
+      "ariaMain": "Agency dashboard",
+      "clientList": "Clients",
+      "viewTenant": "Open client dashboard",
+      "blocked": "This client is not in your permitted scope.",
+      "kpi": {
+        "clients": "Active clients",
+        "insights": "Insights (permitted clients)"
+      }
+    },
+    "widgets": {
+      "kpi_grid": "KPI overview",
+      "insights": "Insights summary",
+      "connectors": "Connector health",
+      "quick_actions": "Quick actions"
+    },
+    "customize": {
+      "title": "Customize dashboard",
+      "subtitle": "Reorder widgets, then save or reset. Editing requires administrator access in this preview.",
+      "ariaMain": "Dashboard customization",
+      "editMode": "Edit layout",
+      "viewMode": "View layout",
+      "save": "Save layout",
+      "reset": "Reset to default",
+      "palette": "Available widgets",
+      "hint": "Drag handles are not enabled on small screens; use add/remove on desktop.",
+      "noPermission": "You do not have permission to edit this layout."
+    }
+  },
   "onboarding": {
     "title": "Welcome aboard",
     "subtitle": "A short guided setup for your workspace.",

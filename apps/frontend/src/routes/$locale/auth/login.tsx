@@ -16,5 +16,5 @@ export const Route = createFileRoute("/$locale/auth/login")({
   }),
   beforeLoad: createPublicAuthBeforeLoad(),
   head: ({ matches }) => buildAuthSeoHead(matches, "login"),
-  component: lazyRouteComponent(() => import("./-login.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/LoginPage")),
 });

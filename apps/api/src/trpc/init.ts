@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 
-import { TenantSecurityError } from "@agenticverdict/core";
+import { TenantSecurityError, toTrpcErrorMeta } from "@agenticverdict/core";
 import { recordTenantSecurityEvent } from "@agenticverdict/observability";
 
 import { getHttpAccessLogTenantId } from "../middleware/request-logging";
@@ -10,6 +10,10 @@ import type { TrpcContext } from "./context";
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error, path, ctx }) {
+    const canonical = toTrpcErrorMeta(error.cause ?? error, {
+      requestId: ctx?.req?.id,
+      trpcPath: path,
+    });
     if (error.cause instanceof TenantSecurityError) {
       recordTenantSecurityEvent("trpc", error.cause.code);
       if (ctx?.req) {
@@ -27,10 +31,17 @@ const t = initTRPC.context<TrpcContext>().create({
         data: {
           ...shape.data,
           tenantSecurityCode: error.cause.code,
+          canonicalError: canonical,
         },
       };
     }
-    return shape;
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        canonicalError: canonical,
+      },
+    };
   },
 });
 

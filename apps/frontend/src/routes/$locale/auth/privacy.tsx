@@ -4,5 +4,5 @@ import { buildAuthSeoHead } from "@/lib/auth/build-auth-seo-head";
 
 export const Route = createFileRoute("/$locale/auth/privacy")({
   head: ({ matches }) => buildAuthSeoHead(matches, "privacy"),
-  component: lazyRouteComponent(() => import("./-privacy.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/PrivacyPage")),
 });

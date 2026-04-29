@@ -28,8 +28,11 @@ export function logWebClientError(error: unknown, context: WebClientLogContext):
     tenantId: tenantId ?? null,
     trpcCode: isTRPCClientError(error) ? (error.data?.code ?? null) : null,
     httpStatus: isTRPCClientError(error) ? (error.data?.httpStatus ?? null) : null,
-    appErrorType: mapped?.type ?? null,
-    appErrorCode: mapped && "code" in mapped ? mapped.code : null,
+    canonicalCode: mapped?.code ?? null,
+    canonicalCategory: mapped?.category ?? null,
+    canonicalSurface: mapped?.surface ?? null,
+    retryable: mapped?.retryable ?? null,
+    correlationId: mapped?.correlationId ?? null,
     name: error instanceof Error ? error.name : typeof error,
   };
 

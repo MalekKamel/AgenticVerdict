@@ -8,18 +8,10 @@ import { Alert, Button, Group, List, Text } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useTranslations } from "@/i18n/react";
 import { forwardRef, useEffect, useRef } from "react";
-import type { AppError } from "@/lib/types/errors";
-import {
-  getErrorTranslationKey,
-  isAuthError,
-  isNetworkError,
-  isRateLimitError,
-  isRetryable,
-  isServerError,
-} from "@/lib/types/errors";
+import { normalizeFrontendError } from "@/lib/errors/normalized-error-adapter";
 
 export interface AuthErrorProps {
-  error: AppError | Error | unknown;
+  error: unknown;
   onRetry?: () => void;
   onContactSupport?: () => void;
   className?: string;
@@ -47,25 +39,16 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
     const internalRef = useRef<HTMLDivElement>(null);
     const errorRef = (ref as React.RefObject<HTMLDivElement>) || internalRef;
 
-    let appError: AppError | null = null;
+    const normalized = normalizeFrontendError(error);
     let errorMessage = customMessage;
 
-    if (error && typeof error === "object" && "type" in error) {
-      appError = error as AppError;
-      if (!customMessage) {
-        const translationKey = getErrorTranslationKey(appError);
-        errorMessage = translationKey.startsWith("errors.")
-          ? tErrors(translationKey.slice("errors.".length))
-          : translationKey.startsWith("auth.")
-            ? tAuth(translationKey.slice("auth.".length))
-            : tErrors(translationKey);
-      }
-    } else if (error instanceof Error) {
-      errorMessage = customMessage || error.message;
-    } else if (typeof error === "string") {
-      errorMessage = customMessage || error;
-    } else if (!customMessage) {
-      errorMessage = tErrors("common.unknownError");
+    if (!customMessage) {
+      const translationKey = normalized.messageKey;
+      errorMessage = translationKey.startsWith("errors.")
+        ? tErrors(translationKey.slice("errors.".length))
+        : translationKey.startsWith("auth.")
+          ? tAuth(translationKey.slice("auth.".length))
+          : tErrors(translationKey);
     }
 
     useEffect(() => {
@@ -79,15 +62,14 @@ export const AuthError = forwardRef<HTMLDivElement, AuthErrorProps>(
       return null;
     }
 
-    const retryable = appError ? isRetryable(appError) : false;
+    const retryable = normalized.retryable;
     const shouldShowRetry = showRetryButton && retryable && onRetry;
     const shouldShowContact = showContactSupport && onContactSupport;
 
     const alertColor = (() => {
-      if (!appError) return "red" as const;
-      if (isNetworkError(appError)) return "yellow" as const;
-      if (isRateLimitError(appError)) return "yellow" as const;
-      if (isAuthError(appError) || isServerError(appError)) return "red" as const;
+      if (normalized.retryable) return "yellow" as const;
+      if (normalized.severity === "critical" || normalized.severity === "error")
+        return "red" as const;
       return "red" as const;
     })();
 

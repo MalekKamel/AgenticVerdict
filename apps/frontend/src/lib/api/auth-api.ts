@@ -454,7 +454,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "Verification code sent",
+            message: "auth.verifyEmail.success.codeSent",
             userId: "new-user-id",
           },
         }),
@@ -500,7 +500,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "Logged out successfully",
+            message: "auth.logout.success",
           },
         }),
       );
@@ -649,7 +649,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "Email verified successfully",
+            message: "auth.verifyEmail.success.verified",
           },
         }),
       );
@@ -693,7 +693,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "Verification code resent",
+            message: "auth.verifyEmail.success.resent",
             retryAfterSeconds: MOCK_VERIFICATION_RESEND_COOLDOWN_SECONDS,
           },
         }),
@@ -746,7 +746,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "If an account exists, a reset link was sent",
+            message: "auth.forgotPassword.success.linkSentIfExists",
           },
         }),
       );
@@ -801,7 +801,7 @@ export const authApi = {
         Promise.resolve({
           data: {
             success: true,
-            message: "Password reset successfully",
+            message: "auth.resetPassword.success.completed",
           },
         }),
       );

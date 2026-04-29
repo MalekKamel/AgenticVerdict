@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import Fastify, { type FastifyInstance } from "fastify";
+import { toHttpErrorResponse } from "@agenticverdict/core";
 
 import { createUpstashRedisFromEnv } from "@agenticverdict/database";
 import { createPinoLogger, renderProductionFlowTestMetrics } from "@agenticverdict/observability";
@@ -156,6 +157,11 @@ export async function buildApiServer(): Promise<FastifyInstance> {
   );
 
   await registerSwaggerUi(app as unknown as FastifyInstance);
+
+  app.setErrorHandler((error, request, reply) => {
+    const translated = toHttpErrorResponse(error, request.id);
+    void reply.status(translated.statusCode).send(translated.body);
+  });
 
   return app as unknown as FastifyInstance;
 }

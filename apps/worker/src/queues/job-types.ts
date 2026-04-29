@@ -60,13 +60,10 @@ export interface WorkflowTriggerJobConfig {
 const depthSchema = z.enum(["quick", "standard", "deep"]);
 const reportFormatSchema = z.enum(REPORT_FORMATS);
 const workflowErrorCodeSchema = z.enum([
-  "platform_fetch_failed",
-  "platform_timeout",
-  "analysis_failed",
-  "insight_generation_failed",
-  "verdict_synthesis_failed",
-  "report_generation_failed",
-  "delivery_queue_failed",
+  "CONNECTOR_UPSTREAM_FAILURE",
+  "CONNECTOR_TIMEOUT",
+  "INTERNAL_ERROR",
+  "QUEUE_JOB_FAILED",
 ]);
 
 export type WorkflowJobErrorCode = z.infer<typeof workflowErrorCodeSchema>;
@@ -148,17 +145,14 @@ export interface WorkflowTriggerJobResult {
     verdictDepth?: "quick" | "standard" | "deep";
     outputFormat?: ReportFormat;
     errorCode?:
-      | "platform_fetch_failed"
-      | "platform_timeout"
-      | "analysis_failed"
-      | "insight_generation_failed"
-      | "verdict_synthesis_failed"
-      | "report_generation_failed"
-      | "delivery_queue_failed";
+      | "CONNECTOR_UPSTREAM_FAILURE"
+      | "CONNECTOR_TIMEOUT"
+      | "INTERNAL_ERROR"
+      | "QUEUE_JOB_FAILED";
     partialFailure?: boolean;
     platformFailures?: Array<{
       platform: string;
-      code: "platform_fetch_failed" | "platform_timeout";
+      code: "CONNECTOR_UPSTREAM_FAILURE" | "CONNECTOR_TIMEOUT";
       message: string;
       retryable: boolean;
       recoveryHint?: string;
@@ -217,7 +211,7 @@ export const workflowTriggerJobResultSchema = z.object({
         .array(
           z.object({
             platform: z.string().min(1),
-            code: z.enum(["platform_fetch_failed", "platform_timeout"]),
+            code: z.enum(["CONNECTOR_UPSTREAM_FAILURE", "CONNECTOR_TIMEOUT"]),
             message: z.string().min(1),
             retryable: z.boolean(),
             recoveryHint: z.string().optional(),

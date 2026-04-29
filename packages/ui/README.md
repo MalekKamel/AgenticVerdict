@@ -86,6 +86,15 @@ function App() {
 
 Target **WCAG 2.1 AA** in app code built with Mantine and shared tokens. `Icon` and `AppShellNavList` follow the same focus and labeling patterns used in the frontend shell.
 
+## Migration notes
+
+`AppShellNavList` now uses normalized item APIs:
+
+- Preferred: `active`, `onClick`
+- Backward-compatible (deprecated): `isActive`, `onSelect`
+
+Existing consumers can migrate incrementally. Deprecated fields remain supported during the migration window and will be removed in a later cleanup change.
+
 ## Testing
 
 ```bash

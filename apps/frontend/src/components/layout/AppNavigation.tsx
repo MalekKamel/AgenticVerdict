@@ -75,8 +75,8 @@ export function AppNavigation({ onNavigate }: AppNavigationProps) {
         return {
           id: item.id,
           label: t(item.labelKey),
-          isActive: isActiveItem(pathname, item),
-          onSelect: () => {
+          active: isActiveItem(pathname, item),
+          onClick: () => {
             router.push(target);
             onNavigate?.(item);
           },

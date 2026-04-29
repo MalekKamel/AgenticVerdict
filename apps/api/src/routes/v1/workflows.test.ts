@@ -11,6 +11,7 @@ import { resetBullmqConnectionForTests } from "../../services/report-bullmq";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
 const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const OTHER_TENANT = "bbbbbbbb-cccc-4ddd-eeee-ffffffffffff";
 
 describe("workflow routes (Phase 1 production-flow foundation)", () => {
   let app: Awaited<ReturnType<typeof buildApiServer>>;
@@ -90,7 +91,24 @@ describe("workflow routes (Phase 1 production-flow foundation)", () => {
     });
     expect(res.statusCode).toBe(503);
     const body = res.json() as { error: { code: string } };
-    expect(body.error.code).toBe("queue_unavailable");
+    expect(body.error.code).toBe("QUEUE_UNAVAILABLE");
+  });
+
+  it("returns 403 when payload tenantId differs from JWT tenant", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/workflows/trigger",
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: {
+        workflowId: "report-generation",
+        testMode: true,
+        tenantId: OTHER_TENANT,
+        config: {},
+      },
+    });
+    expect(res.statusCode).toBe(403);
+    const body = res.json() as { error: { code: string } };
+    expect(body.error.code).toBe("TENANT_MISMATCH");
   });
 
   it("returns 400 for invalid productionFlowScenarioId", async () => {
@@ -166,12 +184,12 @@ describe("workflow contract compatibility", () => {
         stagesCompleted: 3,
         pipelineStatus: "degraded",
         platformsAnalyzed: ["meta"],
-        errorCode: "verdict_synthesis_failed",
+        errorCode: "INTERNAL_ERROR",
         partialFailure: true,
         platformFailures: [
           {
             platform: "meta",
-            code: "platform_fetch_failed",
+            code: "CONNECTOR_UPSTREAM_FAILURE",
             message: "fetch failed",
             retryable: true,
           },
@@ -193,7 +211,7 @@ describe("workflow contract compatibility", () => {
         stagesCompleted: 3,
         pipelineStatus: "completed",
         platformsAnalyzed: ["meta"],
-        errorCode: "delivery_queue_failed",
+        errorCode: "QUEUE_JOB_FAILED",
         partialFailure: true,
       },
     };

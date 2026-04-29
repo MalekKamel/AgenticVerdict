@@ -13,7 +13,7 @@ export function requireAnyRole(...allowed: string[]) {
       await reply.status(403).send({
         error: {
           code: "forbidden",
-          message: `Missing required role (one of: ${allowed.join(", ")})`,
+          message: "errors.auth.forbidden",
           details: {},
         },
         requestId: request.id,

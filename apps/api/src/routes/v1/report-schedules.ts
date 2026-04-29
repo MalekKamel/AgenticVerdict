@@ -151,9 +151,11 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -161,9 +163,8 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       if (!isValidCronExpression(parsed.data.cronExpression)) {
         return reply.status(400).send({
           error: {
-            code: "invalid_cron",
-            message:
-              "cronExpression must be five space-separated fields (minute hour day month weekday)",
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
             details: {},
           },
           requestId: request.id,
@@ -178,8 +179,8 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       if (conflict) {
         return reply.status(409).send({
           error: {
-            code: "schedule_conflict",
-            message: "An enabled schedule already exists for this cron template pair",
+            code: "DB_CONFLICT",
+            message: "errors.common.conflict",
             details: { existingScheduleId: conflict.id },
           },
           requestId: request.id,
@@ -244,9 +245,11 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -254,7 +257,7 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       const existing = getScheduleForTenant(id, tenantId);
       if (!existing) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Schedule not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -264,8 +267,8 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       ) {
         return reply.status(400).send({
           error: {
-            code: "invalid_cron",
-            message: "cronExpression must be five space-separated fields",
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
             details: {},
           },
           requestId: request.id,
@@ -279,8 +282,8 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
         if (conflict) {
           return reply.status(409).send({
             error: {
-              code: "schedule_conflict",
-              message: "Another enabled schedule already uses this cron template pair",
+              code: "DB_CONFLICT",
+              message: "errors.common.conflict",
               details: { existingScheduleId: conflict.id },
             },
             requestId: request.id,
@@ -290,7 +293,7 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       const updated = updateScheduleRecord(id, tenantId, parsed.data);
       if (!updated) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Schedule not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -331,7 +334,7 @@ export function registerReportScheduleRoutes(app: FastifyInstance, redis: Redis 
       const row = getScheduleForTenant(id, tenantId);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Schedule not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }

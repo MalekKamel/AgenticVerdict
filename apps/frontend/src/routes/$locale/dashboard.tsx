@@ -1,8 +1,10 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-import { createProtectedBeforeLoad } from "@/lib/auth/route-guards";
+import { createDashboardParentBeforeLoad } from "@/features/dashboard/route-guards/create-dashboard-parent-before-load";
+import { parseDashboardParentSearch } from "@/features/dashboard/model/dashboard-search";
 
 export const Route = createFileRoute("/$locale/dashboard")({
-  beforeLoad: createProtectedBeforeLoad(),
-  component: lazyRouteComponent(() => import("./-dashboard.page")),
+  validateSearch: (search) => parseDashboardParentSearch(search as Record<string, unknown>),
+  beforeLoad: createDashboardParentBeforeLoad(),
+  component: lazyRouteComponent(() => import("@/features/dashboard/pages/home/DashboardHomePage")),
 });

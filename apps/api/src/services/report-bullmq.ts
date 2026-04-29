@@ -1,4 +1,5 @@
 import type { ReportFormat } from "@agenticverdict/report-generator";
+import { AppFault } from "@agenticverdict/core";
 import {
   createBullmqConnectionFromEnv,
   createReportDeliveryQueue,
@@ -40,7 +41,14 @@ function repeatKeyForSchedule(scheduleId: string): string {
 export async function enqueueReportDelivery(data: ReportDeliveryJobData): Promise<string> {
   const conn = getConnection();
   if (!conn) {
-    throw new Error("queue_unavailable");
+    throw new AppFault({
+      code: "QUEUE_UNAVAILABLE",
+      category: "dependency",
+      httpStatus: 503,
+      retryable: true,
+      safeMessage: "Queue infrastructure is unavailable.",
+      surface: "queue",
+    });
   }
   const q = createReportDeliveryQueue(conn);
   try {
@@ -62,7 +70,14 @@ export async function registerScheduleRepeatableJob(record: {
 }): Promise<void> {
   const conn = getConnection();
   if (!conn) {
-    throw new Error("queue_unavailable");
+    throw new AppFault({
+      code: "QUEUE_UNAVAILABLE",
+      category: "dependency",
+      httpStatus: 503,
+      retryable: true,
+      safeMessage: "Queue infrastructure is unavailable.",
+      surface: "queue",
+    });
   }
   const q = createReportScheduleQueue(conn);
   const payload: ReportScheduleJobData = {
@@ -104,7 +119,14 @@ export async function enqueueWorkflowTrigger(
 ): Promise<string> {
   const conn = getConnection();
   if (!conn) {
-    throw new Error("queue_unavailable");
+    throw new AppFault({
+      code: "QUEUE_UNAVAILABLE",
+      category: "dependency",
+      httpStatus: 503,
+      retryable: true,
+      safeMessage: "Queue infrastructure is unavailable.",
+      surface: "queue",
+    });
   }
   const q = createWorkflowTriggerQueue(conn);
   try {
@@ -130,6 +152,7 @@ export type WorkflowTriggerJobState =
 
 export interface WorkflowTriggerStatusPayload {
   executionId: string;
+  tenantId?: string;
   status: WorkflowTriggerJobState;
   bullmqState: string;
   /** BullMQ `job.timestamp` (ms) when the job was created */
@@ -188,8 +211,10 @@ export async function getWorkflowTriggerJobStatus(
       startedAtMs !== undefined && finishedAtMs !== undefined
         ? finishedAtMs - startedAtMs
         : undefined;
+    const tenantId = typeof job.data?.tenantId === "string" ? job.data.tenantId : undefined;
     return {
       executionId,
+      tenantId,
       status,
       bullmqState: stateStr,
       queuedAtMs,

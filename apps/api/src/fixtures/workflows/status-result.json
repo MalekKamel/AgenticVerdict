@@ -21,12 +21,12 @@
     "platformsAnalyzed": ["meta", "ga4"],
     "verdictDepth": "standard",
     "outputFormat": "pdf",
-    "errorCode": "verdict_synthesis_failed",
+    "errorCode": "CONNECTOR_UPSTREAM_FAILURE",
     "partialFailure": true,
     "platformFailures": [
       {
         "platform": "ga4",
-        "code": "platform_timeout",
+        "code": "CONNECTOR_TIMEOUT",
         "message": "Timed out fetching platform data",
         "retryable": true,
         "recoveryHint": "Retry with reduced date range."

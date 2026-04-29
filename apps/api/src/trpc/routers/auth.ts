@@ -161,7 +161,7 @@ export const authRouter = t.router({
         if (!row || !row.passwordHash || !verifyPassword(input.password, row.passwordHash)) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
-            message: "Invalid email or password",
+            message: "auth.errors.invalidCredentials",
           });
         }
 
@@ -177,7 +177,7 @@ export const authRouter = t.router({
         if (!secret) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "JWT secret is not configured",
+            message: "auth.errors.internalError",
           });
         }
 
@@ -234,7 +234,7 @@ export const authRouter = t.router({
           if (!id) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to create user",
+              message: "auth.errors.internalError",
             });
           }
 
@@ -247,7 +247,7 @@ export const authRouter = t.router({
 
           return {
             success: true,
-            message: `Verification code sent to ${input.email}`,
+            message: "auth.verifyEmail.resendSuccess",
             userId: id,
           };
         });
@@ -255,7 +255,7 @@ export const authRouter = t.router({
         if (isUniqueViolation(e)) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "An account with this email already exists",
+            message: "auth.register.errors.email.alreadyExists",
           });
         }
         if (e instanceof TRPCError) {
@@ -271,7 +271,7 @@ export const authRouter = t.router({
     appendSetCookieHeader(ctx.res, buildSessionClearCookieHeader(secure));
     return {
       success: true,
-      message: "Logged out successfully",
+      message: "auth.login.success",
     };
   }),
 
@@ -315,7 +315,7 @@ export const authRouter = t.router({
           if (isDevelopmentDemoEmailVerification(input.email, input.code)) {
             return {
               success: true,
-              message: "Email verified successfully",
+              message: "auth.verifyEmail.success",
             };
           }
           throw new TRPCError({
@@ -327,7 +327,7 @@ export const authRouter = t.router({
         if (row.emailVerified) {
           return {
             success: true,
-            message: "Email already verified",
+            message: "auth.verifyEmail.success",
           };
         }
         if (isDevelopmentDemoEmailVerification(input.email, input.code)) {
@@ -343,7 +343,7 @@ export const authRouter = t.router({
           verifyAttemptTracker.delete(verifyKey);
           return {
             success: true,
-            message: "Email verified successfully",
+            message: "auth.verifyEmail.success",
           };
         }
         if (!row.emailVerificationTokenHash || !row.emailVerificationExpiresAt) {
@@ -392,7 +392,7 @@ export const authRouter = t.router({
 
         return {
           success: true,
-          message: "Email verified successfully",
+          message: "auth.verifyEmail.success",
         };
       });
     });
@@ -432,7 +432,7 @@ export const authRouter = t.router({
           if (!row || row.emailVerified) {
             return {
               success: true,
-              message: "If an account exists, a verification code was sent",
+              message: "auth.verifyEmail.resendSuccess",
               retryAfterSeconds: EMAIL_VERIFICATION_RESEND_COOLDOWN_SECONDS,
             };
           }
@@ -458,7 +458,7 @@ export const authRouter = t.router({
 
           return {
             success: true,
-            message: "Verification code resent",
+            message: "auth.verifyEmail.resendSuccess",
             retryAfterSeconds: EMAIL_VERIFICATION_RESEND_COOLDOWN_SECONDS,
           };
         });
@@ -500,7 +500,7 @@ export const authRouter = t.router({
 
           return {
             success: true,
-            message: "If an account exists, a reset link was sent",
+            message: "auth.forgotPassword.success",
           };
         });
       });
@@ -523,7 +523,7 @@ export const authRouter = t.router({
       if (!row) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid or expired reset token",
+          message: "auth.resetPassword.errors.invalidToken",
         });
       }
 
@@ -544,7 +544,7 @@ export const authRouter = t.router({
 
           return {
             success: true,
-            message: "Password reset successfully",
+            message: "auth.resetPassword.success",
           };
         });
       });

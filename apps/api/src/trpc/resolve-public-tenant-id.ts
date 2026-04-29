@@ -7,31 +7,13 @@ import {
   parseOptionalTenantId,
   readOptionalTenantIdHeader,
   resolveRequiredTenantIdFromHints,
+  toTrpcErrorCode,
 } from "@agenticverdict/core";
-
-function trpcCodeForTenantSecurity(err: TenantSecurityError): TRPCError["code"] {
-  if (err.httpStatus >= 500) {
-    return "INTERNAL_SERVER_ERROR";
-  }
-  if (err.httpStatus === 401) {
-    return "UNAUTHORIZED";
-  }
-  if (err.httpStatus === 403) {
-    return "FORBIDDEN";
-  }
-  if (err.httpStatus === 404) {
-    return "NOT_FOUND";
-  }
-  if (err.httpStatus === 429) {
-    return "TOO_MANY_REQUESTS";
-  }
-  return "BAD_REQUEST";
-}
 
 /** Maps {@link TenantSecurityError} to tRPC while preserving `cause` for the server error formatter. */
 export function trpcErrorFromTenantSecurity(err: TenantSecurityError): TRPCError {
   return new TRPCError({
-    code: trpcCodeForTenantSecurity(err),
+    code: toTrpcErrorCode(err),
     message: err.message,
     cause: err,
   });

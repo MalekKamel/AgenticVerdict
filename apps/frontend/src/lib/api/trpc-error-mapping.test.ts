@@ -21,14 +21,11 @@ describe("trpcClientErrorToAppError", () => {
 
   it("maps UNAUTHORIZED to auth", () => {
     const app = trpcClientErrorToAppError(makeTrpc("UNAUTHORIZED", 401));
-    expect(app?.type).toBe("auth");
+    expect(app?.code).toBe("AUTH_UNAUTHORIZED");
   });
 
   it("maps 503 to server service unavailable", () => {
     const app = trpcClientErrorToAppError(makeTrpc("INTERNAL_SERVER_ERROR", 503));
-    expect(app?.type).toBe("server");
-    if (app && app.type === "server") {
-      expect(app.code).toBe("SERVER_SERVICE_UNAVAILABLE");
-    }
+    expect(app?.code).toBe("INTERNAL_ERROR");
   });
 });

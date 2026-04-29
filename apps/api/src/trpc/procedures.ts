@@ -11,12 +11,12 @@ import { t } from "./init";
 export const authedProcedure = t.procedure.use(async ({ ctx, next }) => {
   const session = await verifyBearerSessionFromRequest(ctx.req);
   if (!session) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "errors.auth.unauthorized" });
   }
   if (!ctx.tenant) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "Tenant context is required for this operation",
+      message: "errors.tenantRequired",
       cause: new TenantSecurityError(
         "TENANT_CONTEXT_REQUIRED",
         "Authenticated tRPC call did not establish tenant context",
@@ -27,7 +27,7 @@ export const authedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (ctx.tenant.tenantId !== session.auth.tenantId) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "Session tenant does not match resolved tenant context",
+      message: "errors.tenantMismatch",
       cause: new TenantSecurityError(
         "TENANT_MISMATCH",
         "JWT tenant does not match tRPC tenant context",

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { recordWorkflowTriggerEnqueued } from "@agenticverdict/observability";
+import { AppFault, toHttpErrorResponse } from "@agenticverdict/core";
 import {
   workflowTriggerJobDataSchema,
   workflowTriggerJobResultSchema,
@@ -59,6 +60,34 @@ const statusResponseSchema = {
 
 const adminRoles = ["admin"] as const;
 
+function isWorkflowTriggerStatusCode(
+  statusCode: number,
+): statusCode is 202 | 400 | 401 | 403 | 429 | 500 | 503 {
+  return (
+    statusCode === 202 ||
+    statusCode === 400 ||
+    statusCode === 401 ||
+    statusCode === 403 ||
+    statusCode === 429 ||
+    statusCode === 500 ||
+    statusCode === 503
+  );
+}
+
+function isWorkflowStatusStatusCode(
+  statusCode: number,
+): statusCode is 200 | 400 | 401 | 403 | 404 | 429 | 503 {
+  return (
+    statusCode === 200 ||
+    statusCode === 400 ||
+    statusCode === 401 ||
+    statusCode === 403 ||
+    statusCode === 404 ||
+    statusCode === 429 ||
+    statusCode === 503
+  );
+}
+
 function replaceAsciiControlChars(value: string): string {
   let sanitized = "";
   for (const character of value) {
@@ -95,6 +124,20 @@ function sanitizeControlChars(value: unknown): unknown {
     return output;
   }
   return value;
+}
+
+function sendCanonicalFault(
+  requestId: string,
+  fault: AppFault,
+): { statusCode: number; body: ReturnType<typeof toHttpErrorResponse>["body"] } {
+  return toHttpErrorResponse(fault, requestId);
+}
+
+function toSafeWorkflowFailureMessage(error: unknown): string {
+  if (typeof error !== "string" || error.length === 0) {
+    return "errors.common.unknownError";
+  }
+  return "errors.common.unknownError";
 }
 
 export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null): void {
@@ -148,48 +191,88 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
     async (request, reply) => {
       const parsed = triggerBodySchema.safeParse(request.body);
       if (!parsed.success) {
-        return reply.status(400).send({
-          error: {
-            code: "validation_error",
-            message: "Invalid workflow trigger payload",
-            details: parsed.error.flatten(),
-          },
-          requestId: request.id,
-        });
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "VALIDATION_FAILED",
+            category: "validation",
+            httpStatus: 400,
+            retryable: false,
+            safeMessage: "errors.validation.failed",
+            details: { validation: parsed.error.flatten() },
+            surface: "http",
+          }),
+        );
+        return reply.status(400).send(translated.body);
       }
       if (parsed.data.testMode !== true) {
-        return reply.status(400).send({
-          error: {
-            code: "validation_error",
-            message: "Invalid workflow trigger payload",
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "VALIDATION_FAILED",
+            category: "validation",
+            httpStatus: 400,
+            retryable: false,
+            safeMessage: "errors.validation.failed",
             details: { testMode: ["testMode must be true"] },
-          },
-          requestId: request.id,
-        });
+            surface: "http",
+          }),
+        );
+        return reply.status(400).send(translated.body);
       }
 
-      const { workflowId, tenantId, config } = parsed.data;
+      const authTenantId = request.auth!.tenantId;
+      const { workflowId, config } = parsed.data;
+      if (parsed.data.tenantId !== authTenantId) {
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "TENANT_MISMATCH",
+            category: "tenant",
+            httpStatus: 403,
+            retryable: false,
+            safeMessage: "errors.tenantMismatch",
+            details: {
+              expectedTenantId: authTenantId,
+              providedTenantId: parsed.data.tenantId,
+            },
+            surface: "http",
+          }),
+        );
+        return reply.status(403).send(translated.body);
+      }
 
       if (!isWorkflowTestTriggerAllowed()) {
-        return reply.status(400).send({
-          error: {
-            code: "validation_error",
-            message: "Workflow test triggers are not available in production builds",
-            details: {},
-          },
-          requestId: request.id,
-        });
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "VALIDATION_FAILED",
+            category: "validation",
+            httpStatus: 400,
+            retryable: false,
+            safeMessage: "errors.validation.failed",
+            surface: "http",
+          }),
+        );
+        return reply.status(400).send(translated.body);
       }
 
       if (!isBullmqConfigured()) {
-        return reply.status(503).send({
-          error: {
-            code: "queue_unavailable",
-            message: "Set REDIS_URL for BullMQ so the worker can process workflow jobs",
-            details: {},
-          },
-          requestId: request.id,
-        });
+        const translated = toHttpErrorResponse(
+          new AppFault({
+            code: "QUEUE_UNAVAILABLE",
+            category: "dependency",
+            httpStatus: 503,
+            retryable: true,
+            safeMessage: "errors.server.serviceUnavailable",
+            surface: "queue",
+          }),
+          request.id,
+        );
+        const statusCode = isWorkflowTriggerStatusCode(translated.statusCode)
+          ? translated.statusCode
+          : 503;
+        return reply.status(statusCode).send(translated.body);
       }
 
       try {
@@ -197,14 +280,14 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
           {
             workflowId,
             testMode: true,
-            tenantId,
+            tenantId: authTenantId,
             config,
             requestId: request.id,
           },
           `workflow-${workflowId}-${randomUUID()}`,
         );
 
-        recordWorkflowTriggerEnqueued(workflowId, tenantId);
+        recordWorkflowTriggerEnqueued(workflowId, authTenantId);
 
         const startedAt = new Date().toISOString();
         return reply.status(202).send({
@@ -214,26 +297,12 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
           estimatedCompletion: new Date(Date.now() + 60_000).toISOString(),
         });
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "enqueue_failed";
-        if (msg === "queue_unavailable") {
-          return reply.status(503).send({
-            error: {
-              code: "queue_unavailable",
-              message: "Set REDIS_URL for BullMQ so the worker can process workflow jobs",
-              details: {},
-            },
-            requestId: request.id,
-          });
-        }
         request.log.error({ err }, "workflow_trigger_enqueue_failed");
-        return reply.status(500).send({
-          error: {
-            code: "internal_error",
-            message: "Failed to enqueue workflow",
-            details: {},
-          },
-          requestId: request.id,
-        });
+        const translated = toHttpErrorResponse(err, request.id);
+        const statusCode = isWorkflowTriggerStatusCode(translated.statusCode)
+          ? translated.statusCode
+          : 500;
+        return reply.status(statusCode).send(translated.body);
       }
     },
   );
@@ -266,37 +335,65 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
       const paramsSchema = z.object({ executionId: z.string().min(1).max(256) });
       const paramsParsed = paramsSchema.safeParse(request.params);
       if (!paramsParsed.success) {
-        return reply.status(400).send({
-          error: {
-            code: "validation_error",
-            message: "Invalid execution id",
-            details: paramsParsed.error.flatten(),
-          },
-          requestId: request.id,
-        });
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "VALIDATION_FAILED",
+            category: "validation",
+            httpStatus: 400,
+            retryable: false,
+            safeMessage: "errors.validation.failed",
+            details: { validation: paramsParsed.error.flatten() },
+            surface: "http",
+          }),
+        );
+        return reply.status(400).send(translated.body);
       }
 
       if (!isBullmqConfigured()) {
-        return reply.status(503).send({
-          error: {
-            code: "queue_unavailable",
-            message: "Set REDIS_URL for BullMQ status lookups",
-            details: {},
-          },
-          requestId: request.id,
-        });
+        const translated = toHttpErrorResponse(
+          new AppFault({
+            code: "QUEUE_UNAVAILABLE",
+            category: "dependency",
+            httpStatus: 503,
+            retryable: true,
+            safeMessage: "errors.server.serviceUnavailable",
+            surface: "queue",
+          }),
+          request.id,
+        );
+        const statusCode = isWorkflowStatusStatusCode(translated.statusCode)
+          ? translated.statusCode
+          : 503;
+        return reply.status(statusCode).send(translated.body);
       }
 
       const snapshot = await getWorkflowTriggerJobStatus(paramsParsed.data.executionId);
       if (!snapshot) {
         return reply.status(404).send({
           error: {
-            code: "not_found",
-            message: "Execution not found",
+            code: "RESOURCE_NOT_FOUND",
+            message: "errors.common.notFound",
             details: {},
           },
           requestId: request.id,
         });
+      }
+      const ownerTenantId = snapshot.tenantId ?? snapshot.result?.tenantId;
+      if (!ownerTenantId || ownerTenantId !== request.auth!.tenantId) {
+        const translated = sendCanonicalFault(
+          request.id,
+          new AppFault({
+            code: "TENANT_MISMATCH",
+            category: "tenant",
+            httpStatus: 403,
+            retryable: false,
+            safeMessage: "errors.tenantMismatch",
+            details: { executionId: snapshot.executionId },
+            surface: "http",
+          }),
+        );
+        return reply.status(403).send(translated.body);
       }
 
       const body: Record<string, unknown> = {
@@ -320,7 +417,7 @@ export function registerWorkflowRoutes(app: FastifyInstance, redis: Redis | null
         }
       }
       if (snapshot.error !== undefined) {
-        body.error = snapshot.error;
+        body.error = toSafeWorkflowFailureMessage(snapshot.error);
       }
       return reply.send(body);
     },

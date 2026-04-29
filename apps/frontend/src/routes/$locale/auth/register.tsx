@@ -24,5 +24,5 @@ export const Route = createFileRoute("/$locale/auth/register")({
   }),
   beforeLoad: createPublicAuthBeforeLoad(),
   head: ({ matches }) => buildAuthSeoHead(matches, "register"),
-  component: lazyRouteComponent(() => import("./-register.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/RegisterPage")),
 });

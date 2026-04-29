@@ -6,6 +6,7 @@ import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 
 const statusSnapshot: WorkflowTriggerStatusPayload = {
   executionId: "exec-roundtrip-1",
+  tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee44",
   status: "completed",
   bullmqState: "completed",
   result: {

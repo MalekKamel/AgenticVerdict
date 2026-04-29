@@ -10,5 +10,5 @@ export const Route = createFileRoute("/$locale/auth/forgot-password")({
   }),
   beforeLoad: createPublicAuthBeforeLoad(),
   head: ({ matches }) => buildAuthSeoHead(matches, "forgotPassword"),
-  component: lazyRouteComponent(() => import("./-forgot-password.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/ForgotPasswordPage")),
 });

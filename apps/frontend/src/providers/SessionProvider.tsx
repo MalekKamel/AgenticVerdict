@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { useSessionQuery } from "@/hooks/useSessionQuery";
+import { useSessionQuery } from "@/features/auth/hooks/useSessionQuery";
 
 /**
  * Fetches `/` session once on mount and on the configured refresh interval so

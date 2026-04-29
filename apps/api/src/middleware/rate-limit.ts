@@ -85,8 +85,8 @@ export function rateLimit(redis: Redis | null, options: RateLimitOptions) {
         .status(429)
         .send({
           error: {
-            code: "rate_limited",
-            message: "Too many requests for this tenant",
+            code: "VALIDATION_FAILED",
+            message: "errors.rateLimit.tooManyRequests",
             details: { retryAfterSec: result.retryAfterSec },
           },
           requestId: request.id,

@@ -6,6 +6,7 @@
 
 import { getTrpcSafeUserMessage } from "@/lib/api/trpc-error-message";
 import { logWebClientError } from "@/lib/observability/client-log";
+import { useTranslations } from "@/i18n/react";
 import { useEffect } from "react";
 
 export interface AppRouteErrorProps {
@@ -16,11 +17,17 @@ export interface AppRouteErrorProps {
 }
 
 export function AppRouteError({ error, reset, routeLabel }: AppRouteErrorProps) {
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
+
   useEffect(() => {
     logWebClientError(error, { source: "route", routeLabel });
   }, [error, routeLabel]);
 
-  const message = getTrpcSafeUserMessage(error);
+  const messageKey = getTrpcSafeUserMessage(error);
+  const message = messageKey.startsWith("errors.")
+    ? tErrors(messageKey.slice("errors.".length))
+    : tErrors("common.unknownError");
 
   return (
     <div
@@ -32,7 +39,9 @@ export function AppRouteError({ error, reset, routeLabel }: AppRouteErrorProps) 
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      <h1 style={{ fontSize: "1.125rem", marginBottom: "0.5rem" }}>Something went wrong</h1>
+      <h1 style={{ fontSize: "1.125rem", marginBottom: "0.5rem" }}>
+        {tErrors("somethingWentWrong")}
+      </h1>
       <p style={{ marginBottom: "1rem", color: "#333" }}>{message}</p>
       <button
         type="button"
@@ -47,7 +56,7 @@ export function AppRouteError({ error, reset, routeLabel }: AppRouteErrorProps) 
           background: "#fff",
         }}
       >
-        Try again
+        {tCommon("retry")}
       </button>
     </div>
   );

@@ -114,11 +114,11 @@ describe("defaultWorkflowTriggerProcessor", () => {
     });
     expect(result.message).toBe("marketing-analysis_platform_validation_failed");
     expect(result.processingMetadata?.pipelineStatus).toBe("failed");
-    expect(result.processingMetadata?.errorCode).toBe("platform_fetch_failed");
+    expect(result.processingMetadata?.errorCode).toBe("CONNECTOR_UPSTREAM_FAILURE");
     expect(result.processingMetadata?.stagesCompleted).toBe(0);
   });
 
-  it("marks delivery_queue_failed when workflow delivery is enabled but send fails", async () => {
+  it("marks QUEUE_JOB_FAILED when workflow delivery is enabled but send fails", async () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "verdict-generation",
       testMode: true,
@@ -131,7 +131,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
       requestId: "req-vrd-delivery-1",
     });
     expect(result.message).toContain("delivery_issue");
-    expect(result.processingMetadata?.errorCode).toBe("delivery_queue_failed");
+    expect(result.processingMetadata?.errorCode).toBe("QUEUE_JOB_FAILED");
     expect(result.processingMetadata?.partialFailure).toBe(true);
   });
 });

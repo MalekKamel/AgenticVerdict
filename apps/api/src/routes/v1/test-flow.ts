@@ -77,7 +77,7 @@ export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null
       if (!paramsParsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
+            code: "VALIDATION_FAILED",
             message: "Invalid execution id",
             details: paramsParsed.error.flatten(),
           },
@@ -88,7 +88,7 @@ export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null
       if (!isBullmqConfigured()) {
         return reply.status(503).send({
           error: {
-            code: "queue_unavailable",
+            code: "QUEUE_UNAVAILABLE",
             message: "Set REDIS_URL for BullMQ execution lookups",
             details: {},
           },
@@ -100,7 +100,7 @@ export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null
       if (!snapshot) {
         return reply.status(404).send({
           error: {
-            code: "not_found",
+            code: "RESOURCE_NOT_FOUND",
             message: "Execution not found",
             details: {},
           },
@@ -176,7 +176,7 @@ export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
+            code: "VALIDATION_FAILED",
             message: "Invalid telemetry payload",
             details: parsed.error.flatten(),
           },
@@ -218,7 +218,7 @@ export function registerTestFlowRoutes(app: FastifyInstance, redis: Redis | null
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
+            code: "VALIDATION_FAILED",
             message: "Invalid telemetry payload",
             details: parsed.error.flatten(),
           },

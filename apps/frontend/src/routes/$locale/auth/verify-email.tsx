@@ -13,5 +13,5 @@ export const Route = createFileRoute("/$locale/auth/verify-email")({
         : undefined,
   }),
   head: ({ matches }) => buildAuthSeoHead(matches, "verifyEmail"),
-  component: lazyRouteComponent(() => import("./-verify-email.page")),
+  component: lazyRouteComponent(() => import("@/features/auth/pages/VerifyEmailPage")),
 });

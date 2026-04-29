@@ -2,13 +2,20 @@
 
 import type { ButtonHTMLAttributes } from "react";
 import clsx from "clsx";
+import { Group, Stack, Text, ThemeIcon, UnstyledButton } from "@mantine/core";
 
 export type AppShellNavListItem = {
   id: string;
   label: string;
+  /** Preferred normalized active state prop */
+  active?: boolean;
+  /** @deprecated Use `active` */
   isActive?: boolean;
   disabled?: boolean;
-  onSelect: () => void;
+  /** Preferred normalized click handler */
+  onClick?: () => void;
+  /** @deprecated Use `onClick` */
+  onSelect?: () => void;
   onPrefetch?: () => void;
   icon?: React.ReactNode;
 };
@@ -19,55 +26,89 @@ export type AppShellNavListProps = {
   "aria-label"?: string;
 };
 
+function resolveActiveState(item: AppShellNavListItem): boolean {
+  return item.active ?? item.isActive ?? false;
+}
+
+function resolveSelectHandler(item: AppShellNavListItem): () => void {
+  return item.onClick ?? item.onSelect ?? (() => undefined);
+}
+
 function NavItemButton({
   item,
   className,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { item: AppShellNavListItem }) {
+  const active = resolveActiveState(item);
+  const onSelect = resolveSelectHandler(item);
+
   return (
-    <button
+    <UnstyledButton
       type="button"
-      className={clsx(
-        "group flex items-center gap-3 w-full rounded-lg px-4 py-3 text-start text-sm transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mantine-color-blue-6)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mantine-color-body)]",
-        item.isActive
-          ? "bg-[var(--mantine-color-blue-light)] font-semibold text-[var(--mantine-color-blue-light-color)] shadow-sm"
-          : "bg-transparent font-medium text-[var(--mantine-color-text)] hover:bg-[var(--mantine-color-default-hover)] hover:shadow-sm",
-        item.disabled && "cursor-not-allowed opacity-60",
-        className,
-      )}
-      aria-current={item.isActive ? "page" : undefined}
+      className={clsx("group", className)}
+      aria-current={active ? "page" : undefined}
       disabled={item.disabled}
-      onClick={item.onSelect}
+      onClick={onSelect}
       onMouseEnter={item.onPrefetch}
       onFocus={item.onPrefetch}
+      px="md"
+      py="sm"
+      style={(theme) => ({
+        width: "100%",
+        borderRadius: theme.radius.md,
+        color: active ? "var(--mantine-color-blue-light-color)" : "var(--mantine-color-text)",
+        background: active ? "var(--mantine-color-blue-light)" : "transparent",
+        boxShadow: active ? theme.shadows.xs : undefined,
+        opacity: item.disabled ? 0.6 : 1,
+        cursor: item.disabled ? "not-allowed" : "pointer",
+        transition: "all 200ms ease",
+      })}
+      styles={{
+        root: {
+          textAlign: "start",
+        },
+      }}
       {...props}
     >
-      {item.icon && (
-        <span
-          className="flex-shrink-0 text-[var(--mantine-color-dimmed)] group-hover:text-[var(--mantine-color-text)] group-aria-[current=page]:text-[var(--mantine-color-blue-light-color)]"
-          aria-hidden="true"
+      <Group wrap="nowrap" gap="sm">
+        {item.icon ? (
+          <ThemeIcon
+            variant="transparent"
+            color={active ? "blue" : "gray"}
+            size="sm"
+            aria-hidden="true"
+          >
+            {item.icon}
+          </ThemeIcon>
+        ) : null}
+        <Text
+          fw={active ? 600 : 500}
+          size="sm"
+          style={{ flex: 1, minWidth: 0, textAlign: "start" }}
         >
-          {item.icon}
-        </span>
-      )}
-      <span className="min-w-0 flex-1 text-start">{item.label}</span>
-      {item.isActive && (
-        <span
-          className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--mantine-color-blue-filled)]"
-          aria-hidden="true"
-        />
-      )}
-    </button>
+          {item.label}
+        </Text>
+        {active ? (
+          <ThemeIcon
+            variant="filled"
+            color="blue"
+            size={6}
+            radius="xl"
+            aria-hidden="true"
+            style={{ minWidth: 6, minHeight: 6 }}
+          />
+        ) : null}
+      </Group>
+    </UnstyledButton>
   );
 }
 
 export function AppShellNavList({ items, className, ...props }: AppShellNavListProps) {
   return (
-    <nav className={clsx("flex flex-col gap-2", className)} {...props}>
+    <Stack component="nav" gap="xs" className={clsx(className)} {...props}>
       {items.map((item) => (
         <NavItemButton key={item.id} item={item} />
       ))}
-    </nav>
+    </Stack>
   );
 }

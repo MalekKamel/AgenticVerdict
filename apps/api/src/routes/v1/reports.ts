@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { suppressRecipientForTenant } from "@agenticverdict/worker";
+import { toHttpErrorResponse } from "@agenticverdict/core";
 import { z } from "zod";
 
 import { jwtAuth } from "../../middleware/auth";
@@ -77,6 +78,20 @@ const sendgridWebhookBodySchema = z.object({
 });
 
 type CanonicalDeliveryWebhookInput = z.infer<typeof deliveryWebhookBodySchema>;
+
+function isReportDeliveryStatusCode(
+  statusCode: number,
+): statusCode is 202 | 400 | 401 | 403 | 404 | 429 | 503 {
+  return (
+    statusCode === 202 ||
+    statusCode === 400 ||
+    statusCode === 401 ||
+    statusCode === 403 ||
+    statusCode === 404 ||
+    statusCode === 429 ||
+    statusCode === 503
+  );
+}
 
 function parseCanonicalDeliveryWebhookBody(
   body: unknown,
@@ -262,7 +277,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
             : undefined;
       if (!configuredToken || token !== configuredToken) {
         return reply.status(401).send({
-          error: { code: "unauthorized", message: "Invalid webhook token", details: {} },
+          error: { code: "AUTH_UNAUTHORIZED", message: "errors.auth.unauthorized", details: {} },
           requestId: request.id,
         });
       }
@@ -271,8 +286,8 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
             details: {},
           },
           requestId: request.id,
@@ -470,21 +485,21 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const grant = resolveShareGrant(token);
       if (!grant) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Share link invalid or expired", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
       const row = getReportForTenant(grant.reportId, grant.tenantId);
       if (!row || !row.objectKey) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report content not available", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
       const buf = getReportBlob(row.objectKey);
       if (!buf) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report blob missing", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -566,9 +581,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -632,9 +649,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -644,7 +663,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = getReportForTenant(id, tenantId);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -665,21 +684,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
         });
         return reply.status(202).send({ status: "queued", jobId });
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "queue_error";
-        if (msg === "queue_unavailable") {
-          return reply.status(503).send({
-            error: {
-              code: "queue_unavailable",
-              message: "Set REDIS_URL for BullMQ so the worker can process delivery jobs",
-              details: {},
-            },
-            requestId: request.id,
-          });
-        }
-        return reply.status(503).send({
-          error: { code: "queue_error", message: msg, details: {} },
-          requestId: request.id,
-        });
+        const translated = toHttpErrorResponse(e, request.id);
+        const statusCode = isReportDeliveryStatusCode(translated.statusCode)
+          ? translated.statusCode
+          : 503;
+        return reply.status(statusCode).send(translated.body);
       }
     },
   );
@@ -724,9 +733,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -736,7 +747,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = getReportForTenant(id, tenantId);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -793,7 +804,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = getReportForTenant(id, request.auth!.tenantId);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -838,7 +849,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const body = request.body as Buffer;
       if (!Buffer.isBuffer(body) || body.length === 0) {
         return reply.status(400).send({
-          error: { code: "validation_error", message: "Empty body", details: {} },
+          error: { code: "VALIDATION_FAILED", message: "errors.validation.failed", details: {} },
           requestId: request.id,
         });
       }
@@ -849,7 +860,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const updated = putReportBlob(request.auth!.tenantId, id, body, ct);
       if (!updated) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -899,7 +910,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const tenantId = request.auth!.tenantId;
       if (!getReportForTenant(id, tenantId)) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -938,21 +949,21 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const version = Number.parseInt(verStr, 10);
       if (!Number.isFinite(version) || version < 1) {
         return reply.status(400).send({
-          error: { code: "validation_error", message: "Invalid version", details: {} },
+          error: { code: "VALIDATION_FAILED", message: "errors.validation.failed", details: {} },
           requestId: request.id,
         });
       }
       const snap = getReportVersionSnapshot(id, request.auth!.tenantId, version);
       if (!snap) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Version not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
       const buf = getReportBlob(snap.objectKey);
       if (!buf) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Version bytes purged or missing", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -998,9 +1009,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -1009,8 +1022,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const tenantId = request.auth!.tenantId;
       const cmp = compareReportVersions(id, tenantId, parsed.data.versionA, parsed.data.versionB);
       if (!cmp.ok) {
-        const message =
-          cmp.code === "not_found" ? "Report not found" : "One or both versions not found";
+        const message = "errors.common.notFound";
         return reply.status(404).send({
           error: { code: cmp.code, message, details: {} },
           requestId: request.id,
@@ -1082,7 +1094,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = setReportArchived(request.auth!.tenantId, id, true);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -1127,7 +1139,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = setReportArchived(request.auth!.tenantId, id, false);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -1178,9 +1190,11 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
-            message: "Invalid body",
-            details: parsed.error.flatten(),
+            code: "VALIDATION_FAILED",
+            message: "errors.validation.failed",
+            details: {
+              issues: parsed.error.issues.map((issue) => ({ code: issue.code, path: issue.path })),
+            },
           },
           requestId: request.id,
         });
@@ -1189,7 +1203,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = setReportRetentionDays(request.auth!.tenantId, id, parsed.data.retentionDays);
       if (!row) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
@@ -1232,14 +1246,14 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       const row = getReportForTenant(id, request.auth!.tenantId);
       if (!row || !row.objectKey) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report content not available", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }
       const buf = getReportBlob(row.objectKey);
       if (!buf) {
         return reply.status(404).send({
-          error: { code: "not_found", message: "Report blob missing", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }

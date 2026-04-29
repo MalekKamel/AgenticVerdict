@@ -9,7 +9,7 @@
 
 import React, { forwardRef } from "react";
 import type { HTMLAttributes } from "react";
-import clsx from "clsx";
+import { Box, type MantineSize } from "@mantine/core";
 
 /**
  * Icon sizes
@@ -33,18 +33,14 @@ export interface IconProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 /**
- * Icon styles based on size
+ * Mantine-compatible icon box sizes in rem
  */
-const iconStyles = {
-  base: "inline-flex items-center justify-center flex-shrink-0",
-
-  sizes: {
-    xs: "w-3 h-3", // 12px
-    sm: "w-4 h-4", // 16px
-    md: "w-5 h-5", // 20px
-    lg: "w-6 h-6", // 24px
-    xl: "w-8 h-8", // 32px
-  },
+const iconSizeMap: Record<IconSize, MantineSize | number> = {
+  xs: 12,
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
 };
 
 /**
@@ -56,13 +52,22 @@ const iconStyles = {
 export const Icon = forwardRef<HTMLSpanElement, IconProps>(
   ({ size = "md", className, children, ...props }, ref) => {
     return (
-      <span
+      <Box
+        component="span"
         ref={ref}
-        className={clsx(iconStyles.base, iconStyles.sizes[size], className)}
+        className={className}
+        style={{
+          width: iconSizeMap[size],
+          height: iconSizeMap[size],
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
         {...props}
       >
         {children}
-      </span>
+      </Box>
     );
   },
 );

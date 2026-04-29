@@ -1,32 +1,21 @@
 /**
- * Maps tRPC / network errors to user-safe strings (no stack or internal codes in production UI).
+ * Maps tRPC / network errors to user-safe translation keys.
  */
 
-import { isTRPCClientError } from "@trpc/client";
+import { normalizeFrontendError } from "@/lib/errors/normalized-error-adapter";
 
-function isDev(): boolean {
-  try {
-    return process.env.NODE_ENV !== "production";
-  } catch {
-    return true;
-  }
+/**
+ * Returns a user-safe message key for route/error boundaries.
+ */
+export function getTrpcSafeUserMessageKey(error: unknown): string {
+  const normalized = normalizeFrontendError(error);
+  return normalized.messageKey || "errors.common.unknownError";
 }
 
 /**
- * Returns a short, user-facing message for route/error boundaries.
- * In development, includes tRPC error code when present for faster debugging.
+ * Backward-compatible helper returning a translation key string.
+ * Callers should translate this key at the render edge.
  */
 export function getTrpcSafeUserMessage(error: unknown): string {
-  if (isTRPCClientError(error)) {
-    const code = error.data?.code;
-    const base = error.message || "Request failed";
-    if (isDev() && code) {
-      return `${base} (${String(code)})`;
-    }
-    return base;
-  }
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-  return "Something went wrong. Please try again.";
+  return getTrpcSafeUserMessageKey(error);
 }

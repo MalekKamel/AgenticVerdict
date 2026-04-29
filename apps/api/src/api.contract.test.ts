@@ -498,7 +498,7 @@ describe("api v1 integration (remediation R-13)", () => {
       payload: { recipientEmail: "ops@example.test", format: "pdf" },
     });
     expect(res.statusCode).toBe(503);
-    expect((res.json() as { error: { code: string } }).error.code).toBe("queue_unavailable");
+    expect((res.json() as { error: { code: string } }).error.code).toBe("QUEUE_UNAVAILABLE");
   });
 
   it("issues share links and allows unauthenticated download via token path", async () => {
@@ -795,7 +795,7 @@ describe("api v1 integration (remediation R-13)", () => {
       url: "/api/v1/reports/shared/definitely-not-a-valid-token-1234567890/content",
     });
     expect(res.statusCode).toBe(404);
-    expect((res.json() as { error: { code: string } }).error.code).toBe("not_found");
+    expect((res.json() as { error: { code: string } }).error.code).toBe("RESOURCE_NOT_FOUND");
   });
 
   it("Phase 03 Part 9: rejects oversized report title", async () => {

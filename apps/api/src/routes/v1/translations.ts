@@ -161,7 +161,7 @@ export function registerTranslationRoutes(app: FastifyInstance, redis: Redis | n
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
+            code: "VALIDATION_FAILED",
             message: "Invalid body",
             details: parsed.error.flatten(),
           },
@@ -209,7 +209,7 @@ export function registerTranslationRoutes(app: FastifyInstance, redis: Redis | n
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
-            code: "validation_error",
+            code: "VALIDATION_FAILED",
             message: "Invalid query",
             details: parsed.error.flatten(),
           },

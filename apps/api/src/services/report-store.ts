@@ -122,7 +122,7 @@ export function compareReportVersions(
   versionA: number,
   versionB: number,
 ):
-  | { ok: false; code: "not_found" | "version_not_found" }
+  | { ok: false; code: "RESOURCE_NOT_FOUND" }
   | {
       ok: true;
       reportId: string;
@@ -133,12 +133,12 @@ export function compareReportVersions(
     } {
   const row = getReportForTenant(reportId, tenantId);
   if (!row) {
-    return { ok: false, code: "not_found" };
+    return { ok: false, code: "RESOURCE_NOT_FOUND" };
   }
   const a = row.versionSnapshots.find((v) => v.version === versionA);
   const b = row.versionSnapshots.find((v) => v.version === versionB);
   if (!a || !b) {
-    return { ok: false, code: "version_not_found" };
+    return { ok: false, code: "RESOURCE_NOT_FOUND" };
   }
   return {
     ok: true,

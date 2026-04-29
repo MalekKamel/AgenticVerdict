@@ -17,7 +17,16 @@ vi.mock("@/lib/tenant/tenant-resolution", () => ({
 }));
 
 vi.mock("@/lib/api/trpc-error-mapping", () => ({
-  trpcClientErrorToAppError: () => null,
+  trpcClientErrorToAppError: () => ({
+    code: "QUEUE_UNAVAILABLE",
+    category: "dependency",
+    surface: "trpc",
+    messageKey: "errors.common.tryAgain",
+    retryable: true,
+    retryAfterMs: 3000,
+    severity: "error",
+    correlationId: "req-abc",
+  }),
 }));
 
 import { logWebClientError } from "./client-log";
@@ -44,6 +53,9 @@ describe("logWebClientError", () => {
         payload: expect.objectContaining({
           source: "route",
           routeLabel: "/en",
+          canonicalCode: "QUEUE_UNAVAILABLE",
+          canonicalCategory: "dependency",
+          correlationId: "req-abc",
         }),
       }),
     );

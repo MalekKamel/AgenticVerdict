@@ -5,15 +5,15 @@ import { TRPCClientError } from "@trpc/client";
 import { getTrpcSafeUserMessage } from "./trpc-error-message";
 
 describe("getTrpcSafeUserMessage", () => {
-  it("returns a message for generic errors", () => {
-    expect(getTrpcSafeUserMessage(new Error("boom"))).toBe("boom");
+  it("returns a safe fallback for generic errors", () => {
+    expect(getTrpcSafeUserMessage(new Error("boom"))).toBe("errors.common.unknownError");
   });
 
   it("returns a fallback for non-Error values", () => {
-    expect(getTrpcSafeUserMessage(undefined)).toBe("Something went wrong. Please try again.");
+    expect(getTrpcSafeUserMessage(undefined)).toBe("errors.common.unknownError");
   });
 
-  it("returns tRPC message for TRPCClientError", () => {
+  it("does not leak raw tRPC message in user-facing fallback", () => {
     const err = TRPCClientError.from({
       error: {
         message: "Not allowed",
@@ -21,6 +21,6 @@ describe("getTrpcSafeUserMessage", () => {
         data: { code: "FORBIDDEN", httpStatus: 403 },
       },
     });
-    expect(getTrpcSafeUserMessage(err)).toContain("Not allowed");
+    expect(getTrpcSafeUserMessage(err)).toBe("errors.auth.forbidden");
   });
 });

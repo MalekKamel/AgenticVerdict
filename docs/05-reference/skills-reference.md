@@ -58,6 +58,12 @@ This document is the quick-reference index for skills used in this repository.
 - **Focus:** phase/spec alignment, dependency checks, validation gates.
 - **Path:** `.agents/skills/roadmap-context/SKILL.md`
 
+### `error-system`
+
+- **Use for:** tasks involving canonical error handling, error codes, translators, adapters, and observability.
+- **Focus:** core error SSOT compliance, boundary-safe translation, frontend-safe messaging, and governance checks.
+- **Path:** `.agents/skills/error-system/SKILL.md`
+
 ## Reusable Skills (Installed)
 
 ### `find-skills`

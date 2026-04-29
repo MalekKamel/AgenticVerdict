@@ -52,7 +52,7 @@ export function registerAnalysisResultRoutes(app: FastifyInstance, redis: Redis 
       const tenantId = request.auth?.tenantId;
       if (!tenantId) {
         return reply.status(401).send({
-          error: { code: "unauthorized", message: "Unauthorized", details: {} },
+          error: { code: "AUTH_UNAUTHORIZED", message: "errors.auth.unauthorized", details: {} },
           requestId: request.id,
         });
       }
@@ -64,12 +64,12 @@ export function registerAnalysisResultRoutes(app: FastifyInstance, redis: Redis 
         const seeded = listTenantInsights(tenantId);
         if (seeded.length > 0) {
           return reply.status(404).send({
-            error: { code: "not_found", message: "Analysis result not found", details: {} },
+            error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
             requestId: request.id,
           });
         }
         return reply.status(404).send({
-          error: { code: "not_found", message: "Analysis result not found", details: {} },
+          error: { code: "RESOURCE_NOT_FOUND", message: "errors.common.notFound", details: {} },
           requestId: request.id,
         });
       }

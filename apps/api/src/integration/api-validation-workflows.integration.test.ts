@@ -69,7 +69,24 @@ describe("API integration — workflows & secured reads", () => {
     });
     expect(res.statusCode).toBe(503);
     const body = res.json() as { error: { code: string } };
-    expect(body.error.code).toBe("queue_unavailable");
+    expect(body.error.code).toBe("QUEUE_UNAVAILABLE");
+  });
+
+  it("POST /api/v1/workflows/trigger returns 403 for JWT/payload tenant mismatch", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/workflows/trigger",
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: {
+        workflowId: "report-generation",
+        testMode: true,
+        tenantId: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+        config: {},
+      },
+    });
+    expect(res.statusCode).toBe(403);
+    const body = res.json() as { error: { code: string } };
+    expect(body.error.code).toBe("TENANT_MISMATCH");
   });
 
   it("GET /api/v1/reports returns 401 without auth", async () => {
