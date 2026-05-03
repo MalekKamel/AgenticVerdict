@@ -1,15 +1,16 @@
-import type { AuthUserData } from "@/lib/api/auth-api";
+import type { AuthUserData } from "@/features/auth/api/auth-api";
 
 /**
- * Dashboard permission hints mirror shell navigation role heuristics until a formal RBAC feed exists.
+ * Dashboard permission hints use RBAC roles from user data.
+ * Admin role has full customization and quick action access.
  */
 export function resolveDashboardPermissions(user: AuthUserData | null): {
   canCustomizeLayout: boolean;
   canUsePrivilegedQuickActions: boolean;
 } {
-  const privileged = Boolean(user?.email?.endsWith("@agenticverdict.com"));
+  const isAdmin = user?.roles?.some((role) => role === "admin") ?? false;
   return {
-    canCustomizeLayout: privileged,
-    canUsePrivilegedQuickActions: privileged,
+    canCustomizeLayout: isAdmin,
+    canUsePrivilegedQuickActions: isAdmin,
   };
 }

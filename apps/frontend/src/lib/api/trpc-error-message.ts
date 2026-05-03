@@ -2,7 +2,7 @@
  * Maps tRPC / network errors to user-safe translation keys.
  */
 
-import { normalizeFrontendError } from "@/lib/errors/normalized-error-adapter";
+import { normalizeFrontendError } from "@agenticverdict/core";
 
 /**
  * Returns a user-safe message key for route/error boundaries.

@@ -1,5 +1,5 @@
-import { createProtectedBeforeLoad } from "@/lib/auth/route-guards/create-protected-before-load";
-import type { RouteGuardBeforeLoadFn } from "@/lib/auth/route-guards/guard-types";
+import { createProtectedBeforeLoad } from "@/features/auth/route-guards/create-protected-before-load";
+import type { RouteGuardBeforeLoadFn } from "@/features/auth/route-guards/guard-types";
 
 /**
  * Dashboard parent routes reuse the canonical protected guard. SPA mode remains a no-op at

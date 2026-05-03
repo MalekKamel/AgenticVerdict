@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { resetTenantBridgeForTests } from "@/lib/tenant/trpc-tenant-bridge";
-import { authActions } from "@/stores/auth-store";
+import {
+  resetTenantBridgeForTests,
+  setAuthStoreForTests,
+} from "@agenticverdict/core/tenant/trpc-tenant-bridge";
+import { authActions } from "@/features/auth/model/state/auth-store";
 
 import {
   buildTrpcHeaders,
@@ -13,11 +16,38 @@ describe("trpc-client headers", () => {
   afterEach(() => {
     resetTenantBridgeForTests();
     authActions.logout();
+    setAuthStoreForTests({ state: { isAuthenticated: false } });
   });
 
-  it("sends x-tenant-id when auth store has a UUID tenant", () => {
+  it("sends x-tenant-id when authenticated session has a UUID tenant", () => {
     const id = "33333333-3333-4333-8333-333333333333";
-    authActions.setTenantId(id);
+    authActions.setAuth(
+      true,
+      {
+        id: "user-1",
+        email: "u@test.local",
+        firstName: "U",
+        lastName: "",
+        emailVerified: true,
+        roles: ["viewer"],
+        permissions: [],
+        tenantId: id,
+        tenantType: "direct_business",
+        tenantStatus: "active",
+      },
+      id,
+      "direct_business",
+      "active",
+    );
+    // Sync the auth store with the tenant bridge
+    setAuthStoreForTests({
+      state: {
+        isAuthenticated: true,
+        tenantId: id,
+        tenantType: "direct_business",
+        tenantStatus: "active",
+      },
+    });
     const h = buildTrpcHeaders();
     expect(h["x-tenant-id"]).toBe(id);
     expect(h["x-request-id"]).toMatch(

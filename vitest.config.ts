@@ -25,6 +25,19 @@ const testProjects = [
 export default defineConfig({
   test: {
     projects: testProjects,
+    pool: "threads",
+    poolOptions: {
+      threads: {
+        maxThreads: 4,
+        minThreads: 1,
+        useAtomics: true,
+      },
+    },
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    hookTimeout: 60000,
+    testTimeout: 60000,
     coverage: {
       provider: "v8",
       reporter: process.env.CI

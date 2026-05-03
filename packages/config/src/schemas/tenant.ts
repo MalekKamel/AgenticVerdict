@@ -24,6 +24,48 @@ export const tenantConfigSchema = z.object({
       products: z.array(z.string()),
       valueProps: z.array(z.string()),
       differentiators: z.array(z.string()),
+      insights: z
+        .object({
+          types: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                description: z.string().optional(),
+                category: z.string().optional(),
+                defaultPeriod: z.string().optional(),
+              }),
+            )
+            .default([]),
+          metricClasses: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                unit: z.string().optional(),
+              }),
+            )
+            .default([]),
+          periods: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                durationDays: z.number().optional(),
+              }),
+            )
+            .default([]),
+          domains: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                color: z.string().optional(),
+              }),
+            )
+            .default([]),
+        })
+        .default({}),
     })
     .optional(),
 });

@@ -1,7 +1,7 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-import { buildAuthSeoHead } from "@/lib/auth/build-auth-seo-head";
-import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
+import { buildAuthSeoHead } from "@/features/auth/ui/build-auth-seo-head";
+import { isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
 
 export const Route = createFileRoute("/$locale/auth/verify-email")({
   validateSearch: (search: Record<string, unknown>) => ({

@@ -3,7 +3,7 @@ import { redirect } from "@tanstack/react-router";
 import { DASHBOARD_AGENCY_PERMITTED_CLIENT_IDS } from "@/features/dashboard/model/dashboard-agency-constants";
 
 import { createDashboardParentBeforeLoad } from "./create-dashboard-parent-before-load";
-import type { RouteGuardBeforeLoadFn } from "@/lib/auth/route-guards/guard-types";
+import type { RouteGuardBeforeLoadFn } from "@/features/auth/route-guards/guard-types";
 
 export function createAgencyClientDashboardBeforeLoad(): RouteGuardBeforeLoadFn {
   const base = createDashboardParentBeforeLoad();

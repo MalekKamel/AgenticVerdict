@@ -67,6 +67,41 @@
   "business": {
     "products": ["GPS fleet tracking", "Fleet management SaaS"],
     "valueProps": ["Real-time visibility", "Saudi market focus"],
-    "differentiators": ["Arabic-first support", "Regional compliance"]
+    "differentiators": ["Arabic-first support", "Regional compliance"],
+    "insights": {
+      "types": [
+        {
+          "id": "weekly_performance",
+          "name": "Weekly Performance",
+          "description": "Performance metrics and trends",
+          "category": "performance",
+          "defaultPeriod": "weekly"
+        },
+        {
+          "id": "monthly_roi",
+          "name": "Monthly ROI",
+          "description": "Return on investment analysis",
+          "category": "efficiency",
+          "defaultPeriod": "monthly"
+        }
+      ],
+      "metricClasses": [
+        { "id": "performance", "name": "Performance" },
+        { "id": "roi", "name": "Return on Investment", "unit": "percentage" },
+        { "id": "engagement", "name": "Engagement" },
+        { "id": "conversion", "name": "Conversion Rate", "unit": "percentage" }
+      ],
+      "periods": [
+        { "id": "daily", "name": "Daily" },
+        { "id": "weekly", "name": "Weekly" },
+        { "id": "monthly", "name": "Monthly" },
+        { "id": "quarterly", "name": "Quarterly" }
+      ],
+      "domains": [
+        { "id": "marketing", "name": "Marketing", "color": "blue" },
+        { "id": "social", "name": "Social Media", "color": "purple" },
+        { "id": "seo", "name": "SEO", "color": "green" }
+      ]
+    }
   }
 }

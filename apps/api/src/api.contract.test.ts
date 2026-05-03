@@ -26,7 +26,12 @@ const TENANT_REPORT_WRITE_RL = "22222222-2222-4222-8222-222222222222";
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
 
 async function signToken(tenantId: string, roles: string[], sub: string): Promise<string> {
-  return new SignJWT({ tenant_id: tenantId, roles })
+  return new SignJWT({
+    tenant_id: tenantId,
+    tenant_type: "agency" as const,
+    tenant_status: "active" as const,
+    roles,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
     .setIssuedAt()

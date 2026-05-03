@@ -131,19 +131,21 @@ interface TenantConfig {
 
 ### Atoms (11 Components)
 
-| Component      | Variants                                                | Sizes                  | States                                                   | Documentation                                                            |
-| -------------- | ------------------------------------------------------- | ---------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **Button**     | 6 (primary, secondary, ghost, danger, success, warning) | 5 (xs, sm, md, lg, xl) | 5 (default, hover, active, disabled, loading)            | [button-implementation.md](atoms/button-implementation.md)               |
-| **Input**      | 5 (text, email, password, number, search)               | 3 (sm, md, lg)         | 6 (default, error, warning, success, disabled, readonly) | [input-implementation.md](atoms/input-implementation.md)                 |
-| **Checkbox**   | 4 (unchecked, checked, indeterminate, disabled)         | -                      | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
-| **Radio**      | 3 (unselected, selected, disabled)                      | -                      | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
-| **Switch**     | 3 (off, on, disabled)                                   | 3 (sm, md, lg)         | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
-| **Badge**      | 4 (default, filled, light, outline)                     | 4 (xs, sm, md, lg)     | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
-| **Icon**       | -                                                       | 5 (xs, sm, md, lg, xl) | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
-| **Typography** | 17 (h1-h6, display, body, label, caption)               | -                      | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
-| **Link**       | 3 (primary, secondary, gray)                            | -                      | -                                                        | [remaining-implementation.md](atoms/remaining-implementation.md)         |
-| **Separator**  | 3 (solid, dashed, dotted)                               | 5 (xs, sm, md, lg, xl) | -                                                        | [remaining-implementation.md](atoms/remaining-implementation.md)         |
-| **Spinner**    | -                                                       | 5 (xs, sm, md, lg, xl) | 3 (slow, normal, fast)                                   | [remaining-implementation.md](atoms/remaining-implementation.md)         |
+| Component              | Variants                                                | Sizes                  | States                                                   | Documentation                                                            |
+| ---------------------- | ------------------------------------------------------- | ---------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Button**             | 6 (primary, secondary, ghost, danger, success, warning) | 5 (xs, sm, md, lg, xl) | 5 (default, hover, active, disabled, loading)            | [button-implementation.md](atoms/button-implementation.md)               |
+| **Input**              | 5 (text, email, password, number, search)               | 3 (sm, md, lg)         | 6 (default, error, warning, success, disabled, readonly) | [input-implementation.md](atoms/input-implementation.md)                 |
+| **Checkbox**           | 4 (unchecked, checked, indeterminate, disabled)         | -                      | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
+| **Radio**              | 3 (unselected, selected, disabled)                      | -                      | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
+| **Switch**             | 3 (off, on, disabled)                                   | 3 (sm, md, lg)         | -                                                        | [form-controls-implementation.md](atoms/form-controls-implementation.md) |
+| **Badge**              | 4 (default, filled, light, outline)                     | 4 (xs, sm, md, lg)     | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
+| **Icon**               | -                                                       | 5 (xs, sm, md, lg, xl) | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
+| **Typography**         | 17 (h1-h6, display, body, label, caption)               | -                      | -                                                        | [display-implementation.md](atoms/display-implementation.md)             |
+| **Link**               | 3 (primary, secondary, gray)                            | -                      | -                                                        | [remaining-implementation.md](atoms/remaining-implementation.md)         |
+| **Separator**          | 3 (solid, dashed, dotted)                               | 5 (xs, sm, md, lg, xl) | -                                                        | [remaining-implementation.md](atoms/remaining-implementation.md)         |
+| **Spinner**            | -                                                       | 5 (xs, sm, md, lg, xl) | 3 (slow, normal, fast)                                   | [remaining-implementation.md](atoms/remaining-implementation.md)         |
+| **StatusIndicator**    | 4 (healthy, warning, error, inactive)                   | sm                     | -                                                        | Connector UI atom                                                        |
+| **DataFreshnessBadge** | 4 (real-time, recent, stale, outdated)                  | sm                     | -                                                        | Connector UI atom                                                        |
 
 ### Molecules (10 Components)
 

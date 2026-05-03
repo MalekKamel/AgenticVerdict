@@ -3,7 +3,10 @@
 -include .env.docker
 export
 
-DC := docker compose
+# Prefer .env.local for local app runtime vars (e.g. VITE_PUBLIC_DEFAULT_TENANT_ID),
+# then fallback to .env when present.
+ENV_FILE_FLAG := $(if $(wildcard .env.local),--env-file .env.local,$(if $(wildcard .env),--env-file .env,))
+DC := docker compose $(ENV_FILE_FLAG)
 BASE := -f docker-compose.yml
 APPS := $(BASE) -f docker-compose.apps.yml
 DEV_STACK := $(APPS) -f docker-compose.dev.yml -f docker-compose.observability.yml -f docker-compose.pgadmin.yml
@@ -130,8 +133,14 @@ db-migrate: ## Sync DB schema via drizzle-kit push (requires DATABASE_URL; no SQ
 db-seed: ## Seed test data via package script
 	pnpm db:seed:test
 
+db-seed-dev: ## Seed development data via package script (requires running PostgreSQL)
+	pnpm --filter @agenticverdict/database db:seed:dev
+
+db-seed-dev-full: ## Full reset and seed for development (destructive; drops all data)
+	pnpm --filter @agenticverdict/database db:reset && pnpm --filter @agenticverdict/database db:seed:dev
+
 db-reset: ## Drop/recreate public, drizzle-kit push, seed (destructive; local dev)
-	pnpm --filter @agenticverdict/database db:reset
+	pnpm --filter @agenticverdict/database db:reset && pnpm --filter @agenticverdict/database db:seed:dev
 
 shell-db: ## psql into compose Postgres
 	$(DC) $(BASE) exec postgres psql -U postgres -d agenticverdict

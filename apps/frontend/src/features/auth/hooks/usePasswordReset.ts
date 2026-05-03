@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 
 import { useRouter } from "@/i18n/navigation";
 
-import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
-import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
+import { authApi, isAuthSuccess } from "@/features/auth/api/auth-api";
+import { logAuthFunnelEvent } from "@/features/auth/observability/auth-funnel-analytics";
 import type { RequestPasswordResetInput, ConfirmPasswordResetInput } from "@agenticverdict/types";
 
 export interface AuthMutationErrorDetails {

@@ -1,4 +1,4 @@
-import { index, jsonb, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { tenants } from "./tenants";
 
@@ -14,5 +14,8 @@ export const reportTemplates = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("report_templates_tenant_id_name_idx").on(t.tenantId, t.name)],
+  (t) => [
+    index("report_templates_tenant_id_name_idx").on(t.tenantId, t.name),
+    unique("report_templates_tenant_name_unique").on(t.tenantId, t.name),
+  ],
 );

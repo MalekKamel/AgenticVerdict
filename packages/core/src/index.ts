@@ -56,5 +56,24 @@ export {
   getTenantContext,
   requireTenantContext,
   runWithTenantContext,
+  getTenantCapabilities,
+  validateTenantContext,
+  TenantSuspendedError,
+  TenantDeletedError,
+  TenantTypeMismatchError,
   type TenantContext,
 } from "./tenant-context";
+export { resolveTenantIdByPriority } from "./tenant/resolve-tenant-id-by-priority";
+export { getEffectiveTenantId, type EffectiveTenantSources } from "./tenant/tenant-resolution";
+export {
+  publishTenantIdForTrpcHeaders,
+  getTenantIdForTrpcRequest,
+  resetTenantBridgeForTests,
+  setAuthStoreForTests,
+} from "./tenant/trpc-tenant-bridge";
+export { mergePreSessionTenantInput } from "./tenant/merge-pre-session-tenant-input";
+export * from "./storage";
+export {
+  normalizeFrontendError,
+  type NormalizedUiError,
+} from "./error-system/normalized-error-adapter";

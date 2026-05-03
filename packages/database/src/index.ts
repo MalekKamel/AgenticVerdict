@@ -8,6 +8,7 @@ export {
 } from "./client";
 export { dbScoped } from "./db-scoped";
 export { verifyTenantRlsSessionBinding } from "./tenant-rls-guard";
+export { setTenantContext, clearTenantContext } from "./lib";
 export { createUpstashRedisFromEnv } from "./redis";
 export * from "./schema/index";
 export { tenantScopedCacheKey } from "./tenant-cache-keys";
@@ -28,3 +29,5 @@ export {
   type FeatureFlagContext,
 } from "./feature-flag-service";
 export { seedConnectorRegistry } from "./seed-connectors";
+export { RBACService, createRbacService, getRbacService } from "./rbac-service";
+export { seedRbacSystem, SYSTEM_TENANT_ID } from "./seeds/rbac-seed";

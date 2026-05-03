@@ -2,11 +2,11 @@
 
 import { Anchor, Container, Stack, Text } from "@mantine/core";
 
-import { useAppShellHeader } from "@/components/layout/app-shell-context";
+import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";
+import { useRoles } from "@/features/rbac/hooks/useRoles";
 import { useTranslations } from "@/i18n/react";
 import { Link } from "@/i18n/navigation";
-import { isFeatureFlagsAdminUiEnabled } from "@/lib/feature-flags/feature-flags-readiness";
 import { HomeDashboardSurface } from "@/features/dashboard/ui/surfaces/HomeDashboardSurface";
 import { isOnboardingWizardEnabled } from "@/features/onboarding/model/onboarding-readiness";
 
@@ -14,6 +14,7 @@ export default function DashboardHomePage() {
   const tNav = useTranslations("navigation");
   const tCommon = useTranslations("common");
   const { user, isLoading } = useRequireAuth({ requireVerifiedEmail: true });
+  const { hasRole } = useRoles();
   useAppShellHeader({
     breadcrumbs: [{ label: tNav("dashboard"), href: "/dashboard" }],
   });
@@ -26,7 +27,7 @@ export default function DashboardHomePage() {
     );
   }
 
-  const showFlags = isFeatureFlagsAdminUiEnabled();
+  const showFlags = hasRole("admin");
   const showOnboarding = isOnboardingWizardEnabled();
 
   return (

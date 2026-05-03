@@ -3,16 +3,16 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useRouter } from "@/i18n/navigation";
-import { authActions } from "@/stores/auth-store";
-import { authApi } from "@/lib/api/auth-api";
+import { authActions } from "@/features/auth/model/state/auth-store";
+import { authApi } from "@/features/auth/api/auth-api";
 import {
   classifyAuthRedirectTarget,
   sanitizeAuthRedirectTarget,
-} from "@/lib/auth/safe-auth-redirect";
-import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
-import { getTenantIdForTrpcRequest } from "@/lib/tenant/trpc-tenant-bridge";
-import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
-import { applySuccessfulLoginSession } from "@/lib/auth/auth-session-transition";
+} from "@/features/auth/model/safe-auth-redirect";
+import { logAuthFunnelEvent } from "@/features/auth/observability/auth-funnel-analytics";
+import { getTenantIdForTrpcRequest } from "@agenticverdict/core/tenant/trpc-tenant-bridge";
+import { isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
+import { applySuccessfulLoginSession } from "@/features/auth/model/auth-session-transition";
 import type { LoginInput } from "@agenticverdict/types";
 import { useCallback, useState } from "react";
 

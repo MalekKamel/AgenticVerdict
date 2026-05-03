@@ -34,7 +34,10 @@ export const insights = coreSchema.table(
       .default(sql`'{}'::jsonb`),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("insights_tenant_id_idx").on(t.tenantId)],
+  (t) => [
+    index("insights_tenant_id_idx").on(t.tenantId),
+    unique("insights_tenant_name_unique").on(t.tenantId, t.name),
+  ],
 );
 
 export const insightConnectors = coreSchema.table(

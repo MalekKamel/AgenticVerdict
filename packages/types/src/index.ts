@@ -1,4 +1,47 @@
 export type { ConnectorType } from "./connector-types";
+export type {
+  ConnectorStatus,
+  ConnectorListItem,
+  ConnectorListInput,
+  ConnectorListOutput,
+  SyncStatus,
+  SyncHistoryEntry,
+  ConnectorDetailOutput,
+  ConnectorCreateInput,
+  ConnectorCreateOutput,
+  ConnectorUpdateInput,
+  ConnectorUpdateOutput,
+  ConnectorDeleteInput,
+  ConnectorDeleteOutput,
+  ConnectorSyncInput,
+  ConnectorSyncOutput,
+  PlatformInfo,
+  ConnectorTestInput,
+  ConnectorTestOutput,
+  AffectedInsight,
+  ConnectorRemovalPreview,
+} from "./connector-types";
+export {
+  connectorStatusSchema,
+  connectorTypeSchema,
+  connectorListInputSchema,
+  connectorListOutputSchema,
+  connectorDetailOutputSchema,
+  connectorCreateInputSchema,
+  connectorCreateOutputSchema,
+  connectorUpdateInputSchema,
+  connectorUpdateOutputSchema,
+  connectorDeleteInputSchema,
+  connectorDeleteOutputSchema,
+  connectorSyncInputSchema,
+  connectorSyncOutputSchema,
+  platformInfoSchema,
+  connectorTestInputSchema,
+  connectorTestOutputSchema,
+  connectorRemovalPreviewSchema,
+  syncStatusSchema,
+  syncHistoryEntrySchema,
+} from "./connector-types";
 
 export type { DateRange, MetricReference } from "./common";
 export { dateRangeSchema, metricReferenceSchema } from "./common";
@@ -54,8 +97,37 @@ export {
   transformationSchema,
 } from "./analysis";
 
-export type { GeneratedInsight, InsightType } from "./insight";
-export { generatedInsightSchema, insightTypeSchema } from "./insight";
+// Tenant types
+export type {
+  Tenant,
+  TenantType,
+  TenantStatus,
+  TenantLocalization,
+  TenantFeatures,
+  TenantAIConfig,
+  TenantCapabilities,
+  AgencyPartner,
+  AgencyPartnerTier,
+} from "./tenant";
+export {
+  tenantTypeSchema,
+  tenantStatusSchema,
+  tenantSchema,
+  tenantLocalizationSchema,
+  tenantFeaturesSchema,
+  tenantAIConfigSchema,
+  tenantCapabilitiesSchema,
+  agencyPartnerSchema,
+  agencyPartnerTierSchema,
+} from "./tenant";
+
+export type { GeneratedInsight, InsightType, InsightDTO, InsightAttributes } from "./insight";
+export {
+  generatedInsightSchema,
+  insightTypeSchema,
+  insightDtoSchema,
+  insightAttributesSchema,
+} from "./insight";
 
 export type { FeatureFlagAdminRow } from "./admin-feature-flags";
 export { featureFlagAdminListOutputSchema, featureFlagAdminRowSchema } from "./admin-feature-flags";
@@ -80,6 +152,25 @@ export {
   telemetryEnvelopeSchema,
   telemetryKindSchema,
 } from "./telemetry";
+
+// RBAC types
+export type {
+  Permission,
+  Role,
+  SystemRole,
+  CustomRole,
+  UserRole,
+  RolePermission,
+  RoleDb,
+  PermissionDb,
+} from "./rbac";
+export {
+  PERMISSIONS,
+  roleDbSchema,
+  permissionDbSchema,
+  userRoleSchema,
+  rolePermissionSchema,
+} from "./rbac";
 
 export type {
   DataSourceInfo,
@@ -109,3 +200,33 @@ export {
   verdictTypeSchema,
   verdictVisualizationSchema,
 } from "./verdict";
+
+// Dashboard types
+export type {
+  DashboardDomainSlug,
+  DashboardDatePreset,
+  DashboardViewMode,
+  DashboardKpiMetric,
+  DashboardInsightSummary,
+  DashboardConnectorHealth,
+  DashboardHomeSummary,
+  DashboardDomainSummary,
+  DashboardAgencyClientRow,
+  DashboardAgencyOverview,
+  DashboardWidgetId,
+  DashboardLayoutState,
+} from "./dashboard";
+export {
+  dashboardDomainSlugSchema,
+  dashboardDatePresetSchema,
+  dashboardViewModeSchema,
+  dashboardKpiMetricSchema,
+  dashboardInsightSummarySchema,
+  dashboardConnectorHealthSchema,
+  dashboardHomeSummarySchema,
+  dashboardDomainSummarySchema,
+  dashboardAgencyClientRowSchema,
+  dashboardAgencyOverviewSchema,
+  dashboardWidgetIdSchema,
+  dashboardLayoutStateSchema,
+} from "./dashboard";

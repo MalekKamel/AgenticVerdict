@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { fetchProtectedRouteSession } from "@/lib/auth/protected-route-session";
+import { fetchProtectedRouteSession } from "@/features/auth/model/protected-route-session";
 import { Route as DashboardRoute } from "../dashboard";
 import { Route as OnboardingRoute } from "../onboarding";
 import { Route as ForgotPasswordRoute } from "./forgot-password";
@@ -8,7 +8,7 @@ import { Route as LoginRoute } from "./login";
 import { Route as RegisterRoute } from "./register";
 import { Route as VerifyEmailRoute } from "./verify-email";
 
-vi.mock("@/lib/auth/protected-route-session", () => ({
+vi.mock("@/features/auth/model/protected-route-session", () => ({
   fetchProtectedRouteSession: vi.fn(),
 }));
 

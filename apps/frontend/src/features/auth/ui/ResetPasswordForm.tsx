@@ -7,9 +7,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { IconCheck, IconKey, IconX } from "@tabler/icons-react";
 
 import { AUTH_TEXT_LINK_CLASS, AUTH_TRACK_MUTED_CLASS } from "@/features/auth/ui/authUi";
-import { resetPasswordSchema } from "@/lib/validations/auth";
+import { resetPasswordSchema } from "@/features/auth/model/validations/auth";
 import { calculatePasswordStrength, getPasswordRequirements } from "@/lib/validations/password";
-import type { ResetPasswordFormData } from "@/lib/validations/auth";
+
+import type { ResetPasswordFormData } from "@/features/auth/model/validations/auth";
 import { PasswordInput } from "@/features/auth/ui/PasswordInput";
 import { Link } from "@/i18n/navigation";
 import type { AuthMutationError } from "@/features/auth/hooks/usePasswordReset";

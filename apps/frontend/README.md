@@ -120,6 +120,18 @@ The authentication system provides:
 | `/auth/reset-password`  | Password reset confirm  | No        |
 | `/dashboard`            | Authenticated dashboard | Yes       |
 
+### Connector Routes
+
+| Route                                 | Description                    | Protected |
+| ------------------------------------- | ------------------------------ | --------- |
+| `/dashboard/connectors`               | Connector list page            | Yes       |
+| `/dashboard/connectors/add`           | Add connector wizard           | Yes       |
+| `/dashboard/connectors/:id`           | Connector detail page          | Yes       |
+| `/dashboard/connectors/:id/configure` | Connector configuration page   | Yes       |
+| `/dashboard/connectors/:id/remove`    | Connector removal confirmation | Yes       |
+
+Connector routes are nested under `/dashboard` and use the same `beforeLoad` auth guard as other protected dashboard routes. Role-based access control is enforced via the `useConnectorPermissions` hook (Admin/Owner = full access, Analyst = view+sync, Viewer = view only).
+
 ### Protected routes (SSR vs client)
 
 - **`/$locale/dashboard`** (and nested routes such as **`/dashboard/feature-flags`**) use **`beforeLoad`** plus `fetchProtectedRouteSession` (`src/lib/auth/protected-route-session.ts`). The server forwards `Authorization`, `Cookie`, and `x-tenant-id` to the Fastify **`auth.getSession`** tRPC procedure so anonymous users are sent to **`/{locale}/auth/login?redirect=…`** before the dashboard shell renders.

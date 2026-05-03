@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { isTenantUuid } from "@agenticverdict/core";
+import { isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
 
 function normalizeTenantId(value: string | null | undefined): string | undefined {
   if (!value) {

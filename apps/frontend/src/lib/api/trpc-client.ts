@@ -25,7 +25,7 @@ import superjson from "superjson";
 
 import type { AppRouter } from "@agenticverdict/api/trpc";
 
-import { getTenantIdForTrpcRequest } from "@/lib/tenant/trpc-tenant-bridge";
+import { getTenantIdForTrpcRequest } from "@agenticverdict/core/tenant/trpc-tenant-bridge";
 
 import { shouldRetryTrpcMutation, shouldRetryTrpcQuery } from "./trpc-retry-policy";
 

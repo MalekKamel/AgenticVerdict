@@ -6,10 +6,7 @@
 
 import { isTRPCClientError } from "@trpc/client";
 
-import {
-  normalizeFrontendError,
-  type NormalizedUiError,
-} from "@/lib/errors/normalized-error-adapter";
+import { normalizeFrontendError, type NormalizedUiError } from "@agenticverdict/core";
 
 const TRPC_AUTH_CODES = new Set(["UNAUTHORIZED", "FORBIDDEN"]);
 

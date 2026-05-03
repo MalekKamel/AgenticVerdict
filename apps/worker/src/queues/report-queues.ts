@@ -188,6 +188,8 @@ async function runPipelineWorkflow(
   const tenantConfig = await loadTenantConfigForJob(validatedData.tenantId);
   const tenant = buildTenantContextForJob({
     tenantId: validatedData.tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     requestId: validatedData.requestId ?? `workflow-${validatedData.workflowId}`,
     tenantConfig,
   });

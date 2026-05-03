@@ -12,7 +12,7 @@ import { resolveAsyncSectionStatus } from "@/features/dashboard/model/dashboard-
 import { useDashboardStore } from "@/features/dashboard/model/dashboard-store";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
-import { useTenant } from "@/providers/TenantProvider";
+import { useTenant } from "@/features/auth/providers/TenantProvider";
 
 import { DashboardAsyncSection } from "@/features/dashboard/ui/section/DashboardAsyncSection";
 import { DashboardToolbar } from "@/features/dashboard/ui/toolbar/DashboardToolbar";

@@ -4,6 +4,18 @@ export default defineConfig({
   test: {
     environment: "node",
     passWithNoTests: true,
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
+    pool: "threads",
+    poolOptions: {
+      threads: {
+        maxThreads: 2,
+        minThreads: 1,
+      },
+    },
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],

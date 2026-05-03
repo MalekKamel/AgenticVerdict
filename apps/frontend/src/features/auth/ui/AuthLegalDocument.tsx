@@ -6,7 +6,7 @@ import { useTranslations } from "@/i18n/react";
 
 import { Link } from "@/i18n/navigation";
 import { AUTH_TEXT_LINK_CLASS } from "@/features/auth/ui/authUi";
-import { resolveAuthBrandName } from "@/lib/auth/resolve-auth-brand-name";
+import { resolveAuthBrandName } from "@/features/auth/model/resolve-auth-brand-name";
 import { getPublicSupportEmail } from "@/lib/public-support";
 
 type LegalDoc = "terms" | "privacy";

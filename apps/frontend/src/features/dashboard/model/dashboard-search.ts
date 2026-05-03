@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { sanitizeAuthRedirectTarget } from "@/lib/auth/safe-auth-redirect";
+import { sanitizeAuthRedirectTarget } from "@/features/auth/model/safe-auth-redirect";
 
 /**
  * Restricts post-navigation return targets to dashboard subtree to avoid open redirects

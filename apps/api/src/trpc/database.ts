@@ -1,4 +1,4 @@
-import { createDatabaseClient } from "@agenticverdict/database";
+import { createDatabaseClient, createRbacService } from "@agenticverdict/database";
 import { TRPCError } from "@trpc/server";
 
 let cachedDb: ReturnType<typeof createDatabaseClient> | undefined;
@@ -15,6 +15,10 @@ export function getTrpcDatabase() {
     debugSql: false,
     applicationName: "agenticverdict-api-trpc",
   });
+
+  // Initialize RBAC service singleton
+  createRbacService(cachedDb);
+
   return cachedDb;
 }
 

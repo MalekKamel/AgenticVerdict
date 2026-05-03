@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-pnpm exec turbo run test --concurrency=3
+pnpm exec turbo run test --concurrency=8

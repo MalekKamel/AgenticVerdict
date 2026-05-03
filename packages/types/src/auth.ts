@@ -9,6 +9,7 @@
  */
 
 import { z } from "zod";
+import type { Role, Permission } from "./rbac";
 
 /** Optional tenant UUID for pre-session `auth.*` procedures (body channel per SSOT C-HTTP-1). */
 export const optionalAuthTenantIdSchema = z.string().uuid().optional();
@@ -41,6 +42,14 @@ export const loginOutputSchema = z.object({
     lastName: z.string(),
     emailVerified: z.boolean(),
     tenantId: z.string().uuid(),
+    roles: z
+      .array(z.string())
+      .default([])
+      .transform((val) => val as Role[]),
+    permissions: z
+      .array(z.string())
+      .default([])
+      .transform((val) => val as Permission[]),
   }),
   sessionExpiresAt: z.string(), // ISO 8601 datetime string
 });
@@ -121,6 +130,23 @@ export const getSessionOutputSchema = z.object({
       lastName: z.string(),
       emailVerified: z.boolean(),
       tenantId: z.string().uuid(),
+      tenantType: z.enum(["direct_business", "agency_partner", "agency_managed"]),
+      tenantStatus: z.enum([
+        "onboarding",
+        "active",
+        "suspended",
+        "restricted",
+        "archived",
+        "deleted",
+      ]),
+      roles: z
+        .array(z.string())
+        .default([])
+        .transform((val) => val as Role[]),
+      permissions: z
+        .array(z.string())
+        .default([])
+        .transform((val) => val as Permission[]),
     })
     .nullable(), // null if no active session
   sessionExpiresAt: z.string().nullable(),

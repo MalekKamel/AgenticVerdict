@@ -118,7 +118,7 @@ export class PlatformDataFactory {
 
     return Array.from({ length: count }, () => ({
       id: `meta_campaign_${faker.string.uuid()}`,
-      name: faker.tenant.buzzPhrase() + " Campaign",
+      name: faker.company.buzzPhrase() + " Campaign",
       status: faker.helpers.weightedArrayElement([
         { weight: 70, value: "active" },
         { weight: 20, value: "paused" },
@@ -156,7 +156,7 @@ export class PlatformDataFactory {
     return Array.from({ length: count }, () => ({
       id: `meta_adset_${faker.string.uuid()}`,
       campaignId,
-      name: faker.tenant.buzzNoun() + " Audience",
+      name: faker.company.buzzNoun() + " Audience",
       targeting: {
         locations: faker.helpers.arrayElements(locations, { min: 1, max: 3 }),
         interests: faker.helpers.arrayElements(interests, { min: 1, max: 3 }),
@@ -188,7 +188,7 @@ export class PlatformDataFactory {
           : undefined,
         source,
         medium: source === "direct" ? "none" : faker.helpers.arrayElement(mediums),
-        campaign: source === "paid" ? faker.tenant.buzzPhrase() : undefined,
+        campaign: source === "paid" ? faker.company.buzzPhrase() : undefined,
         pageviews: faker.number.int({ min: 1, max: 20 }),
         duration: faker.number.int({ min: 1000, max: 1_800_000 }), // 1 second to 30 minutes
         converted,
@@ -324,7 +324,7 @@ export class PlatformDataFactory {
 
     return Array.from({ length: count }, () => ({
       id: `tiktok_ad_${faker.string.uuid()}`,
-      name: faker.tenant.buzzPhrase() + " TikTok Ad",
+      name: faker.company.buzzPhrase() + " TikTok Ad",
       status: faker.helpers.weightedArrayElement([
         { weight: 70, value: "active" },
         { weight: 25, value: "paused" },

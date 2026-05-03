@@ -4,23 +4,21 @@ import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+import { LOCAL_COMPOSE_POSTGRES_URL } from "../src/local-postgres-default-url";
 import * as schema from "../src/schema/index";
 import { seedConnectorRegistry } from "../src/seed-connectors";
 import { seedTenantsFromJsonDir } from "../src/seeds/tenant-config-seed";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(scriptDir, "..", "..", "..");
-const defaultTestFixturesDir = join(repoRoot, "tests", "fixtures", "tenants");
+const defaultTestFixturesDir = join(repoRoot, "tests", "fixtures", "base", "tenants");
 
 /**
- * Seeds the `tenants` table from JSON under `tests/fixtures/tenants` (or `TENANT_CONFIG_DIR`).
+ * Seeds the `tenants` table from JSON under `tests/fixtures/base/tenants` (or `TENANT_CONFIG_DIR`).
  * Intended for Docker E2E / integration environments alongside static data injection.
  */
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is required to run test seeds");
-  }
+  const connectionString = process.env.DATABASE_URL ?? LOCAL_COMPOSE_POSTGRES_URL;
 
   const configDir = process.env.TENANT_CONFIG_DIR ?? defaultTestFixturesDir;
 

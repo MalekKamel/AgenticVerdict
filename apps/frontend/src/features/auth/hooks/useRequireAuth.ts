@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "./useAuth";
 import { useSessionQuery } from "./useSessionQuery";
 
-import type { AuthUserData } from "@/lib/api/auth-api";
+import type { AuthUserData } from "@/features/auth/api/auth-api";
 
 export type UseRequireAuthOptions = {
   redirectTo?: string;

@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 
-import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
-import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
-import { getEffectiveTenantId, isTenantUuid } from "@/lib/tenant/tenant-resolution";
-import { authStore } from "@/stores/auth-store";
+import { authApi, isAuthSuccess } from "@/features/auth/api/auth-api";
+import { logAuthFunnelEvent } from "@/features/auth/observability/auth-funnel-analytics";
+import { getEffectiveTenantId, isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
+import { authStore } from "@/features/auth/model/state/auth-store";
 import type { RegisterInput } from "@agenticverdict/types";
 import { AuthMutationError, type AuthMutationErrorDetails } from "./usePasswordReset";
 
@@ -38,9 +38,13 @@ export function useRegisterMutation() {
       });
 
       const params = new URLSearchParams({ email: variables.email });
+      const authTenantId =
+        authStore.state.isAuthenticated && isTenantUuid(authStore.state.tenantId)
+          ? authStore.state.tenantId
+          : undefined;
       const effectiveTenantId = isTenantUuid(variables.tenantId)
         ? variables.tenantId
-        : getEffectiveTenantId({ authTenantId: authStore.state.tenantId });
+        : getEffectiveTenantId({ authTenantId });
       if (effectiveTenantId) {
         params.set("tenantId", effectiveTenantId);
       }

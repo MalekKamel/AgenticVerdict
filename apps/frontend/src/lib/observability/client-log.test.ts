@@ -9,11 +9,11 @@ vi.mock("@/lib/observability/telemetry-ingest", () => ({
 }));
 
 vi.mock("@/stores/auth-store", () => ({
-  authStore: { state: { tenantId: null } },
+  authStore: { state: { tenantId: "11111111-1111-4111-8111-111111111111" } },
 }));
 
-vi.mock("@/lib/tenant/tenant-resolution", () => ({
-  getEffectiveTenantId: () => null,
+vi.mock("@agenticverdict/core/tenant/tenant-resolution", () => ({
+  getEffectiveTenantId: () => "11111111-1111-4111-8111-111111111111",
 }));
 
 vi.mock("@/lib/api/trpc-error-mapping", () => ({
@@ -49,7 +49,7 @@ describe("logWebClientError", () => {
     expect(forwardTelemetry).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "client_error",
-        tenantId: null,
+        tenantId: "11111111-1111-4111-8111-111111111111",
         payload: expect.objectContaining({
           source: "route",
           routeLabel: "/en",

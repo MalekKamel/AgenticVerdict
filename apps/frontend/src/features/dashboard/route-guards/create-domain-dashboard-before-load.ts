@@ -3,7 +3,7 @@ import { redirect } from "@tanstack/react-router";
 import { dashboardDomainSlugSchema } from "@/features/dashboard/model/contracts";
 
 import { createDashboardParentBeforeLoad } from "./create-dashboard-parent-before-load";
-import type { RouteGuardBeforeLoadFn } from "@/lib/auth/route-guards/guard-types";
+import type { RouteGuardBeforeLoadFn } from "@/features/auth/route-guards/guard-types";
 
 export function createDomainDashboardBeforeLoad(): RouteGuardBeforeLoadFn {
   const base = createDashboardParentBeforeLoad();

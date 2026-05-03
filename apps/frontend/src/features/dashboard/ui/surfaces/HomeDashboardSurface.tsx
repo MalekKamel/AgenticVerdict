@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Anchor, Badge, Button, Card, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 
-import type { AuthUserData } from "@/lib/api/auth-api";
+import type { AuthUserData } from "@/features/auth/api/auth-api";
 import {
   fetchDashboardConnectorsOnly,
   fetchDashboardInsightsOnly,
@@ -27,7 +27,8 @@ import {
 } from "@/features/dashboard/model/dashboard-store";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
-import { useTenant } from "@/providers/TenantProvider";
+import { useTenant } from "@/features/auth/providers/TenantProvider";
+import { useInsightLocalization } from "@/features/dashboard/hooks/use-insight-localization";
 
 import { DashboardAsyncSection } from "@/features/dashboard/ui/section/DashboardAsyncSection";
 import { DashboardStatusAnnouncer } from "@/features/dashboard/ui/announcer/DashboardStatusAnnouncer";
@@ -43,6 +44,7 @@ export type HomeDashboardSurfaceProps = {
 export function HomeDashboardSurface({ user, scopedClientId }: HomeDashboardSurfaceProps) {
   const t = useTranslations("dashboard");
   const { tenantId } = useTenant();
+  const { getTitle, getBody, getDomainLabels } = useInsightLocalization();
   const queryClient = useQueryClient();
   const refreshToken = useDashboardStore((s) => s.manualRefreshToken);
   const permissions = useMemo(() => resolveDashboardPermissions(user), [user]);
@@ -239,22 +241,27 @@ export function HomeDashboardSurface({ user, scopedClientId }: HomeDashboardSurf
         retryLabel={t("actions.retry")}
       >
         <Stack gap="md">
-          {(insightsQuery.data ?? []).map((row) => (
-            <Card key={row.id} withBorder padding="md" radius="md">
-              <Group justify="space-between" wrap="wrap">
-                <div>
-                  <Text fw={600}>{t(row.titleKey as never)}</Text>
-                  <Text size="sm" c="dimmed">
-                    {t(row.bodyKey as never)}
-                  </Text>
-                </div>
-                <Badge variant="light">{t(`domains.${row.domain}` as never)}</Badge>
-              </Group>
-              <Text size="xs" c="dimmed" mt="xs">
-                {t(row.relativeTimeKey as never)}
-              </Text>
-            </Card>
-          ))}
+          {(insightsQuery.data ?? []).map((row) => {
+            const domainLabels = getDomainLabels(row.domains);
+            const primaryDomain = domainLabels[0];
+
+            return (
+              <Card key={row.id} withBorder padding="md" radius="md">
+                <Group justify="space-between" wrap="wrap">
+                  <div>
+                    <Text fw={600}>{getTitle(row)}</Text>
+                    <Text size="sm" c="dimmed">
+                      {getBody(row)}
+                    </Text>
+                  </div>
+                  {primaryDomain && <Badge variant="light">{primaryDomain}</Badge>}
+                </Group>
+                <Text size="xs" c="dimmed" mt="xs">
+                  {t("insights.relativeTime.updatedRecently")}
+                </Text>
+              </Card>
+            );
+          })}
         </Stack>
       </DashboardAsyncSection>
       <DashboardAsyncSection

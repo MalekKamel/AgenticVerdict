@@ -8,9 +8,9 @@ import {
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
 import { AuthMutationError } from "@/features/auth/hooks/usePasswordReset";
-import { logAuthFunnelEvent } from "@/lib/observability/auth-funnel-analytics";
-import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
-import { authActions } from "@/stores/auth-store";
+import { logAuthFunnelEvent } from "@/features/auth/observability/auth-funnel-analytics";
+import { isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
+import { authActions } from "@/features/auth/model/state/auth-store";
 import {
   IconAlertTriangle,
   IconCircleCheck,

@@ -266,7 +266,7 @@ The auth API integrates seamlessly with the existing TanStack Store:
 
 ```typescript
 // Auth store (already implemented)
-import { authStore, authActions } from "@/stores/auth-store";
+import { authStore, authActions } from "@/features/auth/model/state/auth-store";
 
 // Mutation hooks automatically update the store
 const login = useLoginMutation();

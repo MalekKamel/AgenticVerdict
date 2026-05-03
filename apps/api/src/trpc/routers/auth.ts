@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { assertResourceTenantId, requireTenantContext } from "@agenticverdict/core";
-import { dbScoped, users } from "@agenticverdict/database";
+import { dbScoped, users, tenants, getRbacService } from "@agenticverdict/database";
 import type {
   ConfirmPasswordResetOutput,
   LoginOutput,
@@ -9,6 +9,9 @@ import type {
   ResendEmailVerificationOutput,
   RequestPasswordResetOutput,
   VerifyEmailOutput,
+  Permission,
+  TenantType,
+  TenantStatus,
 } from "@agenticverdict/types";
 import {
   confirmPasswordResetInputSchema,
@@ -47,18 +50,90 @@ const DEV_DEMO_VERIFY_CODE = "123456";
 const verifyAttemptTracker = new Map<string, { attempts: number; lockedUntilMs: number | null }>();
 const resendCooldownTracker = new Map<string, number>();
 
-function mapUserRow(row: typeof users.$inferSelect): {
+/**
+ * Resolve user roles from database using RBAC service.
+ * Falls back to "viewer" role if user has no assigned roles.
+ */
+async function resolveUserRoles(userId: string): Promise<string[]> {
+  try {
+    const rbac = getRbacService();
+    const roles = await rbac.getUserRoles(userId);
+    if (roles.length === 0) {
+      return ["viewer"];
+    }
+    return roles;
+  } catch (error) {
+    console.warn("Failed to resolve user roles from database, using default viewer role:", error);
+    return ["viewer"];
+  }
+}
+
+/**
+ * Resolve user permissions from database using RBAC service.
+ * Returns empty array if user has no permissions or on error.
+ */
+async function resolveUserPermissions(userId: string): Promise<string[]> {
+  try {
+    const rbac = getRbacService();
+    const permissions = await rbac.getUserPermissions(userId);
+    return permissions as string[];
+  } catch (error) {
+    console.warn("Failed to resolve user permissions from database:", error);
+    return [];
+  }
+}
+
+import type { Database } from "@agenticverdict/database";
+type DbOrTransaction =
+  | ReturnType<typeof getTrpcDatabase>
+  | Parameters<Parameters<Database["transaction"]>[0]>[0];
+
+async function mapUserRow(
+  row: typeof users.$inferSelect,
+  db: DbOrTransaction,
+): Promise<{
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   emailVerified: boolean;
   tenantId: string;
-} {
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
+  roles: string[];
+  permissions: Permission[];
+}> {
   const display = row.displayName?.trim() ?? "";
   const parts = display.split(/\s+/).filter(Boolean);
   const firstName = parts[0] ?? "User";
   const lastName = parts.slice(1).join(" ") || "";
+
+  if (!db) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Database unavailable",
+    });
+  }
+
+  const tenantRows = await db
+    .select({
+      type: tenants.type,
+      status: tenants.status,
+    })
+    .from(tenants)
+    .where(eq(tenants.id, row.tenantId))
+    .limit(1);
+
+  const tenantData = tenantRows[0];
+  if (!tenantData) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Tenant not found",
+    });
+  }
+
+  const roles = await resolveUserRoles(row.id);
+  const permissions = await resolveUserPermissions(row.id);
 
   return {
     id: row.id,
@@ -67,6 +142,10 @@ function mapUserRow(row: typeof users.$inferSelect): {
     lastName,
     emailVerified: row.emailVerified,
     tenantId: row.tenantId,
+    tenantType: tenantData.type as TenantType,
+    tenantStatus: tenantData.status as TenantStatus,
+    roles,
+    permissions: permissions as Permission[],
   };
 }
 
@@ -122,7 +201,7 @@ export const authRouter = t.router({
         }
         assertResourceTenantId(row.tenantId);
         return {
-          user: mapUserRow(row),
+          user: await mapUserRow(row, db),
           sessionExpiresAt: session.sessionExpiresAt,
         };
       });
@@ -136,6 +215,10 @@ export const authRouter = t.router({
         lastName: "",
         emailVerified: true,
         tenantId: session.auth.tenantId,
+        tenantType: session.auth.tenantType,
+        tenantStatus: session.auth.tenantStatus,
+        roles: session.auth.roles,
+        permissions: session.auth.permissions,
       },
       sessionExpiresAt: session.sessionExpiresAt,
     };
@@ -181,11 +264,32 @@ export const authRouter = t.router({
           });
         }
 
+        const tenantRows = await tx
+          .select({
+            type: tenants.type,
+            status: tenants.status,
+          })
+          .from(tenants)
+          .where(eq(tenants.id, row.tenantId))
+          .limit(1);
+
+        const tenantData = tenantRows[0];
+        if (!tenantData) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Tenant not found",
+          });
+        }
+
+        const roles = await resolveUserRoles(row.id);
         const jwt = await signSessionAccessToken({
           userId: row.id,
           tenantId: row.tenantId,
+          tenantType: tenantData.type as TenantType,
+          tenantStatus: tenantData.status as TenantStatus,
           rememberMe: Boolean(input.rememberMe),
           secret,
+          roles,
         });
 
         const secure = process.env.NODE_ENV === "production";
@@ -196,7 +300,7 @@ export const authRouter = t.router({
 
         return {
           success: true,
-          user: mapUserRow(row),
+          user: await mapUserRow(row, db),
           sessionExpiresAt: jwt.sessionExpiresAtIso,
         };
       });

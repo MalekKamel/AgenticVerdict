@@ -8,7 +8,7 @@ Use this checklist for any PR changing `apps/frontend`, `packages/ui`, localizat
 
 - [ ] Route -> page -> component -> hook/service -> API boundary remains intact.
 - [ ] Route files stay thin; business/state-transition logic lives in hooks/services.
-- [ ] Navigation/redirect handling is validated and loop-prone targets are blocked.
+- [ ] Navigation/redirect handling is validated; loop-prone targets blocked; **no duplicated locales** (`withLocalePrefix`) and **`redirect` params locale-relative** where guards encode them (`buildProtectedRedirectTarget`); **`beforeLoad` does not infer auth from unwired `context` fields** (see [`router-navigation-guide.md`](./router-navigation-guide.md), [`frontend-development-guidelines.md`](./frontend-development-guidelines.md) §4.4).
 - [ ] Shared feature shell/layout and existing `@agenticverdict/ui` components are reused.
 - [ ] Styles use design tokens; no unexplained one-off hardcoded colors.
 - [ ] Accessibility semantics are correct (`main`, status/alert regions, focus visibility, keyboard support).

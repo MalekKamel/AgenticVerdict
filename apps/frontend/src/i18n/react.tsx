@@ -42,6 +42,11 @@ export function I18nProvider({
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+/** Returns null when rendered outside `I18nProvider` (e.g. root or parent route `errorComponent`). */
+export function useI18nContextOptional() {
+  return useContext(I18nContext);
+}
+
 export function useLocale(): AppLocale {
   const ctx = useContext(I18nContext);
   if (!ctx) {
@@ -55,9 +60,13 @@ function formatMessage(
   locale: AppLocale,
   fullKey: string,
   values?: TranslationValues,
-): string {
+  options?: { returnNull?: boolean },
+): string | null {
   const raw = getNested(messages, fullKey.split("."));
   if (typeof raw !== "string") {
+    if (options?.returnNull) {
+      return null;
+    }
     return fullKey;
   }
   try {
@@ -67,15 +76,30 @@ function formatMessage(
     if (import.meta.env.DEV) {
       console.warn("[i18n] Message formatting failed", { locale, fullKey, raw });
     }
+    if (options?.returnNull) {
+      return null;
+    }
     return fullKey;
   }
 }
+
+interface TranslationOptions {
+  returnNull?: boolean;
+  defaultValue?: string;
+  [key: string]: unknown;
+}
+
+type TranslateFunction = {
+  (key: string, values?: TranslationValues): string;
+  (key: string, options: { returnNull: true } & TranslationOptions): string | null;
+  (key: string, options: TranslationOptions): string;
+};
 
 /**
  * Namespace-first translation hook.
  * Callers must provide a top-level namespace from the message schema.
  */
-export function useTranslations(namespace: TranslationNamespace) {
+export function useTranslations(namespace: TranslationNamespace): TranslateFunction {
   const ctx = useContext(I18nContext);
   if (!ctx) {
     throw new Error("useTranslations must be used within I18nProvider");
@@ -83,12 +107,24 @@ export function useTranslations(namespace: TranslationNamespace) {
   const { locale, messages } = ctx;
 
   return useCallback(
-    (key: string, values?: TranslationValues) => {
+    (key: string, values?: TranslationValues | TranslationOptions): string | null => {
       const fullKey = `${namespace}.${key}`;
-      return formatMessage(messages, locale, fullKey, values);
+      const options =
+        typeof values === "object" && values !== null && "returnNull" in values
+          ? values
+          : undefined;
+      const translationValues = options ? undefined : values;
+
+      return formatMessage(
+        messages,
+        locale,
+        fullKey,
+        translationValues as TranslationValues | undefined,
+        options,
+      );
     },
     [locale, messages, namespace],
-  );
+  ) as TranslateFunction;
 }
 
 /**

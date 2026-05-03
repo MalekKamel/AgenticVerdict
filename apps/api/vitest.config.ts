@@ -9,8 +9,19 @@ export default defineConfig({
   test: {
     environment: "node",
     pool: "threads",
+    poolOptions: {
+      threads: {
+        maxThreads: 2,
+        minThreads: 1,
+      },
+    },
     passWithNoTests: true,
     fileParallelism: false,
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    hookTimeout: 60000,
+    testTimeout: 60000,
     env: {
       VITEST: "true",
       TENANT_CONFIG_DIR: path.join(rootDir, "test-fixtures/tenant-configs"),

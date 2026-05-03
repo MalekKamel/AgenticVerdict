@@ -13,7 +13,13 @@ function req(
 }
 
 function fakeTenant(tenantId: string): TenantContext {
-  return { tenantId, requestId: "r1", config: { tenantId: tenantId } as TenantContext["config"] };
+  return {
+    tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "active",
+    requestId: "r1",
+    config: { tenantId: tenantId } as TenantContext["config"],
+  };
 }
 
 describe("getHttpAccessLogTenantId", () => {
@@ -21,7 +27,14 @@ describe("getHttpAccessLogTenantId", () => {
     expect(
       getHttpAccessLogTenantId(
         req({
-          auth: { userId: "u", tenantId: T, roles: [] },
+          auth: {
+            userId: "u",
+            tenantId: T,
+            tenantType: "direct_business",
+            tenantStatus: "active",
+            roles: [],
+            permissions: [],
+          },
           headers: { "x-tenant-id": "00000000-0000-4000-8000-000000000000" },
         }),
       ),

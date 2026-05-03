@@ -291,11 +291,15 @@ async function runR07(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
   const cacheDistinct = a !== b && a.startsWith(`t:${RLS_TENANT_A}:`);
   const ctxA = buildTenantContextForJob({
     tenantId: RLS_TENANT_A,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     requestId: "r07-a",
     tenantConfig: createTestTenantConfig({ tenantId: RLS_TENANT_A }),
   });
   const ctxB = buildTenantContextForJob({
     tenantId: RLS_TENANT_B,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     requestId: "r07-b",
     tenantConfig: createTestTenantConfig({ tenantId: RLS_TENANT_B }),
   });

@@ -14,7 +14,7 @@ import {
   supportedLocales,
   type LocaleCode,
 } from "./locales";
-import { getPreferredLocale } from "@/lib/storage/locale-storage";
+import { getPreferredLocale } from "@agenticverdict/core/storage/locale-storage";
 
 /**
  * Get direction for a locale

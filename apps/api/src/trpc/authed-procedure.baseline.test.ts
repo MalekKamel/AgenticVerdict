@@ -17,6 +17,8 @@ const TENANT_B = "22222222-2222-4222-8222-222222222222";
 function makeTenantContext(tenantId: string): TenantContext {
   return {
     tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     requestId: "req-authed-procedure-baseline",
     config: { tenantId } as TenantContext["config"],
   };
@@ -33,7 +35,10 @@ function makeCaller(args: {
           auth: {
             userId: "user-authed-procedure-baseline",
             tenantId: args.sessionTenantId,
+            tenantType: "direct_business" as const,
+            tenantStatus: "active" as const,
             roles: ["analyst"],
+            permissions: [],
           },
           sessionExpiresAt: null,
         }

@@ -1,10 +1,7 @@
 import type { AppRouter } from "@agenticverdict/api/trpc";
 import type { TRPCClientError } from "@trpc/client";
 
-import {
-  normalizeFrontendError,
-  type NormalizedUiError,
-} from "@/lib/errors/normalized-error-adapter";
+import { normalizeFrontendError, type NormalizedUiError } from "@agenticverdict/core";
 
 export type DashboardTypedError = NormalizedUiError;
 

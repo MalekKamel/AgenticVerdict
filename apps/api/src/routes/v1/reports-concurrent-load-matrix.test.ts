@@ -24,6 +24,8 @@ describe("P1 report API concurrent load matrix (authenticated GET fan-out)", () 
     await app.ready();
     token = await new SignJWT({
       tenant_id: TENANT_A,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
       roles: ["analyst", "reports:read"],
     })
       .setProtectedHeader({ alg: "HS256" })

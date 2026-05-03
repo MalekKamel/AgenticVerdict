@@ -2,7 +2,7 @@
 
 import { Container } from "@mantine/core";
 
-import { useAppShellHeader } from "@/components/layout/app-shell-context";
+import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";
 import { useTranslations } from "@/i18n/react";
 import { CustomizeDashboardPage as CustomizeDashboardSurface } from "@/features/dashboard/ui/surfaces/CustomizeDashboardPage";

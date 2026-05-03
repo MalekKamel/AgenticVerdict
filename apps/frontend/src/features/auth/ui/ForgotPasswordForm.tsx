@@ -8,7 +8,10 @@ import { IconMailForward } from "@tabler/icons-react";
 
 import { useRequestPasswordReset } from "@/features/auth/hooks/usePasswordReset";
 import { AuthMutationError } from "@/features/auth/hooks/usePasswordReset";
-import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validations/auth";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormData,
+} from "@/features/auth/model/validations/auth";
 import { getDirection } from "@/i18n/locales";
 import { getDirectionalSectionProps } from "@/features/auth/ui/authUi";
 

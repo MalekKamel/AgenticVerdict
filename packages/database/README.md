@@ -12,7 +12,57 @@ Versioned **`packages/database/migrations/*.sql`** files are not used. Apply sch
 
 - **`pnpm db:seed`** — Upserts the connector registry, then tenant JSON from `TENANT_CONFIG_DIR` (default: repo `configs/tenants`). Requires tables to exist (run **`db:push`** first on an empty database).
 
-- **`pnpm db:seed:test`** — Same pattern using `tests/fixtures/tenants` by default (for Docker / E2E fixtures).
+- **`pnpm db:seed:test`** — Same pattern using `tests/fixtures/base/tenants` by default (for Docker / E2E fixtures).
+
+- **`pnpm db:seed:dev`** — Seeds comprehensive development data including tenants, users, connectors, insights, and reports. Uses fixtures from `tests/fixtures/dev-seed-configs/`. Creates tenants from `tests/fixtures/dev-seed-configs/*.json` (including the Northwind demo UUID used by `VITE_PUBLIC_DEFAULT_TENANT_ID` in frontend examples), each with mock users, connectors, insights, and reports following PII-safe conventions.
+
+### Development Seed Data
+
+The `db:seed:dev` script creates the following per tenant:
+
+- **3 users**: admin, viewer, editor roles (emails: `role+tenant-slug@test.local`)
+- **3 connectors**: GA4, Meta Ads, Google Search Console
+- **2 insights**: Weekly Performance, Monthly ROI
+- **1 report template**: Standard Performance Template
+- **2 reports**: One published, one draft
+
+All seed data uses `.test.local` domains and follows RFC 2606 reserved TLD conventions to prevent accidental production contamination.
+
+### Factory Pattern
+
+Seed data generation uses deterministic factories for reproducibility:
+
+- `UserFactory` — Creates users with role-based emails
+- `ConnectorFactory` — Creates tenant connector instances
+- `InsightFactory` — Creates insight configurations
+
+Factories use a fixed faker seed (`12345`) for deterministic generation.
+
+### Multi-Tenant Safety
+
+All seed operations respect tenant boundaries:
+
+- Uses `dbScoped()` + `runWithTenantContext()` for proper RLS propagation
+- Each tenant's data is isolated and cannot cross boundaries
+- Unique constraints enforced per `(tenant_id, email)` for users
+
+### Adding Custom Seed Data
+
+To add custom seed modules:
+
+1. Create a factory in `src/factories/` (optional)
+2. Create a seed module in `src/seeds/` following the pattern:
+   ```typescript
+   export async function seedXForTenant(db, tenantId, configs) {
+     const context = createTenantContext({ tenantId, ... });
+     await runWithTenantContext(context, async () => {
+       await dbScoped(db, async (tx) => {
+         await tx.insert(table).values(configs).onConflictDoNothing();
+       });
+     });
+   }
+   ```
+3. Call from `scripts/seed-dev.ts` orchestrator
 
 ## Destructive reset
 

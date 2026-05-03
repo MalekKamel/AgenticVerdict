@@ -28,3 +28,35 @@ export const generatedInsightSchema = z.object({
 });
 
 export type GeneratedInsight = z.infer<typeof generatedInsightSchema>;
+
+export const insightAttributesSchema = z.object({
+  period: z.string().optional(),
+  metricClass: z.string().optional(),
+  severity: z.string().optional(),
+});
+
+export type InsightAttributes = z.infer<typeof insightAttributesSchema>;
+
+export const insightDtoSchema = z.object({
+  id: z.string(),
+  insightType: z.string(),
+  attributes: insightAttributesSchema,
+  domains: z.array(z.string()),
+  rawName: z.string(),
+  createdAt: z.string(),
+  connectorIds: z.array(z.string()),
+});
+
+export type InsightDTO = z.infer<typeof insightDtoSchema>;
+
+export const dashboardInsightSummarySchema = z.object({
+  id: z.string(),
+  insightType: z.string(),
+  attributes: insightAttributesSchema,
+  domains: z.array(z.string()),
+  rawName: z.string(),
+  createdAt: z.string(),
+  connectorIds: z.array(z.string()),
+});
+
+export type DashboardInsightSummary = z.infer<typeof dashboardInsightSummarySchema>;

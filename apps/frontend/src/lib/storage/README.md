@@ -1,6 +1,6 @@
 # Frontend Storage Architecture (SSOT)
 
-This directory is the single source of truth for browser `localStorage` access in `apps/frontend`.
+This directory contains tests and documentation for browser `localStorage` access. The storage utilities have been promoted to `packages/core/src/storage/` for cross-package reuse.
 
 ## Goals
 
@@ -12,14 +12,21 @@ This directory is the single source of truth for browser `localStorage` access i
 
 ## File structure
 
+Storage utilities are now in `packages/core/src/storage/`:
+
 - `core.ts` - low-level storage runtime primitives, JSON helpers, versioned envelopes, and reporter hook
 - `keys.ts` - canonical key registry and key composition helpers
 - `locale-storage.ts` - domain adapter for preferred locale persistence
 - `app-shell-preferences-storage.ts` - domain adapter for app shell preference persistence
+- `index.ts` - public re-exports for the storage submodule
+
+Tests remain in `apps/frontend/src/lib/storage/`:
+
+- `local-storage.test.ts` - core storage utility tests
 
 ## Layered architecture contract
 
-### 1) Core layer (`core.ts`)
+### 1) Core layer (`@agenticverdict/core/storage/core`)
 
 Use this layer for generic storage operations:
 
@@ -39,7 +46,7 @@ Behavioral guarantees:
 - Safe on parse errors and write failures
 - Returns fallback values instead of throwing
 
-### 2) Key layer (`keys.ts`)
+### 2) Key layer (`@agenticverdict/core/storage/keys`)
 
 All storage keys must be declared here.
 
@@ -57,10 +64,12 @@ Composed keys:
 
 Feature code should depend on domain adapters, not core primitives.
 
-- Locale:
+Import from `@agenticverdict/core/storage/*`:
+
+- Locale (`@agenticverdict/core/storage/locale-storage`):
   - `getPreferredLocale()`
   - `setPreferredLocale(locale)`
-- App shell preferences:
+- App shell preferences (`@agenticverdict/core/storage/app-shell-preferences-storage`):
   - `getAppShellPreferences(tenantId, userId, fallback)`
   - `setAppShellPreferences(tenantId, userId, value)`
 
@@ -91,7 +100,10 @@ Use this for any structured object that may evolve over time.
 ### Locale preference
 
 ```ts
-import { getPreferredLocale, setPreferredLocale } from "@/lib/storage/locale-storage";
+import {
+  getPreferredLocale,
+  setPreferredLocale,
+} from "@agenticverdict/core/storage/locale-storage";
 
 const locale = getPreferredLocale();
 setPreferredLocale("ar");
@@ -103,7 +115,7 @@ setPreferredLocale("ar");
 import {
   getAppShellPreferences,
   setAppShellPreferences,
-} from "@/lib/storage/app-shell-preferences-storage";
+} from "@agenticverdict/core/storage/app-shell-preferences-storage";
 
 const fallback = { desktopNavCollapsed: false };
 const prefs = getAppShellPreferences(tenantId, userId, fallback);
@@ -141,3 +153,4 @@ Current tests:
 - Add/modify keys only in `keys.ts`
 - Use domain adapters from feature code
 - Use versioned storage for structured objects that may change
+- Import storage utilities from `@agenticverdict/core/storage/*` in all packages

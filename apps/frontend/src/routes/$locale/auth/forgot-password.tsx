@@ -1,7 +1,7 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-import { buildAuthSeoHead } from "@/lib/auth/build-auth-seo-head";
-import { createPublicAuthBeforeLoad } from "@/lib/auth/route-guards";
+import { buildAuthSeoHead } from "@/features/auth/ui/build-auth-seo-head";
+import { createPublicAuthBeforeLoad } from "@/features/auth/route-guards";
 
 export const Route = createFileRoute("/$locale/auth/forgot-password")({
   validateSearch: (search: Record<string, unknown>) => ({

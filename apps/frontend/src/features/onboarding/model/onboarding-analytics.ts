@@ -1,6 +1,6 @@
 import { forwardTelemetry, type TelemetryEnvelope } from "@/lib/observability/telemetry-ingest";
-import { getEffectiveTenantId } from "@/lib/tenant/tenant-resolution";
-import { authStore } from "@/stores/auth-store";
+import { getEffectiveTenantId } from "@agenticverdict/core/tenant/tenant-resolution";
+import { authStore } from "@/features/auth/model/state/auth-store";
 
 export type OnboardingAnalyticsStep = "welcome" | "preferences" | "complete";
 

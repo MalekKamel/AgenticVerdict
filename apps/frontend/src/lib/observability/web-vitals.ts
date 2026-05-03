@@ -7,8 +7,8 @@ import type { Metric } from "web-vitals";
 import { onCLS, onINP, onLCP } from "web-vitals";
 
 import { forwardTelemetry } from "@/lib/observability/telemetry-ingest";
-import { getEffectiveTenantId } from "@/lib/tenant/tenant-resolution";
-import { authStore } from "@/stores/auth-store";
+import { getEffectiveTenantId } from "@agenticverdict/core/tenant/tenant-resolution";
+import { authStore } from "@/features/auth/model/state/auth-store";
 
 function emit(metric: Metric): void {
   const tenantId = getEffectiveTenantId({ authTenantId: authStore.state.tenantId });

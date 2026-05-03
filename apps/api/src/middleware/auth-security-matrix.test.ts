@@ -25,7 +25,13 @@ async function signToken(
   sub: string,
   extraClaims?: Record<string, unknown>,
 ): Promise<string> {
-  return new SignJWT({ tenant_id: tenantId, roles, ...extraClaims })
+  return new SignJWT({
+    tenant_id: tenantId,
+    tenant_type: "agency" as const,
+    tenant_status: "active" as const,
+    roles,
+    ...extraClaims,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
     .setIssuedAt()

@@ -7,7 +7,7 @@
 import { useLoginMutation } from "@/features/auth/hooks/useLoginMutation";
 import type { LoginOAuthProvider } from "@/features/auth/hooks/useLoginMutation";
 import { isOAuthCapabilityEnabled } from "@/features/auth/hooks/useLoginMutation";
-import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import { loginSchema, type LoginFormData } from "@/features/auth/model/validations/auth";
 import { PasswordInput } from "@/features/auth/ui/PasswordInput";
 import { AUTH_TEXT_LINK_CLASS, getDirectionalSectionProps } from "@/features/auth/ui/authUi";
 import { Alert, Button, Checkbox, Text, TextInput } from "@mantine/core";

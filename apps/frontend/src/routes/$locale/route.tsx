@@ -2,7 +2,7 @@ import { createFileRoute, defaultStringifySearch, redirect } from "@tanstack/rea
 
 import { AppNotFound } from "@/components/errors/AppNotFound";
 import { AppRouteError } from "@/components/errors/AppRouteError";
-import { LocaleShellGate } from "@/components/layout/LocaleShellGate";
+import { LocaleShellGate } from "@/features/shell/ui/LocaleShellGate";
 import { Providers } from "@/components/Providers";
 import { loadMessages } from "@/i18n/i18n";
 import { getDirection, isSupportedLocale } from "@/i18n/locales";

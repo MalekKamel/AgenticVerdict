@@ -21,7 +21,12 @@ describe("API integration — workflows & secured reads", () => {
     process.env.TENANT_CONFIG_DIR = path.join(apiPackageRoot, "test-fixtures/tenant-configs");
     app = await buildApiServer();
     await app.ready();
-    adminToken = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })
+    adminToken = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["admin"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("admin-user")
       .setIssuedAt()

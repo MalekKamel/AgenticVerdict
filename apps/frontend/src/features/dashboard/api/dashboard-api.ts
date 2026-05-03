@@ -1,22 +1,18 @@
 import type { AppRouter } from "@agenticverdict/api/trpc";
 import type { TRPCClientError } from "@trpc/client";
+import { trpcClient } from "@/lib/api/trpc-client";
 
 import {
-  dashboardAgencyOverviewSchema,
   dashboardDomainSlugSchema,
-  dashboardDomainSummarySchema,
-  dashboardHomeSummarySchema,
   type DashboardAgencyOverview,
   type DashboardDomainSummary,
   type DashboardHomeSummary,
 } from "@/features/dashboard/model/contracts";
 import {
   mapTrpcClientErrorToDashboardError,
-  mapUnknownToDashboardError,
   tenantContextDashboardError,
   type DashboardTypedError,
 } from "@/features/dashboard/model/dashboard-errors";
-import { DASHBOARD_AGENCY_PERMITTED_CLIENT_IDS } from "@/features/dashboard/model/dashboard-agency-constants";
 
 export type DashboardResult<T> = { ok: true; data: T } | { ok: false; error: DashboardTypedError };
 
@@ -35,7 +31,9 @@ function assertTenant(tenantId: string | undefined): DashboardResult<never> | nu
   return null;
 }
 
-/** Placeholder bundle until dedicated tRPC procedures ship; validates with contracts. */
+/**
+ * Fetches dashboard home summary with KPIs, insights, and connector health from tRPC.
+ */
 export async function fetchDashboardHomeSummary(
   tenantId: string | undefined,
 ): Promise<DashboardResult<DashboardHomeSummary>> {
@@ -45,74 +43,16 @@ export async function fetchDashboardHomeSummary(
   }
 
   try {
-    const raw = {
-      kpis: [
-        {
-          id: "insights",
-          labelKey: "home.kpi.totalInsights",
-          value: 12,
-          deltaLabelKey: "home.kpi.deltaUp",
-          href: "/dashboard/marketing",
-        },
-        {
-          id: "connectors",
-          labelKey: "home.kpi.activeConnectors",
-          value: 5,
-          deltaLabelKey: "home.kpi.connectorsHealthy",
-        },
-        {
-          id: "reports",
-          labelKey: "home.kpi.reportsThisMonth",
-          value: 48,
-          deltaLabelKey: "home.kpi.deltaPercent",
-        },
-      ],
-      insights: [
-        {
-          id: "1",
-          titleKey: "home.insights.sampleTitle",
-          bodyKey: "home.insights.sampleBody",
-          relativeTimeKey: "home.insights.sampleTime",
-          domain: "marketing",
-        },
-      ],
-      connectors: [
-        {
-          id: "ga4",
-          nameKey: "home.connectors.ga4",
-          status: "healthy",
-        },
-        {
-          id: "meta",
-          nameKey: "home.connectors.meta",
-          status: "healthy",
-        },
-        {
-          id: "gsc",
-          nameKey: "home.connectors.gsc",
-          status: "degraded",
-        },
-      ],
-      generatedAt: new Date().toISOString(),
-    };
-    const parsed = dashboardHomeSummarySchema.safeParse(raw);
-    if (!parsed.success) {
-      return err({
-        code: "VALIDATION_FAILED",
-        category: "validation",
-        surface: "frontend",
-        messageKey: "dashboard.errors.validation",
-        cause: parsed.error.message,
-        retryable: false,
-        severity: "info",
-      });
-    }
-    return ok(parsed.data);
-  } catch (e) {
-    return err(mapUnknownToDashboardError(e));
+    const result = await trpcClient.dashboard.homeSummary.query();
+    return ok(result);
+  } catch (error) {
+    return err(mapTrpcClientErrorToDashboardError(error as TRPCClientError<AppRouter>));
   }
 }
 
+/**
+ * Fetches only KPIs from dashboard home summary.
+ */
 export async function fetchDashboardKpisOnly(
   tenantId: string | undefined,
 ): Promise<DashboardResult<DashboardHomeSummary["kpis"]>> {
@@ -123,6 +63,9 @@ export async function fetchDashboardKpisOnly(
   return ok(summary.data.kpis);
 }
 
+/**
+ * Fetches only insights from dashboard home summary.
+ */
 export async function fetchDashboardInsightsOnly(
   tenantId: string | undefined,
 ): Promise<DashboardResult<DashboardHomeSummary["insights"]>> {
@@ -133,6 +76,9 @@ export async function fetchDashboardInsightsOnly(
   return ok(summary.data.insights);
 }
 
+/**
+ * Fetches only connector health from dashboard home summary.
+ */
 export async function fetchDashboardConnectorsOnly(
   tenantId: string | undefined,
 ): Promise<DashboardResult<DashboardHomeSummary["connectors"]>> {
@@ -143,6 +89,9 @@ export async function fetchDashboardConnectorsOnly(
   return ok(summary.data.connectors);
 }
 
+/**
+ * Fetches domain-specific metrics for a given domain.
+ */
 export async function fetchDashboardDomainSummary(
   tenantId: string | undefined,
   domain: string,
@@ -164,60 +113,17 @@ export async function fetchDashboardDomainSummary(
     });
   }
   try {
-    const raw = {
-      domain: slug.data,
-      kpis: [
-        {
-          id: "primary",
-          labelKey: "domain.primaryKpi",
-          value: 128,
-          deltaLabelKey: "home.kpi.deltaUp",
-        },
-      ],
-      generatedAt: new Date().toISOString(),
-    };
-    const parsed = dashboardDomainSummarySchema.safeParse(raw);
-    if (!parsed.success) {
-      return err({
-        code: "VALIDATION_FAILED",
-        category: "validation",
-        surface: "frontend",
-        messageKey: "dashboard.errors.validation",
-        cause: parsed.error.message,
-        retryable: false,
-        severity: "info",
-      });
-    }
-    return ok(parsed.data);
-  } catch (e) {
-    return err(mapUnknownToDashboardError(e));
+    const result = await trpcClient.dashboard.domainSummary.query({ domain: slug.data });
+    return ok(result);
+  } catch (error) {
+    return err(mapTrpcClientErrorToDashboardError(error as TRPCClientError<AppRouter>));
   }
 }
 
-const MOCK_AGENCY_CLIENTS: DashboardAgencyOverview["clients"] = [
-  {
-    clientId: "client-a",
-    name: "Acme Co",
-    permitted: DASHBOARD_AGENCY_PERMITTED_CLIENT_IDS.has("client-a"),
-    insightCount: 12,
-    connectorStatusKey: "healthy",
-  },
-  {
-    clientId: "client-b",
-    name: "Contoso",
-    permitted: DASHBOARD_AGENCY_PERMITTED_CLIENT_IDS.has("client-b"),
-    insightCount: 8,
-    connectorStatusKey: "degraded",
-  },
-  {
-    clientId: "client-unscoped",
-    name: "Blocked Org",
-    permitted: false,
-    insightCount: 0,
-    connectorStatusKey: "disconnected",
-  },
-];
-
+/**
+ * Fetches agency-level client overview.
+ * Only relevant for agency_partner or agency_managed tenant types.
+ */
 export async function fetchDashboardAgencyOverview(
   tenantId: string | undefined,
 ): Promise<DashboardResult<DashboardAgencyOverview>> {
@@ -226,47 +132,25 @@ export async function fetchDashboardAgencyOverview(
     return missing;
   }
   try {
-    const permittedClients = MOCK_AGENCY_CLIENTS.filter((c) => c.permitted);
-    const raw = {
-      clients: MOCK_AGENCY_CLIENTS,
-      aggregateKpis: [
-        {
-          id: "clients",
-          labelKey: "agency.kpi.clients",
-          value: permittedClients.length,
-        },
-        {
-          id: "insights",
-          labelKey: "agency.kpi.insights",
-          value: permittedClients.reduce((acc, c) => acc + c.insightCount, 0),
-        },
-      ],
-      generatedAt: new Date().toISOString(),
-    };
-    const parsed = dashboardAgencyOverviewSchema.safeParse(raw);
-    if (!parsed.success) {
-      return err({
-        code: "VALIDATION_FAILED",
-        category: "validation",
-        surface: "frontend",
-        messageKey: "dashboard.errors.validation",
-        cause: parsed.error.message,
-        retryable: false,
-        severity: "info",
-      });
-    }
-    return ok(parsed.data);
-  } catch (e) {
-    return err(mapUnknownToDashboardError(e));
+    const result = await trpcClient.dashboard.agencyOverview.query();
+    return ok(result);
+  } catch (error) {
+    return err(mapTrpcClientErrorToDashboardError(error as TRPCClientError<AppRouter>));
   }
 }
 
+/**
+ * Filters agency clients for rendering based on permission status.
+ */
 export function filterAgencyClientsForRendering(
   overview: DashboardAgencyOverview,
 ): DashboardAgencyOverview["clients"] {
   return overview.clients.filter((c) => c.permitted);
 }
 
+/**
+ * Checks if a specific client is permitted for the current agency.
+ */
 export function isPermittedAgencyClient(
   overview: DashboardAgencyOverview,
   clientId: string,
@@ -275,6 +159,9 @@ export function isPermittedAgencyClient(
   return Boolean(row?.permitted);
 }
 
+/**
+ * Maps tRPC errors to dashboard-specific error types.
+ */
 export function mapDashboardTrpcFailure(error: TRPCClientError<AppRouter>): DashboardTypedError {
   return mapTrpcClientErrorToDashboardError(error);
 }

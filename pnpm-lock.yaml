@@ -171,6 +171,9 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      '@agenticverdict/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@types/node':
         specifier: ^20.19.0
         version: 20.19.39
@@ -572,6 +575,12 @@ importers:
       '@agenticverdict/config':
         specifier: workspace:*
         version: link:../config
+      '@agenticverdict/types':
+        specifier: workspace:*
+        version: link:../types
+      '@trpc/client':
+        specifier: ^11.16.0
+        version: 11.16.0(@trpc/server@11.16.0(typescript@5.9.3))(typescript@5.9.3)
     devDependencies:
       '@types/node':
         specifier: ^20.19.0
@@ -824,12 +833,24 @@ importers:
         specifier: ^1.1.39
         version: 1.1.39(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(openai@6.33.0(ws@8.20.0)(zod@4.3.6))(ws@8.20.0)
     devDependencies:
+      '@types/ioredis':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@types/node':
         specifier: ^20.19.0
         version: 20.19.39
+      bullmq:
+        specifier: ^5.0.0
+        version: 5.73.0
       eslint:
         specifier: ^9.17.0
         version: 9.39.4(jiti@2.6.1)
+      fastify:
+        specifier: ^5.0.0
+        version: 5.8.4
+      ioredis:
+        specifier: ^5.0.0
+        version: 5.10.1
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -3526,6 +3547,10 @@ packages:
 
   '@types/http-cache-semantics@4.2.0':
     resolution: {integrity: sha512-L3LgimLHXtGkWikKnsPg0/VFx9OGZaC+eN1u4r+OB1XRqH3meBIAVC2zr1WdMH+RHmnRkqliQAOHNJ/E0j/e0Q==}
+
+  '@types/ioredis@5.0.0':
+    resolution: {integrity: sha512-zJbJ3FVE17CNl5KXzdeSPtdltc4tMT3TzC6fxQS0sQngkbFZ6h+0uTafsRqu+eSLIugf6Yb0Ea0SUuRr42Nk9g==}
+    deprecated: This is a stub types definition. ioredis provides its own type definitions, so you do not need this installed.
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -11760,6 +11785,12 @@ snapshots:
 
   '@types/http-cache-semantics@4.2.0': {}
 
+  '@types/ioredis@5.0.0':
+    dependencies:
+      ioredis: 5.10.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@types/json-schema@7.0.15': {}
 
   '@types/keyv@3.1.4':
@@ -14503,7 +14534,7 @@ snapshots:
       jsonwebtoken: 9.0.3
       load-esm: 1.0.3
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.14.0(debug@4.4.3))
+      retry-axios: 2.6.0(axios@1.14.0)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -17097,7 +17128,7 @@ snapshots:
 
   ret@0.5.0: {}
 
-  retry-axios@2.6.0(axios@1.14.0(debug@4.4.3)):
+  retry-axios@2.6.0(axios@1.14.0):
     dependencies:
       axios: 1.14.0(debug@4.4.3)
 

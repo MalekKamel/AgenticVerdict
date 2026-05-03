@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tenant/*": "./src/tenant/*.ts",
+    "./storage/*": "./src/storage/*.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
@@ -13,7 +15,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agenticverdict/config": "workspace:*"
+    "@agenticverdict/config": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
+    "@trpc/client": "^11.16.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

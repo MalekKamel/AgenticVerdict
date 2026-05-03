@@ -1,4 +1,5 @@
 import type { TenantContext } from "@agenticverdict/core";
+import type { TenantStatus } from "@agenticverdict/types";
 import { runWithTenantContext } from "@agenticverdict/core";
 import { eq } from "drizzle-orm";
 
@@ -7,7 +8,7 @@ import { dbScoped } from "./db-scoped";
 import { tenants } from "./schema/tenants";
 
 /**
- * Sets `tenants.active` for the tenant in the current security context.
+ * Sets `tenants.status` for the tenant in the current security context.
  */
 export async function setTenantTenantActive(
   db: Database,
@@ -18,7 +19,10 @@ export async function setTenantTenantActive(
     dbScoped(db, async (tx) => {
       await tx
         .update(tenants)
-        .set({ active, updatedAt: new Date() })
+        .set({
+          status: active ? ("active" as TenantStatus) : ("suspended" as TenantStatus),
+          updatedAt: new Date(),
+        })
         .where(eq(tenants.id, ctx.tenantId));
     }),
   );

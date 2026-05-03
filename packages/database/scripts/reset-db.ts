@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+import { LOCAL_COMPOSE_POSTGRES_URL } from "../src/local-postgres-default-url";
 import * as schema from "../src/schema/index";
 import { seedConnectorRegistry } from "../src/seed-connectors";
 import { seedTenantsFromJsonDir } from "../src/seeds/tenant-config-seed";
@@ -37,10 +38,7 @@ async function applyBaselineSchemaSql(connectionString: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is required to reset the database");
-  }
+  const connectionString = process.env.DATABASE_URL ?? LOCAL_COMPOSE_POSTGRES_URL;
 
   const configDir = process.env.TENANT_CONFIG_DIR ?? defaultConfigDir;
 

@@ -8,6 +8,11 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

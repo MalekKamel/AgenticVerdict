@@ -1,7 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createAppShellPreferencesStorageKey, storageKeys } from "./keys";
-import { getStorageJson, getStorageItem, removeStorageItem, setStorageItem } from "./core";
+import {
+  createAppShellPreferencesStorageKey,
+  storageKeys,
+} from "@agenticverdict/core/storage/keys";
+import {
+  getStorageJson,
+  getStorageItem,
+  removeStorageItem,
+  setStorageItem,
+} from "@agenticverdict/core/storage/core";
 
 describe("local-storage utility", () => {
   afterEach(() => {

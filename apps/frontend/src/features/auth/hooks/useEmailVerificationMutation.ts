@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
+import { authApi, isAuthSuccess } from "@/features/auth/api/auth-api";
 import { AuthMutationError, type AuthMutationErrorDetails } from "./usePasswordReset";
 import type { ResendEmailVerificationInput, VerifyEmailInput } from "@agenticverdict/types";
 

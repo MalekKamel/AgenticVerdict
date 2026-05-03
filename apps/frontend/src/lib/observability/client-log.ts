@@ -3,10 +3,10 @@
  * Never log passwords, tokens, or full request bodies — only correlation and classification fields.
  */
 
-import { authStore } from "@/stores/auth-store";
+import { authStore } from "@/features/auth/model/state/auth-store";
 import { trpcClientErrorToAppError } from "@/lib/api/trpc-error-mapping";
 import { forwardTelemetry } from "@/lib/observability/telemetry-ingest";
-import { getEffectiveTenantId } from "@/lib/tenant/tenant-resolution";
+import { getEffectiveTenantId } from "@agenticverdict/core/tenant/tenant-resolution";
 import { isTRPCClientError } from "@trpc/client";
 
 export interface WebClientLogContext {

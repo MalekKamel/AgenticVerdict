@@ -4,6 +4,7 @@ import {
   MockConnectorAdapter,
   testAdapterTenantId,
 } from "@agenticverdict/data-connectors";
+import { createTestTenantContext } from "@agenticverdict/testing";
 import { describe, expect, it } from "vitest";
 
 import type { AgentInvocationContext } from "../interfaces";
@@ -20,10 +21,9 @@ import { TenantScopedTtlCache } from "./tenant-context-tools";
 import { createPhase4ToolRegistry, registerPhase4AgentTools } from "./phase4-tool-registry";
 import { fetchNormalizedSnapshotsForPlatformsParallel } from "./platform-fetch-tools";
 
-const TENANT: TenantContext = {
+const TENANT: TenantContext = createTestTenantContext({
   tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-  requestId: "req-test",
-  config: {
+  tenantConfig: {
     tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     tenantName: "Fixture Co",
     localization: {
@@ -60,9 +60,15 @@ const TENANT: TenantContext = {
       products: ["Fleet GPS"],
       valueProps: ["Reliability"],
       differentiators: ["Local support"],
+      insights: {
+        types: [],
+        metricClasses: [],
+        periods: [],
+        domains: [],
+      },
     },
   },
-};
+});
 
 const INVOCATION: AgentInvocationContext = {
   runId: "run-1",

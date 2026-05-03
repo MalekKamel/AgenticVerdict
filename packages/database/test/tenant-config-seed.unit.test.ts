@@ -21,4 +21,11 @@ describe("tenant-config-seed", () => {
     expect(payloads.every((p) => p.tenantId.length > 0)).toBe(true);
     expect(payloads.every((p) => p.tenantName.length > 0)).toBe(true);
   });
+
+  it("dev-seed fixtures include Northwind demo tenant (matches VITE_PUBLIC_DEFAULT_TENANT_ID + login email slug)", () => {
+    const devDir = join(pkgRoot, "..", "..", "tests", "fixtures", "dev-seed-configs");
+    const payloads = readTenantPayloadsFromDir(devDir);
+    const northwind = payloads.find((p) => p.tenantId === "22222222-2222-4222-8222-222222222222");
+    expect(northwind?.tenantName).toBe("Northwind Analytics (demo tenant)");
+  });
 });

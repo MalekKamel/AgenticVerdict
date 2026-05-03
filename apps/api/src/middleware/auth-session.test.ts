@@ -14,7 +14,12 @@ describe("verifyBearerSessionFromRequest (bearer + session cookie)", () => {
   });
 
   it("accepts JWT from av_session cookie when Authorization is absent", async () => {
-    const token = await new SignJWT({ tenant_id: TENANT, roles: [] as string[] })
+    const token = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: [] as string[],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("user-1")
       .setIssuedAt()

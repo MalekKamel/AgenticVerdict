@@ -21,14 +21,14 @@ import {
   registerStepAccountTypeSchema,
   registerStepTenantSchema,
   type RegisterFormData,
-} from "@/lib/validations/auth";
+} from "@/features/auth/model/validations/auth";
 import { calculatePasswordStrength, type PasswordStrengthResult } from "@/lib/validations/password";
 import { PasswordInput } from "@/features/auth/ui/PasswordInput";
 import { IconCheck, IconUserPlus, IconX } from "@tabler/icons-react";
 import { getDirection } from "@/i18n/locales";
-import { getTenantIdForTrpcRequest } from "@/lib/tenant/trpc-tenant-bridge";
-import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
-import { authStore } from "@/stores/auth-store";
+import { getTenantIdForTrpcRequest } from "@agenticverdict/core/tenant/trpc-tenant-bridge";
+import { isTenantUuid } from "@agenticverdict/core/tenant/tenant-resolution";
+import { authStore } from "@/features/auth/model/state/auth-store";
 
 const AUTH_PASSWORD_PREFIX = "auth.password.";
 

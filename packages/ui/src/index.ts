@@ -26,6 +26,8 @@ export * from "./hooks";
 // COMPOSABLE PRIMITIVES (non–Mantine-duplicative)
 // ===================================================================
 export * from "./atoms/Icon";
+export * from "./atoms/StatusIndicator";
+export * from "./atoms/DataFreshnessBadge";
 export * from "./molecules/AppShellNavList";
 
 // ===================================================================

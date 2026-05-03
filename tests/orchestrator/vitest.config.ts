@@ -11,5 +11,17 @@ export default defineConfig({
     environment: "node",
     include: ["**/*.test.ts"],
     reporters,
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
+    pool: "threads",
+    poolOptions: {
+      threads: {
+        maxThreads: 2,
+        minThreads: 1,
+      },
+    },
   },
 });

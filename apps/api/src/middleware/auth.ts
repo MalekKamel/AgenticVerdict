@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { jwtVerify } from "jose";
 
+import type { TenantType, TenantStatus } from "@agenticverdict/types";
+
 import { AppFault, TenantSecurityError, toHttpErrorResponse } from "@agenticverdict/core";
 import { recordTenantSecurityEvent } from "@agenticverdict/observability";
 
@@ -62,7 +64,10 @@ export function resolveJwtSecret(): string | undefined {
 export interface AuthPayload {
   userId: string;
   tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
   roles: string[];
+  permissions: string[];
 }
 
 export interface AuthMiddlewareOptions {
@@ -169,12 +174,20 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
 
     const sub = typeof payload.sub === "string" ? payload.sub : undefined;
     const tenantId = typeof payload.tenant_id === "string" ? payload.tenant_id : undefined;
+    const tenantTypeRaw = typeof payload.tenant_type === "string" ? payload.tenant_type : undefined;
+    const tenantStatusRaw =
+      typeof payload.tenant_status === "string" ? payload.tenant_status : undefined;
     const rolesRaw = payload.roles;
+    const permissionsRaw = payload.permissions;
+
     const roles = Array.isArray(rolesRaw)
       ? rolesRaw.filter((r): r is string => typeof r === "string")
       : [];
+    const permissions = Array.isArray(permissionsRaw)
+      ? permissionsRaw.filter((p): p is string => typeof p === "string")
+      : [];
 
-    if (!sub || !tenantId) {
+    if (!sub || !tenantId || !tenantTypeRaw || !tenantStatusRaw) {
       const response = toHttpErrorResponse(
         new AppFault({
           code: "AUTH_UNAUTHORIZED",
@@ -194,6 +207,9 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       });
       return;
     }
+
+    const tenantType = tenantTypeRaw as TenantType;
+    const tenantStatus = tenantStatusRaw as TenantStatus;
 
     for (const role of rolesRequired) {
       if (!roles.includes(role)) {
@@ -218,7 +234,7 @@ export function jwtAuth(options: AuthMiddlewareOptions = {}) {
       }
     }
 
-    request.auth = { userId: sub, tenantId, roles };
+    request.auth = { userId: sub, tenantId, tenantType, tenantStatus, roles, permissions };
   };
 }
 
@@ -246,14 +262,25 @@ export async function verifyBearerSessionFromRequest(
     const payload = verified.payload as Record<string, unknown>;
     const sub = typeof payload.sub === "string" ? payload.sub : undefined;
     const tenantId = typeof payload.tenant_id === "string" ? payload.tenant_id : undefined;
+    const tenantTypeRaw = typeof payload.tenant_type === "string" ? payload.tenant_type : undefined;
+    const tenantStatusRaw =
+      typeof payload.tenant_status === "string" ? payload.tenant_status : undefined;
     const rolesRaw = payload.roles;
+    const permissionsRaw = payload.permissions;
+
     const roles = Array.isArray(rolesRaw)
       ? rolesRaw.filter((r): r is string => typeof r === "string")
       : [];
+    const permissions = Array.isArray(permissionsRaw)
+      ? permissionsRaw.filter((p): p is string => typeof p === "string")
+      : [];
 
-    if (!sub || !tenantId) {
+    if (!sub || !tenantId || !tenantTypeRaw || !tenantStatusRaw) {
       return null;
     }
+
+    const tenantType = tenantTypeRaw as TenantType;
+    const tenantStatus = tenantStatusRaw as TenantStatus;
 
     const sessionExpiresAt =
       typeof verified.payload.exp === "number"
@@ -261,7 +288,7 @@ export async function verifyBearerSessionFromRequest(
         : null;
 
     return {
-      auth: { userId: sub, tenantId, roles },
+      auth: { userId: sub, tenantId, tenantType, tenantStatus, roles, permissions },
       sessionExpiresAt,
     };
   } catch {

@@ -38,6 +38,12 @@ const sampleTenant: TenantConfig = {
     products: ["GPS tracking"],
     valueProps: ["Reliability"],
     differentiators: ["Local support"],
+    insights: {
+      types: [],
+      metricClasses: [],
+      periods: [],
+      domains: [],
+    },
   },
 };
 

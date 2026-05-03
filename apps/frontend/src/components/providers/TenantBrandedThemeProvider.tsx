@@ -10,7 +10,7 @@ import { useMemo, type ReactNode } from "react";
 
 import { trpc } from "@/lib/api/trpc-client";
 import { resolveBrandTokensForTenantId } from "@/lib/tenant/tenant-branding";
-import { useTenant } from "@/providers/TenantProvider";
+import { useTenant } from "@/features/auth/providers/TenantProvider";
 
 /**
  * Applies TenantConfig `ui.brand` when available via `tenant.getBranding`, otherwise packaged

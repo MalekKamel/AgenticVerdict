@@ -1,4 +1,4 @@
-import { useAuthStore, authActions } from "@/stores/auth-store";
+import { useAuthStore, authActions } from "@/features/auth/model/state/auth-store";
 
 export function useAuth() {
   const auth = useAuthStore();

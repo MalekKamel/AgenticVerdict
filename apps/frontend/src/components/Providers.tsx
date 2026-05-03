@@ -11,8 +11,8 @@ import { WebVitalsReporter } from "@/components/observability/WebVitalsReporter"
 import { getCspNonce } from "@web-csp-nonce";
 import { trpc, trpcClient } from "@/lib/api/trpc-client";
 import { getQueryClient } from "@/lib/query-client";
-import { SessionProvider } from "@/providers/SessionProvider";
-import { TenantProvider } from "@/providers/TenantProvider";
+import { SessionProvider } from "@/features/auth/providers/SessionProvider";
+import { TenantProvider } from "@/features/auth/providers/TenantProvider";
 
 /**
  * App shell providers: design tokens, RTL/LTR, and Mantine theme from `@agenticverdict/ui`

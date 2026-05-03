@@ -1,14 +1,84 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 
 import type { TenantConfig } from "@agenticverdict/config";
+import type { TenantType, TenantStatus, TenantCapabilities } from "@agenticverdict/types";
 
 import { TenantSecurityError } from "./tenant-security-error";
 
 export interface TenantContext {
   tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
   config: TenantConfig;
   requestId: string;
   userId?: string;
+}
+
+export function getTenantCapabilities(
+  tenantType: TenantType,
+  tenantStatus: TenantStatus,
+): TenantCapabilities {
+  const isActive = tenantStatus === "active";
+
+  switch (tenantType) {
+    case "agency_partner":
+      return {
+        canAccessAgencyDashboard: isActive,
+        canManageClientTenants: isActive,
+        canCreateInsights: isActive,
+        canManageConnectors: isActive,
+        canViewReports: isActive,
+        canWhiteLabelReports: isActive,
+        canSwitchClientContext: isActive,
+      };
+
+    case "agency_managed":
+    case "direct_business":
+    default:
+      return {
+        canAccessAgencyDashboard: false,
+        canManageClientTenants: false,
+        canCreateInsights: isActive,
+        canManageConnectors: isActive,
+        canViewReports: isActive,
+        canWhiteLabelReports: false,
+        canSwitchClientContext: false,
+      };
+  }
+}
+
+export class TenantSuspendedError extends Error {
+  constructor(tenantId: string) {
+    super(`Tenant ${tenantId} is suspended`);
+    this.name = "TenantSuspendedError";
+  }
+}
+
+export class TenantDeletedError extends Error {
+  constructor(tenantId: string) {
+    super(`Tenant ${tenantId} has been deleted`);
+    this.name = "TenantDeletedError";
+  }
+}
+
+export class TenantTypeMismatchError extends Error {
+  constructor(expected: TenantType, actual: TenantType) {
+    super(`Expected tenant type ${expected} but got ${actual}`);
+    this.name = "TenantTypeMismatchError";
+  }
+}
+
+/**
+ * Validate tenant context before allowing operations
+ */
+export function validateTenantContext(context: TenantContext): void {
+  if (context.tenantStatus === "deleted") {
+    throw new TenantDeletedError(context.tenantId);
+  }
+
+  if (context.tenantStatus === "suspended") {
+    throw new TenantSuspendedError(context.tenantId);
+  }
 }
 
 /**
@@ -16,12 +86,25 @@ export interface TenantContext {
  */
 export function createTenantContext(params: {
   tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
   requestId: string;
   config: TenantConfig;
   userId?: string;
 }): TenantContext {
+  validateTenantContext({
+    tenantId: params.tenantId,
+    tenantType: params.tenantType,
+    tenantStatus: params.tenantStatus,
+    config: params.config,
+    requestId: params.requestId,
+    userId: params.userId,
+  });
+
   return {
     tenantId: params.tenantId,
+    tenantType: params.tenantType,
+    tenantStatus: params.tenantStatus,
     requestId: params.requestId,
     config: params.config,
     userId: params.userId,
@@ -33,11 +116,15 @@ export function createTenantContext(params: {
  */
 export function buildTenantContextForJob(params: {
   tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
   requestId: string;
   tenantConfig: TenantConfig;
 }): TenantContext {
   return createTenantContext({
     tenantId: params.tenantId,
+    tenantType: params.tenantType,
+    tenantStatus: params.tenantStatus,
     requestId: params.requestId,
     config: params.tenantConfig,
   });

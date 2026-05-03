@@ -30,7 +30,12 @@ const TENANT_B = "99999999-9999-4999-8999-999999999999";
 const writeRoles = ["analyst", "reports:read", "reports:write", "reports:share"] as const;
 
 async function signWriter(tenantId: string, sub: string): Promise<string> {
-  return new SignJWT({ tenant_id: tenantId, roles: [...writeRoles] })
+  return new SignJWT({
+    tenant_id: tenantId,
+    tenant_type: "agency" as const,
+    tenant_status: "active" as const,
+    roles: [...writeRoles],
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
     .setIssuedAt()

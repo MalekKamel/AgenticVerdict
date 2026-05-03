@@ -22,6 +22,8 @@ export function createTestTenantContext(
   });
   return {
     tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     config,
     requestId: options.requestId ?? "test-request-id",
     userId: options.userId,

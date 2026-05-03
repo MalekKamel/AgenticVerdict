@@ -3,7 +3,7 @@
 import { Anchor, Button, Card, Group, Stack, Text, Title } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { AuthUserData } from "@/lib/api/auth-api";
+import type { AuthUserData } from "@/features/auth/api/auth-api";
 import type { DashboardWidgetId } from "@/features/dashboard/model/contracts";
 import {
   readDashboardLayout,
@@ -11,7 +11,7 @@ import {
 } from "@/features/dashboard/model/dashboard-layout-persistence";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
-import { useTenant } from "@/providers/TenantProvider";
+import { useTenant } from "@/features/auth/providers/TenantProvider";
 
 import { resolveDashboardPermissions } from "./dashboard-permissions";
 

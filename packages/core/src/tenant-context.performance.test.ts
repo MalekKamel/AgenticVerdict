@@ -16,10 +16,15 @@ const sampleConfig = {
   features: { enableInsights: true, enableVerdict: false },
 };
 
+const sampleTenantType = "direct_business" as const;
+const sampleTenantStatus = "active" as const;
+
 describe("tenant context performance (migration plan Part 6)", () => {
   it("keeps amortized getTenantContext cost under 1ms per call inside active context", () => {
     const ctx: TenantContext = {
       tenantId: sampleConfig.tenantId,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "req-perf",
     };

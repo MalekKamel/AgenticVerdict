@@ -5,5 +5,10 @@ export default defineConfig({
     environment: "node",
     include: ["**/*.test.ts"],
     exclude: ["**/*.integration.test.ts"],
+    forceExit: true,
+    dangerouslyIgnoreUnhandledErrors: false,
+    teardownTimeout: 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
   },
 });

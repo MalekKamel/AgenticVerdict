@@ -5,8 +5,8 @@ import {
   type AppShellPreferences,
   getAppShellPreferences,
   setAppShellPreferences,
-} from "@/lib/storage/app-shell-preferences-storage";
-import { createAppShellPreferencesStorageKey } from "@/lib/storage/keys";
+} from "@agenticverdict/core/storage/app-shell-preferences-storage";
+import { createAppShellPreferencesStorageKey } from "@agenticverdict/core/storage/keys";
 
 const DEFAULT_PREFERENCES: AppShellPreferences = {
   desktopNavCollapsed: false,

@@ -1,10 +1,10 @@
 "use client";
 
 import { Button, Container, Group, Stack, Stepper, Text, Title } from "@mantine/core";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate } from "@/router/hooks";
 import { useEffect, useState } from "react";
 
-import { useAppShellHeader } from "@/components/layout/app-shell-context";
+import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
@@ -17,8 +17,6 @@ export default function OnboardingPage() {
   const tNav = useTranslations("navigation");
   const { isLoading } = useRequireAuth();
   const navigate = useNavigate();
-  const params = useParams({ strict: false }) as { locale?: string };
-  const locale = params.locale ?? "en";
   const enabled = isOnboardingWizardEnabled();
   const [active, setActive] = useState(0);
   useAppShellHeader({
@@ -30,9 +28,9 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (!enabled) {
-      navigate({ to: `/${locale}/dashboard`, replace: true });
+      navigate.push(`/dashboard`);
     }
-  }, [enabled, locale, navigate]);
+  }, [enabled, navigate]);
 
   useEffect(() => {
     if (!enabled) {
@@ -74,7 +72,7 @@ export default function OnboardingPage() {
 
   const finish = () => {
     logOnboardingEvent("wizard_complete", { step: "complete", index: 2 });
-    navigate({ to: `/${locale}/dashboard`, replace: true });
+    navigate.push(`/dashboard`);
   };
 
   return (

@@ -47,7 +47,8 @@ For frontend conflicts, precedence is:
 1. `/docs/05-reference/frontend-ui-architecture-guidelines.md`
 2. `/design-system/README.md`
 3. `/docs/05-reference/frontend-development-guidelines.md`
-4. `/CLAUDE.md`
+4. `/docs/05-reference/router-navigation-guide.md` (for routing/navigation)
+5. `/CLAUDE.md`
 
 ## Mandatory workflow reminders
 
@@ -55,3 +56,21 @@ For frontend conflicts, precedence is:
 - Prefer `make` targets for Docker/Compose workflows from repo root.
 - Run type checks and targeted tests for changed scope before concluding work.
 - If a rule must be deviated from, document rationale, risk, mitigation, owner, and due date.
+
+## Key documentation
+
+### Frontend
+
+- **Router & Navigation**: `/docs/05-reference/router-navigation-guide.md` - Complete guide to router SSOT, hooks, and navigation patterns
+- **UI Architecture**: `/docs/05-reference/frontend-ui-architecture-guidelines.md` - Frontend architecture and component patterns
+- **Development Guidelines**: `/docs/05-reference/frontend-development-guidelines.md` - General frontend development practices
+- **Design System**: `/design-system/README.md` - Component library and design tokens
+
+### Backend
+
+- **Backend Patterns**: `/docs/05-reference/backend-patterns.md` - Server implementation patterns
+- **Multi-tenant Guardrails**: `/docs/05-reference/multi-tenant-guardrails.md` - Tenant isolation requirements
+
+### Testing
+
+- **Testing Policy**: `/docs/05-reference/testing-policy.md` - Testing standards and quality gates
