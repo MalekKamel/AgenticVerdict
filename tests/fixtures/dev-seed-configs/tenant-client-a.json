@@ -1,0 +1,25 @@
+{
+  "tenantId": "11111111-1111-4111-8111-111111111111",
+  "tenantName": "Client Brand A",
+  "slug": "client-brand-a",
+  "type": "agency_managed",
+  "status": "active",
+  "agencyPartnerId": "11111111-1111-4111-8111-111111111111",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true,
+    "enableReports": true,
+    "maxInsights": 10,
+    "maxUsers": 5
+  }
+}

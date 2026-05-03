@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-import { createDashboardParentBeforeLoad } from "@/features/dashboard/route-guards/create-dashboard-parent-before-load";
+import { createAgencyDashboardBeforeLoad } from "@/features/dashboard/route-guards/create-agency-dashboard-before-load";
 
 export const Route = createFileRoute("/$locale/dashboard/agency")({
-  beforeLoad: createDashboardParentBeforeLoad(),
+  beforeLoad: createAgencyDashboardBeforeLoad(),
   component: AgencyDashboardLayout,
 });
 

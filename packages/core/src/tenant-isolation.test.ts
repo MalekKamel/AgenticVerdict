@@ -28,6 +28,9 @@ const sampleConfig = {
   features: { enableInsights: true, enableVerdict: false },
 };
 
+const sampleTenantType = "direct_business" as const;
+const sampleTenantStatus = "active" as const;
+
 describe("resolveTenantIdentity", () => {
   it("rejects x-tenant-id that disagrees with JWT tenant_id", async () => {
     const sources: TenantResolutionSources = {
@@ -147,6 +150,8 @@ describe("tenant propagation", () => {
   it("continueWithTenantContext preserves async context", async () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "r",
     };
@@ -161,6 +166,8 @@ describe("tenant propagation", () => {
   it("bindTenantContext restores context in deferred callback", async () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "r",
     };
@@ -176,6 +183,8 @@ describe("tenant data access", () => {
   it("assertResourceTenantId allows matching tenant id", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "r",
     };
@@ -185,6 +194,8 @@ describe("tenant data access", () => {
   it("assertResourceTenantId throws on mismatch", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "r",
     };
@@ -196,6 +207,8 @@ describe("tenant data access", () => {
   it("tenantContextMatches reflects current tenant", () => {
     const ctx: TenantContext = {
       tenantId: TENANT,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "r",
     };

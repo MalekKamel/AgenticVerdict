@@ -1,4 +1,5 @@
 import type { TenantConfig } from "@agenticverdict/config";
+import type { TenantType, TenantStatus } from "@agenticverdict/types";
 
 import { TenantSecurityError } from "./tenant-security-error";
 import { createTenantContext, type TenantContext } from "./tenant-context";
@@ -70,8 +71,13 @@ export async function resolveTenantContextFromHttp(
     }
   }
 
+  const tenantType: TenantType = idResult.tenantType ?? "direct_business";
+  const tenantStatus: TenantStatus = idResult.tenantStatus ?? "active";
+
   const context = createTenantContext({
     tenantId: idResult.tenantId,
+    tenantType,
+    tenantStatus,
     requestId,
     config,
     userId: options.userId,

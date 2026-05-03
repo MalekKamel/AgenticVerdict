@@ -1,5 +1,6 @@
 import {
   createTestTenantConfig,
+  createTestTenantContext,
   TEST_TENANT_ALPHA,
   TEST_TENANT_BETA,
 } from "@agenticverdict/testing";
@@ -45,11 +46,10 @@ describe("AgentFactory (Phase 6)", () => {
       customEntries: [{ id: "t-hello", matchSubstring: "hello", response: "MOCK_HELLO" }],
     });
     const agent = factory.createTestAgent({ role: "analysis", memoryMode: "buffer" }, model);
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-factory-1",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Alpha Co" }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Alpha Co" },
+    });
 
     const out = await runAgentJob({ tenant }, async () =>
       agent.run(
@@ -68,11 +68,10 @@ describe("AgentFactory (Phase 6)", () => {
   it("throws when invocation tenantId does not match ALS tenant", async () => {
     const factory = new AgentFactory({ llmEnv: {} });
     const agent = factory.createTestAgent({ role: "analysis" }, new AgentMockChatModel({}));
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-mismatch",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA },
+    });
 
     await expect(
       runAgentJob({ tenant }, async () =>
@@ -127,11 +126,10 @@ describe("AgentFactory (Phase 6)", () => {
       execute: async () => "pong",
     });
     const agent = createRuleBasedEchoAgent({ tools: [ping] });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "r-rb",
-      config: createTestTenantConfig(),
-    };
+      tenantConfig: createTestTenantConfig(),
+    });
     const r = await runAgentJob({ tenant }, async () =>
       agent.run(
         { goal: "x", context: { demoTool: "ping" } },

@@ -1,0 +1,55 @@
+{
+  "tenantId": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  "tenantName": "Gamma Startup",
+  "slug": "gamma-startup",
+  "active": true,
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/Los_Angeles",
+    "currency": "USD"
+  },
+  "marketing": {
+    "channels": [
+      { "platform": "ga4", "enabled": true },
+      { "platform": "meta", "enabled": true }
+    ],
+    "kpis": [{ "id": "signups", "name": "User signups" }],
+    "b2bKpiProfile": {
+      "enabled": false
+    }
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": false
+  },
+  "ui": {
+    "brand": {
+      "colors": {
+        "primary": "#00796B",
+        "secondary": "#616161",
+        "success": "#43A047",
+        "warning": "#FFA000",
+        "danger": "#E53935",
+        "info": "#039BE5"
+      },
+      "typography": {
+        "fontFamily": "system-ui, -apple-system, sans-serif"
+      },
+      "branding": {
+        "logoUrl": "/logos/gamma-logo.svg",
+        "logoHeight": "32px",
+        "appName": "Gamma Metrics"
+      }
+    }
+  },
+  "business": {
+    "products": ["SaaS platform", "User analytics"],
+    "valueProps": ["Growth tracking", "User engagement"],
+    "differentiators": ["Startup-friendly", "Quick setup"]
+  }
+}

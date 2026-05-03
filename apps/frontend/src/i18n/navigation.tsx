@@ -1,63 +1,25 @@
 /**
  * Locale-aware navigation (replaces next-intl createNavigation).
+ * Now uses router SSOT for centralized router access.
  */
-import {
-  Link as RouterLink,
-  useNavigate,
-  useRouter as useTanStackRouter,
-  useRouterState,
-  useParams,
-} from "@tanstack/react-router";
+import { Link as RouterLink, useRouterState } from "@tanstack/react-router";
 import { forwardRef, useMemo, type ComponentProps } from "react";
 
-import { defaultLocale, isSupportedLocale, supportedLocales, type AppLocale } from "./locales";
+import { useLocaleParam as useRouterLocaleParam } from "@/router/hooks/useLocaleParam";
+import { useNavigate as useSsrNavigate } from "@/router/hooks/useNavigate";
+import { useRouter as useSsrRouter } from "@/router/hooks/useRouter";
+import { withLocalePrefix, stripLocalePrefix } from "@/router/utils/navigation";
 
-function useLocaleParam(): AppLocale {
-  const params = useParams({ strict: false }) as { locale?: string };
-  const locale = params.locale;
-  if (locale && isSupportedLocale(locale)) {
-    return locale as AppLocale;
-  }
-  return defaultLocale;
-}
-
-function withLocalePrefix(locale: AppLocale, path: string): string {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  const hasLocalePrefix = (supportedLocales as readonly string[]).some(
-    (supportedLocale) =>
-      normalized === `/${supportedLocale}` || normalized.startsWith(`/${supportedLocale}/`),
-  );
-
-  if (hasLocalePrefix) {
-    return normalized;
-  }
-
-  if (normalized === "/") {
-    return `/${locale}`;
-  }
-  return `/${locale}${normalized}`;
-}
-
-function stripLocalePrefix(pathname: string, locale: AppLocale): string {
-  const prefix = `/${locale}`;
-  if (pathname === prefix || pathname === `${prefix}/`) {
-    return "/";
-  }
-  if (pathname.startsWith(`${prefix}/`)) {
-    const rest = pathname.slice(prefix.length);
-    return rest || "/";
-  }
-  return pathname;
-}
+export { useRouterLocaleParam as useLocaleParam };
 
 export function usePathname(): string {
-  const locale = useLocaleParam();
+  const locale = useRouterLocaleParam();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return stripLocalePrefix(pathname, locale);
 }
 
 export function useLocaleAwareCurrentPath(): string {
-  const locale = useLocaleParam();
+  const locale = useRouterLocaleParam();
   const location = useRouterState({ select: (s) => s.location });
   const path = stripLocalePrefix(location.pathname, locale);
   return `${path}${location.searchStr}${location.hash}`;
@@ -66,14 +28,14 @@ export function useLocaleAwareCurrentPath(): string {
 export type LocaleLinkProps = Omit<ComponentProps<typeof RouterLink>, "to"> & {
   href?: string;
   to?: string;
-  locale?: AppLocale;
+  locale?: import("./locales").AppLocale;
 };
 
 export const Link = forwardRef<HTMLAnchorElement, LocaleLinkProps>(function Link(
   { href, to, locale: localeProp, ...rest },
   ref,
 ) {
-  const defaultLocale = useLocaleParam();
+  const defaultLocale = useRouterLocaleParam();
   const locale = localeProp ?? defaultLocale;
   const target = href ?? to ?? "/";
   const fullTo = withLocalePrefix(locale, target);
@@ -82,20 +44,17 @@ export const Link = forwardRef<HTMLAnchorElement, LocaleLinkProps>(function Link
 });
 
 export function useRouter() {
-  const navigate = useNavigate();
-  const router = useTanStackRouter();
-  const locale = useLocaleParam();
+  const ssrNavigate = useSsrNavigate();
+  const router = useSsrRouter();
+  const locale = useRouterLocaleParam();
 
   return useMemo(
     () => ({
       push: (path: string) => {
-        navigate({ to: withLocalePrefix(locale, path.startsWith("/") ? path : `/${path}`) });
+        ssrNavigate.push(path);
       },
       replace: (path: string) => {
-        navigate({
-          to: withLocalePrefix(locale, path.startsWith("/") ? path : `/${path}`),
-          replace: true,
-        });
+        ssrNavigate.replace(path);
       },
       prefetch: (path: string) => {
         void router.preloadRoute({
@@ -104,6 +63,8 @@ export function useRouter() {
       },
       back: () => window.history.back(),
     }),
-    [navigate, locale, router],
+    [ssrNavigate, locale, router],
   );
 }
+
+export { withLocalePrefix, stripLocalePrefix } from "@/router/utils/navigation";

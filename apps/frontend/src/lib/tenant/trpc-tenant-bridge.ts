@@ -12,14 +12,14 @@
 
 import { authStore } from "@/stores/auth-store";
 
-import { getEffectiveTenantId } from "./tenant-resolution";
+import { getEffectiveTenantId, isTenantUuid } from "./tenant-resolution";
 import { resolveTenantIdByPriority } from "./resolve-tenant-id-by-priority";
 
 let providerResolvedTenantId: string | undefined;
-const DEV_LOCALHOST_TENANT_ID = "11111111-1111-4111-8111-111111111111";
 
 function getDevLocalhostTenantFallback(): string | undefined {
-  return import.meta.env.DEV ? DEV_LOCALHOST_TENANT_ID : undefined;
+  // Do not silently pin a tenant in dev; rely on env/provider/auth only.
+  return undefined;
 }
 
 /**
@@ -37,14 +37,21 @@ export function resetTenantBridgeForTests(): void {
 /**
  * Tenant UUID to send as `x-tenant-id` on browser tRPC requests.
  *
- * Order: authenticated store tenant → last value published by `TenantProvider` → env default
- * (`getEffectiveTenantId({})`) → **dev-only** fallback so local flows (e.g. verify-email demo) work
- * without copying `.env` keys.
+ * Order: **authenticated** store tenant → last value published by `TenantProvider` → env default
+ * (`getEffectiveTenantId({})`).
+ *
+ * When the user is not authenticated, `authStore.tenantId` is ignored here, and `TenantProvider`
+ * also omits it from the published value, so a UUID left from verify-email/register cannot beat
+ * `VITE_PUBLIC_DEFAULT_TENANT_ID` on `x-tenant-id` / pre-session `tenantId` during login.
  */
 export function getTenantIdForTrpcRequest(): string | undefined {
+  const authTenantId =
+    authStore.state.isAuthenticated && isTenantUuid(authStore.state.tenantId)
+      ? authStore.state.tenantId
+      : undefined;
   const fromEnvOnly = getEffectiveTenantId({});
   return resolveTenantIdByPriority(
-    authStore.state.tenantId,
+    authTenantId,
     providerResolvedTenantId,
     fromEnvOnly,
     getDevLocalhostTenantFallback(),

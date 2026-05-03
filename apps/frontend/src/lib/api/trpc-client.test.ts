@@ -15,9 +15,26 @@ describe("trpc-client headers", () => {
     authActions.logout();
   });
 
-  it("sends x-tenant-id when auth store has a UUID tenant", () => {
+  it("sends x-tenant-id when authenticated session has a UUID tenant", () => {
     const id = "33333333-3333-4333-8333-333333333333";
-    authActions.setTenantId(id);
+    authActions.setAuth(
+      true,
+      {
+        id: "user-1",
+        email: "u@test.local",
+        firstName: "U",
+        lastName: "",
+        emailVerified: true,
+        roles: ["viewer"],
+        permissions: [],
+        tenantId: id,
+        tenantType: "direct_business",
+        tenantStatus: "active",
+      },
+      id,
+      "direct_business",
+      "active",
+    );
     const h = buildTrpcHeaders();
     expect(h["x-tenant-id"]).toBe(id);
     expect(h["x-request-id"]).toMatch(

@@ -52,6 +52,30 @@ describe("resolveRouteAccessDecision", () => {
     });
   });
 
+  it("does not duplicate locale when redirect target already includes the locale segment", () => {
+    expect(
+      resolveRouteAccessDecision({
+        routeKind: "public_auth",
+        authState: {
+          kind: "authenticated_verified",
+          user: {
+            id: "u1",
+            email: "user@example.com",
+            firstName: "User",
+            lastName: "Example",
+            emailVerified: true,
+            tenantId: "11111111-1111-4111-8111-111111111111",
+          },
+        },
+        locale: "en",
+        redirectTarget: "/en/dashboard/agency",
+      }),
+    ).toEqual({
+      type: "redirect",
+      to: "/en/dashboard/agency",
+    });
+  });
+
   it("redirects unverified users on protected routes to verify email", () => {
     expect(
       resolveRouteAccessDecision({

@@ -1,4 +1,4 @@
-import { createTestTenantConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
+import { createTestTenantContext, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
@@ -46,11 +46,10 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
 
     const factory = new AgentFactory({ llmEnv: {} });
     const cache = new LlmInvocationCache({ ttlMs: 300_000, maxEntries: 64 });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-cache-1",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Cache Co" }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Cache Co" },
+    });
 
     const goal = "CACHE_MARKER: Summarize last month.";
     const workflowId = "ffffffff-ffff-4fff-8fff-ffffffffffff";
@@ -104,11 +103,10 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
 
     const factory = new AgentFactory({ llmEnv: {} });
     const timing = vi.fn();
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-time-1",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Timing Co" }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Timing Co" },
+    });
 
     await runAgentJob({ tenant, runId: "run-t1" }, async (scope) =>
       runMarketingAgentPipeline({
@@ -150,11 +148,10 @@ describe("Phase 8 — performance & behavior (tasks 6.6, 7.2, 7.3)", () => {
       ],
     });
     const factory = new AgentFactory({ llmEnv: {} });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-bench-1",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Bench Co" }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Bench Co" },
+    });
 
     for (let i = 0; i < 5; i += 1) {
       const t0 = performance.now();

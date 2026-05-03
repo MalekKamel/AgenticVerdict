@@ -1,4 +1,47 @@
 export type { ConnectorType } from "./connector-types";
+export type {
+  ConnectorStatus,
+  ConnectorListItem,
+  ConnectorListInput,
+  ConnectorListOutput,
+  SyncStatus,
+  SyncHistoryEntry,
+  ConnectorDetailOutput,
+  ConnectorCreateInput,
+  ConnectorCreateOutput,
+  ConnectorUpdateInput,
+  ConnectorUpdateOutput,
+  ConnectorDeleteInput,
+  ConnectorDeleteOutput,
+  ConnectorSyncInput,
+  ConnectorSyncOutput,
+  PlatformInfo,
+  ConnectorTestInput,
+  ConnectorTestOutput,
+  AffectedInsight,
+  ConnectorRemovalPreview,
+} from "./connector-types";
+export {
+  connectorStatusSchema,
+  connectorTypeSchema,
+  connectorListInputSchema,
+  connectorListOutputSchema,
+  connectorDetailOutputSchema,
+  connectorCreateInputSchema,
+  connectorCreateOutputSchema,
+  connectorUpdateInputSchema,
+  connectorUpdateOutputSchema,
+  connectorDeleteInputSchema,
+  connectorDeleteOutputSchema,
+  connectorSyncInputSchema,
+  connectorSyncOutputSchema,
+  platformInfoSchema,
+  connectorTestInputSchema,
+  connectorTestOutputSchema,
+  connectorRemovalPreviewSchema,
+  syncStatusSchema,
+  syncHistoryEntrySchema,
+} from "./connector-types";
 
 export type { DateRange, MetricReference } from "./common";
 export { dateRangeSchema, metricReferenceSchema } from "./common";
@@ -54,6 +97,30 @@ export {
   transformationSchema,
 } from "./analysis";
 
+// Tenant types
+export type {
+  Tenant,
+  TenantType,
+  TenantStatus,
+  TenantLocalization,
+  TenantFeatures,
+  TenantAIConfig,
+  TenantCapabilities,
+  AgencyPartner,
+  AgencyPartnerTier,
+} from "./tenant";
+export {
+  tenantTypeSchema,
+  tenantStatusSchema,
+  tenantSchema,
+  tenantLocalizationSchema,
+  tenantFeaturesSchema,
+  tenantAIConfigSchema,
+  tenantCapabilitiesSchema,
+  agencyPartnerSchema,
+  agencyPartnerTierSchema,
+} from "./tenant";
+
 export type { GeneratedInsight, InsightType } from "./insight";
 export { generatedInsightSchema, insightTypeSchema } from "./insight";
 
@@ -80,6 +147,25 @@ export {
   telemetryEnvelopeSchema,
   telemetryKindSchema,
 } from "./telemetry";
+
+// RBAC types
+export type {
+  Permission,
+  Role,
+  SystemRole,
+  CustomRole,
+  UserRole,
+  RolePermission,
+  RoleDb,
+  PermissionDb,
+} from "./rbac";
+export {
+  PERMISSIONS,
+  roleDbSchema,
+  permissionDbSchema,
+  userRoleSchema,
+  rolePermissionSchema,
+} from "./rbac";
 
 export type {
   DataSourceInfo,

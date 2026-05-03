@@ -14,6 +14,8 @@
 import { Store } from "@tanstack/react-store";
 import { useStore } from "@tanstack/react-store";
 
+import type { Permission, TenantType, TenantStatus } from "@agenticverdict/types";
+
 /**
  * User information type
  */
@@ -24,6 +26,11 @@ export type UserInfo = {
   lastName: string;
   avatar?: string;
   emailVerified: boolean;
+  roles: string[];
+  permissions: Permission[];
+  tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
 };
 
 /**
@@ -42,6 +49,8 @@ export interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo | null;
   tenantId: string | null;
+  tenantType: TenantType | null;
+  tenantStatus: TenantStatus | null;
   isLoading: boolean;
   error: AuthError | null;
 }
@@ -74,6 +83,8 @@ const initialAuthState: AuthState = {
   isAuthenticated: false,
   user: null,
   tenantId: null,
+  tenantType: null,
+  tenantStatus: null,
   isLoading: false,
   error: null,
 };
@@ -88,12 +99,20 @@ export function useAuthStore(): AuthState {
 
 // Store actions
 export const authActions = {
-  setAuth: (isAuthenticated: boolean, user?: UserInfo, tenantId?: string) => {
+  setAuth: (
+    isAuthenticated: boolean,
+    user?: UserInfo,
+    tenantId?: string,
+    tenantType?: TenantType,
+    tenantStatus?: TenantStatus,
+  ) => {
     authStore.setState((prev: AuthState) => ({
       ...prev,
       isAuthenticated,
       user: user ?? null,
       tenantId: tenantId ?? null,
+      tenantType: tenantType ?? null,
+      tenantStatus: tenantStatus ?? null,
       error: null,
     }));
   },
@@ -103,6 +122,8 @@ export const authActions = {
       ...prev,
       user,
       isAuthenticated: user !== null,
+      tenantType: user?.tenantType ?? null,
+      tenantStatus: user?.tenantStatus ?? null,
     }));
   },
 
@@ -110,6 +131,20 @@ export const authActions = {
     authStore.setState((prev: AuthState) => ({
       ...prev,
       tenantId,
+    }));
+  },
+
+  setTenantType: (tenantType: TenantType | null) => {
+    authStore.setState((prev: AuthState) => ({
+      ...prev,
+      tenantType,
+    }));
+  },
+
+  setTenantStatus: (tenantStatus: TenantStatus | null) => {
+    authStore.setState((prev: AuthState) => ({
+      ...prev,
+      tenantStatus,
     }));
   },
 
@@ -141,6 +176,8 @@ export const authActions = {
       isAuthenticated: false,
       user: null,
       tenantId: null,
+      tenantType: null,
+      tenantStatus: null,
       error: null,
       isLoading: false,
     }));

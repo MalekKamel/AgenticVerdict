@@ -48,7 +48,12 @@ describe("bindJwtTenantAsyncContext middleware", () => {
   });
 
   it("binds AsyncLocalStorage tenant context for the route handler", async () => {
-    const token = await new SignJWT({ tenant_id: TENANT, roles: ["analyst"] })
+    const token = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["analyst"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("sub-tenant-ctx")
       .setIssuedAt()
@@ -76,7 +81,12 @@ describe("bindJwtTenantAsyncContext middleware", () => {
 
   it("returns 403 when x-tenant-id header disagrees with JWT tenant_id", async () => {
     const otherTenant = "bbbbbbbb-bbbb-4ccc-dddd-ffffffffffff";
-    const token = await new SignJWT({ tenant_id: TENANT, roles: ["analyst"] })
+    const token = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["analyst"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("sub-tenant-ctx")
       .setIssuedAt()
@@ -99,7 +109,12 @@ describe("bindJwtTenantAsyncContext middleware", () => {
 
   it("returns 403 when tenant config is missing for the JWT tenant", async () => {
     const unknownTenant = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
-    const token = await new SignJWT({ tenant_id: unknownTenant, roles: ["analyst"] })
+    const token = await new SignJWT({
+      tenant_id: unknownTenant,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["analyst"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("sub-unknown-tenant")
       .setIssuedAt()

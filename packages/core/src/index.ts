@@ -56,5 +56,10 @@ export {
   getTenantContext,
   requireTenantContext,
   runWithTenantContext,
+  getTenantCapabilities,
+  validateTenantContext,
+  TenantSuspendedError,
+  TenantDeletedError,
+  TenantTypeMismatchError,
   type TenantContext,
 } from "./tenant-context";

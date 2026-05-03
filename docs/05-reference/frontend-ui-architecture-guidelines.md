@@ -1,7 +1,7 @@
 # Frontend UI and architecture guidelines
 
 **Status:** Enforced reference (mandatory for frontend implementation work)  
-**Date:** 2026-04-22  
+**Date:** 2026-05-03  
 **Applies to:** `apps/frontend`, shared UI in `packages/ui`, and coordinated frontend-facing API contract changes in `apps/api`.
 
 ---
@@ -57,6 +57,8 @@ If guidance conflicts, precedence is:
 - **MUST** prevent loop-prone transitions for protected and entry routes.
 - **MUST** provide deterministic fallback destinations when targets are unsafe, invalid, or absent.
 - **MUST** preserve role/tenant/feature-flag guard behavior for protected feature routes.
+- **MUST** avoid **duplicated locale segments** when resolving redirect targets: compose localized URLs with **`withLocalePrefix`** (see [`router-navigation-guide.md`](./router-navigation-guide.md)); store **`redirect`** query values as **locale-relative** paths when matching SSR guard conventions (**`buildProtectedRedirectTarget`**).
+- **MUST** align **`beforeLoad`** authentication with **real session probes** (`fetchProtectedRouteSession` on SSR, documented SPA deferral)—**MUST NOT** treat absent/unwired **`context.auth`** (or equivalent) as proof the user is signed out.
 
 **Verification criteria**
 

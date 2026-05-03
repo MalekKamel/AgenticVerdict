@@ -5,11 +5,15 @@ import { extractTenantSlugFromHost } from "@/lib/tenant/extract-tenant-slug";
 import { getEffectiveTenantId, isTenantUuid } from "@/lib/tenant/tenant-resolution";
 import { publishTenantIdForTrpcHeaders } from "@/lib/tenant/trpc-tenant-bridge";
 import { useAuthStore } from "@/stores/auth-store";
+import { computeCapabilities } from "@/hooks/useTenantType";
+import type { TenantType, TenantStatus, TenantCapabilities } from "@agenticverdict/types";
 import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export interface TenantContextValue {
-  /** Resolved tenant UUID for the current client session, when known. */
   tenantId: string | undefined;
+  tenantType: TenantType | undefined;
+  tenantStatus: TenantStatus | undefined;
+  capabilities: TenantCapabilities;
 }
 
 const TenantContext = createContext<TenantContextValue | null>(null);
@@ -54,19 +58,25 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     return extractTenantSlugFromHost(hostname, bases);
   }, [bases, hostname]);
 
+  const authenticatedTenantId =
+    auth.isAuthenticated && isTenantUuid(auth.tenantId) ? auth.tenantId : undefined;
+
   const { data: slugResolve } = trpc.tenant.resolveSlug.useQuery(
     { slug: slug! },
-    { enabled: Boolean(slug) && !isTenantUuid(auth.tenantId) },
+    { enabled: Boolean(slug) && !authenticatedTenantId },
   );
 
   const value = useMemo(
     (): TenantContextValue => ({
       tenantId: getEffectiveTenantId({
-        authTenantId: auth.tenantId,
+        authTenantId: authenticatedTenantId,
         slugResolvedTenantId: slugResolve?.tenantId,
       }),
+      tenantType: auth.tenantType ?? undefined,
+      tenantStatus: auth.tenantStatus ?? undefined,
+      capabilities: computeCapabilities(auth.tenantType, auth.tenantStatus),
     }),
-    [auth.tenantId, slugResolve?.tenantId],
+    [authenticatedTenantId, slugResolve?.tenantId, auth.tenantType, auth.tenantStatus],
   );
 
   useEffect(() => {

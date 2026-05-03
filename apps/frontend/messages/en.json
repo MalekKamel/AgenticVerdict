@@ -24,13 +24,15 @@
     "retry": "Retry",
     "contactSupport": "Contact support",
     "required": "Required",
-    "optional": "Optional"
+    "optional": "Optional",
+    "clear": "Clear"
   },
   "navigation": {
     "dashboard": "Dashboard",
     "onboarding": "Onboarding",
     "featureFlags": "Feature flags",
     "connectors": "Connectors",
+    "agency": "Agency",
     "insights": "Insights",
     "reports": "Reports",
     "settings": "Settings",
@@ -727,6 +729,221 @@
       "palette": "Available widgets",
       "hint": "Drag handles are not enabled on small screens; use add/remove on desktop.",
       "noPermission": "You do not have permission to edit this layout."
+    }
+  },
+  "connectors": {
+    "common": {
+      "title": "Connectors",
+      "add": "Add",
+      "remove": "Remove",
+      "configure": "Configure",
+      "connector": "Connector",
+      "connectorName": "Connector Name",
+      "domain": "Domain",
+      "domainPlaceholder": "example.com",
+      "metrics": "Metrics",
+      "syncFrequency": "Sync Frequency",
+      "dataRetention": "Data Retention",
+      "retentionDays": "{days} days",
+      "notFound": "Connector not found",
+      "testConnection": "Test Connection",
+      "continue": "Continue",
+      "finish": "Finish"
+    },
+    "status": {
+      "healthy": "Active",
+      "warning": "Needs Attention",
+      "error": "Error",
+      "inactive": "Inactive",
+      "syncing": "Syncing..."
+    },
+    "frequency": {
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "freshness": {
+      "realTime": "Real-time",
+      "recent": "Recent",
+      "stale": "Stale",
+      "outdated": "Outdated"
+    },
+    "alerts": {
+      "connectionSuccessfulTitle": "Connection successful",
+      "connectionSuccessfulBody": "Your connector is ready.",
+      "limitedPermissionsTitle": "Limited permissions",
+      "limitedPermissionsBody": "Connection works but with limited data access.",
+      "connectionFailedTitle": "Connection failed",
+      "connectionFailedBody": "Please check your credentials and try again."
+    },
+    "platforms": {
+      "ga4": { "name": "Google Analytics 4", "description": "Website traffic and conversions" },
+      "meta": { "name": "Meta Ads", "description": "Facebook and Instagram advertising" },
+      "gsc": { "name": "Google Search Console", "description": "Search performance and indexing" },
+      "tiktok": { "name": "TikTok Ads", "description": "TikTok advertising campaigns" },
+      "gbp": { "name": "Google Business Profile", "description": "Local business presence" }
+    },
+    "metrics": {
+      "sessions": "Sessions",
+      "users": "Users",
+      "conversions": "Conversions",
+      "revenue": "Revenue",
+      "bounceRate": "Bounce Rate",
+      "pageViews": "Page Views",
+      "impressions": "Impressions",
+      "clicks": "Clicks",
+      "ctr": "CTR",
+      "cpc": "CPC",
+      "spend": "Spend",
+      "position": "Position",
+      "pages": "Pages",
+      "queries": "Queries",
+      "videoViews": "Video Views",
+      "views": "Views",
+      "calls": "Calls",
+      "directions": "Directions",
+      "reviews": "Reviews",
+      "photos": "Photos"
+    },
+    "list": {
+      "actions": {
+        "viewDetails": "View Details",
+        "syncNow": "Sync Now",
+        "disconnect": "Disconnect",
+        "addConnector": "Add Connector",
+        "addFirstConnector": "Add your first connector"
+      },
+      "filters": {
+        "allStatuses": "All Statuses",
+        "allDomains": "All Domains",
+        "searchPlaceholder": "Search connectors..."
+      },
+      "card": {
+        "lastSync": "Last sync: {date}",
+        "noSyncHistory": "No sync history"
+      },
+      "empty": {
+        "noConnectors": "No connectors yet",
+        "noFilteredResults": "No connectors match your filters"
+      },
+      "results": {
+        "showing": "Showing {shown} of {total} connectors"
+      }
+    },
+    "add": {
+      "title": "Add Connector",
+      "cancelConfirm": "Discard progress and return to connectors?",
+      "steps": {
+        "platform": { "label": "Platform", "description": "Select data source" },
+        "auth": { "label": "Auth", "description": "Connect account" },
+        "config": { "label": "Config", "description": "Choose metrics" },
+        "confirm": { "label": "Confirm", "description": "Test connection" }
+      },
+      "platform": {
+        "searchPlaceholder": "Search platforms..."
+      },
+      "auth": {
+        "authenticateWith": "Authenticate with {platform}",
+        "connectOAuth": "Connect with OAuth",
+        "orApiCredentials": "Or enter API credentials:",
+        "apiKey": "API Key",
+        "continueApiKey": "Continue with API Key"
+      },
+      "config": {
+        "connectorNamePlaceholder": "My GA4 Connector"
+      },
+      "confirm": {
+        "summary": "Summary",
+        "platform": "Platform: {platform}",
+        "name": "Name: {name}",
+        "domain": "Domain: {domain}",
+        "metrics": "Metrics: {metrics}",
+        "frequency": "Frequency: {frequency}",
+        "retention": "Retention: {days} days"
+      }
+    },
+    "configure": {
+      "title": "Configure {name}",
+      "sections": {
+        "account": "Account",
+        "syncPreferences": "Sync Preferences",
+        "notifications": "Notifications",
+        "advanced": "Advanced"
+      },
+      "actions": {
+        "selectAll": "Select All",
+        "saveChanges": "Save Changes"
+      },
+      "notifications": {
+        "syncFailure": "Sync failure alerts",
+        "authExpiration": "Authentication expiration warnings",
+        "weeklySummary": "Weekly summaries"
+      },
+      "advanced": {
+        "customTags": "Custom Tags",
+        "customTagsPlaceholder": "Add tag and press Enter",
+        "excludeInternalTraffic": "Exclude internal traffic (IP filter)"
+      },
+      "testFailed": "Connection failed. Please check your settings."
+    },
+    "detail": {
+      "actions": {
+        "backToConnectors": "Back to Connectors",
+        "viewAll": "View All",
+        "manage": "Manage"
+      },
+      "sections": {
+        "health": "Health",
+        "recentData": "Recent Data",
+        "syncHistory": "Sync History",
+        "connectedMetrics": "Connected Metrics",
+        "troubleshooting": "Troubleshooting"
+      },
+      "health": {
+        "lastSync": "Last sync: {date}",
+        "nextSync": "Next sync: {date}"
+      },
+      "recentData": {
+        "empty": "No recent data available"
+      },
+      "syncHistory": {
+        "empty": "No sync history yet",
+        "columns": {
+          "date": "Date",
+          "status": "Status",
+          "records": "Records"
+        }
+      },
+      "connectedMetrics": {
+        "empty": "No metrics selected"
+      }
+    },
+    "remove": {
+      "title": "Remove {name}",
+      "warningTitle": "Warning",
+      "warningBody": "Removing this connector will have the following consequences:",
+      "impacts": {
+        "dataCollectionStops": "Data collection will stop",
+        "historicalInsightsOnly": "Existing insights will show historical data only",
+        "noNewReports": "No new reports will include this connector",
+        "historicalRetention": "Historical data will be retained for 90 days",
+        "canReconnectAnytime": "The connector can be reconnected anytime"
+      },
+      "affectedInsightsTitle": "Affected Insights",
+      "alternativeOptionsTitle": "Alternative Options",
+      "options": {
+        "pause": "Pause data collection (keep connector, stop syncing)",
+        "remove": "Remove connector completely (disconnect and remove configuration)"
+      },
+      "exportTitle": "Export Historical Data",
+      "exportDescription": "Download your historical data before removal.",
+      "exportAction": "Export historical data",
+      "confirmTitle": "Confirm Removal",
+      "confirmInstructions": "Type REMOVE to confirm:",
+      "actions": {
+        "pauseConnector": "Pause Connector",
+        "confirmRemoval": "Confirm Removal"
+      }
     }
   },
   "onboarding": {

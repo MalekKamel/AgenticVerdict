@@ -24,16 +24,17 @@
  * ```
  */
 
-import type {
-  LoginInput,
-  RegisterInput,
-  ResendEmailVerificationInput,
-  ResendEmailVerificationOutput,
-  VerifyEmailInput,
-  RequestPasswordResetInput,
-  ConfirmPasswordResetInput,
-  AuthErrorCode,
-  AuthErrorResponse,
+import {
+  PERMISSIONS,
+  type LoginInput,
+  type RegisterInput,
+  type ResendEmailVerificationInput,
+  type ResendEmailVerificationOutput,
+  type VerifyEmailInput,
+  type RequestPasswordResetInput,
+  type ConfirmPasswordResetInput,
+  type AuthErrorCode,
+  type AuthErrorResponse,
 } from "@agenticverdict/types";
 import type { AppRouter } from "@agenticverdict/api/trpc";
 import type { TRPCClientError } from "@trpc/client";
@@ -164,6 +165,10 @@ export type AuthUserData = {
   lastName: string;
   emailVerified: boolean;
   tenantId: string;
+  tenantType: string;
+  tenantStatus: string;
+  roles: string[];
+  permissions: string[];
 };
 
 /**
@@ -384,6 +389,8 @@ export const authApi = {
       const sessionExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const merged = mergePreSessionTenantInput(input);
       const mockTenant = isTenantUuid(merged.tenantId) ? merged.tenantId : MOCK_DEFAULT_TENANT_ID;
+      const roles: string[] = ["viewer"];
+      const permissions: string[] = [PERMISSIONS.REPORTS_READ];
       const user: AuthUserData = {
         id: "mock-user-id",
         email: input.email,
@@ -391,6 +398,10 @@ export const authApi = {
         lastName: "User",
         emailVerified: true,
         tenantId: mockTenant,
+        tenantType: "direct_business",
+        tenantStatus: "active",
+        roles,
+        permissions,
       };
       mockBrowserSession = { user, sessionExpiresAt };
       return wrapMutation(
@@ -406,7 +417,13 @@ export const authApi = {
     return wrapMutation(
       trpcClient.auth.login.mutate(mergePreSessionTenantInput(input)).then((out) => ({
         data: {
-          user: out.user,
+          user: {
+            ...out.user,
+            roles: out.user.roles ?? [],
+            permissions: out.user.permissions ?? [],
+            tenantType: (out.user as { tenantType?: string }).tenantType ?? "direct_business",
+            tenantStatus: (out.user as { tenantStatus?: string }).tenantStatus ?? "active",
+          } as AuthUserData,
           sessionExpiresAt: out.sessionExpiresAt,
         },
       })),

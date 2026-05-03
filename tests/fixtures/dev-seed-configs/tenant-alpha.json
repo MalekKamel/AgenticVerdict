@@ -1,0 +1,67 @@
+{
+  "tenantId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "tenantName": "Alpha Test Company",
+  "slug": "alpha-test-company",
+  "type": "direct_business",
+  "status": "active",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  },
+  "marketing": {
+    "channels": [
+      { "platform": "ga4", "enabled": true },
+      { "platform": "meta", "enabled": true },
+      { "platform": "gsc", "enabled": true }
+    ],
+    "kpis": [{ "id": "leads", "name": "Qualified leads" }],
+    "b2bKpiProfile": {
+      "enabled": true,
+      "minFleetVehiclesQualified": 10,
+      "weights": {
+        "decisionMakerSignal": 0.4,
+        "fleetSizeSignal": 0.4,
+        "regionalFitSignal": 0.2
+      },
+      "targetCpql": { "maxAmount": 500, "currencyCode": "USD" }
+    }
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true,
+    "enableReports": true,
+    "maxInsights": 10,
+    "maxUsers": 5
+  },
+  "ui": {
+    "brand": {
+      "colors": {
+        "primary": "#1976D2",
+        "secondary": "#616161",
+        "success": "#2E7D32",
+        "warning": "#F57C00",
+        "danger": "#C62828",
+        "info": "#0288D1"
+      },
+      "typography": {
+        "fontFamily": "Inter, system-ui, -apple-system, sans-serif"
+      },
+      "branding": {
+        "logoUrl": "/logos/alpha-logo.svg",
+        "logoHeight": "32px",
+        "appName": "Alpha Analytics"
+      }
+    }
+  },
+  "business": {
+    "products": ["Marketing analytics", "Performance tracking"],
+    "valueProps": ["Data-driven insights", "Multi-channel visibility"],
+    "differentiators": ["AI-powered recommendations", "Real-time reporting"]
+  }
+}

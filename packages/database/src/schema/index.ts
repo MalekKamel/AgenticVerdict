@@ -1,8 +1,14 @@
 export { auditLogs } from "./audit-logs";
-export { tenants } from "./tenants";
-export { connectorTagMappings, connectorTags, dataConnectors } from "./core/connectors";
+export { tenants, tenantTypeEnum, tenantStatusEnum } from "./tenants";
+export { agencyPartners, agencyPartnerTierEnum } from "./core/tenants";
+export {
+  connectorTagMappings,
+  connectorTags,
+  connectorSyncHistory,
+  dataConnectors,
+  tenantConnectors,
+} from "./core/connectors";
 export { insights, insightConnectors } from "./core/insights";
-export { agencyPartners } from "./core/tenants";
 export { usageTracking } from "./core/usage";
 export { featureFlags, tenantFeatureFlags } from "./feature-flags";
 export { i18nStrings } from "./i18n-strings";
@@ -12,3 +18,7 @@ export { provenanceRecords } from "./provenance";
 export { reportTemplates } from "./report-templates";
 export { reports } from "./reports";
 export { users } from "./users";
+export { roles } from "./rbac/roles";
+export { permissions } from "./rbac/permissions";
+export { userRoles } from "./rbac/user-roles";
+export { rolePermissions } from "./rbac/role-permissions";

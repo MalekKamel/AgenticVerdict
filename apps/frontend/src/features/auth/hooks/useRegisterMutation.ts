@@ -38,9 +38,13 @@ export function useRegisterMutation() {
       });
 
       const params = new URLSearchParams({ email: variables.email });
+      const authTenantId =
+        authStore.state.isAuthenticated && isTenantUuid(authStore.state.tenantId)
+          ? authStore.state.tenantId
+          : undefined;
       const effectiveTenantId = isTenantUuid(variables.tenantId)
         ? variables.tenantId
-        : getEffectiveTenantId({ authTenantId: authStore.state.tenantId });
+        : getEffectiveTenantId({ authTenantId });
       if (effectiveTenantId) {
         params.set("tenantId", effectiveTenantId);
       }

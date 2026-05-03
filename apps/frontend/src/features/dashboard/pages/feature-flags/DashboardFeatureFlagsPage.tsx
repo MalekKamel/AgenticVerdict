@@ -1,14 +1,11 @@
 "use client";
 
 import { Alert, Anchor, Container, Stack, Table, Text, Title } from "@mantine/core";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect } from "react";
 
 import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";
 import { useAppShellHeader } from "@/components/layout/app-shell-context";
 import { trpc } from "@/lib/api/trpc-client";
 import { normalizeFrontendError } from "@/lib/errors/normalized-error-adapter";
-import { isFeatureFlagsAdminUiEnabled } from "@/lib/feature-flags/feature-flags-readiness";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "@/i18n/react";
 
@@ -26,30 +23,12 @@ export default function DashboardFeatureFlagsPage() {
   const tErrors = useTranslations("errors");
   const tNav = useTranslations("navigation");
   const { user, isLoading } = useRequireAuth();
-  const navigate = useNavigate();
-  const params = useParams({ strict: false }) as { locale?: string };
-  const locale = params.locale ?? "en";
-  const enabled = isFeatureFlagsAdminUiEnabled();
   useAppShellHeader({
     breadcrumbs: [
       { label: tNav("dashboard"), href: "/dashboard" },
       { label: tNav("featureFlags"), href: "/dashboard/feature-flags" },
     ],
   });
-
-  useEffect(() => {
-    if (!enabled) {
-      navigate({ to: `/${locale}/dashboard`, replace: true });
-    }
-  }, [enabled, locale, navigate]);
-
-  if (!enabled) {
-    return (
-      <Container py="xl">
-        <Text role="status">{tCommon("loading")}</Text>
-      </Container>
-    );
-  }
 
   if (isLoading) {
     return (

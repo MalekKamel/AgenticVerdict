@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
+import type { Permission, TenantType, TenantStatus } from "@agenticverdict/types";
 
 import { authActions } from "@/stores/auth-store";
 import { authApi, isAuthSuccess } from "@/lib/api/auth-api";
@@ -45,8 +46,15 @@ export function useSessionQuery(options?: {
             firstName: data.user.firstName,
             lastName: data.user.lastName,
             emailVerified: data.user.emailVerified,
+            roles: data.user.roles,
+            permissions: data.user.permissions as Permission[],
+            tenantId: data.user.tenantId,
+            tenantType: data.user.tenantType as TenantType,
+            tenantStatus: data.user.tenantStatus as TenantStatus,
           },
           data.user.tenantId,
+          data.user.tenantType as TenantType,
+          data.user.tenantStatus as TenantStatus,
         );
       } else {
         authActions.logout();

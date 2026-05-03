@@ -48,6 +48,8 @@ export async function runWorkerJobWithTenantContext<T>(params: {
   const tenantConfig = await loadTenantConfigForJob(params.tenantId);
   const ctx = createTenantContext({
     tenantId: params.tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "active",
     requestId: params.requestId,
     config: tenantConfig,
   });

@@ -36,7 +36,12 @@ describe("jwtAuth middleware", () => {
   beforeAll(async () => {
     process.env.JWT_SECRET = JWT_SECRET;
     app = await buildApp();
-    analystToken = await new SignJWT({ tenant_id: TENANT, roles: ["analyst"] })
+    analystToken = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["analyst"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("user-analyst-1")
       .setIssuedAt()
@@ -85,7 +90,12 @@ describe("jwtAuth middleware", () => {
 
     it("accepts HS256 tokens signed with secret read from JWT_SECRET_FILE (trimmed)", async () => {
       const localApp = await buildApp();
-      const adminTok = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })
+      const adminTok = await new SignJWT({
+        tenant_id: TENANT,
+        tenant_type: "agency" as const,
+        tenant_status: "active" as const,
+        roles: ["admin"],
+      })
         .setProtectedHeader({ alg: "HS256" })
         .setSubject("user-admin-file")
         .setIssuedAt()
@@ -103,7 +113,12 @@ describe("jwtAuth middleware", () => {
     it("prefers JWT_SECRET_FILE over JWT_SECRET when both are set", async () => {
       process.env.JWT_SECRET = "wrong-jwt-secret-env-not-used-32ch";
       const localApp = await buildApp();
-      const adminTok = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })
+      const adminTok = await new SignJWT({
+        tenant_id: TENANT,
+        tenant_type: "agency" as const,
+        tenant_status: "active" as const,
+        roles: ["admin"],
+      })
         .setProtectedHeader({ alg: "HS256" })
         .setSubject("user-admin-pref")
         .setIssuedAt()
@@ -122,7 +137,12 @@ describe("jwtAuth middleware", () => {
       resetJwtSecretCacheForTests();
       writeFileSync(secretPath, "short", { encoding: "utf8" });
       const localApp = await buildApp();
-      const adminTok = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })
+      const adminTok = await new SignJWT({
+        tenant_id: TENANT,
+        tenant_type: "agency" as const,
+        tenant_status: "active" as const,
+        roles: ["admin"],
+      })
         .setProtectedHeader({ alg: "HS256" })
         .setSubject("user-admin-short")
         .setIssuedAt()

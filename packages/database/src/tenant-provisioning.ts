@@ -1,5 +1,5 @@
 import type { TenantConfig } from "@agenticverdict/config";
-import { runWithTenantContext } from "@agenticverdict/core";
+import { runWithTenantContext, createTenantContext } from "@agenticverdict/core";
 import { eq } from "drizzle-orm";
 
 import type { Database } from "./client";
@@ -24,11 +24,13 @@ export async function provisionTenantTenant(
   tenantConfig: TenantConfig,
   slug: string,
 ): Promise<void> {
-  const ctx = {
+  const ctx = createTenantContext({
     tenantId: tenantConfig.tenantId,
+    tenantType: "direct_business",
+    tenantStatus: "onboarding",
     config: tenantConfig,
     requestId: "provision-tenant",
-  };
+  });
 
   await runWithTenantContext(ctx, async () =>
     dbScoped(db, async (tx) => {
@@ -44,7 +46,8 @@ export async function provisionTenantTenant(
         id: tenantConfig.tenantId,
         name: tenantConfig.tenantName,
         slug,
-        active: true,
+        type: "direct_business",
+        status: "onboarding",
       });
     }),
   );

@@ -11,6 +11,29 @@ import { suggestSlugFromTenantName } from "../tenant-provisioning";
 export interface TenantConfigSeedPayload {
   readonly tenantId: string;
   readonly tenantName: string;
+  readonly slug?: string;
+  readonly type?: "direct_business" | "agency_partner" | "agency_managed";
+  readonly status?: "onboarding" | "active" | "suspended" | "restricted" | "archived" | "deleted";
+  readonly agencyPartnerId?: string;
+  readonly parentTenantId?: string;
+  readonly localization?: {
+    readonly language?: string;
+    readonly region?: string;
+    readonly timezone?: string;
+    readonly currency?: string;
+  };
+  readonly features?: {
+    readonly enableInsights?: boolean;
+    readonly enableVerdict?: boolean;
+    readonly enableReports?: boolean;
+    readonly maxInsights?: number;
+    readonly maxUsers?: number;
+    readonly whiteLabelEnabled?: boolean;
+  };
+  readonly ai?: {
+    readonly primaryModel?: string;
+    readonly provider?: string;
+  };
 }
 
 export function listJsonFilenamesInDir(dir: string): string[] {
@@ -38,14 +61,34 @@ export async function upsertTenantFromConfigPayload(
   db: Database,
   payload: TenantConfigSeedPayload,
 ): Promise<void> {
-  const slugBase = suggestSlugFromTenantName(payload.tenantName);
+  const slugBase = payload.slug || suggestSlugFromTenantName(payload.tenantName);
   const slug = slugBase.length > 0 ? slugBase : payload.tenantId.slice(0, 8);
 
   const existing = await db.select().from(tenants).where(eq(tenants.id, payload.tenantId)).limit(1);
   if (existing.length > 0) {
     await db
       .update(tenants)
-      .set({ name: payload.tenantName, slug, updatedAt: new Date() })
+      .set({
+        name: payload.tenantName,
+        slug,
+        type: payload.type || "direct_business",
+        status: payload.status || "onboarding",
+        agencyPartnerId: payload.agencyPartnerId || null,
+        parentTenantId: payload.parentTenantId || null,
+        language: payload.localization?.language || "en",
+        region: payload.localization?.region || "US",
+        timezone: payload.localization?.timezone || "UTC",
+        currency: payload.localization?.currency || "USD",
+        enableInsights: payload.features?.enableInsights ?? true,
+        enableVerdict: payload.features?.enableVerdict ?? true,
+        enableReports: payload.features?.enableReports ?? true,
+        maxInsights: payload.features?.maxInsights ?? 10,
+        maxUsers: payload.features?.maxUsers ?? 5,
+        whiteLabelEnabled: payload.features?.whiteLabelEnabled ?? false,
+        aiProvider: payload.ai?.provider || "anthropic",
+        aiModel: payload.ai?.primaryModel || "claude-3-5-sonnet-20241022",
+        updatedAt: new Date(),
+      })
       .where(eq(tenants.id, payload.tenantId));
     return;
   }
@@ -54,6 +97,22 @@ export async function upsertTenantFromConfigPayload(
     id: payload.tenantId,
     name: payload.tenantName,
     slug,
+    type: payload.type || "direct_business",
+    status: payload.status || "onboarding",
+    agencyPartnerId: payload.agencyPartnerId || null,
+    parentTenantId: payload.parentTenantId || null,
+    language: payload.localization?.language || "en",
+    region: payload.localization?.region || "US",
+    timezone: payload.localization?.timezone || "UTC",
+    currency: payload.localization?.currency || "USD",
+    enableInsights: payload.features?.enableInsights ?? true,
+    enableVerdict: payload.features?.enableVerdict ?? true,
+    enableReports: payload.features?.enableReports ?? true,
+    maxInsights: payload.features?.maxInsights ?? 10,
+    maxUsers: payload.features?.maxUsers ?? 5,
+    whiteLabelEnabled: payload.features?.whiteLabelEnabled ?? false,
+    aiProvider: payload.ai?.provider || "anthropic",
+    aiModel: payload.ai?.primaryModel || "claude-3-5-sonnet-20241022",
   });
 }
 

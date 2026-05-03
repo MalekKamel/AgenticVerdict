@@ -42,6 +42,11 @@ export function I18nProvider({
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+/** Returns null when rendered outside `I18nProvider` (e.g. root or parent route `errorComponent`). */
+export function useI18nContextOptional() {
+  return useContext(I18nContext);
+}
+
 export function useLocale(): AppLocale {
   const ctx = useContext(I18nContext);
   if (!ctx) {

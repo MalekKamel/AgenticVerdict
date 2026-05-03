@@ -1,0 +1,10 @@
+{
+  "tenantId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "tenantName": "Scenario Tenant EN",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  }
+}

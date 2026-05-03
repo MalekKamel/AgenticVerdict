@@ -18,6 +18,8 @@ import { useTranslations } from "@/i18n/react";
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTenant } from "@/providers/TenantProvider";
+import { useRoles } from "@/features/rbac/hooks/useRoles";
+import { usePermissions } from "@/features/rbac/hooks/usePermissions";
 import { useDirection } from "@agenticverdict/ui";
 import { getNavbarToggleIcon } from "./navbar-utils";
 
@@ -58,6 +60,8 @@ function AppShellLayoutContent({ children }: { children: ReactNode }) {
   const router = useRouter();
   const auth = useAuthStore();
   const { tenantId } = useTenant();
+  const { hasRole } = useRoles();
+  const { permissions } = usePermissions();
   const shellBootstrap = useShellBootstrap();
   const { breadcrumbs, headerContext } = useAppShellContext();
   const transitionStartRef = useRef(performance.now());
@@ -69,12 +73,10 @@ function AppShellLayoutContent({ children }: { children: ReactNode }) {
   const { isRTL } = useDirection();
   const breadcrumbSeparator = isRTL ? "‹" : "›";
 
-  const roles: AppShellNavRole[] = auth.user?.email?.endsWith("@agenticverdict.com")
-    ? ["admin", "member"]
-    : ["member"];
+  const roles: AppShellNavRole[] = hasRole("admin") ? ["admin", "member"] : ["member"];
   const visibleNavItems = useMemo(
-    () => filterAppShellNavItems(APP_SHELL_NAV_ITEMS, { roles }),
-    [roles],
+    () => filterAppShellNavItems(APP_SHELL_NAV_ITEMS, { roles, permissions }),
+    [roles, permissions],
   );
 
   useEffect(() => {

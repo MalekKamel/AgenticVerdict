@@ -1,4 +1,4 @@
-import { createTestTenantConfig, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
+import { createTestTenantContext, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
 import { describe, expect, it, vi } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
@@ -44,11 +44,10 @@ describe("marketing-pipeline (Phase 7)", () => {
     });
 
     const factory = new AgentFactory({ llmEnv: {} });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-pipeline-1",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA, tenantName: "Pipeline Co" }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Pipeline Co" },
+    });
 
     const progress = vi.fn();
     const messages: { from: string; to: string; type: string }[] = [];
@@ -97,11 +96,10 @@ describe("marketing-pipeline (Phase 7)", () => {
     });
 
     const factory = new AgentFactory({ llmEnv: {} });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-fail",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA },
+    });
 
     const state = await runAgentJob({ tenant }, async (scope) =>
       runMarketingAgentPipeline({
@@ -132,11 +130,10 @@ describe("marketing-pipeline (Phase 7)", () => {
     });
 
     const factory = new AgentFactory({ llmEnv: {} });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-degraded",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA },
+    });
 
     const state = await runAgentJob({ tenant }, async (scope) =>
       runMarketingAgentPipeline({
@@ -173,11 +170,10 @@ describe("marketing-pipeline (Phase 7)", () => {
     });
 
     const factory = new AgentFactory({ llmEnv: {} });
-    const tenant = {
+    const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
-      requestId: "req-throw",
-      config: createTestTenantConfig({ tenantId: TEST_TENANT_ALPHA }),
-    };
+      tenantConfig: { tenantId: TEST_TENANT_ALPHA },
+    });
 
     await expect(
       runAgentJob({ tenant }, async (scope) =>

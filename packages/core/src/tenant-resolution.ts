@@ -1,3 +1,5 @@
+import type { TenantType, TenantStatus } from "@agenticverdict/types";
+
 import { TenantSecurityError } from "./tenant-security-error";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -82,6 +84,35 @@ function tenantIdFromJwtClaims(claims: Record<string, unknown>): string | undefi
   return undefined;
 }
 
+function tenantTypeFromJwtClaims(claims: Record<string, unknown>): TenantType | undefined {
+  const raw = claims["tenant_type"];
+  if (typeof raw === "string") {
+    const validTypes: TenantType[] = ["direct_business", "agency_partner", "agency_managed"];
+    if (validTypes.includes(raw as TenantType)) {
+      return raw as TenantType;
+    }
+  }
+  return undefined;
+}
+
+function tenantStatusFromJwtClaims(claims: Record<string, unknown>): TenantStatus | undefined {
+  const raw = claims["tenant_status"];
+  if (typeof raw === "string") {
+    const validStatuses: TenantStatus[] = [
+      "onboarding",
+      "active",
+      "suspended",
+      "restricted",
+      "archived",
+      "deleted",
+    ];
+    if (validStatuses.includes(raw as TenantStatus)) {
+      return raw as TenantStatus;
+    }
+  }
+  return undefined;
+}
+
 /**
  * Returns the subdomain label immediately to the left of a trusted base domain, if any.
  * @example host "acme.app.example.com", base "app.example.com" → "acme"
@@ -123,7 +154,10 @@ export function extractTenantSlugFromHost(
 export async function resolveTenantIdentity(
   sources: TenantResolutionSources,
   options: TenantResolutionOptions = {},
-): Promise<{ ok: true; tenantId: string } | { ok: false; error: TenantSecurityError }> {
+): Promise<
+  | { ok: true; tenantId: string; tenantType?: TenantType; tenantStatus?: TenantStatus }
+  | { ok: false; error: TenantSecurityError }
+> {
   try {
     const headers = normalizeHeaders(sources.headers);
     let fromHeader: string | undefined;
@@ -137,9 +171,13 @@ export async function resolveTenantIdentity(
     }
 
     let fromJwt: string | undefined;
+    let tenantTypeFromJwt: TenantType | undefined;
+    let tenantStatusFromJwt: TenantStatus | undefined;
     if (sources.jwtClaims) {
       try {
         fromJwt = tenantIdFromJwtClaims(sources.jwtClaims);
+        tenantTypeFromJwt = tenantTypeFromJwtClaims(sources.jwtClaims);
+        tenantStatusFromJwt = tenantStatusFromJwtClaims(sources.jwtClaims);
       } catch (err) {
         if (err instanceof TenantSecurityError) {
           return { ok: false, error: err };
@@ -161,7 +199,12 @@ export async function resolveTenantIdentity(
 
     const fromAuth = fromHeader ?? fromJwt;
     if (fromAuth) {
-      return { ok: true, tenantId: fromAuth };
+      return {
+        ok: true,
+        tenantId: fromAuth,
+        tenantType: tenantTypeFromJwt,
+        tenantStatus: tenantStatusFromJwt,
+      };
     }
 
     const bases = options.trustedBaseDomains ?? [];

@@ -23,7 +23,7 @@ services:
         # Vite compile-time API base consumed by browser bundle in production-like runtime.
         VITE_PUBLIC_API_URL: ${VITE_PUBLIC_API_URL:-http://localhost:4000}
         # Required by /$locale home loader for demo tenant config resolution.
-        VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:-11111111-1111-4111-8111-111111111111}
+        VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:?set VITE_PUBLIC_DEFAULT_TENANT_ID}
     ports:
       - "3000:3000"
     read_only: true
@@ -42,7 +42,7 @@ services:
       API_URL: ${FRONTEND_INTERNAL_API_URL:-http://api:4000}
       # Keep runtime env aligned with build-time value for diagnostics and fallbacks.
       VITE_PUBLIC_API_URL: ${VITE_PUBLIC_API_URL:-http://localhost:4000}
-      VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:-11111111-1111-4111-8111-111111111111}
+      VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:?set VITE_PUBLIC_DEFAULT_TENANT_ID}
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agenticverdict
       REDIS_URL: redis://redis:6379
       TENANT_CONFIG_DIR: /app/configs/tenants

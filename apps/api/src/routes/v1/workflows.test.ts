@@ -22,13 +22,23 @@ describe("workflow routes (Phase 1 production-flow foundation)", () => {
     process.env.JWT_SECRET = JWT_SECRET;
     app = await buildApiServer();
     await app.ready();
-    adminToken = await new SignJWT({ tenant_id: TENANT, roles: ["admin"] })
+    adminToken = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["admin"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("admin-user")
       .setIssuedAt()
       .setExpirationTime("2h")
       .sign(new TextEncoder().encode(JWT_SECRET));
-    analystToken = await new SignJWT({ tenant_id: TENANT, roles: ["analyst"] })
+    analystToken = await new SignJWT({
+      tenant_id: TENANT,
+      tenant_type: "agency" as const,
+      tenant_status: "active" as const,
+      roles: ["analyst"],
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject("analyst-user")
       .setIssuedAt()

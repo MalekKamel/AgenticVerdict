@@ -261,7 +261,7 @@ Example references:
 Frequent checks:
 
 - API connectivity errors: verify `VITE_PUBLIC_API_URL`/`API_URL` and API server availability
-- Auth redirect issues: inspect protected route session logic and auth mode (`VITE_PUBLIC_AUTH_API_MODE`)
+- Auth redirect issues: inspect protected route session logic and auth mode (`VITE_PUBLIC_AUTH_API_MODE`); for locale doubling or login/dashboard loops see [`frontend-development-guidelines.md`](./frontend-development-guidelines.md) §4.1 / §4.4 and [`router-navigation-guide.md`](./router-navigation-guide.md) (locale-safe redirects)
 - Missing translations: run i18n extract/validate scripts and inspect message files
 - Layout regressions: always test both `/en` and `/ar`
 

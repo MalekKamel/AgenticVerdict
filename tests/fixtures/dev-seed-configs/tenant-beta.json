@@ -1,0 +1,56 @@
+{
+  "tenantId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "tenantName": "Beta Industries",
+  "slug": "beta-industries",
+  "active": true,
+  "localization": {
+    "language": "en",
+    "region": "GB",
+    "timezone": "Europe/London",
+    "currency": "GBP"
+  },
+  "marketing": {
+    "channels": [
+      { "platform": "ga4", "enabled": true },
+      { "platform": "tiktok", "enabled": true },
+      { "platform": "gbp", "enabled": true }
+    ],
+    "kpis": [{ "id": "conversions", "name": "E-commerce conversions" }],
+    "b2bKpiProfile": {
+      "enabled": false
+    }
+  },
+  "ai": {
+    "primaryModel": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true
+  },
+  "ui": {
+    "brand": {
+      "colors": {
+        "primary": "#7B1FA2",
+        "secondary": "#424242",
+        "success": "#388E3C",
+        "warning": "#FBC02D",
+        "danger": "#D32F2F",
+        "info": "#0097A7"
+      },
+      "typography": {
+        "fontFamily": "Roboto, system-ui, -apple-system, sans-serif"
+      },
+      "branding": {
+        "logoUrl": "/logos/beta-logo.svg",
+        "logoHeight": "32px",
+        "appName": "Beta Insights"
+      }
+    }
+  },
+  "business": {
+    "products": ["E-commerce platform", "Retail analytics"],
+    "valueProps": ["Conversion optimization", "Customer insights"],
+    "differentiators": ["Industry benchmarks", "Predictive analytics"]
+  }
+}

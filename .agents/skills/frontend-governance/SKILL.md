@@ -35,7 +35,9 @@ Use these in order and treat them as authoritative:
   - prevent redirect loops,
   - block unsafe redirect targets,
   - preserve protected/public route intent,
-  - keep session/guard transitions deterministic.
+  - keep session/guard transitions deterministic,
+  - compose locale + redirect targets with **`withLocalePrefix`** (never assume `redirect` strings are locale-relative unless encoded that way); encode SSR **`redirect`** query paths with **`buildProtectedRedirectTarget`** when matching protected-route conventions,
+  - **never** infer signed-out state from unwired **`context.auth`** (or similar) in `beforeLoad`—use **`fetchProtectedRouteSession`** / SPA defer patterns documented in **`docs/05-reference/frontend-development-guidelines.md`** §4.4 and **`docs/05-reference/router-navigation-guide.md`**.
 - Do not introduce tenant-specific hardcoding; keep configuration-driven behavior.
 
 ## Required validation commands

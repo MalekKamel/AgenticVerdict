@@ -13,7 +13,7 @@ services:
         DEPS_IMAGE: agenticverdict/deps:local
         # Ensure production-built frontend bundle has an explicit browser API base.
         VITE_PUBLIC_API_URL: ${VITE_PUBLIC_API_URL:-http://localhost:4000}
-        VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:-11111111-1111-4111-8111-111111111111}
+        VITE_PUBLIC_DEFAULT_TENANT_ID: ${VITE_PUBLIC_DEFAULT_TENANT_ID:?set VITE_PUBLIC_DEFAULT_TENANT_ID}
     develop:
       watch:
         - action: rebuild

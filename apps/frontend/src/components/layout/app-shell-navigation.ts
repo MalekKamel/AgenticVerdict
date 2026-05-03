@@ -1,17 +1,26 @@
-import { isFeatureFlagsAdminUiEnabled } from "@/lib/feature-flags/feature-flags-readiness";
+import { isOnboardingWizardEnabled } from "@/features/onboarding/model/onboarding-readiness";
+import { type Permission, PERMISSIONS } from "@agenticverdict/types";
 
-export type AppShellNavKey = "home" | "dashboard" | "onboarding" | "featureFlags";
+export type AppShellNavKey =
+  | "home"
+  | "dashboard"
+  | "onboarding"
+  | "featureFlags"
+  | "connectors"
+  | "agency";
 export type AppShellNavRole = "admin" | "member";
-export type AppShellNavFeatureFlag = "featureFlagsAdminUi";
+export type AppShellNavFeatureFlag = "onboardingWizard";
 
 export type AppShellNavItem = {
   id: AppShellNavKey;
   href: string;
-  labelKey: "home" | "dashboard" | "onboarding" | "featureFlags";
+  labelKey: "home" | "dashboard" | "onboarding" | "featureFlags" | "connectors" | "agency";
   matchMode?: "exact" | "prefix";
   prefetchPriority?: "high" | "normal";
   requiredRoles?: readonly AppShellNavRole[];
+  requiredPermissions?: readonly Permission[];
   featureFlag?: AppShellNavFeatureFlag;
+  requiresAgencyPartner?: boolean;
 };
 
 export const APP_SHELL_NAV_ITEMS: readonly AppShellNavItem[] = [
@@ -24,11 +33,28 @@ export const APP_SHELL_NAV_ITEMS: readonly AppShellNavItem[] = [
     prefetchPriority: "high",
   },
   {
+    id: "connectors",
+    href: "/dashboard/connectors",
+    labelKey: "connectors",
+    matchMode: "prefix",
+    prefetchPriority: "high",
+    requiredPermissions: [PERMISSIONS.CONNECTORS_READ],
+  },
+  {
+    id: "agency",
+    href: "/dashboard/agency",
+    labelKey: "agency",
+    matchMode: "prefix",
+    prefetchPriority: "high",
+    requiresAgencyPartner: true,
+  },
+  {
     id: "onboarding",
     href: "/onboarding",
     labelKey: "onboarding",
-    matchMode: "prefix",
+    matchMode: "exact",
     prefetchPriority: "high",
+    featureFlag: "onboardingWizard",
   },
   {
     id: "featureFlags",
@@ -37,12 +63,13 @@ export const APP_SHELL_NAV_ITEMS: readonly AppShellNavItem[] = [
     matchMode: "prefix",
     prefetchPriority: "normal",
     requiredRoles: ["admin"],
-    featureFlag: "featureFlagsAdminUi",
   },
 ];
 
 export type AppShellNavFilterContext = {
   roles: readonly AppShellNavRole[];
+  permissions?: readonly Permission[];
+  isAgencyPartner?: boolean;
 };
 
 function hasFeatureFlagEnabled(flag: AppShellNavFeatureFlag | undefined): boolean {
@@ -50,11 +77,26 @@ function hasFeatureFlagEnabled(flag: AppShellNavFeatureFlag | undefined): boolea
     return true;
   }
 
-  if (flag === "featureFlagsAdminUi") {
-    return isFeatureFlagsAdminUiEnabled();
+  if (flag === "onboardingWizard") {
+    return isOnboardingWizardEnabled();
   }
 
   return true;
+}
+
+function hasRequiredPermission(
+  item: AppShellNavItem,
+  permissions: readonly Permission[] | undefined,
+): boolean {
+  if (!item.requiredPermissions || item.requiredPermissions.length === 0) {
+    return true;
+  }
+
+  if (!permissions) {
+    return false;
+  }
+
+  return item.requiredPermissions.some((permission) => permissions.includes(permission));
 }
 
 function hasRequiredRole(item: AppShellNavItem, roles: readonly AppShellNavRole[]): boolean {
@@ -74,7 +116,19 @@ export function filterAppShellNavItems(
       return false;
     }
 
-    return hasRequiredRole(item, context.roles);
+    if (!hasRequiredPermission(item, context.permissions)) {
+      return false;
+    }
+
+    if (!hasRequiredRole(item, context.roles)) {
+      return false;
+    }
+
+    if (item.requiresAgencyPartner && !context.isAgencyPartner) {
+      return false;
+    }
+
+    return true;
   });
 }
 

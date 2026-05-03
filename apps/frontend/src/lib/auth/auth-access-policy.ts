@@ -1,3 +1,5 @@
+import type { AppLocale } from "@/i18n/locales";
+import { withLocalePrefix } from "@/router/utils/navigation";
 import { isTenantUuid } from "@/lib/tenant/tenant-resolution";
 
 import type { AuthResolutionState } from "./auth-resolution-state";
@@ -52,7 +54,10 @@ export function resolveRouteAccessDecision({
     }
 
     const target = redirectTarget ?? "/dashboard";
-    return { type: "redirect", to: `/${locale}${target}` };
+    return {
+      type: "redirect",
+      to: withLocalePrefix(locale as AppLocale, target),
+    };
   }
 
   if (authState.kind === "anonymous") {

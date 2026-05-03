@@ -1,8 +1,11 @@
 /**
  * Resolves the effective tenant UUID for the browser client.
  *
- * Priority: authenticated session → slug → host resolution (`tenant.resolveSlug`) →
- * optional `VITE_PUBLIC_DEFAULT_TENANT_ID`.
+ * Priority: authenticated session → `VITE_PUBLIC_DEFAULT_TENANT_ID` → slug from host
+ * (`tenant.resolveSlug`). The default env wins over slug so local / single-tenant setups stay
+ * coherent when `VITE_PUBLIC_TENANT_BASE_DOMAINS` also matches (subdomain inference must not
+ * override an explicit default). Multi-tenant hosts that rely only on subdomain should leave the
+ * default env unset.
  */
 
 import { isTenantUuid, resolveTenantIdByPriority } from "./resolve-tenant-id-by-priority";
@@ -37,7 +40,7 @@ export interface EffectiveTenantSources {
 export function getEffectiveTenantId(sources: EffectiveTenantSources = {}): string | undefined {
   return resolveTenantIdByPriority(
     sources.authTenantId,
-    sources.slugResolvedTenantId,
     readDefaultTenantFromEnv(),
+    sources.slugResolvedTenantId,
   );
 }

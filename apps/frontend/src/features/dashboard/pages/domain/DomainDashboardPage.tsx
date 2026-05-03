@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "@mantine/core";
-import { useParams } from "@tanstack/react-router";
+import { useParams } from "@/router/hooks/useParams";
 
 import { useAppShellHeader } from "@/components/layout/app-shell-context";
 import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";

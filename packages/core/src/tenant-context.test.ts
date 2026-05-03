@@ -22,10 +22,15 @@ const sampleConfig = {
   features: { enableInsights: true, enableVerdict: false },
 };
 
+const sampleTenantType = "direct_business" as const;
+const sampleTenantStatus = "active" as const;
+
 describe("tenant context", () => {
   it("buildTenantContextForJob maps id, request, and config", () => {
     const ctx = buildTenantContextForJob({
       tenantId: sampleConfig.tenantId,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       requestId: "job-1",
       tenantConfig: sampleConfig,
     });
@@ -37,6 +42,8 @@ describe("tenant context", () => {
   it("propagates context inside runWithTenantContext", async () => {
     const ctx: TenantContext = {
       tenantId: sampleConfig.tenantId,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "req-1",
     };
@@ -58,6 +65,8 @@ describe("tenant context", () => {
   it("requireTenantContext returns the active context inside runWithTenantContext", async () => {
     const ctx: TenantContext = {
       tenantId: sampleConfig.tenantId,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "req-2",
     };
@@ -70,12 +79,16 @@ describe("tenant context", () => {
   it("restores outer tenant after nested runWithTenantContext", async () => {
     const outer: TenantContext = {
       tenantId: sampleConfig.tenantId,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: sampleConfig,
       requestId: "outer",
     };
     const innerTenant = "22222222-2222-4222-8222-222222222222";
     const inner: TenantContext = {
       tenantId: innerTenant,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: { ...sampleConfig, tenantId: innerTenant },
       requestId: "inner",
     };
@@ -92,6 +105,8 @@ describe("tenant context", () => {
   it("keeps tenant contexts isolated across concurrent async branches", async () => {
     const makeCtx = (id: string, requestId: string): TenantContext => ({
       tenantId: id,
+      tenantType: sampleTenantType,
+      tenantStatus: sampleTenantStatus,
       config: { ...sampleConfig, tenantId: id },
       requestId,
     });

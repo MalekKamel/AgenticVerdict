@@ -5,8 +5,10 @@ import * as schema from "../src/schema/index";
 describe("database schema exports", () => {
   it("exports all Phase 0 tables", () => {
     expect(Object.keys(schema).sort()).toEqual([
+      "agencyPartnerTierEnum",
       "agencyPartners",
       "auditLogs",
+      "connectorSyncHistory",
       "connectorTagMappings",
       "connectorTags",
       "dataConnectors",
@@ -15,13 +17,20 @@ describe("database schema exports", () => {
       "insightConnectors",
       "insights",
       "marketingMetrics",
+      "permissions",
       "platformCredentials",
       "provenanceRecords",
       "reportTemplates",
       "reports",
+      "rolePermissions",
+      "roles",
+      "tenantConnectors",
       "tenantFeatureFlags",
+      "tenantStatusEnum",
+      "tenantTypeEnum",
       "tenants",
       "usageTracking",
+      "userRoles",
       "users",
     ]);
   });
