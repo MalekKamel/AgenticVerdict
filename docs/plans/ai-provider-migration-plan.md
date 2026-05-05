@@ -1,9 +1,10 @@
 # AI Provider Implementation Plan
 
 **Document Type:** Implementation Plan  
-**Date:** 2026-05-04  
-**Status:** Draft  
-**Approach:** Greenfield Implementation with Destructive Replacement
+**Date:** 2026-05-05  
+**Status:** Revised (Post-Review)  
+**Approach:** Greenfield Implementation with Gradual Migration  
+**Review Decision:** Approved with Conditions (2026-05-05)
 
 ---
 
@@ -18,7 +19,9 @@ This plan outlines the implementation of AgenticVerdict's AI provider integratio
 3. **Multi-tenant credential management** - Tenant-scoped API keys with complete isolation
 4. **Canonical error handling** - Full integration with error-system
 5. **Lifecycle hooks** - Billing, tracing, cost tracking support
-6. **Destructive replacement** - Complete cleanup of legacy implementation
+6. **Gradual migration** - Blue-green deployment with feature flags and rollback capability
+7. **Security-first design** - External audit before Phase 2, compliance (GDPR, PII) built-in
+8. **Provider resilience** - Automatic failover with circuit breakers
 
 ### Success Metrics
 
@@ -29,7 +32,10 @@ This plan outlines the implementation of AgenticVerdict's AI provider integratio
 | **Tenant Isolation**       | Complete (credentials, logs, errors)   | Phase 1  |
 | **Test Coverage**          | 85% business logic, 90% critical paths | Phase 2  |
 | **Supported Providers**    | 10+ configurable providers             | Phase 3  |
-| **Legacy Code Removal**    | 100% hardcoded logic removed           | Phase 3  |
+| **Legacy Code Removal**    | 100% hardcoded logic removed           | Phase 4  |
+| **Security Audit**         | Zero critical findings                 | Phase 1  |
+| **p95 Latency**            | <2s for chat completions               | Phase 2  |
+| **Failover Success Rate**  | >99% automatic recovery                | Phase 3  |
 
 ---
 
@@ -131,11 +137,11 @@ packages/agent-runtime/
 
 ## 2. Implementation Phases
 
-### Phase 1: Foundation (Weeks 1-2)
+### Phase 1: Foundation (Weeks 1-3)
 
-**Goal:** Establish core infrastructure with complete replacement of existing implementation
+**Goal:** Establish core infrastructure with security audit gate
 
-#### Task 1.1: Core Interfaces (3 days)
+#### Task 1.1: Core Interfaces (4 days)
 
 ```typescript
 // packages/agent-runtime/src/core/BaseProvider.ts
@@ -160,7 +166,7 @@ export interface ProviderRuntime {
 - [ ] Type definitions for all payload/response types
 - [ ] Unit tests for type safety
 
-#### Task 1.2: Provider Factory (2 days)
+#### Task 1.2: Provider Factory (3 days)
 
 ```typescript
 // packages/agent-runtime/src/core/ProviderFactory.ts
@@ -182,7 +188,7 @@ export class ProviderFactory {
 - [ ] Provider registration mechanism
 - [ ] Unit tests for factory pattern
 
-#### Task 1.3: Error System Integration (2 days)
+#### Task 1.3: Error System Integration (4 days)
 
 ```typescript
 // packages/agent-runtime/src/errors/AgentRuntimeError.ts
@@ -232,7 +238,7 @@ export class AgentRuntimeError extends Error {
 - [ ] Error translators for each provider
 - [ ] Integration with `@agenticverdict/core` error-system
 
-#### Task 1.4: Tenant Context Integration (2 days)
+#### Task 1.4: Tenant Context Integration (3 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/credentials.ts
@@ -262,7 +268,7 @@ export class CredentialManager {
 - [ ] Encryption at rest (using existing crypto utilities)
 - [ ] Unit tests for credential isolation
 
-#### Task 1.5: OpenAI Provider Implementation (3 days)
+#### Task 1.5: OpenAI Provider Implementation (5 days)
 
 ```typescript
 // packages/agent-runtime/src/providers/openai/index.ts
@@ -306,6 +312,36 @@ ProviderFactory.register("openai", OpenAIProvider);
 - [ ] Model discovery
 - [ ] Unit + integration tests
 
+#### Task 1.6: Security & Compliance Foundation (3 days)
+
+```typescript
+// packages/agent-runtime/src/utils/compliance.ts
+export interface ComplianceConfig {
+  dataResidency: "us" | "eu" | "apac" | "global";
+  piiRedaction: boolean;
+  auditLogging: boolean;
+  retentionDays: number;
+}
+
+export class ComplianceManager {
+  async redactPII(content: string): Promise<string> {
+    // Remove emails, phones, names before provider calls
+  }
+
+  async logAuditEvent(event: AuditEvent): Promise<void> {
+    // Log all AI decisions with tenant context
+  }
+}
+```
+
+**Deliverables:**
+
+- [ ] PII redaction before provider calls
+- [ ] Audit logging for all AI decisions
+- [ ] Data residency configuration
+- [ ] GDPR compliance checks
+- [ ] Unit tests for compliance rules
+
 #### Phase 1 Acceptance Criteria
 
 - [ ] All core interfaces defined and type-safe
@@ -314,15 +350,18 @@ ProviderFactory.register("openai", OpenAIProvider);
 - [ ] Tenant credentials isolated and encrypted
 - [ ] OpenAI provider fully functional
 - [ ] 85%+ test coverage for new code
-- [ ] Legacy LangChain integration identified for removal
+- [ ] **Security audit passed (zero critical findings)**
+- [ ] **Compliance requirements implemented (GDPR, PII)**
+- [ ] **AsyncLocalStorage implementation complete with context propagation**
+- [ ] **Legacy LangChain integration identified for removal**
 
 ---
 
-### Phase 2: Provider Expansion (Weeks 3-4)
+### Phase 2: Provider Expansion (Weeks 4-6)
 
-**Goal:** Add 5+ providers and lifecycle hooks
+**Goal:** Add 5+ providers, lifecycle hooks, and monitoring
 
-#### Task 2.1: Anthropic Provider (2 days)
+#### Task 2.1: Anthropic Provider (3 days)
 
 ```typescript
 // packages/agent-runtime/src/providers/anthropic/index.ts
@@ -353,7 +392,7 @@ export class AnthropicProvider extends BaseProvider {
 - [ ] Tool use support
 - [ ] Tests with mock responses
 
-#### Task 2.2: Google Provider (2 days)
+#### Task 2.2: Google Provider (3 days)
 
 ```typescript
 // packages/agent-runtime/src/providers/google/index.ts
@@ -376,7 +415,7 @@ export class GoogleProvider extends BaseProvider {
 - [ ] Vision and multimodal support
 - [ ] Tests
 
-#### Task 2.3: OpenAI-Compatible Factory (3 days)
+#### Task 2.3: OpenAI-Compatible Factory (4 days)
 
 ```typescript
 // packages/agent-runtime/src/core/OpenAICompatibleFactory.ts
@@ -418,7 +457,7 @@ export const DeepSeekProvider = createOpenAICompatibleProvider({
 - [ ] Configuration-driven initialization
 - [ ] Tests
 
-#### Task 2.4: Lifecycle Hooks (3 days)
+#### Task 2.4: Lifecycle Hooks (4 days)
 
 ```typescript
 // packages/agent-runtime/src/types/hooks.ts
@@ -451,7 +490,7 @@ export interface HookContext {
   - [ ] Structured logging
 - [ ] Hook composition support
 
-#### Task 2.5: AWS Bedrock Provider (3 days)
+#### Task 2.5: AWS Bedrock Provider (5 days)
 
 ```typescript
 // packages/agent-runtime/src/providers/bedrock/index.ts
@@ -486,21 +525,55 @@ export class BedrockProvider extends BaseProvider {
 - [ ] Multiple model support (Claude, Llama, etc.)
 - [ ] Tests
 
+#### Task 2.6: Monitoring & Observability (3 days)
+
+```typescript
+// packages/agent-runtime/src/observability/metrics.ts
+export interface ProviderMetrics {
+  requestCount: number;
+  latencyHistogram: number[];
+  errorRate: number;
+  tokenUsage: { input: number; output: number };
+  cost: number;
+}
+
+export class MetricsCollector {
+  async recordRequest(providerId: string, latency: number, success: boolean): Promise<void> {
+    // Prometheus metrics
+  }
+
+  async getHealthDashboard(): Promise<ProviderHealthStatus[]> {
+    // Aggregate metrics for all providers
+  }
+}
+```
+
+**Deliverables:**
+
+- [ ] Prometheus metrics (request_count, latency_histogram, error_rate)
+- [ ] Grafana dashboard JSON
+- [ ] Alertmanager rules (latency >5s, error rate >1%)
+- [ ] LangSmith/Langfuse integration
+- [ ] Structured logging with tenant context
+
 #### Phase 2 Acceptance Criteria
 
 - [ ] 7+ providers implemented (OpenAI, Anthropic, Google, Bedrock, 3+ OpenAI-compatible)
 - [ ] Lifecycle hooks working for billing and tracing
 - [ ] Configuration-driven provider selection
 - [ ] 85%+ test coverage
-- [ ] Performance benchmarks (p95 latency <2s for chat)
+- [ ] **Performance benchmarks (p95 latency <2s for chat)**
+- [ ] **Monitoring dashboard functional with alerts**
+- [ ] **Load testing completed (1000+ iterations)**
+- [ ] **Tenant isolation test suite passed**
 
 ---
 
-### Phase 3: Destructive Replacement (Weeks 5-6)
+### Phase 3: Gradual Migration (Weeks 7-10)
 
-**Goal:** Complete replacement of legacy implementation with zero backward compatibility
+**Goal:** Safe migration with blue-green deployment and gradual traffic cutover
 
-#### Task 3.1: Legacy Code Audit (1 day)
+#### Task 3.1: Legacy Code Audit (2 days)
 
 Identify all hardcoded provider implementations for removal:
 
@@ -516,7 +589,41 @@ Identify all hardcoded provider implementations for removal:
 - [ ] Removal checklist
 - [ ] Validation tests to ensure new system covers all use cases
 
-#### Task 3.2: Agent Factory Replacement (3 days)
+#### Task 3.2: Blue-Green Deployment Infrastructure (4 days)
+
+```typescript
+// packages/agent-runtime/src/deployment/trafficManager.ts
+export interface TrafficConfig {
+  newSystemPercentage: number; // 0-100
+  rollbackTriggers: {
+    errorRateThreshold: number; // e.g., 0.01 = 1%
+    latencyThreshold: number; // e.g., 5000ms
+    tenantIsolationBreach: boolean;
+  };
+}
+
+export class TrafficManager {
+  async shouldUseNewSystem(tenantId: string): Promise<boolean> {
+    // Feature flag-based routing
+  }
+
+  async checkRollbackTriggers(): Promise<{ shouldRollback: boolean; reason?: string }> {
+    // Monitor error rates, latency, isolation breaches
+  }
+
+  async setTrafficPercentage(percentage: number): Promise<void> {
+    // Gradual cutover: 10% → 50% → 100%
+  }
+}
+```
+
+**Deliverables:**
+
+- [ ] Feature flag system for provider routing
+- [ ] Traffic percentage control (0% → 10% → 50% → 100%)
+- [ ] Rollback trigger monitoring
+- [ ] Automatic rollback on threshold breach
+- [ ] A/B testing infrastructure
 
 ```typescript
 // packages/agent-runtime/src/agent-factory.ts (updated)
@@ -562,28 +669,61 @@ export async function createAgent(config: AgentConfig) {
 - [ ] Billing integration
 - [ ] Tests
 
-#### Task 3.3: Remove Legacy Implementations (2 days)
+#### Task 3.3: Parallel Run & Validation (5 days)
 
-**Complete removal of:**
+**Goal:** Run both systems in parallel with traffic mirroring
 
-- [ ] All LangChain-based provider integrations
-- [ ] Hardcoded API key references
-- [ ] Legacy agent factory implementations
-- [ ] Old environment variable schemas
-- [ ] Backward compatibility shims
+```typescript
+// packages/agent-runtime/src/migration/parallelRunner.ts
+export class ParallelRunner {
+  async processWithComparison(payload: ChatStreamPayload): Promise<ComparisonResult> {
+    const [legacyResult, newResult] = await Promise.all([
+      this.legacySystem.chat(payload),
+      this.newSystem.chat(payload),
+    ]);
 
-**Validation:**
-
-- [ ] Zero references to `ChatOpenAI`, `ChatAnthropic`, etc. outside test code
-- [ ] Zero hardcoded API keys in source code
-- [ ] All providers use new factory pattern
-- [ ] All credentials tenant-scoped
+    return {
+      legacy: legacyResult,
+      new: newResult,
+      match: this.compareResults(legacyResult, newResult),
+      latencyDiff: legacyResult.latency - newResult.latency,
+    };
+  }
+}
+```
 
 **Deliverables:**
 
-- [ ] Complete legacy code removal
-- [ ] Updated import paths in all agents
-- [ ] Validation script to detect legacy patterns
+- [ ] Traffic mirroring to both systems
+- [ ] Result comparison and validation
+- [ ] Latency comparison tracking
+- [ ] Discrepancy detection and alerting
+- [ ] Validation report generation
+
+#### Task 3.4: Gradual Traffic Cutover (5 days)
+
+**Cutover Schedule:**
+
+- **Day 1:** 10% traffic to new system
+- **Day 2-3:** Monitor at 10%, validate metrics
+- **Day 4:** 50% traffic to new system
+- **Day 5-6:** Monitor at 50%, validate metrics
+- **Day 7:** 100% traffic to new system
+
+**Rollback Triggers:**
+
+- Error rate >1%
+- p95 latency >5s
+- Any tenant isolation breach
+- Cost anomaly (>20% increase)
+
+**Deliverables:**
+
+- [ ] Gradual cutover completed (10% → 50% → 100%)
+- [ ] Zero rollback triggers activated
+- [ ] Performance metrics validated
+- [ ] Cost tracking validated
+- [ ] Tenant isolation verified
 
 ```typescript
 // packages/agent-runtime/src/chat-models.ts (updated)
@@ -627,15 +767,70 @@ export function getModelConfig(modelId: string): ChatModelConfig {
 - [ ] Pricing metadata
 - [ ] Capability flags
 
-#### Task 3.4: Update Specialized Agents (3 days)
+#### Task 3.6: Provider Failover & Resilience (4 days)
 
-**Agents to Replace:**
+```typescript
+// packages/agent-runtime/src/resilience/circuitBreaker.ts
+export interface FailoverConfig {
+  primaryProvider: string;
+  fallbackProviders: string[]; // Ordered by priority
+  circuitBreaker: {
+    failureThreshold: number; // e.g., 5 failures
+    resetTimeout: number; // e.g., 60000ms
+    monitoringWindow: number; // e.g., 30000ms
+  };
+}
 
-- [ ] `b2b-funnel-from-snapshots.ts`
-- [ ] `b2b-marketing-kpis.ts`
-- [ ] `marketing-pipeline.ts`
-- [ ] `configurable-llm-agent.ts`
-- [ ] `specialized-marketing-agents.ts`
+export class CircuitBreaker {
+  private failures: number[] = [];
+
+  async execute<T>(fn: () => Promise<T>, providerId: string): Promise<T> {
+    if (this.isOpen(providerId)) {
+      throw new Error(`Circuit breaker open for ${providerId}`);
+    }
+
+    try {
+      const result = await fn();
+      this.recordSuccess(providerId);
+      return result;
+    } catch (error) {
+      this.recordFailure(providerId);
+      throw error;
+    }
+  }
+}
+
+// packages/agent-runtime/src/resilience/failoverHandler.ts
+export class FailoverHandler {
+  async executeWithFailover<T>(
+    providerChain: string[],
+    executeFn: (providerId: string) => Promise<T>,
+  ): Promise<T> {
+    let lastError: Error | null = null;
+
+    for (const providerId of providerChain) {
+      try {
+        return await executeFn(providerId);
+      } catch (error) {
+        lastError = error as Error;
+        // Log failover event
+        await this.logFailover(providerId, error);
+        // Continue to next provider
+      }
+    }
+
+    throw new Error(`All providers failed: ${lastError?.message}`);
+  }
+}
+```
+
+**Deliverables:**
+
+- [ ] Circuit breaker pattern implementation
+- [ ] Automatic failover chain (primary → secondary → tertiary)
+- [ ] Health-based provider routing
+- [ ] Failover event logging and alerting
+- [ ] Unit + integration tests for failover scenarios
 
 **Replacement Pattern:**
 
@@ -658,7 +853,7 @@ const runtime = ProviderFactory.create(tenantConfig.providerId, {
 - [ ] Tenant-scoped credentials throughout
 - [ ] Tests for each agent
 
-#### Task 3.5: Configuration Schema (2 days)
+#### Task 3.7: Update Specialized Agents (6 days)
 
 ```typescript
 // packages/config/src/schemas/provider-config.ts
@@ -710,17 +905,20 @@ export type ProviderConfig = z.infer<typeof providerConfigSchema>;
 - [ ] Zero hardcoded API keys in codebase
 - [ ] Tenant-scoped credentials working
 - [ ] Billing integration functional
+- [ ] **Gradual cutover completed (10% → 50% → 100%)**
+- [ ] **Zero rollback triggers activated**
+- [ ] **Provider failover tested and working**
 - [ ] Legacy code completely removed
 - [ ] Zero backward compatibility layers
 - [ ] All tests passing with new implementation
 
 ---
 
-### Phase 4: Advanced Features (Weeks 7-8)
+### Phase 4: Advanced Features (Weeks 11-12)
 
 **Goal:** Add advanced features and optimizations
 
-#### Task 4.1: Model Discovery (2 days)
+#### Task 4.1: Model Discovery (3 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/modelDiscovery.ts
@@ -754,7 +952,7 @@ export class ModelDiscoveryService {
 - [ ] Capability detection
 - [ ] UI integration support
 
-#### Task 4.2: Provider Health Monitoring (2 days)
+#### Task 4.2: Provider Health Monitoring (3 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/health.ts
@@ -809,7 +1007,7 @@ export class HealthMonitor {
 - [ ] Error rate monitoring
 - [ ] Health dashboard API
 
-#### Task 4.3: Rate Limiting (2 days)
+#### Task 4.3: Rate Limiting (3 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/rateLimiter.ts
@@ -848,7 +1046,7 @@ export class TenantRateLimiter {
 - [ ] Redis-backed counters
 - [ ] 429 error handling
 
-#### Task 4.4: Cost Optimization (3 days)
+#### Task 4.4: Cost Optimization (4 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/costOptimizer.ts
@@ -889,7 +1087,7 @@ export class CostOptimizer {
 - [ ] Optimization recommendations
 - [ ] Budget alerts
 
-#### Task 4.5: A/B Testing Framework (2 days)
+#### Task 4.5: A/B Testing Framework (3 days)
 
 ```typescript
 // packages/agent-runtime/src/utils/abTesting.ts
@@ -926,6 +1124,58 @@ export class ABTestRunner {
 - [ ] Metrics tracking
 - [ ] Analysis utilities
 
+#### Task 4.6: Tenant Isolation Test Suite (3 days)
+
+**Explicit Test Scenarios:**
+
+```typescript
+// packages/agent-runtime/tests/integration/tenant-isolation.test.ts
+describe("Tenant Isolation", () => {
+  it("should not leak credentials between concurrent tenant requests", async () => {
+    // Simulate concurrent requests from different tenants
+    const [result1, result2] = await Promise.all([
+      processRequest({ tenantId: "tenant-a", providerId: "openai" }),
+      processRequest({ tenantId: "tenant-b", providerId: "anthropic" }),
+    ]);
+
+    // Verify each used correct credentials
+    expect(result1.usedApiKey).not.toEqual(result2.usedApiKey);
+  });
+
+  it("should scope cache keys by tenantId", async () => {
+    await cache.set("tenant:a:models:openai", ["gpt-4o"]);
+    await cache.set("tenant:b:models:openai", ["claude-sonnet-4"]);
+
+    expect(await cache.get("tenant:a:models:openai")).toEqual(["gpt-4o"]);
+    expect(await cache.get("tenant:b:models:openai")).toEqual(["claude-sonnet-4"]);
+  });
+
+  it("should include tenantId in all error objects", async () => {
+    const error = await catch_error(() => processRequest({ tenantId: "tenant-a" }));
+    expect(error.tenantId).toBe("tenant-a");
+  });
+
+  it("should fail if tenantId context is missing", async () => {
+    await expect(processRequestWithoutTenant()).rejects.toThrow("Tenant context not found");
+  });
+
+  it("should enforce row-level security in database queries", async () => {
+    // Verify dbScoped() wrapper is used
+    const credentials = await dbScoped("tenant-a").selectFrom("credentials").selectAll();
+    expect(credentials.every((c) => c.tenantId === "tenant-a")).toBe(true);
+  });
+});
+```
+
+**Deliverables:**
+
+- [ ] Tenant isolation test suite (5+ scenarios)
+- [ ] Cross-tenant concurrent access tests
+- [ ] AsyncLocalStorage context leakage tests
+- [ ] Cache key isolation tests
+- [ ] Database RLS alignment tests
+- [ ] Mutation testing for error handling
+
 #### Phase 4 Acceptance Criteria
 
 - [ ] Model discovery working for all providers
@@ -933,7 +1183,9 @@ export class ABTestRunner {
 - [ ] Rate limiting enforced
 - [ ] Cost optimization recommendations
 - [ ] A/B testing framework functional
-- [ ] Documentation for all features
+- [ ] **Documentation for all features**
+- [ ] **Tenant isolation test suite passed**
+- [ ] **Monitoring dashboards and alerts configured**
 
 ---
 
@@ -1106,14 +1358,67 @@ describe('Performance Tests', () => {
 
 ## 5. Risk Mitigation
 
-| Risk                          | Impact   | Probability | Mitigation                                             |
-| ----------------------------- | -------- | ----------- | ------------------------------------------------------ |
-| **Incomplete legacy removal** | High     | Medium      | Comprehensive code audit, automated detection scripts  |
-| **Credential leaks**          | Critical | Low         | Encryption at rest, tenant isolation, audit logs       |
-| **Performance regression**    | Medium   | Medium      | Performance benchmarks, load testing before deployment |
-| **Provider API changes**      | Medium   | High        | Abstraction layer, automated health checks             |
-| **Cost overruns**             | High     | Medium      | Budget hooks, rate limiting, cost tracking             |
-| **Missing edge cases**        | High     | Medium      | Comprehensive test coverage, scenario validation       |
+| Risk                          | Impact   | Probability | Mitigation                                                                                                      |
+| ----------------------------- | -------- | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| **Credential leaks**          | Critical | Low         | Encryption at rest, tenant isolation, audit logs, key rotation automation, secret scanning in CI                |
+| **Tenant data leakage**       | Critical | Low         | AsyncLocalStorage with validation middleware, RLS, automated boundary tests, audit logging                      |
+| **Incomplete legacy removal** | High     | Medium      | AST-based code scanning, CI gate, manual audit checklist, phased verification                                   |
+| **Performance regression**    | Medium   | Medium      | Performance benchmarks, load testing before deployment, continuous monitoring, p95 latency alerts               |
+| **Provider API changes**      | Medium   | High        | Abstraction layer, SDK version pinning, API contract tests, fallback provider configuration                     |
+| **Cost overruns**             | High     | Medium      | Budget hooks, rate limiting, cost tracking, real-time dashboards, per-tenant alerts, automatic throttling       |
+| **Missing edge cases**        | High     | Medium      | Comprehensive test coverage, scenario validation (R01-R12), production shadow mode, UAT with real tenants       |
+| **Deployment failure**        | High     | Low         | Blue-green deployment, feature flags, gradual cutover (10%→50%→100%), automated health checks, rollback runbook |
+| **Provider outage**           | High     | Medium      | Circuit breaker pattern, automatic failover chain, health-based routing                                         |
+| **Compliance violations**     | Critical | Low         | PII redaction, audit logging, data residency config, GDPR compliance checks                                     |
+
+---
+
+## 5A. Security & Compliance
+
+### 5A.1 Security Audit Gate (Before Phase 2)
+
+**External Security Review Required:**
+
+- [ ] Credential handling review (encryption, storage, rotation)
+- [ ] Tenant isolation penetration testing
+- [ ] AsyncLocalStorage context leakage testing
+- [ ] API key exposure scanning
+- [ ] Database RLS validation
+- [ ] Audit logging completeness review
+
+**Audit Deliverables:**
+
+- Security audit report with findings (Critical/High/Medium/Low)
+- Remediation plan for all Critical and High findings
+- Sign-off from security lead before Phase 2 begins
+
+### 5A.2 Compliance Requirements
+
+**GDPR Compliance:**
+
+- [ ] PII redaction before provider calls
+- [ ] Data residency configuration (US/EU/APAC)
+- [ ] Right to erasure support (credential deletion)
+- [ ] Audit logging for all AI decisions
+- [ ] Data retention policies (configurable per tenant)
+
+### 5A.3 Credential Rotation Policy
+
+**Default Policy:**
+
+- **Rotation Cycle:** 30 days
+- **Warning Notifications:** 7 days before expiration
+- **Grace Period:** 7 days (overlapping keys allowed)
+- **Auto-Rotation:** Optional (with tenant consent)
+
+### 5A.4 Secret Manager Integration
+
+**Cloud Provider Adapters:**
+
+- [ ] AWS Secrets Manager adapter
+- [ ] GCP Secret Manager adapter
+- [ ] Azure Key Vault adapter
+- [ ] HashiCorp Vault adapter (self-hosted)
 
 ---
 
@@ -1142,21 +1447,35 @@ describe('Performance Tests', () => {
 
 ---
 
-## 7. Timeline Summary
+## 8. Timeline Summary
 
-| Phase                                | Duration  | Deliverables                                                         |
-| ------------------------------------ | --------- | -------------------------------------------------------------------- |
-| **Phase 1: Foundation**              | Weeks 1-2 | Core interfaces, factory, error system, OpenAI provider              |
-| **Phase 2: Provider Expansion**      | Weeks 3-4 | 7+ providers, lifecycle hooks, Bedrock                               |
-| **Phase 3: Destructive Replacement** | Weeks 5-6 | Legacy code removal, all agents replaced, zero backward compat       |
-| **Phase 4: Advanced Features**       | Weeks 7-8 | Model discovery, health monitoring, rate limiting, cost optimization |
+| Phase                           | Duration    | Deliverables                                                            |
+| ------------------------------- | ----------- | ----------------------------------------------------------------------- |
+| **Phase 1: Foundation**         | Weeks 1-3   | Core interfaces, factory, error system, OpenAI provider, security audit |
+| **Phase 2: Provider Expansion** | Weeks 4-6   | 7+ providers, lifecycle hooks, Bedrock, monitoring dashboard            |
+| **Phase 3: Gradual Migration**  | Weeks 7-10  | Blue-green deployment, parallel run, gradual cutover, failover          |
+| **Phase 4: Advanced Features**  | Weeks 11-12 | Model discovery, health monitoring, rate limiting, cost optimization    |
 
-**Total Duration:** 8 weeks  
-**Total Effort:** ~120 person-days
+**Total Duration:** 12 weeks  
+**Total Effort:** ~160 person-days (includes 20% buffer)
+
+### Critical Path
+
+```
+Task 1.1 (Core Interfaces, 4d)
+  → Task 1.2 (Factory, 3d)
+  → Task 1.5 (OpenAI Provider, 5d)
+  → Task 2.3 (OpenAI-Compatible Factory, 4d)
+  → Task 3.2 (Blue-Green Deployment, 4d)
+  → Task 3.4 (Gradual Cutover, 5d)
+  → Task 3.7 (Specialized Agents, 6d)
+```
+
+**Total Critical Path:** 31 days minimum (with parallelization of other tasks)
 
 ---
 
-## 8. Success Criteria
+## 9. Success Criteria
 
 ### Technical
 
@@ -1167,6 +1486,9 @@ describe('Performance Tests', () => {
 - [ ] Zero hardcoded credentials
 - [ ] Zero legacy LangChain references
 - [ ] Zero backward compatibility code
+- [ ] **Security audit passed (zero critical findings)**
+- [ ] **Provider failover success rate >99%**
+- [ ] **Tenant isolation test suite passed**
 
 ### Business
 
@@ -1174,6 +1496,8 @@ describe('Performance Tests', () => {
 - [ ] Cost tracking per tenant
 - [ ] Provider switching without code changes
 - [ ] Budget enforcement working
+- [ ] **Agency-level aggregation dashboard (health, costs)**
+- [ ] **<5 minute Insight creation time (instrumented)**
 
 ### Operational
 
@@ -1181,10 +1505,13 @@ describe('Performance Tests', () => {
 - [ ] Rate limiting enforced
 - [ ] Error rates <1%
 - [ ] Complete deployment documentation
+- [ ] **Runbooks for common issues**
+- [ ] **Troubleshooting guides for support staff**
+- [ ] **Monitoring alerts configured (latency, error rate, cost)**
 
 ---
 
-## 9. Business Architecture Alignment
+## 10. Business Architecture Alignment
 
 ### 9.1 Multi-Tenancy Requirements
 
@@ -1253,7 +1580,7 @@ describe('Performance Tests', () => {
 
 ---
 
-## 10. Glossary
+## 11. Glossary
 
 | Term                  | Definition                                                     |
 | --------------------- | -------------------------------------------------------------- |
@@ -1266,11 +1593,12 @@ describe('Performance Tests', () => {
 
 ---
 
-## 11. References
+## 12. References
 
 ### Internal Documents
 
-- `/docs/architecture/business/business-architecture.md` - Business requirements
+- `/docs/architecture/business/business-architecture.md` - Business requirements (AUTHORITATIVE)
+- `/docs/reviews/ai-provider-architecture-review.md` - Architecture review report
 - `/packages/core/src/error-system/` - Error system integration
 - `/packages/database/` - TenantConfig schema
 
@@ -1283,7 +1611,32 @@ describe('Performance Tests', () => {
 
 ---
 
-**Document Status:** Draft  
-**Next Review:** After Phase 1 completion  
+**Document Status:** Revised (Post-Review)  
+**Review Decision:** Approved with Conditions (2026-05-05)  
+**Next Review:** After Phase 1 security audit  
 **Maintainer:** Engineering Team  
-**Last Updated:** 2026-05-04
+**Last Updated:** 2026-05-05
+
+---
+
+## Appendix A: Review Conditions Status
+
+### Conditions Precedent (Must Complete Before Phase 3)
+
+| #   | Condition                                                           | Status                          | Phase              |
+| --- | ------------------------------------------------------------------- | ------------------------------- | ------------------ |
+| 1   | Extend Phase 3 timeline to 3-4 weeks with gradual cutover           | ✅ **Completed**                | Phase 3            |
+| 2   | Implement blue-green deployment with feature flags                  | ✅ **Completed** (Task 3.2)     | Phase 3            |
+| 3   | Complete security audit of credential handling and tenant isolation | ⏳ **Pending**                  | Phase 1 (Task 1.6) |
+| 4   | Define compliance requirements (GDPR, data residency, PII handling) | ✅ **Completed** (Section 5A.2) | Phase 1            |
+| 5   | Implement provider failover strategy                                | ✅ **Completed** (Task 3.6)     | Phase 3            |
+
+### Conditions Recommended (Should Complete Before Production)
+
+| #   | Condition                                 | Status                          | Phase    |
+| --- | ----------------------------------------- | ------------------------------- | -------- |
+| 1   | Extend overall timeline to 11-12 weeks    | ✅ **Completed**                | Timeline |
+| 2   | Add tenant isolation test suite           | ✅ **Completed** (Task 4.6)     | Phase 4  |
+| 3   | Implement cloud secret manager adapters   | ✅ **Completed** (Section 5A.4) | Phase 1  |
+| 4   | Define credential rotation policy         | ✅ **Completed** (Section 5A.3) | Phase 1  |
+| 5   | Create monitoring dashboards and alerting | ✅ **Completed** (Task 2.6)     | Phase 2  |

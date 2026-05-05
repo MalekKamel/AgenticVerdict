@@ -1,6 +1,3 @@
-import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { AgentMockChatModel } from "@agenticverdict/testing";
-
 import type { AgentFactoryConfig } from "./agent-config";
 import { createAnalysisTools } from "./agent-tools/analysis-tools";
 import {
@@ -15,9 +12,10 @@ import { createReportPrepTools } from "./agent-tools/report-prep-tools";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { parseAgentFactoryConfig } from "./agent-config";
 import { AgentFactory } from "./agent-factory";
-import type { AgentLlmRole } from "./chat-models";
 import type { IAgent } from "./interfaces";
 import { renderPromptTemplate, resolvePromptTemplate } from "./prompts/index";
+
+type AgentLlmRole = "analysis" | "insights" | "verdict";
 
 const JSON_VERDICT_SUFFIX = `
 
@@ -75,7 +73,6 @@ export interface CreateSpecializedMarketingAgentOptions {
   templateVersion?: string;
   /** Extra factory config merged after specialization defaults. */
   factoryConfig?: Partial<AgentFactoryConfig>;
-  mockLlm?: BaseChatModel;
   /** Shared across pipeline stages to dedupe identical LLM turns (tasks.md 6.6). */
   invocationCache?: LlmInvocationCache;
   /** Optional platform adapter dependency contract for fetch_* tools. */
@@ -168,7 +165,6 @@ export function createSpecializedMarketingTestAgent(
     ...createReportPrepTools(),
   ];
   return factory.createAgentWithTools({ ...cfg, runtimeMode: "test" }, sharedTools, {
-    testChatModel: options.mockLlm ?? new AgentMockChatModel({}),
     invocationCache: options.invocationCache,
   }).agent;
 }

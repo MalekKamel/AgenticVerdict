@@ -100,3 +100,22 @@ export async function withPrimaryFallback<T>(
     return fallback();
   }
 }
+
+export {
+  CircuitBreaker,
+  CircuitState,
+  type CircuitBreakerOptions,
+  type CircuitBreakerEvent,
+} from "./resilience/circuitBreaker";
+export {
+  FailoverHandler,
+  type FailoverChainConfig,
+  type FailoverEvent,
+  type FailoverHandlerOptions,
+  type ProviderHealth,
+} from "./resilience/failoverHandler";
+export {
+  HealthBasedRouter,
+  type HealthBasedRouterOptions,
+  type RoutingDecision,
+} from "./resilience/healthBasedRouter";

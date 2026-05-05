@@ -1,0 +1,230 @@
+# Alerting rules for AI provider health monitoring.
+# Monitors latency, error rates, circuit breakers, and failover events.
+# Mount alongside prometheus.yml (see docker-compose.observability.yml).
+
+groups:
+  - name: agenticverdict_provider_health
+    rules:
+      # High Latency Alerts
+      - alert: ProviderHighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(agenticverdict_provider_request_latency_seconds_bucket{providerId=~".+"}[5m])) by (providerId, le)) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider latency exceeds 5s threshold"
+          description: |
+            Provider {{ $labels.providerId }} p95 latency is {{ $value }}s (threshold: 5s).
+            Check provider status, network connectivity, and consider failover.
+
+      - alert: ProviderCriticalLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(agenticverdict_provider_request_latency_seconds_bucket{providerId=~".+"}[5m])) by (providerId, le)) > 10
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Provider latency critically high (>10s)"
+          description: |
+            Provider {{ $labels.providerId }} p95 latency is {{ $value }}s (critical threshold: 10s).
+            Immediate action required. Consider automatic failover.
+
+      # Error Rate Alerts
+      - alert: ProviderHighErrorRate
+        expr: |
+          (
+            sum(rate(agenticverdict_provider_errors_total{providerId=~".+"}[5m])) by (providerId)
+            /
+            clamp_min(sum(rate(agenticverdict_provider_requests_total{providerId=~".+"}[5m])) by (providerId), 0.01)
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider error rate exceeds 1%"
+          description: |
+            Provider {{ $labels.providerId }} error rate is {{ $value | humanizePercentage }} (threshold: 1%).
+            Check provider API status, credentials, and error logs.
+
+      - alert: ProviderCriticalErrorRate
+        expr: |
+          (
+            sum(rate(agenticverdict_provider_errors_total{providerId=~".+"}[5m])) by (providerId)
+            /
+            clamp_min(sum(rate(agenticverdict_provider_requests_total{providerId=~".+"}[5m])) by (providerId), 0.01)
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Provider error rate critically high (>5%)"
+          description: |
+            Provider {{ $labels.providerId }} error rate is {{ $value | humanizePercentage }} (critical threshold: 5%).
+            Immediate failover recommended. Check provider status page.
+
+      # Circuit Breaker Alerts
+      - alert: ProviderCircuitBreakerOpen
+        expr: |
+          agenticverdict_circuit_breaker_state{providerId=~".+"} == 2
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Provider circuit breaker is OPEN"
+          description: |
+            Circuit breaker for provider {{ $labels.providerId }} is OPEN.
+            Requests are being rejected. Check failover configuration.
+
+      - alert: ProviderCircuitBreakerHalfOpen
+        expr: |
+          agenticverdict_circuit_breaker_state{providerId=~".+"} == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider circuit breaker is HALF-OPEN"
+          description: |
+            Circuit breaker for provider {{ $labels.providerId }} is HALF-OPEN.
+            Testing recovery. Monitor for repeated failures.
+
+      # Failover Alerts
+      - alert: ProviderFrequentFailover
+        expr: |
+          sum(increase(agenticverdict_provider_failovers_total{providerId=~".+"}[10m])) by (fromProvider, toProvider) > 3
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Frequent provider failovers detected"
+          description: |
+            {{ $value }} failovers from {{ $labels.fromProvider }} to {{ $labels.toProvider }} in 10 minutes.
+            Investigate root cause of instability.
+
+      - alert: ProviderFailoverStorm
+        expr: |
+          sum(increase(agenticverdict_provider_failovers_total{providerId=~".+"}[5m])) by (fromProvider, toProvider) > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Provider failover storm detected"
+          description: |
+            {{ $value }} failovers in 5 minutes indicates unstable providers.
+            Manual intervention required. Consider disabling unstable providers.
+
+      # Rate Limiting Alerts
+      - alert: ProviderRateLimitHit
+        expr: |
+          sum(increase(agenticverdict_provider_rate_limits_total{providerId=~".+"}[5m])) by (providerId) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider rate limit frequently hit"
+          description: |
+            Provider {{ $labels.providerId }} rate limit hit {{ $value }} times in 5 minutes.
+            Consider increasing rate limits or optimizing request patterns.
+
+      - alert: ProviderRateLimitCritical
+        expr: |
+          sum(increase(agenticverdict_provider_rate_limits_total{providerId=~".+"}[5m])) by (providerId) > 50
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Provider rate limit critically high"
+          description: |
+            Provider {{ $labels.providerId }} rate limit hit {{ $value }} times in 5 minutes.
+            Service degradation likely. Consider provider failover.
+
+      # Cost Anomaly Alerts
+      - alert: ProviderCostSpike
+        expr: |
+          sum(increase(agenticverdict_provider_cost_usd_total{providerId=~".+"}[1h])) by (providerId)
+          >
+          2 * avg_over_time(sum(increase(agenticverdict_provider_cost_usd_total{providerId=~".+"}[1h])) by (providerId)[24h:1h])
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider cost spike detected"
+          description: |
+            Provider {{ $labels.providerId }} cost is {{ $value }} USD in the last hour,
+            more than 2x the 24-hour average. Check for unusual usage patterns.
+
+      # Model Availability Alerts
+      - alert: ProviderModelUnavailable
+        expr: |
+          agenticverdict_provider_model_availability{providerId=~".+", model=~".+"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider model unavailable"
+          description: |
+            Model {{ $labels.model }} from provider {{ $labels.providerId }} is unavailable.
+            Check provider status and update model routing.
+
+      # Token Usage Anomaly
+      - alert: ProviderTokenUsageSpike
+        expr: |
+          sum(increase(agenticverdict_provider_tokens_total{providerId=~".+", type="total"}[1h])) by (providerId)
+          >
+          3 * avg_over_time(sum(increase(agenticverdict_provider_tokens_total{providerId=~".+", type="total"}[1h])) by (providerId)[24h:1h])
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Provider token usage spike"
+          description: |
+            Provider {{ $labels.providerId }} token usage is {{ $value }} tokens in the last hour,
+            more than 3x the 24-hour average. Investigate unusual traffic patterns.
+
+      # Active Streams Monitoring
+      - alert: ProviderHighActiveStreams
+        expr: |
+          sum(agenticverdict_provider_active_streams{providerId=~".+"}) by (providerId) > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of active streaming connections"
+          description: |
+            Provider {{ $labels.providerId }} has {{ $value }} active streaming connections.
+            Monitor for resource exhaustion.
+
+      # Credential Issues
+      - alert: ProviderCredentialRefreshFailure
+        expr: |
+          sum(increase(agenticverdict_provider_credential_refreshes_total{providerId=~".+"}[1h])) by (providerId) > 10
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Frequent credential refreshes"
+          description: |
+            Provider {{ $labels.providerId }} credentials refreshed {{ $value }} times in 1 hour.
+            Check credential rotation configuration and validity.
+
+      # Cache Performance
+      - alert: ProviderLowCacheHitRate
+        expr: |
+          (
+            sum(rate(agenticverdict_provider_cache_hits_total{providerId=~".+", cacheType="model"}[1h])) by (providerId)
+            /
+            clamp_min(
+              sum(rate(agenticverdict_provider_cache_hits_total{providerId=~".+", cacheType="model"}[1h])) by (providerId)
+              +
+              sum(rate(agenticverdict_provider_requests_total{providerId=~".+"}[1h])) by (providerId),
+              0.01
+            )
+          ) < 0.5
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "Low model cache hit rate"
+          description: |
+            Provider {{ $labels.providerId }} model cache hit rate is below 50%.
+            Consider adjusting cache TTL or pre-warming cache.

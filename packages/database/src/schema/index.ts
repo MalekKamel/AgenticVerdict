@@ -15,6 +15,11 @@ export { featureFlags, tenantFeatureFlags } from "./feature-flags";
 export { i18nStrings } from "./i18n-strings";
 export { marketingMetrics } from "./marketing-metrics";
 export { platformCredentials } from "./platform-credentials";
+export {
+  aiProviderCredentials,
+  aiProviderUsage,
+  aiProviderHealth,
+} from "./ai-provider-credentials";
 export { provenanceRecords } from "./provenance";
 export { reportTemplates } from "./report-templates";
 export { reports } from "./reports";

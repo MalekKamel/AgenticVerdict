@@ -30,44 +30,12 @@ export {
   type AgentLifecycle,
   type AgentLifecycleState,
 } from "./lifecycle";
-export {
-  glmConfigToCredentialEnv,
-  isGlmConfiguredInEnv,
-  parseGlmConfigFromEnv,
-  type GLMConfig,
-  type GlmConfig,
-} from "./glm-config";
-export {
-  buildRuleBasedDegradedAiMessage,
-  ChatGlm,
-  createAnthropicChatModel,
-  createChatModelForPreference,
-  createGlmChatModel,
-  createOpenAiChatModel,
-  createPrimaryAndFallbackChatModels,
-  DEFAULT_AGENT_MODEL_PRESETS,
-  DEFAULT_CLAUDE_3_5_SONNET_MODEL,
-  DEFAULT_GLM_MODEL,
-  DEFAULT_GPT_4_TURBO_MODEL,
-  DEFAULT_PRODUCTION_LLM_RETRY_OPTIONS,
-  invokeChatModelWithProviderFallback,
-  isLlmProviderConfigured,
-  isTransientLlmError,
-  LlmConfigurationError,
-  resolveProviderWithAvailableKeys,
-  type AgentLlmCredentialEnv,
-  type AgentLlmRole,
-  type AgentTypeModelPreset,
-  type CreateChatModelOptions,
-  type InvokeChatModelResilienceOptions,
-  type LlmPrimaryPreference,
-  type LlmProviderFallbackEvent,
-  type LlmRuleBasedFallbackEvent,
-} from "./chat-models";
+
 export { applyLangSmithTracingToProcess, buildSafeLlmRunnableConfig } from "./langsmith-tracing";
 export { loadLlmEnvFromProcess, parseAgentLlmEnv, type AgentLlmEnv } from "./llm-env";
 export { invokeMinimalMessageGraph } from "./minimal-agent-graph";
 export { AgentFactory, type AgentFactoryDeps } from "./agent-factory";
+export { ProviderAgent, type ProviderAgentOptions } from "./provider-agent";
 export {
   agentFactoryConfigSchema,
   agentFactoryMemoryLimitsSchema,
@@ -86,7 +54,6 @@ export {
   buildFactoryTurnPromptLayers,
   type BuildFactoryTurnPromptInput,
 } from "./agent-context-integration";
-export { ConfigurableLlmAgent, type ConfigurableLlmAgentOptions } from "./configurable-llm-agent";
 export {
   LlmInvocationCache,
   buildLlmInvocationCacheKey,
@@ -309,3 +276,46 @@ export {
 } from "./marketing-pipeline";
 
 export { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";
+export { OpenAIProvider } from "./providers/openai";
+export { AnthropicProvider } from "./providers/anthropic";
+export { BillingHook, createBillingHook, type BillingHookConfig } from "./hooks/billing";
+export {
+  LangSmithTracingHook,
+  createLangSmithTracingHook,
+  type LangSmithHookConfig,
+} from "./hooks/langsmith";
+export {
+  LangfuseTracingHook,
+  createLangfuseTracingHook,
+  type LangfuseHookConfig,
+} from "./hooks/langfuse";
+export {
+  StructuredLoggingHook,
+  createStructuredLoggingHook,
+  type StructuredLoggingHookConfig,
+} from "./hooks/structured-logging";
+export {
+  composeBeforeChatHooks,
+  composeOnChatCompleteHooks,
+  composeOnChatErrorHooks,
+  createConditionalHook,
+} from "./core/hook-composition";
+export {
+  recordRequest,
+  recordLatency,
+  recordError,
+  recordTokenUsage,
+  recordCost,
+  recordStreamingDuration,
+  incrementActiveStreams,
+  decrementActiveStreams,
+  setModelAvailability,
+  recordCredentialRefresh,
+  recordCacheHit,
+  recordFailover,
+  recordRateLimit,
+  startLatencyTimer,
+  type ProviderMetricLabels,
+  type ErrorMetricLabels,
+  type LatencyTimer,
+} from "./metrics";

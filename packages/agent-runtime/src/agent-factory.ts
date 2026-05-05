@@ -1,20 +1,18 @@
-import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { AgentMockChatModel } from "@agenticverdict/testing";
-
 import type { AgentFactoryConfig } from "./agent-config";
 import { parseAgentFactoryConfig } from "./agent-config";
-import { createPrimaryAndFallbackChatModels, type AgentLlmCredentialEnv } from "./chat-models";
-import { ConfigurableLlmAgent, type ConfigurableLlmAgentOptions } from "./configurable-llm-agent";
+import { ProviderAgent, type ProviderAgentOptions } from "./provider-agent";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { createAgentMemory } from "./memory";
 import type { IAgent, ITool } from "./interfaces";
 import { ToolRegistry } from "./tools";
+import { getTenantContextFromAsyncLocalStorage } from "./deployment/trafficManager";
 
 export interface AgentFactoryDeps {
   /**
    * Used when {@link AgentFactoryConfig.runtimeMode} is `production` to build primary/fallback models.
+   * Note: Production mode now requires tenant context via AsyncLocalStorage for multi-tenant credential isolation.
    */
-  llmEnv: AgentLlmCredentialEnv;
+  llmEnv?: Record<string, never>;
 }
 
 /**
@@ -46,46 +44,61 @@ export class AgentFactory {
   }
 
   createChatModels(config: AgentFactoryConfig): {
-    primary: BaseChatModel;
-    fallback?: BaseChatModel;
+    providerId: string;
+    modelId: string;
+    fallbackProviderId?: string;
+    fallbackModelId?: string;
   } {
     if (config.runtimeMode === "test") {
+      throw new Error('Use createTestAgent() with a mock provider when runtimeMode is "test".');
+    }
+
+    const tenantId = getTenantContextFromAsyncLocalStorage();
+
+    if (!tenantId) {
       throw new Error(
-        'Use createTestAgent() with a mock BaseChatModel from `@agenticverdict/testing` when runtimeMode is "test".',
+        "Production mode requires tenant context for multi-tenant credential isolation. " +
+          "Ensure tenant context is set via AsyncLocalStorage before creating production agents.",
       );
     }
-    return createPrimaryAndFallbackChatModels(config.role, this.deps.llmEnv, config.temperature);
+
+    return {
+      providerId: "openai",
+      modelId: config.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
+      fallbackProviderId: "anthropic",
+      fallbackModelId: "claude-3-5-sonnet-20241022",
+    };
   }
 
   /**
-   * Deterministic agent for CI: pass a mock {@link BaseChatModel} (for example `AgentMockChatModel` from `@agenticverdict/testing`) or omit to use that package default.
+   * Deterministic agent for CI: uses ProviderAgent with mock configuration.
    */
   createTestAgent(
     config: unknown,
-    mockLlm?: BaseChatModel,
-    agentOptions?: Pick<ConfigurableLlmAgentOptions, "invocationCache">,
+    mockLlm?: unknown,
+    agentOptions?: Pick<ProviderAgentOptions, "invocationCache">,
   ): IAgent {
     const cfg = parseAgentFactoryConfig({
       ...(typeof config === "object" && config !== null ? config : {}),
       runtimeMode: "test",
     });
-    const primary = mockLlm ?? new AgentMockChatModel({});
     const memory = this.createMemory(cfg);
-    return new ConfigurableLlmAgent({
+    return new ProviderAgent({
       factoryConfig: cfg,
       memory,
-      primary,
-      fallback: undefined,
+      providerId: "mock",
+      modelId: "mock-model",
       invocationCache: agentOptions?.invocationCache,
     });
   }
 
   /**
-   * Production agent: real providers from {@link AgentFactoryDeps.llmEnv} (or throws from LangChain if keys missing).
+   * Production agent: real providers from ProviderFactory with tenant-scoped credentials.
+   * Requires tenant context to be set via AsyncLocalStorage for multi-tenant credential isolation.
    */
   createAgent(
     config: unknown,
-    agentOptions?: Pick<ConfigurableLlmAgentOptions, "invocationCache">,
+    agentOptions?: Pick<ProviderAgentOptions, "invocationCache">,
   ): IAgent {
     const cfg = parseAgentFactoryConfig(config);
     if (cfg.runtimeMode === "test") {
@@ -93,29 +106,36 @@ export class AgentFactory {
         'createAgent() requires runtimeMode "production"; use createTestAgent() for tests.',
       );
     }
-    const { primary, fallback } = createPrimaryAndFallbackChatModels(
-      cfg.role,
-      this.deps.llmEnv,
-      cfg.temperature,
-    );
+
+    const tenantId = getTenantContextFromAsyncLocalStorage();
+
+    if (!tenantId) {
+      throw new Error(
+        "Production mode requires tenant context for multi-tenant credential isolation. " +
+          "Ensure tenant context is set via AsyncLocalStorage before creating production agents.",
+      );
+    }
+
     const memory = this.createMemory(cfg);
-    return new ConfigurableLlmAgent({
+    return new ProviderAgent({
       factoryConfig: cfg,
       memory,
-      primary,
-      fallback,
+      providerId: cfg.role === "verdict" ? "openai" : "openai",
+      modelId: cfg.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
+      fallbackProviderId: "anthropic",
+      fallbackModelId: "claude-3-5-sonnet-20241022",
       invocationCache: agentOptions?.invocationCache,
     });
   }
 
   /**
-   * Builds a tool registry plus an {@link IAgent}. When `runtimeMode` is `test`, uses the default mock chat model
-   * from `@agenticverdict/testing` unless you pass `testChatModel`.
+   * Builds a tool registry plus an {@link IAgent}. When `runtimeMode` is `test`, uses ProviderAgent with mock configuration.
+   * Production mode requires tenant context for multi-tenant credential isolation.
    */
   createAgentWithTools(
     config: unknown,
     tools: readonly ITool[],
-    options?: { testChatModel?: BaseChatModel; invocationCache?: LlmInvocationCache },
+    options?: { invocationCache?: LlmInvocationCache },
   ): { agent: IAgent; tools: ToolRegistry } {
     const registry = this.createToolRegistry(tools);
     const cfg = parseAgentFactoryConfig(config);
@@ -140,29 +160,36 @@ export class AgentFactory {
     if (cfg.runtimeMode === "test") {
       return {
         tools: registry,
-        agent: new ConfigurableLlmAgent({
+        agent: new ProviderAgent({
           factoryConfig: cfg,
           memory,
-          primary: options?.testChatModel ?? new AgentMockChatModel({}),
-          fallback: undefined,
+          providerId: "mock",
+          modelId: "mock-model",
           toolRegistry: registry,
           autoToolNames,
           invocationCache: options?.invocationCache,
         }),
       };
     }
-    const { primary, fallback } = createPrimaryAndFallbackChatModels(
-      cfg.role,
-      this.deps.llmEnv,
-      cfg.temperature,
-    );
+
+    const tenantId = getTenantContextFromAsyncLocalStorage();
+
+    if (!tenantId) {
+      throw new Error(
+        "Production mode requires tenant context for multi-tenant credential isolation. " +
+          "Ensure tenant context is set via AsyncLocalStorage before creating production agents.",
+      );
+    }
+
     return {
       tools: registry,
-      agent: new ConfigurableLlmAgent({
+      agent: new ProviderAgent({
         factoryConfig: cfg,
         memory,
-        primary,
-        fallback,
+        providerId: "openai",
+        modelId: cfg.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
+        fallbackProviderId: "anthropic",
+        fallbackModelId: "claude-3-5-sonnet-20241022",
         toolRegistry: registry,
         autoToolNames,
         invocationCache: options?.invocationCache,
