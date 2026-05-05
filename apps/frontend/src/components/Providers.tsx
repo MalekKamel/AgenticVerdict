@@ -4,6 +4,7 @@ import { DirectionProvider, MantineProvider } from "@agenticverdict/ui";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useLocale } from "@/i18n/react";
 import { type ReactNode, useState } from "react";
+import { Notifications } from "@mantine/notifications";
 
 import { DesktopDeepLinkBridge } from "@/components/desktop/DesktopDeepLinkBridge";
 import { TenantBrandedThemeProvider } from "@/components/providers/TenantBrandedThemeProvider";
@@ -32,7 +33,10 @@ export function Providers({ children }: { children: ReactNode }) {
           <TenantProvider>
             <TenantBrandedThemeProvider>
               <DirectionProvider initialLocale={locale}>
-                <MantineProvider cspNonce={cspNonce}>{children}</MantineProvider>
+                <MantineProvider cspNonce={cspNonce}>
+                  <Notifications />
+                  {children}
+                </MantineProvider>
               </DirectionProvider>
             </TenantBrandedThemeProvider>
           </TenantProvider>

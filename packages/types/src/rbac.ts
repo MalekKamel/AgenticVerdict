@@ -27,6 +27,11 @@ export const PERMISSIONS = {
   REPORTS_DELETE: "reports:delete" as const,
   REPORTS_SHARE: "reports:share" as const,
 
+  // Insights
+  INSIGHTS_READ: "insights:read" as const,
+  INSIGHTS_WRITE: "insights:write" as const,
+  INSIGHTS_DELETE: "insights:delete" as const,
+
   // Translations
   TRANSLATIONS_READ: "translations:read" as const,
   TRANSLATIONS_WRITE: "translations:write" as const,

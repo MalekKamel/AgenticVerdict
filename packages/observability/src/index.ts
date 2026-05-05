@@ -3,7 +3,7 @@ export {
   configLoadDurationSeconds,
   featureFlagEvaluationTotal,
 } from "./config-access-metrics";
-export { createPinoLogger, type ObservabilityServiceName } from "./logger";
+export { createPinoLogger, type Logger, type ObservabilityServiceName } from "./logger";
 export { productionFlowTestRegistry } from "./registry";
 export {
   recordBackoffAttemptOutcome,
@@ -32,3 +32,9 @@ export {
   type ScenarioOutcomeLabel,
 } from "./test-metrics";
 export { recordTenantRateLimitHit, recordTenantSecurityEvent } from "./tenant-security-metrics";
+export {
+  recordStorageUploadCompleted,
+  recordStorageDownloadCompleted,
+  type StorageUploadMetric,
+  type StorageDownloadMetric,
+} from "./storage-metrics";

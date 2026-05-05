@@ -499,6 +499,41 @@ const href = withLocalePrefix(locale as AppLocale, redirectTarget);
 
 ✅ **Do:** Use **`fetchProtectedRouteSession`** for SSR probes and documented SPA deferrals (see [`frontend-development-guidelines.md`](./frontend-development-guidelines.md) §4.4).
 
+### 8. Dynamic parent routes with child pages
+
+When a dynamic route segment has nested children, the parent route must be a layout route.
+
+❌ **Don't:** Use the parent as a leaf page component while also defining children.
+
+```typescript
+// routes/$locale/dashboard/insights/$id.tsx
+export const Route = createFileRoute("/$locale/dashboard/insights/$id")({
+  component: lazyRouteComponent(() => import("@/features/insights/pages/InsightDetailPage")),
+});
+// plus routes/$locale/dashboard/insights/$id/edit.tsx
+```
+
+✅ **Do:** Use `Outlet` in the parent and move the default page to `$id.index.tsx`.
+
+```typescript
+// routes/$locale/dashboard/insights/$id.tsx
+export const Route = createFileRoute("/$locale/dashboard/insights/$id")({
+  component: Outlet,
+});
+
+// routes/$locale/dashboard/insights/$id.index.tsx
+export const Route = createFileRoute("/$locale/dashboard/insights/$id/")({
+  component: lazyRouteComponent(() => import("@/features/insights/pages/InsightDetailPage")),
+});
+
+// routes/$locale/dashboard/insights/$id/edit.tsx
+export const Route = createFileRoute("/$locale/dashboard/insights/$id/edit")({
+  component: lazyRouteComponent(() => import("@/features/insights/pages/InsightEditPage")),
+});
+```
+
+This prevents child routes (like `/edit`) from being shadowed by the parent leaf route.
+
 ## Troubleshooting
 
 ### TypeError: Cannot read property 'push' of undefined
@@ -540,6 +575,20 @@ import { useNavigate } from "@tanstack/react-router";
 // ✅ Correct - router SSOT
 import { useNavigate } from "@/router";
 ```
+
+### `/edit` child route not rendering under dynamic parent
+
+Symptoms:
+
+- URL briefly includes child segment (`/.../$id/edit`) but page renders parent detail view
+- URL normalizes back to `.../$id` in UI flows
+
+Checklist:
+
+1. Confirm dynamic parent route uses `Outlet` (not a leaf page component).
+2. Confirm default child page is defined in `$id.index.tsx`.
+3. Keep nested children (`$id/edit.tsx`, `$id/remove.tsx`, etc.) under the same parent folder.
+4. Regenerate route types after adding/renaming route files by running frontend build/dev tooling (for example `pnpm --filter @agenticverdict/frontend build`), then re-run typecheck.
 
 ## Related Documentation
 

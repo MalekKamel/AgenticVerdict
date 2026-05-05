@@ -16,6 +16,8 @@ export const ERROR_CODES = [
   "CONNECTOR_UPSTREAM_FAILURE",
   "RUNTIME_TIMEOUT",
   "RUNTIME_UNAVAILABLE",
+  "STORAGE_ERROR",
+  "STORAGE_SECURITY_ERROR",
   "INTERNAL_ERROR",
 ] as const;
 
@@ -33,6 +35,7 @@ export const ERROR_CATEGORY_VALUES = [
   "rate_limit",
   "timeout",
   "conflict",
+  "security",
   "internal",
 ] as const;
 
@@ -69,6 +72,8 @@ const MESSAGE_KEY_BY_CODE: Record<ErrorCode, string> = {
   CONNECTOR_UPSTREAM_FAILURE: "errors.server.badGateway",
   RUNTIME_TIMEOUT: "errors.server.gatewayTimeout",
   RUNTIME_UNAVAILABLE: "errors.server.serviceUnavailable",
+  STORAGE_ERROR: "errors.storage.error",
+  STORAGE_SECURITY_ERROR: "errors.storage.securityError",
   INTERNAL_ERROR: "errors.common.unknownError",
 };
 
@@ -135,6 +140,8 @@ const CATEGORY_BY_CODE: Record<ErrorCode, ErrorCategory> = {
   CONNECTOR_UPSTREAM_FAILURE: "dependency",
   RUNTIME_TIMEOUT: "timeout",
   RUNTIME_UNAVAILABLE: "dependency",
+  STORAGE_ERROR: "dependency",
+  STORAGE_SECURITY_ERROR: "security",
   INTERNAL_ERROR: "internal",
 };
 
@@ -156,6 +163,8 @@ const HTTP_STATUS_BY_CODE: Record<ErrorCode, number> = {
   CONNECTOR_UPSTREAM_FAILURE: 502,
   RUNTIME_TIMEOUT: 504,
   RUNTIME_UNAVAILABLE: 503,
+  STORAGE_ERROR: 500,
+  STORAGE_SECURITY_ERROR: 403,
   INTERNAL_ERROR: 500,
 };
 
@@ -177,6 +186,8 @@ const RETRYABLE_BY_CODE: Record<ErrorCode, boolean> = {
   CONNECTOR_UPSTREAM_FAILURE: true,
   RUNTIME_TIMEOUT: true,
   RUNTIME_UNAVAILABLE: true,
+  STORAGE_ERROR: true,
+  STORAGE_SECURITY_ERROR: false,
   INTERNAL_ERROR: false,
 };
 

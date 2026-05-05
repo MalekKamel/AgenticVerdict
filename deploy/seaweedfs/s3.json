@@ -1,0 +1,8 @@
+{
+  "buckets": [
+    {
+      "name": "agenticverdict-reports",
+      "region": "auto"
+    }
+  ]
+}

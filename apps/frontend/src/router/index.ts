@@ -1,8 +1,13 @@
 export { router, type AppRouter } from "./router";
 
-export { useRouter, useNavigate, useSearch, useParams, usePathname } from "./hooks";
+export { useNavigate, useParams, usePathname, useRouter, useSearch } from "./hooks";
 
-export { ROUTE_PATHS, type RoutePath, type RoutePaths } from "./utils/route-paths";
+export {
+  ROUTE_PATHS,
+  type RoutePath,
+  type RoutePaths,
+  buildSharedReportUrl,
+} from "./utils/route-paths";
 
 export { withLocalePrefix, stripLocalePrefix } from "./utils/navigation";
 

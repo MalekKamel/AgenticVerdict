@@ -83,7 +83,7 @@ async function main(): Promise<void> {
       );
       const userRoles: SystemRole[] =
         tenant.type === "agency_partner"
-          ? ["admin", "manager", "viewer"]
+          ? ["admin", "analyst", "viewer"]
           : tenant.type === "agency_managed"
             ? ["admin", "editor", "analyst"]
             : ["admin", "analyst", "viewer"];

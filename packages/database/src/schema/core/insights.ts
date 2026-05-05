@@ -20,6 +20,10 @@ export const insights = coreSchema.table(
     description: text("description"),
     templateId: varchar("template_id", { length: 100 }),
     enabled: boolean("enabled").notNull().default(true),
+    domain: varchar("domain", { length: 255 }),
+    status: varchar("status", { length: 50 }).notNull().default("idle"),
+    lastRunAt: timestamp("last_run_at", { withTimezone: true }),
+    lastRunStatus: varchar("last_run_status", { length: 50 }),
     schedule: jsonb("schedule")
       .$type<Record<string, unknown>>()
       .notNull()

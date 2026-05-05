@@ -44,10 +44,10 @@ services:
     read_only: true
     tmpfs:
       - /tmp:noexec,nosuid,size=128m
-    # cap_drop: ALL + hardened seccomp can block the entrypoint’s privilege drop to the redis user.
+    # cap_drop: ALL + hardened seccomp can block the entrypoint's privilege drop to the redis user.
     security_opt:
       - seccomp=deploy/security/seccomp-profile.json
-    # Run as redis (uid 999 in official image) so we don’t rely on setuid in docker-entrypoint.sh.
+    # Run as redis (uid 999 in official image) so we don't rely on setuid in docker-entrypoint.sh.
     user: "999:999"
     entrypoint: ["redis-server"]
     command: ["--dir", "/data", "--appendonly", "yes"]
@@ -69,6 +69,32 @@ services:
       timeout: 3s
       retries: 5
 
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    ports:
+      - "8333:8333"
+      - "8888:8888"
+    volumes:
+      - seaweedfs_data:/data
+    command: "server -s3 -s3.port=8333 -filer -master.volumeSizeLimitMB=1024"
+    networks:
+      - agenticverdict
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8333/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
 volumes:
   pgdata:
   redis_data:
+  seaweedfs_data:

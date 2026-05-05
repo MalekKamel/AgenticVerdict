@@ -5,6 +5,7 @@ import IntlMessageFormat from "intl-messageformat";
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 
 import enMessages from "../../messages/en.json";
+import { initializeNotificationTranslations } from "@/lib/notifications-i18n";
 import type { AppLocale } from "./routing";
 
 type Messages = Record<string, unknown>;
@@ -38,7 +39,11 @@ export function I18nProvider({
   messages: Messages;
   children: ReactNode;
 }) {
-  const value = useMemo(() => ({ locale, messages }), [locale, messages]);
+  const value = useMemo(() => {
+    // Initialize notification translations when locale or messages change
+    initializeNotificationTranslations(locale, messages);
+    return { locale, messages };
+  }, [locale, messages]);
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 

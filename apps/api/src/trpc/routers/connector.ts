@@ -338,4 +338,78 @@ export const connectorRouter = t.router({
         };
       });
     }),
+
+  metrics: authedProcedure
+    .input(z.object({ connectorIds: z.array(z.string().uuid()) }))
+    .output(
+      z.array(
+        z.object({
+          connectorId: z.string().uuid(),
+          connectorName: z.string(),
+          metrics: z.array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              description: z.string(),
+            }),
+          ),
+        }),
+      ),
+    )
+    .query(async ({ input, ctx }) => {
+      const db = requireTrpcDatabase();
+      const tenantId = ctx.tenant.tenantId;
+
+      return dbScoped(db, async (tx) => {
+        const rows = await tx
+          .select()
+          .from(tenantConnectors)
+          .where(
+            and(
+              eq(tenantConnectors.tenantId, tenantId),
+              eq(tenantConnectors.id, input.connectorIds[0]!),
+            ),
+          )
+          .limit(1);
+
+        if (!rows.length || !rows[0]) {
+          return [];
+        }
+
+        const row = rows[0];
+        const metricIds = Array.isArray(row.metrics) ? row.metrics : [];
+
+        const metricDefinitions: Record<string, { name: string; description: string }> = {
+          sessions: { name: "Sessions", description: "Total number of sessions" },
+          users: { name: "Users", description: "Total number of users" },
+          pageviews: { name: "Pageviews", description: "Total page views" },
+          "bounce-rate": { name: "Bounce Rate", description: "Percentage of single-page sessions" },
+          "conversion-rate": {
+            name: "Conversion Rate",
+            description: "Percentage of sessions that converted",
+          },
+          impressions: { name: "Impressions", description: "Total number of ad impressions" },
+          clicks: { name: "Clicks", description: "Total number of clicks" },
+          ctr: { name: "CTR", description: "Click-through rate" },
+          cpc: { name: "CPC", description: "Cost per click" },
+          roas: { name: "ROAS", description: "Return on ad spend" },
+        };
+
+        const metrics = metricIds
+          .map((id) => {
+            const def = metricDefinitions[id];
+            if (!def) return null;
+            return { id, name: def.name, description: def.description };
+          })
+          .filter((m): m is { id: string; name: string; description: string } => m !== null);
+
+        return [
+          {
+            connectorId: row.id,
+            connectorName: row.name,
+            metrics,
+          },
+        ];
+      });
+    }),
 });

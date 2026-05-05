@@ -7,14 +7,24 @@ export type AppShellNavKey =
   | "onboarding"
   | "featureFlags"
   | "connectors"
-  | "agency";
+  | "agency"
+  | "insights"
+  | "reports";
 export type AppShellNavRole = "admin" | "member";
 export type AppShellNavFeatureFlag = "onboardingWizard";
 
 export type AppShellNavItem = {
   id: AppShellNavKey;
   href: string;
-  labelKey: "home" | "dashboard" | "onboarding" | "featureFlags" | "connectors" | "agency";
+  labelKey:
+    | "home"
+    | "dashboard"
+    | "onboarding"
+    | "featureFlags"
+    | "connectors"
+    | "agency"
+    | "insights"
+    | "reports";
   matchMode?: "exact" | "prefix";
   prefetchPriority?: "high" | "normal";
   requiredRoles?: readonly AppShellNavRole[];
@@ -39,6 +49,22 @@ export const APP_SHELL_NAV_ITEMS: readonly AppShellNavItem[] = [
     matchMode: "prefix",
     prefetchPriority: "high",
     requiredPermissions: [PERMISSIONS.CONNECTORS_READ],
+  },
+  {
+    id: "insights",
+    href: "/dashboard/insights",
+    labelKey: "insights",
+    matchMode: "prefix",
+    prefetchPriority: "high",
+    requiredPermissions: [PERMISSIONS.INSIGHTS_READ],
+  },
+  {
+    id: "reports",
+    href: "/dashboard/reports",
+    labelKey: "reports",
+    matchMode: "prefix",
+    prefetchPriority: "normal",
+    requiredPermissions: [PERMISSIONS.REPORTS_READ],
   },
   {
     id: "agency",

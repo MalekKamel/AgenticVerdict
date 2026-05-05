@@ -6,7 +6,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./tenant/*": "./src/tenant/*.ts",
-    "./storage/*": "./src/storage/*.ts"
+    "./tenant-context": "./src/tenant-context.ts",
+    "./storage/*": "./src/storage/*.ts",
+    "./storage": "./src/storage/index.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
@@ -17,6 +19,8 @@
   "dependencies": {
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/types": "workspace:*",
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
     "@trpc/client": "^11.16.0"
   },
   "devDependencies": {

@@ -16,6 +16,7 @@ PGADMIN_STACK := $(BASE) -f docker-compose.pgadmin.yml
 .PHONY: help preflight validate setup build-base build-apps build dev dev-build dev-stop dev-logs \
 	dev-up dev-watch apps-up apps-down infra-up infra-down infra-logs dev-logs apps-logs logs ps ps-apps \
 	pgadmin-up pgadmin-down pgadmin-logs \
+	seaweedfs-up seaweedfs-down seaweedfs-logs seaweedfs-shell \
 	health health-frontend health-api health-worker backup db-dump restore restore-latest \
 	db-migrate db-seed db-reset shell-db test test-integration test-e2e test-scripts test-scripts-all \
 	test-scripts-scenario test-scripts-group test-scripts-validate test-scripts-verify-artifacts \
@@ -89,6 +90,18 @@ pgadmin-down: ## Stop optional pgAdmin overlay
 
 pgadmin-logs: ## Follow optional pgAdmin logs
 	$(DC) $(PGADMIN_STACK) logs -f pgadmin
+
+seaweedfs-up: ## Start SeaweedFS S3-compatible storage
+	$(DC) up -d seaweedfs
+
+seaweedfs-down: ## Stop SeaweedFS storage
+	$(DC) down seaweedfs
+
+seaweedfs-logs: ## Follow SeaweedFS logs
+	$(DC) logs -f seaweedfs
+
+seaweedfs-shell: ## Open shell in SeaweedFS container
+	$(DC) exec seaweedfs /bin/sh
 
 ps: ## docker compose ps for dev stack
 	$(DC) $(DEV_STACK) ps

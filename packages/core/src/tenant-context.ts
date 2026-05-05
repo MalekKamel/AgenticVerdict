@@ -149,6 +149,18 @@ export function requireTenantContext(): TenantContext {
   return ctx;
 }
 
+export function getTenantId(): TenantContext {
+  const ctx = getTenantContext();
+  if (!ctx) {
+    throw new TenantSecurityError(
+      "TENANT_CONTEXT_REQUIRED",
+      "Tenant context is not set for this async execution",
+      500,
+    );
+  }
+  return ctx;
+}
+
 /**
  * Runs `fn` with {@link TenantContext} bound via `AsyncLocalStorage`.
  *

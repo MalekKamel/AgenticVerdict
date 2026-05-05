@@ -18,6 +18,11 @@ export function withLocalePrefix(locale: AppLocale, path: string): string {
 
   if (hasExistingLocale) {
     if (existingLocaleSegment === locale) {
+      const duplicatePrefixPattern = new RegExp(`^/${locale}(?:/${locale})+`);
+      if (duplicatePrefixPattern.test(normalized)) {
+        return normalized.replace(duplicatePrefixPattern, `/${locale}`);
+      }
+
       return normalized;
     }
     const pathWithoutLocale = normalized.replace(/^\/[^/]+/, "");

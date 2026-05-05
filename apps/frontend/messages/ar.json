@@ -807,11 +807,26 @@
       "connectionFailedBody": "Please check your credentials and try again."
     },
     "platforms": {
-      "ga4": { "name": "Google Analytics 4", "description": "Website traffic and conversions" },
-      "meta": { "name": "Meta Ads", "description": "Facebook and Instagram advertising" },
-      "gsc": { "name": "Google Search Console", "description": "Search performance and indexing" },
-      "tiktok": { "name": "TikTok Ads", "description": "TikTok advertising campaigns" },
-      "gbp": { "name": "Google Business Profile", "description": "Local business presence" }
+      "ga4": {
+        "name": "Google Analytics 4",
+        "description": "Website traffic and conversions"
+      },
+      "meta": {
+        "name": "Meta Ads",
+        "description": "Facebook and Instagram advertising"
+      },
+      "gsc": {
+        "name": "Google Search Console",
+        "description": "Search performance and indexing"
+      },
+      "tiktok": {
+        "name": "TikTok Ads",
+        "description": "TikTok advertising campaigns"
+      },
+      "gbp": {
+        "name": "Google Business Profile",
+        "description": "Local business presence"
+      }
     },
     "metrics": {
       "sessions": "Sessions",
@@ -864,10 +879,22 @@
       "title": "Add Connector",
       "cancelConfirm": "Discard progress and return to connectors?",
       "steps": {
-        "platform": { "label": "Platform", "description": "Select data source" },
-        "auth": { "label": "Auth", "description": "Connect account" },
-        "config": { "label": "Config", "description": "Choose metrics" },
-        "confirm": { "label": "Confirm", "description": "Test connection" }
+        "platform": {
+          "label": "Platform",
+          "description": "Select data source"
+        },
+        "auth": {
+          "label": "Auth",
+          "description": "Connect account"
+        },
+        "config": {
+          "label": "Config",
+          "description": "Choose metrics"
+        },
+        "confirm": {
+          "label": "Confirm",
+          "description": "Test connection"
+        }
       },
       "platform": {
         "searchPlaceholder": "Search platforms..."
@@ -973,6 +1000,219 @@
       "actions": {
         "pauseConnector": "Pause Connector",
         "confirmRemoval": "Confirm Removal"
+      }
+    }
+  },
+  "insights": {
+    "list": {
+      "pageTitle": "الرؤى",
+      "pageSubtitle": "إدارة الرؤى المدعومة بالذكاء الاصطناعي",
+      "newInsight": "رؤية جديدة",
+      "searchPlaceholder": "البحث في الرؤى...",
+      "filterByStatus": "تصفية حسب الحالة",
+      "connectors": "موصلات",
+      "created": "تاريخ الإنشاء",
+      "lastRun": "آخر تشغيل",
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "صفحة",
+      "actions": {
+        "viewDetails": "عرض التفاصيل",
+        "runNow": "تشغيل الآن",
+        "edit": "تحرير",
+        "delete": "حذف",
+        "deleteConfirm": "هل أنت متأكد من حذف هذه الرؤية؟"
+      },
+      "emptyState": {
+        "title": "لا توجد رؤى بعد",
+        "createFirst": "إنشاء رؤيتك الأولى"
+      },
+      "errorTitle": "خطأ في تحميل الرؤى",
+      "errorMessage": "فشل تحميل الرؤى. يرجى المحاولة مرة أخرى.",
+      "lastRunStatus": {
+        "running": "قيد التشغيل",
+        "completed": "مكتمل",
+        "failed": "فشل"
+      },
+      "neverRun": "لم يتم التشغيل أبداً"
+    },
+    "status": {
+      "all": "الكل",
+      "enabled": "مفعلة",
+      "disabled": "معطلة",
+      "running": "قيد التشغيل",
+      "failed": "فشل"
+    },
+    "create": {
+      "title": "إنشاء رؤية",
+      "next": "التالي",
+      "back": "رجوع",
+      "cancel": "إلغاء",
+      "cancelConfirm": "تجاهل التقدم والعودة إلى الرؤى؟",
+      "pageTitle": "إنشاء رؤى",
+      "pageSubtitle": "أنشئ رؤى مدعومة بالذكاء الاصطناعي من مصادر بياناتك المتصلة"
+    },
+    "detail": {
+      "tabs": {
+        "overview": "نظرة عامة",
+        "reports": "التقارير",
+        "settings": "الإعدادات",
+        "history": "السجل"
+      },
+      "created": "تاريخ الإنشاء",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذه الرؤية؟",
+      "edit": "تعديل",
+      "errorLoading": "فشل تحميل تفاصيل الرؤية. حاول مرة أخرى.",
+      "loading": "جارٍ تحميل الرؤية...",
+      "overview": {
+        "aiInsightsTitle": "رؤى الذكاء الاصطناعي",
+        "aiModel": "نموذج الذكاء الاصطناعي",
+        "configTitle": "نظرة عامة على الإعدادات",
+        "connectedDomains": "النطاقات المتصلة",
+        "connectors": "الموصلات",
+        "connectorsLabel": "موصلات",
+        "defaultModel": "النموذج الافتراضي",
+        "description": "الوصف",
+        "download": "تنزيل",
+        "generateAIInsights": "إنشاء رؤى بالذكاء الاصطناعي",
+        "keyFindings": "أهم النتائج",
+        "metrics": "المقاييس",
+        "metricsLabel": "مقاييس",
+        "noAIInsightsYet": "لا توجد رؤى ذكاء اصطناعي بعد. أنشئ رؤى للبدء.",
+        "noDescription": "لا يوجد وصف",
+        "noReportsYet": "لا توجد تقارير بعد",
+        "performanceSummary": "ملخص الأداء",
+        "recommendations": "التوصيات",
+        "regenerateAIInsights": "إعادة إنشاء رؤى الذكاء الاصطناعي",
+        "reportsError": "فشل تحميل التقارير المرتبطة",
+        "view": "عرض"
+      },
+      "runNow": "تشغيل الآن"
+    },
+    "actions": {
+      "refresh": "تحديث"
+    },
+    "edit": {
+      "cancelMessage": "لديك تغييرات غير محفوظة. هل تريد مغادرة الصفحة؟",
+      "cancelTitle": "تجاهل التغييرات؟",
+      "continueEditing": "متابعة التعديل",
+      "discardChanges": "تجاهل التغييرات",
+      "errorLoading": "فشل تحميل الرؤية للتعديل.",
+      "loading": "جارٍ تحميل محرر الرؤية...",
+      "pageTitle": "تعديل الرؤية",
+      "pageSubtitle": "حدّث إعدادات الرؤية وجدولها",
+      "resetToDefault": "إعادة للقيم الافتراضية",
+      "sections": {
+        "aiSettings": "إعدادات الذكاء الاصطناعي",
+        "basicInfo": "المعلومات الأساسية",
+        "connectors": "الموصلات",
+        "metrics": "المقاييس",
+        "schedule": "الجدولة والتسليم"
+      },
+      "unsavedChanges": "تغييرات غير محفوظة"
+    }
+  },
+  "reports": {
+    "list": {
+      "pageTitle": "التقارير",
+      "pageSubtitle": "عرض وإدارة التقارير",
+      "newReport": "تقرير جديد",
+      "searchPlaceholder": "البحث في التقارير...",
+      "filterByStatus": "تصفية حسب الحالة",
+      "filterByFormat": "تصفية حسب التنسيق",
+      "filterByDate": "نطاق التاريخ",
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "صفحة",
+      "actions": {
+        "view": "عرض",
+        "download": "تنزيل",
+        "share": "مشاركة",
+        "delete": "حذف",
+        "deleteConfirm": "هل أنت متأكد من حذف هذا التقرير؟"
+      },
+      "emptyState": {
+        "title": "لا توجد تقارير بعد",
+        "createFirst": "إنشاء تقريرك الأول",
+        "clearFilters": "مسح عوامل التصفية"
+      },
+      "bulkActions": {
+        "download": "تنزيل المحدد",
+        "delete": "حذف المحدد",
+        "deleteConfirm": "هل أنت متأكد من حذف {count} تقارير؟"
+      },
+      "bulk": {
+        "delete": "حذف المحدد",
+        "download": "تنزيل المحدد",
+        "selected": "تم تحديد {count}"
+      },
+      "columns": {
+        "actions": "الإجراءات",
+        "date": "التاريخ",
+        "format": "التنسيق",
+        "name": "الاسم",
+        "status": "الحالة"
+      },
+      "dateFrom": "من تاريخ",
+      "dateTo": "إلى تاريخ",
+      "deleteConfirm": {
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "multiple": "هل أنت متأكد أنك تريد حذف {count} تقريرًا؟",
+        "single": "هل أنت متأكد أنك تريد حذف هذا التقرير؟",
+        "title": "حذف التقارير"
+      },
+      "errorLoading": "فشل تحميل التقارير",
+      "format": {
+        "all": "كل التنسيقات"
+      },
+      "status": {
+        "all": "الكل",
+        "failed": "فشل",
+        "generating": "جارٍ الإنشاء",
+        "ready": "جاهز"
+      }
+    },
+    "status": {
+      "all": "الكل",
+      "ready": "جاهز",
+      "generating": "قيد الإنشاء",
+      "failed": "فشل"
+    },
+    "formats": {
+      "all": "كل التنسيقات",
+      "pdf": "PDF",
+      "excel": "Excel"
+    },
+    "viewer": {
+      "loading": "جاري تحميل التقرير...",
+      "error": "فشل تحميل التقرير",
+      "zoom": "تكبير",
+      "page": "صفحة",
+      "of": "من"
+    },
+    "notifications": {
+      "created": {
+        "title": "تم إنشاء الرؤية",
+        "message": "تم إنشاء رؤيتك بنجاح"
+      },
+      "updated": {
+        "title": "تم تحديث الرؤية",
+        "message": "تم تحديث رؤيتك بنجاح"
+      },
+      "deleted": {
+        "title": "تم حذف الرؤية",
+        "message": "تم حذف رؤيتك بنجاح"
+      },
+      "running": {
+        "title": "الرؤية قيد التشغيل",
+        "message": "رؤيتك تقوم الآن بإنشاء تقرير"
+      },
+      "failed": {
+        "createTitle": "فشل إنشاء الرؤية",
+        "updateTitle": "فشل تحديث الرؤية",
+        "deleteTitle": "فشل حذف الرؤية",
+        "runTitle": "فشل تشغيل الرؤية"
       }
     }
   },

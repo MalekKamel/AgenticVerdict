@@ -17,6 +17,12 @@ describe("withLocalePrefix", () => {
     expect(withLocalePrefix("en", "/en/dashboard")).toBe("/en/dashboard");
   });
 
+  it("should collapse duplicated locale segments", () => {
+    expect(withLocalePrefix("en", "/en/en/dashboard/insights/abc")).toBe(
+      "/en/dashboard/insights/abc",
+    );
+  });
+
   it("should handle different locales correctly", () => {
     expect(withLocalePrefix("fr", "/dashboard")).toBe("/fr/dashboard");
     expect(withLocalePrefix("es", "/auth/login")).toBe("/es/auth/login");

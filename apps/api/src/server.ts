@@ -7,6 +7,7 @@ import { toHttpErrorResponse } from "@agenticverdict/core";
 
 import { createUpstashRedisFromEnv } from "@agenticverdict/database";
 import { createPinoLogger, renderProductionFlowTestMetrics } from "@agenticverdict/observability";
+import { getObjectStorage } from "@agenticverdict/core/storage";
 
 import { registerRequestAccessLogging } from "./middleware/request-logging";
 
@@ -110,12 +111,37 @@ export async function buildApiServer(): Promise<FastifyInstance> {
       properties: {
         ok: { type: "boolean" },
         service: { type: "string" },
+        storage: {
+          type: "object",
+          properties: {
+            healthy: { type: "boolean" },
+            provider: { type: "string" },
+          },
+        },
       },
       required: ["ok", "service"],
     },
   } as const;
 
-  const healthHandler = async () => ({ ok: true as const, service: "@agenticverdict/api" });
+  const healthHandler = async () => {
+    const storage = getObjectStorage();
+    let storageHealthy = false;
+    try {
+      storageHealthy = await storage.isHealthy();
+    } catch {
+      storageHealthy = false;
+    }
+    const provider = process.env.STORAGE_PROVIDER ?? "memory";
+
+    return {
+      ok: true as const,
+      service: "@agenticverdict/api",
+      storage: {
+        healthy: storageHealthy,
+        provider,
+      },
+    };
+  };
 
   for (const path of ["/health", "/api/health"] as const) {
     app.get(

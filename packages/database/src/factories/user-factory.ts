@@ -83,7 +83,7 @@ export class UserFactory {
 
   static getRolesForTenantType(tenantType: TenantType, startWithAdmin: boolean): SystemRole[] {
     if (tenantType === "agency_partner") {
-      return ["admin", "manager", "viewer"];
+      return ["admin", "analyst", "viewer"];
     }
 
     if (tenantType === "agency_managed") {

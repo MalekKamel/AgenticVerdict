@@ -1,26 +1,67 @@
 # Insights & Reports Pages
 
-**Version:** 1.0
-**Last Updated:** 2026-04-13
-**Status:** Active
+**Version:** 2.0  
+**Last Updated:** 2026-05-03  
+**Status:** Active (Implementation-Ready)  
 **Related Specs:**
 
 - [Business Architecture: Insight Configuration](/docs/architecture/business/business-architecture.md#24-insight-configuration)
 - [Business Architecture: Intelligence Pipeline](/docs/architecture/business/business-architecture.md#31-intelligence-pipeline)
 - [Core Intelligence Spec](/specs/00-core/02-intelligence/README.md)
 - [Core Insights Spec](/specs/00-core/03-insights/README.md)
+- [System Entities: Insights & Reports](/docs/architecture/ui/02-system-entities/insights-reports.md)
 
 ---
 
 ## Table of Contents
 
-1. [Insight List Page](#insight-list-page)
-2. [Insight Create Page](#insight-create-page)
-3. [Insight Detail Page](#insight-detail-page)
-4. [Report Export Page](#report-export-page)
+1. [Overview](#overview)
+2. [Insight List Page](#insight-list-page)
+3. [Insight Create Page](#insight-create-page)
+4. [Insight Detail Page](#insight-detail-page)
 5. [Report Viewer Page](#report-viewer-page)
-6. [Insight Edit Page](#insight-edit-page)
-7. [Insight Clone Page](#insight-clone-page)
+6. [Report List Page](#report-list-page)
+7. [Insight Edit Page](#insight-edit-page)
+8. [Implementation Patterns](#implementation-patterns)
+
+---
+
+## Overview
+
+### Architecture Summary
+
+**Insights** are AI-powered analysis configurations that define how the platform collects, processes, and analyzes data from multiple connectors. **Reports** are standalone generated documents with versioning, sharing, and delivery capabilities.
+
+**Key Differences from Previous Design:**
+
+- **Flexible Configuration:** JSONB columns for `schedule`, `delivery`, and `aiConfig` allow dynamic schema evolution
+- **Standalone Reports:** Reports are tenant-scoped entities, not strictly tied to insights
+- **Version Management:** Reports support immutable version snapshots with SHA-256 verification
+- **Enterprise Features:** Audit trails, compliance reporting, retention management, and sharing
+
+### Intelligence Pipeline
+
+```
+Configure (Insight) → Collect (Connectors) → Analyze (AI) → Generate (Report) → Deliver (Email/Webhook)
+```
+
+### Current Implementation Status
+
+| Feature               | Backend API                          | Frontend UI              | Status       |
+| --------------------- | ------------------------------------ | ------------------------ | ------------ |
+| List insights         | ✅ `GET /api/v1/insights`            | ⚠️ Dashboard widget only | Partial      |
+| Create insight        | ❌ Missing                           | ❌ Missing               | Not Started  |
+| Insight detail        | ❌ Missing                           | ❌ Missing               | Not Started  |
+| Update insight        | ❌ Missing                           | ❌ Missing               | Not Started  |
+| Delete insight        | ❌ Missing                           | ❌ Missing               | Not Started  |
+| List reports          | ✅ `GET /api/v1/reports`             | ❌ Missing               | Backend Only |
+| Create report         | ✅ `POST /api/v1/reports`            | ❌ Missing               | Backend Only |
+| Upload report content | ✅ `PUT /api/v1/reports/:id/content` | ❌ Missing               | Backend Only |
+| Download report       | ✅ `GET /api/v1/reports/:id/content` | ❌ Missing               | Backend Only |
+| Report versioning     | ✅ Full version management           | ❌ Missing               | Backend Only |
+| Report sharing        | ✅ Time-limited share tokens         | ❌ Missing               | Backend Only |
+| Delivery system       | ✅ BullMQ + webhooks                 | ❌ Missing               | Backend Only |
+| Audit trail           | ✅ Compliance audit API              | ❌ Missing               | Backend Only |
 
 ---
 
@@ -28,67 +69,47 @@
 
 ### Overview
 
-Main hub for browsing and managing all insights. Provides filtering, sorting, bulk actions, and quick access to insight details. Supports both list and grid views.
+Main hub for browsing and managing all insights. Provides filtering, sorting, bulk actions, and quick access to insight details.
 
-### User Goal
+**Route:** `/dashboard/insights`  
+**Layout:** Dashboard layout with sidebar navigation
 
-- **Primary Goal:** Find and access specific insights
-- **Secondary Goals:** Create new insights, manage multiple insights, organize by domain
+### User Goals
+
+- **Primary:** Find and access specific insights
+- **Secondary:** Create new insights, filter by status/domain, manage multiple insights
 
 ### Page Layout
 
-**Wireframe Description:**
+**Wireframe:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ ☰    Insights                     [Search insights...] 🔔 [👤] │
-├────────┬────────────────────────────────────────────────────────┤
+ ├────────┬────────────────────────────────────────────────────────┤
 │        │                                                        │
 │ Home   │  Insights                             [+ New Insight]  │
 │        │  Manage and schedule your business intelligence        │
 │        │                                                        │
-│        │  Filters: [All] [Active] [Scheduled] [Paused]         │
-│        │  Domains: [All Domains ▼]  Sort: [Last Run ▼]        │
-│        │                                                        │
-│        │  ☑ 2 selected  [Archive] [Pause] [Run Now]            │
+│        │  Filters: [Status ▼] [Domain ▼] [Search]              │
 │        │                                                        │
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ ☑ Marketing Performance                         │  │
-│        │  │ Marketing • GA4, Meta, TikTok                   │  │
-│        │  │ Last run: 2 hours ago • Next: Tomorrow 9:00 AM  │  │
+│        │  │ ✅ Enabled • Marketing • GA4, Meta, TikTok      │  │
+│        │  │ Created: Apr 13, 2026 • Last run: 2 hours ago   │  │
 │        │  │ [View] [⋮]                                      │  │
 │        │  └─────────────────────────────────────────────────┘  │
 │        │                                                        │
 │        │  ┌─────────────────────────────────────────────────┐  │
 │        │  │ ☑ Financial Summary                             │  │
-│        │  │ Finance • GA4, QuickBooks, Stripe              │  │
-│        │  │ Last run: Yesterday • Next: Weekly (Monday)    │  │
+│        │  │ ✅ Enabled • Finance • GA4, Stripe              │  │
+│        │  │ Created: Apr 10, 2026 • Last run: Yesterday     │  │
 │        │  │ [View] [⋮]                                      │  │
 │        │  └─────────────────────────────────────────────────┘  │
 │        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ SEO Performance                                 │  │
-│        │  │ SEO • GA4, Google Search Console               │  │
-│        │  │ Last run: 3 days ago • Next: Manual            │  │
-│        │  │ [View] [⋮]                                      │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ Social Media Engagement                         │  │
-│        │  │ Social • Meta, TikTok                          │  │
-│        │  │ Last run: 1 week ago • Next: Paused             │  │
-│        │  │ [View] [⋮]                                      │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ Local Business Performance                      │  │
-│        │  │ Local • Google Business Profile                │  │
-│        │  │ Not run yet • Schedule to start                │  │
-│        │  │ [View] [⋮]                                      │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ← Previous  1  2  3  Next →                        │
-└────────┴────────────────────────────────────────────────────────┘
+│        │  Showing 2 of 5 insights                              │
+│        │  ← Previous  1  2  Next →                             │
+│        └────────────────────────────────────────────────────────┘
 ```
 
 **Layout Behavior:**
@@ -102,130 +123,118 @@ Main hub for browsing and managing all insights. Provides filtering, sorting, bu
 **Component Tree:**
 
 ```
-DashboardLayout (Template)
-├── Sidebar (Organism) - [standard sidebar]
-├── TopBar (Organism)
-│   ├── SearchBar (Molecule) - Search insights
-│   └── [other top bar components]
-└── MainContent (Organism)
-    ├── PageHeader (Molecule)
-    │   ├── Typography (Atom) - "Insights"
-    │   ├── Typography (Atom) - Description
-    │   └── Button (Atom) - "+ New Insight"
-    ├── FilterBar (Molecule)
-    │   ├── StatusFilter (Molecule) - All, Active, Scheduled, Paused
-    │   ├── DomainFilter (Molecule) - Domain dropdown
-    │   ├── SortDropdown (Molecule) - Last Run, Name, Domain
-    │   └── ViewToggle (Molecule) - Grid/List view
-    ├── BulkActionBar (Molecule) - Hidden until selection
-    │   ├── SelectionCount (Atom) - "2 selected"
-    │   ├── BulkArchiveButton (Atom)
-    │   ├── BulkPauseButton (Atom)
-    │   └── BulkRunNowButton (Atom)
-    └── InsightGrid (Organism)
-        ├── InsightCard (Molecule)
-        │   ├── Checkbox (Atom)
-        │   ├── CardHeader (Molecule)
-        │   │   ├── InsightName (Atom)
-        │   │   ├── DomainTags (Molecule)
-        │   │   └── StatusBadge (Atom)
-        │   ├── ConnectorList (Molecule) - Connector icons
-        │   ├── ScheduleInfo (Atom) - Last run, Next run
-        │   └── ActionButtons (Molecule)
-        │       ├── Button (Atom) - View
-        │       └── DropdownMenu (Atom) - Run, Pause, Edit, Delete
-        └── [more insight cards]
-    └── Pagination (Molecule)
-        ├── PageInfo (Atom) - "Showing 1-10 of 24"
-        └── PageControls (Molecule) - Prev, Next, Page numbers
+InsightListPage
+├── PageHeader
+│   ├── Typography - "Insights"
+│   └── Button - "+ New Insight"
+├── FilterBar
+│   ├── Select - Status filter (Enabled, Disabled)
+│   ├── Select - Domain filter (Marketing, Finance, etc.)
+│   └── TextInput - Search by name
+├── InsightGrid
+│   └── InsightCard (repeating)
+│       ├── StatusIndicator - Enabled/Disabled
+│       ├── Typography - Insight name
+│       ├── Badge - Domain (extracted from connectors)
+│       ├── Text - Connector list
+│       ├── Text - Created date, last run
+│       └── ActionMenu - View, Edit, Delete, Run Now
+└── Pagination
 ```
 
 **Insight Card States:**
 
-**Active:**
-
-- Green status indicator
-- "Last run: [time]" • "Next: [schedule]"
-- All actions available
-
-**Scheduled:**
-
-- Blue status indicator
-- "Not run yet" • "Next: [schedule]"
-- "Run Now" button available
-
-**Paused:**
-
-- Yellow/gray status indicator
-- "Last run: [time]" • "Next: Paused"
-- "Resume" action available
-
-**Error:**
-
-- Red status indicator
-- "Last run: Failed" • Error message
-- "Retry" action highlighted
+| State        | Indicator       | Description                    |
+| ------------ | --------------- | ------------------------------ |
+| **Enabled**  | ✅ Green        | Active and running on schedule |
+| **Disabled** | ⚪ Gray         | Manually disabled, not running |
+| **Running**  | 🔄 Blue spinner | Currently executing            |
+| **Failed**   | ❌ Red          | Last run failed                |
+| **No Runs**  | ⚪ Gray         | Created but never executed     |
 
 ### States
 
 **1. Loading State**
 
-- Skeleton cards for insights (8-10 placeholders)
+- Skeleton cards (6-8 placeholders)
 - Shimmer effect
 - Filters disabled
 
 **2. Empty State**
 
 - "No insights yet"
-- Illustration of insights/dashboard
-- "Create your first insight" button (primary)
+- Illustration
+- "Create your first insight" button
 - "Learn about insights" link
 
 **3. Filtered State**
 
 - Active filters shown as chips
-- Clear filters button appears
-- Result count: "Showing 5 of 12 insights"
+- Clear filters button
+- Result count: "Showing 2 of 5 insights"
 - Empty state for no matches
 
-**4. Selection State**
+**4. Error State**
 
-- Bulk action bar appears at top
-- Selected cards highlighted
-- Checkbox state synced across pages
-- "Clear selection" button
-
-**5. Running State**
-
-- "Run Now" shows spinner
-- Card shows "Running..." status
-- Other actions disabled
-- Success toast on completion
+- Error message from API
+- Retry button
+- Fallback to empty state
 
 ### Navigation
 
 **Entry Points:**
 
 - Sidebar "Insights" navigation
-- Dashboard "Recent Insights" click
-- Direct URL: `/insights`
+- Dashboard "Recent Insights" → "View All"
+- Direct URL: `/dashboard/insights`
 
 **Exits:**
 
-- **+ New Insight:** Navigate to insight creation flow
-- **Insight Card Click:** Navigate to insight detail page
-- **View Button:** Navigate to insight detail page
-- **⋮ Menu:** Run, Pause, Edit, Delete, Clone
+- **+ New Insight:** Navigate to `/dashboard/insights/create`
+- **View:** Navigate to `/dashboard/insights/:id`
+- **Edit:** Navigate to `/dashboard/insights/:id/edit`
+- **Run Now:** API call, stay on page with toast notification
+- **Delete:** Confirmation modal, then back to list
 
-**Breadcrumb Hierarchy:**
+### API Integration
 
+**Query:** `GET /api/v1/insights`
+
+**Request:**
+
+```typescript
+{
+  query: {
+    type?: "anomaly" | "trend" | "opportunity" | "warning",
+    minConfidence?: number,
+    minRelevance?: number,
+    sort?: "relevance" | "created" | "confidence",
+    limit?: number (1-100, default 50),
+    offset?: number (default 0)
+  }
+}
 ```
-Insights
+
+**Response:**
+
+```typescript
+{
+  insights: GeneratedInsight[],
+  total: number,
+  limit: number,
+  offset: number
+}
 ```
+
+**Caching:**
+
+- Redis cache with 5-minute TTL
+- Cache key includes tenant ID and query params
+- Invalidated on create/update/delete
 
 ### Permissions
 
-- **Viewer:** View insights, no bulk actions
+- **Viewer:** View insights only
 - **Analyst:** View, run, clone insights
 - **Admin/Owner:** Full access including create, edit, delete
 
@@ -235,158 +244,282 @@ Insights
 
 ### Overview
 
-Multi-step insight creation wizard. Guides users through template selection, connector configuration, metric choices, AI settings, scheduling, and delivery preferences.
+Multi-step insight creation wizard. Guides users through configuration of connectors, metrics, AI settings, scheduling, and delivery preferences.
 
-### User Goal
+**Route:** `/dashboard/insights/create`  
+**Layout:** Centered wizard layout
 
-- **Primary Goal:** Create a new insight with desired data sources and outputs
-- **Secondary Goals:** Understand available options, preview before finalizing
+### User Goals
 
-### Page Layout
+- **Primary:** Create a new insight with desired data sources and outputs
+- **Secondary:** Understand available options, preview before finalizing
 
-**Multi-Step Flow:**
+### Multi-Step Flow
 
 ```
-Step 1: Template → Step 2: Connectors → Step 3: Metrics → Step 4: AI Settings → Step 5: Schedule & Delivery → Step 6: Review
+Step 1: Name & Domain → Step 2: Connectors → Step 3: Metrics → Step 4: AI Settings → Step 5: Schedule & Delivery → Step 6: Review
 ```
 
-**Wireframe Description (Step 1 - Template Selection):**
+### Step 1: Name & Domain
+
+**Wireframe:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ ☰    Create Insight                     [✕ Cancel]             │
-├────────┬────────────────────────────────────────────────────────┤
-│        │                                                        │
-│        │  Create New Insight                                   │
-│        │  Step 1 of 6: Choose a Template                       │
-│        │                                                        │
-│        │  ┌────┐   ┌────┐   ┌────┐   ┌────┐   ┌────┐       │
-│        │  │ 1  │ → │ 2  │ → │ 3  │ → │ 4  │ → │ 5  │ → │ 6  │ │
-│        │  │ ●  │   │    │   │    │   │    │   │    │   │    │ │
-│        │  └────┘   └────┘   └────┘   └────┘   └────┘       │
-│        │                                                        │
-│        │  Start with a template or create from scratch:        │
-│        │                                                        │
-│        │  ◉ Start from template                               │
-│        │  ○ Create from scratch                               │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ [🔍 Search templates...]                       │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌──────────────────┐  ┌──────────────────┐         │
-│        │  │ Marketing         │  │ Finance          │         │
-│        │  │ Performance       │  │ Insight          │         │
-│        │  │                  │  │                  │         │
-│        │  │ Track marketing  │  │ Monitor financial │         │
-│        │  │ performance across│  │ health with      │         │
-│        │  │ campaigns and     │  │ revenue, expense │         │
-│        │  │ channels.         │  │ tracking.        │         │
-│        │  │                  │  │                  │         │
-│        │  │ Connectors:       │  │ Connectors:      │         │
-│        │  │ GA4, Meta, TikTok│  │ GA4, QB, Stripe │         │
-│        │  │                  │  │                  │         │
-│        │  │ [Use Template]    │  │ [Use Template]  │         │
-│        │  └──────────────────┘  └──────────────────┘         │
-│        │                                                        │
-│        │  ┌──────────────────┐  ┌──────────────────┐         │
-│        │  │ SEO Performance  │  │ Social Media     │         │
-│        │  │ Insight          │  │ Insight          │         │
-│        │  │ [Use Template]   │  │ [Use Template]   │         │
-│        │  └──────────────────┘  └──────────────────┘         │
-│        │                                                        │
-│        │  ┌───────┐         ┌──────────────────────┐        │
-│        │  │ Back  │         │  Continue            │        │
-│        │  └───────┘         └──────────────────────┘        │
-└────────┴────────────────────────────────────────────────────────┘
+│ Create New Insight                                    [Cancel] │
+│ Step 1 of 6: Basic Information                                 │
+│ ━━━━○─────○─────○─────○─────○─────○                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Insight Name *                                                │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                                                         │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  Domain (Optional)                                             │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Select domain                                           │ ▼│
+│  └─────────────────────────────────────────────────────────┘  │
+│  Domains are auto-detected from connectors                    │
+│                                                                 │
+│  Description (Optional)                                        │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                                                         │  │
+│  │                                                         │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  [Back]                              [Continue to Connectors] │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Components
+**Validation:**
 
-**Step-by-Step Components:**
+- Name: Required, 2-255 characters
+- Domain: Optional (extracted from connectors if not provided)
+- Description: Optional, max 500 characters
 
-**Step 1: Template Selection**
+### Step 2: Connector Selection
 
-- Template cards with preview, description, connector list
-- Search and filter by domain
-- "Start from scratch" option
+**Wireframe:**
 
-**Step 2: Connector Selection**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Create New Insight                                    [Cancel] │
+│ Step 2 of 6: Select Data Sources                               │
+│ ━━━━━━━━━━○─────○─────○─────○─────○                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Select connectors to include in this insight:                 │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ ☑ Google Analytics 4                                   │  │
+│  │   ✅ Healthy • Marketing • Last sync: 2 hours ago      │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ ☑ Meta Ads                                             │  │
+│  │   ✅ Healthy • Marketing • Last sync: 3 hours ago      │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ ☐ TikTok Ads                                           │  │
+│  │   ⚠️ Warning • Marketing • Last sync: 1 day ago        │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  [Manage Connectors] - Add new connectors                      │
+│                                                                 │
+│  [Back]                              [Continue to Metrics]    │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-- List of available connectors (by domain)
-- Multi-select with checkboxes
-- Connector health indicators
-- "Add new connector" link
+**Validation:**
 
-**Step 3: Metric Configuration**
+- At least 1 connector required
+- Connectors must be healthy or warning status
+- "Manage Connectors" opens connector add flow in modal
 
-- Metric checklist per connector
-- Search metrics
-- Select all/none buttons
+### Step 3: Metric Configuration
+
+**Wireframe:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Create New Insight                                    [Cancel] │
+│ Step 3 of 6: Select Metrics                                    │
+│ ━━━━━━━━━━━━━━━━○─────○─────○─────○                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Google Analytics 4                                            │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ ☑ Sessions          ☑ Conversions     ☑ Revenue        │  │
+│  │ ☐ Bounce Rate       ☐ Avg. Duration   ☐ Users          │  │
+│  │ [Select All] [Clear All]                                │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  Meta Ads                                                      │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ ☑ Impressions       ☑ Clicks          ☑ Spend          │  │
+│  │ ☑ ROAS              ☐ CTR             ☐ CPC            │  │
+│  │ [Select All] [Clear All]                                │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  [Back]                              [Continue to AI Settings]│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Validation:**
+
+- At least 1 metric per selected connector
 - Recommended metrics highlighted
 
-**Step 4: AI Settings**
+### Step 4: AI Settings
 
-- Model selection dropdown (Claude, GPT-4)
-- Quality/Speed toggle (Smart defaults)
-- Detail level slider (Concise → Standard → Detailed)
-- Custom prompt field (optional)
+**Wireframe:**
 
-**Step 5: Schedule & Delivery**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Create New Insight                                    [Cancel] │
+│ Step 4 of 6: AI Configuration                                  │
+│ ━━━━━━━━━━━━━━━━━━━━━━○─────○─────○                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  AI Model                                                      │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Claude 3.5 Sonnet (Recommended)                         │ ▼│
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  Analysis Quality                                              │
+│  ○ Standard (Faster)    ● Premium (More detailed)             │
+│                                                                 │
+│  Detail Level                                                  │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Concise ────●───────── Standard ──────── Detailed       │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  Custom Prompt (Optional)                                      │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Focus on ROI and customer acquisition costs...          │  │
+│  │                                                         │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  [Back]                              [Continue to Schedule]   │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-- Schedule: Manual, Hourly, Daily, Weekly, Monthly
-- Date/time picker
-- Delivery format: PDF, Excel, Both
-- Delivery method: Email, Dashboard, Webhook
-- Recipient management
+**Configuration Structure:**
 
-**Step 6: Review & Create**
+```json
+{
+  "aiConfig": {
+    "model": "claude-3-5-sonnet-20241022",
+    "provider": "anthropic",
+    "qualityLevel": "premium",
+    "detailLevel": "standard",
+    "customPrompt": "Optional custom instructions..."
+  }
+}
+```
 
-- Insight summary
-- Connector list
-- Selected metrics
-- AI settings summary
-- Schedule and delivery
-- "Create Insight" button
+### Step 5: Schedule & Delivery
+
+**Wireframe:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Create New Insight                                    [Cancel] │
+│ Step 5 of 6: Schedule & Delivery                               │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━○─────○                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Schedule                                                      │
+│  ● Run manually only                                           │
+│  ○ Run on schedule                                             │
+│    ┌────────────────────────────────────────────────────────┐ │
+│    │ Frequency: [Daily ▼]                                   │ │
+│    │ Time: [09:00 ▼]                                        │ │
+│    └────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  Delivery Format                                               │
+│  ● PDF Report                                                  │
+│  ○ Excel Spreadsheet                                           │
+│  ○ Both PDF + Excel                                            │
+│                                                                 │
+│  Delivery Method                                               │
+│  ☑ Email to: team@example.com [+ Add]                         │
+│  ☐ Dashboard notification                                      │
+│                                                                 │
+│  [Back]                              [Continue to Review]     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Configuration Structure:**
+
+```json
+{
+  "schedule": {
+    "enabled": false
+  },
+  "delivery": {
+    "format": "pdf",
+    "channels": ["email"],
+    "recipients": ["team@example.com"]
+  }
+}
+```
+
+### Step 6: Review & Create
+
+**Wireframe:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Create New Insight                                    [Cancel] │
+│ Step 6 of 6: Review & Create                                   │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━●                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Insight Summary                                               │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Name: Marketing Performance                             │  │
+│  │ Domain: Marketing                                       │  │
+│  │ Connectors: GA4, Meta Ads (2)                           │  │
+│  │ Metrics: 8 selected                                     │  │
+│  │ AI Model: Claude 3.5 Sonnet (Premium)                   │  │
+│  │ Schedule: Manual only                                   │  │
+│  │ Delivery: PDF via email                                 │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ☑ Activate insight after creation                             │
+│                                                                 │
+│  [Back]                              [Create Insight]         │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ### States
 
-**1. Template Selection State**
+**1. Template Selection State** (if templates implemented)
 
-- **Browsing:** All templates shown
-- **Searching:** Filtered results
-- **Selected:** Template card highlighted
-- **From Scratch:** Skip to connector selection
+- Browse templates by domain
+- Search templates
+- Preview template configuration
 
-**2. Connector Selection State**
+**2. Validation State**
 
-- **Initial:** No connectors selected
-- **Selecting:** Checkboxes add/remove connectors
-- **Adding New:** Open connector add flow, return with selection
+- Real-time validation per step
+- "Continue" button disabled until valid
+- Error messages inline
 
-**3. Metric Configuration State**
+**3. Creating State**
 
-- **Loading:** Fetch available metrics from selected connectors
-- **Selecting:** Checkboxes for metrics
-- **Validating:** At least one metric required per connector
+- Submit button shows spinner
+- "Creating insight..." message
+- All form fields disabled
 
-**4. AI Settings State**
+**4. Success State**
 
-- **Smart Defaults:** Pre-selected optimal settings
-- **Customizing:** User changes selections
-- **Advanced:** Custom prompt field appears
-
-**5. Schedule & Delivery State**
-
-- **Manual:** No recurrence, run once
-- **Scheduled:** Date/time picker, recurrence selector
-- **Delivery:** Format and method selection
-
-**6. Review State**
-
-- **Validating:** All required fields complete
-- **Creating:** Submit to backend, show loading
-- **Success:** Success message, redirect to insight detail
+- Success toast
+- Redirect to insight detail page
+- Option to "Create Another"
 
 ### Navigation
 
@@ -394,13 +527,13 @@ Step 1: Template → Step 2: Connectors → Step 3: Metrics → Step 4: AI Setti
 
 - Insight list "New Insight" button
 - Dashboard "Quick Actions" → "Create Insight"
-- Direct URL: `/insights/create`
+- Direct URL: `/dashboard/insights/create`
 
 **Exits:**
 
 - **Cancel:** Return to insight list (discard progress)
-- **Complete:** Navigate to new insight detail page
-- **Save Draft:** Save progress, return to insight list
+- **Complete:** Navigate to `/dashboard/insights/:id`
+- **Back:** Previous step (preserve form state)
 
 ---
 
@@ -408,138 +541,130 @@ Step 1: Template → Step 2: Connectors → Step 3: Metrics → Step 4: AI Setti
 
 ### Overview
 
-Comprehensive view of a single insight with full report, metrics, AI-generated insights, recommendations, and action buttons for running, editing, and sharing.
+Comprehensive view of a single insight with configuration, recent reports, AI-generated insights, and action buttons.
 
-### User Goal
+**Route:** `/dashboard/insights/:id`  
+**Layout:** Dashboard layout with tabs
 
-- **Primary Goal:** Review complete insight report with AI analysis
-- **Secondary Goals:** Run insight manually, edit configuration, share report
+### User Goals
+
+- **Primary:** Review insight configuration and generated reports
+- **Secondary:** Run insight manually, edit configuration, view history
 
 ### Page Layout
 
-**Wireframe Description:**
+**Wireframe:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ ☰    Marketing Performance            [Edit] [⋮]                │
-├────────┬────────────────────────────────────────────────────────┤
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ Insight Overview                               │  │
-│        │  │                                                 │  │
-│        │  │ Last run: Apr 13, 2026 at 2:30 PM               │  │
-│        │  │ Next run: Apr 14, 2026 at 9:00 AM               │  │
-│        │  │ Status: ✅ Completed successfully                │  │
-│        │  │                                                 │  │
-│        │  │ Connectors: GA4, Meta, TikTok                   │  │
-│        │  │ Schedule: Daily at 9:00 AM                      │  │
-│        │  │ Delivery: Email to team@masafh.com              │  │
-│        │  │                                                 │  │
-│        │  │ [Run Now] [Share] [Export] [Pause]              │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ Key Metrics                                    │  │
-│        │  │                                                 │  │
-│        │  │ ┌───────────────┐  ┌───────────────┐           │  │
-│        │  │ │ Sessions     │  │ Conversions  │           │  │
-│        │  │ │ 45,231       │  │ 1,234        │           │  │
-│        │  │ │ ↑ 23%        │  │ ↑ 15%        │           │  │
-│        │  │ └───────────────┘  └───────────────┘           │  │
-│        │  │                                                 │  │
-│        │  │ ┌───────────────┐  ┌───────────────┐           │  │
-│        │  │ │ ROAS         │  │ CPA           │           │  │
-│        │  │ │ 3.2x         │  │ $12.45        │           │  │
-│        │  │ │ ↑ 8%         │  │ ↓ 3%         │           │  │
-│        │  │ └───────────────┘  └───────────────┘           │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ AI-Generated Insights                          │  │
-│        │  │                                                 │  │
-│        │  │ 📊 Performance Summary                          │  │
-│        │  │ Marketing performance improved 23% compared to  │  │
-│        │  │ previous period, driven by strong Meta campaign │  │
-│        │  │ results. TikTok shows emerging potential.       │  │
-│        │  │                                                 │  │
-│        │  │ 💡 Key Findings                                 │  │
-│        │  │ • Meta campaigns delivered 3.2x ROAS, exceeding │  │
-│        │  │   benchmarks by 15%                            │  │
-│        │  │ • TikTok engagement up 45%, but conversion rate │  │
-│        │  │   lower than Meta (1.2% vs 2.8%)               │  │
-│        │  │ • GA4 sessions increased, but bounce rate       │  │
-│        │  │   slightly elevated (52% vs 48% target)        │  │
-│        │  │                                                 │  │
-│        │  │ 🎯 Recommendations                              │  │
-│        │  │ 1. Reallocate 10% budget from underperforming   │  │
-│        │  │    campaigns to top Meta creatives             │  │
-│        │  │ 2. A/B test TikTok landing pages to improve     │  │
-│        │  │    conversion rate                             │  │
-│        │  │ 3. Investigate GA4 bounce rate increase; check  │  │
-│        │  │    site performance on top landing pages       │  │
-│        │  │                                                 │  │
-│        │  │ [View Full Report] [Download PDF]              │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ Trend Charts                                   │  │
-│        │  │ [Line charts showing metric trends over time]    │  │
-│        │  └─────────────────────────────────────────────────┘  │
-└────────┴────────────────────────────────────────────────────────┘
+│ ← Back    Marketing Performance    [Edit] [Run Now] [⋮]         │
+ ├────────────────────────────────────────────────────────────────┤
+│  Overview | Reports | Settings | History                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Insight Overview                                       │  │
+│  │                                                         │  │
+│  │ Status: ✅ Enabled                                      │  │
+│  │ Created: Apr 13, 2026                                   │  │
+│  │ Last run: Apr 13, 2026 at 2:30 PM                       │  │
+│  │ Next run: Manual only                                   │  │
+│  │                                                         │  │
+│  │ Connectors: GA4, Meta Ads                               │  │
+│  │ Metrics: 8 selected                                     │  │
+│  │ AI Model: Claude 3.5 Sonnet                             │  │
+│  │                                                         │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ Recent Reports (3)                    [View All Reports] │  │
+│  │                                                         │  │
+│  │ ┌───────────────────────────────────────────────────┐   │  │
+│  │ │ 📄 Marketing Report - Apr 13, 2026                │   │  │
+│  │ │    Created: 2 hours ago • PDF • 2.4 MB            │   │  │
+│  │ │    [Download] [View] [Share]                      │   │  │
+│  │ └───────────────────────────────────────────────────┘   │  │
+│  │                                                         │  │
+│  │ ┌───────────────────────────────────────────────────┐   │  │
+│  │ │ 📄 Marketing Report - Apr 12, 2026                │   │  │
+│  │ │    Created: Yesterday • PDF • 2.1 MB              │   │  │
+│  │ │    [Download] [View] [Share]                      │   │  │
+│  │ └───────────────────────────────────────────────────┘   │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │ AI-Generated Insights                                  │  │
+│  │                                                         │  │
+│  │ 📊 Performance Summary                                  │  │
+│  │ Marketing performance improved 23% compared to          │  │
+│  │ previous period, driven by strong Meta campaign results.│  │
+│  │                                                         │  │
+│  │ 💡 Key Findings                                         │  │
+│  │ • Meta campaigns delivered 3.2x ROAS                    │  │
+│  │ • TikTok engagement up 45%                              │  │
+│  │                                                         │  │
+│  │ 🎯 Recommendations                                      │  │
+│  │ 1. Reallocate 10% budget to top Meta creatives          │  │
+│  │ 2. A/B test TikTok landing pages                        │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+### Tabs
+
+**1. Overview Tab**
+
+- Insight summary
+- Recent reports (3-5)
+- AI-generated insights
+- Quick actions
+
+**2. Reports Tab**
+
+- Full report list with pagination
+- Filter by date range, format
+- Bulk actions (download, delete)
+- Version history per report
+
+**3. Settings Tab**
+
+- Edit connectors
+- Edit metrics
+- Edit AI settings
+- Edit schedule
+- Edit delivery
+- Danger zone (delete insight)
+
+**4. History Tab**
+
+- Audit trail
+- Run history
+- Configuration changes
+- Delivery events
 
 ### Components
 
 **Component Tree:**
 
 ```
-InsightDetailLayout (Template)
-├── PageHeader (Molecule)
-│   ├── Typography (Atom) - Insight name
-│   ├── StatusBadge (Atom) - Completion status
-│   └── ActionButtons (Molecule)
-│       ├── Button (Atom) - Edit
-│       └── DropdownMenu (Atom) - Run, Share, Export, Clone, Delete
-├── OverviewCard (Molecule)
-│   ├── InfoGrid (Organism)
-│   │   ├── InfoItem (Molecule) - Last run
-│   │   ├── InfoItem (Molecule) - Next run
-│   │   ├── InfoItem (Molecule) - Status
-│   │   ├── InfoItem (Molecule) - Connectors
-│   │   ├── InfoItem (Molecule) - Schedule
-│   │   └── InfoItem (Molecule) - Delivery
-│   └── QuickActions (Molecule)
-│       ├── Button (Atom) - Run Now
-│       ├── Button (Atom) - Share
-│       ├── Button (Atom) - Export
-│       └── Button (Atom) - Pause
-├── KeyMetricsCard (Molecule)
-│   ├── KPICardGrid (Organism)
-│   │   ├── KPICard (Molecule) - Sessions
-│   │   ├── KPICard (Molecule) - Conversions
-│   │   ├── KPICard (Molecule) - ROAS
-│   │   └── KPICard (Molecule) - CPA
-│   └── TrendIndicators (Organism) - Up/down arrows with percentages
-├── AIInsightsCard (Molecule)
-│   ├── InsightSection (Organism)
-│   │   ├── SectionIcon (Atom)
-│   │   ├── SectionTitle (Atom)
-│   │   └── InsightContent (Atom) - AI-generated text
-│   ├── KeyFindingsCard (Molecule)
-│   │   ├── FindingList (Organism)
-│   │   │   └── FindingItem (Molecule) - Bullet point
-│   └── RecommendationsCard (Molecule)
-│       ├── RecommendationList (Organism)
-│       │   └── RecommendationItem (Molecule) - Numbered recommendation
-│   └── ActionButtons (Molecule)
-│       ├── Button (Atom) - View Full Report
-│       └── Button (Atom) - Download PDF
-└── TrendChartsCard (Molecule)
-    ├── ChartContainer (Organism)
-    │   ├── LineChart (Molecule) - Sessions trend
-    │   ├── LineChart (Molecule) - Conversions trend
-    │   └── LineChart (Molecule) - ROAS trend
-    └── DateRangeSelector (Molecule)
+InsightDetailPage
+├── PageHeader
+│   ├── BackButton
+│   ├── Typography - Insight name
+│   ├── StatusBadge
+│   └── ActionButtons - Edit, Run Now, Menu
+├── TabList
+│   └── Tab - Overview, Reports, Settings, History
+├── TabPanel (Overview)
+│   ├── OverviewCard
+│   ├── RecentReportsCard
+│   └── AIInsightsCard
+├── TabPanel (Reports)
+│   └── ReportListTable
+├── TabPanel (Settings)
+│   └── InsightSettingsForm
+└── TabPanel (History)
+    └── AuditTrailTimeline
 ```
 
 ### States
@@ -552,15 +677,13 @@ InsightDetailLayout (Template)
 **2. Completed State**
 
 - All sections populated
-- "✅ Completed successfully" badge
-- Full metrics, insights, recommendations
+- Full metrics, insights, reports
 - All actions available
 
 **3. Running State**
 
 - "Running insight..." spinner
-- Progress indicator (if available)
-- Most recent data shown
+- Progress indicator
 - Run button disabled
 
 **4. Failed State**
@@ -568,185 +691,27 @@ InsightDetailLayout (Template)
 - "❌ Failed" badge
 - Error message
 - "Retry" button
-- Last successful run data shown
 
-**5. Empty State**
+**5. Empty State** (no reports yet)
 
 - "Insight created, not yet run"
 - "Run Now" button prominent
-- No metrics or insights shown
 
 ### Navigation
 
 **Entry Points:**
 
 - Insight list "View" button
-- Dashboard "Recent Insights" click
 - Insight create completion
-- Direct URL: `/insights/[id]`
+- Direct URL: `/dashboard/insights/:id`
 
 **Exits:**
 
-- **Edit:** Navigate to insight edit page
-- **Run Now:** Trigger run, stay on page
-- **Share:** Open share modal
-- **Export:** Navigate to export page
-- **View Full Report:** Open report viewer
-
-**Breadcrumb Hierarchy:**
-
-```
-Insights > [Insight Name]
-```
-
----
-
-## Report Export Page
-
-### Overview
-
-Export configuration page for insights. Users select format, date range, delivery options, and schedule recurring exports.
-
-### User Goal
-
-- **Primary Goal:** Export insight report in desired format
-- **Secondary Goals:** Schedule recurring exports, share with stakeholders
-
-### Page Layout
-
-**Wireframe Description:**
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ ☰    Export Report                       [✕ Cancel]           │
-├────────┬────────────────────────────────────────────────────────┤
-│        │                                                        │
-│        │  Export: Marketing Performance                        │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ 1. Choose Format                               │  │
-│        │  │                                                 │  │
-│        │  │ ◉ PDF Report (Recommended for sharing)          │  │
-│        │  │   • Formatted with charts and insights         │  │
-│        │  │   • Suitable for printing and emailing         │  │
-│        │  │                                                 │  │
-│        │  │ ○ Excel Spreadsheet (For analysis)             │  │
-│        │  │   • Raw data with all metrics                  │  │
-│        │  │   • Suitable for data manipulation             │  │
-│        │  │                                                 │  │
-│        │  │ ○ Both PDF and Excel                           │  │
-│        │  │                                                 │  │
-│        │  │ ○ CSV Data Export (For integration)            │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ 2. Select Date Range                           │  │
-│        │  │                                                 │  │
-│        │  │ ◉ Last run (Apr 13, 2026)                      │  │
-│        │  │ ○ Custom range                                │  │
-│        │  │   From: [Apr 1, 2026] To: [Apr 13, 2026]       │  │
-│        │  │ ○ Last 7 days   ○ Last 30 days   ○ This month  │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ 3. Delivery Options                            │  │
-│        │  │                                                 │  │
-│        │  │ ☑ Email report to:                             │  │
-│        │  │   team@masafh.com [+ Add recipient]            │  │
-│        │  │                                                 │  │
-│        │  │ ☑ Include executive summary                    │  │
-│        │  │ ☐ Include raw data appendix (Excel only)       │  │
-│        │  │ ☑ Include AI recommendations                   │  │
-│        │  │                                                 │  │
-│        │  │ Schedule recurring export:                     │  │
-│        │  │ ○ One-time export                              │  │
-│        │  │ ◉ Recurring: Weekly every Monday               │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌─────────────────────────────────────────────────┐  │
-│        │  │ 4. Preview                                     │  │
-│        │  │                                                 │  │
-│        │  │ [Preview button generates sample]              │  │
-│        │  └─────────────────────────────────────────────────┘  │
-│        │                                                        │
-│        │  ┌───────┐         ┌──────────────────────┐        │
-│        │  │ Cancel │         │  Export Report        │        │
-│        │  └───────┘         └──────────────────────┘        │
-└────────┴────────────────────────────────────────────────────────┘
-```
-
-### Components
-
-**Component Tree:**
-
-```
-ReportExportLayout (Template)
-├── PageHeader (Molecule)
-│   ├── Typography (Atom) - "Export: [Insight Name]"
-│   └── Button (Atom) - "✕ Cancel"
-├── ExportForm (Organism)
-│   ├── FormatSection (Molecule)
-│   │   ├── RadioGroup (Molecule) - Format options
-│   │   └── FormatDescription (Atom) - Explanation
-│   ├── DateRangeSection (Molecule)
-│   │   ├── RadioGroup (Molecule) - Preset ranges
-│   │   └── DateRangePicker (Molecule) - Custom range
-│   ├── DeliverySection (Molecule)
-│   │   ├── EmailRecipientInput (Molecule)
-│   │   ├── CheckboxGroup (Molecule) - Include options
-│   │   └── SchedulePicker (Molecule) - Recurring options
-│   └── PreviewSection (Molecule)
-│       ├── PreviewButton (Atom)
-│       └── PreviewModal (Molecule) - Hidden until clicked
-└── FormActions (Molecule)
-    ├── Button (Atom) - Secondary "Cancel"
-    └── Button (Atom) - Primary "Export Report"
-```
-
-### States
-
-**1. Initial State**
-
-- Default format selected (PDF)
-- Default date range selected (Last run)
-- One-time export selected
-
-**2. Configuring State**
-
-- User changes format, date range, delivery
-- Form validation (email required if email selected)
-- Preview button available
-
-**3. Previewing State**
-
-- Preview modal opens
-- Show sample of selected format
-- Close preview to continue
-
-**4. Exporting State**
-
-- Export button shows spinner
-- "Preparing export..." message
-- Disable form fields
-
-**5. Success State**
-
-- Success message
-- Download starts automatically
-- Option to schedule another export
-
-### Navigation
-
-**Entry Points:**
-
-- Insight detail "Export" button
-- Insight list bulk "Export" action
-- Direct URL: `/insights/[id]/export`
-
-**Exits:**
-
-- **Cancel:** Return to insight detail
-- **Export:** Generate file, download, stay on page
+- **Back:** Return to insight list
+- **Edit:** Navigate to `/dashboard/insights/:id/edit`
+- **Run Now:** API call, stay on page with progress
+- **View Report:** Navigate to `/dashboard/reports/:id`
+- **Delete:** Confirmation modal, then back to list
 
 ---
 
@@ -756,19 +721,22 @@ ReportExportLayout (Template)
 
 Embedded viewer for generated reports. Supports PDF viewing, Excel preview, printing, and downloading.
 
-### User Goal
+**Route:** `/dashboard/reports/:id`  
+**Layout:** Full-width viewer layout
 
-- **Primary Goal:** View generated report in full detail
-- **Secondary Goals:** Print, download, share report
+### User Goals
+
+- **Primary:** View generated report in full detail
+- **Secondary:** Print, download, share report
 
 ### Page Layout
 
-**Wireframe Description:**
+**Wireframe:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ ← Back    Marketing Performance Report    [Print] [Download]    │
-├─────────────────────────────────────────────────────────────────┤
+│ ← Back    Marketing Report - Apr 13, 2026    [Print] [Download]│
+ ├────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │                                                          │   │
@@ -784,10 +752,9 @@ Embedded viewer for generated reports. Supports PDF viewing, Excel preview, prin
 │  │                                                          │   │
 │  │  [Charts and graphs embedded in PDF]                    │   │
 │  │                                                          │   │
-│  │                                                          │   │
 │  └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│  Page 1 of 5  ← Previous  1  2  3  4  5  Next →              │
+│  Page 1 of 5  [−] 100% [+]  ← Previous  1  2  3  4  5  Next → │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -796,23 +763,20 @@ Embedded viewer for generated reports. Supports PDF viewing, Excel preview, prin
 **Component Tree:**
 
 ```
-ReportViewerLayout (Template)
-├── ViewerHeader (Molecule)
-│   ├── BackButton (Atom)
-│   ├── Typography (Atom) - Report title
-│   └── ActionButtons (Molecule)
-│       ├── Button (Atom) - Print
-│       └── Button (Atom) - Download
-└── ViewerContainer (Organism)
-    ├── PDFViewer (Molecule) - For PDF reports
-    │   ├── PDFPage (Atom) - Individual pages
-    │   └── ZoomControls (Molecule) - Zoom in/out
-    ├── ExcelViewer (Molecule) - For Excel reports
-    │   ├── SheetTabs (Molecule) - Sheet selector
-    │   └── DataTable (Organism) - Spreadsheet view
-    └── PaginationControls (Molecule)
-        ├── PageInfo (Atom) - "Page 1 of 5"
-        └── NavigationButtons (Molecule) - Prev, Next, page numbers
+ReportViewerPage
+├── ViewerHeader
+│   ├── BackButton
+│   ├── Typography - Report title
+│   └── ActionButtons - Print, Download, Share
+├── ViewerContainer
+│   ├── PDFViewer (for PDF reports)
+│   │   ├── PDFPage
+│   │   ├── ZoomControls
+│   │   └── PageNavigation
+│   └── ExcelViewer (for Excel reports)
+│       ├── SheetTabs
+│       └── DataTable
+└── VersionSelector (if multiple versions)
 ```
 
 ### States
@@ -842,15 +806,148 @@ ReportViewerLayout (Template)
 
 **Entry Points:**
 
-- Insight detail "View Full Report" button
-- Export completion "View report" link
-- Direct URL: `/reports/[id]`
+- Report list "View" button
+- Insight detail "View Report" button
+- Direct URL: `/dashboard/reports/:id`
 
 **Exits:**
 
-- **Back:** Return to insight detail
+- **Back:** Return to previous page
 - **Download:** Download file, stay on page
 - **Print:** Open print dialog
+- **Share:** Open share modal
+
+### API Integration
+
+**Download:** `GET /api/v1/reports/:id/content`
+
+**Response:** Binary file (application/pdf or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+
+**Share:** `POST /api/v1/reports/:id/share-links`
+
+**Request:**
+
+```json
+{
+  "expiresInHours": 168
+}
+```
+
+**Response:**
+
+```json
+{
+  "token": "abc123...",
+  "expiresAt": "2026-05-10T14:30:00Z",
+  "downloadPath": "/api/v1/reports/shared/abc123.../content"
+}
+```
+
+---
+
+## Report List Page
+
+### Overview
+
+Browse and manage all reports for an insight or tenant-wide.
+
+**Route:** `/dashboard/insights/:id/reports` or `/dashboard/reports`  
+**Layout:** Dashboard layout with table
+
+### User Goals
+
+- **Primary:** Find and download specific reports
+- **Secondary:** Filter by date, format, bulk download
+
+### Page Layout
+
+**Wireframe:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Reports for: Marketing Performance             [Export Filters] │
+ ├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Filters: [Date Range ▼] [Format ▼] [Status ▼] [Search]        │
+│                                                                 │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │ ☑ | Report Name           | Date       | Format | Size  │ │
+│  │───|──────────────────────|────────────|────────|───────│ │
+│  │ ☑ | Marketing Report     | Apr 13     | PDF    | 2.4MB │ │
+│  │   | 📄 [Download] [View] [Share] [Delete]                │ │
+│  │───|──────────────────────|────────────|────────|───────│ │
+│  │ ☐ | Marketing Report     | Apr 12     | PDF    | 2.1MB │ │
+│  │   | 📄 [Download] [View] [Share] [Delete]                │ │
+│  │───|──────────────────────|────────────|────────|───────│ │
+│  │ ☐ | Marketing Report     | Apr 11     | Excel  | 1.8MB │ │
+│  │   | 📊 [Download] [View] [Share] [Delete]                │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  ☑ 1 selected  [Bulk Download] [Bulk Delete]                  │
+│  ← Previous  1  2  3  Next →                                   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Components
+
+**Component Tree:**
+
+```
+ReportListPage
+├── PageHeader
+│   ├── Typography - "Reports"
+│   └── Button - "Export Filters" (optional)
+├── FilterBar
+│   ├── DateRangePicker
+│   ├── Select - Format filter
+│   ├── Select - Status filter
+│   └── TextInput - Search
+├── ReportTable
+│   ├── TableHeader
+│   └── ReportRow (repeating)
+│       ├── Checkbox
+│       ├── ReportName
+│       ├── Date
+│       ├── FormatBadge
+│       ├── FileSize
+│       └── ActionButtons - Download, View, Share, Delete
+├── BulkActionBar
+│   └── BulkDownload, BulkDelete
+└── Pagination
+```
+
+### States
+
+**1. Loading State**
+
+- Skeleton table rows
+- Shimmer effect
+
+**2. Empty State**
+
+- "No reports yet"
+- "Run insight to generate reports" button
+
+**3. Filtered State**
+
+- Active filters shown
+- Result count
+- Clear filters button
+
+### Navigation
+
+**Entry Points:**
+
+- Insight detail "Reports" tab
+- Direct URL: `/dashboard/insights/:id/reports`
+- Direct URL: `/dashboard/reports`
+
+**Exits:**
+
+- **View:** Navigate to `/dashboard/reports/:id`
+- **Download:** Download file, stay on page
+- **Share:** Open share modal
+- **Delete:** Confirmation modal
 
 ---
 
@@ -858,30 +955,22 @@ ReportViewerLayout (Template)
 
 ### Overview
 
-Edit existing insight configuration. Modify connectors, metrics, AI settings, schedule, and delivery options. Preserves all existing data unless explicitly changed.
+Edit existing insight configuration. Modifies connectors, metrics, AI settings, schedule, and delivery options.
 
-### User Goal
+**Route:** `/dashboard/insights/:id/edit`  
+**Layout:** Same as create wizard
 
-- **Primary Goal:** Update insight configuration
-- **Secondary Goals:** Fix issues, optimize performance, change schedule
+### User Goals
 
-### Page Layout
+- **Primary:** Update insight configuration
+- **Secondary:** Fix issues, optimize performance, change schedule
 
-Same structure as Insight Create Page but with:
+### Differences from Create
 
 - All current values pre-populated
 - "Save Changes" instead of "Create"
 - "Reset to Default" option
-- Version history access
-
-### Components
-
-Reuses Insight Create components with:
-
-- Pre-populated form fields
-- "Save Changes" button
-- "Reset" button
-- Version history dropdown
+- Version history access (if changing config affects reports)
 
 ### States
 
@@ -914,7 +1003,7 @@ Reuses Insight Create components with:
 
 - Insight detail "Edit" button
 - Insight list "⋮" → "Edit"
-- Direct URL: `/insights/[id]/edit`
+- Direct URL: `/dashboard/insights/:id/edit`
 
 **Exits:**
 
@@ -923,93 +1012,169 @@ Reuses Insight Create components with:
 
 ---
 
-## Insight Clone Page
+## Implementation Patterns
 
-### Overview
+### Pattern: Connector Consistency
 
-Duplicate existing insight with option to modify configuration before creating. Accelerates insight creation for similar use cases.
+Follow the Connectors feature implementation pattern:
 
-### User Goal
+```typescript
+// Feature structure
+apps/frontend/src/features/insights/
+├── pages/
+│   ├── InsightListPage.tsx
+│   ├── InsightDetailPage.tsx
+│   ├── InsightCreatePage.tsx
+│   ├── InsightEditPage.tsx
+│   └── InsightRemovePage.tsx (optional, or use modal)
+├── api/
+│   └── insight-api.ts (React Query hooks)
+└── hooks/
+    └── useInsightPermissions.ts
 
-- **Primary Goal:** Create similar insight without starting from scratch
-- **Secondary Goals:** Modify connectors, metrics, schedule
+apps/frontend/src/features/reports/
+├── pages/
+│   ├── ReportListPage.tsx
+│   └── ReportViewerPage.tsx
+├── api/
+│   └── report-api.ts
+└── components/
+    ├── ReportTable.tsx
+    └── PDFViewer.tsx
+```
 
-### Page Layout
+### Pattern: API Integration
 
-Same as Insight Edit Page but:
+**React Query Hooks:**
 
-- Title: "Clone: [Original Insight Name]"
-- New name field required
-- "Clone Insight" button
-- Option to reset schedule
+```typescript
+// apps/frontend/src/features/insights/api/insight-api.ts
+export function useInsightList(filters: InsightFilters) {
+  return useQuery({
+    queryKey: ["insights", filters],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/insights?${serialize(filters)}`);
+      return response.json();
+    },
+  });
+}
 
-### Components
+export function useInsightCreate() {
+  return useMutation({
+    mutationFn: async (data: CreateInsightInput) => {
+      const response = await fetch("/api/v1/insights", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+  });
+}
+```
 
-Reuses Insight Edit components with:
+### Pattern: Multi-Tenant Safety
 
-- New name field (pre-filled with "Copy of [Name]")
-- "Clone" button instead of "Save"
-- Reset schedule option
+**Always:**
 
-### States
+- Extract tenant ID from JWT (never from client)
+- Use `dbScoped()` for all database queries
+- Include tenant ID in all cache keys
+- Log tenant context in structured logging
 
-Same as Insight Edit states but creates new insight on save.
+**Never:**
 
-### Navigation
+- Accept tenant ID from client input
+- Query database without tenant scoping
+- Log sensitive data (tokens, PII)
 
-**Entry Points:**
+### Pattern: JSONB Configuration
 
-- Insight detail "⋮" → "Clone"
-- Insight list bulk action "Clone"
-- Direct URL: `/insights/[id]/clone`
+**Schema Flexibility:**
 
-**Exits:**
+```typescript
+// Database schema
+insights: {
+  schedule: jsonb,    // { enabled: boolean, frequency?: string, time?: string }
+  delivery: jsonb,    // { format: string, channels: string[], recipients: string[] }
+  aiConfig: jsonb,    // { model: string, provider: string, qualityLevel: string }
+}
 
-- **Clone:** Create new insight, navigate to new insight detail
-- **Cancel:** Return to original insight detail
+// TypeScript types
+interface InsightSchedule {
+  enabled: boolean;
+  frequency?: 'daily' | 'weekly' | 'monthly';
+  time?: string; // HH:MM
+  dayOfWeek?: number;
+  dayOfMonth?: number;
+}
 
----
+interface InsightDelivery {
+  format: 'pdf' | 'excel' | 'both';
+  channels: ('email' | 'dashboard')[];
+  recipients: string[];
+  subject?: string;
+}
 
-## Shared Insights & Reports Patterns
+interface InsightAIConfig {
+  model: string;
+  provider: 'anthropic' | 'openai';
+  qualityLevel: 'standard' | 'premium';
+  detailLevel: 'concise' | 'standard' | 'detailed';
+  customPrompt?: string;
+}
+```
 
-### Insight Status Indicators
+### Pattern: Report Versioning
 
-- **✅ Active:** Running on schedule, last run successful
-- **🔄 Running:** Currently executing
-- **⏸️ Paused:** Manually paused, not running
-- **❌ Failed:** Last run failed, needs attention
-- **⏳ Scheduled:** Configured, not yet run
+**Version Management:**
 
-### AI Insight Sections
+```typescript
+// Report metadata includes version snapshots
+{
+  id: "uuid",
+  title: "Marketing Report",
+  metadata: {
+    versions: [
+      {
+        version: 1,
+        sha256: "abc123...",
+        byteLength: 2400000,
+        contentType: "application/pdf",
+        createdAt: "2026-04-13T14:30:00Z",
+        objectKey: "reports/tenant-id/report-id/v1.pdf"
+      }
+    ],
+    retentionDays: 90,
+    retainUntil: "2026-07-13T14:30:00Z"
+  }
+}
+```
 
-- **Performance Summary:** High-level overview
-- **Key Findings:** Bullet points of discoveries
-- **Recommendations:** Actionable suggestions
-- **Trend Analysis:** Historical patterns
-- **Anomalies:** Unusual patterns detected
+### Pattern: Audit Trail
 
-### Export Formats
+**Immutable Audit Log:**
 
-- **PDF:** Formatted report with charts, insights, recommendations
-- **Excel:** Raw data with pivot tables, suitable for analysis
-- **CSV:** Flat data export for integration
-- **Image:** PNG/JPEG of specific charts (for sharing)
-
-### Delivery Methods
-
-- **Email:** Attached report sent to recipients
-- **Dashboard:** In-app notification
-- **Webhook:** POST to configured endpoint
-- **Cloud Storage:** Upload to S3, GCS, etc.
+```typescript
+// Audit events
+{
+  tenantId: "uuid",
+  reportId: "uuid",
+  actorSub: "user-id",
+  action: "report.created" | "report.content_uploaded" | "report.archived",
+  requestId: "request-id",
+  timestamp: "2026-04-13T14:30:00Z",
+  details: { version: 1, byteLength: 2400000 }
+}
+```
 
 ---
 
 ## Document Status
 
-**Version:** 1.0
-**Last Updated:** 2026-04-13
-**Status:** Active
-**Next Review:** After insight implementation
+**Version:** 2.0  
+**Last Updated:** 2026-05-03  
+**Status:** Active (Implementation-Ready)  
+**Next Review:** After frontend implementation complete  
 **Maintainer:** UI/UX Team
 
 **Related Documents:**
@@ -1018,3 +1183,5 @@ Same as Insight Edit states but creates new insight on save.
 - [Business Architecture: Intelligence Pipeline](/docs/architecture/business/business-architecture.md#31-intelligence-pipeline)
 - [Core Intelligence Spec](/specs/00-core/02-intelligence/README.md)
 - [Core Insights Spec](/specs/00-core/03-insights/README.md)
+- [System Entities: Insights & Reports](/docs/architecture/ui/02-system-entities/insights-reports.md)
+- [Implementation Analysis](/docs/analysis/insights-reports-implementation-analysis.md)

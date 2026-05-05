@@ -18,28 +18,42 @@ export type AppShellBreadcrumb = {
 
 type AppShellContextValue = {
   breadcrumbs: AppShellBreadcrumb[];
-  setBreadcrumbs: Dispatch<SetStateAction<AppShellBreadcrumb[]>>;
   headerContext: ReactNode;
+};
+
+type AppShellActionsContextValue = {
+  setBreadcrumbs: Dispatch<SetStateAction<AppShellBreadcrumb[]>>;
   setHeaderContext: Dispatch<SetStateAction<ReactNode>>;
 };
 
 const AppShellContext = createContext<AppShellContextValue | null>(null);
+const AppShellActionsContext = createContext<AppShellActionsContextValue | null>(null);
 
 export function AppShellContextProvider({ children }: { children: ReactNode }) {
   const [breadcrumbs, setBreadcrumbs] = useState<AppShellBreadcrumb[]>([]);
   const [headerContext, setHeaderContext] = useState<ReactNode>(null);
 
-  const value = useMemo(
+  const stateValue = useMemo(
     () => ({
       breadcrumbs,
-      setBreadcrumbs,
       headerContext,
-      setHeaderContext,
     }),
     [breadcrumbs, headerContext],
   );
 
-  return <AppShellContext.Provider value={value}>{children}</AppShellContext.Provider>;
+  const actionsValue = useMemo(
+    () => ({
+      setBreadcrumbs,
+      setHeaderContext,
+    }),
+    [setBreadcrumbs, setHeaderContext],
+  );
+
+  return (
+    <AppShellActionsContext.Provider value={actionsValue}>
+      <AppShellContext.Provider value={stateValue}>{children}</AppShellContext.Provider>
+    </AppShellActionsContext.Provider>
+  );
 }
 
 export function useAppShellContext(): AppShellContextValue {
@@ -50,11 +64,19 @@ export function useAppShellContext(): AppShellContextValue {
   return context;
 }
 
+function useAppShellActionsContext(): AppShellActionsContextValue {
+  const context = useContext(AppShellActionsContext);
+  if (!context) {
+    throw new Error("useAppShellActionsContext must be used within AppShellContextProvider");
+  }
+  return context;
+}
+
 export function useAppShellHeader(options: {
   breadcrumbs?: AppShellBreadcrumb[];
   headerContext?: ReactNode;
 }) {
-  const { setBreadcrumbs, setHeaderContext } = useAppShellContext();
+  const { setBreadcrumbs, setHeaderContext } = useAppShellActionsContext();
   const breadcrumbs = options.breadcrumbs ?? [];
   const headerContext = options.headerContext ?? null;
 

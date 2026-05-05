@@ -11,3 +11,4 @@ export const routing = {
 };
 
 export type { AppLocale };
+export { defaultLocale };

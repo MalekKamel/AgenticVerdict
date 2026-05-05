@@ -15,6 +15,7 @@ export function useConnectorList(input: {
 }) {
   return trpc.connector.list.useQuery(input, {
     retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
@@ -56,4 +57,15 @@ export function useConnectorTest() {
 
 export function useConnectorRemovalPreview(id: string) {
   return trpc.connector.removalPreview.useQuery({ id });
+}
+
+export function useConnectorMetrics(connectorIds: string[]) {
+  return trpc.connector.metrics.useQuery(
+    { connectorIds },
+    {
+      enabled: connectorIds.length > 0,
+      retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  );
 }

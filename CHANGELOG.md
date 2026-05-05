@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Insights & Reports UI Implementation:** Complete frontend implementation for insights and reports management including:
+  - Insight list, create wizard, detail, and edit pages
+  - Report list and viewer pages with PDF/Excel support
+  - Report sharing with expiration controls
+  - Audit trail timeline visualization
+  - Comprehensive test suite (unit, component, integration, E2E, accessibility)
+  - Feature flag `ENABLE_INSIGHTS_UI` for controlled rollout
+  - Full i18n support (English/Arabic) with RTL layout
+  - Accessibility compliance (WCAG AA)
+  - See `docs/05-reference/insights-reports-routes.md`, `docs/05-reference/insights-reports-api-examples.md`, `docs/04-deployment-and-monitoring/insights-reports-feature-flag.md`
 - **Docker testing removal and local testing migration:** Complete removal of Docker E2E testing infrastructure in favor of local Vitest execution. See [`changelog/2026-04-07-docker-testing-removal-local-testing-migration.md`](changelog/2026-04-07-docker-testing-removal-local-testing-migration.md) and implementation plan [`docs/02-planning-and-methodology/docker-testing-removal-plan.md`](docs/02-planning-and-methodology/docker-testing-removal-plan.md).
 - **Phase 03 Part 9 (testing & hardening):** API contract tests for report rate limits, tenant isolation, share-token and validation edge cases, concurrent read smoke, template preview `lang`/`dir`; report-generator executive-summary perf case; Playwright axe WCAG smoke; i18n `/formatters` export for client-safe imports; Part 9 production-readiness runbook. See [`changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md`](changelog/2026-04-05-phase-03-execution-plan-part-9-testing-and-hardening.md).
 - **Phase 03 Part 8 (history & versioning):** API report byte versioning, compare-metadata endpoint, archival and retention sweep, in-memory audit trail and compliance summary/audit export. See [`changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md`](changelog/2026-04-05-phase-03-execution-plan-part-8-history-versioning.md).

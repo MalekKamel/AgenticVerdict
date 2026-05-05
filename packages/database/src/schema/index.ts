@@ -1,4 +1,5 @@
 export { auditLogs } from "./audit-logs";
+export { auditTrail } from "./audit-trail";
 export { tenants, tenantTypeEnum, tenantStatusEnum } from "./tenants";
 export { agencyPartners, agencyPartnerTierEnum } from "./core/tenants";
 export {
@@ -17,6 +18,7 @@ export { platformCredentials } from "./platform-credentials";
 export { provenanceRecords } from "./provenance";
 export { reportTemplates } from "./report-templates";
 export { reports } from "./reports";
+export { reportShares } from "./report-shares";
 export { users } from "./users";
 export { roles } from "./rbac/roles";
 export { permissions } from "./rbac/permissions";

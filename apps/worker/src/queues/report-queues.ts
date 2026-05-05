@@ -493,6 +493,20 @@ async function postDeliveryEventWebhook(
   }
 }
 
+async function triggerAIInsightsGeneration(
+  tenantId: string,
+  reportId: string,
+  logger: ReturnType<typeof createJobLogger>,
+): Promise<void> {
+  logger.info({
+    event: "ai_insights_trigger_placeholder",
+    tenantId,
+    reportId,
+    message:
+      "AI insights auto-generation triggered (placeholder - to be implemented with agent-runtime)",
+  });
+}
+
 export interface ReportDeliveryProcessorOptions {
   /** BullMQ Redis connection — when set, bounce/complaint suppressions are enforced before send. */
   suppressionRedis?: IORedis | null;
@@ -555,6 +569,11 @@ export async function defaultReportDeliveryProcessor(
       error: result.error,
       timestamp: new Date().toISOString(),
     });
+  }
+
+  if (result.success) {
+    const log = createJobLogger(REPORT_DELIVERY_QUEUE, String(data.reportId));
+    await triggerAIInsightsGeneration(data.tenantId, data.reportId, log);
   }
 }
 

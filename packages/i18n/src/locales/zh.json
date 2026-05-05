@@ -37,6 +37,8 @@
   "auth.errors.networkError": "网络错误。请检查您的连接。",
   "common.ok": "确定",
   "common.cancel": "取消",
+  "navigation.insights": "洞察",
+  "navigation.reports": "报告",
   "reports.title": "报告",
   "reports.ready": "您的报告已就绪",
   "reports.download": "下载",

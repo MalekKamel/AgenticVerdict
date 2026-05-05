@@ -16,34 +16,31 @@ import {
   getHighPriorityPrefetchPaths,
   resolveShellNavigationTarget,
   type AppShellNavItem,
+  type AppShellNavKey,
   type AppShellNavRole,
 } from "./app-shell-navigation";
 
-function getIconForItem(id: string): React.ReactNode {
-  let icon: React.ReactNode;
-  switch (id) {
-    case "home":
-      icon = <Home />;
-      break;
-    case "dashboard":
-      icon = <LayoutDashboard />;
-      break;
-    case "connectors":
-      icon = <PlugZap />;
-      break;
-    case "onboarding":
-      icon = <UserPlus />;
-      break;
-    case "featureFlags":
-      icon = <Flag />;
-      break;
-    case "agency":
-      icon = <Building2 />;
-      break;
-    default:
-      return null;
+const NAVIGATION_ICON_MAP: Record<AppShellNavKey, React.ComponentType> = {
+  home: Home,
+  dashboard: LayoutDashboard,
+  connectors: PlugZap,
+  onboarding: UserPlus,
+  featureFlags: Flag,
+  agency: Building2,
+  insights: LayoutDashboard,
+  reports: LayoutDashboard,
+};
+
+function getIconForItem(id: AppShellNavKey): React.ReactNode {
+  const IconComponent = NAVIGATION_ICON_MAP[id];
+  if (!IconComponent) {
+    return null;
   }
-  return <Icon size="sm">{icon}</Icon>;
+  return (
+    <Icon size="sm">
+      <IconComponent />
+    </Icon>
+  );
 }
 
 function isActiveItem(

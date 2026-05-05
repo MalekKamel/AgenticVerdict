@@ -1,9 +1,11 @@
 import { createStream } from "rotating-file-stream";
-import pino, { type DestinationStream, type Logger } from "pino";
+import pino, { type DestinationStream } from "pino";
+import type { Logger } from "pino";
 
 import { resolveLogLevel } from "@agenticverdict/config";
 import { getTenantContext } from "@agenticverdict/core";
 
+export type { Logger };
 export type ObservabilityServiceName = "api" | "worker";
 
 function buildDestination(): DestinationStream {
