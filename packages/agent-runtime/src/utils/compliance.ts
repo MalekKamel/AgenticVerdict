@@ -146,11 +146,11 @@ export class ComplianceManager {
       }
 
       if (filters.startTime) {
-        logs = logs.filter((log) => log.timestamp >= filters.startTime);
+        logs = logs.filter((log) => log.timestamp >= (filters.startTime ?? 0));
       }
 
       if (filters.endTime) {
-        logs = logs.filter((log) => log.timestamp <= filters.endTime);
+        logs = logs.filter((log) => log.timestamp <= (filters.endTime ?? Date.now()));
       }
 
       if (filters.operation) {

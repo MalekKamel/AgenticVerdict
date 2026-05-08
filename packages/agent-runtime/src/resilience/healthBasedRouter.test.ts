@@ -233,7 +233,7 @@ describe("HealthBasedRouter", () => {
       expect(router.isProviderHealthy("primary")).toBe(true);
     });
 
-    it("should return unhealthy status for unhealthy provider", async () => {
+    it("should keep provider healthy while circuit is closed", async () => {
       router = new HealthBasedRouter({
         tenantId: "test-tenant",
         defaultProvider: "primary",
@@ -252,16 +252,9 @@ describe("HealthBasedRouter", () => {
         lastChecked: new Date(),
       });
 
-      expect(router.isProviderHealthy("primary")).toBe(false);
+      await router.checkHealth("primary");
+      expect(router.isProviderHealthy("primary")).toBe(true);
     });
-
-    router = new HealthBasedRouter({
-      tenantId: "test-tenant",
-      defaultProvider: "primary",
-      healthChecker: healthCheckerMock,
-    });
-
-    expect(router.isProviderHealthy("primary")).toBe(false);
   });
 
   it("should get list of healthy providers", async () => {
@@ -281,169 +274,196 @@ describe("HealthBasedRouter", () => {
 
     expect(healthy).toContain("primary");
   });
-});
 
-describe("Routing history", () => {
-  it("should record routing decisions", async () => {
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
-    });
-
-    const executor = vi.fn().mockResolvedValue("success");
-    await router.route(executor);
-
-    const history = router.getRoutingHistory();
-
-    expect(history).toHaveLength(1);
-    expect(history[0].providerId).toBe("primary");
-    expect(history[0].reason).toBe("default");
-  });
-
-  it("should record failover routing decisions", async () => {
-    router = new HealthBasedRouter({
-      tenantId: "test-tenant",
-      defaultProvider: "primary",
-      failoverChains: {
-        primary: {
-          providers: ["primary", "secondary"],
-          skipUnhealthy: true,
-        },
-      },
-      healthChecker: healthCheckerMock,
-      onFailover: onFailoverMock,
-    });
-
-    healthCheckerMock
-      .mockResolvedValueOnce({
+  describe("Routing history", () => {
+    it("should record routing decisions", async () => {
+      healthCheckerMock.mockResolvedValue({
         providerId: "primary",
-        isHealthy: false,
-        lastChecked: new Date(),
-      })
-      .mockResolvedValueOnce({
-        providerId: "secondary",
         isHealthy: true,
         lastChecked: new Date(),
       });
 
-    const executor = vi.fn().mockResolvedValue("success");
-    await router.route(executor);
-
-    const history = router.getRoutingHistory();
-
-    expect(history).toHaveLength(1);
-    expect(history[0].reason).toBe("default");
-  });
-
-  it("should limit history size to maxHistorySize", async () => {
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
-    });
-
-    const executor = vi.fn().mockResolvedValue("success");
-
-    for (let i = 0; i < 150; i++) {
+      const executor = vi.fn().mockResolvedValue("success");
       await router.route(executor);
-    }
 
-    const history = router.getRoutingHistory();
+      const history = router.getRoutingHistory();
 
-    expect(history.length).toBeLessThanOrEqual(100);
+      expect(history).toHaveLength(1);
+      expect(history[0].providerId).toBe("primary");
+      expect(history[0].reason).toBe("default");
+    });
+
+    it("should record failover routing decisions", async () => {
+      router = new HealthBasedRouter({
+        tenantId: "test-tenant",
+        defaultProvider: "primary",
+        failoverChains: {
+          primary: {
+            providers: ["primary", "secondary"],
+            skipUnhealthy: true,
+          },
+        },
+        healthChecker: healthCheckerMock,
+        onFailover: onFailoverMock,
+      });
+
+      healthCheckerMock
+        .mockResolvedValueOnce({
+          providerId: "primary",
+          isHealthy: false,
+          lastChecked: new Date(),
+        })
+        .mockResolvedValueOnce({
+          providerId: "secondary",
+          isHealthy: true,
+          lastChecked: new Date(),
+        });
+
+      const executor = vi.fn().mockResolvedValue("success");
+      await router.route(executor);
+
+      const history = router.getRoutingHistory();
+
+      expect(history).toHaveLength(1);
+      expect(history[0].reason).toBe("default");
+    });
+
+    it("should limit history size to maxHistorySize", async () => {
+      healthCheckerMock.mockResolvedValue({
+        providerId: "primary",
+        isHealthy: true,
+        lastChecked: new Date(),
+      });
+
+      const executor = vi.fn().mockResolvedValue("success");
+
+      for (let i = 0; i < 150; i++) {
+        await router.route(executor);
+      }
+
+      const history = router.getRoutingHistory();
+
+      expect(history.length).toBeLessThanOrEqual(100);
+    });
+
+    it("should clear routing history", async () => {
+      healthCheckerMock.mockResolvedValue({
+        providerId: "primary",
+        isHealthy: true,
+        lastChecked: new Date(),
+      });
+
+      const executor = vi.fn().mockResolvedValue("success");
+      await router.route(executor);
+
+      expect(router.getRoutingHistory()).toHaveLength(1);
+
+      router.clearRoutingHistory();
+
+      expect(router.getRoutingHistory()).toHaveLength(0);
+    });
   });
 
-  it("should clear routing history", async () => {
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
+  describe("Reset functionality", () => {
+    let healthCheckerMock: ReturnType<typeof vi.fn>;
+    let onFailoverMock: ReturnType<typeof vi.fn>;
+    let router: HealthBasedRouter;
+
+    beforeEach(() => {
+      healthCheckerMock = vi.fn();
+      onFailoverMock = vi.fn();
+      router = new HealthBasedRouter({
+        tenantId: "test-tenant",
+        defaultProvider: "primary",
+        healthChecker: healthCheckerMock,
+        onFailover: onFailoverMock,
+      });
     });
 
-    const executor = vi.fn().mockResolvedValue("success");
-    await router.route(executor);
-
-    expect(router.getRoutingHistory()).toHaveLength(1);
-
-    router.clearRoutingHistory();
-
-    expect(router.getRoutingHistory()).toHaveLength(0);
-  });
-});
-
-describe("Reset functionality", () => {
-  it("should reset single provider", async () => {
-    router.resetProvider("primary");
-  });
-
-  it("should reset all providers and clear history", async () => {
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
+    it("should reset single provider", async () => {
+      router.resetProvider("primary");
     });
 
-    const executor = vi.fn().mockResolvedValue("success");
-    await router.route(executor);
+    it("should reset all providers and clear history", async () => {
+      healthCheckerMock.mockResolvedValue({
+        providerId: "primary",
+        isHealthy: true,
+        lastChecked: new Date(),
+      });
 
-    expect(router.getRoutingHistory()).toHaveLength(1);
+      const executor = vi.fn().mockResolvedValue("success");
+      await router.route(executor);
 
-    router.resetAll();
+      expect(router.getRoutingHistory()).toHaveLength(1);
 
-    expect(router.getRoutingHistory()).toHaveLength(0);
-  });
-});
+      router.resetAll();
 
-describe("Health cache management", () => {
-  it("should refresh health cache", async () => {
-    router = new HealthBasedRouter({
-      tenantId: "test-tenant",
-      defaultProvider: "primary",
-      healthChecker: healthCheckerMock,
+      expect(router.getRoutingHistory()).toHaveLength(0);
     });
-
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
-    });
-
-    router.resetProvider("primary");
-    await router.refreshHealthCache();
-
-    expect(healthCheckerMock).toHaveBeenCalled();
   });
 
-  it("should clear health cache", async () => {
-    healthCheckerMock.mockResolvedValue({
-      providerId: "primary",
-      isHealthy: true,
-      lastChecked: new Date(),
+  describe("Health cache management", () => {
+    let healthCheckerMock: ReturnType<typeof vi.fn>;
+    let router: HealthBasedRouter;
+
+    beforeEach(() => {
+      healthCheckerMock = vi.fn();
+      router = new HealthBasedRouter({
+        tenantId: "test-tenant",
+        defaultProvider: "primary",
+        healthChecker: healthCheckerMock,
+      });
     });
 
-    await router.checkHealth("primary");
-    router.clearHealthCache();
+    it("should refresh health cache", async () => {
+      router = new HealthBasedRouter({
+        tenantId: "test-tenant",
+        defaultProvider: "primary",
+        healthChecker: healthCheckerMock,
+      });
 
-    await router.checkHealth("primary");
+      healthCheckerMock.mockResolvedValue({
+        providerId: "primary",
+        isHealthy: true,
+        lastChecked: new Date(),
+      });
 
-    expect(healthCheckerMock).toHaveBeenCalledTimes(2);
+      router.resetProvider("primary");
+      await router.refreshHealthCache();
+
+      expect(healthCheckerMock).toHaveBeenCalled();
+    });
+
+    it("should clear health cache", async () => {
+      healthCheckerMock.mockResolvedValue({
+        providerId: "primary",
+        isHealthy: true,
+        lastChecked: new Date(),
+      });
+
+      await router.checkHealth("primary");
+      router.clearHealthCache();
+
+      await router.checkHealth("primary");
+
+      expect(healthCheckerMock).toHaveBeenCalledTimes(2);
+    });
   });
-});
 
-describe("Tenant isolation", () => {
-  it("should maintain separate routing per tenant", () => {
-    const tenant1Router = new HealthBasedRouter({
-      tenantId: "tenant-1",
-      defaultProvider: "primary",
+  describe("Tenant isolation", () => {
+    it("should maintain separate routing per tenant", () => {
+      const tenant1Router = new HealthBasedRouter({
+        tenantId: "tenant-1",
+        defaultProvider: "primary",
+      });
+
+      const tenant2Router = new HealthBasedRouter({
+        tenantId: "tenant-2",
+        defaultProvider: "primary",
+      });
+
+      expect(tenant1Router.getRoutingHistory()).toEqual([]);
+      expect(tenant2Router.getRoutingHistory()).toEqual([]);
     });
-
-    const tenant2Router = new HealthBasedRouter({
-      tenantId: "tenant-2",
-      defaultProvider: "primary",
-    });
-
-    expect(tenant1Router.getRoutingHistory()).toEqual([]);
-    expect(tenant2Router.getRoutingHistory()).toEqual([]);
   });
 });

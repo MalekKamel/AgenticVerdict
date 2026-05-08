@@ -1,7 +1,7 @@
 import { TrafficManager } from "./trafficManager";
 import { createPinoLogger } from "@agenticverdict/observability";
 
-const logger = createPinoLogger("ParallelRunner");
+const logger = createPinoLogger("agent-runtime");
 
 export interface ParallelRunConfig {
   enabled: boolean;
@@ -95,6 +95,8 @@ export class ParallelRunner {
       totalRequests: 0,
       matchedRequests: 0,
       discrepancyCount: 0,
+      legacyCount: 0,
+      newCount: 0,
       avgLatencyLegacy: 0,
       avgLatencyNew: 0,
       avgCostLegacy: 0,

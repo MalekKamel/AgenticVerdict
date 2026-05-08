@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  applyMarketingVerdictPipelineContext,
+  applyVerdictPipelineContext,
   extractJsonObjectText,
   getVerdictParseFailureDetails,
-  parseMarketingVerdictFromAgentText,
-  safeParseMarketingVerdictFromAgentText,
+  parseVerdictFromAgentText,
+  safeParseVerdictFromAgentText,
 } from "./agent-verdict-json";
-import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
+import { buildVerdictFixture } from "./test-utils/verdict-fixtures";
 import { VerdictParseError } from "./verdict-schema";
 
 const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
@@ -16,7 +16,7 @@ const ANALYSIS = "bbbbbbbb-bbbb-4ccc-dddd-eeeeeeeeeeee";
 describe("agent-verdict-json", () => {
   it("extractJsonObjectText handles fenced JSON", () => {
     const inner = JSON.stringify(
-      buildMarketingVerdictFixture({
+      buildVerdictFixture({
         tenantId: TENANT,
         analysisId: ANALYSIS,
         overrides: { summary: "Executive summary long enough for schema minimum length rules." },
@@ -26,35 +26,35 @@ describe("agent-verdict-json", () => {
     expect(extractJsonObjectText(raw)).toContain('"verdictType"');
   });
 
-  it("parseMarketingVerdictFromAgentText validates a minimal fixture", () => {
+  it("parseVerdictFromAgentText validates a minimal fixture", () => {
     const json = JSON.stringify(
-      buildMarketingVerdictFixture({
+      buildVerdictFixture({
         tenantId: TENANT,
         analysisId: ANALYSIS,
       }),
     );
-    const v = parseMarketingVerdictFromAgentText(json);
+    const v = parseVerdictFromAgentText(json);
     expect(v.sentiment).toBe("neutral");
     expect(v.score).toBe(72);
     expect(v.keyInsights[0]?.title).toBe("Channel efficiency");
   });
 
-  it("safeParseMarketingVerdictFromAgentText returns error on invalid JSON", () => {
-    const r = safeParseMarketingVerdictFromAgentText("not json");
+  it("safeParseVerdictFromAgentText returns error on invalid JSON", () => {
+    const r = safeParseVerdictFromAgentText("not json");
     expect(r.ok).toBe(false);
     if (!r.ok) {
       expect(r.error).toBeInstanceOf(VerdictParseError);
     }
   });
 
-  it("parseMarketingVerdictFromAgentText rejects out-of-range score", () => {
-    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+  it("parseVerdictFromAgentText rejects out-of-range score", () => {
+    const v = buildVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
     const bad = JSON.stringify({ ...v, score: 101 });
-    expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
+    expect(() => parseVerdictFromAgentText(bad)).toThrow(VerdictParseError);
   });
 
   it("rejects non-uuid nested IDs and reports failing fields", () => {
-    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const v = buildVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
     const bad = JSON.stringify({
       ...v,
       keyInsights: [{ ...v.keyInsights[0], id: "insight-001" }],
@@ -63,7 +63,7 @@ describe("agent-verdict-json", () => {
       evidence: [{ ...v.evidence[0], id: "evi-001" }],
     });
     try {
-      parseMarketingVerdictFromAgentText(bad);
+      parseVerdictFromAgentText(bad);
       expect.unreachable("expected VerdictParseError");
     } catch (error) {
       expect(error).toBeInstanceOf(VerdictParseError);
@@ -77,17 +77,17 @@ describe("agent-verdict-json", () => {
   });
 
   it("rejects enum case mismatches for sentiment and impact", () => {
-    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const v = buildVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
     const bad = JSON.stringify({
       ...v,
       sentiment: "Caution",
       keyInsights: [{ ...v.keyInsights[0], impact: "High" }],
     });
-    expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
+    expect(() => parseVerdictFromAgentText(bad)).toThrow(VerdictParseError);
   });
 
   it("rejects estimatedImpact string values", () => {
-    const v = buildMarketingVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
+    const v = buildVerdictFixture({ tenantId: TENANT, analysisId: ANALYSIS });
     const bad = JSON.stringify({
       ...v,
       recommendations: [
@@ -97,15 +97,15 @@ describe("agent-verdict-json", () => {
         },
       ],
     });
-    expect(() => parseMarketingVerdictFromAgentText(bad)).toThrow(VerdictParseError);
+    expect(() => parseVerdictFromAgentText(bad)).toThrow(VerdictParseError);
   });
 
-  it("applyMarketingVerdictPipelineContext overrides tenant and analysis ids", () => {
-    const parsed = buildMarketingVerdictFixture({
+  it("applyVerdictPipelineContext overrides tenant and analysis ids", () => {
+    const parsed = buildVerdictFixture({
       tenantId: TENANT,
       analysisId: ANALYSIS,
     });
-    const v = applyMarketingVerdictPipelineContext(parsed, {
+    const v = applyVerdictPipelineContext(parsed, {
       tenantId: "cccccccc-cccc-4ccc-cccc-cccccccccccc",
       analysisId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
     });

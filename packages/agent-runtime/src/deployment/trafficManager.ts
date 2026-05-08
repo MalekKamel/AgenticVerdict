@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "async_hooks";
 import { Redis } from "ioredis";
 import { createPinoLogger } from "@agenticverdict/observability";
 
-const logger = createPinoLogger("TrafficManager");
+const logger = createPinoLogger("agent-runtime");
 
 export type TrafficTarget = "legacy" | "new";
 
@@ -116,14 +116,19 @@ export class TrafficManager {
 
       const config: TrafficConfig = {
         globalPercentage: globalPercentage ? parseInt(globalPercentage, 10) : 0,
-        tenantOverrides: new Map(Object.entries(tenantOverridesRaw || {}) as [string, string][]),
+        tenantOverrides: new Map(
+          Object.entries(tenantOverridesRaw || {}).map(([key, value]): [string, TrafficTarget] => [
+            key,
+            value as TrafficTarget,
+          ]),
+        ),
         abTests: new Map(),
       };
 
       if (abTestsRaw) {
         Object.entries(abTestsRaw).forEach(([key, value]) => {
           try {
-            const parsed = JSON.parse(value) as ABTestConfig;
+            const parsed = JSON.parse(value as string) as ABTestConfig;
             config.abTests.set(key, parsed);
           } catch {
             // ignore malformed A/B test payloads and keep loading valid entries
@@ -462,7 +467,11 @@ export class TrafficManager {
 export function withTenantContext<T>(tenantId: string, fn: () => T): T {
   const store = new Map<string, unknown>();
   store.set(TENANT_CONTEXT_KEY, tenantId);
-  return TrafficManager.asyncLocalStorage.run(store, fn);
+  return (
+    TrafficManager as unknown as {
+      asyncLocalStorage: { run: <T>(store: Map<string, unknown>, fn: () => T) => T };
+    }
+  ).asyncLocalStorage.run(store, fn);
 }
 
 export function getTenantContextFromAsyncLocalStorage(): string | undefined {

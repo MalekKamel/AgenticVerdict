@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { ActionIcon, useMantineColorScheme, useComputedColorScheme } from "@mantine/core";
 import { useTranslations } from "@/i18n/react";
 

@@ -24,7 +24,10 @@ const sampleConfig = {
     currency: "USD",
   },
   marketing: { channels: [] as { platform: "ga4"; enabled: boolean }[] },
-  ai: { primaryModel: "test", provider: "openai" as const },
+  ai: {
+    primaryProvider: "openai" as const,
+    defaultModel: { providerId: "openai" as const, modelId: "gpt-4" },
+  },
   features: { enableInsights: true, enableVerdict: false },
 };
 

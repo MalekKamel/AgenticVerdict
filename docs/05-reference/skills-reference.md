@@ -16,6 +16,24 @@ This document is the quick-reference index for skills used in this repository.
 
 ## Custom Skills (Project-Specific)
 
+### `architecture-governance`
+
+- **Use for:** monorepo structure changes, service boundaries, platform adapter contracts, multi-tenancy design.
+- **Focus:** tenant isolation, service boundary compliance, adapter contract alignment.
+- **Path:** `.agents/skills/architecture-governance/SKILL.md`
+
+### `coding-standards`
+
+- **Use for:** TypeScript strict mode, error system patterns, logging conventions, security rules.
+- **Focus:** zero `any` types, canonical error system, structured logging, no sensitive data leakage.
+- **Path:** `.agents/skills/coding-standards/SKILL.md`
+
+### `ci-governance`
+
+- **Use for:** CI/CD pipeline, PR workflow, bundle verification, quality gates.
+- **Focus:** lint → typecheck → test → build sequence, production bundle gate, E2E validation.
+- **Path:** `.agents/skills/ci-governance/SKILL.md`
+
 ### `frontend-governance`
 
 - **Use for:** frontend/UI/routing/auth/localization/design-token work.
@@ -37,7 +55,7 @@ This document is the quick-reference index for skills used in this repository.
 ### `testing-policy`
 
 - **Use for:** any behavior-changing implementation or refactor.
-- **Focus:** risk-based targeted testing, coverage expectations, validation evidence.
+- **Focus:** risk-based targeted testing, coverage expectations, validation evidence, mock adapter mode.
 - **Path:** `.agents/skills/testing-policy/SKILL.md`
 
 ### `docs-navigation`
@@ -103,13 +121,17 @@ This document is the quick-reference index for skills used in this repository.
 
 ## Trigger Matrix (Quick Use)
 
-- If task touches frontend UI/routing/auth/i18n -> use `frontend-governance`.
-- If task touches tenant scoping/context/db isolation -> use `multi-tenant-guardrails`.
-- If task touches Docker/runtime env/container CI -> use `runtime-config-docker`.
-- If task changes behavior or risk profile -> use `testing-policy`.
-- If task starts with planning or doc discovery -> use `docs-navigation`.
-- If task touches backend/service/connector logic -> use `backend-patterns`.
-- If task needs phase/spec alignment -> use `roadmap-context`.
+- If task touches monorepo structure/service boundaries/adapters → use `architecture-governance`.
+- If task involves TypeScript strict mode/error handling/logging/security → use `coding-standards`.
+- If task involves CI/CD/PR workflow/bundle gates → use `ci-governance`.
+- If task touches frontend UI/routing/auth/i18n → use `frontend-governance`.
+- If task touches tenant scoping/context/db isolation → use `multi-tenant-guardrails`.
+- If task touches Docker/runtime env/container CI → use `runtime-config-docker`.
+- If task changes behavior or risk profile → use `testing-policy`.
+- If task starts with planning or doc discovery → use `docs-navigation`.
+- If task touches backend/service/connector logic → use `backend-patterns`.
+- If task needs phase/spec alignment → use `roadmap-context`.
+- If task involves error system/translation/observability → use `error-system`.
 
 ## Maintenance Rules
 

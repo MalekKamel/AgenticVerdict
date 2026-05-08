@@ -35,6 +35,10 @@ class MockProvider extends BaseProvider {
       ],
     };
   }
+
+  async destroy(): Promise<void> {
+    // No-op for mock
+  }
 }
 
 describe("ProviderFactory", () => {
@@ -119,6 +123,33 @@ describe("ProviderFactory", () => {
       expect(providers).toContain("mock");
       expect(providers).toContain("mock2");
       expect(providers.length).toBe(2);
+    });
+  });
+
+  describe("registerDefaultProviders", () => {
+    it("should register default provider IDs", () => {
+      ProviderFactory.registerDefaultProviders();
+
+      expect(ProviderFactory.listProviders().sort()).toEqual([
+        "anthropic",
+        "bedrock",
+        "google",
+        "openai",
+        "openai-compatible",
+      ]);
+    });
+
+    it("should be idempotent when called multiple times", () => {
+      ProviderFactory.registerDefaultProviders();
+      ProviderFactory.registerDefaultProviders();
+
+      expect(ProviderFactory.listProviders().sort()).toEqual([
+        "anthropic",
+        "bedrock",
+        "google",
+        "openai",
+        "openai-compatible",
+      ]);
     });
   });
 

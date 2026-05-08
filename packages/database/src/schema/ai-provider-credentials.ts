@@ -7,6 +7,7 @@ import {
   integer,
   timestamp,
   unique,
+  index,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -124,13 +125,13 @@ export const aiProviderUsage = pgTable(
   },
   (t) => [
     /** Index for tenant usage queries */
-    unique("ai_provider_usage_tenant_idx").on(t.tenantId),
+    index("ai_provider_usage_tenant_idx").on(t.tenantId),
 
     /** Index for time-based queries */
-    unique("ai_provider_usage_timestamp_idx").on(t.timestamp),
+    index("ai_provider_usage_timestamp_idx").on(t.timestamp),
 
     /** Composite index for billing queries */
-    unique("ai_provider_usage_tenant_provider_month_idx").on(t.tenantId, t.providerId, t.timestamp),
+    index("ai_provider_usage_tenant_provider_month_idx").on(t.tenantId, t.providerId, t.timestamp),
   ],
 );
 

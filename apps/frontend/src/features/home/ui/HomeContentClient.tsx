@@ -25,7 +25,13 @@ export function HomeContentClient({ config }: { config: TenantConfig }) {
   const t = useTranslations("Home");
   const code = useLocale();
   const appLocale = toAppLocale(code);
-  const formatters = createLocalizationFormatters(appLocale, config.localization);
+  const localization = config.localization ?? {
+    language: "en",
+    region: "US",
+    timezone: "America/New_York",
+    currency: "USD",
+  };
+  const formatters = createLocalizationFormatters(appLocale, localization);
   const sampleDate = new Date("2026-04-04T12:00:00.000Z");
 
   return (
@@ -50,10 +56,10 @@ export function HomeContentClient({ config }: { config: TenantConfig }) {
           {t("tenantLabel")}: {config.tenantName}
         </Text>
         <Text>
-          {t("languageLabel")}: {config.localization.language.toUpperCase()}
+          {t("languageLabel")}: {localization.language.toUpperCase()}
         </Text>
         <Text>
-          {t("regionLabel")}: {config.localization.region}
+          {t("regionLabel")}: {localization.region}
         </Text>
       </Stack>
 

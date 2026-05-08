@@ -31,3 +31,8 @@ export {
 export { seedConnectorRegistry } from "./seed-connectors";
 export { RBACService, createRbacService, getRbacService } from "./rbac-service";
 export { seedRbacSystem, SYSTEM_TENANT_ID } from "./seeds/rbac-seed";
+export { AiProviderRepository } from "./repositories/ai-provider.repository";
+export { BusinessDomainsRepository } from "./repositories/business-domains.repository";
+export { BudgetAlertsRepository } from "./repositories/budget-alerts.repository";
+export { AiUsageRepository } from "./repositories/ai-usage.repository";
+export { AiTemplatesRepository } from "./repositories/ai-templates.repository";

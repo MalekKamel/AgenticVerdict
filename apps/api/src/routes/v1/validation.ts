@@ -3,7 +3,7 @@ import type { Redis } from "@upstash/redis";
 import { z } from "zod";
 
 import { ValidationService } from "@agenticverdict/agent-runtime";
-import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
+import { generatedInsightSchema, verdictSchema } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
 import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
@@ -121,7 +121,7 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
       preHandler: preHandlers,
       schema: {
         tags: ["Validation"],
-        summary: "Validate a MarketingVerdict against Zod schema and quality rules",
+        summary: "Validate a Verdict against Zod schema and quality rules",
         security: [{ bearerAuth: [] }],
         body: {
           type: "object",
@@ -151,7 +151,7 @@ export function registerValidationRoutes(app: FastifyInstance, redis: Redis | nu
         });
       }
 
-      const verdictParsed = marketingVerdictSchema.safeParse(parsed.data.verdict);
+      const verdictParsed = verdictSchema.safeParse(parsed.data.verdict);
       if (!verdictParsed.success) {
         return reply.status(400).send({
           error: {

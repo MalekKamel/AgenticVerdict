@@ -51,8 +51,8 @@ export const connectorRouter = t.router({
         if (input.status) {
           conditions.push(eq(tenantConnectors.status, input.status));
         }
-        if (input.domain) {
-          conditions.push(eq(tenantConnectors.domain, input.domain));
+        if (input.domainId) {
+          conditions.push(eq(tenantConnectors.domainId, input.domainId));
         }
         if (input.search) {
           conditions.push(ilike(tenantConnectors.name, `%${input.search}%`));
@@ -85,7 +85,7 @@ export const connectorRouter = t.router({
           platform: row.platform as "meta" | "ga4" | "gsc" | "gbp" | "tiktok",
           name: row.name,
           status: row.status as "healthy" | "warning" | "error" | "inactive" | "syncing",
-          domain: row.domain ?? null,
+          domainId: row.domainId ?? null,
           lastSyncAt: toIsoDateStringOrNull(row.lastSyncAt),
           lastSyncStatus: row.lastSyncStatus as "success" | "warning" | "error" | null,
           metricsCount: Array.isArray(row.metrics) ? row.metrics.length : 0,
@@ -130,7 +130,7 @@ export const connectorRouter = t.router({
           platform: row.platform as "meta" | "ga4" | "gsc" | "gbp" | "tiktok",
           name: row.name,
           status: row.status as "healthy" | "warning" | "error" | "inactive" | "syncing",
-          domain: row.domain ?? null,
+          domainId: row.domainId ?? null,
           config: (row.config as Record<string, unknown>) ?? {},
           metrics: Array.isArray(row.metrics) ? row.metrics : [],
           syncFrequency: row.syncFrequency ?? null,
@@ -173,7 +173,7 @@ export const connectorRouter = t.router({
             tenantId,
             platform: input.platform,
             name: input.name,
-            domain: input.domain ?? null,
+            domainId: input.domainId ?? null,
             config: input.config,
             metrics: input.metrics,
             syncFrequency: input.syncFrequency ?? "daily",
@@ -205,7 +205,7 @@ export const connectorRouter = t.router({
       return dbScoped(db, async (tx) => {
         const setValues: Record<string, unknown> = { updatedAt: new Date() };
         if (input.name !== undefined) setValues.name = input.name;
-        if (input.domain !== undefined) setValues.domain = input.domain ?? null;
+        if (input.domainId !== undefined) setValues.domainId = input.domainId ?? null;
         if (input.config !== undefined) setValues.config = input.config;
         if (input.metrics !== undefined) setValues.metrics = input.metrics;
         if (input.syncFrequency !== undefined) setValues.syncFrequency = input.syncFrequency;

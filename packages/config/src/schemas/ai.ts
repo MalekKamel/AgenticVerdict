@@ -1,8 +1,14 @@
 import { z } from "zod";
 
-export const aiConfigSchema = z.object({
-  primaryModel: z.string().min(1),
-  provider: z.enum(["anthropic", "openai"]),
-});
+import {
+  tenantAIConfigSchema,
+  defaultTenantAIConfig,
+} from "@agenticverdict/core/tenant/config-schema";
+
+// Re-export the comprehensive TenantAIConfig schema from core
+export const aiConfigSchema = tenantAIConfigSchema;
 
 export type AiConfig = z.infer<typeof aiConfigSchema>;
+
+// Re-export default config for convenience
+export { defaultTenantAIConfig };

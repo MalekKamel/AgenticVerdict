@@ -62,7 +62,7 @@ export interface PipelineTimingLogFields {
 /**
  * Structured, tenant-safe timing breakdown for logs / LangSmith metadata (no prompt text).
  */
-export function marketingPipelineTimingToLogFields(state: {
+export function pipelineTimingToLogFields(state: {
   workflowId: string;
   status: string;
   stages: readonly { stage: string; durationMs: number }[];

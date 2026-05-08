@@ -49,6 +49,15 @@ CREATE TABLE "tenants" (
 	"ai_model" varchar(64) DEFAULT 'claude-3-5-sonnet-20241022' NOT NULL,
 	"ai_quality_level" varchar(16) DEFAULT 'standard' NOT NULL,
 	"ai_customization_level" varchar(16) DEFAULT 'balanced' NOT NULL,
+	"ai_config" jsonb DEFAULT '{}'::jsonb,
+	"ai_default_cost_tier" varchar(16) DEFAULT 'standard' NOT NULL,
+	"ai_monthly_budget_cents" integer,
+	"ai_budget_alert_threshold" integer DEFAULT 80 NOT NULL,
+	"ai_enable_usage_tracking" boolean DEFAULT true NOT NULL,
+	"ai_enable_budget_alerts" boolean DEFAULT true NOT NULL,
+	"ai_enable_failover" boolean DEFAULT true NOT NULL,
+	"ai_failover_providers" jsonb,
+	"ai_usage_retention_days" integer DEFAULT 90 NOT NULL,
 	"suspended_at" timestamp with time zone,
 	"suspended_reason" text,
 	"archived_at" timestamp with time zone,
@@ -119,10 +128,15 @@ CREATE TABLE "core"."insights" (
 	"description" text,
 	"template_id" varchar(100),
 	"enabled" boolean DEFAULT true NOT NULL,
+	"domain" varchar(255),
+	"status" varchar(50) DEFAULT 'idle' NOT NULL,
+	"last_run_at" timestamp with time zone,
+	"last_run_status" varchar(50),
 	"schedule" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"delivery" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"ai_config" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "insights_tenant_name_unique" UNIQUE("tenant_id","name")
 );
 --> statement-breakpoint
 CREATE TABLE "marketing_metrics" (
@@ -213,7 +227,7 @@ CREATE TABLE "tenant_connectors" (
 	"platform" varchar(64) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"status" varchar(32) DEFAULT 'inactive' NOT NULL,
-	"domain" varchar(255),
+	"domain_id" uuid,
 	"config" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"metrics" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"sync_frequency" varchar(32) DEFAULT 'daily',
@@ -281,6 +295,460 @@ CREATE TABLE "role_permissions" (
 	CONSTRAINT "role_permissions_role_id_permission_id_unique" UNIQUE("role_id","permission_id")
 );
 --> statement-breakpoint
+CREATE TABLE "business_domains" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"name" varchar(128) NOT NULL,
+	"description" text,
+	"parent_id" uuid,
+	"order" integer DEFAULT 0 NOT NULL,
+	"provider_config" jsonb,
+	"uses_tenant_default" boolean DEFAULT true NOT NULL,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "business_domains_tenant_name_unique" UNIQUE("tenant_id","name")
+);
+--> statement-breakpoint
+CREATE TABLE "domain_connector_assignments" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"domain_id" uuid NOT NULL,
+	"connector_id" uuid NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"order" integer DEFAULT 0 NOT NULL,
+	"assigned_by" uuid,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "domain_connector_assignments_connector_unique" UNIQUE("connector_id")
+);
+--> statement-breakpoint
+CREATE TABLE "domain_hierarchy_cache" (
+	"domain_id" uuid PRIMARY KEY NOT NULL,
+	"materialized_path" text NOT NULL,
+	"ancestor_ids" jsonb NOT NULL,
+	"descendant_ids" jsonb NOT NULL,
+	"depth" integer DEFAULT 0 NOT NULL,
+	"last_refreshed_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TYPE "provider_status" AS ENUM ('active', 'inactive', 'error');
+CREATE TYPE "provider_scope" AS ENUM ('global', 'tenant');
+CREATE TYPE "cost_tier" AS ENUM ('economy', 'standard', 'premium');
+CREATE TABLE "ai_providers" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"provider_name" varchar(128) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"model_name" varchar(128),
+	"cost_tier" cost_tier DEFAULT 'standard' NOT NULL,
+	"custom_pricing" jsonb,
+	"scope" provider_scope NOT NULL,
+	"parent_id" uuid,
+	"is_enabled" boolean DEFAULT true NOT NULL,
+	"status" provider_status DEFAULT 'active' NOT NULL,
+	"priority" integer DEFAULT 0 NOT NULL,
+	"rate_limit_override" integer,
+	"timeout_override" integer,
+	"base_url" text,
+	"is_override" boolean DEFAULT false NOT NULL,
+	"last_health_check_at" timestamp with time zone,
+	"health_error_message" text,
+	"credentials_id" uuid,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_providers_tenant_scope_parent_unique" UNIQUE("tenant_id","scope","parent_id","provider_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_provider_models" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"model_name" varchar(128) NOT NULL,
+	"version" varchar(32) NOT NULL,
+	"context_window" integer NOT NULL,
+	"input_cost_per_1k" integer DEFAULT 0 NOT NULL,
+	"output_cost_per_1k" integer DEFAULT 0 NOT NULL,
+	"supports_streaming" boolean DEFAULT false NOT NULL,
+	"supports_function_calling" boolean DEFAULT false NOT NULL,
+	"is_multimodal" boolean DEFAULT false NOT NULL,
+	"capabilities" jsonb,
+	"is_available" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_provider_models_provider_model_unique" UNIQUE("provider_id","model_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_provider_failover" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"primary_provider_id" varchar(64) NOT NULL,
+	"fallback_providers" jsonb NOT NULL,
+	"is_enabled" boolean DEFAULT true NOT NULL,
+	"provider_timeout" integer DEFAULT 10000 NOT NULL,
+	"max_retries" integer DEFAULT 1 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_provider_failover_tenant_primary_unique" UNIQUE("tenant_id","primary_provider_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_provider_credentials" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"encrypted_api_key" text NOT NULL,
+	"encryption_iv" text NOT NULL,
+	"base_url" text,
+	"aws_access_key_id" text,
+	"aws_secret_access_key" text,
+	"aws_region" varchar(32),
+	"is_active" boolean DEFAULT true NOT NULL,
+	"priority" integer DEFAULT 0 NOT NULL,
+	"rate_limit_override" integer,
+	"timeout_override" integer,
+	"last_used_at" timestamp with time zone,
+	"last_rotated_at" timestamp with time zone,
+	"next_rotation_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_provider_credentials_tenant_provider_unique" UNIQUE("tenant_id","provider_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_provider_usage" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"input_tokens" integer DEFAULT 0 NOT NULL,
+	"output_tokens" integer DEFAULT 0 NOT NULL,
+	"cost_cents" integer DEFAULT 0 NOT NULL,
+	"timestamp" timestamp with time zone DEFAULT now() NOT NULL,
+	"request_id" uuid,
+	"was_failover" boolean DEFAULT false NOT NULL,
+	"latency_ms" integer,
+	"success" boolean DEFAULT true NOT NULL,
+	"error_code" varchar(64)
+);
+--> statement-breakpoint
+CREATE TABLE "ai_provider_health" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"tenant_id" uuid,
+	"error_rate" integer DEFAULT 0 NOT NULL,
+	"avg_latency_ms" integer DEFAULT 0 NOT NULL,
+	"p95_latency_ms" integer DEFAULT 0 NOT NULL,
+	"requests_per_minute" integer DEFAULT 0 NOT NULL,
+	"circuit_state" varchar(16) DEFAULT 'closed' NOT NULL,
+	"consecutive_failures" integer DEFAULT 0 NOT NULL,
+	"last_health_check" timestamp with time zone DEFAULT now() NOT NULL,
+	"last_failure" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_provider_health_provider_tenant_unique" UNIQUE("provider_id","tenant_id")
+);
+--> statement-breakpoint
+CREATE TYPE "template_type" AS ENUM ('prompt', 'configuration', 'workflow');
+CREATE TYPE "template_status" AS ENUM ('draft', 'published', 'archived');
+CREATE TABLE "ai_templates" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"name" varchar(128) NOT NULL,
+	"description" text,
+	"type" template_type NOT NULL,
+	"version" varchar(32) DEFAULT '1.0.0' NOT NULL,
+	"content" text NOT NULL,
+	"variables" jsonb DEFAULT '[]'::jsonb,
+	"provider_id" varchar(64),
+	"model_id" varchar(128),
+	"domain_id" uuid,
+	"status" template_status DEFAULT 'draft' NOT NULL,
+	"parent_version_id" uuid,
+	"is_latest_version" boolean DEFAULT false NOT NULL,
+	"version_number" integer DEFAULT 1 NOT NULL,
+	"created_by_id" uuid,
+	"deployment_count" integer DEFAULT 0 NOT NULL,
+	"last_deployed_at" timestamp with time zone,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_templates_tenant_name_domain_unique" UNIQUE("tenant_id","name","domain_id")
+);
+--> statement-breakpoint
+CREATE TABLE "template_deployments" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"template_id" uuid NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"scope" varchar(16) NOT NULL,
+	"target_id" uuid,
+	"deployed_variables" jsonb,
+	"deployed_by" uuid,
+	"deployment_status" varchar(32) DEFAULT 'active' NOT NULL,
+	"notes" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "template_usage_analytics" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"template_id" uuid NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"usage_date" timestamp with time zone NOT NULL,
+	"execution_count" integer DEFAULT 0 NOT NULL,
+	"success_count" integer DEFAULT 0 NOT NULL,
+	"failure_count" integer DEFAULT 0 NOT NULL,
+	"avg_execution_time_ms" integer DEFAULT 0 NOT NULL,
+	"total_tokens" integer DEFAULT 0 NOT NULL,
+	"total_cost_cents" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "template_usage_analytics_template_date_unique" UNIQUE("template_id","usage_date")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_usage_reports" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"domain_id" uuid,
+	"connector_id" uuid,
+	"request_id" varchar(128) NOT NULL,
+	"prompt_tokens" integer DEFAULT 0 NOT NULL,
+	"completion_tokens" integer DEFAULT 0 NOT NULL,
+	"total_tokens" integer DEFAULT 0 NOT NULL,
+	"cost_cents" integer DEFAULT 0 NOT NULL,
+	"timestamp" timestamp with time zone NOT NULL,
+	"latency_ms" integer DEFAULT 0 NOT NULL,
+	"success" boolean DEFAULT true NOT NULL,
+	"error_code" varchar(64),
+	"error_message" text,
+	"was_failover" boolean DEFAULT false NOT NULL,
+	"failover_attempt" integer DEFAULT 0,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ai_usage_reports_request_unique" UNIQUE("request_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_usage_aggregation_daily" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"usage_date" timestamp with time zone NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"domain_id" uuid,
+	"total_prompt_tokens" integer DEFAULT 0 NOT NULL,
+	"total_completion_tokens" integer DEFAULT 0 NOT NULL,
+	"total_tokens" integer DEFAULT 0 NOT NULL,
+	"total_cost_cents" integer DEFAULT 0 NOT NULL,
+	"total_requests" integer DEFAULT 0 NOT NULL,
+	"successful_requests" integer DEFAULT 0 NOT NULL,
+	"failed_requests" integer DEFAULT 0 NOT NULL,
+	"avg_latency_ms" integer DEFAULT 0 NOT NULL,
+	"failover_requests" integer DEFAULT 0 NOT NULL,
+	"last_aggregated_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "ai_usage_aggregation_daily_unique" UNIQUE("tenant_id","usage_date","provider_id","model_id")
+);
+--> statement-breakpoint
+CREATE TABLE "ai_usage_aggregation_monthly" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"year" integer NOT NULL,
+	"month" integer NOT NULL,
+	"provider_id" varchar(64) NOT NULL,
+	"model_id" varchar(128) NOT NULL,
+	"domain_id" uuid,
+	"total_prompt_tokens" integer DEFAULT 0 NOT NULL,
+	"total_completion_tokens" integer DEFAULT 0 NOT NULL,
+	"total_tokens" integer DEFAULT 0 NOT NULL,
+	"total_cost_cents" integer DEFAULT 0 NOT NULL,
+	"total_requests" integer DEFAULT 0 NOT NULL,
+	"successful_requests" integer DEFAULT 0 NOT NULL,
+	"failed_requests" integer DEFAULT 0 NOT NULL,
+	"avg_latency_ms" integer DEFAULT 0 NOT NULL,
+	"peak_daily_cost_cents" integer DEFAULT 0 NOT NULL,
+	"last_aggregated_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "ai_usage_aggregation_monthly_unique" UNIQUE("tenant_id","year","month","provider_id","model_id")
+);
+--> statement-breakpoint
+CREATE TYPE "alert_type" AS ENUM ('threshold', 'anomaly', 'forecast');
+CREATE TYPE "alert_threshold_type" AS ENUM ('cost', 'tokens', 'requests');
+CREATE TYPE "alert_time_window" AS ENUM ('hourly', 'daily', 'weekly', 'monthly');
+CREATE TYPE "alert_status" AS ENUM ('active', 'paused', 'triggered', 'resolved');
+CREATE TABLE "budget_alerts" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"name" varchar(128) NOT NULL,
+	"description" text,
+	"type" alert_type NOT NULL,
+	"threshold" integer NOT NULL,
+	"threshold_type" alert_threshold_type NOT NULL,
+	"time_window" alert_time_window NOT NULL,
+	"status" alert_status DEFAULT 'active' NOT NULL,
+	"notifications" jsonb NOT NULL,
+	"last_triggered_at" timestamp with time zone,
+	"last_evaluated_at" timestamp with time zone,
+	"last_evaluated_value" integer,
+	"trigger_count" integer DEFAULT 0 NOT NULL,
+	"cooldown_minutes" integer DEFAULT 60 NOT NULL,
+	"created_by_id" uuid,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "alert_trigger_history" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"alert_id" uuid NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"triggered_value" integer NOT NULL,
+	"threshold_value" integer NOT NULL,
+	"exceeded_by" integer,
+	"triggered_at" timestamp with time zone NOT NULL,
+	"notifications_sent" jsonb,
+	"evaluation_context" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "budget_period_summaries" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"period_type" alert_time_window NOT NULL,
+	"period_start" timestamp with time zone NOT NULL,
+	"period_end" timestamp with time zone NOT NULL,
+	"total_cost_cents" integer DEFAULT 0 NOT NULL,
+	"total_tokens" integer DEFAULT 0 NOT NULL,
+	"total_requests" integer DEFAULT 0 NOT NULL,
+	"budget_limit_cents" integer,
+	"budget_used_percent" integer DEFAULT 0 NOT NULL,
+	"projected_cost_cents" integer,
+	"days_remaining" integer,
+	"daily_average_cost_cents" integer,
+	"alerts_triggered" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "budget_period_summaries_tenant_period_unique" UNIQUE("tenant_id","period_type","period_start")
+);
+--> statement-breakpoint
+CREATE TABLE "report_shares" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"report_id" uuid NOT NULL,
+	"token" text NOT NULL,
+	"expires_at" timestamp with time zone NOT NULL,
+	"revoked_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"created_by" text NOT NULL,
+	CONSTRAINT "report_shares_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
+CREATE TABLE "audit_trail" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"insight_id" uuid,
+	"event_type" varchar(128) NOT NULL,
+	"event_data" jsonb NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "tenant_connectors" ADD CONSTRAINT "tenant_connectors_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "business_domains" ADD CONSTRAINT "business_domains_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "business_domains" ADD CONSTRAINT "business_domains_parent_id_business_domains_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "domain_connector_assignments" ADD CONSTRAINT "domain_connector_assignments_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "domain_connector_assignments" ADD CONSTRAINT "domain_connector_assignments_connector_id_tenant_connectors_id_fk" FOREIGN KEY ("connector_id") REFERENCES "public"."tenant_connectors"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "domain_connector_assignments" ADD CONSTRAINT "domain_connector_assignments_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "domain_connector_assignments" ADD CONSTRAINT "domain_connector_assignments_assigned_by_users_id_fk" FOREIGN KEY ("assigned_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "domain_hierarchy_cache" ADD CONSTRAINT "domain_hierarchy_cache_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_providers" ADD CONSTRAINT "ai_providers_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_provider_failover" ADD CONSTRAINT "ai_provider_failover_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_provider_credentials" ADD CONSTRAINT "ai_provider_credentials_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_provider_usage" ADD CONSTRAINT "ai_provider_usage_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_provider_health" ADD CONSTRAINT "ai_provider_health_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_templates" ADD CONSTRAINT "ai_templates_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_templates" ADD CONSTRAINT "ai_templates_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_templates" ADD CONSTRAINT "ai_templates_parent_version_id_ai_templates_id_fk" FOREIGN KEY ("parent_version_id") REFERENCES "public"."ai_templates"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_templates" ADD CONSTRAINT "ai_templates_created_by_id_users_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "template_deployments" ADD CONSTRAINT "template_deployments_template_id_ai_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."ai_templates"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "template_deployments" ADD CONSTRAINT "template_deployments_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "template_deployments" ADD CONSTRAINT "template_deployments_deployed_by_users_id_fk" FOREIGN KEY ("deployed_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "template_usage_analytics" ADD CONSTRAINT "template_usage_analytics_template_id_ai_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."ai_templates"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "template_usage_analytics" ADD CONSTRAINT "template_usage_analytics_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_reports" ADD CONSTRAINT "ai_usage_reports_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_reports" ADD CONSTRAINT "ai_usage_reports_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_aggregation_daily" ADD CONSTRAINT "ai_usage_aggregation_daily_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_aggregation_daily" ADD CONSTRAINT "ai_usage_aggregation_daily_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_aggregation_monthly" ADD CONSTRAINT "ai_usage_aggregation_monthly_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ai_usage_aggregation_monthly" ADD CONSTRAINT "ai_usage_aggregation_monthly_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "budget_alerts" ADD CONSTRAINT "budget_alerts_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "budget_alerts" ADD CONSTRAINT "budget_alerts_created_by_id_users_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "alert_trigger_history" ADD CONSTRAINT "alert_trigger_history_alert_id_budget_alerts_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."budget_alerts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "alert_trigger_history" ADD CONSTRAINT "alert_trigger_history_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "budget_period_summaries" ADD CONSTRAINT "budget_period_summaries_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "report_shares" ADD CONSTRAINT "report_shares_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "report_shares" ADD CONSTRAINT "report_shares_report_id_reports_id_fk" FOREIGN KEY ("report_id") REFERENCES "public"."reports"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "audit_trail" ADD CONSTRAINT "audit_trail_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "audit_trail" ADD CONSTRAINT "audit_trail_insight_id_insights_id_fk" FOREIGN KEY ("insight_id") REFERENCES "core"."insights"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "business_domains_tenant_idx" ON "business_domains" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "business_domains_parent_idx" ON "business_domains" USING btree ("parent_id");--> statement-breakpoint
+CREATE INDEX "business_domains_order_idx" ON "business_domains" USING btree ("order");--> statement-breakpoint
+CREATE INDEX "business_domains_tenant_parent_idx" ON "business_domains" USING btree ("tenant_id","parent_id");--> statement-breakpoint
+CREATE INDEX "domain_connector_assignments_domain_idx" ON "domain_connector_assignments" USING btree ("domain_id");--> statement-breakpoint
+CREATE INDEX "domain_connector_assignments_connector_idx" ON "domain_connector_assignments" USING btree ("connector_id");--> statement-breakpoint
+CREATE INDEX "domain_connector_assignments_tenant_idx" ON "domain_connector_assignments" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "domain_connector_assignments_domain_connector_idx" ON "domain_connector_assignments" USING btree ("domain_id","connector_id");--> statement-breakpoint
+CREATE INDEX "ai_providers_tenant_id_idx" ON "ai_providers" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "ai_providers_provider_id_idx" ON "ai_providers" USING btree ("provider_id");--> statement-breakpoint
+CREATE INDEX "ai_provider_models_provider_id_idx" ON "ai_provider_models" USING btree ("provider_id");--> statement-breakpoint
+CREATE INDEX "ai_provider_failover_tenant_id_idx" ON "ai_provider_failover" USING btree ("tenant_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "ai_provider_credentials_tenant_idx" ON "ai_provider_credentials" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "ai_provider_usage_tenant_idx" ON "ai_provider_usage" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "ai_provider_usage_timestamp_idx" ON "ai_provider_usage" USING btree ("timestamp");--> statement-breakpoint
+CREATE INDEX "ai_provider_usage_tenant_provider_month_idx" ON "ai_provider_usage" USING btree ("tenant_id","provider_id","timestamp");--> statement-breakpoint
+CREATE INDEX "ai_templates_tenant_idx" ON "ai_templates" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "ai_templates_domain_idx" ON "ai_templates" USING btree ("domain_id");--> statement-breakpoint
+CREATE INDEX "ai_templates_status_idx" ON "ai_templates" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "ai_templates_type_idx" ON "ai_templates" USING btree ("type");--> statement-breakpoint
+CREATE INDEX "ai_templates_parent_version_idx" ON "ai_templates" USING btree ("parent_version_id");--> statement-breakpoint
+CREATE INDEX "ai_templates_latest_idx" ON "ai_templates" USING btree ("tenant_id","is_latest_version");--> statement-breakpoint
+CREATE INDEX "template_deployments_template_idx" ON "template_deployments" USING btree ("template_id");--> statement-breakpoint
+CREATE INDEX "template_deployments_tenant_idx" ON "template_deployments" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "template_deployments_target_idx" ON "template_deployments" USING btree ("target_id");--> statement-breakpoint
+CREATE INDEX "template_deployments_active_idx" ON "template_deployments" USING btree ("tenant_id","scope","deployment_status");--> statement-breakpoint
+CREATE INDEX "template_usage_analytics_template_idx" ON "template_usage_analytics" USING btree ("template_id");--> statement-breakpoint
+CREATE INDEX "template_usage_analytics_date_idx" ON "template_usage_analytics" USING btree ("usage_date");--> statement-breakpoint
+CREATE INDEX "template_usage_analytics_tenant_date_idx" ON "template_usage_analytics" USING btree ("tenant_id","usage_date");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_tenant_idx" ON "ai_usage_reports" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_provider_idx" ON "ai_usage_reports" USING btree ("provider_id");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_domain_idx" ON "ai_usage_reports" USING btree ("domain_id");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_timestamp_idx" ON "ai_usage_reports" USING btree ("timestamp");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_connector_idx" ON "ai_usage_reports" USING btree ("connector_id");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_tenant_timestamp_idx" ON "ai_usage_reports" USING btree ("tenant_id","timestamp");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_tenant_provider_timestamp_idx" ON "ai_usage_reports" USING btree ("tenant_id","provider_id","timestamp");--> statement-breakpoint
+CREATE INDEX "ai_usage_reports_tenant_domain_timestamp_idx" ON "ai_usage_reports" USING btree ("tenant_id","domain_id","timestamp");--> statement-breakpoint
+CREATE INDEX "ai_usage_aggregation_daily_tenant_date_idx" ON "ai_usage_aggregation_daily" USING btree ("tenant_id","usage_date");--> statement-breakpoint
+CREATE INDEX "ai_usage_aggregation_daily_provider_date_idx" ON "ai_usage_aggregation_daily" USING btree ("provider_id","usage_date");--> statement-breakpoint
+CREATE INDEX "ai_usage_aggregation_daily_tenant_provider_date_idx" ON "ai_usage_aggregation_daily" USING btree ("tenant_id","provider_id","usage_date");--> statement-breakpoint
+CREATE INDEX "ai_usage_aggregation_monthly_tenant_month_idx" ON "ai_usage_aggregation_monthly" USING btree ("tenant_id","year","month");--> statement-breakpoint
+CREATE INDEX "ai_usage_aggregation_monthly_provider_month_idx" ON "ai_usage_aggregation_monthly" USING btree ("provider_id","year","month");--> statement-breakpoint
+CREATE INDEX "budget_alerts_tenant_idx" ON "budget_alerts" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "budget_alerts_status_idx" ON "budget_alerts" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "budget_alerts_type_idx" ON "budget_alerts" USING btree ("type");--> statement-breakpoint
+CREATE INDEX "budget_alerts_time_window_idx" ON "budget_alerts" USING btree ("time_window");--> statement-breakpoint
+CREATE INDEX "budget_alerts_active_idx" ON "budget_alerts" USING btree ("tenant_id","status");--> statement-breakpoint
+CREATE INDEX "alert_trigger_history_alert_idx" ON "alert_trigger_history" USING btree ("alert_id");--> statement-breakpoint
+CREATE INDEX "alert_trigger_history_tenant_idx" ON "alert_trigger_history" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "alert_trigger_history_triggered_at_idx" ON "alert_trigger_history" USING btree ("triggered_at");--> statement-breakpoint
+CREATE INDEX "alert_trigger_history_tenant_alert_time_idx" ON "alert_trigger_history" USING btree ("tenant_id","alert_id","triggered_at");--> statement-breakpoint
+CREATE INDEX "budget_period_summaries_tenant_idx" ON "budget_period_summaries" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "budget_period_summaries_period_type_idx" ON "budget_period_summaries" USING btree ("period_type");--> statement-breakpoint
+CREATE INDEX "budget_period_summaries_period_start_idx" ON "budget_period_summaries" USING btree ("period_start");--> statement-breakpoint
+CREATE INDEX "budget_period_summaries_tenant_period_idx" ON "budget_period_summaries" USING btree ("tenant_id","period_type","period_start");--> statement-breakpoint
+CREATE INDEX "report_shares_token_idx" ON "report_shares" USING btree ("token");--> statement-breakpoint
+CREATE INDEX "report_shares_report_id_idx" ON "report_shares" USING btree ("report_id");--> statement-breakpoint
+CREATE INDEX "audit_trail_tenant_id_idx" ON "audit_trail" USING btree ("tenant_id");--> statement-breakpoint
+CREATE INDEX "audit_trail_insight_id_idx" ON "audit_trail" USING btree ("insight_id");--> statement-breakpoint
+CREATE INDEX "audit_trail_created_at_idx" ON "audit_trail" USING btree ("created_at");
+--> statement-breakpoint
 ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tenants" ADD CONSTRAINT "tenants_agency_partner_id_agency_partners_id_fk" FOREIGN KEY ("agency_partner_id") REFERENCES "core"."agency_partners"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tenants" ADD CONSTRAINT "tenants_parent_tenant_id_tenants_id_fk" FOREIGN KEY ("parent_tenant_id") REFERENCES "public"."tenants"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
@@ -323,7 +791,7 @@ CREATE INDEX "usage_tracking_tenant_id_period_idx" ON "core"."usage_tracking" US
 CREATE INDEX "tenant_connectors_tenant_idx" ON "tenant_connectors" USING btree ("tenant_id");--> statement-breakpoint
 CREATE INDEX "tenant_connectors_platform_idx" ON "tenant_connectors" USING btree ("platform");--> statement-breakpoint
 CREATE INDEX "tenant_connectors_status_idx" ON "tenant_connectors" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "tenant_connectors_domain_idx" ON "tenant_connectors" USING btree ("domain");--> statement-breakpoint
+CREATE INDEX "tenant_connectors_domain_idx" ON "tenant_connectors" USING btree ("domain_id");--> statement-breakpoint
 CREATE INDEX "sync_history_connector_idx" ON "connector_sync_history" USING btree ("connector_id");--> statement-breakpoint
 CREATE INDEX "sync_history_tenant_idx" ON "connector_sync_history" USING btree ("tenant_id");--> statement-breakpoint
 CREATE INDEX "sync_history_started_idx" ON "connector_sync_history" USING btree ("started_at");--> statement-breakpoint

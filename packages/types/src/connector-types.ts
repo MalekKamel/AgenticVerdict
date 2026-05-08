@@ -28,7 +28,7 @@ export const connectorListItemSchema = z.object({
   platform: connectorTypeSchema,
   name: z.string(),
   status: connectorStatusSchema,
-  domain: z.string().nullable(),
+  domainId: z.string().uuid().nullable(),
   lastSyncAt: z.string().nullable(),
   lastSyncStatus: syncStatusSchema.nullable(),
   metricsCount: z.number().int().default(0),
@@ -39,7 +39,7 @@ export type ConnectorListItem = z.infer<typeof connectorListItemSchema>;
 /** Connector list input. */
 export const connectorListInputSchema = z.object({
   status: connectorStatusSchema.optional(),
-  domain: z.string().optional(),
+  domainId: z.string().uuid().optional(),
   search: z.string().optional(),
   page: z.number().int().min(1).default(1),
   pageSize: z.number().int().min(1).max(100).default(20),
@@ -75,7 +75,7 @@ export const connectorDetailOutputSchema = z.object({
   platform: connectorTypeSchema,
   name: z.string(),
   status: connectorStatusSchema,
-  domain: z.string().nullable(),
+  domainId: z.string().uuid().nullable(),
   config: z.record(z.unknown()),
   metrics: z.array(z.string()),
   syncFrequency: z.string().nullable(),
@@ -114,7 +114,7 @@ export type ConnectorDetailOutput = z.infer<typeof connectorDetailOutputSchema>;
 export const connectorCreateInputSchema = z.object({
   platform: connectorTypeSchema,
   name: z.string().min(1).max(255),
-  domain: z.string().max(255).optional(),
+  domainId: z.string().uuid().optional(),
   config: z.record(z.unknown()).default({}),
   metrics: z.array(z.string()).default([]),
   syncFrequency: z.string().optional(),
@@ -137,7 +137,7 @@ export type ConnectorCreateOutput = z.infer<typeof connectorCreateOutputSchema>;
 export const connectorUpdateInputSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255).optional(),
-  domain: z.string().max(255).optional(),
+  domainId: z.string().uuid().optional(),
   config: z.record(z.unknown()).optional(),
   metrics: z.array(z.string()).optional(),
   syncFrequency: z.string().optional(),

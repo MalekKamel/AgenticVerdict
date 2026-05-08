@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import type { AgentFactoryConfig } from "./agent-config";
+import type { AgentConfig } from "./agent-config";
 import type { AgentRunResult } from "./interfaces";
 
 export interface LlmInvocationCacheOptions {
@@ -87,13 +87,13 @@ export class LlmInvocationCache {
 /**
  * Stable fingerprint for factory fields that affect assembly budgets (not full system text).
  */
-export function factoryConfigCacheFingerprint(cfg: AgentFactoryConfig): string {
+export function factoryConfigCacheFingerprint(cfg: AgentConfig): string {
   return JSON.stringify({
     role: cfg.role,
     memoryMode: cfg.memoryMode,
-    tenantContextMaxApproxTokens: cfg.tenantContextMaxApproxTokens,
-    maxAssembledPromptApproxTokens: cfg.maxAssembledPromptApproxTokens,
-    temperature: cfg.temperature ?? null,
+    tenantContextMaxApproxTokens: cfg.tokenBudgets.tenantContextMaxApproxTokens,
+    maxAssembledPromptApproxTokens: cfg.tokenBudgets.maxAssembledPromptApproxTokens,
+    temperature: cfg.modelParams.temperature ?? null,
   });
 }
 

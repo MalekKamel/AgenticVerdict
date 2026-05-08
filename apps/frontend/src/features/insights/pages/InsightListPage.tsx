@@ -48,7 +48,7 @@ function InsightCard({ insight: insightRaw }: { insight: InsightListItem }) {
   const deleteMutation = useInsightDelete();
   const runMutation = useInsightRun();
 
-  const insight = insightRaw;
+  const insight = insightRaw as InsightListItem;
 
   const status = insight.enabled ? "enabled" : "disabled";
   const isRunning = insight.status === "running";
@@ -242,18 +242,6 @@ function InsightListContent() {
   const insights = data?.insights || [];
   const totalPages = data?.total ? Math.ceil(data.total / 20) : 1;
 
-  if (error) {
-    const errorMessage = getInsightErrorMessage(error);
-    return (
-      <Container size="xl">
-        <Stack gap="md">
-          <Title order={2}>{t("list.errorTitle")}</Title>
-          <Text c="red">{errorMessage}</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
   useAppShellHeader({
     breadcrumbs: [
       { label: tNav("dashboard"), href: ROUTE_PATHS.DASHBOARD },
@@ -274,6 +262,18 @@ function InsightListContent() {
       </Group>
     ),
   });
+
+  if (error) {
+    const errorMessage = getInsightErrorMessage(error);
+    return (
+      <Container size="xl">
+        <Stack gap="md">
+          <Title order={2}>{t("list.errorTitle")}</Title>
+          <Text c="red">{errorMessage}</Text>
+        </Stack>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl">
@@ -307,7 +307,7 @@ function InsightListContent() {
           <>
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
               {insights.map((insight) => (
-                <InsightCard key={insight.id} insight={insight} />
+                <InsightCard key={insight.id} insight={insight as InsightListItem} />
               ))}
             </SimpleGrid>
 

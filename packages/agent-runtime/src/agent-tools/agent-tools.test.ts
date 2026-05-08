@@ -54,7 +54,7 @@ const TENANT: TenantContext = createTestTenantContext({
         targetCpql: { maxAmount: 10_000, currencyCode: "SAR" },
       },
     },
-    ai: { primaryModel: "claude-3-5-sonnet-20241022", provider: "anthropic" },
+    ai: { primaryProvider: "anthropic" },
     features: { enableInsights: true, enableVerdict: true },
     business: {
       products: ["Fleet GPS"],

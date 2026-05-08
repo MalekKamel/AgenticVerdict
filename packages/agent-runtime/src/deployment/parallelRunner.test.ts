@@ -424,7 +424,7 @@ describe("ParallelRunner", () => {
       }
 
       const report = await runner.generateReport();
-      expect(report.recommendations.some((r) => r.includes("traffic increase"))).toBe(true);
+      expect(report.recommendations.some((r) => r.includes("increasing traffic"))).toBe(true);
     });
   });
 

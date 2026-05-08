@@ -1,18 +1,20 @@
-import type { AgentFactoryConfig } from "./agent-config";
-import { parseAgentFactoryConfig } from "./agent-config";
+import { parseAgentConfig, parseAgentFactoryConfig, type AgentFactoryConfig } from "./agent-config";
 import { ProviderAgent, type ProviderAgentOptions } from "./provider-agent";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { createAgentMemory } from "./memory";
 import type { IAgent, ITool } from "./interfaces";
 import { ToolRegistry } from "./tools";
 import { getTenantContextFromAsyncLocalStorage } from "./deployment/trafficManager";
+import { requireTenantContext } from "@agenticverdict/core";
+import { defaultTenantAIConfig } from "@agenticverdict/core/tenant/config-schema";
+import type { AgentLlmEnv } from "./llm-env";
 
 export interface AgentFactoryDeps {
   /**
    * Used when {@link AgentFactoryConfig.runtimeMode} is `production` to build primary/fallback models.
    * Note: Production mode now requires tenant context via AsyncLocalStorage for multi-tenant credential isolation.
    */
-  llmEnv?: Record<string, never>;
+  llmEnv?: AgentLlmEnv;
 }
 
 /**
@@ -43,6 +45,110 @@ export class AgentFactory {
     return registry;
   }
 
+  /**
+   * Selects provider and model based on tenant AI configuration and agent role.
+   * Falls back to default configuration if tenant has no custom settings.
+   */
+  private selectProviderFromTenantConfig(role: AgentFactoryConfig["role"]): {
+    providerId: string;
+    modelId: string;
+    fallbackProviderId?: string;
+    fallbackModelId?: string;
+  } {
+    const tenantContext = requireTenantContext();
+    const aiConfig = tenantContext.config.ai || defaultTenantAIConfig;
+
+    // Try role-based model configuration first
+    if (aiConfig.roleBasedModels) {
+      if (role === "analysis" && aiConfig.roleBasedModels.analysis) {
+        return {
+          providerId: aiConfig.roleBasedModels.analysis.providerId,
+          modelId: aiConfig.roleBasedModels.analysis.modelId,
+        };
+      }
+      if (role === "insights" && aiConfig.roleBasedModels.insights) {
+        return {
+          providerId: aiConfig.roleBasedModels.insights.providerId,
+          modelId: aiConfig.roleBasedModels.insights.modelId,
+        };
+      }
+      if (role === "verdict" && aiConfig.roleBasedModels.reports) {
+        return {
+          providerId: aiConfig.roleBasedModels.reports.providerId,
+          modelId: aiConfig.roleBasedModels.reports.modelId,
+        };
+      }
+    }
+
+    // Fall back to default model
+    if (aiConfig.defaultModel) {
+      return {
+        providerId: aiConfig.defaultModel.providerId,
+        modelId: aiConfig.defaultModel.modelId,
+      };
+    }
+
+    // Ultimate fallback: use primary provider with sensible defaults
+    const primaryProvider = aiConfig.primaryProvider || "anthropic";
+    const defaultModelsByRole: Record<AgentFactoryConfig["role"], string> = {
+      analysis: "claude-3-5-sonnet-20241022",
+      insights: "claude-3-5-sonnet-20241022",
+      verdict: "claude-3-5-sonnet-20241022",
+    };
+
+    return {
+      providerId: primaryProvider,
+      modelId: defaultModelsByRole[role],
+    };
+  }
+
+  /**
+   * Selects fallback provider from tenant failover configuration.
+   */
+  private selectFallbackProvider(): {
+    fallbackProviderId?: string;
+    fallbackModelId?: string;
+  } | null {
+    const tenantContext = requireTenantContext();
+    const aiConfig = tenantContext.config.ai || defaultTenantAIConfig;
+
+    if (!aiConfig.failover?.enabled || !aiConfig.failover.fallbackProviders?.length) {
+      return null;
+    }
+
+    // Use first fallback provider from tenant config
+    const fallbackProviderId = aiConfig.failover.fallbackProviders[0];
+
+    // Try to get model for this provider from roleBasedModels or use default
+    let fallbackModelId: string | undefined;
+
+    if (aiConfig.roleBasedModels) {
+      // Try to find a model for this provider in any role
+      const roles = ["analysis", "insights", "reports"] as const;
+      for (const role of roles) {
+        if (aiConfig.roleBasedModels[role]?.providerId === fallbackProviderId) {
+          fallbackModelId = aiConfig.roleBasedModels[role]?.modelId;
+          break;
+        }
+      }
+    }
+
+    // If no specific model found, use a sensible default
+    if (!fallbackModelId) {
+      fallbackModelId =
+        fallbackProviderId === "openai"
+          ? "gpt-4o"
+          : fallbackProviderId === "google"
+            ? "gemini-1.5-pro"
+            : "claude-3-5-sonnet-20241022";
+    }
+
+    return {
+      fallbackProviderId,
+      fallbackModelId,
+    };
+  }
+
   createChatModels(config: AgentFactoryConfig): {
     providerId: string;
     modelId: string;
@@ -62,11 +168,12 @@ export class AgentFactory {
       );
     }
 
+    const primary = this.selectProviderFromTenantConfig(config.role);
+    const fallback = this.selectFallbackProvider();
+
     return {
-      providerId: "openai",
-      modelId: config.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
-      fallbackProviderId: "anthropic",
-      fallbackModelId: "claude-3-5-sonnet-20241022",
+      ...primary,
+      ...fallback,
     };
   }
 
@@ -89,6 +196,7 @@ export class AgentFactory {
       providerId: "mock",
       modelId: "mock-model",
       invocationCache: agentOptions?.invocationCache,
+      mockLlm,
     });
   }
 
@@ -96,11 +204,8 @@ export class AgentFactory {
    * Production agent: real providers from ProviderFactory with tenant-scoped credentials.
    * Requires tenant context to be set via AsyncLocalStorage for multi-tenant credential isolation.
    */
-  createAgent(
-    config: unknown,
-    agentOptions?: Pick<ProviderAgentOptions, "invocationCache">,
-  ): IAgent {
-    const cfg = parseAgentFactoryConfig(config);
+  createAgent(config: unknown): IAgent {
+    const cfg = parseAgentConfig(config);
     if (cfg.runtimeMode === "test") {
       throw new Error(
         'createAgent() requires runtimeMode "production"; use createTestAgent() for tests.',
@@ -117,14 +222,14 @@ export class AgentFactory {
     }
 
     const memory = this.createMemory(cfg);
+    const primary = this.selectProviderFromTenantConfig(cfg.role);
+    const fallback = this.selectFallbackProvider();
+
     return new ProviderAgent({
       factoryConfig: cfg,
       memory,
-      providerId: cfg.role === "verdict" ? "openai" : "openai",
-      modelId: cfg.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
-      fallbackProviderId: "anthropic",
-      fallbackModelId: "claude-3-5-sonnet-20241022",
-      invocationCache: agentOptions?.invocationCache,
+      ...primary,
+      ...fallback,
     });
   }
 
@@ -181,15 +286,16 @@ export class AgentFactory {
       );
     }
 
+    const primary = this.selectProviderFromTenantConfig(cfg.role);
+    const fallback = this.selectFallbackProvider();
+
     return {
       tools: registry,
       agent: new ProviderAgent({
         factoryConfig: cfg,
         memory,
-        providerId: "openai",
-        modelId: cfg.role === "verdict" ? "gpt-4-turbo" : "gpt-4o",
-        fallbackProviderId: "anthropic",
-        fallbackModelId: "claude-3-5-sonnet-20241022",
+        ...primary,
+        ...fallback,
         toolRegistry: registry,
         autoToolNames,
         invocationCache: options?.invocationCache,

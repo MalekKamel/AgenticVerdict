@@ -8,7 +8,7 @@ import { trpc } from "@/lib/api/trpc-client";
 
 export function useConnectorList(input: {
   status?: "healthy" | "warning" | "error" | "inactive" | "syncing";
-  domain?: string;
+  domainId?: string;
   search?: string;
   page?: number;
   pageSize?: number;

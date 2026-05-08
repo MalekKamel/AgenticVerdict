@@ -6,7 +6,7 @@ import { resolveLogLevel } from "@agenticverdict/config";
 import { getTenantContext } from "@agenticverdict/core";
 
 export type { Logger };
-export type ObservabilityServiceName = "api" | "worker";
+export type ObservabilityServiceName = "api" | "worker" | "agent-runtime";
 
 function buildDestination(): DestinationStream {
   const logFile = process.env.LOG_FILE?.trim();

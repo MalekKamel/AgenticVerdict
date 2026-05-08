@@ -25,7 +25,7 @@ describe("Bedrock Error Translator", () => {
 
       const translated = translateBedrockError(mockError, context);
 
-      expect(translated.code).toBe(AgentRuntimeErrorCode.TENANT_UNAUTHORIZED);
+      expect(translated.code).toBe(AgentRuntimeErrorCode.AUTHENTICATION_FAILED);
       expect(translated.providerId).toBe("bedrock");
       expect(translated.statusCode).toBe(403);
       expect(translated.message).toContain("Access denied");

@@ -247,5 +247,6 @@
   "validation.required": "Este campo es obligatorio",
   "validation.invalidEmail": "Introduzca una dirección de correo electrónico válida",
   "validation.tooShort": "Debe tener al menos {min} caracteres",
-  "validation.tooLong": "Debe tener como máximo {max} caracteres"
+  "validation.tooLong": "Debe tener como máximo {max} caracteres",
+  "errors.common.unknownError": "Ha ocurrido un error inesperado. Inténtelo de nuevo."
 }

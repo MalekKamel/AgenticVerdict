@@ -1,16 +1,20 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, beforeAll, afterAll } from "vitest";
 import { performance } from "perf_hooks";
 
 import { createTestTenantContext, TEST_TENANT_ALPHA } from "@agenticverdict/testing";
 import { AgentFactory } from "./agent-factory";
 import { runAgentJob } from "./agent-job";
-import { runMarketingAgentPipeline } from "./marketing-pipeline";
-import { buildMarketingVerdictFixture } from "./test-utils/marketing-verdict-fixtures";
+import { runIntelligencePipeline } from "./intelligence-pipeline";
+import { buildVerdictFixture } from "./test-utils/verdict-fixtures";
 import { computePercentile, summarizeLatencyMs } from "./agent-performance-metrics";
 import { AgentMockChatModel } from "@agenticverdict/testing";
+import { ProviderRegistry } from "./core/ProviderRegistry";
+import { BaseProvider } from "./core/BaseProvider";
+import type { ChatCompletionResponse } from "./types/chat";
+import type { ChatCompletionRequest } from "./types/chat";
 
 const VERDICT_MOCK_JSON = JSON.stringify(
-  buildMarketingVerdictFixture({
+  buildVerdictFixture({
     tenantId: TEST_TENANT_ALPHA,
     analysisId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     overrides: {
@@ -20,6 +24,65 @@ const VERDICT_MOCK_JSON = JSON.stringify(
     },
   }),
 );
+
+class PipelineMockProvider extends BaseProvider {
+  readonly providerId = "mock";
+  readonly capabilities = {
+    chat: true,
+    chatStreaming: false,
+    chatVision: false,
+    chatTools: true,
+    embeddings: false,
+    imageGeneration: false,
+    textToSpeech: false,
+  };
+
+  async chat(request: ChatCompletionRequest): Promise<ChatCompletionResponse> {
+    const lastUserMessage = [...request.messages].reverse().find((m) => m.role === "user");
+    const prompt = lastUserMessage?.content ?? "";
+
+    let response: string;
+    if (prompt.includes("Tenant context")) {
+      response = VERDICT_MOCK_JSON;
+    } else if (prompt.includes("Use the cross-platform analysis")) {
+      response = "Insight: Meta CTR +15% WoW, GA4 conversions +8%.";
+    } else {
+      response = "Analysis: Strong performance across Meta and GA4 channels.";
+    }
+
+    return {
+      id: "mock-completion",
+      object: "chat.completion",
+      created: Date.now(),
+      model: "mock-model",
+      choices: [
+        {
+          index: 0,
+          message: { role: "assistant", content: response },
+          finish_reason: "stop",
+        },
+      ],
+      usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
+    };
+  }
+
+  async destroy(): Promise<void> {
+    // No-op
+  }
+}
+
+beforeAll(() => {
+  ProviderRegistry.register(
+    "mock",
+    PipelineMockProvider as unknown as new (
+      config: unknown,
+    ) => ReturnType<typeof BaseProvider.prototype.chat>,
+  );
+});
+
+afterAll(() => {
+  ProviderRegistry.unregister("mock");
+});
 
 describe("Load Testing — 1000+ iterations (task 2.36)", () => {
   const createPipelineMock = () =>
@@ -59,7 +122,7 @@ describe("Load Testing — 1000+ iterations (task 2.36)", () => {
     mockModels: Record<string, AgentMockChatModel>,
   ) =>
     runAgentJob({ tenant, runId }, async (scope) =>
-      runMarketingAgentPipeline({
+      runIntelligencePipeline({
         factory,
         ctx: scope.invocation,
         goal: "Load test pipeline execution",
@@ -102,6 +165,7 @@ describe("Load Testing — 1000+ iterations (task 2.36)", () => {
 
       if ((i + 1) % 100 === 0) {
         const partial = summarizeLatencyMs(latencies);
+
         console.log(
           `Load test progress: ${i + 1}/${totalIterations} iterations complete. p95: ${partial.p95Ms.toFixed(2)}ms`,
         );
@@ -112,12 +176,19 @@ describe("Load Testing — 1000+ iterations (task 2.36)", () => {
     expect(completedRuns).toHaveLength(totalIterations);
 
     const stats = summarizeLatencyMs(latencies);
+
     console.log("Load Test Results Summary:");
+
     console.log(`  Total iterations: ${stats.n}`);
+
     console.log(`  Min latency: ${stats.minMs.toFixed(2)}ms`);
+
     console.log(`  Max latency: ${stats.maxMs.toFixed(2)}ms`);
+
     console.log(`  p50 latency: ${stats.p50Ms.toFixed(2)}ms`);
+
     console.log(`  p95 latency: ${stats.p95Ms.toFixed(2)}ms`);
+
     console.log(`  p99 latency: ${stats.p99Ms.toFixed(2)}ms`);
 
     expect(stats.n).toBeGreaterThanOrEqual(1000);
@@ -143,7 +214,9 @@ describe("Load Testing — 1000+ iterations (task 2.36)", () => {
     }
 
     const stats = summarizeLatencyMs(latencies);
+
     console.log("Sustained Load p95 Validation:");
+
     console.log(`  p95 latency: ${stats.p95Ms.toFixed(2)}ms (target: <2000ms)`);
 
     expect(stats.p95Ms).toBeLessThan(2000);
@@ -233,6 +306,7 @@ describe("Load Testing — 1000+ iterations (task 2.36)", () => {
       }
 
       const stats = summarizeLatencyMs(latencies);
+
       console.log(
         `Traffic ${traffic.level}: ${traffic.iterations} iterations, p95=${stats.p95Ms.toFixed(2)}ms`,
       );

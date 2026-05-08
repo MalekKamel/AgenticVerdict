@@ -1,13 +1,20 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { dbScoped, insights, insightConnectors, auditTrail } from "@agenticverdict/database";
-import { eq, and, desc, like, sql, gte, lte } from "drizzle-orm";
+import { eq, and, desc, like, sql, inArray } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { requireTrpcDatabase } from "../database";
 import { authedProcedure } from "../procedures";
 import { t } from "../init";
-import { randomUUID } from "crypto";
+import { ProviderFactory } from "@agenticverdict/agent-runtime";
 
 const logger = console;
+
+/**
+ * Dynamic provider validation schema
+ * Accepts any string but validates against registered providers at runtime
+ */
+const providerIdSchema = z.string().min(1).max(64);
 
 const insightCreateSchema = z.object({
   name: z.string().min(1).max(255),
@@ -26,7 +33,7 @@ const insightCreateSchema = z.object({
   }),
   aiConfig: z.object({
     model: z.string(),
-    provider: z.enum(["anthropic", "openai"]).optional(),
+    provider: providerIdSchema.optional(),
     qualityLevel: z.enum(["standard", "premium"]).optional(),
     quality: z.number().optional(),
     detailLevel: z.enum(["executive", "standard", "comprehensive"]),
@@ -43,6 +50,24 @@ const insightCreateSchema = z.object({
 });
 
 const insightUpdateSchema = insightCreateSchema.partial();
+
+/**
+ * Validates provider ID against registered providers
+ * Throws TRPCError if provider is not registered
+ */
+function validateProvider(providerId?: string) {
+  if (!providerId) {
+    return; // Provider is optional, use default
+  }
+
+  if (!ProviderFactory.isRegistered(providerId)) {
+    const availableProviders = ProviderFactory.listProviders();
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `Provider "${providerId}" is not available. Available providers: ${availableProviders.join(", ")}`,
+    });
+  }
+}
 
 const insightListInputSchema = z.object({
   status: z.enum(["enabled", "disabled", "all"]).optional().default("all"),
@@ -70,11 +95,11 @@ const insightOutputSchema = z.object({
     format: z.enum(["pdf", "excel", "both"]),
     emailRecipients: z.array(z.string().email()).optional(),
     enableWebhook: z.boolean().optional(),
-    webhookUrl: z.string().url().optional().or(z.literal("")),
+    webhookUrl: z.string().optional(),
   }),
   aiConfig: z.object({
     model: z.string(),
-    provider: z.enum(["anthropic", "openai"]).optional(),
+    provider: providerIdSchema.optional(),
     qualityLevel: z.enum(["standard", "premium"]).optional(),
     quality: z.number().optional(),
     detailLevel: z.enum(["executive", "standard", "comprehensive"]),
@@ -173,32 +198,38 @@ export const insightRouter = t.router({
             const connectorRows = await tx
               .select()
               .from(insightConnectors)
-              .where(and(eq(insightConnectors.insightId, insightIds[0]!)));
+              .where(inArray(insightConnectors.insightId, insightIds));
 
             connectorMappings = new Map();
             for (const row of connectorRows) {
               const existing = connectorMappings.get(row.insightId) ?? [];
-              existing.push(row);
+              existing.push({
+                ...row,
+                selectedMetrics: row.selectedMetrics ?? [],
+                filters: row.filters ?? {},
+              });
               connectorMappings.set(row.insightId, existing);
             }
 
             const recentExecutions = await tx
               .select({
                 insightId: auditTrail.insightId,
-                status: auditTrail.status,
-                timestamp: auditTrail.timestamp,
                 eventType: auditTrail.eventType,
+                createdAt: auditTrail.createdAt,
+                eventData: auditTrail.eventData,
               })
               .from(auditTrail)
-              .where(and(eq(auditTrail.tenantId, tenantId), eq(auditTrail.eventType, "run")))
-              .orderBy(desc(auditTrail.timestamp));
+              .where(eq(auditTrail.tenantId, tenantId))
+              .orderBy(desc(auditTrail.createdAt));
 
             for (const exec of recentExecutions) {
               if (exec.insightId && !executionStats.has(exec.insightId)) {
+                const eventData = exec.eventData as Record<string, unknown> | null;
+                const runStatus = (eventData?.status as string | undefined) ?? "success";
                 executionStats.set(exec.insightId, {
-                  status: exec.status === "success" ? "completed" : "failed",
-                  lastRunAt: exec.timestamp,
-                  lastRunStatus: exec.status === "success" ? "success" : "failed",
+                  status: runStatus === "success" ? "completed" : "failed",
+                  lastRunAt: exec.createdAt,
+                  lastRunStatus: runStatus === "success" ? "success" : "failed",
                 });
               }
             }
@@ -206,6 +237,38 @@ export const insightRouter = t.router({
 
           const insightsWithConnectors = insightRows.map((insight) => {
             const execStats = executionStats.get(insight.id);
+            const schedule = insight.schedule as Record<string, unknown> | null;
+            const delivery = insight.delivery as Record<string, unknown> | null;
+            const aiConfig = insight.aiConfig as Record<string, unknown> | null;
+
+            const normalizedSchedule = {
+              frequency: ((schedule?.frequency as string) ?? "weekly") as
+                | "daily"
+                | "weekly"
+                | "monthly"
+                | "quarterly",
+              time: (schedule?.time as number) ?? 9,
+            };
+
+            const normalizedDelivery = {
+              format: ((delivery?.format as string) ?? "pdf") as "pdf" | "excel" | "both",
+              emailRecipients: delivery?.emailRecipients as string[] | undefined,
+              enableWebhook: delivery?.enableWebhook as boolean | undefined,
+              webhookUrl: delivery?.webhookUrl as string | undefined,
+            };
+
+            const normalizedAiConfig = {
+              model: (aiConfig?.model as string) ?? "claude-3.5-sonnet",
+              provider: aiConfig?.provider as string | undefined,
+              qualityLevel: aiConfig?.qualityLevel as "standard" | "premium" | undefined,
+              quality: aiConfig?.quality as number | undefined,
+              detailLevel: ((aiConfig?.detailLevel as string) ?? "standard") as
+                | "executive"
+                | "standard"
+                | "comprehensive",
+              customPrompt: aiConfig?.customPrompt as string | undefined,
+            };
+
             return {
               ...insight,
               status: (execStats?.status ?? insight.status) as
@@ -219,24 +282,9 @@ export const insightRouter = t.router({
                 | "failed"
                 | null,
               connectors: connectorMappings.get(insight.id) ?? [],
-              schedule: insight.schedule as {
-                frequency: "daily" | "weekly" | "monthly" | "quarterly";
-                time: number;
-              },
-              delivery: insight.delivery as {
-                format: "pdf" | "excel" | "both";
-                emailRecipients?: string[];
-                enableWebhook?: boolean;
-                webhookUrl?: string;
-              },
-              aiConfig: insight.aiConfig as {
-                model: string;
-                provider?: "anthropic" | "openai";
-                qualityLevel?: "standard" | "premium";
-                quality?: number;
-                detailLevel: "executive" | "standard" | "comprehensive";
-                customPrompt?: string;
-              },
+              schedule: normalizedSchedule,
+              delivery: normalizedDelivery,
+              aiConfig: normalizedAiConfig,
             };
           });
 
@@ -311,28 +359,39 @@ export const insightRouter = t.router({
             .from(insightConnectors)
             .where(eq(insightConnectors.insightId, input.id));
 
+          const schedule = insight.schedule as Record<string, unknown> | null;
+          const delivery = insight.delivery as Record<string, unknown> | null;
+          const aiConfig = insight.aiConfig as Record<string, unknown> | null;
+
           return {
             ...insight,
             status: insight.status as "idle" | "running" | "completed" | "failed",
             lastRunStatus: insight.lastRunStatus as "success" | "failed" | null,
             connectors: connectorRows,
-            schedule: insight.schedule as {
-              frequency: "daily" | "weekly" | "monthly" | "quarterly";
-              time: number;
+            schedule: {
+              frequency: ((schedule?.frequency as string) ?? "weekly") as
+                | "daily"
+                | "weekly"
+                | "monthly"
+                | "quarterly",
+              time: (schedule?.time as number) ?? 9,
             },
-            delivery: insight.delivery as {
-              format: "pdf" | "excel" | "both";
-              emailRecipients?: string[];
-              enableWebhook?: boolean;
-              webhookUrl?: string;
+            delivery: {
+              format: ((delivery?.format as string) ?? "pdf") as "pdf" | "excel" | "both",
+              emailRecipients: delivery?.emailRecipients as string[] | undefined,
+              enableWebhook: delivery?.enableWebhook as boolean | undefined,
+              webhookUrl: delivery?.webhookUrl as string | undefined,
             },
-            aiConfig: insight.aiConfig as {
-              model: string;
-              provider?: "anthropic" | "openai";
-              qualityLevel?: "standard" | "premium";
-              quality?: number;
-              detailLevel: "executive" | "standard" | "comprehensive";
-              customPrompt?: string;
+            aiConfig: {
+              model: (aiConfig?.model as string) ?? "claude-3.5-sonnet",
+              provider: aiConfig?.provider as string | undefined,
+              qualityLevel: aiConfig?.qualityLevel as "standard" | "premium" | undefined,
+              quality: aiConfig?.quality as number | undefined,
+              detailLevel: ((aiConfig?.detailLevel as string) ?? "standard") as
+                | "executive"
+                | "standard"
+                | "comprehensive",
+              customPrompt: aiConfig?.customPrompt as string | undefined,
             },
           };
         });
@@ -399,28 +458,39 @@ export const insightRouter = t.router({
             .from(insightConnectors)
             .where(eq(insightConnectors.insightId, input.id));
 
+          const schedule = insight.schedule as Record<string, unknown> | null;
+          const delivery = insight.delivery as Record<string, unknown> | null;
+          const aiConfig = insight.aiConfig as Record<string, unknown> | null;
+
           return {
             ...insight,
             status: insight.status as "idle" | "running" | "completed" | "failed",
             lastRunStatus: insight.lastRunStatus as "success" | "failed" | null,
             connectors: connectorRows,
-            schedule: insight.schedule as {
-              frequency: "daily" | "weekly" | "monthly" | "quarterly";
-              time: number;
+            schedule: {
+              frequency: ((schedule?.frequency as string) ?? "weekly") as
+                | "daily"
+                | "weekly"
+                | "monthly"
+                | "quarterly",
+              time: (schedule?.time as number) ?? 9,
             },
-            delivery: insight.delivery as {
-              format: "pdf" | "excel" | "both";
-              emailRecipients?: string[];
-              enableWebhook?: boolean;
-              webhookUrl?: string;
+            delivery: {
+              format: ((delivery?.format as string) ?? "pdf") as "pdf" | "excel" | "both",
+              emailRecipients: delivery?.emailRecipients as string[] | undefined,
+              enableWebhook: delivery?.enableWebhook as boolean | undefined,
+              webhookUrl: delivery?.webhookUrl as string | undefined,
             },
-            aiConfig: insight.aiConfig as {
-              model: string;
-              provider?: "anthropic" | "openai";
-              qualityLevel?: "standard" | "premium";
-              quality?: number;
-              detailLevel: "executive" | "standard" | "comprehensive";
-              customPrompt?: string;
+            aiConfig: {
+              model: (aiConfig?.model as string) ?? "claude-3.5-sonnet",
+              provider: aiConfig?.provider as string | undefined,
+              qualityLevel: aiConfig?.qualityLevel as "standard" | "premium" | undefined,
+              quality: aiConfig?.quality as number | undefined,
+              detailLevel: ((aiConfig?.detailLevel as string) ?? "standard") as
+                | "executive"
+                | "standard"
+                | "comprehensive",
+              customPrompt: aiConfig?.customPrompt as string | undefined,
             },
           };
         });
@@ -467,6 +537,9 @@ export const insightRouter = t.router({
       try {
         const db = requireTrpcDatabase();
 
+        // Validate provider before creating insight
+        validateProvider(input.aiConfig.provider);
+
         const result = await dbScoped(db, async (tx) => {
           const [insight] = await tx
             .insert(insights)
@@ -490,14 +563,17 @@ export const insightRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
             insightId: insight.id,
-            actorSub: ctx.auth.userId,
-            action: "create",
             eventType: "created",
-            status: "success",
-            metadata: { title: input.name, description: input.description },
-            requestId: randomUUID(),
+            eventData: {
+              title: input.name,
+              description: input.description,
+              status: "success",
+              actorSub: ctx.auth.userId,
+              action: "create",
+            },
           });
 
           if (input.connectors.length > 0) {
@@ -517,28 +593,39 @@ export const insightRouter = t.router({
             .from(insightConnectors)
             .where(eq(insightConnectors.insightId, insight.id));
 
+          const schedule = insight.schedule as Record<string, unknown> | null;
+          const delivery = insight.delivery as Record<string, unknown> | null;
+          const aiConfig = insight.aiConfig as Record<string, unknown> | null;
+
           return {
             ...insight,
             status: insight.status as "idle" | "running" | "completed" | "failed",
             lastRunStatus: insight.lastRunStatus as "success" | "failed" | null,
             connectors: connectorRows,
-            schedule: insight.schedule as {
-              frequency: "daily" | "weekly" | "monthly" | "quarterly";
-              time: number;
+            schedule: {
+              frequency: ((schedule?.frequency as string) ?? "weekly") as
+                | "daily"
+                | "weekly"
+                | "monthly"
+                | "quarterly",
+              time: (schedule?.time as number) ?? 9,
             },
-            delivery: insight.delivery as {
-              format: "pdf" | "excel" | "both";
-              emailRecipients?: string[];
-              enableWebhook?: boolean;
-              webhookUrl?: string;
+            delivery: {
+              format: ((delivery?.format as string) ?? "pdf") as "pdf" | "excel" | "both",
+              emailRecipients: delivery?.emailRecipients as string[] | undefined,
+              enableWebhook: delivery?.enableWebhook as boolean | undefined,
+              webhookUrl: delivery?.webhookUrl as string | undefined,
             },
-            aiConfig: insight.aiConfig as {
-              model: string;
-              provider?: "anthropic" | "openai";
-              qualityLevel?: "standard" | "premium";
-              quality?: number;
-              detailLevel: "executive" | "standard" | "comprehensive";
-              customPrompt?: string;
+            aiConfig: {
+              model: (aiConfig?.model as string) ?? "claude-3.5-sonnet",
+              provider: aiConfig?.provider as string | undefined,
+              qualityLevel: aiConfig?.qualityLevel as "standard" | "premium" | undefined,
+              quality: aiConfig?.quality as number | undefined,
+              detailLevel: ((aiConfig?.detailLevel as string) ?? "standard") as
+                | "executive"
+                | "standard"
+                | "comprehensive",
+              customPrompt: aiConfig?.customPrompt as string | undefined,
             },
           };
         });
@@ -586,6 +673,11 @@ export const insightRouter = t.router({
       try {
         const db = requireTrpcDatabase();
 
+        // Validate provider if being updated
+        if (input.data.aiConfig?.provider) {
+          validateProvider(input.data.aiConfig.provider);
+        }
+
         const result = await dbScoped(db, async (tx) => {
           const [insight] = await tx
             .update(insights)
@@ -603,14 +695,16 @@ export const insightRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
             insightId: insight.id,
-            actorSub: ctx.auth.userId,
-            action: "update",
             eventType: "updated",
-            status: "success",
-            metadata: { changes: input.data },
-            requestId: randomUUID(),
+            eventData: {
+              changes: input.data,
+              status: "success",
+              actorSub: ctx.auth.userId,
+              action: "update",
+            },
           });
 
           if (input.data.connectors) {
@@ -634,28 +728,39 @@ export const insightRouter = t.router({
             .from(insightConnectors)
             .where(eq(insightConnectors.insightId, insight.id));
 
+          const schedule = insight.schedule as Record<string, unknown> | null;
+          const delivery = insight.delivery as Record<string, unknown> | null;
+          const aiConfig = insight.aiConfig as Record<string, unknown> | null;
+
           return {
             ...insight,
             status: insight.status as "idle" | "running" | "completed" | "failed",
             lastRunStatus: insight.lastRunStatus as "success" | "failed" | null,
             connectors: connectorRows,
-            schedule: insight.schedule as {
-              frequency: "daily" | "weekly" | "monthly" | "quarterly";
-              time: number;
+            schedule: {
+              frequency: ((schedule?.frequency as string) ?? "weekly") as
+                | "daily"
+                | "weekly"
+                | "monthly"
+                | "quarterly",
+              time: (schedule?.time as number) ?? 9,
             },
-            delivery: insight.delivery as {
-              format: "pdf" | "excel" | "both";
-              emailRecipients?: string[];
-              enableWebhook?: boolean;
-              webhookUrl?: string;
+            delivery: {
+              format: ((delivery?.format as string) ?? "pdf") as "pdf" | "excel" | "both",
+              emailRecipients: delivery?.emailRecipients as string[] | undefined,
+              enableWebhook: delivery?.enableWebhook as boolean | undefined,
+              webhookUrl: delivery?.webhookUrl as string | undefined,
             },
-            aiConfig: insight.aiConfig as {
-              model: string;
-              provider?: "anthropic" | "openai";
-              qualityLevel?: "standard" | "premium";
-              quality?: number;
-              detailLevel: "executive" | "standard" | "comprehensive";
-              customPrompt?: string;
+            aiConfig: {
+              model: (aiConfig?.model as string) ?? "claude-3.5-sonnet",
+              provider: aiConfig?.provider as string | undefined,
+              qualityLevel: aiConfig?.qualityLevel as "standard" | "premium" | undefined,
+              quality: aiConfig?.quality as number | undefined,
+              detailLevel: ((aiConfig?.detailLevel as string) ?? "standard") as
+                | "executive"
+                | "standard"
+                | "comprehensive",
+              customPrompt: aiConfig?.customPrompt as string | undefined,
             },
           };
         });
@@ -717,14 +822,16 @@ export const insightRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
             insightId: input.id,
-            actorSub: ctx.auth.userId,
-            action: "delete",
             eventType: "deleted",
-            status: "success",
-            metadata: { deletedInsightId: input.id },
-            requestId: randomUUID(),
+            eventData: {
+              deletedInsightId: input.id,
+              status: "success",
+              actorSub: ctx.auth.userId,
+              action: "delete",
+            },
           });
         });
 
@@ -860,11 +967,11 @@ export const insightRouter = t.router({
           }
 
           if (input.dateFrom) {
-            whereConditions.push(gte(auditTrail.timestamp, new Date(input.dateFrom)));
+            whereConditions.push(sql`${auditTrail.createdAt} >= ${new Date(input.dateFrom)}`);
           }
 
           if (input.dateTo) {
-            whereConditions.push(lte(auditTrail.timestamp, new Date(input.dateTo)));
+            whereConditions.push(sql`${auditTrail.createdAt} <= ${new Date(input.dateTo)}`);
           }
 
           const events = await tx
@@ -872,27 +979,28 @@ export const insightRouter = t.router({
               id: auditTrail.id,
               insightId: auditTrail.insightId,
               eventType: auditTrail.eventType,
-              status: auditTrail.status,
-              timestamp: auditTrail.timestamp,
-              duration: auditTrail.durationMs,
-              metadata: auditTrail.metadata,
+              createdAt: auditTrail.createdAt,
+              eventData: auditTrail.eventData,
             })
             .from(auditTrail)
             .where(and(...whereConditions))
-            .orderBy(desc(auditTrail.timestamp));
+            .orderBy(desc(auditTrail.createdAt));
 
           return {
             events: events
               .filter((e): e is typeof e & { insightId: string } => e.insightId !== null)
-              .map((event) => ({
-                id: event.id,
-                insightId: event.insightId,
-                eventType: event.eventType,
-                status: event.status,
-                timestamp: event.timestamp?.toISOString() ?? new Date().toISOString(),
-                duration: event.duration ?? undefined,
-                metadata: event.metadata ?? undefined,
-              })),
+              .map((event) => {
+                const data = event.eventData as Record<string, unknown> | null;
+                return {
+                  id: event.id,
+                  insightId: event.insightId,
+                  eventType: event.eventType,
+                  status: (data?.status as string) ?? "success",
+                  timestamp: event.createdAt?.toISOString() ?? new Date().toISOString(),
+                  duration: (data?.durationMs as number) ?? undefined,
+                  metadata: data ?? undefined,
+                };
+              }),
           };
         });
 
@@ -972,18 +1080,18 @@ export const insightRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
             insightId: input.insightId,
-            actorSub: ctx.auth.userId,
-            action: "ai_generate",
             eventType: "ai_generated",
-            status: "success",
-            metadata: {
+            eventData: {
               trigger: "manual",
               reportId: input.reportId || "manual",
               insightName: insight.name,
+              status: "success",
+              actorSub: ctx.auth.userId,
+              action: "ai_generate",
             },
-            requestId: randomUUID(),
           });
         });
 

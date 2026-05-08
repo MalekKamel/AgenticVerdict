@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { dateRangeSchema } from "./common";
 import { generatedInsightSchema } from "./insight";
-import { marketingVerdictSchema } from "./verdict";
+import { verdictSchema } from "./verdict";
 
 export const transformationSchema = z.object({
   type: z.string().min(1),
@@ -44,7 +44,7 @@ export const analysisResultResponseSchema = z.object({
   generatedAt: z.coerce.date(),
   provenance: provenanceInfoSchema,
   insights: z.array(generatedInsightSchema),
-  verdicts: z.array(marketingVerdictSchema),
+  verdicts: z.array(verdictSchema),
 });
 
 export type AnalysisResultResponse = z.infer<typeof analysisResultResponseSchema>;

@@ -2,6 +2,7 @@
  * Unit tests for Connector API hooks
  */
 
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -95,7 +96,7 @@ describe("useConnectorList", () => {
       () =>
         useConnectorList({
           status: "healthy",
-          domain: "marketing",
+          domainId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
           search: "test",
           page: 2,
           pageSize: 10,
@@ -108,7 +109,7 @@ describe("useConnectorList", () => {
     expect(trpc.connector.list.useQuery).toHaveBeenCalledWith(
       {
         status: "healthy",
-        domain: "marketing",
+        domainId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         search: "test",
         page: 2,
         pageSize: 10,

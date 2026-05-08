@@ -4,15 +4,16 @@
 import IntlMessageFormat from "intl-messageformat";
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 
-import enMessages from "../../messages/en.json";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import _enMessages from "../../messages/en.json";
 import { initializeNotificationTranslations } from "@/lib/notifications-i18n";
 import type { AppLocale } from "./routing";
 
 type Messages = Record<string, unknown>;
 type TranslationValues = Record<string, string | number | boolean | Date | null | undefined>;
-type MessageSchema = typeof enMessages;
 
-export type TranslationNamespace = keyof MessageSchema & string;
+// Allow any string for namespace since we support dotted paths via getNested
+export type TranslationNamespace = string;
 
 const I18nContext = createContext<{
   locale: AppLocale;

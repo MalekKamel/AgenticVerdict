@@ -142,7 +142,7 @@ describe("BedrockProvider", () => {
       } catch (error) {
         if (error instanceof AgentRuntimeError) {
           expect(error.code).toBeOneOf([
-            AgentRuntimeErrorCode.TENANT_UNAUTHORIZED,
+            AgentRuntimeErrorCode.AUTHENTICATION_FAILED,
             AgentRuntimeErrorCode.MODEL_NOT_FOUND,
             AgentRuntimeErrorCode.INTERNAL_ERROR,
           ]);

@@ -392,10 +392,7 @@ describe("Hook Composition", () => {
       const hook2 = vi.fn();
       const hook3 = vi.fn();
 
-      const conditionalHook = createConditionalHook(
-        hook2,
-        (ctx: BeforeChatContext) => ctx.providerId === "openai",
-      );
+      const conditionalHook = createConditionalHook(hook2, (ctx) => ctx.providerId === "openai");
 
       const composed = composeBeforeChatHooks(hook1, conditionalHook, hook3);
 

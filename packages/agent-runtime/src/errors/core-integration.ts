@@ -26,6 +26,7 @@ const ERROR_CATEGORY_MAP: Record<AgentRuntimeErrorCode, ErrorCategory> = {
   [AgentRuntimeErrorCode.FAILOVER_EXHAUSTED]: "dependency",
   [AgentRuntimeErrorCode.BUDGET_EXCEEDED]: "authorization",
   [AgentRuntimeErrorCode.COMPLIANCE_VIOLATION]: "security",
+  [AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED]: "dependency",
 };
 
 const HTTP_STATUS_MAP: Record<AgentRuntimeErrorCode, number> = {
@@ -47,6 +48,7 @@ const HTTP_STATUS_MAP: Record<AgentRuntimeErrorCode, number> = {
   [AgentRuntimeErrorCode.FAILOVER_EXHAUSTED]: 503,
   [AgentRuntimeErrorCode.BUDGET_EXCEEDED]: 403,
   [AgentRuntimeErrorCode.COMPLIANCE_VIOLATION]: 403,
+  [AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED]: 500,
 };
 
 const RETRYABLE_MAP: Record<AgentRuntimeErrorCode, boolean> = {
@@ -68,6 +70,7 @@ const RETRYABLE_MAP: Record<AgentRuntimeErrorCode, boolean> = {
   [AgentRuntimeErrorCode.FAILOVER_EXHAUSTED]: true,
   [AgentRuntimeErrorCode.BUDGET_EXCEEDED]: false,
   [AgentRuntimeErrorCode.COMPLIANCE_VIOLATION]: false,
+  [AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED]: false,
 };
 
 const CORE_ERROR_CODE_MAP: Record<AgentRuntimeErrorCode, CoreErrorCode> = {
@@ -89,6 +92,7 @@ const CORE_ERROR_CODE_MAP: Record<AgentRuntimeErrorCode, CoreErrorCode> = {
   [AgentRuntimeErrorCode.FAILOVER_EXHAUSTED]: "RUNTIME_UNAVAILABLE",
   [AgentRuntimeErrorCode.BUDGET_EXCEEDED]: "AUTH_FORBIDDEN",
   [AgentRuntimeErrorCode.COMPLIANCE_VIOLATION]: "STORAGE_SECURITY_ERROR",
+  [AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED]: "INTERNAL_ERROR",
 };
 
 const MESSAGE_KEY_MAP: Record<AgentRuntimeErrorCode, string> = {
@@ -110,6 +114,7 @@ const MESSAGE_KEY_MAP: Record<AgentRuntimeErrorCode, string> = {
   [AgentRuntimeErrorCode.FAILOVER_EXHAUSTED]: "errors.provider.failoverExhausted",
   [AgentRuntimeErrorCode.BUDGET_EXCEEDED]: "errors.provider.budgetExceeded",
   [AgentRuntimeErrorCode.COMPLIANCE_VIOLATION]: "errors.provider.complianceViolation",
+  [AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED]: "errors.provider.hookExecutionFailed",
 };
 
 export interface AgentRuntimeFault extends AppFault {

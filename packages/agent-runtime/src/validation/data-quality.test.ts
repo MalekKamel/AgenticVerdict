@@ -6,7 +6,7 @@ import {
   type GeneratedInsight,
 } from "@agenticverdict/types";
 
-import { buildMinimalMarketingVerdict } from "../test-utils/marketing-verdict-fixtures";
+import { buildMinimalVerdict } from "../test-utils/verdict-fixtures";
 import { DataQualityService, ValidationService } from "./data-quality";
 
 const TENANT_ID = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
@@ -29,8 +29,8 @@ function parseInsight(overrides: Partial<GeneratedInsight> = {}) {
   });
 }
 
-function sampleMarketingVerdict() {
-  return buildMinimalMarketingVerdict(TENANT_ID, ANALYSIS_ID, {
+function sampleVerdict() {
+  return buildMinimalVerdict(TENANT_ID, ANALYSIS_ID, {
     summary:
       "Channels are balanced with Meta leading efficiency for the quarter under review and stable CPA.",
     sentiment: "positive",
@@ -39,7 +39,7 @@ function sampleMarketingVerdict() {
 }
 
 function baseAnalysisResult(overrides: Record<string, unknown> = {}) {
-  const verdict = sampleMarketingVerdict();
+  const verdict = sampleVerdict();
   return analysisResultResponseSchema.parse({
     analysisId: ANALYSIS_ID,
     tenantId: TENANT_ID,
@@ -90,7 +90,7 @@ describe("DataQualityService", () => {
   });
 
   it("accepts well-formed verdict payloads from normalization", () => {
-    const verdict = sampleMarketingVerdict();
+    const verdict = sampleVerdict();
     const r = svc.validateVerdict(verdict);
     expect(r.isValid).toBe(true);
     expect(r.score).toBeGreaterThan(50);
@@ -221,20 +221,20 @@ describe("validateVerdict — edge cases", () => {
   const svc = new DataQualityService();
 
   it("warns on low confidence verdicts", () => {
-    const verdict = sampleMarketingVerdict();
+    const verdict = sampleVerdict();
     const relaxed = { ...verdict, confidence: 0.1 };
     const r = svc.validateVerdict(relaxed);
     expect(r.warnings.some((w) => w.code === "LOW_CONFIDENCE")).toBe(true);
   });
 
   it("warns when evidence is empty", () => {
-    const verdict = sampleMarketingVerdict();
+    const verdict = sampleVerdict();
     const r = svc.validateVerdict({ ...verdict, evidence: [] });
     expect(r.warnings.some((w) => w.code === "NO_EVIDENCE")).toBe(true);
   });
 
   it("recommends action items when none are present", () => {
-    const verdict = sampleMarketingVerdict();
+    const verdict = sampleVerdict();
     const r = svc.validateVerdict({ ...verdict, actionItems: [] });
     expect(r.recommendations.some((x) => x.includes("action item"))).toBe(true);
   });

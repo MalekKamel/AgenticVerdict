@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { promisify } from "node:util";
 
 import { HumanMessage } from "@langchain/core/messages";
-import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
+import { buildVerdictFixture } from "@agenticverdict/agent-runtime";
 import { isFeatureMockEnabled, resolveRuntimePolicy } from "@agenticverdict/config";
 import { AgentMockChatModel } from "@agenticverdict/testing";
 import { tenantScopedCacheKey } from "@agenticverdict/database";
@@ -227,7 +227,7 @@ async function runR05(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
     throw new Error("production_flow_r05:platform_field");
   }
 
-  const verdict = buildMarketingVerdictFixture({
+  const verdict = buildVerdictFixture({
     tenantId,
     analysisId,
     fixtureSeed: "r05-scenario",

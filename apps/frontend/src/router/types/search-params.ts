@@ -1,6 +1,6 @@
 export type ConnectorListSearch = {
   status?: "healthy" | "warning" | "error" | "inactive" | "syncing";
-  domain?: string;
+  domainId?: string;
   search?: string;
   page?: number;
   pageSize?: number;

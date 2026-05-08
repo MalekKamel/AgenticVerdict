@@ -113,5 +113,6 @@
   "errors.sectionTitle": "无法加载数据",
   "errors.generic": "出现错误",
   "errors.tenantRequired": "需要租户上下文",
-  "actions.retry": "重试"
+  "actions.retry": "重试",
+  "errors.common.unknownError": "发生意外错误。请重试。"
 }

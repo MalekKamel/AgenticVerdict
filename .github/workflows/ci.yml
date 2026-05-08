@@ -72,6 +72,9 @@ jobs:
       - name: Tenant architecture boundary check
         run: pnpm run check:tenant-boundaries
 
+      - name: Hardcoded provider reference scan
+        run: pnpm run scan:providers
+
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
 

@@ -124,7 +124,7 @@ export function buildTenantPromptContextSections(config: TenantConfig): PromptCo
   sections.push({
     key: "ai_preferences",
     priority: priorities.ai_preferences,
-    text: `AI preferences: provider=${config.ai.provider}, primaryModel=${config.ai.primaryModel}`,
+    text: `AI preferences: provider=${config.ai.primaryProvider}, defaultModel=${config.ai.defaultModel?.modelId || "none"}`,
   });
 
   return sections;

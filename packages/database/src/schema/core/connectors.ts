@@ -15,6 +15,7 @@ import {
 
 import { coreSchema } from "./schema";
 import { tenants } from "../tenants";
+import { businessDomains } from "../business-domains";
 
 /** Canonical registry row for a data connector (GA4, Meta, …). IDs are stable string slugs (e.g. `ga4`). */
 export const dataConnectors = coreSchema.table("data_connectors", {
@@ -62,7 +63,7 @@ export const tenantConnectors = pgTable(
     platform: varchar("platform", { length: 64 }).notNull(),
     name: varchar("name", { length: 255 }).notNull(),
     status: varchar("status", { length: 32 }).notNull().default("inactive"),
-    domain: varchar("domain", { length: 255 }),
+    domainId: uuid("domain_id").references(() => businessDomains.id, { onDelete: "set null" }),
     config: jsonb("config")
       .$type<Record<string, unknown>>()
       .notNull()
@@ -93,7 +94,7 @@ export const tenantConnectors = pgTable(
     index("tenant_connectors_tenant_idx").on(t.tenantId),
     index("tenant_connectors_platform_idx").on(t.platform),
     index("tenant_connectors_status_idx").on(t.status),
-    index("tenant_connectors_domain_idx").on(t.domain),
+    index("tenant_connectors_domain_idx").on(t.domainId),
     unique("tenant_connectors_tenant_platform_name_unique").on(t.tenantId, t.platform, t.name),
   ],
 );

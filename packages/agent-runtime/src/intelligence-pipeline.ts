@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { MarketingVerdict, ProvenanceInfo } from "@agenticverdict/types";
+import type { Verdict, ProvenanceInfo } from "@agenticverdict/types";
 import { requireTenantContext } from "@agenticverdict/core";
 import {
   recordVerdictParseAttempt,
@@ -10,80 +10,76 @@ import {
 } from "@agenticverdict/observability";
 
 import type { AgentFactory } from "./agent-factory";
-import {
-  createAgentMessage,
-  type AgentExecutionContext,
-  type AgentMessage,
-} from "./agent-protocol";
+import { createAgentMessage, type AgentMessageContext, type AgentMessage } from "./agent-protocol";
 import type { AgentInvocationContext, AgentRunResult, IAgent } from "./interfaces";
 import {
-  createSpecializedMarketingProductionAgent,
-  createSpecializedMarketingTestAgent,
-  type CreateSpecializedMarketingAgentOptions,
-  type SpecializedMarketingAgentKind,
-} from "./specialized-marketing-agents";
-import { marketingPipelineTimingToLogFields } from "./agent-performance-metrics";
+  createPipelineAgentConfig,
+  createPipelineAgentTools,
+  type CreatePipelineAgentOptions,
+  type PipelineAgentKind,
+} from "./agent-kinds";
+import { pipelineTimingToLogFields } from "./agent-performance-metrics";
 import type { LlmInvocationCache } from "./llm-invocation-cache";
 import { ProvenanceTracker } from "./provenance/tracker";
 import {
-  applyMarketingVerdictPipelineContext,
+  applyVerdictPipelineContext,
   getVerdictParseFailureDetails,
-  parseMarketingVerdictFromAgentText,
+  parseVerdictFromAgentText,
   resolveWorkflowAnalysisUuid,
 } from "./agent-verdict-json";
 import { VerdictParseError } from "./verdict-schema";
 import { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";
 
-export type MarketingPipelineStageName = "analysis" | "insights" | "verdict";
+import type { ToolRegistry } from "./tools";
 
-export interface MarketingPipelineStageRecord {
-  stage: MarketingPipelineStageName;
+export interface PipelineStageRecord {
+  stage: PipelineAgentKind;
   result: AgentRunResult;
   durationMs: number;
 }
 
-export type MarketingPipelineStatus = "completed" | "failed" | "degraded";
+export type PipelineStatus = "completed" | "failed" | "degraded";
 
-export interface MarketingPipelineState {
+export interface PipelineState {
   workflowId: string;
-  status: MarketingPipelineStatus;
-  stages: MarketingPipelineStageRecord[];
-  verdict?: MarketingVerdict;
+  status: PipelineStatus;
+  stages: PipelineStageRecord[];
+  verdict?: Verdict;
   /** Provenance captured during the run (Phase 03 prerequisite: agents). */
   provenance?: ProvenanceInfo;
   /** Present when verdict JSON could not be parsed but the text answer is retained. */
   verdictRawAnswer?: string;
-  error?: { stage: MarketingPipelineStageName; message: string; cause?: unknown };
+  error?: { stage: PipelineAgentKind; message: string; cause?: unknown };
 }
 
-export interface MarketingWorkflowProgressEvent {
-  stage: MarketingPipelineStageName;
+export interface WorkflowProgressEvent {
+  stage: PipelineAgentKind;
   index: number;
   total: number;
   /** Approximate percent complete after this stage finishes. */
   percent: number;
 }
 
-const PIPELINE_AGENT_NAMES: Record<MarketingPipelineStageName, string> = {
+const PIPELINE_AGENT_NAMES: Record<PipelineAgentKind, string> = {
   analysis: "agent.cross_platform_analysis",
-  insights: "agent.marketing_insights",
-  verdict: "agent.media_verdict",
+  insights: "agent.insights_generation",
+  verdict: "agent.verdict",
 };
 
-const HANDOFF_RECIPIENT: Record<MarketingPipelineStageName, string> = {
+const HANDOFF_RECIPIENT: Record<PipelineAgentKind, string> = {
   analysis: PIPELINE_AGENT_NAMES.insights,
   insights: PIPELINE_AGENT_NAMES.verdict,
   verdict: "orchestrator.pipeline",
 };
 
-export interface RunMarketingPipelineOptions {
+export interface RunPipelineOptions {
   factory: AgentFactory;
   ctx: AgentInvocationContext;
   goal: string;
   /** Defaults to random UUID. */
   workflowId?: string;
   specialization: Pick<
-    CreateSpecializedMarketingAgentOptions,
+    CreatePipelineAgentOptions,
     | "tenantName"
     | "promptVars"
     | "templateVersion"
@@ -93,8 +89,8 @@ export interface RunMarketingPipelineOptions {
   >;
   /** When true, uses production chat models (requires keys). */
   useProductionModels?: boolean;
-  mockModels?: Partial<Record<MarketingPipelineStageName, BaseChatModel>>;
-  onProgress?: (event: MarketingWorkflowProgressEvent) => void;
+  mockModels?: Partial<Record<PipelineAgentKind, BaseChatModel>>;
+  onProgress?: (event: WorkflowProgressEvent) => void;
   /** Receives handoff notifications between agents. */
   onMessage?: (message: AgentMessage) => void;
   /**
@@ -106,14 +102,14 @@ export interface RunMarketingPipelineOptions {
   /**
    * Emits aggregate timing suitable for logs / LangSmith metadata (no prompt bodies).
    */
-  onPipelineTiming?: (fields: ReturnType<typeof marketingPipelineTimingToLogFields>) => void;
+  onPipelineTiming?: (fields: ReturnType<typeof pipelineTimingToLogFields>) => void;
 }
 
 function buildExecutionContext(
   ctx: AgentInvocationContext,
   workflowId: string,
-  stage?: MarketingPipelineStageName,
-): AgentExecutionContext {
+  stage?: PipelineAgentKind,
+): AgentMessageContext {
   return {
     correlationId: ctx.requestId,
     tenantId: ctx.tenantId,
@@ -133,7 +129,7 @@ function truncateForContext(text: string, maxChars: number): string {
 async function timedRun(
   agent: IAgent,
   input: Parameters<IAgent["run"]>[0],
-  ctx: AgentInvocationContext,
+  ctx: Parameters<IAgent["run"]>[1],
 ) {
   const t0 = performance.now();
   const result = await agent.run(input, ctx);
@@ -141,14 +137,12 @@ async function timedRun(
 }
 
 /**
- * Sequential marketing workflow: cross-platform analysis → insights → media verdict (tasks.md 6.5).
+ * Sequential workflow: cross-domain analysis → insights → verdict.
  * Must run inside {@link runAgentJob} so tenant ALS matches `ctx`.
  */
-export async function runMarketingAgentPipeline(
-  options: RunMarketingPipelineOptions,
-): Promise<MarketingPipelineState> {
+export async function runIntelligencePipeline(options: RunPipelineOptions): Promise<PipelineState> {
   const workflowId = options.workflowId ?? randomUUID();
-  const stages: MarketingPipelineStageRecord[] = [];
+  const stages: PipelineStageRecord[] = [];
   const provenanceTracker = new ProvenanceTracker(workflowId, options.ctx.tenantId);
   provenanceTracker.recordAgentUsage(
     AGENT_RUNTIME_PACKAGE_VERSION,
@@ -156,7 +150,7 @@ export async function runMarketingAgentPipeline(
     {
       requestId: options.ctx.requestId,
       runId: options.ctx.runId,
-      pipeline: "marketing_analysis_insights_verdict",
+      pipeline: "intelligence_pipeline",
     },
   );
 
@@ -165,7 +159,7 @@ export async function runMarketingAgentPipeline(
     .filter((channel) => channel.enabled)
     .map((channel) => channel.label?.trim() || channel.platform.toUpperCase())
     .join(", ");
-  const specialization: RunMarketingPipelineOptions["specialization"] = {
+  const specialization: RunPipelineOptions["specialization"] = {
     ...options.specialization,
     promptVars: {
       currency: tenant.config.localization.currency,
@@ -184,38 +178,41 @@ export async function runMarketingAgentPipeline(
     options.onMessage?.(msg);
   };
 
-  const createAgent = (
-    kind: SpecializedMarketingAgentKind,
-    stage: MarketingPipelineStageName,
-  ): IAgent => {
-    const mock = options.mockModels?.[stage];
-    const spec: CreateSpecializedMarketingAgentOptions = {
+  const createAgent = async (
+    kind: PipelineAgentKind,
+  ): Promise<{ agent: IAgent; tools: ToolRegistry }> => {
+    const spec: CreatePipelineAgentOptions = {
       ...specialization,
-      mockLlm: mock,
-      invocationCache: options.invocationCache,
     };
-    if (options.useProductionModels) {
-      return createSpecializedMarketingProductionAgent(options.factory, kind, spec);
-    }
-    return createSpecializedMarketingTestAgent(options.factory, kind, spec);
+
+    const config = createPipelineAgentConfig(kind, spec);
+    const tools = createPipelineAgentTools(spec);
+
+    return options.factory.createAgentWithTools(config, tools, {
+      invocationCache: options.invocationCache,
+    });
   };
 
-  const reportProgress = (stage: MarketingPipelineStageName, index: number): void => {
+  const reportProgress = (stage: PipelineAgentKind, index: number): void => {
     const total = 3;
     const percent = Math.round(((index + 1) / total) * 100);
     options.onProgress?.({ stage, index, total, percent });
   };
 
   try {
-    const analysisAgent = createAgent("cross_platform_analysis", "analysis");
-    const execCtx = (stage: MarketingPipelineStageName): AgentExecutionContext =>
+    const analysisAgentResult = await createAgent("analysis");
+    const execCtx = (stage: PipelineAgentKind): AgentMessageContext =>
       buildExecutionContext(options.ctx, workflowId, stage);
 
-    const analysisTimed = await timedRun(analysisAgent, { goal: options.goal }, options.ctx);
+    const analysisTimed = await timedRun(
+      analysisAgentResult.agent,
+      { goal: options.goal },
+      options.ctx,
+    );
     stages.push({ stage: "analysis", ...analysisTimed });
     reportProgress("analysis", 0);
     provenanceTracker.recordTransformation({
-      type: "marketing_pipeline_stage",
+      type: "pipeline_stage",
       description: "Completed cross_platform_analysis agent",
       timestamp: new Date(),
       parameters: { stage: "analysis", durationMs: analysisTimed.durationMs },
@@ -229,9 +226,9 @@ export async function runMarketingAgentPipeline(
       context: execCtx("analysis"),
     });
 
-    const insightsAgent = createAgent("marketing_insight_generation", "insights");
+    const insightsAgentResult = await createAgent("insights");
     const insightsTimed = await timedRun(
-      insightsAgent,
+      insightsAgentResult.agent,
       {
         goal: `${options.goal}\n\nUse the cross-platform analysis below as primary evidence:\n${truncateForContext(analysisTimed.result.answer, 20_000)}`,
       },
@@ -240,8 +237,8 @@ export async function runMarketingAgentPipeline(
     stages.push({ stage: "insights", ...insightsTimed });
     reportProgress("insights", 1);
     provenanceTracker.recordTransformation({
-      type: "marketing_pipeline_stage",
-      description: "Completed marketing_insight_generation agent",
+      type: "pipeline_stage",
+      description: "Completed insights_generation agent",
       timestamp: new Date(),
       parameters: { stage: "insights", durationMs: insightsTimed.durationMs },
     });
@@ -254,7 +251,7 @@ export async function runMarketingAgentPipeline(
       context: execCtx("insights"),
     });
 
-    const verdictAgent = createAgent("media_verdict", "verdict");
+    const verdictAgentResult = await createAgent("verdict");
     const analysisUuid = resolveWorkflowAnalysisUuid(options.ctx.tenantId, workflowId);
     const verdictGoal = `${options.goal}
 
@@ -266,12 +263,16 @@ ${truncateForContext(analysisTimed.result.answer, 12_000)}
 2) Insights:
 ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
 
-    const verdictTimed = await timedRun(verdictAgent, { goal: verdictGoal }, options.ctx);
+    const verdictTimed = await timedRun(
+      verdictAgentResult.agent,
+      { goal: verdictGoal },
+      options.ctx,
+    );
     stages.push({ stage: "verdict", ...verdictTimed });
     reportProgress("verdict", 2);
     provenanceTracker.recordTransformation({
-      type: "marketing_pipeline_stage",
-      description: "Completed media_verdict agent",
+      type: "pipeline_stage",
+      description: "Completed verdict agent",
       timestamp: new Date(),
       parameters: { stage: "verdict", durationMs: verdictTimed.durationMs },
     });
@@ -287,24 +288,24 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
     recordVerdictParseAttempt(workflowId, options.ctx.tenantId);
 
     try {
-      const parsedVerdict = parseMarketingVerdictFromAgentText(verdictTimed.result.answer);
-      const verdict = applyMarketingVerdictPipelineContext(parsedVerdict, {
+      const parsedVerdict = parseVerdictFromAgentText(verdictTimed.result.answer);
+      const verdict = applyVerdictPipelineContext(parsedVerdict, {
         tenantId: options.ctx.tenantId,
         analysisId: analysisUuid,
       });
       provenanceTracker.recordTransformation({
         type: "verdict_normalization",
-        description: "marketingVerdictSchema.parse (unified MarketingVerdict)",
+        description: "verdictSchema.parse (unified Verdict)",
         timestamp: new Date(),
       });
-      const completed: MarketingPipelineState = {
+      const completed: PipelineState = {
         workflowId,
         status: "completed",
         stages,
         verdict,
         provenance: provenanceTracker.getCurrentProvenance(),
       };
-      options.onPipelineTiming?.(marketingPipelineTimingToLogFields(completed));
+      options.onPipelineTiming?.(pipelineTimingToLogFields(completed));
       return completed;
     } catch (e) {
       if (options.tolerateVerdictParseFailure) {
@@ -323,7 +324,7 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
             field,
           });
         }
-        const degraded: MarketingPipelineState = {
+        const degraded: PipelineState = {
           workflowId,
           status: "degraded",
           stages,
@@ -338,7 +339,7 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
           },
           provenance: provenanceTracker.getCurrentProvenance(),
         };
-        options.onPipelineTiming?.(marketingPipelineTimingToLogFields(degraded));
+        options.onPipelineTiming?.(pipelineTimingToLogFields(degraded));
         return degraded;
       }
       throw e;
@@ -347,9 +348,9 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
     if (e instanceof VerdictParseError) {
       throw e;
     }
-    const failedStage: MarketingPipelineStageName =
+    const failedStage: PipelineAgentKind =
       stages.length === 0 ? "analysis" : stages.length === 1 ? "insights" : "verdict";
-    const failed: MarketingPipelineState = {
+    const failed: PipelineState = {
       workflowId,
       status: "failed",
       stages,
@@ -360,14 +361,12 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
         cause: e,
       },
     };
-    options.onPipelineTiming?.(marketingPipelineTimingToLogFields(failed));
+    options.onPipelineTiming?.(pipelineTimingToLogFields(failed));
     return failed;
   }
 }
 
-export function marketingPipelineStateToJson(
-  state: MarketingPipelineState,
-): Record<string, unknown> {
+export function pipelineStateToJson(state: PipelineState): Record<string, unknown> {
   return {
     workflowId: state.workflowId,
     status: state.status,

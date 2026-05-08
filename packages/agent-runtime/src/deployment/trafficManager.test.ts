@@ -368,7 +368,7 @@ describe("TrafficManager", () => {
 
     it("should preserve rollback state for post-mortem", async () => {
       const trigger = {
-        type: "latency",
+        type: "latency" as const,
         threshold: 5000,
         currentValue: 6000,
         triggeredAt: new Date(),

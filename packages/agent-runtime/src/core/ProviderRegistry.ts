@@ -1,4 +1,4 @@
-import type { ProviderConfig, ProviderRuntime } from "./BaseProvider";
+import { type ProviderConfig, type ProviderRuntime } from "./BaseProvider";
 import { AgentRuntimeError, AgentRuntimeErrorCode } from "../errors/AgentRuntimeError";
 
 export class ProviderRegistry {

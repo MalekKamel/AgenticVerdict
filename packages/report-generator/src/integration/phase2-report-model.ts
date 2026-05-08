@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  generatedInsightSchema,
-  marketingVerdictSchema,
-  type MarketingVerdict,
-} from "@agenticverdict/types";
+import { generatedInsightSchema, verdictSchema, type Verdict } from "@agenticverdict/types";
 
 import type { ChartSpec, ReportTemplateViewModel } from "../templates/view-model";
 import { coerceReportTemplateViewModel } from "../templates/view-model";
@@ -15,18 +11,18 @@ export interface MergePhase2ReportModelOptions {
 }
 
 export interface Phase3Verdict {
-  verdictType: MarketingVerdict["verdictType"];
+  verdictType: Verdict["verdictType"];
   score: number;
   confidence: number;
-  sentiment: MarketingVerdict["sentiment"];
+  sentiment: Verdict["sentiment"];
   summary: string;
   summaryLine: string;
   keyFindings: string[];
   recommendations: Array<{
     title: string;
     rationale: string;
-    priority: MarketingVerdict["recommendations"][number]["priority"];
-    effort: MarketingVerdict["recommendations"][number]["effort"];
+    priority: Verdict["recommendations"][number]["priority"];
+    effort: Verdict["recommendations"][number]["effort"];
   }>;
   dataQuality: {
     blendedScore: number;
@@ -42,7 +38,7 @@ function titleCaseVerdictType(verdictType: string): string {
 }
 
 function buildDataQualityMetrics(
-  verdict: z.infer<typeof marketingVerdictSchema>,
+  verdict: z.infer<typeof verdictSchema>,
 ): ReportTemplateViewModel["metrics"] {
   return {
     columns: ["Platform", "Quality score", "Freshness (days)", "Metrics"],
@@ -55,7 +51,7 @@ function buildDataQualityMetrics(
   };
 }
 
-function buildTrendChart(verdict: z.infer<typeof marketingVerdictSchema>): ChartSpec | null {
+function buildTrendChart(verdict: z.infer<typeof verdictSchema>): ChartSpec | null {
   const hist = verdict.historicalContext;
   if (!hist || hist.length < 2) {
     return null;
@@ -67,7 +63,7 @@ function buildTrendChart(verdict: z.infer<typeof marketingVerdictSchema>): Chart
   };
 }
 
-export function mapMarketingVerdictToReportModel(verdict: MarketingVerdict): Phase3Verdict {
+export function mapVerdictToReportModel(verdict: Verdict): Phase3Verdict {
   const blended =
     verdict.dataSources.length > 0
       ? verdict.dataSources.reduce((sum, source) => sum + source.qualityScore, 0) /
@@ -95,7 +91,7 @@ export function mapMarketingVerdictToReportModel(verdict: MarketingVerdict): Pha
 }
 
 /**
- * Merges Phase 2 agent outputs ({@link marketingVerdictSchema}, {@link generatedInsightSchema}[])
+ * Merges Phase 2 agent outputs ({@link verdictSchema}, {@link generatedInsightSchema}[])
  * into a {@link ReportTemplateViewModel}. Invalid payloads record `phase2IntegrationErrors` and
  * skip the offending slice without throwing.
  */
@@ -109,7 +105,7 @@ export function mergePhase2IntoReportModel(
   const maxInsights = options?.maxInsights ?? 12;
 
   const verdictParsed =
-    phase2.verdict !== undefined ? marketingVerdictSchema.safeParse(phase2.verdict) : null;
+    phase2.verdict !== undefined ? verdictSchema.safeParse(phase2.verdict) : null;
   if (phase2.verdict !== undefined && !verdictParsed?.success) {
     errors.push("verdict_validation_failed");
   }
@@ -127,7 +123,7 @@ export function mergePhase2IntoReportModel(
 
   const topInsights = insightsParsed.slice(0, maxInsights);
 
-  const mappedVerdict = verdict ? mapMarketingVerdictToReportModel(verdict) : undefined;
+  const mappedVerdict = verdict ? mapVerdictToReportModel(verdict) : undefined;
   const fromVerdictFindings = mappedVerdict?.keyFindings ?? [];
   const fromAgentInsights = topInsights.map((i) => `${i.title} (${i.type}) — ${i.description}`);
   const keyFindings = [...vm.keyFindings, ...fromVerdictFindings, ...fromAgentInsights].slice(

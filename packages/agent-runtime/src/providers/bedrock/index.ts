@@ -581,7 +581,7 @@ export class BedrockProvider implements ProviderRuntime {
   private translateError(error: unknown): AgentRuntimeError {
     if (error instanceof AccessDeniedException) {
       return new AgentRuntimeError({
-        code: AgentRuntimeErrorCode.TENANT_UNAUTHORIZED,
+        code: AgentRuntimeErrorCode.AUTHENTICATION_FAILED,
         message: "Access denied to Bedrock model. Check IAM permissions.",
         providerId: this.providerId,
         statusCode: 403,

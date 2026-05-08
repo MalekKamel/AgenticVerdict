@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MantineProvider, useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";

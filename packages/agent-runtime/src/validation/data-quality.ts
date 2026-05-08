@@ -1,9 +1,9 @@
 import {
   analysisResultResponseSchema,
   generatedInsightSchema,
-  marketingVerdictSchema,
+  verdictSchema,
   type GeneratedInsight,
-  type MarketingVerdict,
+  type Verdict,
 } from "@agenticverdict/types";
 
 const VALIDATOR_VERSION = "1.0.0";
@@ -53,7 +53,7 @@ export interface ValidationConfig {
 
 export interface DataQualityValidator {
   validateInsight(insight: GeneratedInsight): ValidationResult;
-  validateVerdict(verdict: MarketingVerdict): ValidationResult;
+  validateVerdict(verdict: Verdict): ValidationResult;
   validateAnalysisResult(result: AnalysisResultValidationInput): ValidationResult;
 }
 
@@ -157,10 +157,10 @@ export class DataQualityService implements DataQualityValidator {
     };
   }
 
-  validateVerdict(verdict: MarketingVerdict): ValidationResult {
+  validateVerdict(verdict: Verdict): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    const parsed = marketingVerdictSchema.safeParse(verdict);
+    const parsed = verdictSchema.safeParse(verdict);
     if (!parsed.success) {
       for (const issue of parsed.error.issues) {
         errors.push({
@@ -175,7 +175,7 @@ export class DataQualityService implements DataQualityValidator {
         score: calculateQualityScore(errors, warnings),
         errors,
         warnings,
-        recommendations: ["Align the verdict payload with the unified MarketingVerdict schema."],
+        recommendations: ["Align the verdict payload with the unified Verdict schema."],
         metadata: baseMetadata(),
       };
     }

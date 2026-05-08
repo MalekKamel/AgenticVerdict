@@ -254,5 +254,6 @@
   "errors.reports.shareLinkNotFound": "Share link not found",
   "errors.reports.shareLinkRevoked": "Share link has been revoked",
   "errors.reports.shareLinkExpired": "Share link has expired",
-  "errors.reports.createShareFailed": "Failed to create share link"
+  "errors.reports.createShareFailed": "Failed to create share link",
+  "errors.common.unknownError": "An unexpected error occurred. Please try again."
 }

@@ -35,19 +35,34 @@ export { applyLangSmithTracingToProcess, buildSafeLlmRunnableConfig } from "./la
 export { loadLlmEnvFromProcess, parseAgentLlmEnv, type AgentLlmEnv } from "./llm-env";
 export { invokeMinimalMessageGraph } from "./minimal-agent-graph";
 export { AgentFactory, type AgentFactoryDeps } from "./agent-factory";
-export { ProviderAgent, type ProviderAgentOptions } from "./provider-agent";
+export { ProviderFactory } from "./core";
 export {
-  agentFactoryConfigSchema,
-  agentFactoryMemoryLimitsSchema,
+  agentConfigSchema,
+  agentMemoryLimitsSchema,
   agentMemoryModeSchema,
+  agentRoleSchema,
   agentRuntimeModeSchema,
-  type AgentFactoryConfig,
-  type AgentFactoryMemoryLimits,
+  agentToolConfigSchema,
+  extractVariablesFromTemplate,
+  modelParamsSchema,
+  outputFormatSchema,
+  promptVariableSchema,
+  retryConfigSchema,
+  type AgentConfig,
+  type AgentMemoryLimits,
   type AgentMemoryMode,
+  type AgentRole,
   type AgentRuntimeMode,
-  parseAgentFactoryConfig,
-  safeParseAgentFactoryConfig,
+  type AgentToolConfig,
+  type ModelParams,
+  type OutputFormat,
+  type PromptVariable,
+  type RetryConfig,
+  parseAgentConfig,
+  safeParseAgentConfig,
+  substituteVariables,
 } from "./agent-config";
+export type { AgentExecutionContext, CreatedAgent } from "./agent-execution-context";
 export {
   AgentTenantContextError,
   assertInvocationMatchesActiveTenant,
@@ -63,7 +78,7 @@ export {
 } from "./llm-invocation-cache";
 export {
   computePercentile,
-  marketingPipelineTimingToLogFields,
+  pipelineTimingToLogFields,
   summarizeLatencyMs,
   type PipelineTimingLogFields,
 } from "./agent-performance-metrics";
@@ -220,27 +235,27 @@ export {
   AgentMessageLogger,
   AgentProtocolError,
   createAgentMessage,
-  type AgentExecutionContext,
+  type AgentMessageContext,
   type AgentMessage,
   type AgentMessageType,
 } from "./agent-protocol";
 export {
-  applyMarketingVerdictPipelineContext,
+  applyVerdictPipelineContext,
   extractJsonObjectText,
   getVerdictParseFailureDetails,
-  parseMarketingVerdictFromAgentText,
+  parseVerdictFromAgentText,
   resolveWorkflowAnalysisUuid,
-  safeParseMarketingVerdictFromAgentText,
+  safeParseVerdictFromAgentText,
   type VerdictParseFailureDetails,
   type VerdictParseFailureKind,
 } from "./agent-verdict-json";
 export { VerdictParseError } from "./verdict-schema";
 export {
-  buildMarketingVerdictFixture,
-  buildMinimalMarketingVerdict,
+  buildVerdictFixture,
+  buildMinimalVerdict,
   deterministicUuid,
-  type BuildMarketingVerdictFixtureOptions,
-} from "./test-utils/marketing-verdict-fixtures";
+  type BuildVerdictFixtureOptions,
+} from "./test-utils/verdict-fixtures";
 export {
   DataQualityService,
   ValidationService,
@@ -257,23 +272,21 @@ export {
   type ProvenanceTrackerState,
 } from "./provenance/tracker";
 export {
-  buildSpecializedMarketingFactoryConfig,
-  createSpecializedMarketingProductionAgent,
-  createSpecializedMarketingTestAgent,
-  type CreateSpecializedMarketingAgentOptions,
-  type SpecializedMarketingAgentKind,
-  type SpecializedMarketingAgentPromptVars,
-} from "./specialized-marketing-agents";
+  pipelineStateToJson,
+  runIntelligencePipeline,
+  type PipelineStageRecord,
+  type PipelineState,
+  type PipelineStatus,
+  type WorkflowProgressEvent,
+  type RunPipelineOptions,
+} from "./intelligence-pipeline";
+
 export {
-  marketingPipelineStateToJson,
-  runMarketingAgentPipeline,
-  type MarketingPipelineStageName,
-  type MarketingPipelineStageRecord,
-  type MarketingPipelineState,
-  type MarketingPipelineStatus,
-  type MarketingWorkflowProgressEvent,
-  type RunMarketingPipelineOptions,
-} from "./marketing-pipeline";
+  type PipelineAgentKind,
+  type CreatePipelineAgentOptions,
+  createPipelineAgentConfig,
+  createPipelineAgentTools,
+} from "./agent-kinds";
 
 export { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";
 export { OpenAIProvider } from "./providers/openai";

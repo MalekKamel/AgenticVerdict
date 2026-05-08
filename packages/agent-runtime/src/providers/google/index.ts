@@ -5,7 +5,7 @@ import {
   TextPart,
   GenerateContentRequest,
   GenerateContentResult,
-  StreamContentResult,
+  Tool,
 } from "@google/generative-ai";
 
 import type {
@@ -105,6 +105,9 @@ export class GoogleProvider implements ProviderRuntime {
   ];
 
   constructor(config: GoogleProviderConfig) {
+    if (!config.apiKey) {
+      throw new Error("Google provider requires apiKey");
+    }
     this.client = new GoogleGenerativeAI(config.apiKey);
     this.modelCache = new Map();
     this.cacheTTL = 60 * 60 * 1000;
@@ -119,14 +122,35 @@ export class GoogleProvider implements ProviderRuntime {
 
   async chat(request: ChatCompletionRequest): Promise<ChatCompletionResponse> {
     try {
+      const tools = request.tools
+        ? ([
+            {
+              functionDeclarations: request.tools.map((t) => {
+                const converted = this.convertTool(t);
+                return {
+                  name: converted.name,
+                  description: converted.description,
+                  parameters: converted.parameters
+                    ? {
+                        type: "object" as const,
+                        properties: converted.parameters as Record<
+                          string,
+                          { type: string; description?: string }
+                        >,
+                      }
+                    : undefined,
+                };
+              }),
+            },
+          ] as unknown as Tool[])
+        : undefined;
+
       const model = this.client.getGenerativeModel({
         model: request.model,
-        tools: request.tools
-          ? [{ functionDeclarations: request.tools.map((t) => this.convertTool(t)) }]
-          : undefined,
+        tools,
       });
 
-      const googleRequest = this.convertToGoogleFormat(request, model);
+      const googleRequest = this.convertToGoogleFormat(request);
       const result = await model.generateContent(googleRequest);
 
       return this.convertFromGoogleResponse(result, request.model);
@@ -139,18 +163,42 @@ export class GoogleProvider implements ProviderRuntime {
 
   async *chatStream(request: ChatCompletionRequest): AsyncIterable<ChatCompletionResponse> {
     try {
+      const tools = request.tools
+        ? ([
+            {
+              functionDeclarations: request.tools.map((t) => {
+                const converted = this.convertTool(t);
+                return {
+                  name: converted.name,
+                  description: converted.description,
+                  parameters: converted.parameters
+                    ? {
+                        type: "object" as const,
+                        properties: converted.parameters as Record<
+                          string,
+                          { type: string; description?: string }
+                        >,
+                      }
+                    : undefined,
+                };
+              }),
+            },
+          ] as unknown as Tool[])
+        : undefined;
+
       const model = this.client.getGenerativeModel({
         model: request.model,
-        tools: request.tools
-          ? [{ functionDeclarations: request.tools.map((t) => this.convertTool(t)) }]
-          : undefined,
+        tools,
       });
 
-      const googleRequest = this.convertToGoogleFormat(request, model);
+      const googleRequest = this.convertToGoogleFormat(request);
       const result = await model.generateContentStream(googleRequest);
 
       for await (const chunk of result.stream) {
-        yield this.convertFromGoogleStreamChunk(chunk, request.model);
+        yield this.convertFromGoogleStreamChunk(
+          chunk as unknown as GenerateContentResult,
+          request.model,
+        );
       }
     } catch (error) {
       throw translateGoogleError(error, {
@@ -398,7 +446,7 @@ export class GoogleProvider implements ProviderRuntime {
       functionCallParts.length > 0
         ? functionCallParts.map((part) => ({
             id: part.functionCall.name,
-            type: "function",
+            type: "function" as const,
             function: {
               name: part.functionCall.name,
               arguments: JSON.stringify(part.functionCall.args),
@@ -432,7 +480,7 @@ export class GoogleProvider implements ProviderRuntime {
       : undefined;
 
     return {
-      id: response.text || "unknown",
+      id: textContent || "unknown",
       object: "chat.completion",
       created: Math.floor(Date.now() / 1000),
       model,
@@ -452,10 +500,12 @@ export class GoogleProvider implements ProviderRuntime {
   }
 
   private convertFromGoogleStreamChunk(
-    chunk: StreamContentResult,
+    chunk: GenerateContentResult,
     model: string,
   ): ChatCompletionResponse {
-    const response = chunk.response;
+    const response = chunk.response as unknown as {
+      candidates: Array<{ content: { parts: Part[] }; finishReason?: string }>;
+    };
     const candidates = response.candidates;
 
     if (!candidates || candidates.length === 0) {
@@ -471,39 +521,45 @@ export class GoogleProvider implements ProviderRuntime {
     const candidate = candidates[0];
     const content = candidate.content;
 
-    const textParts = content.parts.filter((p): p is TextPart => p.text !== undefined);
+    const textParts = content.parts.filter(
+      (p: Part): p is TextPart => "text" in p && typeof p.text === "string",
+    );
     const functionCallParts = content.parts.filter(
-      (p): p is Part & { functionCall: { name: string; args?: unknown } } =>
+      (p: Part): p is Part & { functionCall: { name: string; args?: unknown } } =>
         p.functionCall !== undefined,
     );
 
-    const textContent = textParts.map((p) => p.text).join("");
+    const textContent = textParts.map((p: TextPart) => p.text).join("");
 
-    const toolCalls =
+    const toolCalls: ChatToolCall[] | undefined =
       functionCallParts.length > 0
-        ? functionCallParts.map((part) => ({
-            id: part.functionCall.name,
-            type: "function",
-            function: {
-              name: part.functionCall.name,
-              arguments: JSON.stringify(part.functionCall.args),
-            },
-          }))
+        ? functionCallParts.map(
+            (part: Part & { functionCall: { name: string; args?: unknown } }): ChatToolCall => ({
+              id: part.functionCall.name,
+              type: "function" as const,
+              function: {
+                name: part.functionCall.name,
+                arguments: JSON.stringify(part.functionCall.args),
+              },
+            }),
+          )
         : undefined;
 
-    const finishReason: ChatCompletionResponse["choices"][0]["finish_reason"] =
-      candidate.finishReason === "STOP"
+    const candidateFinishReason = candidate.finishReason;
+
+    const finishReasonValue: ChatCompletionResponse["choices"][0]["finish_reason"] =
+      candidateFinishReason === "STOP"
         ? "stop"
-        : candidate.finishReason === "MAX_TOKENS"
+        : candidateFinishReason === "MAX_TOKENS"
           ? "length"
-          : candidate.finishReason === "SAFETY"
+          : candidateFinishReason === "SAFETY"
             ? "content_filter"
             : functionCallParts.length > 0
               ? "tool_calls"
               : null;
 
     return {
-      id: response.text || "unknown",
+      id: textContent || "unknown",
       object: "chat.completion.chunk",
       created: Math.floor(Date.now() / 1000),
       model,
@@ -515,7 +571,7 @@ export class GoogleProvider implements ProviderRuntime {
             content: textContent,
             toolCalls,
           },
-          finish_reason: finishReason,
+          finish_reason: finishReasonValue,
           delta: {
             role: "assistant",
             content: textContent,
@@ -523,15 +579,7 @@ export class GoogleProvider implements ProviderRuntime {
           },
         },
       ],
-      usage: response.usageMetadata
-        ? {
-            prompt_tokens: response.usageMetadata.promptTokenCount ?? 0,
-            completion_tokens: response.usageMetadata.candidatesTokenCount ?? 0,
-            total_tokens:
-              (response.usageMetadata.promptTokenCount ?? 0) +
-              (response.usageMetadata.candidatesTokenCount ?? 0),
-          }
-        : undefined,
+      usage: undefined,
     };
   }
 

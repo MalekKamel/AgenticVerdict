@@ -32,7 +32,7 @@ const sampleTenant: TenantConfig = {
     ],
     kpis: [{ id: "leads", name: "Qualified leads", unit: "count" }],
   },
-  ai: { primaryModel: "claude-3-5-sonnet-20241022", provider: "anthropic" },
+  ai: { primaryProvider: "anthropic" },
   features: { enableInsights: true, enableVerdict: true },
   business: {
     products: ["GPS tracking"],

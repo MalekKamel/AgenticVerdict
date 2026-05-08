@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import type { MarketingVerdict } from "@agenticverdict/types";
-import { marketingVerdictSchema } from "@agenticverdict/types";
+import type { Verdict } from "@agenticverdict/types";
+import { verdictSchema } from "@agenticverdict/types";
 
 export const validationDatasetCaseSchema = z.object({
   id: z.string().min(1),
@@ -27,7 +27,7 @@ export interface HeuristicQualityScores {
 /**
  * Deterministic rubric-style scores for CI gates (tasks.md 7.4). Not a substitute for expert review.
  */
-export function assessVerdictHeuristicQuality(verdict: MarketingVerdict): HeuristicQualityScores {
+export function assessVerdictHeuristicQuality(verdict: Verdict): HeuristicQualityScores {
   const summaryLen = verdict.summary.trim().length;
   const clarityBase =
     summaryLen >= 120 ? 5 : summaryLen >= 80 ? 4 : summaryLen >= 40 ? 3 : summaryLen >= 20 ? 2 : 1;
@@ -68,10 +68,10 @@ export function runVerdictQualityGate(
   verdictJsonText: string,
 ): QualityGateResult {
   const failures: string[] = [];
-  let parsed: MarketingVerdict;
+  let parsed: Verdict;
   try {
     const obj = JSON.parse(verdictJsonText) as unknown;
-    parsed = marketingVerdictSchema.parse(obj);
+    parsed = verdictSchema.parse(obj);
   } catch (e) {
     failures.push(e instanceof Error ? e.message : "schema_validation_failed");
     return { ok: false, caseId: caseRow.id, schemaOk: false, failures };

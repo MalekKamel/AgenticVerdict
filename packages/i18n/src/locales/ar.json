@@ -254,5 +254,6 @@
   "errors.reports.shareLinkNotFound": "رابط المشاركة غير موجود",
   "errors.reports.shareLinkRevoked": "تم إلغاء رابط المشاركة",
   "errors.reports.shareLinkExpired": "انتهت صلاحية رابط المشاركة",
-  "errors.reports.createShareFailed": "فشل إنشاء رابط المشاركة"
+  "errors.reports.createShareFailed": "فشل إنشاء رابط المشاركة",
+  "errors.common.unknownError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
 }

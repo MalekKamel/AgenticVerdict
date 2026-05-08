@@ -1,7 +1,7 @@
 export interface SeedTenantConnector {
   platform: string;
   name: string;
-  domain: string;
+  domainId?: string | null;
   status?: "active" | "inactive" | "error";
   syncFrequency?: string;
   metrics?: string[];
@@ -39,7 +39,7 @@ export class ConnectorFactory {
   };
 
   static create(
-    tenantSlug: string,
+    _tenantSlug: string,
     platform: string,
     overrides?: Partial<SeedTenantConnector>,
   ): SeedTenantConnector {
@@ -47,8 +47,8 @@ export class ConnectorFactory {
     const defaultMetrics = this.PLATFORM_METRICS[platform] || [];
     return {
       platform,
-      name: `${platformName} - ${tenantSlug}`,
-      domain: `${tenantSlug}.test.local`,
+      name: `${platformName}`,
+      domainId: null,
       status: "inactive",
       syncFrequency: "daily",
       metrics: defaultMetrics,

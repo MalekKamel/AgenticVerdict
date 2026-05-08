@@ -22,6 +22,7 @@
     "lint": "turbo run lint",
     "lint:openapi": "redocly lint specs/00-core/01-connectors/operations/openapi/platform-adapters-health.yaml",
     "prepare": "husky",
+    "scan:providers": "tsx scripts/scan-provider-references.ts",
     "test": "turbo run test",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "turbo run test:e2e",

@@ -175,7 +175,7 @@ export {
 export type {
   DataSourceInfo,
   HistoricalTrend,
-  MarketingVerdict,
+  Verdict,
   MethodologyInfo,
   VerdictActionItem,
   VerdictEvidence,
@@ -189,8 +189,8 @@ export {
   dataSourceInfoSchema,
   dataSourcePlatformSchema,
   historicalTrendSchema,
-  marketingVerdictReportMetadataSchema,
-  marketingVerdictSchema,
+  verdictSchema,
+  verdictReportMetadataSchema,
   methodologyInfoSchema,
   verdictActionItemSchema,
   verdictEvidenceSchema,
@@ -230,3 +230,14 @@ export {
   dashboardWidgetIdSchema,
   dashboardLayoutStateSchema,
 } from "./dashboard";
+
+// AI Provider types
+export type {
+  CostTier,
+  AiProviderType,
+  BusinessDomain,
+  BusinessDomainWithProviders,
+  AiProviderDetail,
+  AiTemplate,
+  Connector,
+} from "./ai-providers";

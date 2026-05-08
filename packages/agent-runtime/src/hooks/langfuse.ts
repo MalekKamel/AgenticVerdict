@@ -250,8 +250,9 @@ export class LangfuseTracingHook {
         // Update trace with error
         this.client.trace({
           id: traceContext.traceId,
-          level: "ERROR",
-          statusMessage: errorInfo.message,
+          metadata: {
+            errorMessage: errorInfo.message,
+          },
         });
 
         // Clean up trace map

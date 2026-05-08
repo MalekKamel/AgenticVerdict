@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { parseAgentFactoryConfig } from "./agent-config";
+import { parseAgentConfig } from "./agent-config";
 import {
   LlmInvocationCache,
   buildLlmInvocationCacheKey,
@@ -47,7 +47,12 @@ describe("LlmInvocationCache", () => {
 
 describe("factoryConfigCacheFingerprint", () => {
   it("is stable for parsed config", () => {
-    const cfg = parseAgentFactoryConfig({ role: "analysis", memoryMode: "none" });
+    const cfg = parseAgentConfig({
+      name: "test-agent",
+      role: "analysis",
+      memoryMode: "none",
+      systemMessage: "Test system message",
+    });
     expect(factoryConfigCacheFingerprint(cfg)).toContain("analysis");
   });
 });

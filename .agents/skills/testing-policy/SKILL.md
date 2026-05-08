@@ -13,18 +13,20 @@ Provide a repeatable testing workflow that ensures changes are validated suffici
 - Refactors that may affect runtime behavior.
 - CI failure triage or regression prevention updates.
 
-## Required sources of truth
+## Test pyramid
 
-- `/docs/02-planning-and-methodology/testing-strategy.md`
-- `/docs/05-reference/frontend-development-guidelines.md`
+```
+Unit (Vitest) → Integration → E2E (Playwright) → Scenario Orchestration (R01-R12)
+```
 
-## Coverage expectations
+## Coverage thresholds
 
-- Business logic: `>=85%` (`>=90%` for critical code)
-- Data models: `>=80%`
-- API controllers: `>=75%`
-- Utilities: `>=90%`
-- UI components: `>=70%` (`>=80%` for critical UI)
+| Scope                                     | Threshold |
+| ----------------------------------------- | --------- |
+| Overall                                   | 70%       |
+| Business logic                            | 85%       |
+| Critical (auth, tenant isolation, agents) | 90%       |
+| UI components                             | 70%       |
 
 ## Required validation by change type
 
@@ -33,6 +35,61 @@ Provide a repeatable testing workflow that ensures changes are validated suffici
 - Database/tenant isolation: integration checks and cross-tenant regression tests.
 - Shared packages: package-local tests + dependent targeted checks.
 - Security-sensitive changes: redaction/error safety tests.
+
+## Test commands
+
+```bash
+# Unit tests (root workspace runs all packages)
+pnpm run test:unit
+
+# Unit tests with coverage (70% overall, 85% business logic, 90% critical)
+pnpm run test:coverage
+
+# Package-scoped tests (Turbo)
+turbo run test
+
+# Integration tests (database, API flows)
+pnpm run test:integration
+
+# E2E tests (Playwright; auto-starts webServer)
+pnpm run test:e2e
+
+# Production flow scenarios (R01-R12 mock adapter runs)
+pnpm run test:production-flow
+
+# Scenario orchestration (full workflow validation)
+pnpm run test:scenarios:all
+make test-scripts-all
+
+# Frontend-only tests
+pnpm --filter @agenticverdict/frontend test
+
+# Frontend E2E (Smoke)
+pnpm run test:e2e:frontend:smoke
+
+# AI/Agent runtime tests
+pnpm --filter @agenticverdict/agent-runtime test
+```
+
+## Mock adapter mode
+
+For deterministic, network-free development and testing:
+
+```bash
+# .env.local
+AGENTICVERDICT_MOCK_MODE=all
+AGENTICVERDICT_MOCK_SEED=42001
+AGENTICVERDICT_MOCK_SCENARIO=normal
+```
+
+Verify: `curl http://localhost:3000/api/health/adapters` → includes `mockMode`.
+
+**Usage:**
+
+- Unit tests: use mock responses for platform adapters.
+- Integration tests: use controlled inputs with mock adapter.
+- Scenario orchestration: use R01-R12 mock adapter runs.
+- **Never use production API keys in tests.** Use separate test keys or mock responses.
 
 ## Step-by-step workflow
 
@@ -57,3 +114,4 @@ Provide a repeatable testing workflow that ensures changes are validated suffici
 - Under-testing critical scope.
 - Critical coverage thresholds missed without approved exception.
 - Frontend quality gates skipped without rationale.
+- Production API keys used in tests.

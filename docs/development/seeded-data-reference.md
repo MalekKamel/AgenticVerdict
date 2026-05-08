@@ -1,22 +1,24 @@
 # Development Database Seed Data Reference
 
-**Last Updated:** 2026-05-02  
-**Version:** 2.1.0
+**Last Updated:** 2026-05-08  
+**Version:** 3.0.0
 
 This document provides comprehensive details about the development database seed data created by running `make db-seed-dev` or `pnpm db:seed:dev`.
 
-**What's New in v2.1.0:**
+**What's New in v3.0.0:**
 
-- Email naming convention reflects tenant types (`direct_*`, `agency_*`, `client_*`)
-- Explicit tenant type and status fields in seed configs
-- Updated `getDefaultRoleForTenantType` to use enum values (`direct_business`, `agency_managed`)
-
-**What's New in v2.0.0:**
-
-- Multi-tenant seeding with agency partner support
-- Direct business and agency-managed tenant scenarios
-- Enhanced RBAC role seeding with system roles
-- New seed examples for testing different tenant architectures
+- Complete seed coverage for all database tables (34+ tables)
+- Business domains with hierarchy and connector assignments
+- AI provider management (providers, models, failover, credentials, usage, health)
+- AI templates with deployments and usage analytics
+- AI usage reports with daily/monthly aggregation
+- Budget alerts with trigger history and period summaries
+- Feature flags with tenant overrides
+- Report shares with expiring tokens
+- Audit logs and audit trail events
+- Connector sync history
+- Insight-connector assignments
+- I18n strings for localization
 
 ---
 
@@ -71,8 +73,30 @@ The development seed creates tenants in two categories: **direct business tenant
 - Users with RBAC roles (admin, analyst, editor, viewer)
 - 3 connectors (GA4, Meta, GSC)
 - 2 insights (Weekly Performance, Monthly ROI)
+- 5 insight-connector assignments
+- 3 connector sync history records
+- 3 business domains (Paid Media, Organic, Social) with hierarchy
+- 3 domain-connector assignments
+- 2 AI providers (Anthropic primary, OpenAI failover)
+- 1 AI provider failover configuration
+- 1 AI provider credential (encrypted)
+- 2 AI provider usage records
+- 2 AI provider health records
+- 2 AI templates (prompt + configuration)
+- 2 template deployments
+- 2 template usage analytics records
+- 3 AI usage reports
+- 2 daily usage aggregations
+- 2 monthly usage aggregations
+- 2 budget alerts
+- 1 alert trigger history record
+- 1 budget period summary
 - 1 report template (Standard Performance Template)
 - 2 reports (1 published, 1 draft)
+- 1 report share (for published report)
+- 3 audit logs
+- 4 i18n strings (en + fr)
+- 4 feature flag overrides
 
 ---
 
@@ -632,14 +656,115 @@ tenants (1) ───────────────┼── (N) users
                            ├── (N) tenant_connectors
                            ├── (N) core.insights
                            ├── (N) report_templates
-                           └── (N) reports
+                           ├── (N) reports
+                           ├── (N) business_domains
+                           ├── (N) ai_providers
+                           ├── (N) ai_templates
+                           ├── (N) budget_alerts
+                           ├── (N) audit_logs
+                           └── (N) i18n_strings
 
 tenant_connectors (1) ── (N) core.insight_connectors ── (N) core.insights
+tenant_connectors (1) ── (N) connector_sync_history
+tenant_connectors (1) ── (N) domain_connector_assignments ── (N) business_domains
 
 report_templates (1) ── (N) reports
+reports (1) ── (N) report_shares
+
+business_domains (1) ── (N) business_domains (self-referencing hierarchy)
+business_domains (1) ── (N) ai_providers (domain-scoped)
+business_domains (1) ── (N) domain_hierarchy_cache
+
+ai_providers ── (N) ai_provider_models
+ai_providers ── (1) ai_provider_failover
+ai_providers ── (1) ai_provider_credentials
+ai_providers ── (N) ai_provider_usage
+ai_providers ── (1) ai_provider_health
+
+ai_templates (1) ── (N) template_deployments
+ai_templates (1) ── (N) template_usage_analytics
+
+budget_alerts (1) ── (N) alert_trigger_history
 
 roles (1) ── (N) user_roles ── (N) users
+permissions (1) ── (N) role_permissions ── (N) roles
+
+feature_flags (1) ── (N) tenant_feature_flags ── (N) tenants
 ```
+
+### Complete Table Coverage
+
+| Table                          | Seeded | Description                   |
+| ------------------------------ | ------ | ----------------------------- |
+| `tenants`                      | ✅     | Multi-tenant entities         |
+| `users`                        | ✅     | User accounts with RBAC       |
+| `roles`                        | ✅     | RBAC roles per tenant         |
+| `permissions`                  | ✅     | Global permission definitions |
+| `user_roles`                   | ✅     | User-role assignments         |
+| `role_permissions`             | ✅     | Role-permission mappings      |
+| `reports`                      | ✅     | Generated reports             |
+| `report_templates`             | ✅     | Report template definitions   |
+| `report_shares`                | ✅     | Shareable report links        |
+| `audit_logs`                   | ✅     | General audit trail           |
+| `audit_trail`                  | ✅     | Detailed event audit trail    |
+| `feature_flags`                | ✅     | Global feature flags          |
+| `tenant_feature_flags`         | ✅     | Per-tenant flag overrides     |
+| `i18n_strings`                 | ✅     | Internationalized strings     |
+| `business_domains`             | ✅     | Custom business domains       |
+| `domain_connector_assignments` | ✅     | Domain-connector links        |
+| `domain_hierarchy_cache`       | ✅     | Hierarchy materialized paths  |
+| `ai_providers`                 | ✅     | AI provider configurations    |
+| `ai_provider_models`           | ✅     | Model catalog (global)        |
+| `ai_provider_failover`         | ✅     | Failover chain configs        |
+| `ai_provider_credentials`      | ✅     | Encrypted API keys            |
+| `ai_provider_usage`            | ✅     | Usage tracking                |
+| `ai_provider_health`           | ✅     | Health metrics                |
+| `ai_usage_reports`             | ✅     | Detailed AI usage             |
+| `ai_usage_aggregation_daily`   | ✅     | Daily aggregated usage        |
+| `ai_usage_aggregation_monthly` | ✅     | Monthly aggregated usage      |
+| `ai_templates`                 | ✅     | AI prompt/config templates    |
+| `template_deployments`         | ✅     | Template deployment tracking  |
+| `template_usage_analytics`     | ✅     | Template usage metrics        |
+| `budget_alerts`                | ✅     | Budget threshold alerts       |
+| `alert_trigger_history`        | ✅     | Alert trigger events          |
+| `budget_period_summaries`      | ✅     | Pre-calculated summaries      |
+| `tenant_connectors`            | ✅     | Tenant connector instances    |
+| `connector_sync_history`       | ✅     | Sync execution history        |
+| `core.data_connectors`         | ✅     | Connector registry (global)   |
+| `core.connector_tags`          | ✅     | Domain tags (global)          |
+| `core.connector_tag_mappings`  | ✅     | Connector-tag mappings        |
+| `core.insights`                | ✅     | Insight configurations        |
+| `core.insight_connectors`      | ✅     | Insight-connector links       |
+| `core.agency_partners`         | ✅     | Agency partner entities       |
+
+### New: Business Domains
+
+| Domain     | Description                   | Hierarchy           |
+| ---------- | ----------------------------- | ------------------- |
+| Paid Media | All paid advertising channels | Root                |
+| Organic    | Organic and SEO channels      | Root                |
+| Social     | Social media marketing        | Child of Paid Media |
+
+### New: AI Providers Per Tenant
+
+| Provider  | Model             | Cost Tier | Priority     |
+| --------- | ----------------- | --------- | ------------ |
+| Anthropic | Claude 3.5 Sonnet | standard  | 0 (primary)  |
+| OpenAI    | GPT-4o Mini       | economy   | 1 (failover) |
+
+### New: AI Templates Per Tenant
+
+| Template                    | Type          | Status    |
+| --------------------------- | ------------- | --------- |
+| Performance Analysis Prompt | prompt        | published |
+| ROI Calculation Config      | configuration | published |
+
+### New: Budget Alerts Per Tenant
+
+| Alert             | Type      | Threshold          | Time Window |
+| ----------------- | --------- | ------------------ | ----------- |
+| Monthly Cost Cap  | threshold | $100 (10000 cents) | monthly     |
+| Daily Token Limit | threshold | 50K tokens         | daily       |
 
 ### New: Agency Partner Relationships
 
@@ -693,6 +818,8 @@ pnpm --filter @agenticverdict/database db:seed:dev
 
 The seed implementation provides multiple functions for different scenarios:
 
+#### Core Seed Functions
+
 | Function                                | Purpose                                 | Usage             |
 | --------------------------------------- | --------------------------------------- | ----------------- |
 | `seedDirectTenant()`                    | Seed standalone business tenant         | Direct businesses |
@@ -701,6 +828,37 @@ The seed implementation provides multiple functions for different scenarios:
 | `seedUsersForTenant()`                  | Seed users for existing tenant          | User seeding      |
 | `seedUsersForMultipleTenants()`         | Batch seed across tenants               | Multi-tenant      |
 | `seedSystemRolesForTenantIfNotExists()` | Ensure RBAC roles exist                 | Pre-seeding setup |
+
+#### New Seed Functions (v3.0.0)
+
+| Function                                    | Purpose                              | Module                           |
+| ------------------------------------------- | ------------------------------------ | -------------------------------- |
+| `seedBusinessDomainsForTenant()`            | Seed business domains with hierarchy | `business-domains-seed.ts`       |
+| `seedDomainConnectorAssignmentsForTenant()` | Link connectors to domains           | `business-domains-seed.ts`       |
+| `seedDomainHierarchyCacheForTenant()`       | Build materialized path cache        | `business-domains-seed.ts`       |
+| `seedAiProvidersForTenant()`                | Seed AI provider configurations      | `ai-providers-seed.ts`           |
+| `seedAiProviderModels()`                    | Seed global model catalog            | `ai-providers-seed.ts`           |
+| `seedAiProviderFailoverForTenant()`         | Configure failover chains            | `ai-providers-seed.ts`           |
+| `seedAiProviderCredentialsForTenant()`      | Seed encrypted API keys              | `ai-providers-seed.ts`           |
+| `seedAiProviderUsageForTenant()`            | Seed usage tracking records          | `ai-providers-seed.ts`           |
+| `seedAiProviderHealthForTenant()`           | Seed health metrics                  | `ai-providers-seed.ts`           |
+| `seedAiTemplatesForTenant()`                | Seed AI templates                    | `ai-templates-seed.ts`           |
+| `seedTemplateDeploymentsForTenant()`        | Seed template deployments            | `ai-templates-seed.ts`           |
+| `seedTemplateUsageAnalyticsForTenant()`     | Seed template analytics              | `ai-templates-seed.ts`           |
+| `seedAiUsageReportsForTenant()`             | Seed detailed usage reports          | `ai-usage-seed.ts`               |
+| `seedAiUsageAggregationDailyForTenant()`    | Seed daily aggregations              | `ai-usage-seed.ts`               |
+| `seedAiUsageAggregationMonthlyForTenant()`  | Seed monthly aggregations            | `ai-usage-seed.ts`               |
+| `seedBudgetAlertsForTenant()`               | Seed budget alerts                   | `budget-alerts-seed.ts`          |
+| `seedAlertTriggerHistoryForTenant()`        | Seed alert trigger events            | `budget-alerts-seed.ts`          |
+| `seedBudgetPeriodSummariesForTenant()`      | Seed period summaries                | `budget-alerts-seed.ts`          |
+| `seedFeatureFlags()`                        | Seed global feature flags            | `feature-flags-i18n-seed.ts`     |
+| `seedTenantFeatureFlagOverrides()`          | Seed per-tenant overrides            | `feature-flags-i18n-seed.ts`     |
+| `seedI18nStringsForTenant()`                | Seed localization strings            | `feature-flags-i18n-seed.ts`     |
+| `seedReportSharesForTenant()`               | Seed report share links              | `report-shares-seed.ts`          |
+| `seedAuditLogsForTenant()`                  | Seed audit log entries               | `audit-seed.ts`                  |
+| `seedAuditTrailForTenant()`                 | Seed audit trail events              | `audit-seed.ts`                  |
+| `seedConnectorSyncHistoryForTenant()`       | Seed sync history                    | `connector-sync-insight-seed.ts` |
+| `seedInsightConnectorsForTenant()`          | Link insights to connectors          | `connector-sync-insight-seed.ts` |
 
 ### Example: Seed Direct Business Tenant
 
@@ -914,6 +1072,44 @@ GROUP BY tenant_id, title
 HAVING COUNT(*) > 1;
 ```
 
+### Query New Seeded Data (v3.0.0)
+
+```sql
+-- List all AI providers per tenant
+SELECT t.slug, ap.provider_id, ap.model_name, ap.cost_tier, ap.priority
+FROM ai_providers ap
+JOIN tenants t ON ap.tenant_id = t.id
+ORDER BY t.slug, ap.priority;
+
+-- List all business domains with hierarchy
+SELECT t.slug, bd.name, bd.description, parent.name as parent_domain
+FROM business_domains bd
+JOIN tenants t ON bd.tenant_id = t.id
+LEFT JOIN business_domains parent ON bd.parent_id = parent.id
+ORDER BY t.slug, bd."order";
+
+-- List all budget alerts
+SELECT t.slug, ba.name, ba.threshold, ba.threshold_type, ba.time_window, ba.status
+FROM budget_alerts ba
+JOIN tenants t ON ba.tenant_id = t.id
+ORDER BY t.slug, ba.name;
+
+-- List AI usage summary per tenant per month
+SELECT t.slug, aum.provider_id, aum.year, aum.month,
+       aum.total_tokens, aum.total_cost_cents, aum.total_requests
+FROM ai_usage_aggregation_monthly aum
+JOIN tenants t ON aum.tenant_id = t.id
+ORDER BY t.slug, aum.year DESC, aum.month DESC;
+
+-- List template usage analytics
+SELECT t.slug, at.name as template, tua.execution_count,
+       tua.success_count, tua.total_cost_cents
+FROM template_usage_analytics tua
+JOIN ai_templates at ON tua.template_id = at.id
+JOIN tenants t ON tua.tenant_id = t.id
+ORDER BY t.slug, tua.execution_count DESC;
+```
+
 ---
 
 ## Data Customization
@@ -1015,8 +1211,9 @@ Expected output:
 
 ```
 ✅ Development seed complete!
-   - Seeded 5 tenants
-   - Each tenant has: 3 users, 3 connectors, 2 insights, 1 template, 2 reports
+   - Seeded 8 tenants
+   - Each tenant has: users, connectors, insights, business domains, AI providers,
+     AI templates, budget alerts, reports, report shares, audit logs, i18n strings
 ```
 
 ### Connection Issues

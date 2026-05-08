@@ -113,5 +113,6 @@
   "errors.sectionTitle": "Impossible de charger les données",
   "errors.generic": "Une erreur s'est produite",
   "errors.tenantRequired": "Le contexte du locataire est requis",
-  "actions.retry": "Réessayer"
+  "actions.retry": "Réessayer",
+  "errors.common.unknownError": "Une erreur inattendue s'est produite. Veuillez réessayer."
 }

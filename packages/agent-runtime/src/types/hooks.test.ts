@@ -7,6 +7,7 @@ import type {
   BeforeChatHook,
   OnChatCompleteHook,
   OnChatErrorHook,
+  ChatHook,
   HookRegistry,
   ConditionalHook,
   HookExecutionResult,

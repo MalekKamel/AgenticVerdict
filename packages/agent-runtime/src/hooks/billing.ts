@@ -101,7 +101,7 @@ export class BillingHook {
    */
   createOnChatCompleteHook(): OnChatCompleteHook {
     return async (context: OnChatCompleteContext) => {
-      const { tenantId, providerId } = context;
+      const { tenantId, providerId, modelId, requestId } = context;
       const { tokenUsage, durationMs } = context;
 
       try {

@@ -3,32 +3,21 @@ import { LangfuseTracingHook, createLangfuseTracingHook } from "./langfuse";
 import { AgentRuntimeError, AgentRuntimeErrorCode } from "../errors";
 
 // Mock Langfuse client
+const mockTrace = vi.fn().mockImplementation((data) => ({
+  id: data.id || "trace-123",
+  span: vi.fn().mockReturnValue({ id: "span-123" }),
+  generation: vi.fn(),
+}));
+
+const mockGeneration = vi.fn();
+const mockShutdownAsync = vi.fn().mockResolvedValue(undefined);
+
 vi.mock("langfuse", () => {
-  const mockTrace = {
-    id: "trace-123",
-    span: vi.fn().mockReturnValue({ id: "span-123" }),
-    generation: vi.fn(),
-  };
-
-  const mockSpan = {
-    id: "span-123",
-    generation: vi.fn(),
-  };
-
-  const mockGeneration = {
-    id: "generation-123",
-  };
-
   const Langfuse = vi.fn().mockImplementation(() => ({
-    trace: vi.fn().mockImplementation((data) => {
-      return {
-        ...mockTrace,
-        id: data.id || "trace-123",
-      };
-    }),
-    span: vi.fn().mockReturnValue(mockSpan),
-    generation: vi.fn().mockReturnValue(mockGeneration),
-    shutdownAsync: vi.fn().mockResolvedValue(undefined),
+    trace: mockTrace,
+    span: vi.fn().mockReturnValue({ id: "span-123", generation: mockGeneration }),
+    generation: mockGeneration,
+    shutdownAsync: mockShutdownAsync,
   }));
 
   return { Langfuse };
@@ -101,25 +90,25 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: { messages: [{ role: "user", content: "Hello" }] },
       };
 
       await beforeChatHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           id: "req-123",
           name: "chat.openai.gpt-4",
           userId: "tenant-123",
-          metadata: expect.objectContaining({
+          metadata: {
             tenantId: "tenant-123",
             providerId: "openai",
             modelId: "gpt-4",
             requestId: "req-123",
-          }),
-          tags: expect.arrayContaining(["provider:openai", "model:gpt-4", "tenant:tenant-123"]),
+          },
+          tags: ["provider:openai", "model:gpt-4", "tenant:tenant-123"],
+          input: { requestId: "req-123" },
         }),
       );
     });
@@ -132,14 +121,13 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: { messages: [{ role: "user", content: "Hello" }] },
       };
 
       await beforeChatHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           input: { requestId: "req-123" },
         }),
@@ -158,14 +146,13 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: { messages: [{ role: "user", content: "Hello" }] },
       };
 
       await beforeChatHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           input: { messages: [{ role: "user", content: "Hello" }] },
         }),
@@ -173,9 +160,73 @@ describe("LangfuseTracingHook", () => {
     });
 
     it("should not throw on tracing errors", async () => {
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      vi.mocked(mockClient.trace).mockImplementation(() => {
+      mockTrace.mockImplementationOnce(() => {
+        throw new Error("Tracing error");
+      });
+
+      const beforeChatHook = hook.createBeforeChatHook();
+
+      const context = {
+        tenantId: "tenant-123",
+        providerId: "openai",
+        modelId: "gpt-4",
+        requestId: "req-123",
+        startedAt: Date.now(),
+        payload: { messages: [{ role: "user", content: "Hello" }] },
+      };
+
+      await expect(beforeChatHook(context)).resolves.not.toThrow();
+      expect(mockConfig.logger.error).toHaveBeenCalled();
+    });
+
+    it("should exclude payload by default", async () => {
+      const beforeChatHook = hook.createBeforeChatHook();
+
+      const context = {
+        tenantId: "tenant-123",
+        providerId: "openai",
+        modelId: "gpt-4",
+        requestId: "req-123",
+        startedAt: Date.now(),
+        payload: { messages: [{ role: "user", content: "Hello" }] },
+      };
+
+      await beforeChatHook(context);
+
+      expect(mockTrace).toHaveBeenCalledWith(
+        expect.objectContaining({
+          input: { requestId: "req-123" },
+        }),
+      );
+    });
+
+    it("should include payload when configured", async () => {
+      const hookWithPayloads = createLangfuseTracingHook({
+        ...mockConfig,
+        includePayloads: true,
+      });
+      const beforeChatHook = hookWithPayloads.createBeforeChatHook();
+
+      const context = {
+        tenantId: "tenant-123",
+        providerId: "openai",
+        modelId: "gpt-4",
+        requestId: "req-123",
+        startedAt: Date.now(),
+        payload: { messages: [{ role: "user", content: "Hello" }] },
+      };
+
+      await beforeChatHook(context);
+
+      expect(mockTrace).toHaveBeenCalledWith(
+        expect.objectContaining({
+          input: { messages: [{ role: "user", content: "Hello" }] },
+        }),
+      );
+    });
+
+    it("should not throw on tracing errors", async () => {
+      mockTrace.mockImplementationOnce(() => {
         throw new Error("Langfuse API error");
       });
 
@@ -186,6 +237,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       };
 
@@ -209,6 +261,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       });
 
@@ -220,8 +273,9 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         response: { message: "Hello!" },
-        durationMs: 1500,
+        durationMs: 100,
         tokenUsage: {
           promptTokens: 10,
           completionTokens: 20,
@@ -231,9 +285,7 @@ describe("LangfuseTracingHook", () => {
 
       await onCompleteHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.generation).toHaveBeenCalledWith(
+      expect(mockGeneration).toHaveBeenCalledWith(
         expect.objectContaining({
           usage: {
             input: 10,
@@ -254,7 +306,8 @@ describe("LangfuseTracingHook", () => {
         modelId: "gpt-4",
         requestId: "non-existent-req",
         response: { message: "Hello!" },
-        durationMs: 1500,
+        durationMs: 100,
+        startedAt: Date.now(),
         tokenUsage: undefined,
       };
 
@@ -272,6 +325,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       });
 
@@ -282,16 +336,15 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         response: { message: "Hello!" },
-        durationMs: 1500,
+        durationMs: 100,
         tokenUsage: undefined,
       };
 
       await onCompleteHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           output: {},
         }),
@@ -313,12 +366,15 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       });
 
       const onErrorHook = hook.createOnChatErrorHook();
 
-      const error = new AgentRuntimeError(AgentRuntimeErrorCode.PROVIDER_ERROR, "Provider failed", {
+      const error = new AgentRuntimeError({
+        code: AgentRuntimeErrorCode.PROVIDER_NOT_FOUND,
+        message: "Provider failed",
         providerId: "openai",
         tenantId: "tenant-123",
         statusCode: 500,
@@ -329,18 +385,21 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         error,
-        durationMs: 2000,
+        durationMs: 100,
       };
 
       await onErrorHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      // The implementation updates the span with level/statusMessage,
+      // and updates the trace with metadata.errorMessage
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
-          level: "ERROR",
-          statusMessage: "Provider failed",
+          id: "req-123",
+          metadata: {
+            errorMessage: "Provider failed",
+          },
         }),
       );
     });
@@ -352,6 +411,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       });
 
@@ -364,18 +424,19 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         error,
-        durationMs: 2000,
+        durationMs: 100,
       };
 
       await onErrorHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
-          level: "ERROR",
-          statusMessage: "Something went wrong",
+          id: "req-123",
+          metadata: {
+            errorMessage: "Something went wrong",
+          },
         }),
       );
     });
@@ -387,6 +448,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {},
       });
 
@@ -399,18 +461,19 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         error,
-        durationMs: 2000,
+        durationMs: 100,
       };
 
       await onErrorHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
-          level: "ERROR",
-          statusMessage: "String error",
+          id: "req-123",
+          metadata: {
+            errorMessage: "String error",
+          },
         }),
       );
     });
@@ -426,7 +489,8 @@ describe("LangfuseTracingHook", () => {
         modelId: "gpt-4",
         requestId: "non-existent-req",
         error,
-        durationMs: 2000,
+        durationMs: 100,
+        startedAt: Date.now(),
       };
 
       await onErrorHook(context);
@@ -441,9 +505,7 @@ describe("LangfuseTracingHook", () => {
     it("should shutdown Langfuse client", async () => {
       await hook.shutdown();
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.shutdownAsync).toHaveBeenCalled();
+      expect(mockShutdownAsync).toHaveBeenCalled();
     });
 
     it("should log shutdown message", async () => {
@@ -461,14 +523,13 @@ describe("LangfuseTracingHook", () => {
         providerId: "anthropic",
         modelId: "claude-3",
         requestId: "req-789",
+        startedAt: Date.now(),
         payload: {},
       };
 
       await beforeChatHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: "tenant-456",
           metadata: expect.objectContaining({
@@ -486,6 +547,7 @@ describe("LangfuseTracingHook", () => {
         providerId: "openai",
         modelId: "gpt-4",
         requestId: "req-123",
+        startedAt: Date.now(),
         payload: {
           messages: [{ role: "user", content: "My SSN is 123-45-6789" }],
         },
@@ -493,9 +555,7 @@ describe("LangfuseTracingHook", () => {
 
       await beforeChatHook(context);
 
-      const { Langfuse } = await import("langfuse");
-      const mockClient = new Langfuse();
-      expect(mockClient.trace).toHaveBeenCalledWith(
+      expect(mockTrace).toHaveBeenCalledWith(
         expect.objectContaining({
           input: { requestId: "req-123" },
         }),

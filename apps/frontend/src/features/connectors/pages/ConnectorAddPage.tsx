@@ -16,6 +16,7 @@ import {
   Card,
   LoadingOverlay,
   Alert,
+  Select,
 } from "@mantine/core";
 import { useSearch } from "@/router/hooks/useSearch";
 import { useRouter } from "@/i18n/navigation";
@@ -23,6 +24,7 @@ import { IconSearch, IconCheck, IconAlertTriangle, IconX } from "@tabler/icons-r
 
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useConnectorCreate, useConnectorTest } from "@/features/connectors/api/connector-api";
+import { useAiDomains } from "@/hooks/useAiDomains";
 import {
   inputCheckedFromChangeEvent,
   inputValueFromChangeEvent,
@@ -90,7 +92,7 @@ type WizardState =
 
 interface ConnectorConfig {
   name: string;
-  domain: string;
+  domainId: string | null;
   metrics: string[];
   frequency: string;
   retention: number;
@@ -158,7 +160,7 @@ export default function ConnectorAddPage() {
   );
   const [config, setConfig] = useState<ConnectorConfig>({
     name: "",
-    domain: "",
+    domainId: null,
     metrics: [],
     frequency: "daily",
     retention: 90,
@@ -167,6 +169,11 @@ export default function ConnectorAddPage() {
 
   const createMutation = useConnectorCreate();
   const testMutation = useConnectorTest();
+  const { data: domainsData } = useAiDomains();
+  const domainOptions = (domainsData ?? []).map((d) => ({
+    value: d.id,
+    label: d.name,
+  }));
 
   useAppShellHeader({
     breadcrumbs: [
@@ -210,7 +217,7 @@ export default function ConnectorAddPage() {
     const res = await createMutation.mutateAsync({
       platform: state.platform,
       name: state.config.name,
-      domain: state.config.domain || undefined,
+      domainId: state.config.domainId || undefined,
       metrics: state.config.metrics,
       syncFrequency: state.config.frequency,
       retentionDays: state.config.retention,
@@ -322,11 +329,13 @@ export default function ConnectorAddPage() {
               onChange={(e) => setConfig((c) => ({ ...c, name: inputValueFromChangeEvent(e) }))}
               required
             />
-            <TextInput
+            <Select
               label={t("common.domain")}
-              placeholder={t("common.domainPlaceholder")}
-              value={config.domain}
-              onChange={(e) => setConfig((c) => ({ ...c, domain: inputValueFromChangeEvent(e) }))}
+              placeholder={t("common.selectDomain")}
+              data={domainOptions}
+              value={config.domainId}
+              onChange={(value) => setConfig((c) => ({ ...c, domainId: value ?? null }))}
+              clearable
             />
             <Text fw={500}>{t("common.metrics")}</Text>
             <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xs">
@@ -375,7 +384,11 @@ export default function ConnectorAddPage() {
               {t("add.confirm.platform", { platform: t(`platforms.${state.platform}.name`) })}
             </Text>
             <Text>{t("add.confirm.name", { name: state.config.name })}</Text>
-            <Text>{t("add.confirm.domain", { domain: state.config.domain || "—" })}</Text>
+            <Text>
+              {t("add.confirm.domain", {
+                domain: domainsData?.find((d) => d.id === state.config.domainId)?.name ?? "—",
+              })}
+            </Text>
             <Text>
               {t("add.confirm.metrics", {
                 metrics: state.config.metrics.map(localizeMetric).join(", "),

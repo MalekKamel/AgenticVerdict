@@ -18,15 +18,21 @@ afterEach(() => {
 });
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
+global.IntersectionObserver = class IntersectionObserverMock {
+  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {
+    void _callback;
+    void _options;
+  }
+  root = null;
+  rootMargin = "";
+  thresholds = [] as number[];
   disconnect() {}
   observe() {}
   takeRecords() {
     return [];
   }
   unobserve() {}
-} as typeof IntersectionObserver;
+} as unknown as typeof IntersectionObserver;
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -107,18 +113,10 @@ vi.mock("@tabler/icons-react", () => ({
 vi.mock("@mantine/core", () => ({
   Box: ({ children, ...props }: { children?: React.ReactNode }) =>
     React.createElement("div", { ...props }, children),
-  Button: ({
-    children,
-    loading,
-    disabled,
-    ...props
-  }: {
-    children?: React.ReactNode;
-    loading?: boolean;
-  }) =>
+  Button: ({ children, loading, ...props }: { children?: React.ReactNode; loading?: boolean }) =>
     React.createElement(
       "button",
-      { disabled: Boolean(loading || disabled), "data-loading": loading, ...props },
+      { disabled: Boolean(loading), "data-loading": loading, ...props },
       children,
     ),
   Stack: ({ children, ...props }: { children?: React.ReactNode }) =>

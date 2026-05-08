@@ -98,11 +98,11 @@ export type ChatHook = BeforeChatHook | OnChatCompleteHook | OnChatErrorHook;
  */
 export interface HookRegistry {
   /** Hooks to run before chat completion */
-  beforeChat: BeforeChatHook[];
+  beforeChat: Array<BeforeChatHook | ConditionalHook<BeforeChatHook>>;
   /** Hooks to run after successful chat completion */
-  onChatComplete: OnChatCompleteHook[];
+  onChatComplete: Array<OnChatCompleteHook | ConditionalHook<OnChatCompleteHook>>;
   /** Hooks to run when chat completion fails */
-  onChatError: OnChatErrorHook[];
+  onChatError: Array<OnChatErrorHook | ConditionalHook<OnChatErrorHook>>;
 }
 
 /**

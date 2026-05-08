@@ -33,7 +33,7 @@ export class HookExecutor {
   constructor(
     registry: HookRegistry,
     options?: {
-      logger?: typeof this.logger;
+      logger?: HookExecutor["logger"];
     },
   ) {
     this.registry = registry;
@@ -67,7 +67,7 @@ export class HookExecutor {
         const startTime = Date.now();
         const hook = this.getHookFunction(hookOrConditional);
 
-        await hook(context);
+        await (hook as (ctx: typeof context) => Promise<void>)(context);
 
         const durationMs = Date.now() - startTime;
         results.push({ hookName, success: true, durationMs });
@@ -88,7 +88,7 @@ export class HookExecutor {
         } else {
           this.logger?.error(`Required hook ${hookName} failed:`, error);
           throw AgentRuntimeError.fromError({
-            code: AgentRuntimeErrorCode.HookExecutionFailed,
+            code: AgentRuntimeErrorCode.HOOK_EXECUTION_FAILED,
             providerId: context.providerId,
             tenantId: context.tenantId,
             cause: error,
@@ -126,7 +126,7 @@ export class HookExecutor {
         const startTime = Date.now();
         const hook = this.getHookFunction(hookOrConditional);
 
-        await hook(context);
+        await (hook as (ctx: typeof context) => Promise<void>)(context);
 
         const durationMs = Date.now() - startTime;
         results.push({ hookName, success: true, durationMs });
@@ -173,7 +173,7 @@ export class HookExecutor {
         const startTime = Date.now();
         const hook = this.getHookFunction(hookOrConditional);
 
-        await hook(context);
+        await (hook as (ctx: typeof context) => Promise<void>)(context);
 
         const durationMs = Date.now() - startTime;
         results.push({ hookName, success: true, durationMs });

@@ -128,14 +128,14 @@ export const verdictVisualizationSchema = z.object({
 
 export type VerdictVisualization = z.infer<typeof verdictVisualizationSchema>;
 
-export const marketingVerdictReportMetadataSchema = z.object({
+export const verdictReportMetadataSchema = z.object({
   includeInExecutiveSummary: z.boolean().default(false),
   displayPriority: z.number().int().min(1).max(10).default(5),
   visualizations: z.array(verdictVisualizationSchema).optional(),
   footnotes: z.array(z.string()).optional(),
 });
 
-export const marketingVerdictSchema = z.object({
+export const verdictSchema = z.object({
   id: z.string().uuid(),
   tenantId: z.string().uuid(),
   campaignId: z.string().uuid().optional(),
@@ -159,7 +159,7 @@ export const marketingVerdictSchema = z.object({
   generatedBy: z.string().min(1),
   modelUsed: z.string().min(1),
   parameters: z.record(z.string(), z.unknown()).optional(),
-  reportMetadata: marketingVerdictReportMetadataSchema.optional(),
+  reportMetadata: verdictReportMetadataSchema.optional(),
 });
 
-export type MarketingVerdict = z.infer<typeof marketingVerdictSchema>;
+export type Verdict = z.infer<typeof verdictSchema>;

@@ -1,4 +1,5 @@
 import { OpenAI } from "openai";
+import type { ChatCompletion } from "openai/resources/chat/completions";
 
 import type {
   ProviderConfig,
@@ -68,7 +69,7 @@ export class OpenAIProvider implements ProviderRuntime {
     try {
       const openAIRequest = this.convertToOpenAIFormat(request);
 
-      const response = await this.client.chat.completions.create(openAIRequest);
+      const response = (await this.client.chat.completions.create(openAIRequest)) as ChatCompletion;
 
       return this.convertFromOpenAIResponse(response);
     } catch (error) {
@@ -213,7 +214,7 @@ export class OpenAIProvider implements ProviderRuntime {
     if (message.role === "tool") {
       return {
         role: "tool",
-        tool_call_id: message.toolCallId,
+        tool_call_id: message.toolCallId || "",
         content:
           typeof message.content === "string"
             ? message.content
@@ -291,10 +292,10 @@ export class OpenAIProvider implements ProviderRuntime {
           content: choice.message.content ?? "",
           toolCalls: choice.message.tool_calls?.map((call) => ({
             id: call.id,
-            type: "function",
+            type: call.type as "function",
             function: {
-              name: call.function.name,
-              arguments: call.function.arguments,
+              name: "function" in call ? call.function.name : "",
+              arguments: "function" in call ? call.function.arguments : "",
             },
           })),
         },
@@ -306,7 +307,6 @@ export class OpenAIProvider implements ProviderRuntime {
             prompt_tokens: response.usage.prompt_tokens,
             completion_tokens: response.usage.completion_tokens,
             total_tokens: response.usage.total_tokens,
-            completion_tokens_details: response.usage.completion_tokens_details,
           }
         : undefined,
       system_fingerprint: response.system_fingerprint,
@@ -314,31 +314,49 @@ export class OpenAIProvider implements ProviderRuntime {
   }
 
   private convertFromOpenAIStreamChunk(
-    chunk: Stream<OpenAI.Chat.ChatCompletionChunk>,
+    chunk: OpenAI.Chat.ChatCompletionChunk,
   ): ChatCompletionResponse {
     return {
       id: chunk.id,
       object: "chat.completion.chunk",
       created: chunk.created,
       model: chunk.model,
-      choices: chunk.choices.map((choice) => ({
-        index: choice.index,
-        message: {
-          role: choice.delta.role ?? "assistant",
-          content: choice.delta.content ?? "",
-          toolCalls: choice.delta.tool_calls?.map((call) => ({
-            id: call.id,
-            type: "function",
-            function: {
-              name: call.function?.name ?? "",
-              arguments: call.function?.arguments ?? "",
-            },
-          })),
-        },
-        finish_reason:
-          choice.finish_reason as ChatCompletionResponse["choices"][0]["finish_reason"],
-        delta: choice.delta,
-      })),
+      choices: chunk.choices.map((choice) => {
+        const role = choice.delta.role;
+        const validRole = (
+          ["user", "assistant", "system", "tool"].includes(role || "") ? role : "assistant"
+        ) as "user" | "assistant" | "system" | "tool";
+
+        return {
+          index: choice.index,
+          message: {
+            role: validRole ?? "assistant",
+            content: choice.delta.content ?? "",
+            toolCalls: choice.delta.tool_calls?.map((call) => ({
+              id: call.id,
+              type: "function" as const,
+              function: {
+                name: call.function?.name ?? "",
+                arguments: call.function?.arguments ?? "",
+              },
+            })),
+          },
+          finish_reason:
+            choice.finish_reason as ChatCompletionResponse["choices"][0]["finish_reason"],
+          delta: {
+            role: validRole ?? "assistant",
+            content: choice.delta.content ?? "",
+            tool_calls: choice.delta.tool_calls?.map((call) => ({
+              id: call.id,
+              type: "function" as const,
+              function: {
+                name: call.function?.name ?? "",
+                arguments: call.function?.arguments ?? "",
+              },
+            })),
+          },
+        } as ChatCompletionResponse["choices"][0];
+      }),
       usage: chunk.usage
         ? {
             prompt_tokens: chunk.usage.prompt_tokens,

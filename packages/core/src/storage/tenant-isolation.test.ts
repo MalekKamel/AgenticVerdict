@@ -16,7 +16,13 @@ const createTenantContext = (tenantId: string): TenantContext => ({
       currency: "USD",
     },
     marketing: { channels: [] },
-    ai: { primaryModel: "test", provider: "openai" },
+    ai: {
+      primaryProvider: "openai" as const,
+      defaultModel: {
+        providerId: "openai" as const,
+        modelId: "gpt-4",
+      },
+    },
     features: { enableInsights: true, enableVerdict: false },
   },
   requestId: `request-${tenantId}`,

@@ -77,3 +77,4 @@ export {
   normalizeFrontendError,
   type NormalizedUiError,
 } from "./error-system/normalized-error-adapter";
+export * from "./schemas/ai-provider";

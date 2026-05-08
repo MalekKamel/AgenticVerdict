@@ -1,11 +1,12 @@
 import { ProviderFactory } from "./core/ProviderFactory";
 import type { ChatCompletionRequest } from "./types/chat";
+import type { BaseMessage } from "@langchain/core/messages";
 
 import {
   assertInvocationMatchesActiveTenant,
   buildFactoryTurnPromptLayers,
 } from "./agent-context-integration";
-import type { AgentFactoryConfig } from "./agent-config";
+import type { AgentConfig } from "./agent-config";
 import {
   buildLlmInvocationCacheKey,
   factoryConfigCacheFingerprint,
@@ -37,7 +38,9 @@ function memoryTurnsToMessages(
 }
 
 export interface ProviderAgentOptions {
-  factoryConfig: AgentFactoryConfig;
+  factoryConfig: AgentConfig & {
+    temperature?: number;
+  };
   memory: IMemory;
   providerId: string;
   modelId: string;
@@ -47,10 +50,14 @@ export interface ProviderAgentOptions {
   invocationCache?: LlmInvocationCache;
   toolRegistry?: ToolRegistry;
   autoToolNames?: readonly string[];
+  /** LangChain-compatible mock model for test mode. */
+  mockLlm?: unknown;
 }
 
 export class ProviderAgent implements IAgent {
-  private readonly factoryConfig: AgentFactoryConfig;
+  private readonly factoryConfig: AgentConfig & {
+    temperature?: number;
+  };
   private readonly memory: IMemory;
   private readonly providerId: string;
   private readonly modelId: string;
@@ -61,6 +68,7 @@ export class ProviderAgent implements IAgent {
   private readonly factoryFingerprint: string;
   private readonly toolRegistry: ToolRegistry | undefined;
   private readonly autoToolNames: readonly string[] | undefined;
+  private readonly mockLlm: unknown | undefined;
 
   constructor(options: ProviderAgentOptions) {
     this.factoryConfig = options.factoryConfig;
@@ -74,6 +82,7 @@ export class ProviderAgent implements IAgent {
     this.factoryFingerprint = factoryConfigCacheFingerprint(options.factoryConfig);
     this.toolRegistry = options.toolRegistry;
     this.autoToolNames = options.autoToolNames;
+    this.mockLlm = options.mockLlm;
   }
 
   private async runAutoTools(
@@ -150,7 +159,12 @@ export class ProviderAgent implements IAgent {
         : toolContextText;
 
     const layers = buildFactoryTurnPromptLayers({
-      factoryConfig: this.factoryConfig,
+      factoryConfig: {
+        tenantContextMaxApproxTokens: this.factoryConfig.tokenBudgets.tenantContextMaxApproxTokens,
+        maxAssembledPromptApproxTokens:
+          this.factoryConfig.tokenBudgets.maxAssembledPromptApproxTokens,
+        systemPolicy: undefined,
+      },
       goal: input.goal,
       toolContext,
     });
@@ -238,6 +252,17 @@ export class ProviderAgent implements IAgent {
     messages: ChatCompletionRequest["messages"],
     tenantId: string,
   ): Promise<string> {
+    if (this.mockLlm) {
+      const baseMessages = messages.map((m) => ({
+        _getType() {
+          return m.role === "user" ? "human" : m.role === "assistant" ? "ai" : "system";
+        },
+        content: m.content,
+      })) as BaseMessage[];
+      const mockModel = this.mockLlm as { _call(msgs: BaseMessage[]): Promise<string> };
+      return await mockModel._call(baseMessages);
+    }
+
     const provider = ProviderFactory.create(providerId, {
       providerId,
       tenantId,

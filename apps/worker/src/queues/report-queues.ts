@@ -4,9 +4,9 @@ import {
   AgentFactory,
   loadLlmEnvFromProcess,
   runAgentJob,
-  runMarketingAgentPipeline,
+  runIntelligencePipeline,
   type TenantContextToolDeps,
-  type MarketingPipelineState,
+  type PipelineState,
   type PlatformFetchToolDeps,
 } from "@agenticverdict/agent-runtime";
 import { buildTenantContextForJob } from "@agenticverdict/core";
@@ -83,7 +83,7 @@ function periodFromWorkflowJobConfig(
 }
 
 function extractAnalysisDataSourcesFromPipeline(
-  pipelineState: MarketingPipelineState,
+  pipelineState: PipelineState,
   platformsAnalyzed: readonly ConnectorType[],
   dateRange: { start: string; end: string },
 ): DataSourceProvenance[] {
@@ -144,7 +144,7 @@ function foundationWorkflowResult(data: WorkflowTriggerJobData): WorkflowTrigger
 
 function toGeneratedInsights(
   data: WorkflowTriggerJobData,
-  state: MarketingPipelineState,
+  state: PipelineState,
   platforms: ConnectorType[],
 ): GeneratedInsight[] {
   const analysisId = state.workflowId;
@@ -237,19 +237,24 @@ async function runPipelineWorkflow(
     });
   }
 
-  const platformDeps: PlatformFetchToolDeps = createWorkerPlatformFetchToolDeps({
-    tenant,
-    mockScenario: validatedData.config.mockData?.scenario,
-    mockSeed: validatedData.config.mockData?.seed,
-  });
+  const platformDeps: PlatformFetchToolDeps = {
+    getAdapter: (platform) =>
+      createWorkerPlatformFetchToolDeps({
+        tenant,
+        mockScenario: validatedData.config.mockData?.scenario,
+        mockSeed: validatedData.config.mockData?.seed,
+      }).getAdapter(platform),
+  };
+  void platformDeps;
   const tenantContextDeps: TenantContextToolDeps = {};
+  void tenantContextDeps;
   const workflowId = randomUUID();
   // Enable production models when LLM credentials are available
   const useProductionModels = Boolean(
     llmEnv.anthropicApiKey || llmEnv.openAiApiKey || llmEnv.glmApiKey,
   );
   const pipelineState = await runAgentJob({ tenant, runId: `run-${workflowId}` }, async (scope) =>
-    runMarketingAgentPipeline({
+    runIntelligencePipeline({
       factory,
       ctx: scope.invocation,
       workflowId,
@@ -259,8 +264,27 @@ async function runPipelineWorkflow(
         promptVars: {
           platforms: effectivePlatforms.map((platform) => platform.toUpperCase()).join(", "),
         },
-        platformDeps,
-        tenantContextDeps,
+        factoryConfig: undefined,
+        templateVersion: undefined,
+        platformDeps: {
+          getPlatforms: async () => effectivePlatforms,
+        },
+        tenantContextDeps: {
+          getTenantContext: async () => ({
+            tenantId: tenant.tenantId,
+            tenantName: tenant.config.tenantName,
+            localization: tenant.config.localization,
+            marketing: {
+              channels: tenant.config.marketing.channels.map((c) => ({
+                platform: c.platform,
+                enabled: c.enabled,
+                label: c.label,
+                settings: c.settings,
+              })),
+              kpis: tenant.config.marketing.kpis,
+            },
+          }),
+        },
       },
       tolerateVerdictParseFailure: true,
       useProductionModels,

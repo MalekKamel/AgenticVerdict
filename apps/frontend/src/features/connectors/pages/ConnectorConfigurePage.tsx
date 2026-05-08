@@ -16,6 +16,7 @@ import {
   Switch,
   Skeleton,
   Alert,
+  Select,
 } from "@mantine/core";
 import { useParams } from "@/router/hooks/useParams";
 import { useRouter } from "@/i18n/navigation";
@@ -28,6 +29,7 @@ import {
   useConnectorTest,
 } from "@/features/connectors/api/connector-api";
 import { useConnectorPermissions } from "@/features/connectors/hooks/useConnectorPermissions";
+import { useAiDomains } from "@/hooks/useAiDomains";
 import {
   inputCheckedFromChangeEvent,
   inputValueFromChangeEvent,
@@ -50,12 +52,17 @@ export default function ConnectorConfigurePage() {
   const { data, isLoading } = useConnectorDetail(id);
   const updateMutation = useConnectorUpdate();
   const testMutation = useConnectorTest();
+  const { data: domainsData } = useAiDomains();
+  const domainOptions = (domainsData ?? []).map((d) => ({
+    value: d.id,
+    label: d.name,
+  }));
   const [_dirty, setDirty] = useState(false);
   const [testResult, setTestResult] = useState<"success" | "error" | null>(null);
 
   const [form, setForm] = useState({
     name: "",
-    domain: "",
+    domainId: "" as string | null,
     metrics: [] as string[],
     frequency: "daily",
     retention: 90,
@@ -68,7 +75,7 @@ export default function ConnectorConfigurePage() {
     if (data) {
       setForm({
         name: data.name,
-        domain: data.domain ?? "",
+        domainId: data.domainId ?? null,
         metrics: data.metrics ?? [],
         frequency: data.syncFrequency ?? "daily",
         retention: data.retentionDays ?? 90,
@@ -84,7 +91,7 @@ export default function ConnectorConfigurePage() {
     if (!data) return;
     const isDirty =
       form.name !== data.name ||
-      form.domain !== (data.domain ?? "") ||
+      form.domainId !== (data.domainId ?? null) ||
       JSON.stringify(form.metrics) !== JSON.stringify(data.metrics ?? []) ||
       form.frequency !== (data.syncFrequency ?? "daily") ||
       form.retention !== (data.retentionDays ?? 90) ||
@@ -119,7 +126,7 @@ export default function ConnectorConfigurePage() {
     await updateMutation.mutateAsync({
       id,
       name: form.name,
-      domain: form.domain || undefined,
+      domainId: form.domainId || undefined,
       metrics: form.metrics,
       syncFrequency: form.frequency,
       retentionDays: form.retention,
@@ -173,10 +180,13 @@ export default function ConnectorConfigurePage() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: inputValueFromChangeEvent(e) }))}
             />
-            <TextInput
+            <Select
               label={t("common.domain")}
-              value={form.domain}
-              onChange={(e) => setForm((f) => ({ ...f, domain: inputValueFromChangeEvent(e) }))}
+              placeholder={t("common.selectDomain")}
+              data={domainOptions}
+              value={form.domainId}
+              onChange={(value) => setForm((f) => ({ ...f, domainId: value ?? null }))}
+              clearable
             />
           </Stack>
         </Card>

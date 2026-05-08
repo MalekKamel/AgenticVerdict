@@ -18,7 +18,7 @@ export { HtmlFormatGenerator } from "./html-format-generator";
 export { ExcelXlsxFormatGenerator } from "./xlsx-format-generator";
 export { JsonFormatGenerator } from "./json-format-generator";
 export {
-  mapMarketingVerdictToReportModel,
+  mapVerdictToReportModel,
   mergePhase2IntoReportModel,
   type MergePhase2ReportModelOptions,
   type Phase3Verdict,

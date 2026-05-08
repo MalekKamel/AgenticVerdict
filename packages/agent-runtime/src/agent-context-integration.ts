@@ -2,7 +2,6 @@ import { requireTenantContext } from "@agenticverdict/core";
 
 import type { AgentInvocationContext } from "./interfaces";
 import { assemblePromptLayers, buildTenantPromptContext } from "./prompts/index";
-import type { AgentFactoryConfig } from "./agent-config";
 
 export class AgentTenantContextError extends Error {
   constructor(message: string) {
@@ -25,7 +24,11 @@ export function assertInvocationMatchesActiveTenant(ctx: AgentInvocationContext)
 }
 
 export interface BuildFactoryTurnPromptInput {
-  factoryConfig: AgentFactoryConfig;
+  factoryConfig: {
+    tenantContextMaxApproxTokens: number;
+    maxAssembledPromptApproxTokens: number;
+    systemPolicy?: string;
+  };
   goal: string;
   /** Optional short-lived tool/metrics blob; trimmed first under budget pressure. */
   toolContext?: string;
@@ -44,7 +47,7 @@ export function buildFactoryTurnPromptLayers(
   });
 
   const defaultPolicy =
-    "You are a marketing analytics assistant. Stay tenant-scoped, avoid secrets in replies, and be concise.";
+    "You are a business intelligence analyst assistant. Stay tenant-scoped, avoid secrets in replies, and be concise.";
 
   return assemblePromptLayers({
     systemPolicy: input.factoryConfig.systemPolicy ?? defaultPolicy,

@@ -1,19 +1,19 @@
 import { createHash, randomUUID } from "node:crypto";
 
-import type { MarketingVerdict } from "@agenticverdict/types";
-import { marketingVerdictSchema } from "@agenticverdict/types";
+import type { Verdict } from "@agenticverdict/types";
+import { verdictSchema } from "@agenticverdict/types";
 
 export function deterministicUuid(seed: string, salt: string): string {
   const h32 = createHash("sha256").update(`${seed}\n${salt}`).digest("hex").slice(0, 32);
   return `${h32.slice(0, 8)}-${h32.slice(8, 12)}-4${h32.slice(13, 16)}-a${h32.slice(17, 20)}-${h32.slice(20, 32)}`;
 }
 
-export interface BuildMarketingVerdictFixtureOptions {
+export interface BuildVerdictFixtureOptions {
   tenantId: string;
   analysisId: string;
   /** Stable nested UUIDs for deterministic datasets and tests. */
   fixtureSeed?: string;
-  overrides?: Partial<MarketingVerdict>;
+  overrides?: Partial<Verdict>;
 }
 
 const DEFAULT_RANGE = { start: "2026-01-01", end: "2026-01-31" } as const;
@@ -26,13 +26,11 @@ function nid(seed: string | undefined, salt: string): string {
 }
 
 /**
- * Builds a schema-valid {@link MarketingVerdict} for tests, demos, and validation fixtures.
+ * Builds a schema-valid {@link Verdict} for tests, demos, and validation fixtures.
  */
-export function buildMarketingVerdictFixture(
-  options: BuildMarketingVerdictFixtureOptions,
-): MarketingVerdict {
+export function buildVerdictFixture(options: BuildVerdictFixtureOptions): Verdict {
   const { tenantId, analysisId, fixtureSeed, overrides = {} } = options;
-  const raw: MarketingVerdict = {
+  const raw: Verdict = {
     id: nid(fixtureSeed, "verdict-id"),
     tenantId,
     analysisId,
@@ -132,17 +130,17 @@ export function buildMarketingVerdictFixture(
     platformsAnalyzed: ["meta", "ga4"],
     dateRange: DEFAULT_RANGE,
     generatedAt: new Date("2026-01-15T12:00:00.000Z"),
-    generatedBy: "agent.media_verdict",
+    generatedBy: "agent.verdict",
     modelUsed: "fixture",
     ...overrides,
   };
-  return marketingVerdictSchema.parse(raw);
+  return verdictSchema.parse(raw);
 }
 
-export function buildMinimalMarketingVerdict(
+export function buildMinimalVerdict(
   tenantId: string,
   analysisId: string,
-  overrides?: Partial<MarketingVerdict>,
-): MarketingVerdict {
-  return buildMarketingVerdictFixture({ tenantId, analysisId, overrides });
+  overrides?: Partial<Verdict>,
+): Verdict {
+  return buildVerdictFixture({ tenantId, analysisId, overrides });
 }

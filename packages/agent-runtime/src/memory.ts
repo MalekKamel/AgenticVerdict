@@ -1,4 +1,4 @@
-import type { AgentFactoryConfig, AgentMemoryMode } from "./agent-config";
+import type { AgentConfig } from "./agent-config";
 import type { IMemory } from "./interfaces";
 
 type MemoryTurn = { role: "user" | "assistant" | "system"; content: string };
@@ -192,24 +192,33 @@ export class CompositeAgentMemory implements IMemory {
   }
 }
 
-export function createAgentMemory(factoryConfig: AgentFactoryConfig): IMemory {
-  return createMemoryForMode(factoryConfig.memoryMode, factoryConfig);
+export function createAgentMemory(
+  factoryConfig: Pick<AgentConfig, "memoryMode" | "memoryLimits">,
+): IMemory {
+  return createMemoryForMode(factoryConfig.memoryMode, factoryConfig.memoryLimits);
 }
 
 export function createMemoryForMode(
-  mode: AgentMemoryMode,
-  factoryConfig: AgentFactoryConfig,
+  mode: AgentConfig["memoryMode"],
+  limits?: AgentConfig["memoryLimits"],
 ): IMemory {
-  const limits = factoryConfig.memoryLimits;
+  const memoryLimits = limits || {
+    maxBufferTurns: 32,
+    maxLongTermChars: 8000,
+    mergeEvictedTurnsIntoSummary: true,
+    maxSemanticSnippets: 48,
+    maxEntities: 64,
+  };
+
   switch (mode) {
     case "none":
       return new NullAgentMemory();
     case "buffer":
-      return new BoundedBufferMemory(limits.maxBufferTurns);
+      return new BoundedBufferMemory(memoryLimits.maxBufferTurns);
     case "buffer_summary":
-      return new CompositeAgentMemory("buffer_summary", limits);
+      return new CompositeAgentMemory("buffer_summary", memoryLimits);
     case "full":
-      return new CompositeAgentMemory("full", limits);
+      return new CompositeAgentMemory("full", memoryLimits);
     default: {
       const _exhaustive: never = mode;
       return _exhaustive;

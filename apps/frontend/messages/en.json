@@ -1230,5 +1230,27 @@
     "stepDoneLabel": "Done",
     "stepDoneDescription": "All set",
     "stepDoneBody": "You can revisit settings anytime from the app."
+  },
+  "components": {
+    "costImpactEstimator": {},
+    "costTierSelector": {},
+    "credentialForm": {},
+    "domainCard": {},
+    "inheritanceIndicator": {},
+    "insightAIConfig": {},
+    "loadingStates": {},
+    "providerGrid": {},
+    "templateBrowser": {},
+    "templatePreview": {},
+    "usageChart": {},
+    "usageTable": {},
+    "domainMapper": {}
+  },
+  "settings": {
+    "domains": {},
+    "providers": {},
+    "templates": {},
+    "usage": {},
+    "domainMapper": {}
   }
 }

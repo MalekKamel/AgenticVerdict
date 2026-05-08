@@ -10,7 +10,7 @@ import type {
 } from "../types/hooks";
 import { createPinoLogger } from "@agenticverdict/observability";
 
-const logger = createPinoLogger("HookComposition");
+const logger = createPinoLogger("agent-runtime");
 
 /**
  * Compose multiple beforeChat hooks into a single hook.

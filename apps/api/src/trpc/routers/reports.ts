@@ -12,7 +12,6 @@ import {
   StorageNotFoundError,
   TenantSecurityError,
 } from "@agenticverdict/core/storage";
-import { requireTenantContext } from "@agenticverdict/core/tenant-context";
 import {
   recordStorageUploadCompleted,
   recordStorageDownloadCompleted,
@@ -220,7 +219,6 @@ export const reportRouter = t.router({
     .query(async ({ ctx, input }) => {
       const start = Date.now();
       const tenantId = ctx.tenant.tenantId;
-      const tenantContext = requireTenantContext();
 
       logger.info(
         {
@@ -264,18 +262,18 @@ export const reportRouter = t.router({
 
           await dbScoped(db, async (tx) => {
             await tx.insert(auditTrail).values({
+              id: randomUUID(),
               tenantId,
-              reportId: input.id,
-              actorSub: ctx.auth.userId,
-              action: "download",
+              insightId: report.id,
               eventType: "accessed",
-              status: "success",
-              metadata: {
+              eventData: {
                 format: input.format,
                 storageKey,
                 sha256Hash: storageResult.sha256Hash,
+                actorSub: ctx.auth.userId,
+                action: "download",
+                status: "success",
               },
-              requestId: tenantContext.requestId,
             });
           });
 
@@ -372,7 +370,6 @@ export const reportRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       const start = Date.now();
       const tenantId = ctx.tenant.tenantId;
-      const tenantContext = requireTenantContext();
 
       logger.info(
         {
@@ -429,19 +426,19 @@ export const reportRouter = t.router({
 
           await dbScoped(db, async (tx) => {
             await tx.insert(auditTrail).values({
+              id: randomUUID(),
               tenantId,
-              reportId: input.id,
-              actorSub: ctx.auth.userId,
-              action: "upload",
+              insightId: report.id,
               eventType: "created",
-              status: "success",
-              metadata: {
+              eventData: {
                 format: input.format,
                 storageKey,
                 sha256Hash: uploadResult.sha256Hash,
                 etag: uploadResult.etag,
+                actorSub: ctx.auth.userId,
+                action: "upload",
+                status: "success",
               },
-              requestId: tenantContext.requestId,
             });
           });
 
@@ -543,14 +540,16 @@ export const reportRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
-            reportId: input.id,
-            actorSub: ctx.auth.userId,
-            action: "delete",
+            insightId: input.id,
             eventType: "deleted",
-            status: "success",
-            metadata: { deletedReportId: input.id },
-            requestId: randomUUID(),
+            eventData: {
+              deletedReportId: input.id,
+              actorSub: ctx.auth.userId,
+              action: "delete",
+              status: "success",
+            },
           });
         });
 
@@ -603,13 +602,16 @@ export const reportRouter = t.router({
             .returning();
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
-            actorSub: ctx.auth.userId,
-            action: "deleteMany",
             eventType: "deleted",
-            status: "success",
-            metadata: { deletedCount: deleted.length, reportIds: input.ids },
-            requestId: randomUUID(),
+            eventData: {
+              deletedCount: deleted.length,
+              reportIds: input.ids,
+              actorSub: ctx.auth.userId,
+              action: "deleteMany",
+              status: "success",
+            },
           });
 
           return deleted.length;
@@ -781,14 +783,17 @@ export const reportRouter = t.router({
           }
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
-            reportId: input.reportId,
-            actorSub: ctx.auth.userId,
-            action: "share",
+            insightId: input.reportId,
             eventType: "shared",
-            status: "success",
-            metadata: { shareId: share.id, expiresAt: share.expiresAt.toISOString() },
-            requestId: randomUUID(),
+            eventData: {
+              shareId: share.id,
+              expiresAt: share.expiresAt.toISOString(),
+              actorSub: ctx.auth.userId,
+              action: "share",
+              status: "success",
+            },
           });
 
           const shareUrl = buildSharedReportUrl({
@@ -866,14 +871,16 @@ export const reportRouter = t.router({
             .where(eq(reportShares.id, input.shareId));
 
           await tx.insert(auditTrail).values({
+            id: randomUUID(),
             tenantId,
-            reportId: share.reportId,
-            actorSub: ctx.auth.userId,
-            action: "revoke_share",
+            insightId: share.reportId,
             eventType: "share_revoked",
-            status: "success",
-            metadata: { shareId: input.shareId },
-            requestId: randomUUID(),
+            eventData: {
+              shareId: input.shareId,
+              actorSub: ctx.auth.userId,
+              action: "revoke_share",
+              status: "success",
+            },
           });
         });
 

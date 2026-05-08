@@ -147,7 +147,7 @@ export class FailoverHandler {
         continue;
       }
 
-      if (this.healthChecker) {
+      if (this.healthChecker && typeof this.healthChecker === "function") {
         const health = await this.checkProviderHealth(providerId);
         if (!health.isHealthy) {
           continue;

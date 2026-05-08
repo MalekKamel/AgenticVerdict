@@ -12,6 +12,7 @@ import {
   runWithTenantContext,
   type TenantContext,
 } from "@agenticverdict/core";
+import { createTestTenantConfig } from "@agenticverdict/testing";
 
 vi.mock("@agenticverdict/core", async () => {
   const actual = await vi.importActual("@agenticverdict/core");
@@ -35,10 +36,10 @@ describe("tenant-context", () => {
   describe("getRuntimeTenantContext", () => {
     it("should return tenant context when available", () => {
       const mockContext: TenantContext = {
-        tenantId: "tenant-123",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         tenantType: "direct_business",
         tenantStatus: "active",
-        config: {},
+        config: createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" }),
         requestId: "req-456",
         userId: "user-789",
       };
@@ -48,7 +49,7 @@ describe("tenant-context", () => {
       const result = getRuntimeTenantContext();
 
       expect(result).toEqual({
-        tenantId: "tenant-123",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         requestId: "req-456",
         userId: "user-789",
       });
@@ -57,10 +58,10 @@ describe("tenant-context", () => {
 
     it("should return undefined userId when not provided", () => {
       const mockContext: TenantContext = {
-        tenantId: "tenant-123",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         tenantType: "direct_business",
         tenantStatus: "active",
-        config: {},
+        config: createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" }),
         requestId: "req-456",
       };
 
@@ -69,37 +70,36 @@ describe("tenant-context", () => {
       const result = getRuntimeTenantContext();
 
       expect(result).toEqual({
-        tenantId: "tenant-123",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         requestId: "req-456",
         userId: undefined,
       });
     });
 
     it("should throw TENANT_CONTEXT_MISSING error when context not found", () => {
-      mockGetTenantContext.mockReturnValue(null);
+      mockGetTenantContext.mockReturnValue(undefined);
 
       expect(() => getRuntimeTenantContext()).toThrow(AgentRuntimeError);
 
-      const error = (() => {
-        try {
-          getRuntimeTenantContext();
-        } catch (e) {
-          return e as AgentRuntimeError;
-        }
-      })();
+      let error: AgentRuntimeError | undefined;
+      try {
+        getRuntimeTenantContext();
+      } catch (e) {
+        error = e as AgentRuntimeError;
+      }
 
-      expect(error.code).toBe(AgentRuntimeErrorCode.TENANT_CONTEXT_MISSING);
-      expect(error.message).toContain("Tenant context not found");
+      expect(error?.code).toBe(AgentRuntimeErrorCode.TENANT_CONTEXT_MISSING);
+      expect(error?.message).toContain("Tenant context not found");
     });
   });
 
   describe("requireRuntimeTenantContext", () => {
     it("should return tenant context from requireTenantContext", () => {
       const mockContext: TenantContext = {
-        tenantId: "tenant-abc",
+        tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
         tenantType: "direct_business",
         tenantStatus: "active",
-        config: { language: "en" },
+        config: createTestTenantConfig({ tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" }),
         requestId: "req-def",
         userId: "user-ghi",
       };
@@ -109,7 +109,7 @@ describe("tenant-context", () => {
       const result = requireRuntimeTenantContext();
 
       expect(result).toEqual({
-        tenantId: "tenant-abc",
+        tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
         requestId: "req-def",
         userId: "user-ghi",
       });
@@ -128,11 +128,11 @@ describe("tenant-context", () => {
   describe("runWithRuntimeTenantContext", () => {
     it("should wrap function with tenant context", () => {
       const testFn = vi.fn(() => "result");
-      const config = { language: "en", kpis: ["revenue"] };
+      const config = createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" });
 
       mockRunWithTenantContext.mockImplementation((context, fn) => {
         expect(context).toEqual({
-          tenantId: "tenant-123",
+          tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
           tenantType: "direct_business",
           tenantStatus: "active",
           config,
@@ -143,7 +143,7 @@ describe("tenant-context", () => {
       });
 
       const result = runWithRuntimeTenantContext(
-        "tenant-123",
+        "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         "req-456",
         config,
         testFn,
@@ -157,26 +157,37 @@ describe("tenant-context", () => {
 
     it("should work without userId", () => {
       const testFn = vi.fn(() => "result");
-      const config = {};
+      const config = createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" });
 
       mockRunWithTenantContext.mockImplementation((context, fn) => {
         expect(context.userId).toBeUndefined();
         return fn();
       });
 
-      runWithRuntimeTenantContext("tenant-123", "req-456", config, testFn);
+      runWithRuntimeTenantContext(
+        "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+        "req-456",
+        config,
+        testFn,
+      );
 
       expect(testFn).toHaveBeenCalledTimes(1);
     });
 
     it("should support async functions", async () => {
       const testFn = vi.fn(async () => "async-result");
+      const config = createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" });
 
       mockRunWithTenantContext.mockImplementation(async (context, fn) => {
         return await fn();
       });
 
-      const result = await runWithRuntimeTenantContext("tenant-123", "req-456", {}, testFn);
+      const result = await runWithRuntimeTenantContext(
+        "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+        "req-456",
+        config,
+        testFn,
+      );
 
       expect(result).toBe("async-result");
       expect(testFn).toHaveBeenCalledTimes(1);
@@ -186,10 +197,10 @@ describe("tenant-context", () => {
   describe("ensureTenantIsolation", () => {
     beforeEach(() => {
       const mockContext: TenantContext = {
-        tenantId: "tenant-123",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         tenantType: "direct_business",
         tenantStatus: "active",
-        config: {},
+        config: createTestTenantConfig({ tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee" }),
         requestId: "req-456",
       };
 
@@ -198,45 +209,43 @@ describe("tenant-context", () => {
 
     it("should not throw when tenant IDs match", () => {
       expect(() => {
-        ensureTenantIsolation("read", "tenant-123");
+        ensureTenantIsolation("read", "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee");
       }).not.toThrow();
     });
 
     it("should throw TENANT_CONTEXT_MISSING error when tenant IDs do not match", () => {
       expect(() => {
-        ensureTenantIsolation("read", "tenant-456");
+        ensureTenantIsolation("read", "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
       }).toThrow(AgentRuntimeError);
 
-      const error = (() => {
-        try {
-          ensureTenantIsolation("read", "tenant-456");
-        } catch (e) {
-          return e as AgentRuntimeError;
-        }
-      })();
+      let error: AgentRuntimeError | undefined;
+      try {
+        ensureTenantIsolation("read", "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+      } catch (e) {
+        error = e as AgentRuntimeError;
+      }
 
-      expect(error.code).toBe(AgentRuntimeErrorCode.TENANT_CONTEXT_MISSING);
-      expect(error.message).toContain("Tenant isolation violation");
-      expect(error.message).toContain("tenant-456");
-      expect(error.message).toContain("tenant-123");
-      expect(error.metadata).toEqual({
+      expect(error?.code).toBe(AgentRuntimeErrorCode.TENANT_CONTEXT_MISSING);
+      expect(error?.message).toContain("Tenant isolation violation");
+      expect(error?.message).toContain("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+      expect(error?.message).toContain("aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee");
+      expect(error?.metadata).toEqual({
         operation: "read",
-        resourceTenantId: "tenant-456",
+        resourceTenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
       });
     });
 
     it("should include operation and resource tenant ID in error metadata", () => {
-      const error = (() => {
-        try {
-          ensureTenantIsolation("delete", "tenant-789");
-        } catch (e) {
-          return e as AgentRuntimeError;
-        }
-      })();
+      let error: AgentRuntimeError | undefined;
+      try {
+        ensureTenantIsolation("delete", "cccccccc-cccc-4ccc-8ccc-cccccccccccc");
+      } catch (e) {
+        error = e as AgentRuntimeError;
+      }
 
-      expect(error.metadata).toEqual({
+      expect(error?.metadata).toEqual({
         operation: "delete",
-        resourceTenantId: "tenant-789",
+        resourceTenantId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
       });
     });
   });

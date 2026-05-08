@@ -2,8 +2,8 @@
 /**
  * Live LLM Verdict Generator
  *
- * Executes the marketing pipeline with production LLM (GLM) to capture
- * the full MarketingVerdict JSON response.
+ * Executes the intelligence pipeline with production LLM (GLM) to capture
+ * the full Verdict JSON response.
  */
 
 import { randomUUID } from "node:crypto";
@@ -12,7 +12,7 @@ import { createTestTenantConfig } from "../packages/testing/src/create-test-tena
 import { TEST_TENANT_ALPHA } from "../packages/testing/src/tenant-ids.ts";
 import { AgentFactory } from "../packages/agent-runtime/src/agent-factory.ts";
 import { runAgentJob } from "../packages/agent-runtime/src/agent-job.ts";
-import { runMarketingAgentPipeline } from "../packages/agent-runtime/src/marketing-pipeline.ts";
+import { runIntelligencePipeline } from "../packages/agent-runtime/src/intelligence-pipeline.ts";
 import { parseAgentLlmEnv } from "../packages/agent-runtime/src/llm-env.ts";
 
 const LOG_DIR = "test-output";
@@ -38,7 +38,7 @@ function logJson(label: string, data: unknown): void {
 
 async function main() {
   logSection("LIVE LLM VERDICT GENERATOR");
-  log("Starting marketing pipeline execution with live GLM LLM...");
+  log("Starting intelligence pipeline execution with live GLM LLM...");
 
   const llmEnv = parseAgentLlmEnv(process.env);
   log("LLM Configuration:");
@@ -91,7 +91,7 @@ Provide:
   const messages: Array<{ from: string; to: string; type: string }> = [];
 
   const state = await runAgentJob({ tenant, runId: `run-live-${randomUUID()}` }, async (scope) =>
-    runMarketingAgentPipeline({
+    runIntelligencePipeline({
       factory,
       ctx: scope.invocation,
       goal,
@@ -144,13 +144,13 @@ Provide:
   }
 
   if (state.verdict) {
-    logSection("VERDICT (PARSED MarketingVerdict)");
+    logSection("VERDICT (PARSED Verdict)");
     logJson("Full Verdict Object", state.verdict);
   }
 
   if (state.verdictRawAnswer) {
     logSection("RAW LLM VERDICT RESPONSE");
-    log("Raw answer from LLM (failed to parse as MarketingVerdict):");
+    log("Raw answer from LLM (failed to parse as Verdict):");
     log(state.verdictRawAnswer);
   }
 

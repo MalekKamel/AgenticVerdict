@@ -409,7 +409,7 @@ describe("translateOpenAIError", () => {
       expect(json.providerId).toBe("openai");
       expect(json.tenantId).toBe("tenant-123");
       expect(json.statusCode).toBe(429);
-      expect(json.metadata.errorType).toBe("rate_limit_error");
+      expect((json.metadata as { errorType?: string }).errorType).toBe("rate_limit_error");
       expect(json.timestamp).toBeDefined();
     });
   });

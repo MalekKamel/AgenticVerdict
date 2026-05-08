@@ -36,7 +36,7 @@ export const agentMessageSchema = z
   });
 
 export type AgentMessageType = z.infer<typeof agentMessageTypeSchema>;
-export type AgentExecutionContext = z.infer<typeof agentExecutionContextSchema>;
+export type AgentMessageContext = z.infer<typeof agentExecutionContextSchema>;
 export type AgentMessage = z.infer<typeof agentMessageSchema>;
 
 export class AgentProtocolError extends Error {
@@ -51,7 +51,7 @@ export interface CreateAgentMessageInput {
   to: string;
   type: AgentMessageType;
   payload: unknown;
-  context: AgentExecutionContext;
+  context: AgentMessageContext;
   /** Redundant copy required by tasks.md 6.4; must match `context.correlationId`. */
   correlationId: string;
   timestamp?: Date;

@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { z } from "zod";
 
-import type { MarketingVerdict } from "@agenticverdict/types";
+import type { Verdict } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
 import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
@@ -20,7 +20,7 @@ const verdictQuerySchema = z.object({
 });
 
 function rangesOverlap(
-  vr: MarketingVerdict["dateRange"],
+  vr: Verdict["dateRange"],
   start: string | undefined,
   end: string | undefined,
 ): boolean {
@@ -43,7 +43,7 @@ export function registerVerdictRoutes(app: FastifyInstance, redis: Redis | null)
       preHandler: preHandlers,
       schema: {
         tags: ["Verdicts"],
-        summary: "List MarketingVerdict records for the tenant",
+        summary: "List Verdict records for the tenant",
         security: [{ bearerAuth: [] }],
         querystring: {
           type: "object",
@@ -102,10 +102,7 @@ export function registerVerdictRoutes(app: FastifyInstance, redis: Redis | null)
 
       const q = parsed.data;
       const cacheKey = `cache:v1:verdicts:${tenantId}:${stableQueryKey(q as Record<string, unknown>)}`;
-      const cached = await readJsonCache<{ verdicts: MarketingVerdict[]; total: number }>(
-        redis,
-        cacheKey,
-      );
+      const cached = await readJsonCache<{ verdicts: Verdict[]; total: number }>(redis, cacheKey);
       if (cached) {
         return reply.send(cached);
       }

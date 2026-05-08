@@ -133,6 +133,7 @@ describe("AgentRuntimeError", () => {
         "FAILOVER_EXHAUSTED",
         "BUDGET_EXCEEDED",
         "COMPLIANCE_VIOLATION",
+        "HOOK_EXECUTION_FAILED",
       ];
 
       const actualCodes = Object.values(AgentRuntimeErrorCode);

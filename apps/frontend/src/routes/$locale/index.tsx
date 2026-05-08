@@ -21,7 +21,8 @@ function resolveHomeTenantIdFromEnv(): string {
 /** Server-only: loads JSON from disk; keep out of the client bundle via createServerFn. */
 const loadDemoTenantConfig = createServerFn({ method: "GET" }).handler(async () => {
   const { loadTenantConfig } = await import("@agenticverdict/config");
-  return loadTenantConfig(resolveHomeTenantIdFromEnv());
+  const config = loadTenantConfig(resolveHomeTenantIdFromEnv());
+  return JSON.parse(JSON.stringify(config)) as Record<string, string | number | boolean | null>;
 });
 
 export const Route = createFileRoute("/$locale/")({
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/$locale/")({
   ),
   loader: async () => {
     const config = await loadDemoTenantConfig();
-    return { config };
+    return { config: config as Record<string, unknown> };
   },
   component: HomePage,
 });
@@ -41,7 +42,9 @@ function HomePage() {
   return (
     <Container py="xl">
       <Stack gap="md">
-        <HomeContentClient config={config} />
+        <HomeContentClient
+          config={config as unknown as import("@agenticverdict/config").TenantConfig}
+        />
       </Stack>
     </Container>
   );

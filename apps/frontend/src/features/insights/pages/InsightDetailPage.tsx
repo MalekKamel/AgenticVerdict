@@ -433,7 +433,6 @@ function OverviewTab({
     <Stack gap="lg">
       <ConfigurationSummary insight={insight} />
       <RecentReports
-        insightId={insight.id}
         onViewReport={onViewReport}
         onDownloadReport={onDownloadReport}
         onShareReport={onShareReport}
@@ -768,7 +767,7 @@ function InsightDetailContent() {
     }
   };
 
-  const typedInsight = insight;
+  const typedInsight = insight as InsightListItem;
 
   const handleRunNow = () => {
     if (!insightId) return;
@@ -862,7 +861,6 @@ function InsightDetailContent() {
 
           <Tabs.Panel value="reports" pt="md">
             <ReportsTab
-              insightId={typedInsight.id}
               onViewReport={handleViewReport}
               onDownloadReport={handleDownloadReport}
               onShareReport={handleShareReport}

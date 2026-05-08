@@ -80,7 +80,8 @@ describe("createOpenAICompatibleProvider", () => {
       defaultModels: ["model-1", "model-2"],
     });
 
-    await expect(provider.discoverModels()).resolves.toBeDefined();
+    const providerImpl = provider as unknown as { discoverModels(): Promise<unknown> };
+    await expect(providerImpl.discoverModels()).resolves.toBeDefined();
   });
 });
 
@@ -93,10 +94,11 @@ describe("pre-configured providers", () => {
 
     it("should have DeepSeek default models", async () => {
       const provider = createDeepSeekProvider("test-key");
-      const models = await provider.discoverModels();
+      const providerImpl = provider as unknown as { discoverModels(): Promise<{ id: string }[]> };
+      const models = await providerImpl.discoverModels();
 
-      expect(models.some((m) => m.id === "deepseek-chat")).toBe(true);
-      expect(models.some((m) => m.id === "deepseek-coder")).toBe(true);
+      expect(models.some((m: { id: string }) => m.id === "deepseek-chat")).toBe(true);
+      expect(models.some((m: { id: string }) => m.id === "deepseek-coder")).toBe(true);
     });
   });
 
@@ -108,10 +110,11 @@ describe("pre-configured providers", () => {
 
     it("should have Groq default models", async () => {
       const provider = createGroqProvider("test-key");
-      const models = await provider.discoverModels();
+      const providerImpl = provider as unknown as { discoverModels(): Promise<{ id: string }[]> };
+      const models = await providerImpl.discoverModels();
 
-      expect(models.some((m) => m.id.includes("llama"))).toBe(true);
-      expect(models.some((m) => m.id.includes("mixtral"))).toBe(true);
+      expect(models.some((m: { id: string }) => m.id.includes("llama"))).toBe(true);
+      expect(models.some((m: { id: string }) => m.id.includes("mixtral"))).toBe(true);
     });
   });
 
@@ -140,9 +143,10 @@ describe("pre-configured providers", () => {
 
     it("should have Moonshot default models", async () => {
       const provider = createMoonshotProvider("test-key");
-      const models = await provider.discoverModels();
+      const providerImpl = provider as unknown as { discoverModels(): Promise<{ id: string }[]> };
+      const models = await providerImpl.discoverModels();
 
-      expect(models.some((m) => m.id.includes("moonshot"))).toBe(true);
+      expect(models.some((m: { id: string }) => m.id.includes("moonshot"))).toBe(true);
     });
   });
 
@@ -242,9 +246,10 @@ describe("discoverModels", () => {
       defaultModels: ["fallback-model"],
     });
 
-    const models = await provider.discoverModels();
+    const providerImpl = provider as unknown as { discoverModels(): Promise<{ id: string }[]> };
+    const models = await providerImpl.discoverModels();
 
-    expect(models.some((m) => m.id === "fallback-model")).toBe(true);
+    expect(models.some((m: { id: string }) => m.id === "fallback-model")).toBe(true);
   });
 
   it("should throw error when no default models configured and API fails", async () => {
@@ -255,7 +260,8 @@ describe("discoverModels", () => {
       baseURL: "https://api.test.com/v1",
     });
 
-    await expect(provider.discoverModels()).rejects.toThrow();
+    const providerImpl = provider as unknown as { discoverModels(): Promise<unknown> };
+    await expect(providerImpl.discoverModels()).rejects.toThrow();
   });
 });
 
@@ -269,19 +275,24 @@ describe("destroy", () => {
       defaultModels: ["test-model-1", "test-model-2"],
     });
 
+    const providerImpl = provider as unknown as {
+      discoverModels(): Promise<{ id: string }[]>;
+      destroy(): Promise<void>;
+    };
+
     // First, populate the cache
-    await provider.discoverModels();
+    await providerImpl.discoverModels();
 
     // Then destroy
-    await provider.destroy();
+    await providerImpl.destroy();
 
     // After destroy, cache should be cleared but default models should still be available
     // The discoverModels will fallback to defaultModels when API fails
-    const models = await provider.discoverModels();
+    const models = await providerImpl.discoverModels();
 
     // Should have at least the default models
     expect(models.length).toBeGreaterThanOrEqual(2);
-    expect(models.map((m) => m.id)).toContain("test-model-1");
-    expect(models.map((m) => m.id)).toContain("test-model-2");
+    expect(models.map((m: { id: string }) => m.id)).toContain("test-model-1");
+    expect(models.map((m: { id: string }) => m.id)).toContain("test-model-2");
   });
 });

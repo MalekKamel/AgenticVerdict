@@ -14,14 +14,18 @@ const swaggerBaseOptions = {
     },
     tags: [
       { name: "Health", description: "Service liveness" },
-      { name: "Insights", description: "Generated marketing insights" },
-      { name: "Verdicts", description: "Unified MarketingVerdict payloads" },
+      {
+        name: "Insights",
+        description:
+          "Generated domain-specific insights. Note: AI provider validation is dynamic - accepts any registered provider ID at runtime, validated against ProviderRegistry.",
+      },
+      { name: "Verdicts", description: "Unified Verdict payloads" },
       { name: "Analysis", description: "Full analysis results with provenance" },
       { name: "Validation", description: "Data quality validation for insights and verdicts" },
       {
         name: "Reports",
         description:
-          "Report metadata, binary upload/download (each upload creates a new version), email delivery enqueue, share links, delivery metrics, archival, retention, and compliance endpoints (tenant-scoped)",
+          "Report metadata, binary upload/download (each upload creates a new version), email delivery enqueue, share links, delivery metrics, archival, and compliance endpoints (tenant-scoped)",
       },
       {
         name: "Report schedules",

@@ -7,6 +7,11 @@ import { dashboardRouter } from "./routers/dashboard";
 import { insightRouter } from "./routers/insights";
 import { reportRouter } from "./routers/reports";
 import { tenantRouter } from "./routers/tenant";
+import { aiProvidersRouter } from "./routers/ai-providers";
+import { aiDomainsRouter } from "./routers/ai-domains";
+import { aiTemplatesRouter } from "./routers/ai-templates";
+import { aiUsageRouter } from "./routers/ai-usage";
+import { budgetAlertsRouter } from "./routers/budget-alerts";
 
 export const appRouter = t.router({
   auth: authRouter,
@@ -17,6 +22,11 @@ export const appRouter = t.router({
   dashboard: dashboardRouter,
   insight: insightRouter,
   report: reportRouter,
+  aiProviders: aiProvidersRouter,
+  aiDomains: aiDomainsRouter,
+  aiTemplates: aiTemplatesRouter,
+  aiUsage: aiUsageRouter,
+  budgetAlerts: budgetAlertsRouter,
 });
 
 export type AppRouter = typeof appRouter;

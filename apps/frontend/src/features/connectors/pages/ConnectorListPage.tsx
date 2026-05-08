@@ -33,10 +33,17 @@ import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import { useConnectorPermissions } from "@/features/connectors/hooks/useConnectorPermissions";
 import { useConnectorList, useConnectorSync } from "@/features/connectors/api/connector-api";
+import { useAiDomains } from "@/hooks/useAiDomains";
 import { StatusIndicator } from "@agenticverdict/ui";
 import type { ConnectorListItem } from "@agenticverdict/types";
 
-function ConnectorCard({ connector }: { connector: ConnectorListItem }) {
+function ConnectorCard({
+  connector,
+  domains,
+}: {
+  connector: ConnectorListItem;
+  domains: Array<{ id: string; name: string }>;
+}) {
   const t = useTranslations("connectors");
   const perms = useConnectorPermissions();
   const router = useRouter();
@@ -100,9 +107,9 @@ function ConnectorCard({ connector }: { connector: ConnectorListItem }) {
         <Badge size="sm" variant="outline">
           {connector.platform.toUpperCase()}
         </Badge>
-        {connector.domain ? (
+        {connector.domainId ? (
           <Text size="sm" c="dimmed">
-            {connector.domain}
+            {domains.find((d) => d.id === connector.domainId)?.name ?? connector.domainId}
           </Text>
         ) : null}
         {connector.lastSyncAt ? (
@@ -144,17 +151,20 @@ export default function ConnectorListPage() {
     "healthy" | "warning" | "error" | "inactive" | "syncing" | null
   >((search.status as "healthy" | "warning" | "error" | "inactive" | "syncing") ?? null);
   const [domainFilter, setDomainFilter] = useState<string | null>(
-    (search.domain as string) ?? null,
+    (search.domainId as string) ?? null,
   );
   const [searchQuery, setSearchQuery] = useState<string>((search.search as string) ?? "");
 
   const { data, isLoading } = useConnectorList({
     status: statusFilter ?? undefined,
-    domain: domainFilter ?? undefined,
+    domainId: domainFilter ?? undefined,
     search: searchQuery || undefined,
     page: 1,
     pageSize: 50,
   });
+
+  const { data: domainsData } = useAiDomains();
+  const domains = domainsData ?? [];
 
   useAppShellHeader({
     breadcrumbs: [
@@ -165,9 +175,7 @@ export default function ConnectorListPage() {
 
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
-  const uniqueDomains = Array.from(
-    new Set(items.map((c) => c.domain).filter((d): d is string => d !== null && d.length > 0)),
-  ).sort();
+  const domainFilterOptions = domains.map((d) => ({ value: d.id, label: d.name }));
 
   return (
     <Container py="xl" size="xl">
@@ -201,7 +209,7 @@ export default function ConnectorListPage() {
           />
           <Select
             placeholder={t("list.filters.allDomains")}
-            data={uniqueDomains.map((d) => ({ value: d, label: d }))}
+            data={domainFilterOptions}
             value={domainFilter}
             onChange={setDomainFilter}
             clearable
@@ -273,7 +281,7 @@ export default function ConnectorListPage() {
             </Text>
             <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
               {items.map((connector) => (
-                <ConnectorCard key={connector.id} connector={connector} />
+                <ConnectorCard key={connector.id} connector={connector} domains={domains} />
               ))}
             </SimpleGrid>
           </>

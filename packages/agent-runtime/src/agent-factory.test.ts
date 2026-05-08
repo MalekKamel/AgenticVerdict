@@ -3,16 +3,61 @@ import {
   createTestTenantContext,
   TEST_TENANT_ALPHA,
   TEST_TENANT_BETA,
+  AgentMockChatModel,
 } from "@agenticverdict/testing";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi, beforeEach } from "vitest";
 
 import { AgentFactory } from "./agent-factory";
-import { parseAgentFactoryConfig, safeParseAgentFactoryConfig } from "./agent-config";
 import { AgentTenantContextError } from "./agent-context-integration";
-import { AgentJobError, runAgentJob } from "./agent-job";
-import { AgentMockChatModel } from "@agenticverdict/testing";
-import { createRuleBasedEchoAgent } from "./rule-based-agent";
+import { runAgentJob, AgentJobError } from "./agent-job";
 import { defineTool } from "./tools";
+import { parseAgentFactoryConfig, safeParseAgentFactoryConfig } from "./agent-config";
+import { ProviderRegistry } from "./core/ProviderRegistry";
+import { BaseProvider } from "./core/BaseProvider";
+import type { ChatCompletionResponse } from "./types/chat";
+import { createRuleBasedEchoAgent } from "./rule-based-agent";
+
+class MockProvider extends BaseProvider {
+  readonly providerId = "mock";
+  readonly capabilities = {
+    chat: true,
+    chatStreaming: false,
+    chatVision: false,
+    chatTools: true,
+    embeddings: false,
+    imageGeneration: false,
+    textToSpeech: false,
+  };
+
+  async chat(): Promise<ChatCompletionResponse> {
+    return {
+      id: "mock-completion",
+      object: "chat.completion",
+      created: Date.now(),
+      model: "mock-model",
+      choices: [
+        {
+          index: 0,
+          message: { role: "assistant", content: "MOCK_RESPONSE" },
+          finish_reason: "stop",
+        },
+      ],
+      usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
+    };
+  }
+
+  async destroy(): Promise<void> {
+    // No-op for mock provider
+  }
+}
+
+beforeEach(() => {
+  ProviderRegistry.register("mock", MockProvider);
+});
+
+afterEach(() => {
+  ProviderRegistry.unregister("mock");
+});
 
 describe("AgentFactory (Phase 6)", () => {
   afterEach(() => {
@@ -20,24 +65,35 @@ describe("AgentFactory (Phase 6)", () => {
   });
 
   it("parses config with Zod defaults", () => {
-    const cfg = parseAgentFactoryConfig({ runtimeMode: "test", role: "insights" });
+    const cfg = parseAgentFactoryConfig({
+      runtimeMode: "test",
+      role: "insights",
+      name: "Test Agent",
+      systemMessage: "Test",
+    });
     expect(cfg.memoryMode).toBe("buffer");
-    expect(cfg.memoryLimits.maxBufferTurns).toBe(32);
+    expect(cfg.maxHistoryLength).toBe(10);
+    expect(cfg.timeoutMs).toBe(60000);
   });
 
   it("safeParseAgentFactoryConfig surfaces Zod errors", () => {
     const r = safeParseAgentFactoryConfig({ role: "invalid" });
-    expect(r.ok).toBe(false);
-    if (!r.ok) {
+    expect(r.success).toBe(false);
+    if (!r.success) {
       expect(r.error.issues.length).toBeGreaterThan(0);
     }
   });
 
   it("createAgent rejects test runtimeMode", () => {
     const factory = new AgentFactory({ llmEnv: {} });
-    expect(() => factory.createAgent({ runtimeMode: "test", role: "analysis" })).toThrow(
-      /createTestAgent/,
-    );
+    expect(() =>
+      factory.createAgent({
+        runtimeMode: "test",
+        role: "analysis",
+        name: "Test Agent",
+        systemMessage: "Test",
+      }),
+    ).toThrow(/createTestAgent/);
   });
 
   it("createTestAgent forces test runtime and runs under tenant scope", async () => {
@@ -45,7 +101,10 @@ describe("AgentFactory (Phase 6)", () => {
     const model = new AgentMockChatModel({
       customEntries: [{ id: "t-hello", matchSubstring: "hello", response: "MOCK_HELLO" }],
     });
-    const agent = factory.createTestAgent({ role: "analysis", memoryMode: "buffer" }, model);
+    const agent = factory.createTestAgent(
+      { role: "analysis", memoryMode: "buffer", name: "Test Agent", systemMessage: "Test" },
+      model,
+    );
     const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
       tenantConfig: { tenantId: TEST_TENANT_ALPHA, tenantName: "Alpha Co" },
@@ -67,7 +126,10 @@ describe("AgentFactory (Phase 6)", () => {
 
   it("throws when invocation tenantId does not match ALS tenant", async () => {
     const factory = new AgentFactory({ llmEnv: {} });
-    const agent = factory.createTestAgent({ role: "analysis" }, new AgentMockChatModel({}));
+    const agent = factory.createTestAgent(
+      { role: "analysis", name: "Test Agent", systemMessage: "Test" },
+      new AgentMockChatModel({}),
+    );
     const tenant = createTestTenantContext({
       tenantId: TEST_TENANT_ALPHA,
       tenantConfig: { tenantId: TEST_TENANT_ALPHA },
@@ -95,6 +157,8 @@ describe("AgentFactory (Phase 6)", () => {
       runtimeMode: "test",
       role: "analysis",
       memoryMode: "buffer",
+      name: "Test Agent",
+      systemMessage: "Test",
     });
     const memA = factory.createMemory(cfg);
     const memB = factory.createMemory(cfg);
@@ -112,7 +176,7 @@ describe("AgentFactory (Phase 6)", () => {
       execute: async () => "pong",
     });
     const { tools, agent } = factory.createAgentWithTools(
-      { runtimeMode: "test", role: "analysis" },
+      { runtimeMode: "test", role: "analysis", name: "Test Agent", systemMessage: "Test" },
       [ping],
     );
     expect(tools.get("ping")).toBeDefined();

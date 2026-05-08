@@ -1,20 +1,17 @@
 import { randomUUID } from "node:crypto";
 
-import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
+import { buildVerdictFixture } from "@agenticverdict/agent-runtime";
 import { generatedInsightSchema } from "@agenticverdict/types";
 import { describe, expect, it } from "vitest";
 
-import {
-  mapMarketingVerdictToReportModel,
-  mergePhase2IntoReportModel,
-} from "./phase2-report-model";
+import { mapVerdictToReportModel, mergePhase2IntoReportModel } from "./phase2-report-model";
 
 describe("mergePhase2IntoReportModel", () => {
   const tenantId = randomUUID();
   const analysisId = randomUUID();
 
   it("merges verdict and insights into view model fields", () => {
-    const verdict = buildMarketingVerdictFixture({
+    const verdict = buildVerdictFixture({
       tenantId,
       analysisId,
       fixtureSeed: "phase2-merge",
@@ -67,14 +64,14 @@ describe("mergePhase2IntoReportModel", () => {
   });
 });
 
-describe("mapMarketingVerdictToReportModel", () => {
+describe("mapVerdictToReportModel", () => {
   it("projects unified verdict into report-facing Phase3Verdict", () => {
-    const verdict = buildMarketingVerdictFixture({
+    const verdict = buildVerdictFixture({
       tenantId: randomUUID(),
       analysisId: randomUUID(),
       fixtureSeed: "phase3-map",
     });
-    const mapped = mapMarketingVerdictToReportModel(verdict);
+    const mapped = mapVerdictToReportModel(verdict);
     expect(mapped.verdictType).toBe(verdict.verdictType);
     expect(mapped.score).toBe(verdict.score);
     expect(mapped.summaryLine).toBe(verdict.summary);

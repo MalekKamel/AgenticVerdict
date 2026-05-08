@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   computePercentile,
-  marketingPipelineTimingToLogFields,
+  pipelineTimingToLogFields,
   summarizeLatencyMs,
 } from "./agent-performance-metrics";
 
@@ -23,7 +23,7 @@ describe("agent-performance-metrics", () => {
   });
 
   it("builds pipeline timing log fields without prompt text", () => {
-    const fields = marketingPipelineTimingToLogFields({
+    const fields = pipelineTimingToLogFields({
       workflowId: "wf-1",
       status: "completed",
       stages: [

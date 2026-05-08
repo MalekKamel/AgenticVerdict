@@ -8,7 +8,9 @@
     "./tenant/*": "./src/tenant/*.ts",
     "./tenant-context": "./src/tenant-context.ts",
     "./storage/*": "./src/storage/*.ts",
-    "./storage": "./src/storage/index.ts"
+    "./storage": "./src/storage/index.ts",
+    "./types/*": "./src/types/*.ts",
+    "./schemas/*": "./src/schemas/*.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
@@ -21,7 +23,8 @@
     "@agenticverdict/types": "workspace:*",
     "@aws-sdk/client-s3": "^3.0.0",
     "@aws-sdk/s3-request-presigner": "^3.0.0",
-    "@trpc/client": "^11.16.0"
+    "@trpc/client": "^11.16.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

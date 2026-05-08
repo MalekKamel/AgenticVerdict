@@ -3,7 +3,7 @@ import type { OutgoingHttpHeaders } from "node:http";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SignJWT } from "jose";
 
-import { marketingVerdictSchema } from "@agenticverdict/types";
+import { verdictSchema } from "@agenticverdict/types";
 
 import { __clearRateLimitMemoryForTests } from "./middleware/rate-limit";
 import { buildApiServer } from "./server";
@@ -193,7 +193,7 @@ describe("api v1 integration (remediation R-13)", () => {
     }
   });
 
-  it("GET /api/v1/verdicts returns unified MarketingVerdict payloads", async () => {
+  it("GET /api/v1/verdicts returns unified Verdict payloads", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/api/v1/verdicts",
@@ -202,7 +202,7 @@ describe("api v1 integration (remediation R-13)", () => {
     expect(res.statusCode).toBe(200);
     const body = res.json() as { verdicts: unknown[] };
     expect(body.verdicts.length).toBeGreaterThan(0);
-    const parsed = marketingVerdictSchema.safeParse(body.verdicts[0]);
+    const parsed = verdictSchema.safeParse(body.verdicts[0]);
     expect(parsed.success).toBe(true);
     const v = parsed.success ? parsed.data : null;
     expect(v?.keyInsights.length).toBeGreaterThan(0);

@@ -34,6 +34,12 @@ export const ROUTE_PATHS = {
   DASHBOARD_REPORTS: "/dashboard/reports" as const,
   DASHBOARD_REPORTS_DETAIL: "/dashboard/reports/$reportId" as const,
   SHARED_REPORTS: "/shared/reports/$reportId" as const,
+  SETTINGS_PROVIDERS: "/settings/providers" as const,
+  SETTINGS_DOMAINS: "/settings/domains" as const,
+  SETTINGS_DOMAIN_PROVIDERS: "/settings/domains/$domainId/providers" as const,
+  SETTINGS_TEMPLATES: "/settings/templates" as const,
+  SETTINGS_USAGE: "/settings/usage" as const,
+  SETTINGS_CONNECTORS_DOMAIN_MAPPER: "/settings/connectors/domain-mapper" as const,
 
   API_HEALTH: "/api/health" as const,
   API_HEALTH_ADAPTERS: "/api/health/adapters" as const,

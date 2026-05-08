@@ -1,13 +1,10 @@
 import type { ValidationDatasetCase } from "./agent-quality-validation";
-import {
-  buildMarketingVerdictFixture,
-  deterministicUuid,
-} from "./test-utils/marketing-verdict-fixtures";
+import { buildVerdictFixture, deterministicUuid } from "./test-utils/verdict-fixtures";
 
 function buildFixtureVerdictJson(seed: string): string {
   const tenantId = deterministicUuid(seed, "tenant");
   const analysisId = deterministicUuid(seed, "analysis");
-  const verdict = buildMarketingVerdictFixture({
+  const verdict = buildVerdictFixture({
     tenantId,
     analysisId,
     fixtureSeed: seed,

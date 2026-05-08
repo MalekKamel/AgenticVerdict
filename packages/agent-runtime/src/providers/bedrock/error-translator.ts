@@ -25,7 +25,7 @@ export function translateBedrockError(
 
   if (error instanceof AccessDeniedException || errorName === "AccessDeniedException") {
     return new AgentRuntimeError({
-      code: AgentRuntimeErrorCode.TENANT_UNAUTHORIZED,
+      code: AgentRuntimeErrorCode.AUTHENTICATION_FAILED,
       message: "Access denied to Bedrock model. Verify IAM permissions and credentials.",
       providerId: context.providerId,
       statusCode: 403,

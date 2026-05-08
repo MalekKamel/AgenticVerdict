@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseAgentFactoryConfig } from "./agent-config";
+import { parseAgentConfig } from "./agent-config";
 import {
   BoundedBufferMemory,
   CompositeAgentMemory,
@@ -86,18 +86,22 @@ describe("agent memory (Phase 6)", () => {
   });
 
   it("createAgentMemory maps factory memory modes", () => {
-    const none = parseAgentFactoryConfig({
+    const none = parseAgentConfig({
+      name: "test-agent",
       memoryMode: "none",
       runtimeMode: "test",
       role: "insights",
+      systemMessage: "Test system message",
     });
     expect(createAgentMemory(none).snapshot()).toEqual([]);
 
-    const buf = parseAgentFactoryConfig({
+    const buf = parseAgentConfig({
+      name: "test-agent",
       role: "insights",
       memoryMode: "buffer",
       runtimeMode: "test",
       memoryLimits: { maxBufferTurns: 1 },
+      systemMessage: "Test system message",
     });
     const bm = createAgentMemory(buf);
     bm.append("user", "a");

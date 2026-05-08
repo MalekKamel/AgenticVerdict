@@ -1,15 +1,15 @@
 import { randomUUID } from "node:crypto";
 
-import { buildMarketingVerdictFixture } from "@agenticverdict/agent-runtime";
+import { buildVerdictFixture } from "@agenticverdict/agent-runtime";
 import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
 import type {
   AnalysisResultResponse,
   DataSourceProvenance,
   GeneratedInsight,
-  MarketingVerdict,
+  Verdict,
   ConnectorType,
 } from "@agenticverdict/types";
-import { generatedInsightSchema, marketingVerdictSchema } from "@agenticverdict/types";
+import { generatedInsightSchema, verdictSchema } from "@agenticverdict/types";
 
 const byTenant = new Map<string, Map<string, AnalysisResultResponse>>();
 
@@ -97,8 +97,8 @@ function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsig
   ];
 }
 
-function buildDemoVerdict(tenantId: string, analysisId: string): MarketingVerdict {
-  return buildMarketingVerdictFixture({
+function buildDemoVerdict(tenantId: string, analysisId: string): Verdict {
+  return buildVerdictFixture({
     tenantId,
     analysisId,
     overrides: {
@@ -309,7 +309,7 @@ export function listAllInsightsForTenant(tenantId: string): GeneratedInsight[] {
   return [...tenantMap.values()].flatMap((bundle) => bundle.insights);
 }
 
-export function listAllVerdictsForTenant(tenantId: string): MarketingVerdict[] {
+export function listAllVerdictsForTenant(tenantId: string): Verdict[] {
   const tenantMap = ensureTenantMap(tenantId);
   if (tenantMap.size === 0) {
     return ensureTenantAnalysisStore(tenantId).bundle.verdicts;
@@ -344,7 +344,7 @@ export function persistWorkflowResultForTenant(
       createdAt: generatedAt,
     }),
   );
-  const maybeVerdict = marketingVerdictSchema.safeParse(workflowResult.verdict);
+  const maybeVerdict = verdictSchema.safeParse(workflowResult.verdict);
   const verdicts = maybeVerdict.success ? [maybeVerdict.data] : [];
   const platformsAnalyzed = (workflowResult.processingMetadata?.platformsAnalyzed ?? [
     "meta",

@@ -21,6 +21,7 @@ import { IconSettings, IconRefresh, IconCheck } from "@tabler/icons-react";
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useConnectorDetail, useConnectorSync } from "@/features/connectors/api/connector-api";
 import { useConnectorPermissions } from "@/features/connectors/hooks/useConnectorPermissions";
+import { useAiDomains } from "@/hooks/useAiDomains";
 import { useTranslations } from "@/i18n/react";
 import { StatusIndicator, DataFreshnessBadge } from "@agenticverdict/ui";
 
@@ -33,6 +34,7 @@ export default function ConnectorDetailPage() {
   const perms = useConnectorPermissions();
   const { data, isLoading, refetch } = useConnectorDetail(id);
   const syncMutation = useConnectorSync();
+  const { data: domainsData } = useAiDomains();
   const [polling, setPolling] = useState(false);
 
   useAppShellHeader({
@@ -93,9 +95,9 @@ export default function ConnectorDetailPage() {
               <Badge size="sm" variant="outline">
                 {data.platform.toUpperCase()}
               </Badge>
-              {data.domain ? (
+              {data.domainId ? (
                 <Text size="sm" c="dimmed">
-                  {data.domain}
+                  {domainsData?.find((d) => d.id === data.domainId)?.name ?? data.domainId}
                 </Text>
               ) : null}
             </Group>

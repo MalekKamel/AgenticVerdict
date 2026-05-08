@@ -8,9 +8,11 @@ import {
   text,
   pgTable,
   type AnyPgColumn,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 import { agencyPartners } from "./core/tenants";
+import type { TenantAIConfig } from "@agenticverdict/core/tenant/config-schema";
 
 export const tenantTypeEnum = pgEnum("tenant_type", [
   "direct_business",
@@ -60,6 +62,34 @@ export const tenants = pgTable("tenants", {
   aiCustomizationLevel: varchar("ai_customization_level", { length: 16 })
     .notNull()
     .default("balanced"),
+
+  // Comprehensive AI configuration (JSONB for flexibility)
+  aiConfig: jsonb("ai_config").$type<TenantAIConfig>(),
+
+  // AI Provider Management Settings (new)
+  /** Default cost tier for AI providers */
+  aiDefaultCostTier: varchar("ai_default_cost_tier", { length: 16 }).notNull().default("standard"),
+
+  /** Monthly AI budget limit in USD cents */
+  aiMonthlyBudgetCents: integer("ai_monthly_budget_cents"),
+
+  /** Budget alert threshold percentage (0-100) */
+  aiBudgetAlertThreshold: integer("ai_budget_alert_threshold").notNull().default(80),
+
+  /** Enable AI usage tracking */
+  aiEnableUsageTracking: boolean("ai_enable_usage_tracking").notNull().default(true),
+
+  /** Enable budget alerts */
+  aiEnableBudgetAlerts: boolean("ai_enable_budget_alerts").notNull().default(true),
+
+  /** Enable automatic failover */
+  aiEnableFailover: boolean("ai_enable_failover").notNull().default(true),
+
+  /** Failover providers (ordered list) */
+  aiFailoverProviders: jsonb("ai_failover_providers").$type<string[]>(),
+
+  /** Usage data retention days */
+  aiUsageRetentionDays: integer("ai_usage_retention_days").notNull().default(90),
 
   suspendedAt: timestamp("suspended_at", { withTimezone: true }),
   suspendedReason: text("suspended_reason"),

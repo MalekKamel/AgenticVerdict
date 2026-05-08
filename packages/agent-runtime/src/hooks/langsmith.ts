@@ -104,7 +104,10 @@ export class LangSmithTracingHook {
 
         // Store run context for later completion
         this.runMap.set(requestId, {
-          runId: runResult.id,
+          runId:
+            typeof runResult === "object" && runResult !== null && "id" in runResult
+              ? (runResult as { id: string }).id
+              : requestId,
           startTime,
         });
 
