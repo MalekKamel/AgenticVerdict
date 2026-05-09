@@ -26,6 +26,7 @@ import {
   IconDeviceFloppy,
 } from "@tabler/icons-react";
 
+import { trpc } from "@/lib/api/trpc-client";
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import { useAiDomains, useMapConnector, useUnmapConnector } from "@/hooks/useAiDomains";
@@ -35,6 +36,7 @@ import {
   showSuccessNotification,
 } from "@/lib/notifications";
 import { ROUTE_PATHS } from "@/router/utils/route-paths";
+import { useTenantConnectors } from "./connector-api";
 import type { BusinessDomain, Connector } from "@agenticverdict/types";
 
 interface DraggableConnectorProps {
@@ -53,8 +55,12 @@ function DraggableConnector({ connector, onDragStart }: DraggableConnectorProps)
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
+      case "healthy":
         return "green";
+      case "syncing":
+        return "blue";
+      case "warning":
+        return "yellow";
       case "inactive":
         return "gray";
       case "error":
@@ -237,21 +243,28 @@ export function DomainMapper() {
   });
 
   const { data: domains = [], isLoading } = useAiDomains();
+  const { data: connectorsData, isLoading: connectorsLoading } = useTenantConnectors();
   const mapConnectorMutation = useMapConnector();
   const unmapConnectorMutation = useUnmapConnector();
+  const queryClient = trpc.useUtils();
 
-  // Mock connectors - in real implementation, this would come from a hook
-  const connectors: Connector[] = useMemo(
-    () => [
-      // This would be fetched from useConnectors hook
-    ],
-    [],
-  );
+  const connectors: Connector[] = useMemo(() => {
+    if (!connectorsData?.items) return [];
+    return connectorsData.items.map((item) => ({
+      id: item.id,
+      platform: item.platform,
+      name: item.name,
+      type: item.platform,
+      status: item.status,
+      domainId: item.domainId,
+      lastSyncedAt: item.lastSyncAt,
+    }));
+  }, [connectorsData]);
 
   const filteredConnectors = connectors.filter(
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.platform?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()),
+      c.platform.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const unassignedConnectors = connectors.filter((c) => !c.domainId);
@@ -290,18 +303,21 @@ export function DomainMapper() {
         }),
       );
       setPendingChanges([]);
+      queryClient.aiDomains.list.invalidate();
+      queryClient.connector.list.invalidate();
       showSuccessNotification({
         title: t("actions.save"),
-        message: t("pendingChanges", { count: 0 }),
+        message: t("changes.saved", { count: pendingChanges.length }),
       });
     } catch {
       showErrorNotification({
         title: t("messages.error"),
+        message: t("messages.saveError"),
       });
     }
   };
 
-  if (isLoading) {
+  if (isLoading || connectorsLoading) {
     return (
       <Container size="xl" py="xl">
         <Text c="dimmed">{t("loading")}</Text>

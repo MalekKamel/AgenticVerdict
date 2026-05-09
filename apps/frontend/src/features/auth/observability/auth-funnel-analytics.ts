@@ -1,6 +1,7 @@
 import { getEffectiveTenantId } from "@agenticverdict/core/tenant/tenant-resolution";
 import { authStore } from "@/features/auth/model/state/auth-store";
-import { forwardTelemetry, type TelemetryEnvelope } from "@/lib/observability/telemetry-ingest";
+import { forwardTelemetry } from "@/lib/observability/telemetry-ingest";
+import type { TelemetryEnvelope } from "@agenticverdict/types";
 
 export type AuthFunnelFlow =
   | "login"

@@ -1,5 +1,5 @@
 import { BusinessDomainsRepository } from "@agenticverdict/database";
-import { createDomainSchema, updateDomainSchema } from "@agenticverdict/core/schemas/ai-provider";
+import { createDomainSchema, updateDomainSchema } from "@agenticverdict/types";
 import type { z } from "zod";
 
 /**

@@ -1,24 +1,5 @@
 import { randomUUID } from "node:crypto";
-
-export type DeliveryEventType =
-  | "email_queued"
-  | "email_sent"
-  | "email_failed"
-  | "email_bounced"
-  | "email_complaint"
-  | "share_issued"
-  | "schedule_registered"
-  | "schedule_removed";
-
-export interface DeliveryEvent {
-  id: string;
-  tenantId: string;
-  type: DeliveryEventType;
-  reportId?: string | undefined;
-  scheduleId?: string | undefined;
-  at: string;
-  meta?: Record<string, string | number | boolean> | undefined;
-}
+import type { DeliveryEvent, DeliveryMetricsSummary } from "@agenticverdict/types";
 
 const events: DeliveryEvent[] = [];
 const maxEvents = 5000;
@@ -44,17 +25,6 @@ export function recordDeliveryEvent(
 
 export function listDeliveryEventsForTenant(tenantId: string, limit = 100): DeliveryEvent[] {
   return events.filter((e) => e.tenantId === tenantId).slice(-limit);
-}
-
-export interface DeliveryMetricsSummary {
-  emailQueued: number;
-  emailSent: number;
-  emailFailed: number;
-  emailBounced: number;
-  emailComplaints: number;
-  shareIssued: number;
-  scheduleRegistered: number;
-  scheduleRemoved: number;
 }
 
 export function summarizeDeliveryEvents(tenantId: string): DeliveryMetricsSummary {

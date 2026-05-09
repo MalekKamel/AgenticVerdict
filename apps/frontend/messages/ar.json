@@ -1010,6 +1010,18 @@
       "newInsight": "رؤية جديدة",
       "searchPlaceholder": "البحث في الرؤى...",
       "filterByStatus": "تصفية حسب الحالة",
+      "filterByDomain": "تصفية حسب النطاق",
+      "sortBy": "ترتيب حسب",
+      "sort": {
+        "nameAsc": "الاسم (أ-ي)",
+        "nameDesc": "الاسم (ي-أ)",
+        "createdAtAsc": "تاريخ الإنشاء (الأقدم)",
+        "createdAtDesc": "تاريخ الإنشاء (الأحدث)",
+        "lastRunAtAsc": "آخر تشغيل (الأقدم)",
+        "lastRunAtDesc": "آخر تشغيل (الأحدث)",
+        "statusAsc": "الحالة (نشط أولاً)",
+        "statusDesc": "الحالة (غير نشط أولاً)"
+      },
       "connectors": "موصلات",
       "created": "تاريخ الإنشاء",
       "lastRun": "آخر تشغيل",
@@ -1110,6 +1122,51 @@
         "schedule": "الجدولة والتسليم"
       },
       "unsavedChanges": "تغييرات غير محفوظة"
+    },
+    "templates": {
+      "title": "القوالب",
+      "searchPlaceholder": "البحث في القوالب...",
+      "allDomains": "جميع المجالات",
+      "all": "الكل",
+      "noTemplatesFound": "لم يتم العثور على قوالب",
+      "noTemplatesFoundAction": "لم يتم العثور على قوالب. ابدأ من الصفر لإنشاء رؤيتك.",
+      "preview": "معاينة",
+      "previewTitle": "معاينة القالب",
+      "connectors": "الموصلات",
+      "schedule": "الجدول الزمني",
+      "delivery": "التسليم",
+      "applyTemplate": "تطبيق القالب",
+      "applyAndCustomize": "تطبيق وتخصيص",
+      "close": "إغلاق",
+      "cancel": "إلغاء",
+      "useTemplate": "استخدام القالب",
+      "useATemplate": "استخدام قالب",
+      "startFromScratch": "البدء من الصفر",
+      "chooseStartingPoint": "اختر نقطة بداية",
+      "chooseStartingPointDesc": "ابدأ من قالب أو ابنِ رؤيتك من الصفر.",
+      "failedToLoad": "فشل تحميل القوالب. يرجى المحاولة مرة أخرى لاحقًا.",
+      "loading": "جاري تحميل القوالب...",
+      "templateNotFound": "لم يتم العثور على القالب.",
+      "loadingDetails": "جاري تحميل تفاصيل القالب...",
+      "appliedTemplate": "تم تطبيق القالب: {name}. جميع الحقول قابلة للتعديل.",
+      "templateApplied": "تم تطبيق القالب",
+      "connectorCount": "{count, plural, zero {لا يوجد موصلات} one {موصل واحد} two {موصلان} few {# موصلات} many {# موصل} other {# موصلات}}",
+      "frequency": {
+        "daily": "يوميًا",
+        "weekly": "أسبوعيًا",
+        "monthly": "شهريًا",
+        "quarterly": "ربع سنوي"
+      },
+      "format": {
+        "pdf": "PDF",
+        "excel": "Excel",
+        "both": "PDF + Excel"
+      },
+      "domains": "المجالات",
+      "connectorsMetrics": "الموصلات والمقاييس",
+      "formatLabel": "التنسيق",
+      "webhookEnabled": "Webhook مفعّل",
+      "plusMore": "+{count}"
     }
   },
   "reports": {

@@ -10,8 +10,10 @@ import { tenantRouter } from "./routers/tenant";
 import { aiProvidersRouter } from "./routers/ai-providers";
 import { aiDomainsRouter } from "./routers/ai-domains";
 import { aiTemplatesRouter } from "./routers/ai-templates";
+import { insightTemplatesRouter } from "./routers/insight-templates";
 import { aiUsageRouter } from "./routers/ai-usage";
 import { budgetAlertsRouter } from "./routers/budget-alerts";
+import { schedulesRouter } from "./routers/schedules";
 
 export const appRouter = t.router({
   auth: authRouter,
@@ -25,8 +27,10 @@ export const appRouter = t.router({
   aiProviders: aiProvidersRouter,
   aiDomains: aiDomainsRouter,
   aiTemplates: aiTemplatesRouter,
+  insightTemplates: insightTemplatesRouter,
   aiUsage: aiUsageRouter,
   budgetAlerts: budgetAlertsRouter,
+  schedules: schedulesRouter,
 });
 
 export type AppRouter = typeof appRouter;

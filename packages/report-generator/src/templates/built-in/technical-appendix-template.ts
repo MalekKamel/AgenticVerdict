@@ -1,6 +1,7 @@
 import { renderDataTable } from "../../components/data-table";
 import { renderSectionDivider } from "../../components/section-divider";
 import { escapeHtml } from "../../html-utils";
+import { getReportStrings } from "../../i18n/report-strings";
 import type { ReportGenerationContext } from "../../types";
 import { BaseReportTemplate } from "../base-report-template";
 import { renderCoverBlock } from "../cover-and-header";
@@ -25,6 +26,7 @@ export class TechnicalAppendixTemplate extends BaseReportTemplate {
   async renderHtml(context: ReportGenerationContext, model: unknown): Promise<string> {
     const vm = coerceReportTemplateViewModel(model);
     const dir = resolveContextTextDirection(context);
+    const t = getReportStrings(context.locale);
     const sections = vm.appendixSections;
     const tocEntries = sections.map((s, i) => ({
       id: `appendix-${i}`,
@@ -43,9 +45,9 @@ export class TechnicalAppendixTemplate extends BaseReportTemplate {
 
     const metricsBlock =
       vm.metrics.columns.length > 0
-        ? `${renderSectionDivider("Reference tables")}
+        ? `${renderSectionDivider(t.referenceTables)}
 <section id="appendix-metrics">
-  <h2 style="font-size:17px;">Reference metrics</h2>
+  <h2 style="font-size:17px;">${escapeHtml(t.referenceMetrics)}</h2>
   ${renderDataTable({ ...vm.metrics, striped: true })}
 </section>`
         : "";
@@ -55,9 +57,10 @@ export class TechnicalAppendixTemplate extends BaseReportTemplate {
       tenantName: vm.tenantName,
       periodLabel: vm.periodLabel,
       accentColor: vm.brandAccentColor,
+      locale: context.locale,
     })}
-${renderTableOfContents(tocEntries)}
-${sections.length > 0 ? blocks : `<p style="color:#9ca3af;">No appendix sections provided.</p>`}
+${renderTableOfContents(tocEntries, context.locale)}
+${sections.length > 0 ? blocks : `<p style="color:#9ca3af;">${escapeHtml(t.noAppendixText)}</p>`}
 ${metricsBlock}`;
 
     return wrapReportDocument({

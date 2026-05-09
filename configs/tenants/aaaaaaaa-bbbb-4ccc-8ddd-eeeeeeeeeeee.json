@@ -1,0 +1,20 @@
+{
+  "tenantId": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+  "tenantName": "Tenant A",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "America/New_York",
+    "currency": "USD"
+  },
+  "marketing": {
+    "channels": [{ "platform": "ga4", "enabled": true }]
+  },
+  "ai": {
+    "primaryProvider": "anthropic"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true
+  }
+}

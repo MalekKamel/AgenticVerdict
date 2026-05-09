@@ -5,6 +5,7 @@ export {
   type Database,
   type DatabaseClientOptions,
   type RetryOptions,
+  type Sql,
 } from "./client";
 export { dbScoped } from "./db-scoped";
 export { verifyTenantRlsSessionBinding } from "./tenant-rls-guard";
@@ -36,3 +37,17 @@ export { BusinessDomainsRepository } from "./repositories/business-domains.repos
 export { BudgetAlertsRepository } from "./repositories/budget-alerts.repository";
 export { AiUsageRepository } from "./repositories/ai-usage.repository";
 export { AiTemplatesRepository } from "./repositories/ai-templates.repository";
+export { InsightTemplatesRepository } from "./repositories/insight-templates.repository";
+export { SchedulesRepository } from "./repositories/schedules.repository";
+export type {
+  InsightTemplateWithDomains,
+  InsightTemplateWithConnectors,
+  InsightTemplateWithRelations,
+  InsightTemplateSummary as InsightTemplateSummaryDb,
+  ValidationResult,
+} from "./repositories/insight-templates.repository";
+export type {
+  ExecutionHistoryOptions,
+  ExecutionHistoryResult,
+  ConflictResult,
+} from "./repositories/schedules.repository";

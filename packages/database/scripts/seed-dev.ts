@@ -49,11 +49,25 @@ import {
   seedI18nStringsForTenant,
 } from "../src/seeds/feature-flags-i18n-seed";
 import { seedReportSharesForTenant } from "../src/seeds/report-shares-seed";
-import { seedAuditLogsForTenant } from "../src/seeds/audit-seed";
+import { InsightTemplateFactory, getDevTemplates } from "../src/factories/insight-template-factory";
+import { seedAuditLogsForTenant, seedAuditTrailForTenant } from "../src/seeds/audit-seed";
+import { seedConnectorSyncHistoryForTenant } from "../src/seeds/connector-sync-insight-seed";
 import {
-  seedConnectorSyncHistoryForTenant,
-  seedInsightConnectorsForTenant,
-} from "../src/seeds/connector-sync-insight-seed";
+  seedPlatformCredentialsForTenant,
+  createDevPlatformCredentials,
+} from "../src/seeds/platform-credentials-seed";
+import {
+  seedMarketingMetricsForTenant,
+  createDevMarketingMetrics,
+} from "../src/seeds/marketing-metrics-seed";
+import {
+  seedProvenanceRecordsForTenant,
+  createDevProvenanceRecords,
+} from "../src/seeds/provenance-records-seed";
+import {
+  seedUsageTrackingForTenant,
+  createDevUsageTracking,
+} from "../src/seeds/usage-tracking-seed";
 import { UserFactory } from "../src/factories/user-factory";
 import { ConnectorFactory } from "../src/factories/connector-factory";
 import { InsightFactory } from "../src/factories/insight-factory";
@@ -194,6 +208,9 @@ async function main(): Promise<void> {
       },
     ]);
 
+    console.log("  → Seeding insight templates (platform-shared)...");
+    await InsightTemplateFactory.createBatch(db, getDevTemplates());
+
     console.log("  → Seeding agency partners from configs...");
     const agencyPartnerCount = await seedAgencyPartnersFromTenantConfigs(
       db,
@@ -246,24 +263,24 @@ async function main(): Promise<void> {
       );
 
       // --- Connectors ---
-      const connectors = ConnectorFactory.createList(tenant.slug, ["ga4", "meta", "gsc"]);
+      const connectors = ConnectorFactory.createList(tenant.slug, [
+        "ga4",
+        "meta",
+        "gsc",
+        "tiktok",
+        "gbp",
+      ]);
       await seedTenantConnectors(db, tenant.id, connectors);
 
       // --- Insights ---
       const insights = InsightFactory.createList(tenant.slug, [
         "Weekly Performance",
         "Monthly ROI",
+        "SEO Analysis",
+        "Social Media Performance",
+        "Local Business Insights",
       ]);
       await seedInsightsForTenant(db, tenant.id, insights);
-
-      // --- Insight-Connector Assignments ---
-      await seedInsightConnectorsForTenant(db, tenant.id, [
-        { insightName: "Weekly Performance", connectorPlatform: "ga4" },
-        { insightName: "Weekly Performance", connectorPlatform: "meta" },
-        { insightName: "Monthly ROI", connectorPlatform: "ga4" },
-        { insightName: "Monthly ROI", connectorPlatform: "meta" },
-        { insightName: "Monthly ROI", connectorPlatform: "gsc" },
-      ]);
 
       // --- Connector Sync History ---
       const now = new Date();
@@ -599,6 +616,45 @@ async function main(): Promise<void> {
           metadata: { count: 3 },
         },
       ]);
+
+      // --- Audit Trail ---
+      await seedAuditTrailForTenant(db, tenant.id, [
+        {
+          eventType: "created",
+          eventData: { resource: "insight", action: "insight.created", count: 2 },
+        },
+        {
+          eventType: "config_change",
+          eventData: {
+            resource: "connector",
+            action: "connector.configured",
+            platforms: ["ga4", "meta", "gsc"],
+          },
+        },
+        {
+          eventType: "run",
+          eventData: { resource: "insight", action: "insight.run", status: "success" },
+        },
+      ]);
+
+      // --- Platform Credentials ---
+      await seedPlatformCredentialsForTenant(db, tenant.id, createDevPlatformCredentials());
+
+      // --- Marketing Metrics ---
+      await seedMarketingMetricsForTenant(db, tenant.id, createDevMarketingMetrics(14));
+
+      // --- Provenance Records ---
+      await seedProvenanceRecordsForTenant(
+        db,
+        tenant.id,
+        createDevProvenanceRecords([
+          `${tenant.id.slice(0, 8)}-0000-0000-0000-000000000001`,
+          `${tenant.id.slice(0, 8)}-0000-0000-0000-000000000002`,
+        ]),
+      );
+
+      // --- Usage Tracking ---
+      await seedUsageTrackingForTenant(db, tenant.id, createDevUsageTracking());
 
       // --- I18n Strings ---
       await seedI18nStringsForTenant(db, tenant.id, [

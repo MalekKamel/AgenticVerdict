@@ -1,3 +1,4 @@
+import type { TemplateVariable, TemplateMetadata } from "@agenticverdict/types";
 import {
   pgTable,
   uuid,
@@ -51,18 +52,7 @@ export const aiTemplates = pgTable(
     content: text("content").notNull(),
 
     /** Variable definitions (JSON) */
-    variables: jsonb("variables")
-      .$type<
-        Array<{
-          name: string;
-          type: string;
-          required: boolean;
-          defaultValue?: unknown;
-          description?: string;
-          pattern?: string;
-        }>
-      >()
-      .default([]),
+    variables: jsonb("variables").$type<TemplateVariable[]>().default([]),
 
     /** Associated provider ID */
     providerId: varchar("provider_id", { length: 64 }),
@@ -98,7 +88,7 @@ export const aiTemplates = pgTable(
     lastDeployedAt: timestamp("last_deployed_at", { withTimezone: true }),
 
     /** Metadata for additional configuration */
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<TemplateMetadata>(),
 
     /** Created timestamp */
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -296,7 +286,7 @@ export const templateUsageAnalyticsRelations = relations(templateUsageAnalytics,
 }));
 
 // Type exports
-export type AiTemplate = typeof aiTemplates.$inferSelect;
+export type AiTemplateDb = typeof aiTemplates.$inferSelect;
 export type NewAiTemplate = typeof aiTemplates.$inferInsert;
 export type TemplateDeployment = typeof templateDeployments.$inferSelect;
 export type NewTemplateDeployment = typeof templateDeployments.$inferInsert;

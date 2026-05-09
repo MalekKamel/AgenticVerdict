@@ -348,7 +348,7 @@ export const connectorsRouter = t.router({
 import { trpc } from '@/lib/trpc'
 
 function ConnectorCard({ connector }: { connector: string }) {
-  const utils = trpc.useContext()
+  const utils = trpc.useUtils()
 
   const { data } = trpc.connectors.fetchMetrics.useQuery({
     connector,

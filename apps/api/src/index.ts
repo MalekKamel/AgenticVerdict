@@ -4,11 +4,6 @@
 export const API_VERSION = "0.1.0";
 
 export { buildApiServer } from "./server";
-export {
-  jwtAuth,
-  tenantSecurityErrorReply,
-  type AuthMiddlewareOptions,
-  type AuthPayload,
-} from "./middleware/auth";
+export { jwtAuth, tenantSecurityErrorReply, type AuthMiddlewareOptions } from "./middleware/auth";
 export { bindJwtTenantAsyncContext } from "./middleware/jwt-tenant-context";
 export { rateLimit, type RateLimitOptions } from "./middleware/rate-limit";

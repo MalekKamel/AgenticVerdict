@@ -12,12 +12,12 @@ describe("Cross-package integration — tenant config fixtures", () => {
     const raw = await readFile(
       path.join(
         root,
-        "apps/api/test-fixtures/tenant-configs/aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee.json",
+        "apps/api/test-fixtures/tenant-configs/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee.json",
       ),
       "utf8",
     );
     const parsed = tenantConfigSchema.parse(JSON.parse(raw));
-    expect(parsed.tenantId).toBe("aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee");
+    expect(parsed.tenantId).toBe("aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee");
     expect(parsed.localization.language).toMatch(/^(ar|en|fr)$/);
   });
 

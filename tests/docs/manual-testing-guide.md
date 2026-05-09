@@ -237,17 +237,15 @@ agenticverdict-web-1      running              0.0.0.0:3000->3000/tcp
 #### Step 4: Initialize Database
 
 ```bash
-# Run database migrations
+# Apply database schema
 pnpm --filter @agenticverdict/database db:push
 
 # Optional: Seed with test data
 pnpm --filter @agenticverdict/database db:seed
 ```
 
-If seed fails with errors like `relation "audit_logs" already exists` (schema already applied via `db:push`), set `AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1` so the seed script skips running migrations inside the seed path. After the database seed remediation, `db:push` followed by `db:seed` should succeed without this flag; keep the variable documented for edge cases (partial runs, mixed migration state).
-
 ```bash
-AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1 pnpm --filter @agenticverdict/database db:seed
+
 ```
 
 #### Step 5: Configure Mock Mode
@@ -1065,7 +1063,7 @@ curl -s http://localhost:3000/api/health/adapters | jq '.components.circuitBreak
 
 ```bash
 # Provenance rows are inserted when GET /api/v1/workflows/status/:executionId runs on a completed analysis-like
-# result, and only if the tenant exists in tenants (run db:seed per §2.2 — use AGENTICVERDICT_SKIP_SEED_MIGRATIONS=1 if migrations already applied).
+# result, and only if the tenant exists in tenants (run db:seed per §2.2).
 docker exec -it agenticverdict-postgres-1 psql -U postgres -d agenticverdict -c \
   "SELECT COUNT(*) FROM provenance_records WHERE tenant_id = '22222222-2222-4222-8222-222222222222';"
 ```

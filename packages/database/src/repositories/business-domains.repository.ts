@@ -3,7 +3,7 @@ import {
   businessDomains,
   domainConnectorAssignments,
   domainHierarchyCache,
-  type BusinessDomain,
+  type BusinessDomainDb,
   type NewBusinessDomain,
   type DomainConnectorAssignment,
   type NewDomainConnectorAssignment,
@@ -43,7 +43,7 @@ export class BusinessDomainsRepository {
   /**
    * Find all domains for a tenant (flat list)
    */
-  async findAllByTenant(tenantId: string): Promise<BusinessDomain[]> {
+  async findAllByTenant(tenantId: string): Promise<BusinessDomainDb[]> {
     return this.db
       .select()
       .from(businessDomains)
@@ -54,7 +54,7 @@ export class BusinessDomainsRepository {
   /**
    * Find root domains (no parent)
    */
-  async findRootDomains(tenantId: string): Promise<BusinessDomain[]> {
+  async findRootDomains(tenantId: string): Promise<BusinessDomainDb[]> {
     return this.db
       .select()
       .from(businessDomains)
@@ -65,7 +65,7 @@ export class BusinessDomainsRepository {
   /**
    * Find domain by ID with tenant isolation
    */
-  async findById(tenantId: string, id: string): Promise<BusinessDomain | null> {
+  async findById(tenantId: string, id: string): Promise<BusinessDomainDb | null> {
     const results = await this.db
       .select()
       .from(businessDomains)
@@ -78,7 +78,7 @@ export class BusinessDomainsRepository {
   /**
    * Find child domains of a parent
    */
-  async findChildren(tenantId: string, parentId: string): Promise<BusinessDomain[]> {
+  async findChildren(tenantId: string, parentId: string): Promise<BusinessDomainDb[]> {
     return this.db
       .select()
       .from(businessDomains)
@@ -89,7 +89,7 @@ export class BusinessDomainsRepository {
   /**
    * Create new domain
    */
-  async create(data: NewBusinessDomain): Promise<BusinessDomain> {
+  async create(data: NewBusinessDomain): Promise<BusinessDomainDb> {
     const results = await this.db.insert(businessDomains).values(data).returning();
     return results[0];
   }
@@ -101,7 +101,7 @@ export class BusinessDomainsRepository {
     tenantId: string,
     id: string,
     data: Partial<NewBusinessDomain>,
-  ): Promise<BusinessDomain | null> {
+  ): Promise<BusinessDomainDb | null> {
     const results = await this.db
       .update(businessDomains)
       .set({
@@ -256,7 +256,7 @@ export class BusinessDomainsRepository {
   /**
    * Get full domain hierarchy tree for tenant
    */
-  async getHierarchyTree(tenantId: string): Promise<BusinessDomain[]> {
+  async getHierarchyTree(tenantId: string): Promise<BusinessDomainDb[]> {
     // Get all domains ordered for tree construction
     return this.db
       .select()
@@ -268,8 +268,8 @@ export class BusinessDomainsRepository {
   /**
    * Get ancestor chain for a domain
    */
-  async getAncestorChain(tenantId: string, domainId: string): Promise<BusinessDomain[]> {
-    const ancestors: BusinessDomain[] = [];
+  async getAncestorChain(tenantId: string, domainId: string): Promise<BusinessDomainDb[]> {
+    const ancestors: BusinessDomainDb[] = [];
     let currentDomain = await this.findById(tenantId, domainId);
 
     while (currentDomain && currentDomain.parentId) {
@@ -393,7 +393,7 @@ export class BusinessDomainsRepository {
    */
   async getDomainsWithConnectorCount(
     tenantId: string,
-  ): Promise<Array<BusinessDomain & { connectorCount: number }>> {
+  ): Promise<Array<BusinessDomainDb & { connectorCount: number }>> {
     const domains = await this.findAllByTenant(tenantId);
     const domainsWithCount = await Promise.all(
       domains.map(async (domain) => {

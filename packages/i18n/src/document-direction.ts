@@ -1,14 +1,12 @@
-import { textDirection } from "./rtl";
-
-export type ReportTextDirection = "ltr" | "rtl";
+import { textDirection, type TextDirection } from "./rtl";
 
 /**
  * Resolves document root direction: optional tenant/user override wins over locale rules.
  */
 export function resolveReportTextDirection(
   locale: string,
-  override: ReportTextDirection | undefined,
-): ReportTextDirection {
+  override: TextDirection | undefined,
+): TextDirection {
   if (override !== undefined) {
     return override;
   }

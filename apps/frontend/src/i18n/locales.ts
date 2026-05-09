@@ -1,4 +1,5 @@
 import localeConfig from "./locales.config.json";
+import type { TextDirection } from "@agenticverdict/types";
 
 export const defaultLocale = localeConfig.defaultLocale;
 export const supportedLocales = localeConfig.shippingLocales;
@@ -8,7 +9,7 @@ export const allConfiguredLocales = [...supportedLocales, ...draftLocales] as co
 export type AppLocale = (typeof supportedLocales)[number];
 export type DraftLocale = (typeof draftLocales)[number];
 export type LocaleCode = (typeof allConfiguredLocales)[number];
-export type TextDirection = "ltr" | "rtl";
+export type { TextDirection };
 
 export type LocaleMeta = {
   name: string;

@@ -10,8 +10,9 @@ export {
   createLocalizationFormatters,
   intlLocaleTag,
   type LocalizationFormatConfig,
+  LANGUAGE_NATIVE_NAMES,
 } from "./formatters";
-export type { ReportTextDirection } from "./document-direction";
+export type { TextDirection } from "./rtl";
 export { resolveReportTextDirection } from "./document-direction";
 export {
   appLocaleFromLanguageTag,
@@ -28,12 +29,13 @@ export {
   missingKeysComparedTo,
 } from "./translation-parity";
 export {
-  analyzeArabicLocaleQuality,
-  assertArabicStructuralLocaleQuality,
+  analyzeLocaleQuality,
+  assertStructuralLocaleQuality,
   computeLexicalOverlapDiagnostic,
-  type ArabicLocaleQualityIssue,
-  type ArabicLocaleQualityReport,
-} from "./arabic-locale-quality";
+  targetLocales,
+  type LocaleQualityIssue,
+  type LocaleQualityReport,
+} from "./locale-quality";
 export {
   computeSentenceBleu,
   meanSentenceBleu,

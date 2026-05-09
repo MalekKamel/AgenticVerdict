@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { buildVerdictFixture } from "@agenticverdict/agent-runtime";
-import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
+import type { WorkflowTriggerJobResult } from "@agenticverdict/types";
 import type {
   AnalysisResultResponse,
   DataSourceProvenance,
@@ -58,7 +58,7 @@ function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsig
 
   return [
     base({
-      type: "trend",
+      type: "observation",
       title: "Paid social efficiency improving",
       description:
         "Blended CPA improved week over week as prospecting audiences were narrowed to high-intent segments.",
@@ -68,7 +68,7 @@ function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsig
       relatedMetricKeys: ["cpa", "roas"],
     }),
     base({
-      type: "anomaly",
+      type: "risk",
       title: "Search impression share dip",
       description:
         "Branded search impression share dipped sharply on Tuesday, likely auction pressure from a competitor conquest push.",
@@ -86,7 +86,7 @@ function buildDemoInsights(tenantId: string, analysisId: string): GeneratedInsig
       platforms: ["gbp"],
     }),
     base({
-      type: "warning",
+      type: "risk",
       title: "Creative fatigue on hero assets",
       description:
         "CTR on top spend ad sets declined for three consecutive weeks while frequency climbed in remarketing pools.",

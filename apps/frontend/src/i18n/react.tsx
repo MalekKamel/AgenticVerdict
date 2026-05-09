@@ -4,8 +4,6 @@
 import IntlMessageFormat from "intl-messageformat";
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import _enMessages from "../../messages/en.json";
 import { initializeNotificationTranslations } from "@/lib/notifications-i18n";
 import type { AppLocale } from "./routing";
 

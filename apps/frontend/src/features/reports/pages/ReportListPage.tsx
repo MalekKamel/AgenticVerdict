@@ -31,7 +31,6 @@ import {
   IconAlertCircle,
   IconX,
 } from "@tabler/icons-react";
-import JSZip from "jszip";
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import { useNavigate } from "@/router/hooks";
@@ -41,13 +40,11 @@ import {
   useReportDelete,
   useReportDeleteMany,
 } from "@/features/reports/api/report-api";
-import {
-  showSuccessNotification,
-  showErrorNotification,
-  showInfoNotification,
-} from "@/lib/notifications";
-import { getReportErrorMessage } from "../utils/error-translator";
+import { trpc } from "@/lib/api/trpc-client";
+import { downloadReport, bulkDownloadReports } from "@/lib/download";
+import { showSuccessNotification } from "@/lib/notifications";
 import { DatePickerInput } from "@mantine/dates";
+import { ScheduleStatusBadge } from "@/features/shared/ui/ScheduleStatusBadge";
 
 function ReportTableSkeleton() {
   return (
@@ -334,65 +331,9 @@ export default function ReportListPage() {
     const selectedIds = Array.from(selectedReports);
     if (selectedIds.length === 0) return;
 
-    if (selectedIds.length > 10) {
-      showErrorNotification({
-        title: "Too many reports",
-        message: "Please select at most 10 reports for bulk download",
-      });
-      return;
-    }
+    const selectedReportObjects = reports.filter((r) => selectedIds.includes(r.id));
 
-    try {
-      if (selectedIds.length >= 3) {
-        showInfoNotification({
-          title: "Preparing download",
-          message: `Preparing ${selectedIds.length} reports for download...`,
-        });
-      }
-
-      const zip = new JSZip();
-      const reportsFolder = zip.folder("reports");
-
-      // Get selected report objects
-      const selectedReportObjects = reports.filter((r) => selectedIds.includes(r.id));
-
-      // Download all reports and add to ZIP
-      await Promise.all(
-        selectedReportObjects.map(async (report) => {
-          try {
-            // TODO: Implement actual report fetching
-            // For now, just add a placeholder file
-            reportsFolder?.file(
-              `${report.title}.txt`,
-              `Report: ${report.title}\nGenerated: ${report.createdAt}`,
-            );
-          } catch (error) {
-            console.error(`Failed to download report ${report.id}:`, error);
-          }
-        }),
-      );
-
-      // Generate and download ZIP
-      const content = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(content);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `reports-${new Date().toISOString().split("T")[0]}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      showSuccessNotification({
-        title: "Download complete",
-        message: `${selectedReportObjects.length} reports downloaded successfully`,
-      });
-    } catch (error) {
-      showErrorNotification({
-        title: "Bulk download failed",
-        message: getReportErrorMessage(error),
-      });
-    }
+    await bulkDownloadReports({ reports: selectedReportObjects });
   };
 
   const handleViewReport = (reportId: string) => {
@@ -400,32 +341,28 @@ export default function ReportListPage() {
   };
 
   const handleDownloadReport = async (report: (typeof reports)[0]) => {
-    try {
-      showInfoNotification({
-        title: "Downloading report",
-        message: "Your report is being downloaded",
-      });
-
-      // TODO: Implement actual download logic with tRPC endpoint
-      showSuccessNotification({
-        title: "Download started",
-        message: `Downloading ${report.title}`,
-      });
-    } catch (error) {
-      showErrorNotification({
-        title: "Download failed",
-        message: getReportErrorMessage(error),
-      });
-    }
+    await downloadReport({
+      reportId: report.id,
+      fileName: report.title,
+      metadata: report.metadata,
+    });
   };
 
   const [shareModalOpened, setShareModalOpened] = useState(false);
   const [selectedReportForShare, setSelectedReportForShare] = useState<(typeof reports)[0] | null>(
     null,
   );
+  const [generatedShareUrl, setGeneratedShareUrl] = useState<string | null>(null);
+
+  const createShareMutation = trpc.report.createShareLink.useMutation({
+    onSuccess: (data) => {
+      setGeneratedShareUrl(data.shareUrl);
+    },
+  });
 
   const handleShareReport = (report: (typeof reports)[0]) => {
     setSelectedReportForShare(report);
+    setGeneratedShareUrl(null);
     setShareModalOpened(true);
   };
 
@@ -527,6 +464,7 @@ export default function ReportListPage() {
                     </Table.Th>
                     <Table.Th>{t("list.columns.format")}</Table.Th>
                     <Table.Th>{t("list.columns.status")}</Table.Th>
+                    <Table.Th>Schedule</Table.Th>
                     <Table.Th>{t("list.columns.actions")}</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
@@ -565,6 +503,9 @@ export default function ReportListPage() {
                         >
                           {t(`list.status.${report.status}`)}
                         </Badge>
+                      </Table.Td>
+                      <Table.Td>
+                        <ScheduleStatusBadge schedule={null} />
                       </Table.Td>
                       <Table.Td>
                         <Group gap="xs">
@@ -650,30 +591,36 @@ export default function ReportListPage() {
           <Text>
             Share report: <strong>{selectedReportForShare?.title}</strong>
           </Text>
-          <TextInput
-            label="Share via link"
-            value={
-              selectedReportForShare
-                ? `${window.location.origin}/shared/reports/${selectedReportForShare.id}`
-                : ""
-            }
-            readOnly
-          />
-          <Button
-            onClick={() => {
-              if (selectedReportForShare) {
-                navigator.clipboard.writeText(
-                  `${window.location.origin}/shared/reports/${selectedReportForShare.id}`,
-                );
-                showSuccessNotification({
-                  title: "Link copied",
-                  message: "Share link copied to clipboard",
-                });
-              }
-            }}
-          >
-            Copy Link
-          </Button>
+          {!generatedShareUrl ? (
+            <Button
+              onClick={() => {
+                if (selectedReportForShare) {
+                  createShareMutation.mutate({
+                    reportId: selectedReportForShare.id,
+                    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                  });
+                }
+              }}
+              loading={createShareMutation.isPending}
+            >
+              Generate Share Link
+            </Button>
+          ) : (
+            <>
+              <TextInput label="Share via link" value={generatedShareUrl} readOnly />
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedShareUrl);
+                  showSuccessNotification({
+                    title: "Link copied",
+                    message: "Share link copied to clipboard",
+                  });
+                }}
+              >
+                Copy Link
+              </Button>
+            </>
+          )}
         </Stack>
       </Modal>
     </Container>

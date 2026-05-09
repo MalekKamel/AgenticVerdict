@@ -15,7 +15,7 @@ describe("report-store history and retention", () => {
   });
 
   it("stacks versions with distinct hashes on each upload", () => {
-    const tenant = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+    const tenant = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
     const r = createReportRecord(tenant, "t");
     putReportBlob(tenant, r.id, Buffer.from("a"), "application/pdf");
     putReportBlob(tenant, r.id, Buffer.from("bb"), "application/pdf");
@@ -29,7 +29,7 @@ describe("report-store history and retention", () => {
   });
 
   it("sweep removes blobs when retain-until is in the past", () => {
-    const tenant = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+    const tenant = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
     const r = createReportRecord(tenant, "t");
     putReportBlob(tenant, r.id, Buffer.from("x"), "application/octet-stream");
     __setReportRetainUntilForTests(r.id, tenant, "1999-01-01T00:00:00.000Z");

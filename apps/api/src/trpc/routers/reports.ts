@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { dbScoped, reports, reportShares, auditTrail } from "@agenticverdict/database";
-import { eq, and, desc, like, sql, between, gte, lte } from "drizzle-orm";
+import { eq, and, desc, like, sql, between, gte, lte, inArray } from "drizzle-orm";
 import { requireTrpcDatabase } from "../database";
-import { authedProcedure } from "../procedures";
+import { authedProcedure, authedProcedureWithPermission } from "../procedures";
 import { t } from "../init";
 import { randomBytes } from "crypto";
 import { randomUUID } from "crypto";
@@ -15,7 +15,15 @@ import {
 import {
   recordStorageUploadCompleted,
   recordStorageDownloadCompleted,
+  createPinoLogger,
 } from "@agenticverdict/observability";
+import {
+  PERMISSIONS,
+  reportMetadataSchema,
+  reportListInputSchema,
+  reportOutputSchema,
+  reportListOutputSchema,
+} from "@agenticverdict/types";
 
 function buildSharedReportUrl(options: {
   baseUrl: string;
@@ -26,34 +34,7 @@ function buildSharedReportUrl(options: {
   return `${baseUrl}/shared/reports/${options.reportId}?token=${options.token}`;
 }
 
-const logger = console;
-
-const reportListInputSchema = z.object({
-  status: z.string().optional(),
-  format: z.enum(["pdf", "excel", "all"]).optional().default("all"),
-  search: z.string().optional(),
-  dateFrom: z.string().optional(),
-  dateTo: z.string().optional(),
-  page: z.number().int().min(1).default(1),
-  pageSize: z.number().int().min(1).max(100).default(20),
-});
-
-const reportOutputSchema = z.object({
-  id: z.string(),
-  tenantId: z.string(),
-  title: z.string(),
-  status: z.string(),
-  metadata: z.record(z.unknown()).nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-const reportListOutputSchema = z.object({
-  reports: z.array(reportOutputSchema),
-  total: z.number(),
-  page: z.number(),
-  pageSize: z.number(),
-});
+const logger = createPinoLogger("api");
 
 export const reportRouter = t.router({
   list: authedProcedure
@@ -94,6 +75,12 @@ export const reportRouter = t.router({
             whereConditions.push(gte(reports.createdAt, new Date(input.dateFrom)));
           } else if (input.dateTo) {
             whereConditions.push(lte(reports.createdAt, new Date(input.dateTo)));
+          }
+
+          if (input.insightId) {
+            whereConditions.push(
+              sql`${reports.metadata} @> ${JSON.stringify({ insightId: input.insightId })}::jsonb`,
+            );
           }
 
           const [reportRows, countResult] = await Promise.all([
@@ -507,7 +494,7 @@ export const reportRouter = t.router({
       }
     }),
 
-  delete: authedProcedure
+  delete: authedProcedureWithPermission(PERMISSIONS.REPORTS_DELETE)
     .input(z.object({ id: z.string() }))
     .output(z.object({ success: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
@@ -576,12 +563,19 @@ export const reportRouter = t.router({
       }
     }),
 
-  deleteMany: authedProcedure
+  deleteMany: authedProcedureWithPermission(PERMISSIONS.REPORTS_DELETE)
     .input(z.object({ ids: z.array(z.string()) }))
     .output(z.object({ success: z.boolean(), deletedCount: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const start = Date.now();
       const tenantId = ctx.tenant.tenantId;
+
+      if (input.ids.length > 100) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot delete more than 100 reports at once",
+        });
+      }
 
       logger.info(
         {
@@ -598,7 +592,7 @@ export const reportRouter = t.router({
         const result = await dbScoped(db, async (tx) => {
           const deleted = await tx
             .delete(reports)
-            .where(and(eq(reports.tenantId, tenantId), eq(reports.id, input.ids[0]!)))
+            .where(and(eq(reports.tenantId, tenantId), inArray(reports.id, input.ids)))
             .returning();
 
           await tx.insert(auditTrail).values({
@@ -915,7 +909,7 @@ export const reportRouter = t.router({
         tenantId: z.string(),
         title: z.string(),
         status: z.string(),
-        metadata: z.record(z.unknown()).nullable(),
+        metadata: reportMetadataSchema,
         createdAt: z.date(),
         updatedAt: z.date(),
       }),
@@ -1049,16 +1043,23 @@ export const reportRouter = t.router({
           }
         });
 
+        // Fetch actual report content from object storage
+        const storage = getObjectStorage();
+        const storageKey = `reports/${input.reportId}/${input.format}`;
+        const storageResult = await storage.downloadObject({ key: storageKey });
+        const base64Content = storageResult.body.toString("base64");
+
         logger.info(
           {
             procedure: "report.getSharedReportContent",
             duration: Date.now() - start,
+            contentLength: base64Content.length,
           },
           "report.getSharedReportContent.success",
         );
 
         return {
-          content: "base64-encoded-content-placeholder",
+          content: base64Content,
           contentType:
             input.format === "pdf"
               ? "application/pdf"

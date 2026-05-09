@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import {
   workflowTriggerJobDataSchema,
   workflowTriggerJobResultSchema,
-} from "@agenticverdict/worker";
+} from "@agenticverdict/types";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../fixtures/workflows");
 

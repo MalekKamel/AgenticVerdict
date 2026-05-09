@@ -1,8 +1,7 @@
 import { z } from "zod";
+import { connectorTypeSchema } from "@agenticverdict/types";
 
 import type { NormalizedConnectorSnapshot } from "./types";
-
-const connectorTypeSchema = z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]);
 
 const dateRangeIsoSchema = z.object({
   startInclusive: z.string().min(1),

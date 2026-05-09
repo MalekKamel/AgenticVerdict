@@ -13,7 +13,7 @@ export const telemetryEnvelopeSchema = z.object({
   ts: z.string().min(1),
   tenantId: z.union([z.string().uuid(), z.null()]),
   /** Structured, non-PII fields only (see client-log / web-vitals modules). */
-  payload: z.record(z.unknown()),
+  payload: z.record(z.string(), z.unknown()),
 });
 
 export type TelemetryEnvelope = z.infer<typeof telemetryEnvelopeSchema>;

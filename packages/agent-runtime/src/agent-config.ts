@@ -139,12 +139,18 @@ export const agentConfigSchema = z.object({
   modelId: z.string().min(1).max(128).optional(),
 
   /** Model-specific parameters. */
-  modelParams: modelParamsSchema.default({}),
+  modelParams: modelParamsSchema.default({
+    temperature: 0.7,
+    maxTokens: 4096,
+    topP: 1,
+    frequencyPenalty: 0,
+    presencePenalty: 0,
+  }),
 
-  // === Output Configuration ===
-
-  /** Output format and validation settings. */
-  outputFormat: outputFormatSchema.default({ type: "text" }),
+  outputFormat: outputFormatSchema.default({
+    type: "text",
+    strictValidation: false,
+  }),
 
   /** Include reasoning in output. */
   includeReasoning: z.boolean().default(false),
@@ -155,15 +161,21 @@ export const agentConfigSchema = z.object({
   timeoutMs: z.number().int().min(1000).max(300000).default(60000),
 
   /** Retry configuration. */
-  retryConfig: retryConfigSchema.default({}),
+  retryConfig: retryConfigSchema.default({
+    maxRetries: 3,
+    initialDelayMs: 1000,
+    maxDelayMs: 10000,
+  }),
 
-  /** Token budgets for prompt assembly. */
   tokenBudgets: z
     .object({
       tenantContextMaxApproxTokens: z.number().int().min(50).max(8192).default(1024),
       maxAssembledPromptApproxTokens: z.number().int().min(400).max(32000).default(6000),
     })
-    .default({}),
+    .default({
+      tenantContextMaxApproxTokens: 1024,
+      maxAssembledPromptApproxTokens: 6000,
+    }),
 
   // === Metadata ===
 

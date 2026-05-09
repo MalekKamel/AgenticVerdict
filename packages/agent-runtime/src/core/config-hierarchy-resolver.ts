@@ -1,6 +1,5 @@
 import { AiProviderRepository, BusinessDomainsRepository } from "@agenticverdict/database";
-import type { ResolvedConfig } from "@agenticverdict/core/types/ai-models";
-import { CostTier } from "@agenticverdict/core/types/ai-models";
+import type { ResolvedConfig, CostTier, ConfigScope } from "@agenticverdict/types";
 import NodeCache from "node-cache";
 
 /**
@@ -29,7 +28,7 @@ export interface ResolveConfigOptions {
   /** Bypass cache */
   bypassCache?: boolean;
   /** Scope to resolve (tenant, domain, connector) */
-  scope: "tenant" | "domain" | "connector";
+  scope: ConfigScope;
   /** Source ID (tenantId, domainId, or connectorId) */
   sourceId: string;
 }
@@ -147,10 +146,7 @@ export class ConfigHierarchyResolver {
   /**
    * Resolve configuration from database
    */
-  private async resolveFromDatabase(
-    scope: "tenant" | "domain" | "connector",
-    sourceId: string,
-  ): Promise<ResolvedConfig> {
+  private async resolveFromDatabase(scope: ConfigScope, sourceId: string): Promise<ResolvedConfig> {
     // Extract tenant ID from sourceId or scope
     let tenantId: string;
     let inheritanceChain: string[] = [];

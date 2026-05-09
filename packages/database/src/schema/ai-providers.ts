@@ -1,3 +1,4 @@
+import type { CustomPricing, ProviderMetadata, ProviderCapabilities } from "@agenticverdict/types";
 import {
   pgTable,
   uuid,
@@ -51,10 +52,7 @@ export const aiProviders = pgTable(
     costTier: costTierEnum("cost_tier").notNull().default("standard"),
 
     /** Custom pricing override (JSONB) */
-    customPricing: jsonb("custom_pricing").$type<{
-      inputCostPer1k: number;
-      outputCostPer1k: number;
-    }>(),
+    customPricing: jsonb("custom_pricing").$type<CustomPricing>(),
 
     /** Configuration scope */
     scope: providerScopeEnum("scope").notNull(),
@@ -93,7 +91,7 @@ export const aiProviders = pgTable(
     credentialsId: uuid("credentials_id"),
 
     /** Metadata for additional configuration */
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<ProviderMetadata>(),
 
     /** Created timestamp */
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -134,8 +132,13 @@ export const aiProviderModels = pgTable(
     /** Unique identifier */
     id: uuid("id").primaryKey().defaultRandom(),
 
-    /** Provider ID */
+    /** Provider ID (string identifier like 'openai', 'anthropic') */
     providerId: varchar("provider_id", { length: 64 }).notNull(),
+
+    /** Foreign key to ai_providers.id */
+    providerRefId: uuid("provider_ref_id").references(() => aiProviders.id, {
+      onDelete: "cascade",
+    }),
 
     /** Model identifier */
     modelId: varchar("model_id", { length: 128 }).notNull(),
@@ -165,7 +168,7 @@ export const aiProviderModels = pgTable(
     isMultimodal: boolean("is_multimodal").notNull().default(false),
 
     /** Model capabilities (JSON array) */
-    capabilities: jsonb("capabilities").$type<string[]>(),
+    capabilities: jsonb("capabilities").$type<ProviderCapabilities>(),
 
     /** Whether model is available */
     isAvailable: boolean("is_available").notNull().default(true),
@@ -182,6 +185,9 @@ export const aiProviderModels = pgTable(
 
     /** Index for provider lookup */
     index("ai_provider_models_provider_idx").on(t.providerId),
+
+    /** Index for FK provider reference */
+    index("ai_provider_models_provider_ref_idx").on(t.providerRefId),
 
     /** Index for availability */
     index("ai_provider_models_available_idx").on(t.isAvailable),
@@ -249,8 +255,8 @@ export const aiProvidersRelations = relations(aiProviders, ({ one, many }) => ({
 
 export const aiProviderModelsRelations = relations(aiProviderModels, ({ one }) => ({
   provider: one(aiProviders, {
-    fields: [aiProviderModels.providerId],
-    references: [aiProviders.providerId],
+    fields: [aiProviderModels.providerRefId],
+    references: [aiProviders.id],
   }),
 }));
 

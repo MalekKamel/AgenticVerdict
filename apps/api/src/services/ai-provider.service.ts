@@ -3,7 +3,8 @@ import {
   createProviderConfigSchema,
   updateProviderConfigSchema,
   providerCredentialsSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+} from "@agenticverdict/types";
+import type { ConfigScope } from "@agenticverdict/types";
 import type { z } from "zod";
 
 /**
@@ -349,11 +350,7 @@ export class AiProviderService {
   /**
    * Get providers by scope
    */
-  async getProvidersByScope(
-    tenantId: string,
-    scope: "tenant" | "domain" | "connector",
-    parentId?: string,
-  ) {
+  async getProvidersByScope(tenantId: string, scope: ConfigScope, parentId?: string) {
     return this.repository.findByScope(tenantId, scope, parentId);
   }
 }

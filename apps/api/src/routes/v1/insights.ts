@@ -2,6 +2,8 @@ import type { FastifyInstance } from "fastify";
 import type { Redis } from "@upstash/redis";
 import { z } from "zod";
 
+import { dbScoped, generatedInsights, type GeneratedInsightDb } from "@agenticverdict/database";
+import { getTrpcDatabase } from "../../trpc/database";
 import type { GeneratedInsight } from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
@@ -9,15 +11,32 @@ import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
 import { rateLimit } from "../../middleware/rate-limit";
 import { listTenantInsights } from "../../services/analysis-repository";
 import { readJsonCache, stableQueryKey, writeJsonCache } from "../../services/response-cache";
+import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 const insightQuerySchema = z.object({
-  type: z.enum(["anomaly", "trend", "opportunity", "warning"]).optional(),
+  type: z.enum(["opportunity", "risk", "observation", "recommendation"]).optional(),
   minConfidence: z.coerce.number().min(0).max(1).optional(),
   minRelevance: z.coerce.number().min(0).max(1).optional(),
   sort: z.enum(["relevance", "created", "confidence"]).optional().default("relevance"),
   limit: z.coerce.number().int().min(1).max(100).optional().default(50),
   offset: z.coerce.number().int().min(0).optional().default(0),
 });
+
+function mapDbRowToInsight(row: GeneratedInsightDb): GeneratedInsight {
+  return {
+    id: row.id,
+    tenantId: row.tenantId,
+    analysisId: row.analysisId ?? "",
+    type: row.insightType,
+    title: row.title,
+    description: row.description,
+    confidence: Number(row.confidence),
+    relevanceScore: Number(row.relevanceScore),
+    platforms: row.platforms,
+    relatedMetricKeys: row.relatedMetricKeys,
+    createdAt: row.createdAt,
+  };
+}
 
 export function registerInsightRoutes(app: FastifyInstance, redis: Redis | null): void {
   const preHandlers = [
@@ -37,7 +56,10 @@ export function registerInsightRoutes(app: FastifyInstance, redis: Redis | null)
         querystring: {
           type: "object",
           properties: {
-            type: { type: "string", enum: ["anomaly", "trend", "opportunity", "warning"] },
+            type: {
+              type: "string",
+              enum: ["opportunity", "risk", "observation", "recommendation"],
+            },
             minConfidence: { type: "number", minimum: 0, maximum: 1 },
             minRelevance: { type: "number", minimum: 0, maximum: 1 },
             sort: {
@@ -102,35 +124,80 @@ export function registerInsightRoutes(app: FastifyInstance, redis: Redis | null)
         return reply.send(cached);
       }
 
-      let rows = listTenantInsights(tenantId);
+      // Query from database when available, fall back to in-memory store
+      const db = getTrpcDatabase();
+      let rows: { insights: GeneratedInsight[]; total: number };
 
-      if (q.type) {
-        rows = rows.filter((i) => i.type === q.type);
-      }
-      const minConfidence = q.minConfidence;
-      if (minConfidence !== undefined) {
-        rows = rows.filter((i) => i.confidence >= minConfidence);
-      }
-      const minRelevance = q.minRelevance;
-      if (minRelevance !== undefined) {
-        rows = rows.filter((i) => i.relevanceScore >= minRelevance);
-      }
+      if (db) {
+        rows = await dbScoped(db, async (tx) => {
+          const whereConditions = [eq(generatedInsights.tenantId, tenantId)];
 
-      const sorted = [...rows];
-      if (q.sort === "relevance") {
-        sorted.sort((a, b) => b.relevanceScore - a.relevanceScore);
-      } else if (q.sort === "confidence") {
-        sorted.sort((a, b) => b.confidence - a.confidence);
+          if (q.type) {
+            whereConditions.push(eq(generatedInsights.insightType, q.type));
+          }
+          if (q.minConfidence !== undefined) {
+            whereConditions.push(gte(generatedInsights.confidence, String(q.minConfidence)));
+          }
+
+          let orderBy = desc(generatedInsights.relevanceScore);
+          if (q.sort === "created") {
+            orderBy = desc(generatedInsights.createdAt);
+          } else if (q.sort === "confidence") {
+            orderBy = desc(generatedInsights.confidence);
+          }
+
+          const [results, countResult] = await Promise.all([
+            tx
+              .select()
+              .from(generatedInsights)
+              .where(and(...whereConditions))
+              .orderBy(orderBy)
+              .limit(q.limit)
+              .offset(q.offset),
+            tx
+              .select({ count: sql<number>`count(*)` })
+              .from(generatedInsights)
+              .where(and(...whereConditions)),
+          ]);
+
+          return {
+            insights: results.map(mapDbRowToInsight),
+            total: Number(countResult[0]?.count ?? 0),
+          };
+        });
       } else {
-        sorted.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      }
+        let insights = listTenantInsights(tenantId);
 
-      const total = sorted.length;
-      const page = sorted.slice(q.offset, q.offset + q.limit);
+        if (q.type) {
+          insights = insights.filter((i) => i.type === q.type);
+        }
+        const minConfidence = q.minConfidence;
+        if (minConfidence !== undefined) {
+          insights = insights.filter((i) => i.confidence >= minConfidence);
+        }
+        const minRelevance = q.minRelevance;
+        if (minRelevance !== undefined) {
+          insights = insights.filter((i) => i.relevanceScore >= minRelevance);
+        }
+
+        const sorted = [...insights];
+        if (q.sort === "relevance") {
+          sorted.sort((a, b) => b.relevanceScore - a.relevanceScore);
+        } else if (q.sort === "confidence") {
+          sorted.sort((a, b) => b.confidence - a.confidence);
+        } else {
+          sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+
+        rows = {
+          insights: sorted.slice(q.offset, q.offset + q.limit),
+          total: sorted.length,
+        };
+      }
 
       const body = {
-        insights: page,
-        total,
+        insights: rows.insights,
+        total: rows.total,
         limit: q.limit,
         offset: q.offset,
       };

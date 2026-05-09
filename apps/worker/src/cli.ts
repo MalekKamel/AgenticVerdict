@@ -7,10 +7,12 @@ import { BUILD_CONFIG } from "@agenticverdict/config/build-constants";
 import { assertProductionSafeRuntimePolicy, resolveRuntimePolicy } from "@agenticverdict/config";
 import { renderProductionFlowTestMetrics } from "@agenticverdict/observability";
 
+import { closeDatabase } from "./database";
 import { startHealthServer } from "./health";
 import { getWorkerRootLogger } from "./queues/logger";
 import { createBullmqConnectionFromEnv } from "./queues/redis-connection";
 import { refreshBullmqQueueDepthMetrics, registerReportWorkers } from "./queues/report-queues";
+import { recoverSchedules } from "./queues/schedule-recovery";
 
 const log = getWorkerRootLogger();
 
@@ -41,6 +43,20 @@ try {
 }
 
 const connection = requireBullmqRedis();
+
+(async () => {
+  try {
+    await recoverSchedules();
+  } catch (error) {
+    log.error({ event: "schedule_recovery_failed", error }, "schedule_recovery_failed");
+  }
+})();
+
+const databaseUrl = process.env.DATABASE_URL?.trim();
+if (!databaseUrl) {
+  log.fatal("DATABASE_URL is required for the worker process");
+  process.exit(1);
+}
 const healthServer = startHealthServer({ connection });
 const workers = registerReportWorkers(connection);
 
@@ -87,6 +103,7 @@ async function shutdown(signal: string): Promise<void> {
   try {
     await workers.close();
   } finally {
+    closeDatabase();
     await new Promise<void>((resolve) => {
       if (metricsServer) {
         metricsServer.close(() => resolve());

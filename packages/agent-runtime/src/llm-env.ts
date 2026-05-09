@@ -22,12 +22,6 @@ const agentLlmEnvSchema = z.object({
 
 export type AgentLlmEnv = z.infer<typeof agentLlmEnvSchema>;
 
-/** @deprecated Use {@link AgentLlmEnv} — kept for older imports that only need keys. */
-export type LlmProviderEnv = Pick<
-  AgentLlmEnv,
-  "anthropicApiKey" | "openAiApiKey" | "glmApiKey" | "glmApiBaseUrl" | "glmModel"
->;
-
 function emptyToUndefined(value: string | undefined): string | undefined {
   if (value === undefined || value === "") {
     return undefined;

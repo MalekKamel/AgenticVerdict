@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { tenants, agencyPartners, tenantConnectors, insights } from "@agenticverdict/database";
 import { t } from "../init";
@@ -90,49 +90,42 @@ export const agencyRouter = t.router({
     return clients;
   }),
 
-  getAggregateMetrics: t.procedure
-    .use(requireAgencyPartner)
-    .input(
-      z.object({
-        dateRange: z.object({
-          start: z.string().datetime(),
-          end: z.string().datetime(),
-        }),
-      }),
-    )
-    .query(async ({ ctx }) => {
-      const db = getTrpcDatabase();
-      if (!db) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database unavailable",
-        });
-      }
+  getAggregateMetrics: t.procedure.use(requireAgencyPartner).query(async ({ ctx }) => {
+    const db = getTrpcDatabase();
+    if (!db) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Database unavailable",
+      });
+    }
 
-      const clientTenants = await db
-        .select({ id: tenants.id })
-        .from(tenants)
-        .where(eq(tenants.agencyPartnerId, ctx.agencyPartnerId));
+    const clientTenants = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(eq(tenants.agencyPartnerId, ctx.agencyPartnerId));
 
-      const clientIds = clientTenants.map((c) => c.id);
+    const clientIds = clientTenants.map((c) => c.id);
 
-      const totalInsights = await db.$count(
-        insights,
-        and(eq(insights.tenantId, clientIds[0] ?? ""), eq(insights.enabled, true)),
-      );
+    const totalInsights =
+      clientIds.length > 0
+        ? await db.$count(
+            insights,
+            and(inArray(insights.tenantId, clientIds), eq(insights.enabled, true)),
+          )
+        : 0;
 
-      const totalConnectors = await db.$count(
-        tenantConnectors,
-        eq(tenantConnectors.tenantId, clientIds[0] ?? ""),
-      );
+    const totalConnectors =
+      clientIds.length > 0
+        ? await db.$count(tenantConnectors, inArray(tenantConnectors.tenantId, clientIds))
+        : 0;
 
-      return {
-        clientCount: clientTenants.length,
-        totalInsights,
-        totalConnectors,
-        activeInsights: totalInsights,
-      };
-    }),
+    return {
+      clientCount: clientTenants.length,
+      totalInsights,
+      totalConnectors,
+      activeInsights: totalInsights,
+    };
+  }),
 
   switchClientContext: t.procedure
     .use(requireAgencyPartner)

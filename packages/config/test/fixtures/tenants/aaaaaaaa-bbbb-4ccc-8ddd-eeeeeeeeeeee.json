@@ -1,0 +1,20 @@
+{
+  "tenantId": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+  "tenantName": "Fixture Co",
+  "localization": {
+    "language": "en",
+    "region": "GB",
+    "timezone": "Europe/London",
+    "currency": "GBP"
+  },
+  "marketing": {
+    "channels": [{ "platform": "ga4", "enabled": true }]
+  },
+  "ai": {
+    "primaryProvider": "anthropic"
+  },
+  "features": {
+    "enableInsights": false,
+    "enableVerdict": false
+  }
+}

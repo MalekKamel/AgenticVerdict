@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { VerdictParseError } from "./verdict-schema";
+import { VerdictParseError } from "@agenticverdict/types";
 
 describe("VerdictParseError", () => {
   it("is an Error subclass with a stable name", () => {

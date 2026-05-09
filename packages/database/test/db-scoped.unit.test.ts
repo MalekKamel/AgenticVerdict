@@ -46,6 +46,6 @@ describe("dbScoped", () => {
     });
 
     expect(result).toBe("ok");
-    expect(execute).toHaveBeenCalledTimes(1);
+    expect(execute).toHaveBeenCalledTimes(2);
   });
 });

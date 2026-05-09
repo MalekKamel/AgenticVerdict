@@ -1,10 +1,6 @@
-export type ConnectorListSearch = {
-  status?: "healthy" | "warning" | "error" | "inactive" | "syncing";
-  domainId?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-};
+import type { ConnectorListInput } from "@agenticverdict/types";
+
+export type ConnectorListSearch = ConnectorListInput;
 
 export type AuthRedirectSearch = {
   redirect?: string;

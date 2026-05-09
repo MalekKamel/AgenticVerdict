@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@agenticverdict/config": "workspace:*"
+    "@agenticverdict/config": "workspace:*",
+    "@agenticverdict/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

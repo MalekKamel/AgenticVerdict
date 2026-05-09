@@ -18,9 +18,16 @@ import { AISettingsStep } from "../ui/wizard/steps/AISettingsStep";
 import { ScheduleDeliveryStep } from "../ui/wizard/steps/ScheduleDeliveryStep";
 import { ReviewStep } from "../ui/wizard/steps/ReviewStep";
 import { createInsightWizardSchema, type CreateInsightFormData } from "../ui/wizard/validation";
-import { useInsightDetail, useInsightUpdate } from "../api/insight-api";
+import {
+  useInsightDetail,
+  useInsightUpdate,
+  useAiModels,
+  useConnectorDomains,
+  useTenantConfig,
+} from "../api/insight-api";
 import { useConnectorList, useConnectorMetrics } from "@/features/connectors/api/connector-api";
-import { isInsightAIConfig, isInsightSchedule, isInsightDelivery } from "../schemas";
+import { isInsightAiConfig, isInsightDelivery } from "@agenticverdict/types";
+import { useInsightOptions } from "../utils/option-mapper";
 
 const STEPS = [
   { id: "basic-info", title: "Basic Info", description: "Name and domain" },
@@ -31,26 +38,12 @@ const STEPS = [
   { id: "review", title: "Review", description: "Confirm configuration" },
 ];
 
-const AVAILABLE_MODELS = [
-  { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet (Recommended)" },
-  { value: "claude-3-opus", label: "Claude 3 Opus" },
-  { value: "gpt-4o", label: "GPT-4o" },
-];
-
-const AVAILABLE_DOMAINS = [
-  { value: "marketing", label: "Marketing" },
-  { value: "sales", label: "Sales" },
-  { value: "finance", label: "Finance" },
-  { value: "operations", label: "Operations" },
-  { value: "analytics", label: "Analytics" },
-];
-
 const WIZARD_STEP_FIELDS: Array<Array<keyof CreateInsightFormData>> = [
   ["name", "description", "domain"],
   ["connectorIds"],
   ["selectedMetrics"],
   ["model", "quality", "detailLevel", "customPrompt"],
-  ["frequency", "time", "format", "emailRecipients", "enableWebhook", "webhookUrl"],
+  ["format", "emailRecipients", "enableWebhook", "webhookUrl"],
   [],
 ];
 
@@ -58,13 +51,6 @@ const DETAIL_LEVEL_OPTIONS = new Set<CreateInsightFormData["detailLevel"]>([
   "executive",
   "standard",
   "comprehensive",
-]);
-
-const FREQUENCY_OPTIONS = new Set<CreateInsightFormData["frequency"]>([
-  "daily",
-  "weekly",
-  "monthly",
-  "quarterly",
 ]);
 
 const FORMAT_OPTIONS = new Set<CreateInsightFormData["format"]>(["pdf", "excel", "both"]);
@@ -101,6 +87,23 @@ function InsightEditContent() {
 
   const { data: insight, isLoading: isLoadingInsight } = useInsightDetail(insightId || "");
   const updateMutation = useInsightUpdate();
+  const { data: aiModels } = useAiModels();
+  const { data: connectorDomains } = useConnectorDomains();
+  const { data: tenantConfig } = useTenantConfig();
+  const options = useInsightOptions();
+
+  const models =
+    aiModels?.providers.flatMap((p) =>
+      p.models.map((m) => ({
+        value: m.value,
+        label: m.recommended ? `${m.label} (Recommended)` : m.label,
+      })),
+    ) || [];
+
+  const domains = connectorDomains?.domains.map((d) => ({ value: d.value, label: d.label })) || [];
+
+  const detailLevelOptions = options.detailLevelOptions(tenantConfig?.detailLevelOptions ?? []);
+  const formatOptions = options.formatOptions(tenantConfig?.formatOptions ?? []);
 
   const {
     data: connectorsData,
@@ -139,8 +142,6 @@ function InsightEditContent() {
       quality: 50,
       detailLevel: "standard",
       customPrompt: "",
-      frequency: "weekly",
-      time: "9",
       format: "pdf",
       emailRecipients: [],
       enableWebhook: false,
@@ -161,14 +162,9 @@ function InsightEditContent() {
       });
 
       const aiConfigRaw = insight.aiConfig;
-      const aiConfig = isInsightAIConfig(aiConfigRaw)
+      const aiConfig = isInsightAiConfig(aiConfigRaw)
         ? aiConfigRaw
         : { model: "", detailLevel: "standard" as const };
-
-      const scheduleRaw = insight.schedule;
-      const schedule = isInsightSchedule(scheduleRaw)
-        ? scheduleRaw
-        : { frequency: "weekly" as const, time: 9 };
 
       const deliveryRaw = insight.delivery;
       const delivery = isInsightDelivery(deliveryRaw) ? deliveryRaw : { format: "pdf" as const };
@@ -176,7 +172,6 @@ function InsightEditContent() {
       const detailLevel = DETAIL_LEVEL_OPTIONS.has(aiConfig.detailLevel)
         ? aiConfig.detailLevel
         : "standard";
-      const frequency = FREQUENCY_OPTIONS.has(schedule.frequency) ? schedule.frequency : "weekly";
       const format = FORMAT_OPTIONS.has(delivery.format) ? delivery.format : "pdf";
 
       const defaultData: CreateInsightFormData = {
@@ -192,8 +187,6 @@ function InsightEditContent() {
         quality: aiConfig.quality || 50,
         detailLevel,
         customPrompt: aiConfig.customPrompt || "",
-        frequency,
-        time: String(schedule.time || 9),
         format,
         emailRecipients: delivery.emailRecipients || [],
         enableWebhook: !!delivery.webhookUrl,
@@ -284,10 +277,6 @@ function InsightEditContent() {
             detailLevel: data.detailLevel,
             customPrompt: data.customPrompt,
           },
-          schedule: {
-            frequency: data.frequency,
-            time: parseInt(data.time, 10),
-          },
           delivery: {
             format: data.format,
             emailRecipients: data.emailRecipients,
@@ -314,7 +303,7 @@ function InsightEditContent() {
       case 0:
         return (
           <>
-            <BasicInfoStep domains={AVAILABLE_DOMAINS} />
+            <BasicInfoStep domains={domains} />
             <ResetToDefaultButton
               onReset={() => handleResetSection("name")}
               sectionName={t("edit.sections.basicInfo")}
@@ -326,7 +315,7 @@ function InsightEditContent() {
           <>
             <ConnectorSelectionStep
               connectors={connectors}
-              onManageConnectors={() => {}}
+              onManageConnectors={() => navigate.push(ROUTE_PATHS.DASHBOARD_CONNECTORS)}
               onConnectorsChange={setSelectedConnectorIds}
               loading={connectorsLoading}
               error={connectorsError}
@@ -350,7 +339,7 @@ function InsightEditContent() {
       case 3:
         return (
           <>
-            <AISettingsStep models={AVAILABLE_MODELS} />
+            <AISettingsStep models={models} detailLevelOptions={detailLevelOptions} />
             <ResetToDefaultButton
               onReset={() => handleResetSection("model")}
               sectionName={t("edit.sections.aiSettings")}
@@ -360,10 +349,10 @@ function InsightEditContent() {
       case 4:
         return (
           <>
-            <ScheduleDeliveryStep />
+            <ScheduleDeliveryStep formatOptions={formatOptions} />
             <ResetToDefaultButton
-              onReset={() => handleResetSection("frequency")}
-              sectionName={t("edit.sections.schedule")}
+              onReset={() => handleResetSection("format")}
+              sectionName={t("edit.sections.delivery")}
             />
           </>
         );
@@ -397,7 +386,7 @@ function InsightEditContent() {
   return (
     <Container size="lg">
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit as never)}>
           <WizardLayout
             steps={STEPS}
             activeStep={activeStep}

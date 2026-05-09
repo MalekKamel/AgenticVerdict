@@ -1,14 +1,19 @@
 import type { ReportFormat } from "@agenticverdict/report-generator";
 import { AppFault } from "@agenticverdict/core";
+import type {
+  ReportDeliveryJobData,
+  ReportScheduleJobData,
+  WorkflowTriggerJobData,
+  WorkflowTriggerJobResult,
+  InsightExecutionJobData,
+  InsightExecutionJobResult,
+} from "@agenticverdict/types";
 import {
   createBullmqConnectionFromEnv,
   createReportDeliveryQueue,
   createReportScheduleQueue,
   createWorkflowTriggerQueue,
-  type ReportDeliveryJobData,
-  type ReportScheduleJobData,
-  type WorkflowTriggerJobData,
-  type WorkflowTriggerJobResult,
+  createInsightExecutionQueue,
 } from "@agenticverdict/worker";
 
 let cachedConnection: ReturnType<typeof createBullmqConnectionFromEnv> | undefined;
@@ -191,6 +196,116 @@ export async function getWorkflowTriggerJobStatus(
     const failedReason = typeof job.failedReason === "string" ? job.failedReason : undefined;
     const returnvalue = job.returnvalue as WorkflowTriggerJobResult | undefined;
     const status: WorkflowTriggerJobState =
+      stateStr === "completed"
+        ? "completed"
+        : stateStr === "failed"
+          ? "failed"
+          : stateStr === "active"
+            ? "active"
+            : stateStr === "waiting"
+              ? "waiting"
+              : stateStr === "delayed"
+                ? "delayed"
+                : stateStr === "paused"
+                  ? "paused"
+                  : "unknown";
+    const queuedAtMs = typeof job.timestamp === "number" ? job.timestamp : undefined;
+    const startedAtMs = typeof job.processedOn === "number" ? job.processedOn : undefined;
+    const finishedAtMs = typeof job.finishedOn === "number" ? job.finishedOn : undefined;
+    const durationMs =
+      startedAtMs !== undefined && finishedAtMs !== undefined
+        ? finishedAtMs - startedAtMs
+        : undefined;
+    const tenantId = typeof job.data?.tenantId === "string" ? job.data.tenantId : undefined;
+    return {
+      executionId,
+      tenantId,
+      status,
+      bullmqState: stateStr,
+      queuedAtMs,
+      startedAtMs,
+      finishedAtMs,
+      durationMs,
+      result: returnvalue,
+      error: failedReason,
+    };
+  } finally {
+    await q.close();
+  }
+}
+
+export async function enqueueInsightExecution(
+  data: InsightExecutionJobData,
+  jobId?: string,
+): Promise<string> {
+  const conn = getConnection();
+  if (!conn) {
+    throw new AppFault({
+      code: "QUEUE_UNAVAILABLE",
+      category: "dependency",
+      httpStatus: 503,
+      retryable: true,
+      safeMessage: "Queue infrastructure is unavailable.",
+      surface: "queue",
+    });
+  }
+  const q = createInsightExecutionQueue(conn);
+  try {
+    const job = await q.add(
+      "insight-execution",
+      data,
+      jobId ? { jobId, removeOnComplete: 1000 } : { removeOnComplete: 1000 },
+    );
+    return typeof job.id === "string" ? job.id : String(job.id);
+  } finally {
+    await q.close();
+  }
+}
+
+export type InsightExecutionJobState =
+  | "completed"
+  | "failed"
+  | "active"
+  | "waiting"
+  | "delayed"
+  | "paused"
+  | "unknown";
+
+export interface InsightExecutionStatusPayload {
+  executionId: string;
+  tenantId?: string;
+  status: InsightExecutionJobState;
+  bullmqState: string;
+  queuedAtMs?: number;
+  startedAtMs?: number;
+  finishedAtMs?: number;
+  durationMs?: number;
+  result?: InsightExecutionJobResult;
+  error?: string;
+}
+
+export async function getInsightExecutionJobStatus(
+  executionId: string,
+): Promise<InsightExecutionStatusPayload | null> {
+  const conn = getConnection();
+  if (!conn) {
+    return null;
+  }
+  const q = createInsightExecutionQueue(conn);
+  try {
+    let job = await q.getJob(executionId);
+    for (let attempt = 0; attempt < 5 && !job; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      job = await q.getJob(executionId);
+    }
+    if (!job) {
+      return null;
+    }
+    const state = await job.getState();
+    const stateStr = state as string;
+    const failedReason = typeof job.failedReason === "string" ? job.failedReason : undefined;
+    const returnvalue = job.returnvalue as InsightExecutionJobResult | undefined;
+    const status: InsightExecutionJobState =
       stateStr === "completed"
         ? "completed"
         : stateStr === "failed"

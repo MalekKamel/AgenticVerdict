@@ -12,7 +12,7 @@ import {
 
 const fixturesDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "fixtures", "tenants");
 
-const fixtureTenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const fixtureTenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 afterEach(() => {
   clearTenantConfigCache();

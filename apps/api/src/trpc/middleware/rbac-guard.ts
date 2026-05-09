@@ -1,11 +1,10 @@
 import { TRPCError } from "@trpc/server";
+import type { AnyMiddlewareFunction } from "@trpc/server/unstable-core-do-not-import";
 
 import { getRbacService } from "@agenticverdict/database";
 import { TenantSecurityError } from "@agenticverdict/core";
 import { type Permission, type Role } from "@agenticverdict/types";
 import { recordTenantSecurityEvent } from "@agenticverdict/observability";
-
-import { t } from "../init";
 
 /**
  * Extended context added by RBAC middleware guards.
@@ -24,6 +23,11 @@ export interface RbacContext {
   };
 }
 
+interface AuthCtx {
+  auth?: { userId: string; tenantId: string; roles: string[] };
+  tenant?: { tenantId: string };
+}
+
 /**
  * Middleware that requires the authenticated user to have a specific permission.
  * Checks database for current permissions (not just JWT roles).
@@ -36,16 +40,13 @@ export interface RbacContext {
  *
  * @example
  * ```ts
- * const adminProcedure = t.procedure
- *   .use(authedProcedure)
+ * const adminProcedure = authedProcedure
  *   .use(requirePermission(PERMISSIONS.REPORTS_WRITE));
  * ```
  */
-export function requirePermission(permission: Permission) {
-  return t.procedure.use(async (opts) => {
-    const ctx = opts.ctx as typeof opts.ctx & {
-      auth?: { userId: string; tenantId: string; roles: string[] };
-    };
+export function requirePermission(permission: Permission): AnyMiddlewareFunction {
+  const middleware: AnyMiddlewareFunction = async (opts) => {
+    const ctx = opts.ctx as AuthCtx;
 
     // Check authentication first
     if (!ctx.auth || !ctx.auth.userId || !ctx.auth.tenantId) {
@@ -79,7 +80,7 @@ export function requirePermission(permission: Permission) {
             tenantId,
             permission,
           },
-        } as RbacContext & typeof ctx,
+        },
       });
     } catch (error) {
       // Re-throw TRPCError as-is
@@ -97,7 +98,8 @@ export function requirePermission(permission: Permission) {
         message: "Authorization service unavailable",
       });
     }
-  });
+  };
+  return middleware;
 }
 
 /**
@@ -112,16 +114,13 @@ export function requirePermission(permission: Permission) {
  *
  * @example
  * ```ts
- * const adminProcedure = t.procedure
- *   .use(authedProcedure)
+ * const adminProcedure = authedProcedure
  *   .use(requireRole("admin"));
  * ```
  */
-export function requireRole(role: Role) {
-  return t.procedure.use(async (opts) => {
-    const ctx = opts.ctx as typeof opts.ctx & {
-      auth?: { userId: string; tenantId: string; roles: string[] };
-    };
+export function requireRole(role: Role): AnyMiddlewareFunction {
+  const middleware: AnyMiddlewareFunction = async (opts) => {
+    const ctx = opts.ctx as AuthCtx;
 
     // Check authentication first
     if (!ctx.auth || !ctx.auth.userId || !ctx.auth.tenantId) {
@@ -159,7 +158,7 @@ export function requireRole(role: Role) {
             tenantId,
             role,
           },
-        } as RbacContext & typeof ctx,
+        },
       });
     } catch (error) {
       // Re-throw TRPCError as-is
@@ -177,7 +176,8 @@ export function requireRole(role: Role) {
         message: "Authorization service unavailable",
       });
     }
-  });
+  };
+  return middleware;
 }
 
 /**
@@ -189,16 +189,13 @@ export function requireRole(role: Role) {
  *
  * @example
  * ```ts
- * const tenantScopedProcedure = t.procedure
- *   .use(authedProcedure)
+ * const tenantScopedProcedure = authedProcedure
  *   .use(validateTenantContext());
  * ```
  */
-export function validateTenantContext() {
-  return t.procedure.use(async (opts) => {
-    const ctx = opts.ctx as typeof opts.ctx & {
-      auth?: { userId: string; tenantId: string; roles: string[] };
-    };
+export function validateTenantContext(): AnyMiddlewareFunction {
+  const middleware: AnyMiddlewareFunction = async (opts) => {
+    const ctx = opts.ctx as AuthCtx;
 
     if (!ctx.auth || !ctx.auth.tenantId) {
       throw new TRPCError({
@@ -217,5 +214,6 @@ export function validateTenantContext() {
     }
 
     return opts.next();
-  });
+  };
+  return middleware;
 }

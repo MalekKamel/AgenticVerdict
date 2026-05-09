@@ -1,16 +1,19 @@
 import { escapeHtml } from "../html-utils";
+import { getReportStrings } from "../i18n/report-strings";
 
 export interface CoverHeaderInput {
   title: string;
   tenantName: string;
   periodLabel: string;
   accentColor: string;
+  locale?: string;
 }
 
 export function renderCoverBlock(input: CoverHeaderInput): string {
+  const t = getReportStrings(input.locale ?? "en");
   const sub = [input.tenantName, input.periodLabel].filter(Boolean).join(" · ");
   return `<header class="report-cover" style="border-bottom:3px solid ${escapeHtml(input.accentColor)};padding-bottom:20px;margin-bottom:28px;">
-  <p class="brand-accent" style="font-size:13px;letter-spacing:0.04em;text-transform:uppercase;margin:0 0 8px;">Marketing intelligence</p>
+  <p class="brand-accent" style="font-size:13px;letter-spacing:0.04em;text-transform:uppercase;margin:0 0 8px;">${escapeHtml(t.marketingIntelligence)}</p>
   <h1 style="font-size:28px;margin:0 0 8px;">${escapeHtml(input.title)}</h1>
   ${sub ? `<p style="margin:0;color:#4b5563;font-size:14px;">${escapeHtml(sub)}</p>` : ""}
 </header>`;

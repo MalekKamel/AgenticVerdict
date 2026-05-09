@@ -1,5 +1,69 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@agenticverdict/agent-runtime", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@agenticverdict/agent-runtime")>();
+  return {
+    ...actual,
+    runIntelligencePipeline: vi.fn().mockResolvedValue({
+      workflowId: "00000000-0000-4000-8000-000000000001",
+      status: "completed",
+      stages: [],
+      structuredResults: {
+        insights: {
+          insights: [
+            {
+              id: "00000000-0000-4000-8000-000000000002",
+              type: "observation",
+              title: "Test insight",
+              description: "Test description",
+              confidence: 0.85,
+              impact: "medium",
+              platforms: ["meta", "ga4"],
+              metrics: ["roas"],
+            },
+          ],
+        },
+      },
+    }),
+    runAgentJob: vi.fn().mockImplementation((_opts, work) => work({ invocation: {} })),
+  };
+});
+
+vi.mock("../tenant/worker-tenant-als", () => ({
+  loadTenantConfigForJob: vi.fn().mockResolvedValue({
+    tenantName: "test-tenant",
+    localization: { locale: "en", timezone: "UTC" },
+    marketing: { channels: [], kpis: [] },
+  }),
+  runWorkerJobWithTenantContext: vi.fn().mockImplementation(({ work }) => work()),
+}));
+
+vi.mock("../connector-factory", () => ({
+  createWorkerPlatformFetchToolDeps: vi.fn().mockReturnValue({
+    getAdapter: vi.fn(),
+  }),
+  getEnabledTenantConnectors: vi.fn().mockReturnValue(["meta", "ga4", "gsc"]),
+  toConnectorType: vi.fn().mockImplementation((name) => {
+    const valid = ["meta", "ga4", "gsc", "tiktok", "google-ads"];
+    return valid.includes(name) ? name : null;
+  }),
+}));
+
+vi.mock("@agenticverdict/core", () => ({
+  buildTenantContextForJob: vi.fn().mockReturnValue({
+    tenantId: "00000000-0000-4000-8000-000000000010",
+    config: {
+      tenantName: "test-tenant",
+      localization: { locale: "en", timezone: "UTC" },
+      marketing: { channels: [], kpis: [] },
+    },
+  }),
+}));
+
+vi.mock("../services/email", () => ({
+  sendReportEmail: vi.fn().mockResolvedValue({ success: false, error: "delivery_failed" }),
+}));
+
 vi.mock("./workflow-trigger-production-flow", () => ({
   runProductionFlowScenario: vi.fn(),
 }));
@@ -17,13 +81,13 @@ describe("defaultWorkflowTriggerProcessor", () => {
       defaultWorkflowTriggerProcessor({
         workflowId: "report-generation",
         testMode: true,
-        tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+        tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
         config: { mockData: { scenario: "normal", seed: 42_001 } },
         requestId: "req-1",
       }),
     ).resolves.toEqual({
       workflowId: "report-generation",
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       testMode: true,
       phase: "foundation",
       message: "workflow_trigger_acknowledged",
@@ -34,7 +98,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
   it("delegates R01 production-flow to runProductionFlowScenario", async () => {
     const pdfResult = {
       workflowId: "report-generation" as const,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       testMode: true,
       phase: "report-generation" as const,
       message: "production_flow_pdf_ok",
@@ -53,7 +117,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
     const payload = {
       workflowId: "report-generation" as const,
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       config: {
         mockData: { scenario: "normal" as const, seed: 42_001 },
         productionFlowScenarioId: "R01" as const,
@@ -67,7 +131,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "marketing-analysis",
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       config: {
         dateRange: { start: "2026-03-01T00:00:00.000Z", end: "2026-03-31T23:59:59.000Z" },
         platforms: ["meta", "ga4"],
@@ -86,7 +150,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "verdict-generation",
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       config: {
         dateRange: { start: "2026-03-01T00:00:00.000Z", end: "2026-03-31T23:59:59.000Z" },
         platforms: ["meta", "ga4", "gsc"],
@@ -106,7 +170,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "marketing-analysis",
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       config: {
         platforms: ["linkedin"],
       },
@@ -122,7 +186,7 @@ describe("defaultWorkflowTriggerProcessor", () => {
     const result = await defaultWorkflowTriggerProcessor({
       workflowId: "verdict-generation",
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       config: {
         deliveryEnabled: true,
         recipientEmail: "ops@example.test",

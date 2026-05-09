@@ -15,6 +15,7 @@ The repository root **Makefile** wraps the commands below. Copy **`.env.docker.e
 | `make dev-logs`                              | Follow dev stack logs                                        | Same `-f` list, then `logs -f`                                                                                                                                          |
 | `make apps-up` / `make apps-down`            | Production-like app images (no dev overlay)                  | `docker-compose.yml` + `docker-compose.apps.yml` only                                                                                                                   |
 | `make build`                                 | Base images + app images                                     | `make build-base` + `make build-apps`                                                                                                                                   |
+| `make build-all`                             | Build all packages (turbo)                                   | `pnpm build`                                                                                                                                                            |
 | `make health`                                | HTTP + script probes                                         | `./scripts/health-check.sh` (see [Getting started](./getting-started.md#health-checks))                                                                                 |
 | `make validate`                              | Compose merge / YAML checks                                  | `./scripts/docker-validate.sh`                                                                                                                                          |
 | `make preflight`                             | Docker CLI, ports, `.env.docker` hint                        | `./scripts/docker-preflight.sh`                                                                                                                                         |
@@ -30,11 +31,29 @@ The repository root **Makefile** wraps the commands below. Copy **`.env.docker.e
 | `make infra-logs`                            | Postgres + Redis logs                                        | `docker compose -f docker-compose.yml logs -f`                                                                                                                          |
 | `make db-dump`                               | Postgres-only backup script                                  | `./scripts/backup-postgres.sh`                                                                                                                                          |
 | `make db-reset`                              | Destructive DB reset (local)                                 | `pnpm --filter @agenticverdict/database db:reset`                                                                                                                       |
+| `make db-generate`                           | Generate Drizzle migration files                             | `pnpm --filter @agenticverdict/database db:generate`                                                                                                                    |
+| `make db-studio`                             | Open Drizzle Studio UI                                       | `pnpm --filter @agenticverdict/database db:studio`                                                                                                                      |
 | `make restore`                               | Restore a chosen `.sql.gz`                                   | `make restore BACKUP=backups/backup-….sql.gz`                                                                                                                           |
 | `make test-e2e`                              | Playwright E2E                                               | `pnpm test:e2e`                                                                                                                                                         |
 | `make clean-all`                             | Dev + prod-like `down -v`                                    | Deletes compose volumes for those stacks                                                                                                                                |
 | `make prod-example-up` / `prod-example-down` | **Production example** under `deploy/`                       | Requires `POSTGRES_PASSWORD` and `secrets/jwt_secret.txt`                                                                                                               |
 | `make sbom` / `make verify-image`            | Local Syft / Cosign                                          | Optional; CI uses `docker-scan.yml` / `docker-release.yml`                                                                                                              |
+
+### Pipeline & quality targets
+
+| Target               | Intent                                            | Equivalent           |
+| -------------------- | ------------------------------------------------- | -------------------- |
+| `make lint`          | Lint all packages (turbo)                         | `pnpm lint`          |
+| `make lint-fix`      | Lint with auto-fix                                | `pnpm lint -- --fix` |
+| `make lint-openapi`  | Lint OpenAPI specs                                | `pnpm lint:openapi`  |
+| `make typecheck`     | Type-check all packages (turbo)                   | `pnpm typecheck`     |
+| `make format`        | Format all files (prettier --write)               | `pnpm format`        |
+| `make format-check`  | Check formatting (prettier --check)               | `pnpm format:check`  |
+| `make ci`            | Full CI pipeline: lint → typecheck → test → build | `pnpm lint && ...`   |
+| `make test-unit`     | Run root-level unit tests (vitest)                | `pnpm test:unit`     |
+| `make test-coverage` | Run tests with coverage                           | `pnpm test:coverage` |
+| `make check-cycles`  | Detect circular dependencies (madge)              | `pnpm check:cycles`  |
+| `make check-all`     | Run all quality checks                            | Multiple checks      |
 
 Run **`make help`** for every target. Production-like stack (no dev overlay) omits `-f docker-compose.dev.yml` and uses only `docker-compose.yml` + `docker-compose.apps.yml`—see [Getting started](./getting-started.md#common-stacks).
 
@@ -124,13 +143,19 @@ docker compose \
 
 Enable BuildKit for cache mounts: `export DOCKER_BUILDKIT=1`. See [Compose and networking](./compose-and-networking.md#build-cache-and-faster-compose-builds).
 
-## Database migrations (host → Compose Postgres)
+## Database schema apply (host → Compose Postgres)
 
-With the base stack exposing Postgres on **`localhost:5432`**, apply migrations from the monorepo using the **`@agenticverdict/database`** package and a host **`DATABASE_URL`**:
+With the base stack exposing Postgres on **`localhost:5432`**, apply the consolidated baseline schema from the monorepo using the **`@agenticverdict/database`** package and a host **`DATABASE_URL`**:
 
 ```bash
 export DATABASE_URL='postgresql://postgres:postgres@localhost:5432/agenticverdict'
-pnpm --filter @agenticverdict/database db:migrate
+pnpm --filter @agenticverdict/database db:push
+```
+
+For a full destructive reset (drops all schemas, applies baseline, seeds data):
+
+```bash
+pnpm --filter @agenticverdict/database db:reset
 ```
 
 Credentials match the default dev database in [Compose and networking](./compose-and-networking.md#base-stack-docker-composeyml). Adjust the URL if you changed Postgres user, password, port, or database name.

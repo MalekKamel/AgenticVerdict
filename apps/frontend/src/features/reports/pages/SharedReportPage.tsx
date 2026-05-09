@@ -19,6 +19,7 @@ import {
 import { IconDownload, IconPrinter, IconX, IconZoomIn, IconZoomOut } from "@tabler/icons-react";
 import { trpc } from "@/lib/api/trpc-client";
 import { ReportViewer } from "@/features/reports/ui/ReportViewer";
+import { downloadFromContent } from "@/lib/download";
 
 export default function SharedReportPage() {
   const search = useSearch({ strict: false }) as { reportId?: string; token?: string };
@@ -71,12 +72,14 @@ export default function SharedReportPage() {
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 50));
   const handlePrint = () => window.print();
   const handleDownload = () => {
-    if (reportContent?.content) {
-      const link = document.createElement("a");
-      link.href = `data:${reportContent.contentType};base64,${reportContent.content}`;
-      link.download = `${report.title}.pdf`;
-      link.click();
-    }
+    if (!reportContent?.content) return;
+
+    downloadFromContent({
+      content: reportContent.content,
+      contentType: reportContent.contentType,
+      fileName: report.title,
+      extension: "pdf",
+    });
   };
 
   return (

@@ -1,10 +1,8 @@
 import { createHash } from "node:crypto";
 
 import type { Verdict } from "@agenticverdict/types";
-import { verdictSchema } from "@agenticverdict/types";
+import { verdictSchema, VerdictParseError } from "@agenticverdict/types";
 import { z } from "zod";
-
-import { VerdictParseError } from "./verdict-schema";
 
 /**
  * Pulls a JSON object from an LLM reply: optional ```json fence, else first `{`…`}` span.

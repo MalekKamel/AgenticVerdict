@@ -1,27 +1,33 @@
 import { renderCallout } from "../components/callout";
 import { renderScoreGaugeSvg } from "../components/gauge";
 import { escapeHtml } from "../html-utils";
+import { getReportStrings } from "../i18n/report-strings";
 import type { ReportTemplateViewModel } from "../templates/view-model";
 
-export function renderPhase2IntegrationBanner(vm: ReportTemplateViewModel): string {
+export function renderPhase2IntegrationBanner(
+  vm: ReportTemplateViewModel,
+  locale?: string,
+): string {
+  const t = getReportStrings(locale ?? "en");
   const errs = vm.phase2IntegrationErrors;
   if (!errs?.length) {
     return "";
   }
   return renderCallout(
     "warning",
-    "Phase 2 integration",
+    t.phase2Integration,
     `Some payloads did not match the expected schema: ${errs.join(", ")}.`,
   );
 }
 
-export function renderVerdictScorecardBlock(vm: ReportTemplateViewModel): string {
+export function renderVerdictScorecardBlock(vm: ReportTemplateViewModel, locale?: string): string {
+  const t = getReportStrings(locale ?? "en");
   const sc = vm.verdictScorecard;
   if (!sc) {
     return "";
   }
   const gauge = renderScoreGaugeSvg(sc.score, {
-    title: "Verdict score",
+    title: t.verdictScore,
     confidence: sc.confidence,
   });
   const typeLabel = sc.verdictType.replace(/_/g, " ");
@@ -30,16 +36,20 @@ export function renderVerdictScorecardBlock(vm: ReportTemplateViewModel): string
     ${gauge}
   </div>
   <div style="flex:1 1 240px;">
-    <h2 style="font-size:18px;margin:0 0 8px;">Verdict overview</h2>
-    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>Type:</strong> ${escapeHtml(typeLabel)}</p>
-    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>Sentiment:</strong> ${escapeHtml(sc.sentiment)}</p>
-    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>Model confidence:</strong> ${Math.round(sc.confidence * 100)}%</p>
+    <h2 style="font-size:18px;margin:0 0 8px;">${escapeHtml(t.verdictOverview)}</h2>
+    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>${escapeHtml(t.type)}:</strong> ${escapeHtml(typeLabel)}</p>
+    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>${escapeHtml(t.sentiment)}:</strong> ${escapeHtml(sc.sentiment)}</p>
+    <p style="margin:0 0 6px;color:#374151;font-size:14px;"><strong>${escapeHtml(t.modelConfidence)}:</strong> ${Math.round(sc.confidence * 100)}%</p>
     ${sc.summaryLine ? `<p style="margin:10px 0 0;line-height:1.55;font-size:14px;">${escapeHtml(sc.summaryLine)}</p>` : ""}
   </div>
 </section>`;
 }
 
-export function renderRecommendationEngineBlock(vm: ReportTemplateViewModel): string {
+export function renderRecommendationEngineBlock(
+  vm: ReportTemplateViewModel,
+  locale?: string,
+): string {
+  const t = getReportStrings(locale ?? "en");
   const recs = vm.verdictRecommendations;
   if (!recs?.length) {
     return "";
@@ -54,12 +64,13 @@ export function renderRecommendationEngineBlock(vm: ReportTemplateViewModel): st
     )
     .join("");
   return `<section id="sec-recommendations" style="margin-top:22px;">
-  <h2 style="font-size:18px;">Recommendations</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.recommendations)}</h2>
   <ol style="padding-left:20px;margin:8px 0 0;">${items}</ol>
 </section>`;
 }
 
-export function renderInsightContextBlock(vm: ReportTemplateViewModel): string {
+export function renderInsightContextBlock(vm: ReportTemplateViewModel, locale?: string): string {
+  const t = getReportStrings(locale ?? "en");
   const rows = vm.insightHighlights;
   if (!rows?.length) {
     return "";
@@ -77,12 +88,16 @@ export function renderInsightContextBlock(vm: ReportTemplateViewModel): string {
     )
     .join("");
   return `<section id="sec-insight-context" style="margin-top:22px;">
-  <h2 style="font-size:18px;">Insight context</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.insightContext)}</h2>
   ${cards}
 </section>`;
 }
 
-export function renderStatisticalSummariesBlock(vm: ReportTemplateViewModel): string {
+export function renderStatisticalSummariesBlock(
+  vm: ReportTemplateViewModel,
+  locale?: string,
+): string {
+  const t = getReportStrings(locale ?? "en");
   const stats = vm.statisticalSummaries;
   if (!stats?.length) {
     return "";
@@ -97,19 +112,23 @@ export function renderStatisticalSummariesBlock(vm: ReportTemplateViewModel): st
     )
     .join("");
   return `<section id="sec-statistical-summaries" style="margin-top:22px;">
-  <h2 style="font-size:18px;">Statistical summaries</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.statisticalSummaries)}</h2>
   <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;">
     <thead><tr>
-      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">Measure</th>
-      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">Value</th>
-      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">Note</th>
+      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">${escapeHtml(t.measure)}</th>
+      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">${escapeHtml(t.value)}</th>
+      <th align="left" style="padding:8px 12px;border-bottom:2px solid #d1d5db;">${escapeHtml(t.note)}</th>
     </tr></thead>
     <tbody>${lines}</tbody>
   </table>
 </section>`;
 }
 
-export function renderDataQualityIndicatorsBlock(vm: ReportTemplateViewModel): string {
+export function renderDataQualityIndicatorsBlock(
+  vm: ReportTemplateViewModel,
+  locale?: string,
+): string {
+  const t = getReportStrings(locale ?? "en");
   const ind = vm.dataQualityIndicators;
   if (!ind?.length) {
     return "";
@@ -126,7 +145,7 @@ export function renderDataQualityIndicatorsBlock(vm: ReportTemplateViewModel): s
     )
     .join("");
   return `<section id="sec-data-quality" style="margin-top:20px;">
-  <h2 style="font-size:18px;">Data quality indicators</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.dataQualityIndicators)}</h2>
   <div style="margin-top:8px;">${chips}</div>
 </section>`;
 }

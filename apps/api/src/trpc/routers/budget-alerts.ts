@@ -3,23 +3,22 @@ import { z } from "zod";
 import { BudgetAlertsService } from "../../services/budget-alerts.service";
 import { authedProcedure } from "../procedures";
 import { t } from "../init";
+import {
+  alertTypeSchema,
+  alertThresholdTypeSchema,
+  syncFrequencySchema,
+  alertStatusSchema,
+  notificationChannelSchema,
+} from "@agenticverdict/types";
 
 const createAlertInputSchema = z.object({
   name: z.string().min(1).max(128),
   description: z.string().max(512).optional(),
-  type: z.enum(["threshold", "percentage", "rate"]),
+  type: alertTypeSchema,
   threshold: z.number().positive(),
-  thresholdType: z.enum(["cost", "tokens", "requests"]),
-  timeWindow: z.enum(["hourly", "daily", "weekly", "monthly"]),
-  notifications: z
-    .array(
-      z.object({
-        type: z.enum(["email", "webhook", "slack"]),
-        target: z.string(),
-        isEnabled: z.boolean().default(true),
-      }),
-    )
-    .min(1),
+  thresholdType: alertThresholdTypeSchema,
+  timeWindow: syncFrequencySchema,
+  notifications: z.array(notificationChannelSchema).min(1),
 });
 
 const updateAlertInputSchema = createAlertInputSchema.partial().extend({
@@ -30,7 +29,7 @@ const getAlertInputSchema = z.object({ alertId: z.string().uuid() });
 
 const toggleAlertInputSchema = z.object({
   alertId: z.string().uuid(),
-  status: z.enum(["active", "paused"]),
+  status: alertStatusSchema.exclude(["triggered"]),
 });
 
 const alertOutputSchema = z.object({
@@ -38,11 +37,11 @@ const alertOutputSchema = z.object({
   tenantId: z.string().uuid(),
   name: z.string(),
   description: z.string().nullable(),
-  type: z.enum(["threshold", "percentage", "rate"]),
+  type: alertTypeSchema,
   threshold: z.number(),
-  thresholdType: z.enum(["cost", "tokens", "requests"]),
-  timeWindow: z.enum(["hourly", "daily", "weekly", "monthly"]),
-  status: z.enum(["active", "paused", "triggered"]),
+  thresholdType: alertThresholdTypeSchema,
+  timeWindow: syncFrequencySchema,
+  status: alertStatusSchema,
   notifications: z.array(
     z.object({
       id: z.string().uuid().optional(),

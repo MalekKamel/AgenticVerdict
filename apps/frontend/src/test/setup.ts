@@ -111,6 +111,8 @@ vi.mock("@tabler/icons-react", () => ({
 
 // Mock @mantine/core components
 vi.mock("@mantine/core", () => ({
+  MantineProvider: ({ children }: { children?: React.ReactNode }) =>
+    React.createElement("div", { "data-mantine-provider": true }, children),
   Box: ({ children, ...props }: { children?: React.ReactNode }) =>
     React.createElement("div", { ...props }, children),
   Button: ({ children, loading, ...props }: { children?: React.ReactNode; loading?: boolean }) =>

@@ -2,6 +2,7 @@
 
 import { Stack, Box, Text, Group, Badge, Divider, Title } from "@mantine/core";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "@/i18n/react";
 
 interface ReviewValues {
   name: string;
@@ -26,6 +27,7 @@ interface ReviewStepProps {
 }
 
 export function ReviewStep({ connectors }: ReviewStepProps) {
+  const t = useTranslations("insights");
   const { getValues } = useFormContext<ReviewValues>();
   const values = getValues();
 
@@ -37,25 +39,25 @@ export function ReviewStep({ connectors }: ReviewStepProps) {
 
   return (
     <Stack gap="md">
-      <Title order={4}>Review Configuration</Title>
+      <Title order={4}>{t("wizard.steps.review.title")}</Title>
 
       <Box>
         <Text fw={600} mb="xs">
-          Basic Information
+          {t("wizard.steps.review.sections.basicInfo")}
         </Text>
         <Stack gap="xs">
           <Group gap="xs">
-            <Text c="dimmed">Name:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.name")}:</Text>
             <Text>{values.name}</Text>
           </Group>
           {values.description && (
             <Group gap="xs" align="flex-start">
-              <Text c="dimmed">Description:</Text>
+              <Text c="dimmed">{t("wizard.steps.review.fields.description")}:</Text>
               <Text>{values.description}</Text>
             </Group>
           )}
           <Group gap="xs">
-            <Text c="dimmed">Domain:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.domain")}:</Text>
             <Badge>{values.domain}</Badge>
           </Group>
         </Stack>
@@ -65,17 +67,17 @@ export function ReviewStep({ connectors }: ReviewStepProps) {
 
       <Box>
         <Text fw={600} mb="xs">
-          Connectors & Metrics
+          {t("wizard.steps.review.sections.connectors")}
         </Text>
         <Stack gap="xs">
           <Group gap="xs">
-            <Text c="dimmed">Selected Connectors:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.selectedConnectors")}:</Text>
             <Text>
               {selectedConnectors.length} ({selectedConnectors.map((c) => c.name).join(", ")})
             </Text>
           </Group>
           <Group gap="xs">
-            <Text c="dimmed">Total Metrics:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.totalMetrics")}:</Text>
             <Text>{totalMetrics}</Text>
           </Group>
         </Stack>
@@ -85,24 +87,24 @@ export function ReviewStep({ connectors }: ReviewStepProps) {
 
       <Box>
         <Text fw={600} mb="xs">
-          AI Settings
+          {t("wizard.steps.review.sections.aiSettings")}
         </Text>
         <Stack gap="xs">
           <Group gap="xs">
-            <Text c="dimmed">Model:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.model")}:</Text>
             <Badge>{values.model}</Badge>
           </Group>
           <Group gap="xs">
-            <Text c="dimmed">Quality:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.quality")}:</Text>
             <Text>{values.quality}%</Text>
           </Group>
           <Group gap="xs">
-            <Text c="dimmed">Detail Level:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.detailLevel")}:</Text>
             <Badge>{values.detailLevel}</Badge>
           </Group>
           {values.customPrompt && (
             <Group gap="xs" align="flex-start">
-              <Text c="dimmed">Custom Instructions:</Text>
+              <Text c="dimmed">{t("wizard.steps.review.fields.customInstructions")}:</Text>
               <Text style={{ flex: 1 }}>{values.customPrompt}</Text>
             </Group>
           )}
@@ -113,23 +115,23 @@ export function ReviewStep({ connectors }: ReviewStepProps) {
 
       <Box>
         <Text fw={600} mb="xs">
-          Schedule & Delivery
+          {t("wizard.steps.review.sections.schedule")}
         </Text>
         <Stack gap="xs">
           <Group gap="xs">
-            <Text c="dimmed">Frequency:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.frequency")}:</Text>
             <Badge>{values.frequency}</Badge>
           </Group>
           <Group gap="xs">
-            <Text c="dimmed">Time:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.time")}:</Text>
             <Text>{values.time}:00</Text>
           </Group>
           <Group gap="xs">
-            <Text c="dimmed">Format:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.format")}:</Text>
             <Badge>{values.format}</Badge>
           </Group>
           <Group gap="xs" align="flex-start">
-            <Text c="dimmed">Email Recipients:</Text>
+            <Text c="dimmed">{t("wizard.steps.review.fields.emailRecipients")}:</Text>
             <Stack gap={2}>
               {values.emailRecipients.map((email: string, index: number) => (
                 <Text key={index} size="sm">
@@ -140,7 +142,7 @@ export function ReviewStep({ connectors }: ReviewStepProps) {
           </Group>
           {values.enableWebhook && values.webhookUrl && (
             <Group gap="xs" align="flex-start">
-              <Text c="dimmed">Webhook:</Text>
+              <Text c="dimmed">{t("wizard.steps.review.fields.webhook")}:</Text>
               <Text size="sm">{values.webhookUrl}</Text>
             </Group>
           )}

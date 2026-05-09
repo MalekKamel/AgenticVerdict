@@ -1,4 +1,5 @@
-import { CostTier } from "@agenticverdict/core/types/ai-models";
+import { COST_TIER } from "@agenticverdict/types";
+import type { CostTier } from "@agenticverdict/types";
 
 /**
  * Cost Calculation Utilities
@@ -12,15 +13,15 @@ import { CostTier } from "@agenticverdict/core/types/ai-models";
  * These are base prices that get multiplied by cost tier
  */
 const DEFAULT_PRICING = {
-  [CostTier.PREMIUM]: {
+  [COST_TIER.PREMIUM]: {
     inputCostPer1k: 3.0, // $0.03 per 1K input tokens
     outputCostPer1k: 15.0, // $0.15 per 1K output tokens
   },
-  [CostTier.STANDARD]: {
+  [COST_TIER.STANDARD]: {
     inputCostPer1k: 1.0, // $0.01 per 1K input tokens
     outputCostPer1k: 5.0, // $0.05 per 1K output tokens
   },
-  [CostTier.ECONOMY]: {
+  [COST_TIER.ECONOMY]: {
     inputCostPer1k: 0.3, // $0.003 per 1K input tokens
     outputCostPer1k: 1.5, // $0.015 per 1K output tokens
   },
@@ -30,7 +31,7 @@ const DEFAULT_PRICING = {
  * Provider-specific pricing overrides
  * In production, this would come from configuration/database
  */
-const PROVIDER_PRICING: Record<string, (typeof DEFAULT_PRICING)[CostTier.STANDARD]> = {
+const PROVIDER_PRICING: Record<string, { inputCostPer1k: number; outputCostPer1k: number }> = {
   anthropic: {
     inputCostPer1k: 3.0,
     outputCostPer1k: 15.0,
@@ -57,7 +58,7 @@ const PROVIDER_PRICING: Record<string, (typeof DEFAULT_PRICING)[CostTier.STANDAR
 export function calculateCost(
   promptTokens: number,
   completionTokens: number,
-  costTier: CostTier = CostTier.STANDARD,
+  costTier: CostTier = COST_TIER.STANDARD,
   customPricing?: {
     inputCostPer1k: number;
     outputCostPer1k: number;
@@ -91,7 +92,7 @@ export function calculateCostWithProvider(
   promptTokens: number,
   completionTokens: number,
   providerId: string,
-  costTier: CostTier = CostTier.STANDARD,
+  costTier: CostTier = COST_TIER.STANDARD,
 ): number {
   // Get provider-specific pricing or fall back to tier default
   const providerPricing = PROVIDER_PRICING[providerId];
@@ -135,9 +136,9 @@ export function calculateCostWithCustomPricing(
  */
 export function applyCostTierMultiplier(baseCostCents: number, costTier: CostTier): number {
   const multipliers = {
-    [CostTier.PREMIUM]: 3.0,
-    [CostTier.STANDARD]: 1.0,
-    [CostTier.ECONOMY]: 0.3,
+    [COST_TIER.PREMIUM]: 3.0,
+    [COST_TIER.STANDARD]: 1.0,
+    [COST_TIER.ECONOMY]: 0.3,
   };
 
   const multiplier = multipliers[costTier];
@@ -152,7 +153,7 @@ export function applyCostTierMultiplier(baseCostCents: number, costTier: CostTie
  * @returns Pricing object with input/output costs per 1K tokens
  */
 export function getPricing(
-  costTier: CostTier = CostTier.STANDARD,
+  costTier: CostTier = COST_TIER.STANDARD,
   providerId?: string,
 ): {
   inputCostPer1k: number;
@@ -183,7 +184,7 @@ export function getPricing(
 export function estimateCost(
   estimatedPromptTokens: number,
   estimatedCompletionTokens: number,
-  costTier: CostTier = CostTier.STANDARD,
+  costTier: CostTier = COST_TIER.STANDARD,
 ): {
   estimatedCostCents: number;
   estimatedCostUSD: string;
@@ -235,7 +236,7 @@ export function formatCostUSD(costCents: number): string {
 export function calculateEfficiencyScore(
   totalTokens: number,
   totalCostCents: number,
-  costTier: CostTier = CostTier.STANDARD,
+  costTier: CostTier = COST_TIER.STANDARD,
 ): number {
   if (totalTokens === 0 || totalCostCents === 0) {
     return 0;
@@ -268,7 +269,7 @@ export function compareTiers(
   costUSD: string;
   savings: number;
 }> {
-  const costs = Object.values(CostTier).map((tier) => ({
+  const costs = Object.values(COST_TIER).map((tier) => ({
     tier,
     costCents: calculateCost(promptTokens, completionTokens, tier),
     costUSD: "",
@@ -276,7 +277,7 @@ export function compareTiers(
   }));
 
   // Calculate savings compared to premium
-  const premiumCost = costs.find((c) => c.tier === CostTier.PREMIUM)?.costCents || 0;
+  const premiumCost = costs.find((c) => c.tier === COST_TIER.PREMIUM)?.costCents || 0;
 
   return costs.map((cost) => ({
     ...cost,

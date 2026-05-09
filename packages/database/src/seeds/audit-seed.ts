@@ -53,11 +53,9 @@ export async function seedAuditLogsForTenant(
 }
 
 export interface SeedAuditTrailEvent {
+  insightId?: string;
   eventType: string;
-  entityType: "insight" | "report" | "connector" | "user";
-  entityId: string;
-  description: string;
-  metadata?: Record<string, unknown>;
+  eventData: Record<string, unknown>;
 }
 
 export async function seedAuditTrailForTenant(
@@ -78,12 +76,9 @@ export async function seedAuditTrailForTenant(
       for (const cfg of eventConfigs) {
         await tx.insert(auditTrail).values({
           tenantId,
+          insightId: cfg.insightId ?? null,
           eventType: cfg.eventType,
-          entityType: cfg.entityType,
-          entityId: cfg.entityId,
-          description: cfg.description,
-          metadata: cfg.metadata,
-          occurredAt: new Date(),
+          eventData: cfg.eventData,
         });
       }
     });

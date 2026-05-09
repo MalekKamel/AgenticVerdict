@@ -7,9 +7,8 @@ import {
   type NewBudgetAlert,
   type AlertTriggerHistory,
   type BudgetPeriodSummary,
-  type AlertStatus,
-  type AlertTimeWindow,
 } from "../schema/budget-alerts";
+import type { AlertStatus, SyncFrequency } from "@agenticverdict/types";
 import { and, eq, desc, sql } from "drizzle-orm";
 
 /**
@@ -319,7 +318,7 @@ export class BudgetAlertsRepository {
    */
   async updatePeriodSummary(
     tenantId: string,
-    periodType: AlertTimeWindow,
+    periodType: SyncFrequency,
     periodStart: Date,
     updates: {
       totalCostCents?: number;

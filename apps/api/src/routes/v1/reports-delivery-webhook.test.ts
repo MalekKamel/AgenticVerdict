@@ -23,7 +23,9 @@ describe("reports delivery webhook route", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
     delete process.env.REPORT_DELIVERY_WEBHOOK_TOKEN;
   });
 

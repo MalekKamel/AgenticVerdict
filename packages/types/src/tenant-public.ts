@@ -41,3 +41,37 @@ export type ResolveTenantSlugInput = z.infer<typeof resolveTenantSlugInputSchema
 export type ResolveTenantSlugOutput = z.infer<typeof resolveTenantSlugOutputSchema>;
 export type GetTenantBrandingInput = z.infer<typeof getTenantBrandingInputSchema>;
 export type GetTenantBrandingOutput = z.infer<typeof getTenantBrandingOutputSchema>;
+
+// ============================================================================
+// Tenant Config Output Schema (moved from apps/api/src/trpc/routers/insights.ts)
+// ============================================================================
+
+export const tenantConfigOutputSchema = z.object({
+  shareLinkExpiryHours: z.number().min(1).max(720),
+  defaultAiModel: z.string().nullable(),
+  defaultAiProvider: z.string().nullable(),
+  defaultAiQuality: z.string().nullable(),
+  defaultAiDetailLevel: z.string().nullable(),
+  detailLevelOptions: z.array(
+    z.object({
+      value: z.string(),
+      labelKey: z.string(),
+      order: z.number().optional(),
+    }),
+  ),
+  frequencyOptions: z.array(
+    z.object({
+      value: z.string(),
+      labelKey: z.string(),
+      order: z.number().optional(),
+    }),
+  ),
+  formatOptions: z.array(
+    z.object({
+      value: z.string(),
+      labelKey: z.string(),
+      order: z.number().optional(),
+    }),
+  ),
+});
+export type TenantConfigOutput = z.infer<typeof tenantConfigOutputSchema>;

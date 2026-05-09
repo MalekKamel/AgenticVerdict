@@ -5,7 +5,7 @@ export const promptTemplateTypeSchema = z.enum(["analysis", "insight", "verdict"
 export type PromptTemplateType = z.infer<typeof promptTemplateTypeSchema>;
 
 export const promptTemplateMetadataSchema = z.object({
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
   author: z.string().min(1),
   tags: z.array(z.string()),
 });

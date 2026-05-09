@@ -9,13 +9,14 @@ import { createUpstashRedisFromEnv } from "@agenticverdict/database";
 import { createPinoLogger, renderProductionFlowTestMetrics } from "@agenticverdict/observability";
 import { getObjectStorage } from "@agenticverdict/core/storage";
 
+const logger = createPinoLogger("api");
+
 import { registerRequestAccessLogging } from "./middleware/request-logging";
 
 import { registerSwagger, registerSwaggerUi } from "./openapi";
 import { registerAnalysisResultRoutes } from "./routes/v1/analysis-results";
 import { registerInsightRoutes } from "./routes/v1/insights";
 import { registerReportRoutes } from "./routes/v1/reports";
-import { registerReportScheduleRoutes } from "./routes/v1/report-schedules";
 import { registerReportTemplateRoutes } from "./routes/v1/report-templates";
 import { registerTranslationRoutes } from "./routes/v1/translations";
 import { registerTestFlowRoutes } from "./routes/v1/test-flow";
@@ -27,6 +28,7 @@ import "./middleware/jwt-tenant-context";
 import { registerTenantAlsRouteWrapping } from "./middleware/tenant-route-als";
 import { runTenantRlsStartupCheck } from "./startup/tenant-rls-startup-check";
 import { registerTrpc } from "./trpc/register-fastify";
+import { recoverSchedules } from "@agenticverdict/worker";
 
 /**
  * Swagger plugins use Fastify's default `FastifyBaseLogger` generic; this server uses Pino's `Logger`
@@ -34,6 +36,14 @@ import { registerTrpc } from "./trpc/register-fastify";
  */
 export async function buildApiServer(): Promise<FastifyInstance> {
   await runTenantRlsStartupCheck();
+  try {
+    await recoverSchedules();
+  } catch (error) {
+    logger.warn(
+      { err: error },
+      "[schedule-recovery] Recovery failed during API startup (non-fatal)",
+    );
+  }
   const redis = createUpstashRedisFromEnv();
   const app = Fastify({
     ...(process.env.VITEST === "true"
@@ -170,7 +180,6 @@ export async function buildApiServer(): Promise<FastifyInstance> {
       registerVerdictRoutes(scope, redis);
       registerAnalysisResultRoutes(scope, redis);
       registerReportRoutes(scope, redis);
-      registerReportScheduleRoutes(scope, redis);
       registerReportTemplateRoutes(scope, redis);
       registerTranslationRoutes(scope, redis);
       registerValidationRoutes(scope, redis);

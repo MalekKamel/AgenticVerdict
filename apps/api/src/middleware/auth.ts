@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { jwtVerify } from "jose";
 
-import type { TenantType, TenantStatus } from "@agenticverdict/types";
+import type { TenantType, TenantStatus, AuthPayload } from "@agenticverdict/types";
 
 import { AppFault, TenantSecurityError, toHttpErrorResponse } from "@agenticverdict/core";
 import { recordTenantSecurityEvent } from "@agenticverdict/observability";
@@ -59,15 +59,6 @@ export function resolveJwtSecret(): string | undefined {
     return undefined;
   }
   return fromEnv;
-}
-
-export interface AuthPayload {
-  userId: string;
-  tenantId: string;
-  tenantType: TenantType;
-  tenantStatus: TenantStatus;
-  roles: string[];
-  permissions: string[];
 }
 
 export interface AuthMiddlewareOptions {

@@ -1,3 +1,9 @@
+import type {
+  ConnectorConfig,
+  ConnectorNotifications,
+  ConnectorAdvancedOptions,
+} from "@agenticverdict/types";
+
 export interface SeedTenantConnector {
   platform: string;
   name: string;
@@ -5,6 +11,9 @@ export interface SeedTenantConnector {
   status?: "active" | "inactive" | "error";
   syncFrequency?: string;
   metrics?: string[];
+  config?: ConnectorConfig;
+  notifications?: ConnectorNotifications;
+  advancedOptions?: ConnectorAdvancedOptions;
 }
 
 export class ConnectorFactory {
@@ -52,6 +61,9 @@ export class ConnectorFactory {
       status: "inactive",
       syncFrequency: "daily",
       metrics: defaultMetrics,
+      config: {},
+      notifications: {},
+      advancedOptions: {},
       ...overrides,
     };
   }

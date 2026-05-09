@@ -31,7 +31,9 @@ describe("POST /api/v1/telemetry/ingest", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("accepts a valid envelope when TELEMETRY_INGEST_SECRET is unset (non-production dev)", async () => {

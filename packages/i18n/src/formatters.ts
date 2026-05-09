@@ -5,6 +5,15 @@ export type AppLocale = (typeof APP_LOCALES)[number];
 
 export type LocalizationFormatConfig = Pick<LocalizationConfig, "region" | "timezone" | "currency">;
 
+/** Native language names for each locale, used in UI and prompt context. */
+export const LANGUAGE_NATIVE_NAMES: Record<AppLocale, string> = {
+  en: "English",
+  ar: "العربية",
+  fr: "Français",
+  es: "Español",
+  zh: "中文",
+};
+
 /**
  * BCP 47 tag for Intl formatters, combining UI locale with tenant region (e.g. en-SA, ar-SA).
  */

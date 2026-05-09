@@ -1,6 +1,8 @@
 import { createTenantContext, runWithTenantContext } from "@agenticverdict/core";
 import type { TenantConfig } from "@agenticverdict/config";
 
+import type { ConfigScope, CostTier } from "@agenticverdict/types";
+
 import type { Database } from "../client";
 import { dbScoped } from "../db-scoped";
 import { aiProviders, aiProviderModels, aiProviderFailover } from "../schema/ai-providers";
@@ -27,8 +29,8 @@ export interface SeedAiProvider {
   providerName: string;
   modelId: string;
   modelName: string;
-  costTier?: "premium" | "standard" | "economy";
-  scope?: "tenant" | "domain" | "connector";
+  costTier?: CostTier;
+  scope?: ConfigScope;
   priority?: number;
 }
 

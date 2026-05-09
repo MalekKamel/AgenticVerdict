@@ -1,3 +1,4 @@
+import type { DomainProviderConfig, DomainMetadata } from "@agenticverdict/types";
 import {
   pgTable,
   uuid,
@@ -47,17 +48,13 @@ export const businessDomains = pgTable(
     order: integer("order").notNull().default(0),
 
     /** Domain-specific provider configuration override */
-    providerConfig: jsonb("provider_config").$type<{
-      providerId: string;
-      modelId: string;
-      costTier: string;
-    }>(),
+    providerConfig: jsonb("provider_config").$type<DomainProviderConfig>(),
 
     /** Whether domain uses tenant default provider */
     usesTenantDefault: boolean("uses_tenant_default").notNull().default(true),
 
     /** Metadata for additional configuration */
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<DomainMetadata>(),
 
     /** Created timestamp */
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -221,7 +218,7 @@ export const domainHierarchyCacheRelations = relations(domainHierarchyCache, ({ 
 }));
 
 // Type exports
-export type BusinessDomain = typeof businessDomains.$inferSelect;
+export type BusinessDomainDb = typeof businessDomains.$inferSelect;
 export type NewBusinessDomain = typeof businessDomains.$inferInsert;
 export type DomainConnectorAssignment = typeof domainConnectorAssignments.$inferSelect;
 export type NewDomainConnectorAssignment = typeof domainConnectorAssignments.$inferInsert;

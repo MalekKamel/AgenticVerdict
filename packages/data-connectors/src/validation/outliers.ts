@@ -1,6 +1,6 @@
 import type { NormalizedMetricRecord } from "../normalization/types";
 
-import type { OutlierFlag } from "./types";
+import type { OutlierFlag } from "@agenticverdict/types";
 
 export interface OutlierDetectionOptions {
   readonly iqrMultiplier?: number;

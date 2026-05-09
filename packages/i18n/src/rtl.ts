@@ -1,4 +1,7 @@
 import type { AppLocale } from "./formatters";
+import type { TextDirection } from "@agenticverdict/types";
+
+export type { TextDirection };
 
 const RTL_APP_LOCALES: ReadonlySet<AppLocale> = new Set<AppLocale>(["ar"]);
 
@@ -21,6 +24,6 @@ export function isRtlLocale(locale: string): boolean {
   return RTL_APP_LOCALES.has(normalized as AppLocale);
 }
 
-export function textDirection(locale: string): "rtl" | "ltr" {
+export function textDirection(locale: string): TextDirection {
   return isRtlLocale(locale) ? "rtl" : "ltr";
 }

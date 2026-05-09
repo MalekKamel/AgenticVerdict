@@ -6,7 +6,7 @@ import { persistWorkflowArtifactsFromStatus } from "./workflow-status-persistenc
 
 describe("workflow status persistence", () => {
   it("persists analysis bundle from completed workflow status result", async () => {
-    const tenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee33";
+    const tenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee33";
     const analysisId = "aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa";
     const snapshot: WorkflowTriggerStatusPayload = {
       executionId: "exec-1",
@@ -22,7 +22,7 @@ describe("workflow status persistence", () => {
         insights: [
           {
             id: "bbbbbbbb-1111-4111-8111-bbbbbbbbbbbb",
-            type: "trend",
+            type: "observation",
             title: "Trend",
             description: "Detected trend",
             confidence: 0.8,

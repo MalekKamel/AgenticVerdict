@@ -10,6 +10,7 @@
 
 import { z } from "zod";
 import type { Role, Permission } from "./rbac";
+import type { TenantType, TenantStatus } from "./tenant";
 
 /** Optional tenant UUID for pre-session `auth.*` procedures (body channel per SSOT C-HTTP-1). */
 export const optionalAuthTenantIdSchema = z.string().uuid().optional();
@@ -272,6 +273,10 @@ export type AuthUserData = {
   lastName: string;
   emailVerified: boolean;
   tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
+  roles: string[];
+  permissions: string[];
 };
 
 /**
@@ -304,3 +309,16 @@ export type AuthErrorResponse = {
   message: string;
   details?: Record<string, unknown>;
 };
+
+// ============================================================================
+// Auth Payload (moved from apps/api/src/middleware/auth.ts)
+// ============================================================================
+
+export interface AuthPayload {
+  userId: string;
+  tenantId: string;
+  tenantType: TenantType;
+  tenantStatus: TenantStatus;
+  roles: string[];
+  permissions: string[];
+}

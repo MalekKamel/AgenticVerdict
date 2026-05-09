@@ -1,21 +1,24 @@
 "use client";
 
 import { Alert, Button, Text } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale, useTranslations } from "@/i18n/react";
 import { useCallback, useEffect, useRef } from "react";
 import { IconCheck, IconKey, IconX } from "@tabler/icons-react";
 
 import { AUTH_TEXT_LINK_CLASS, AUTH_TRACK_MUTED_CLASS } from "@/features/auth/ui/authUi";
-import { resetPasswordSchema } from "@/features/auth/model/validations/auth";
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormData,
+} from "@/features/auth/model/validations/auth";
 import { calculatePasswordStrength, getPasswordRequirements } from "@/lib/validations/password";
 
-import type { ResetPasswordFormData } from "@/features/auth/model/validations/auth";
 import { PasswordInput } from "@/features/auth/ui/PasswordInput";
 import { Link } from "@/i18n/navigation";
 import type { AuthMutationError } from "@/features/auth/hooks/usePasswordReset";
 import { getDirectionalSectionProps } from "@/features/auth/ui/authUi";
 import { getDirection } from "@/i18n/locales";
+import { useForm } from "react-hook-form";
 
 const RESET_ERROR_LINK_CLASS =
   "text-sm font-semibold text-[var(--mantine-color-red-9)] underline underline-offset-2 transition-colors hover:text-[var(--mantine-color-red-8)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--mantine-color-red-9)]";
@@ -93,9 +96,9 @@ export function ResetPasswordForm({
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResetPasswordFormData>({
-    mode: "uncontrolled",
-    validate: zodResolver(resetPasswordSchema),
-    initialValues: {
+    mode: "onChange",
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
       password: "",
       confirmPassword: "",
     },
@@ -105,13 +108,18 @@ export function ResetPasswordForm({
     firstFieldRef.current?.focus();
   }, []);
 
-  const passwordStrength = calculatePasswordStrength(form.values.password);
-  const passwordRequirements = getPasswordRequirements(
-    form.values.password,
-    "password-requirement",
-  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = form;
+  const currentPassword = watch("password");
 
-  const handleSubmit = useCallback(
+  const passwordStrength = calculatePasswordStrength(currentPassword);
+  const passwordRequirements = getPasswordRequirements(currentPassword, "password-requirement");
+
+  const handleFormSubmit = useCallback(
     (values: ResetPasswordFormData) => {
       onSubmit?.({ token, password: values.password });
     },
@@ -127,7 +135,7 @@ export function ResetPasswordForm({
     apiErrorMessage === "auth.errors.tokenInvalid";
   const isRateLimited = errorCode === "RATE_LIMIT_EXCEEDED";
   const localizedApiError = localizeResetPasswordError(apiErrorMessage, tAuth);
-  const passwordRequirementsDescription = form.values.password
+  const passwordRequirementsDescription = currentPassword
     ? "password-requirement-minlength password-requirement-uppercase password-requirement-lowercase password-requirement-number password-requirement-special"
     : undefined;
 
@@ -156,7 +164,7 @@ export function ResetPasswordForm({
 
   return (
     <div className={className}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex flex-col gap-6">
           {apiErrorMessage ? (
             <div role="alert" aria-live="assertive">
@@ -188,7 +196,7 @@ export function ResetPasswordForm({
             </div>
           ) : null}
 
-          {form.values.password ? (
+          {currentPassword ? (
             <div className="flex flex-col gap-4">
               <ul
                 className="m-0 grid list-none gap-1 p-0"
@@ -248,27 +256,32 @@ export function ResetPasswordForm({
           ) : null}
 
           <PasswordInput
-            ref={firstFieldRef}
+            {...register("password")}
+            ref={(e) => {
+              register("password").ref(e);
+              if (typeof firstFieldRef === "object") firstFieldRef.current = e;
+            }}
             label={tAuth("resetPassword.fields.password")}
             placeholder={tAuth("resetPassword.fields.password")}
             required
             radius="md"
-            {...form.getInputProps("password")}
-            error={typeof form.errors.password === "string" ? form.errors.password : undefined}
+            error={
+              typeof errors.password?.message === "string" ? errors.password.message : undefined
+            }
             aria-describedby={passwordRequirementsDescription}
             autoComplete="new-password"
             disabled={isLoading}
           />
 
           <PasswordInput
+            {...register("confirmPassword")}
             label={tAuth("resetPassword.fields.confirmPassword")}
             placeholder={tAuth("resetPassword.fields.confirmPassword")}
             required
             radius="md"
-            {...form.getInputProps("confirmPassword")}
             error={
-              typeof form.errors.confirmPassword === "string"
-                ? form.errors.confirmPassword
+              typeof errors.confirmPassword?.message === "string"
+                ? errors.confirmPassword.message
                 : undefined
             }
             autoComplete="new-password"

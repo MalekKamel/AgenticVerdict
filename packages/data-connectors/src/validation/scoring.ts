@@ -1,4 +1,4 @@
-import type { OutlierFlag, ValidationIssue } from "./types";
+import type { OutlierFlag, ValidationIssue } from "@agenticverdict/types";
 
 export interface DataQualityScoreInput {
   readonly issues: readonly ValidationIssue[];

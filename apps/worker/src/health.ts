@@ -2,6 +2,7 @@ import http from "node:http";
 
 import type IORedis from "ioredis";
 
+import { checkDatabaseHealth } from "./database";
 import { getWorkerRootLogger } from "./queues/logger";
 
 const log = getWorkerRootLogger();
@@ -102,6 +103,40 @@ export function startHealthServer(options: StartHealthServerOptions): http.Serve
             return;
           }
           res.end("Redis unavailable");
+        }
+      })();
+      return;
+    }
+
+    if (path === "/healthz/db") {
+      void (async () => {
+        try {
+          const healthy = await checkDatabaseHealth();
+          if (!healthy) {
+            res.statusCode = 503;
+            res.setHeader("content-type", "text/plain; charset=utf-8");
+            if (method === "HEAD") {
+              res.end();
+              return;
+            }
+            res.end("Database unhealthy");
+            return;
+          }
+          res.statusCode = 200;
+          res.setHeader("content-type", "text/plain; charset=utf-8");
+          if (method === "HEAD") {
+            res.end();
+            return;
+          }
+          res.end("ok");
+        } catch {
+          res.statusCode = 503;
+          res.setHeader("content-type", "text/plain; charset=utf-8");
+          if (method === "HEAD") {
+            res.end();
+            return;
+          }
+          res.end("Database unavailable");
         }
       })();
       return;

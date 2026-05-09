@@ -1,30 +1,5 @@
 import { AiUsageRepository } from "@agenticverdict/database";
-
-export interface UsageTrackOptions {
-  tenantId: string;
-  providerId: string;
-  modelId: string;
-  inputTokens: number;
-  outputTokens: number;
-  totalTokens?: number;
-  latencyMs?: number;
-  success?: boolean;
-  errorMessage?: string;
-  domainId?: string;
-  connectorId?: string;
-  metadata?: Record<string, unknown>;
-}
-
-export interface UsageMetrics {
-  totalRequests: number;
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  totalCost: number;
-  avgLatencyMs: number;
-  successRate: number;
-  periodStart: Date;
-  periodEnd: Date;
-}
+import type { UsageTrackOptions, UsageMetrics } from "@agenticverdict/types";
 
 export class UsageTracker {
   private usageRepo: AiUsageRepository;

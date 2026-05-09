@@ -14,12 +14,11 @@ import {
   __resetReportStoreForTests,
   __setReportRetainUntilForTests,
 } from "./services/report-store";
-import { __resetScheduleStoreForTests } from "./services/schedule-store";
 import { __resetShareStoreForTests } from "./services/share-store";
 import { __resetTemplateCustomizationStoreForTests } from "./services/template-customization-store";
 import { __resetTranslationStoreForTests } from "./services/translation-store";
 
-const TENANT_A = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT_A = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 const TENANT_B = "99999999-9999-4999-8999-999999999999";
 const TENANT_RL = "11111111-1111-4111-8111-111111111111";
 const TENANT_REPORT_WRITE_RL = "22222222-2222-4222-8222-222222222222";
@@ -76,7 +75,6 @@ describe("api v1 integration (remediation R-13)", () => {
     resetBullmqConnectionForTests();
     __resetReportStoreForTests();
     __resetReportAuditForTests();
-    __resetScheduleStoreForTests();
     __resetShareStoreForTests();
     __resetDeliveryAnalyticsForTests();
     __resetTemplateCustomizationStoreForTests();
@@ -84,7 +82,9 @@ describe("api v1 integration (remediation R-13)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("GET /documentation/json exposes OpenAPI with v1 paths (R-14)", async () => {
@@ -119,7 +119,6 @@ describe("api v1 integration (remediation R-13)", () => {
     expect(doc.paths?.["/api/v1/reports/{id}/archive"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/{id}/unarchive"]).toBeDefined();
     expect(doc.paths?.["/api/v1/reports/{id}/retention"]).toBeDefined();
-    expect(doc.paths?.["/api/v1/report-schedules"]).toBeDefined();
     expect(doc.paths?.["/api/v1/report-templates"]).toBeDefined();
     expect(doc.paths?.["/api/v1/report-templates/{templateId}/preview"]).toBeDefined();
     expect(doc.paths?.["/api/v1/translations"]).toBeDefined();
@@ -164,13 +163,13 @@ describe("api v1 integration (remediation R-13)", () => {
 
     const trend = await app.inject({
       method: "GET",
-      url: "/api/v1/insights?type=trend",
+      url: "/api/v1/insights?type=observation",
       headers: { authorization: `Bearer ${tokenA}` },
     });
     expect(trend.statusCode).toBe(200);
     const trendBody = trend.json() as { insights: { type: string }[]; total: number };
     expect(trendBody.total).toBeLessThanOrEqual(totalAll);
-    expect(trendBody.insights.every((i) => i.type === "trend")).toBe(true);
+    expect(trendBody.insights.every((i) => i.type === "observation")).toBe(true);
 
     const highConf = await app.inject({
       method: "GET",
@@ -549,53 +548,6 @@ describe("api v1 integration (remediation R-13)", () => {
     expect(metrics.statusCode).toBe(200);
     const m = metrics.json() as { summary: { shareIssued: number } };
     expect(m.summary.shareIssued).toBeGreaterThanOrEqual(1);
-  });
-
-  it("manages report schedules with conflict detection and skips BullMQ without Redis", async () => {
-    const first = await app.inject({
-      method: "POST",
-      url: "/api/v1/report-schedules",
-      headers: { authorization: `Bearer ${tokenReportWrite}`, "content-type": "application/json" },
-      payload: {
-        cronExpression: "0 9 * * 1",
-        templateId: "executive-summary",
-        format: "pdf",
-      },
-    });
-    expect(first.statusCode).toBe(201);
-    expect((first.json() as { repeatableRegistered: boolean }).repeatableRegistered).toBe(false);
-
-    const dup = await app.inject({
-      method: "POST",
-      url: "/api/v1/report-schedules",
-      headers: { authorization: `Bearer ${tokenReportWrite}`, "content-type": "application/json" },
-      payload: {
-        cronExpression: "0 9 * * 1",
-        templateId: "executive-summary",
-        format: "pdf",
-      },
-    });
-    expect(dup.statusCode).toBe(409);
-
-    const badCron = await app.inject({
-      method: "POST",
-      url: "/api/v1/report-schedules",
-      headers: { authorization: `Bearer ${tokenReportWrite}`, "content-type": "application/json" },
-      payload: {
-        cronExpression: "every minute",
-        templateId: "executive-summary",
-        format: "pdf",
-      },
-    });
-    expect(badCron.statusCode).toBe(400);
-
-    const list = await app.inject({
-      method: "GET",
-      url: "/api/v1/report-schedules",
-      headers: { authorization: `Bearer ${tokenReportWrite}` },
-    });
-    expect(list.statusCode).toBe(200);
-    expect((list.json() as { schedules: unknown[] }).schedules.length).toBe(1);
   });
 
   it("versions report bytes, compares, archives, sweeps retention, and exposes compliance audit (Phase 03 HIST)", async () => {

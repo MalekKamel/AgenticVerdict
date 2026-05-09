@@ -35,8 +35,8 @@ import {
   inputValueFromChangeEvent,
 } from "@/lib/dom/safe-input-change";
 import { useTranslations } from "@/i18n/react";
+import { SYNC_FREQUENCIES } from "@agenticverdict/types";
 
-const FREQUENCIES = ["hourly", "daily", "weekly"] as const;
 const RETENTIONS = [30, 90, 180, 365] as const;
 
 export default function ConnectorConfigurePage() {
@@ -239,9 +239,9 @@ export default function ConnectorConfigurePage() {
               fullWidth
               value={form.frequency}
               onChange={(value) =>
-                setForm((f) => ({ ...f, frequency: value as (typeof FREQUENCIES)[number] }))
+                setForm((f) => ({ ...f, frequency: value as (typeof SYNC_FREQUENCIES)[number] }))
               }
-              data={FREQUENCIES.map((f) => ({ value: f, label: t(`frequency.${f}`) }))}
+              data={SYNC_FREQUENCIES.map((f) => ({ value: f, label: t(`frequency.${f}`) }))}
             />
             <Text size="sm" fw={500}>
               {t("common.dataRetention")}

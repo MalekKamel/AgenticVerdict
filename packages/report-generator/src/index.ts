@@ -58,7 +58,6 @@ export { DetailedAnalysisTemplate } from "./templates/built-in/detailed-analysis
 export { ExecutiveSummaryTemplate } from "./templates/built-in/executive-summary-template";
 export { TechnicalAppendixTemplate } from "./templates/built-in/technical-appendix-template";
 export { wrapReportDocument, type ReportDocumentShellOptions } from "./templates/document-shell";
-export { textDirection as localeToTextDirection } from "@agenticverdict/i18n";
 export {
   templateDefinitionSchema,
   templateKindSchema,

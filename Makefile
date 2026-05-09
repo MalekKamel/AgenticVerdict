@@ -17,15 +17,30 @@ PGADMIN_STACK := $(BASE) -f docker-compose.pgadmin.yml
 	dev-up dev-watch apps-up apps-down infra-up infra-down infra-logs dev-logs apps-logs logs ps ps-apps \
 	pgadmin-up pgadmin-down pgadmin-logs \
 	seaweedfs-up seaweedfs-down seaweedfs-logs seaweedfs-shell \
-	health health-frontend health-api health-worker backup db-dump restore restore-latest \
-	db-migrate db-seed db-reset shell-db test test-integration test-e2e test-scripts test-scripts-all \
+	health health-frontend health-worker backup db-dump restore restore-latest \
+	db-migrate db-seed db-reset db-generate db-studio shell-db \
+	lint lint-fix lint-openapi typecheck build-all format format-check ci \
+	test test-integration test-e2e test-unit test-coverage test-production-flow test-phase01 \
+	test-e2e-frontend-smoke test-e2e-desktop \
+	test-scripts test-scripts-all \
 	test-scripts-scenario test-scripts-group test-scripts-validate test-scripts-verify-artifacts \
-	test-scripts-capture clean clean-volumes clean-all \
+	test-scripts-capture \
+	check-cycles check-error-governance check-error-translator-coverage \
+	check-tenant-boundaries check-all \
+	verify-build-config verify-production-bundle validate-pen-files \
+	benchmark-vite-bundles benchmark-performance-baseline \
+	desktop-dev desktop-dev-standalone desktop-build desktop-package \
+	frontend-build-spa frontend-build-analyze frontend-preview \
+	frontend-i18n-extract frontend-i18n-validate \
+	ui-dev ui-ladle ui-test-coverage \
+	config-generate-schema-doc \
+	scan-providers workflow-full workflow-smoke \
+	clean clean-volumes clean-all \
 	prod-validate prod-example-up prod-example-down obs-up scan sbom verify-image
 
 help: ## Show available targets
 	@echo "Docker / Compose (see docs/docker/quick-start.md)"
-	@grep -E '^[a-zA-Z0-9_.-]+:.*##' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*##"}; {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z0-9_:/.-]+:.*##' Makefile | sort | sed 's/:.*##/:/' | awk -F: '{printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 preflight: ## Host checks (Docker, ports, .env.docker hint)
 	bash scripts/docker-preflight.sh
@@ -140,7 +155,7 @@ restore-latest: ## Restore newest backups/backup-*.sql.gz (non-interactive)
 	echo "Using $$latest"; \
 	CONFIRM=1 bash scripts/docker-restore.sh "$$latest"
 
-db-migrate: ## Sync DB schema via drizzle-kit push (requires DATABASE_URL; no SQL migration journal)
+db-migrate: ## Sync DB schema via drizzle-kit push (requires DATABASE_URL; baseline schema in scripts/baseline-schema.sql)
 	pnpm --filter @agenticverdict/database db:push
 
 db-seed: ## Seed test data via package script
@@ -155,8 +170,142 @@ db-seed-dev-full: ## Full reset and seed for development (destructive; drops all
 db-reset: ## Drop/recreate public, drizzle-kit push, seed (destructive; local dev)
 	pnpm --filter @agenticverdict/database db:reset && pnpm --filter @agenticverdict/database db:seed:dev
 
+db-generate: ## Generate Drizzle migration files
+	pnpm --filter @agenticverdict/database db:generate
+
+db-studio: ## Open Drizzle Studio
+	pnpm --filter @agenticverdict/database db:studio
+
 shell-db: ## psql into compose Postgres
 	$(DC) $(BASE) exec postgres psql -U postgres -d agenticverdict
+
+# --- Pipeline targets ---
+lint: ## Lint all packages (turbo)
+	pnpm lint
+
+lint-fix: ## Lint all packages with auto-fix
+	pnpm lint -- --fix
+
+lint-openapi: ## Lint OpenAPI specs
+	pnpm lint:openapi
+
+typecheck: ## Type-check all packages (turbo)
+	pnpm typecheck
+
+build-all: ## Build all packages (turbo)
+	pnpm build
+
+format: ## Format all files (prettier --write)
+	pnpm format
+
+format-check: ## Check formatting (prettier --check)
+	pnpm format:check
+
+ci: ## Full CI pipeline: lint -> typecheck -> test -> build
+	pnpm lint && pnpm typecheck && pnpm test && pnpm build
+
+# --- Test variants ---
+test-unit: ## Run root-level unit tests (vitest)
+	pnpm test:unit
+
+test-coverage: ## Run tests with coverage
+	pnpm test:coverage
+
+test-production-flow: ## Run production flow orchestrator tests
+	pnpm test:production-flow
+
+test-phase01: ## Run phase01 platform integration tests
+	pnpm test:phase01-integration
+
+test-e2e-frontend-smoke: ## Frontend critical-path smoke tests
+	pnpm test:e2e:frontend:smoke
+
+test-e2e-desktop: ## Desktop E2E tests (Playwright)
+	pnpm test:e2e:desktop
+
+# --- Quality & verification ---
+check-cycles: ## Detect circular dependencies (madge)
+	pnpm check:cycles
+
+check-error-governance: ## Verify error system governance
+	pnpm check:error-governance
+
+check-error-translator-coverage: ## Check error translator test coverage
+	pnpm check:error-translator-coverage
+
+check-tenant-boundaries: ## Verify tenant isolation boundaries
+	pnpm check:tenant-boundaries
+
+check-all: check-cycles check-error-governance check-tenant-boundaries ## Run all quality checks
+
+verify-build-config: ## Verify build configuration
+	pnpm verify:build-config
+
+verify-production-bundle: build-all ## Verify production bundle (api + worker)
+	pnpm verify:production-bundle
+
+validate-pen-files: ## Validate design system .pen files
+	pnpm validate:pen-files
+
+# --- Benchmarking ---
+benchmark-vite-bundles: build-all ## Benchmark Vite build performance
+	pnpm benchmark:vite-bundles
+
+benchmark-performance-baseline: ## Generate performance baseline
+	pnpm benchmark:performance-baseline
+
+# --- Desktop ---
+desktop-dev: ## Start frontend + desktop parallel dev servers
+	pnpm desktop:dev
+
+desktop-dev-standalone: ## Start desktop-only dev server
+	pnpm desktop:dev:desktop-only
+
+desktop-build: ## Build desktop application
+	pnpm --filter @agenticverdict/desktop build
+
+desktop-package: desktop-build ## Package desktop application
+	pnpm desktop:package
+
+# --- Frontend-specific ---
+frontend-build-spa: ## Build frontend in SPA mode
+	pnpm --filter @agenticverdict/frontend build:spa
+
+frontend-build-analyze: ## Build frontend with bundle analysis
+	pnpm --filter @agenticverdict/frontend build:analyze
+
+frontend-preview: ## Preview production frontend build
+	pnpm --filter @agenticverdict/frontend preview
+
+frontend-i18n-extract: ## Extract i18n message keys
+	pnpm --filter @agenticverdict/frontend i18n:extract
+
+frontend-i18n-validate: ## Validate translation files
+	pnpm --filter @agenticverdict/frontend i18n:validate
+
+# --- UI package ---
+ui-dev: ## Watch-mode type-check for UI package
+	pnpm --filter @agenticverdict/ui dev
+
+ui-ladle: ## Start Ladle component dev server
+	pnpm --filter @agenticverdict/ui ladle
+
+ui-test-coverage: ## Run UI tests with coverage
+	pnpm --filter @agenticverdict/ui test:coverage
+
+# --- Config package ---
+config-generate-schema-doc: ## Generate schema reference documentation
+	pnpm --filter @agenticverdict/config generate:schema-doc
+
+# --- Utility ---
+scan-providers: ## Scan provider references in codebase
+	pnpm scan:providers
+
+workflow-full: ## Run full production flow script
+	pnpm workflow:full
+
+workflow-smoke: ## Run workflow smoke roundtrip test
+	pnpm workflow:smoke:roundtrip
 
 test: ## Monorepo unit tests (host)
 	pnpm test

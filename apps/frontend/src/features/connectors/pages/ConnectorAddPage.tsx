@@ -30,7 +30,7 @@ import {
   inputValueFromChangeEvent,
 } from "@/lib/dom/safe-input-change";
 import { useTranslations } from "@/i18n/react";
-import type { ConnectorType } from "@agenticverdict/types";
+import { SYNC_FREQUENCIES, type ConnectorType } from "@agenticverdict/types";
 
 const PLATFORMS: { id: ConnectorType }[] = [
   { id: "ga4" },
@@ -70,7 +70,6 @@ const METRIC_TRANSLATION_KEYS: Record<string, string> = {
   Photos: "photos",
 };
 
-const FREQUENCIES = ["hourly", "daily", "weekly"] as const;
 const RETENTIONS = [30, 90, 180, 365] as const;
 
 type WizardState =
@@ -359,9 +358,9 @@ export default function ConnectorAddPage() {
               fullWidth
               value={config.frequency}
               onChange={(value) =>
-                setConfig((c) => ({ ...c, frequency: value as (typeof FREQUENCIES)[number] }))
+                setConfig((c) => ({ ...c, frequency: value as (typeof SYNC_FREQUENCIES)[number] }))
               }
-              data={FREQUENCIES.map((f) => ({ value: f, label: t(`frequency.${f}`) }))}
+              data={SYNC_FREQUENCIES.map((f) => ({ value: f, label: t(`frequency.${f}`) }))}
             />
             <Text fw={500}>{t("common.dataRetention")}</Text>
             <SegmentedControl

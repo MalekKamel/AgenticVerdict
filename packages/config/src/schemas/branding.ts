@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 
 const hex6 = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
 
@@ -269,8 +268,5 @@ export function designTokensToCssVariables(tokens: DesignTokens): Record<string,
 }
 
 export function exportDesignTokensJsonSchema(): Record<string, unknown> {
-  return zodToJsonSchema(designTokensSchema, {
-    name: "DesignTokens",
-    $refStrategy: "none",
-  }) as Record<string, unknown>;
+  return designTokensSchema.toJSONSchema() as Record<string, unknown>;
 }

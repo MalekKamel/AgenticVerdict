@@ -6,7 +6,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { ExcelViewer } from "./ExcelViewer";
-import type { ReportContent } from "../types";
+import type { ReportContent } from "@agenticverdict/types";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 

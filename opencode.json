@@ -1,0 +1,110 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": {
+    "typescript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts"],
+      "initialization": {
+        "preferences": {
+          "includeCompletionsForModuleExports": false,
+          "includeCompletionsWithInsertText": true,
+          "includeAutomaticOptionalChainCompletions": true
+        }
+      },
+      "env": {
+        "TSSERVER_MAX_MEMORY": "4096"
+      }
+    },
+    "sql": {
+      "command": ["sql-language-server", "up", "--method", "stdio"],
+      "extensions": [".sql"],
+      "initialization": {
+        "sql": {
+          "dialect": "PostgreSQL",
+          "lint": {
+            "rules": ["strong"]
+          }
+        }
+      }
+    },
+    "yaml": {
+      "command": ["yaml-language-server", "--stdio"],
+      "extensions": [".yaml", ".yml"],
+      "initialization": {
+        "yaml": {
+          "schemas": {
+            "https://json.schemastore.org/docker-compose.json": "/docker-compose*.yml",
+            "https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.yml"
+          },
+          "validate": true,
+          "format": { "enable": true }
+        }
+      }
+    },
+    "css": {
+      "command": ["css-languageserver", "--stdio"],
+      "extensions": [".css"],
+      "initialization": {
+        "css": {
+          "validate": true,
+          "lint": { "unknownAtRules": "ignore" }
+        }
+      }
+    },
+    "tailwindcss": {
+      "command": ["tailwindcss-language-server", "--stdio"],
+      "extensions": [".ts", ".tsx", ".css"],
+      "initialization": {
+        "tailwindCSS": {
+          "experimental": {
+            "classRegex": [
+              ["className", "\"([^\"]*)\""],
+              ["class", "\"([^\"]*)\""]
+            ]
+          },
+          "includeLanguages": {
+            "typescript": "javascript",
+            "typescriptreact": "javascript"
+          }
+        }
+      }
+    },
+    "dockerfile": {
+      "command": ["docker-langserver", "--stdio"],
+      "extensions": [".dockerfile"]
+    },
+    "json": {
+      "command": ["vscode-json-languageserver", "--stdio", "--log-level", "error"],
+      "extensions": [".json"],
+      "initialization": {
+        "json": {
+          "validate": { "enable": true },
+          "format": { "enable": true }
+        }
+      }
+    },
+    "bash": {
+      "command": ["bash-language-server", "start"],
+      "extensions": [".sh", ".bash"]
+    },
+    "python": {
+      "command": ["pyright-langserver", "--stdio"],
+      "extensions": [".py", ".pyi"]
+    }
+  },
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.next/**",
+      "**/.turbo/**",
+      "**/coverage/**",
+      "**/ignored/**",
+      "**/backups/**",
+      "**/sboms/**",
+      "**/logs/**",
+      "**/.env*",
+      "**/pnpm-lock.yaml"
+    ]
+  }
+}

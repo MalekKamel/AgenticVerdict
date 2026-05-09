@@ -8,9 +8,9 @@
   "insights": [
     {
       "id": "bbbbbbbb-1234-4234-8234-bbbbbbbbbbbb",
-      "type": "trend",
-      "title": "Cross-platform trend",
-      "description": "Trend narrative",
+      "type": "observation",
+      "title": "Cross-platform observation",
+      "description": "Observation narrative",
       "confidence": 0.84
     }
   ],

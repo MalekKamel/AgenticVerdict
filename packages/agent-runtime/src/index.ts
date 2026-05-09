@@ -228,18 +228,6 @@ export {
   type TenantContext,
 } from "./tenant-runtime";
 export {
-  agentExecutionContextSchema,
-  agentMessageSchema,
-  agentMessageToLogFields,
-  agentMessageTypeSchema,
-  AgentMessageLogger,
-  AgentProtocolError,
-  createAgentMessage,
-  type AgentMessageContext,
-  type AgentMessage,
-  type AgentMessageType,
-} from "./agent-protocol";
-export {
   applyVerdictPipelineContext,
   extractJsonObjectText,
   getVerdictParseFailureDetails,
@@ -249,7 +237,6 @@ export {
   type VerdictParseFailureDetails,
   type VerdictParseFailureKind,
 } from "./agent-verdict-json";
-export { VerdictParseError } from "./verdict-schema";
 export {
   buildVerdictFixture,
   buildMinimalVerdict,
@@ -261,7 +248,6 @@ export {
   ValidationService,
   type AnalysisResultValidationInput,
   type DataQualityValidator,
-  type ValidationConfig,
   type ValidationError,
   type ValidationResult,
   type ValidationWarning,
@@ -279,6 +265,7 @@ export {
   type PipelineStatus,
   type WorkflowProgressEvent,
   type RunPipelineOptions,
+  type StructuredPipelineResults,
 } from "./intelligence-pipeline";
 
 export {
@@ -291,6 +278,13 @@ export {
 export { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";
 export { OpenAIProvider } from "./providers/openai";
 export { AnthropicProvider } from "./providers/anthropic";
+export { UsageTracker } from "./services/usage-tracker";
+export {
+  BudgetAlertsService,
+  type BudgetAlertConfig,
+  type AlertCheckResult,
+  type AlertNotification,
+} from "./services/budget-alerts";
 export { BillingHook, createBillingHook, type BillingHookConfig } from "./hooks/billing";
 export {
   LangSmithTracingHook,

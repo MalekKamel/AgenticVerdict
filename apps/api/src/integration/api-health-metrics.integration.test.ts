@@ -17,7 +17,9 @@ describe("API integration — health & metrics", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("GET /health returns 200 with ok payload", async () => {

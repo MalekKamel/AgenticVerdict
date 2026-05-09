@@ -22,7 +22,7 @@ describe("CompositeTemplateEngine", () => {
     const engine = createDefaultCompositeTemplateEngine();
     const html = await engine.render(ctx(), { title: "T", executiveSummary: "S" });
     expect(html).toContain("<!DOCTYPE html>");
-    expect(html).toContain("Executive overview");
+    expect(html).toContain("Summary");
     expect(html).toContain("T");
   });
 

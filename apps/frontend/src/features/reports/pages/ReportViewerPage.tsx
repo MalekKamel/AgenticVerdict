@@ -31,6 +31,8 @@ import { ReportViewer } from "../ui/ReportViewer";
 import { ShareReportModal } from "../ui/ShareReportModal";
 import { useTenantContext } from "@/lib/tenant-context";
 import { showSuccessNotification } from "@/lib/notifications";
+import { downloadFromContent, detectFormatFromMetadata } from "@/lib/download";
+import { FORMAT_EXTENSIONS } from "@/lib/download/types";
 
 export default function ReportViewerPage() {
   const params = useParams({ strict: false });
@@ -88,13 +90,17 @@ export default function ReportViewerPage() {
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 50));
   const handlePrint = () => window.print();
   const handleDownload = () => {
-    if (reportContent?.content) {
-      const link = document.createElement("a");
-      link.href = `data:${reportContent.contentType};base64,${reportContent.content}`;
-      link.download = `${report.title}.pdf`;
-      link.click();
-      showSuccessNotification({ title: "Download started" });
-    }
+    if (!reportContent?.content) return;
+
+    const format = detectFormatFromMetadata(report.metadata);
+    downloadFromContent({
+      content: reportContent.content,
+      contentType: reportContent.contentType,
+      fileName: report.title,
+      extension: FORMAT_EXTENSIONS[format],
+    });
+
+    showSuccessNotification({ title: "Download started" });
   };
 
   const versionOptions: { value: string; label: string }[] = [];

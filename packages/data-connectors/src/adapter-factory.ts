@@ -1,6 +1,6 @@
 import { IS_PRODUCTION } from "@agenticverdict/config/build-constants";
 import { isMockEnabledForConnector } from "@agenticverdict/config/configuration";
-import type { ConnectorType } from "@agenticverdict/types";
+import { type ConnectorType } from "@agenticverdict/types";
 
 import type { BaseConnectorAdapterOptions, ConnectorAdapter } from "./adapter";
 import { Ga4ConnectorAdapter } from "./ga4/ga4-adapter";
@@ -10,8 +10,6 @@ import { MetaConnectorAdapter } from "./meta/meta-adapter";
 import { MockAdapterFactory } from "./mock-adapter-factory";
 import type { MockAdapterScenario } from "./mock-static-data";
 import { TikTokConnectorAdapter } from "./tiktok/tiktok-adapter";
-
-export const connectorAdapterTypes = ["meta", "ga4", "gsc", "gbp", "tiktok"] as const;
 
 export interface AdapterFactoryConfig extends BaseConnectorAdapterOptions {
   readonly connector: ConnectorType;

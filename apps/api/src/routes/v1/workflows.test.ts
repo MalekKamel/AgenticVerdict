@@ -3,14 +3,14 @@ import { SignJWT } from "jose";
 import {
   workflowTriggerJobDataSchema,
   workflowTriggerJobResultSchema,
-} from "@agenticverdict/worker";
+} from "@agenticverdict/types";
 
 import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 import { buildApiServer } from "../../server";
 import { resetBullmqConnectionForTests } from "../../services/report-bullmq";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 const OTHER_TENANT = "bbbbbbbb-cccc-4ddd-eeee-ffffffffffff";
 
 describe("workflow routes (Phase 1 production-flow foundation)", () => {
@@ -53,7 +53,9 @@ describe("workflow routes (Phase 1 production-flow foundation)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("returns 401 without bearer token", async () => {
@@ -183,7 +185,7 @@ describe("workflow contract compatibility", () => {
       insights: [
         {
           id: "11111111-1111-4111-8111-111111111111",
-          type: "trend",
+          type: "observation",
           title: "t",
           description: "d",
           confidence: 0.8,

@@ -5,7 +5,7 @@ import { AgentFactory } from "./agent-factory";
 import { AgentJobError, runAgentJob } from "./agent-job";
 import { pipelineStateToJson, runIntelligencePipeline } from "./intelligence-pipeline";
 import { buildVerdictFixture } from "./test-utils/verdict-fixtures";
-import { VerdictParseError } from "./verdict-schema";
+import { VerdictParseError } from "@agenticverdict/types";
 import { ProviderRegistry } from "./core/ProviderRegistry";
 import { BaseProvider } from "./core/BaseProvider";
 import type { ProviderCapabilities } from "./core/BaseProvider";

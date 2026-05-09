@@ -1010,6 +1010,18 @@
       "newInsight": "New Insight",
       "searchPlaceholder": "Search insights...",
       "filterByStatus": "Filter by status",
+      "filterByDomain": "Filter by domain",
+      "sortBy": "Sort by",
+      "sort": {
+        "nameAsc": "Name (A-Z)",
+        "nameDesc": "Name (Z-A)",
+        "createdAtAsc": "Created (Oldest)",
+        "createdAtDesc": "Created (Newest)",
+        "lastRunAtAsc": "Last run (Oldest)",
+        "lastRunAtDesc": "Last run (Recent)",
+        "statusAsc": "Status (Active first)",
+        "statusDesc": "Status (Inactive first)"
+      },
       "connectors": "connectors",
       "created": "Created",
       "lastRun": "Last run",
@@ -1110,6 +1122,51 @@
         "schedule": "Schedule & delivery"
       },
       "unsavedChanges": "Unsaved changes"
+    },
+    "templates": {
+      "title": "Templates",
+      "searchPlaceholder": "Search templates...",
+      "allDomains": "All Domains",
+      "all": "All",
+      "noTemplatesFound": "No templates found",
+      "noTemplatesFoundAction": "No templates found. Start from scratch to create your insight.",
+      "preview": "Preview",
+      "previewTitle": "Template Preview",
+      "connectors": "Connectors",
+      "schedule": "Schedule",
+      "delivery": "Delivery",
+      "applyTemplate": "Apply Template",
+      "applyAndCustomize": "Apply & Customize",
+      "close": "Close",
+      "cancel": "Cancel",
+      "useTemplate": "Use Template",
+      "useATemplate": "Use a template",
+      "startFromScratch": "Start from scratch",
+      "chooseStartingPoint": "Choose a Starting Point",
+      "chooseStartingPointDesc": "Choose a template or build your insight from scratch.",
+      "failedToLoad": "Failed to load templates. Please try again later.",
+      "loading": "Loading templates...",
+      "templateNotFound": "Template not found.",
+      "loadingDetails": "Loading template details...",
+      "appliedTemplate": "Applied template: {name}. All fields are editable.",
+      "templateApplied": "Template Applied",
+      "connectorCount": "{count, plural, one {# connector} other {# connectors}}",
+      "frequency": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly"
+      },
+      "format": {
+        "pdf": "PDF",
+        "excel": "Excel",
+        "both": "PDF + Excel"
+      },
+      "domains": "Domains",
+      "connectorsMetrics": "Connectors & Metrics",
+      "formatLabel": "Format",
+      "webhookEnabled": "Webhook enabled",
+      "plusMore": "+{count}"
     }
   },
   "reports": {

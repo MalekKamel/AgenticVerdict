@@ -9,11 +9,6 @@ import {
   __resetReportStoreForTests,
 } from "../services/report-store";
 import { appendTemplateVersion } from "../services/template-customization-store";
-import {
-  createScheduleRecord,
-  getScheduleForTenant,
-  __resetScheduleStoreForTests,
-} from "../services/schedule-store";
 import { __clearRateLimitMemoryForTests } from "./rate-limit";
 import { resetJwtSecretCacheForTests } from "./auth";
 import { __resetDeliveryAnalyticsForTests } from "../services/delivery-analytics-store";
@@ -24,7 +19,7 @@ import { __resetTemplateCustomizationStoreForTests } from "../services/template-
 import { __resetTranslationStoreForTests } from "../services/translation-store";
 
 const JWT_SECRET = "test-jwt-secret-isolation-matrix-32chars!";
-const TENANT_A = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT_A = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 const TENANT_B = "99999999-9999-4999-8999-999999999999";
 
 const writeRoles = ["analyst", "reports:read", "reports:write", "reports:share"] as const;
@@ -64,7 +59,6 @@ describe("P1 tenant isolation matrix (cross-tenant data boundaries)", () => {
     resetBullmqConnectionForTests();
     __resetReportStoreForTests();
     __resetReportAuditForTests();
-    __resetScheduleStoreForTests();
     __resetShareStoreForTests();
     __resetDeliveryAnalyticsForTests();
     __resetTemplateCustomizationStoreForTests();
@@ -72,7 +66,9 @@ describe("P1 tenant isolation matrix (cross-tenant data boundaries)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   describe("report-store invariants", () => {
@@ -80,19 +76,6 @@ describe("P1 tenant isolation matrix (cross-tenant data boundaries)", () => {
       const row = createReportRecord(TENANT_A, "Secret");
       expect(getReportForTenant(row.id, TENANT_B)).toBeNull();
       expect(getReportForTenant(row.id, TENANT_A)?.id).toBe(row.id);
-    });
-  });
-
-  describe("schedule-store invariants", () => {
-    it("getScheduleForTenant hides other tenant schedules", () => {
-      const sch = createScheduleRecord(TENANT_A, {
-        cronExpression: "0 9 * * 1",
-        templateId: "executive-summary",
-        format: "pdf",
-        enabled: false,
-      });
-      expect(getScheduleForTenant(sch.id, TENANT_B)).toBeNull();
-      expect(getScheduleForTenant(sch.id, TENANT_A)?.id).toBe(sch.id);
     });
   });
 
@@ -264,60 +247,6 @@ describe("P1 tenant isolation matrix (cross-tenant data boundaries)", () => {
       expect(bAudit.statusCode).toBe(200);
       const body = bAudit.json() as { events: { reportId?: string }[] };
       expect(body.events.some((e) => e.reportId === reportIdA)).toBe(false);
-    });
-  });
-
-  describe("HTTP: schedules", () => {
-    let scheduleIdA: string;
-
-    beforeEach(async () => {
-      const res = await app.inject({
-        method: "POST",
-        url: "/api/v1/report-schedules",
-        headers: {
-          authorization: `Bearer ${tokenWriterA}`,
-          "content-type": "application/json",
-        },
-        payload: {
-          cronExpression: "0 7 * * *",
-          templateId: "executive-summary",
-          format: "pdf",
-          enabled: false,
-        },
-      });
-      expect(res.statusCode).toBe(201);
-      scheduleIdA = (res.json() as { schedule: { id: string } }).schedule.id;
-    });
-
-    it("GET /report-schedules/:id → 404 for tenant B", async () => {
-      const res = await app.inject({
-        method: "GET",
-        url: `/api/v1/report-schedules/${scheduleIdA}`,
-        headers: { authorization: `Bearer ${tokenWriterB}` },
-      });
-      expect(res.statusCode).toBe(404);
-    });
-
-    it("PATCH /report-schedules/:id → 404 for tenant B", async () => {
-      const res = await app.inject({
-        method: "PATCH",
-        url: `/api/v1/report-schedules/${scheduleIdA}`,
-        headers: {
-          authorization: `Bearer ${tokenWriterB}`,
-          "content-type": "application/json",
-        },
-        payload: { enabled: true },
-      });
-      expect(res.statusCode).toBe(404);
-    });
-
-    it("DELETE /report-schedules/:id → 404 for tenant B", async () => {
-      const res = await app.inject({
-        method: "DELETE",
-        url: `/api/v1/report-schedules/${scheduleIdA}`,
-        headers: { authorization: `Bearer ${tokenWriterB}` },
-      });
-      expect(res.statusCode).toBe(404);
     });
   });
 

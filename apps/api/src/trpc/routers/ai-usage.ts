@@ -3,64 +3,13 @@ import { z } from "zod";
 import { AiUsageService } from "../../services/ai-usage.service";
 import { authedProcedure } from "../procedures";
 import { t } from "../init";
+import {
+  usageQueryInputSchema,
+  usageSummaryOutputSchema,
+  recordUsageInputSchema,
+} from "@agenticverdict/types";
 
 const logger = console;
-
-const usageQueryInputSchema = z.object({
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  providerId: z.string().optional(),
-  domainId: z.string().uuid().optional(),
-  modelId: z.string().optional(),
-});
-
-const recordUsageInputSchema = z.object({
-  providerId: z.string(),
-  modelId: z.string(),
-  domainId: z.string().uuid().optional(),
-  connectorId: z.string().uuid().optional(),
-  promptTokens: z.number().int().nonnegative(),
-  completionTokens: z.number().int().nonnegative(),
-  totalTokens: z.number().int().nonnegative(),
-  costCents: z.number().int().nonnegative(),
-  requestId: z.string().uuid(),
-  latencyMs: z.number().int().nonnegative(),
-  success: z.boolean(),
-  errorCode: z.string().max(64).optional(),
-  errorMessage: z.string().max(512).optional(),
-  wasFailover: z.boolean().default(false),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
-const usageSummaryOutputSchema = z.object({
-  tenantId: z.string().uuid(),
-  periodStart: z.string().datetime(),
-  periodEnd: z.string().datetime(),
-  totalPromptTokens: z.number().int(),
-  totalCompletionTokens: z.number().int(),
-  totalTokens: z.number().int(),
-  totalCostCents: z.number().int(),
-  totalRequests: z.number().int(),
-  successfulRequests: z.number().int(),
-  failedRequests: z.number().int(),
-  avgLatencyMs: z.number(),
-  byProvider: z.array(
-    z.object({
-      providerId: z.string(),
-      totalTokens: z.number().int(),
-      totalCostCents: z.number().int(),
-      requestCount: z.number().int(),
-    }),
-  ),
-  byDomain: z.array(
-    z.object({
-      domainId: z.string().uuid().nullable(),
-      totalTokens: z.number().int(),
-      totalCostCents: z.number().int(),
-      requestCount: z.number().int(),
-    }),
-  ),
-});
 
 export const aiUsageRouter = t.router({
   getSummary: authedProcedure
@@ -154,7 +103,7 @@ export const aiUsageRouter = t.router({
     }),
 
   getFailedRequests: authedProcedure
-    .input(z.object({ startDate: z.string().datetime(), endDate: z.string().datetime() }))
+    .input(z.object({ startDate: z.iso.datetime(), endDate: z.iso.datetime() }))
     .output(z.array(z.unknown()))
     .query(async ({ ctx, input }) => {
       const service = new AiUsageService();
@@ -206,7 +155,7 @@ export const aiUsageRouter = t.router({
   }),
 
   getCostEfficiency: authedProcedure
-    .input(z.object({ startDate: z.string().datetime(), endDate: z.string().datetime() }))
+    .input(z.object({ startDate: z.iso.datetime(), endDate: z.iso.datetime() }))
     .output(
       z.object({
         overall: z.object({

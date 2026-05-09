@@ -1,11 +1,8 @@
 "use client";
 
-import {
-  ThemeProvider,
-  brandTokensSchema,
-  defaultBrandTheme,
-  type BrandTokens,
-} from "@agenticverdict/ui";
+import { ThemeProvider, defaultBrandTheme } from "@agenticverdict/ui";
+import type { BrandTokens } from "@agenticverdict/types";
+import { brandTokensSchema } from "@agenticverdict/types";
 import { useMemo, type ReactNode } from "react";
 
 import { trpc } from "@/lib/api/trpc-client";

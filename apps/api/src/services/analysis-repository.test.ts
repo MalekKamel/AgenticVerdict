@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
+import type { WorkflowTriggerJobResult } from "@agenticverdict/types";
 import { provenanceInfoSchema } from "@agenticverdict/types";
 
 import {
@@ -11,7 +11,7 @@ import {
 
 describe("analysis-repository provenance access", () => {
   it("handles database fallback path safely when query fails", async () => {
-    const tenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee88";
+    const tenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee88";
     const analysisId = "aaaaaaaa-8888-4888-8888-aaaaaaaaaaaa";
     const validRecord = provenanceInfoSchema.parse({
       analysisId,
@@ -52,7 +52,7 @@ describe("analysis-repository provenance access", () => {
   });
 
   it("returns provenance for persisted workflow result analysis", async () => {
-    const tenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee55";
+    const tenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee55";
     const analysisId = "aaaaaaaa-5555-4555-8555-aaaaaaaaaaaa";
     const result: WorkflowTriggerJobResult = {
       workflowId: "marketing-analysis",
@@ -64,7 +64,7 @@ describe("analysis-repository provenance access", () => {
       insights: [
         {
           id: "bbbbbbbb-5555-4555-8555-bbbbbbbbbbbb",
-          type: "trend",
+          type: "observation",
           title: "Repository provenance insight",
           description: "persistence path",
           confidence: 0.7,

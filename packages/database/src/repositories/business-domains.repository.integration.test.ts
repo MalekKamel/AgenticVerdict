@@ -6,7 +6,7 @@
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { BusinessDomainsRepository } from "./business-domains.repository";
-import { type BusinessDomain, type NewBusinessDomain } from "../schema/business-domains";
+import { type BusinessDomainDb, type NewBusinessDomain } from "../schema/business-domains";
 
 const mockDb = {
   select: vi.fn(),
@@ -27,7 +27,7 @@ describe("BusinessDomainsRepository", () => {
 
   describe("findAllByTenant", () => {
     it("should return all domains for a tenant ordered by order and name", async () => {
-      const mockDomains: BusinessDomain[] = [
+      const mockDomains: BusinessDomainDb[] = [
         {
           id: "domain-1",
           tenantId: mockTenantId,
@@ -64,7 +64,7 @@ describe("BusinessDomainsRepository", () => {
 
   describe("findRootDomains", () => {
     it("should find root domains (no parent)", async () => {
-      const mockRootDomains: BusinessDomain[] = [
+      const mockRootDomains: BusinessDomainDb[] = [
         {
           id: "domain-1",
           tenantId: mockTenantId,
@@ -91,7 +91,7 @@ describe("BusinessDomainsRepository", () => {
 
   describe("findById", () => {
     it("should return domain by ID with tenant isolation", async () => {
-      const mockDomain: BusinessDomain = {
+      const mockDomain: BusinessDomainDb = {
         id: "domain-123",
         tenantId: mockTenantId,
         name: "Marketing",
@@ -129,7 +129,7 @@ describe("BusinessDomainsRepository", () => {
 
   describe("findChildren", () => {
     it("should find child domains of a parent", async () => {
-      const mockChildren: BusinessDomain[] = [
+      const mockChildren: BusinessDomainDb[] = [
         {
           id: "domain-child-1",
           tenantId: mockTenantId,
@@ -162,7 +162,7 @@ describe("BusinessDomainsRepository", () => {
         order: 1,
       };
 
-      const createdDomain: BusinessDomain = {
+      const createdDomain: BusinessDomainDb = {
         ...newDomain,
         id: "domain-new",
         parentId: null,
@@ -185,7 +185,7 @@ describe("BusinessDomainsRepository", () => {
 
   describe("update", () => {
     it("should update domain", async () => {
-      const updatedDomain: BusinessDomain = {
+      const updatedDomain: BusinessDomainDb = {
         id: "domain-123",
         tenantId: mockTenantId,
         name: "Updated Marketing",
@@ -322,7 +322,7 @@ describe("BusinessDomainsRepository", () => {
   describe("Hierarchy operations", () => {
     describe("getAncestorChain", () => {
       it("should return ancestor chain for a domain", async () => {
-        const mockDomain: BusinessDomain = {
+        const mockDomain: BusinessDomainDb = {
           id: "domain-child",
           tenantId: mockTenantId,
           name: "Child",
@@ -332,7 +332,7 @@ describe("BusinessDomainsRepository", () => {
           updatedAt: new Date(),
         };
 
-        const mockParent: BusinessDomain = {
+        const mockParent: BusinessDomainDb = {
           id: "domain-parent",
           tenantId: mockTenantId,
           name: "Parent",
@@ -360,7 +360,7 @@ describe("BusinessDomainsRepository", () => {
 
     describe("getDescendantIds", () => {
       it("should return all descendant domain IDs", async () => {
-        const mockChildren: BusinessDomain[] = [
+        const mockChildren: BusinessDomainDb[] = [
           {
             id: "domain-child-1",
             tenantId: mockTenantId,

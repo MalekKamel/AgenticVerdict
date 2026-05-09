@@ -19,6 +19,9 @@ export {
   aiProviderCredentials,
   aiProviderUsage,
   aiProviderHealth,
+  aiProviderCredentialsRelations,
+  aiProviderUsageRelations,
+  aiProviderHealthRelations,
 } from "./ai-provider-credentials";
 // AI Provider Management schemas
 export {
@@ -28,6 +31,9 @@ export {
   providerScopeEnum,
   providerStatusEnum,
   costTierEnum,
+  aiProvidersRelations,
+  aiProviderModelsRelations,
+  aiProviderFailoverRelations,
 } from "./ai-providers";
 export {
   businessDomains,
@@ -63,21 +69,53 @@ export type {
   NewAlertTriggerHistory,
   BudgetPeriodSummary,
   NewBudgetPeriodSummary,
+} from "./budget-alerts";
+export type {
   AlertType,
   AlertThresholdType,
-  AlertTimeWindow,
+  SyncFrequency,
   AlertStatus,
   NotificationType,
-} from "./budget-alerts";
+} from "@agenticverdict/types";
 export { provenanceRecords } from "./provenance";
 export { reportTemplates } from "./report-templates";
+export {
+  insightTemplates,
+  insightTemplateDomains,
+  insightTemplateConnectors,
+  insightTemplatesRelations,
+  insightTemplateDomainsRelations,
+  insightTemplateConnectorsRelations,
+} from "./insight-templates";
+export type {
+  InsightTemplateDb,
+  NewInsightTemplate,
+  InsightTemplateDomain,
+  NewInsightTemplateDomain,
+  InsightTemplateConnector,
+  NewInsightTemplateConnector,
+} from "./insight-templates";
 export { reports } from "./reports";
+export { generatedInsights, insightTypeEnum } from "./generated-insights";
+export type { GeneratedInsightDb, NewGeneratedInsight } from "./generated-insights";
 export { reportShares } from "./report-shares";
 export { users } from "./users";
 export { roles } from "./rbac/roles";
 export { permissions } from "./rbac/permissions";
 export { userRoles } from "./rbac/user-roles";
 export { rolePermissions } from "./rbac/role-permissions";
+export { schedules, scheduleEntityTypeEnum } from "./schedules";
+export {
+  scheduleExecutions,
+  scheduleExecutionStatusEnum,
+  schedulesRelations,
+  scheduleExecutionsRelations,
+} from "./schedule-executions";
+export type { ScheduleDb, NewScheduleDb } from "./schedules";
+export type { ScheduleExecutionDb, NewScheduleExecutionDb } from "./schedule-executions";
+
+export { webhookDeliveries, webhookDeliveryStatusEnum } from "./webhook-deliveries";
+export type { WebhookDeliveryDb, NewWebhookDeliveryDb } from "./webhook-deliveries";
 
 // Type exports
 export type {

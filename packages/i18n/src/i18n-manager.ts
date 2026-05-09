@@ -1,12 +1,12 @@
 import type { AppLocale } from "./formatters";
-import type { ReportTextDirection } from "./document-direction";
+import type { TextDirection } from "./rtl";
 import { loadMessagesSync, resolveLocaleOrFallback, type MessageDictionary } from "./load-messages";
 import { textDirection } from "./rtl";
 
 export class I18nManager {
   private locale: AppLocale;
   private messages: MessageDictionary;
-  private directionOverride: ReportTextDirection | undefined;
+  private directionOverride: TextDirection | undefined;
 
   constructor(initialLocale: AppLocale) {
     this.locale = initialLocale;
@@ -30,7 +30,7 @@ export class I18nManager {
   }
 
   /** Force LTR/RTL regardless of locale (e.g. user preference). Pass undefined to clear. */
-  setTextDirectionOverride(override: ReportTextDirection | undefined): void {
+  setTextDirectionOverride(override: TextDirection | undefined): void {
     this.directionOverride = override;
   }
 

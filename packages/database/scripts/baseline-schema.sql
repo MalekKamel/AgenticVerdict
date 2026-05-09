@@ -1,4 +1,5 @@
 CREATE TYPE "agency_partner_tier" AS ENUM ('registered', 'certified', 'elite');
+CREATE TYPE "insight_type" AS ENUM ('opportunity', 'risk', 'observation', 'recommendation');
 CREATE TABLE "core"."agency_partners" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(255) NOT NULL,
@@ -136,7 +137,25 @@ CREATE TABLE "core"."insights" (
 	"delivery" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"ai_config" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "insights_tenant_name_unique" UNIQUE("tenant_id","name")
+);
+--> statement-breakpoint
+CREATE TABLE "core"."generated_insights" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"report_id" uuid NOT NULL,
+	"analysis_id" uuid,
+	"insight_type" insight_type NOT NULL,
+	"title" varchar(512) NOT NULL,
+	"description" text NOT NULL,
+	"confidence" decimal(3,2) DEFAULT '0' NOT NULL,
+	"relevance_score" decimal(3,2) DEFAULT '0' NOT NULL,
+	"platforms" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"related_metric_keys" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "generated_insights_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE "marketing_metrics" (
@@ -185,6 +204,7 @@ CREATE TABLE "reports" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "core"."generated_insights" ADD CONSTRAINT "generated_insights_report_id_fkey" FOREIGN KEY ("report_id") REFERENCES "public"."reports"("id") ON DELETE cascade;--> statement-breakpoint
 CREATE TABLE "tenant_feature_flags" (
 	"tenant_id" uuid NOT NULL,
 	"flag_id" uuid NOT NULL,
@@ -333,8 +353,8 @@ CREATE TABLE "domain_hierarchy_cache" (
 );
 --> statement-breakpoint
 CREATE TYPE "provider_status" AS ENUM ('active', 'inactive', 'error');
-CREATE TYPE "provider_scope" AS ENUM ('global', 'tenant');
-CREATE TYPE "cost_tier" AS ENUM ('economy', 'standard', 'premium');
+CREATE TYPE "provider_scope" AS ENUM ('tenant', 'domain', 'connector');
+CREATE TYPE "cost_tier" AS ENUM ('premium', 'standard', 'economy');
 CREATE TABLE "ai_providers" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
@@ -365,6 +385,7 @@ CREATE TABLE "ai_providers" (
 CREATE TABLE "ai_provider_models" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"provider_id" varchar(64) NOT NULL,
+	"provider_ref_id" uuid,
 	"model_id" varchar(128) NOT NULL,
 	"model_name" varchar(128) NOT NULL,
 	"version" varchar(32) NOT NULL,
@@ -378,7 +399,8 @@ CREATE TABLE "ai_provider_models" (
 	"is_available" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "ai_provider_models_provider_model_unique" UNIQUE("provider_id","model_id")
+	CONSTRAINT "ai_provider_models_provider_model_unique" UNIQUE("provider_id","model_id"),
+	CONSTRAINT "ai_provider_models_provider_ref_id_fk" FOREIGN KEY ("provider_ref_id") REFERENCES "ai_providers"("id") ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE "ai_provider_failover" (
@@ -571,10 +593,10 @@ CREATE TABLE "ai_usage_aggregation_monthly" (
 	CONSTRAINT "ai_usage_aggregation_monthly_unique" UNIQUE("tenant_id","year","month","provider_id","model_id")
 );
 --> statement-breakpoint
-CREATE TYPE "alert_type" AS ENUM ('threshold', 'anomaly', 'forecast');
+CREATE TYPE "alert_type" AS ENUM ('threshold', 'percentage', 'rate');
 CREATE TYPE "alert_threshold_type" AS ENUM ('cost', 'tokens', 'requests');
 CREATE TYPE "alert_time_window" AS ENUM ('hourly', 'daily', 'weekly', 'monthly');
-CREATE TYPE "alert_status" AS ENUM ('active', 'paused', 'triggered', 'resolved');
+CREATE TYPE "alert_status" AS ENUM ('active', 'paused', 'triggered');
 CREATE TABLE "budget_alerts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"tenant_id" uuid NOT NULL,
@@ -699,6 +721,7 @@ CREATE INDEX "domain_connector_assignments_domain_connector_idx" ON "domain_conn
 CREATE INDEX "ai_providers_tenant_id_idx" ON "ai_providers" USING btree ("tenant_id");--> statement-breakpoint
 CREATE INDEX "ai_providers_provider_id_idx" ON "ai_providers" USING btree ("provider_id");--> statement-breakpoint
 CREATE INDEX "ai_provider_models_provider_id_idx" ON "ai_provider_models" USING btree ("provider_id");--> statement-breakpoint
+CREATE INDEX "ai_provider_models_provider_ref_idx" ON "ai_provider_models" USING btree ("provider_ref_id");--> statement-breakpoint
 CREATE INDEX "ai_provider_failover_tenant_id_idx" ON "ai_provider_failover" USING btree ("tenant_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "ai_provider_credentials_tenant_idx" ON "ai_provider_credentials" USING btree ("tenant_id");--> statement-breakpoint
 CREATE INDEX "ai_provider_usage_tenant_idx" ON "ai_provider_usage" USING btree ("tenant_id");--> statement-breakpoint
@@ -804,3 +827,369 @@ CREATE INDEX "tenants_type_idx" ON "tenants" USING btree ("type");
 CREATE INDEX "tenants_status_idx" ON "tenants" USING btree ("status");
 CREATE INDEX "tenants_agency_partner_id_idx" ON "tenants" USING btree ("agency_partner_id");
 CREATE INDEX "tenants_parent_tenant_id_idx" ON "tenants" USING btree ("parent_tenant_id");
+
+-- ============================================================
+-- Row-Level Security (RLS)
+-- ============================================================
+
+-- Enable RLS on all tenant-scoped tables
+ALTER TABLE "users" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "tenant_connectors" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "core"."insights" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "core"."insight_connectors" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "reports" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "report_templates" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "roles" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "audit_logs" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "audit_trail" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "report_shares" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "provenance_records" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "marketing_metrics" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "platform_credentials" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "i18n_strings" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "tenant_feature_flags" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "business_domains" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "domain_connector_assignments" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "budget_alerts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "alert_trigger_history" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "budget_period_summaries" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_providers" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_provider_failover" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_provider_credentials" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_provider_usage" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_provider_health" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_usage_reports" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_usage_aggregation_daily" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_usage_aggregation_monthly" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_templates" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "template_deployments" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "template_usage_analytics" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "connector_sync_history" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "core"."usage_tracking" ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for users table
+CREATE POLICY tenant_isolation_users ON "users"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY users_self_read ON "users"
+  FOR SELECT
+  USING (id = current_setting('app.current_user_id')::uuid);
+
+-- RLS for tenant_connectors
+CREATE POLICY tenant_isolation_connectors ON "tenant_connectors"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- RLS for insights
+CREATE POLICY tenant_isolation_insights ON "core"."insights"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- RLS for reports
+CREATE POLICY tenant_isolation_reports ON "reports"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- RLS for report_templates
+CREATE POLICY tenant_isolation_templates ON "report_templates"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Agency partner access to client tenants
+CREATE POLICY agency_client_access_insights ON "core"."insights"
+  FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM "tenants" t
+      WHERE t.id = "core"."insights".tenant_id
+        AND t.parent_tenant_id = current_setting('app.current_tenant_id')::uuid
+    )
+  );
+
+-- RBAC
+CREATE POLICY tenant_isolation_roles ON "roles"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Audit
+CREATE POLICY tenant_isolation_audit_logs ON "audit_logs"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_audit_trail ON "audit_trail"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Report shares
+CREATE POLICY tenant_isolation_report_shares ON "report_shares"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Provenance & Metrics
+CREATE POLICY tenant_isolation_provenance_records ON "provenance_records"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_marketing_metrics ON "marketing_metrics"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Platform credentials
+CREATE POLICY tenant_isolation_platform_credentials ON "platform_credentials"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- i18n & Feature Flags
+CREATE POLICY tenant_isolation_i18n_strings ON "i18n_strings"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_tenant_feature_flags ON "tenant_feature_flags"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Business Domains
+CREATE POLICY tenant_isolation_business_domains ON "business_domains"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_domain_connector_assignments ON "domain_connector_assignments"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Budget Alerts
+CREATE POLICY tenant_isolation_budget_alerts ON "budget_alerts"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_alert_trigger_history ON "alert_trigger_history"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_budget_period_summaries ON "budget_period_summaries"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- AI Providers
+CREATE POLICY tenant_isolation_ai_providers ON "ai_providers"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_provider_failover ON "ai_provider_failover"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_provider_credentials ON "ai_provider_credentials"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_provider_usage ON "ai_provider_usage"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_provider_health ON "ai_provider_health"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid OR tenant_id IS NULL);
+
+-- AI Usage
+CREATE POLICY tenant_isolation_ai_usage_reports ON "ai_usage_reports"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_usage_aggregation_daily ON "ai_usage_aggregation_daily"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_ai_usage_aggregation_monthly ON "ai_usage_aggregation_monthly"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- AI Templates
+CREATE POLICY tenant_isolation_ai_templates ON "ai_templates"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_template_deployments ON "template_deployments"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY tenant_isolation_template_usage_analytics ON "template_usage_analytics"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Connector Sync
+CREATE POLICY tenant_isolation_connector_sync_history ON "connector_sync_history"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Core schema
+CREATE POLICY tenant_isolation_usage_tracking ON "core"."usage_tracking"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+-- Generated insights
+ALTER TABLE "core"."generated_insights" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation_generated_insights ON "core"."generated_insights"
+  USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY agency_client_access_generated_insights ON "core"."generated_insights"
+  FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM "tenants" t
+      WHERE t.id = "core"."generated_insights".tenant_id
+        AND t.parent_tenant_id = current_setting('app.current_tenant_id')::uuid
+    )
+  );
+
+-- RLS for insight_connectors
+CREATE POLICY tenant_isolation_insight_connectors ON "core"."insight_connectors"
+  USING (
+    EXISTS (
+      SELECT 1 FROM "core"."insights" i
+      WHERE i.id = "core"."insight_connectors".insight_id
+        AND i.tenant_id = current_setting('app.current_tenant_id')::uuid
+    )
+  );
+
+-- Indexes for generated_insights
+CREATE INDEX "generated_insights_tenant_id_created_at_idx" ON "core"."generated_insights" USING btree ("tenant_id","created_at");
+CREATE INDEX "generated_insights_report_id_idx" ON "core"."generated_insights" USING btree ("report_id");
+CREATE INDEX "generated_insights_analysis_id_idx" ON "core"."generated_insights" USING btree ("analysis_id");
+CREATE INDEX "generated_insights_insight_type_idx" ON "core"."generated_insights" USING btree ("insight_type");
+
+-- Standalone index on insight_connectors.insight_id
+CREATE INDEX "insight_connectors_insight_id_idx" ON "core"."insight_connectors" USING btree ("insight_id");
+
+-- Update trigger for insights.updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = NOW();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_insights_updated_at
+   BEFORE UPDATE ON "core"."insights"
+   FOR EACH ROW
+   EXECUTE FUNCTION update_updated_at_column();
+--> statement-breakpoint
+CREATE TYPE "notification_type" AS ENUM ('email', 'webhook', 'slack');
+CREATE TYPE "webhook_delivery_status" AS ENUM ('pending', 'success', 'failed', 'dead-letter');
+CREATE TYPE "insight_template_schedule_frequency" AS ENUM ('daily', 'weekly', 'monthly', 'quarterly');
+--> statement-breakpoint
+CREATE TYPE "insight_template_delivery_format" AS ENUM ('pdf', 'excel', 'both');
+--> statement-breakpoint
+CREATE TABLE "insight_templates" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid,
+	"name_translations" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"description_translations" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"icon" varchar(32),
+	"ai_template_id" uuid,
+	"schedule" jsonb DEFAULT '{"frequency":"weekly","time":9}'::jsonb NOT NULL,
+	"delivery" jsonb DEFAULT '{"format":"pdf","emailRecipients":[],"enableWebhook":false,"webhookUrl":null}'::jsonb NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"version" integer DEFAULT 1 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "insight_template_domains" (
+	"template_id" uuid NOT NULL,
+	"domain_id" uuid NOT NULL,
+	CONSTRAINT "insight_template_domains_pkey" PRIMARY KEY("template_id","domain_id")
+);
+--> statement-breakpoint
+CREATE TABLE "insight_template_connectors" (
+	"template_id" uuid NOT NULL,
+	"connector_id" varchar(64) NOT NULL,
+	"metrics" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	CONSTRAINT "insight_template_connectors_pkey" PRIMARY KEY("template_id","connector_id")
+);
+--> statement-breakpoint
+ALTER TABLE "insight_templates" ADD CONSTRAINT "insight_templates_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "insight_templates" ADD CONSTRAINT "insight_templates_ai_template_id_ai_templates_id_fk" FOREIGN KEY ("ai_template_id") REFERENCES "public"."ai_templates"("id") ON DELETE set null;
+--> statement-breakpoint
+ALTER TABLE "insight_template_domains" ADD CONSTRAINT "insight_template_domains_template_id_insight_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."insight_templates"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "insight_template_domains" ADD CONSTRAINT "insight_template_domains_domain_id_business_domains_id_fk" FOREIGN KEY ("domain_id") REFERENCES "public"."business_domains"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "insight_template_connectors" ADD CONSTRAINT "insight_template_connectors_template_id_insight_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."insight_templates"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "insight_template_connectors" ADD CONSTRAINT "insight_template_connectors_connector_id_data_connectors_id_fk" FOREIGN KEY ("connector_id") REFERENCES "core"."data_connectors"("id") ON DELETE cascade;
+--> statement-breakpoint
+CREATE INDEX "insight_templates_tenant_idx" ON "insight_templates" USING btree ("tenant_id");
+--> statement-breakpoint
+CREATE INDEX "insight_templates_active_idx" ON "insight_templates" USING btree ("is_active");
+--> statement-breakpoint
+CREATE INDEX "insight_templates_ai_template_idx" ON "insight_templates" USING btree ("ai_template_id");
+--> statement-breakpoint
+CREATE INDEX "insight_template_domains_domain_idx" ON "insight_template_domains" USING btree ("domain_id");
+--> statement-breakpoint
+CREATE INDEX "insight_template_connectors_connector_idx" ON "insight_template_connectors" USING btree ("connector_id");
+--> statement-breakpoint
+CREATE TYPE "schedule_entity_type" AS ENUM ('report', 'insight');
+CREATE TYPE "schedule_execution_status" AS ENUM ('pending', 'running', 'completed', 'failed', 'skipped');
+CREATE TABLE "schedules" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"entity_type" schedule_entity_type NOT NULL,
+	"entity_id" uuid NOT NULL,
+	"cron_expression" varchar(128) NOT NULL,
+	"timezone" varchar(64) DEFAULT 'UTC' NOT NULL,
+	"enabled" boolean DEFAULT true NOT NULL,
+	"metadata" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"last_run_at" timestamp with time zone,
+	"next_run_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "schedule_executions" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"schedule_id" uuid NOT NULL,
+	"tenant_id" uuid NOT NULL,
+	"entity_type" schedule_entity_type NOT NULL,
+	"entity_id" uuid NOT NULL,
+	"scheduled_at" timestamp with time zone NOT NULL,
+	"started_at" timestamp with time zone,
+	"completed_at" timestamp with time zone,
+	"status" schedule_execution_status DEFAULT 'pending' NOT NULL,
+	"error_message" varchar(1024),
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "schedules" ADD CONSTRAINT "schedules_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "schedule_executions" ADD CONSTRAINT "schedule_executions_schedule_id_schedules_id_fk" FOREIGN KEY ("schedule_id") REFERENCES "public"."schedules"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "schedule_executions" ADD CONSTRAINT "schedule_executions_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade;
+--> statement-breakpoint
+CREATE INDEX "schedules_tenant_entity_type_entity_idx" ON "schedules" USING btree ("tenant_id","entity_type","entity_id");
+--> statement-breakpoint
+CREATE INDEX "schedules_tenant_enabled_cron_idx" ON "schedules" USING btree ("tenant_id","enabled","cron_expression");
+--> statement-breakpoint
+CREATE INDEX "schedules_tenant_next_run_idx" ON "schedules" USING btree ("tenant_id","next_run_at");
+--> statement-breakpoint
+CREATE INDEX "schedules_tenant_entity_type_idx" ON "schedules" USING btree ("tenant_id","entity_type");
+--> statement-breakpoint
+CREATE INDEX "schedule_executions_schedule_idx" ON "schedule_executions" USING btree ("schedule_id");
+--> statement-breakpoint
+CREATE INDEX "schedule_executions_tenant_schedule_idx" ON "schedule_executions" USING btree ("tenant_id","schedule_id");
+--> statement-breakpoint
+CREATE INDEX "schedule_executions_tenant_entity_type_idx" ON "schedule_executions" USING btree ("tenant_id","entity_type");
+--> statement-breakpoint
+ALTER TABLE "schedules" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "schedule_executions" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "schedules_tenant_isolation_select" ON "schedules" FOR SELECT USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedules_tenant_isolation_insert" ON "schedules" FOR INSERT WITH CHECK (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedules_tenant_isolation_update" ON "schedules" FOR UPDATE USING (tenant_id = current_setting('app.current_tenant_id')::uuid) WITH CHECK (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedules_tenant_isolation_delete" ON "schedules" FOR DELETE USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+
+CREATE POLICY "schedule_executions_tenant_isolation_select" ON "schedule_executions" FOR SELECT USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedule_executions_tenant_isolation_insert" ON "schedule_executions" FOR INSERT WITH CHECK (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedule_executions_tenant_isolation_update" ON "schedule_executions" FOR UPDATE USING (tenant_id = current_setting('app.current_tenant_id')::uuid) WITH CHECK (tenant_id = current_setting('app.current_tenant_id')::uuid);
+CREATE POLICY "schedule_executions_tenant_isolation_delete" ON "schedule_executions" FOR DELETE USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
+--> statement-breakpoint
+CREATE TABLE "webhook_deliveries" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"insight_id" uuid,
+	"tenant_id" uuid NOT NULL,
+	"report_id" uuid,
+	"url" text NOT NULL,
+	"status" webhook_delivery_status DEFAULT 'pending' NOT NULL,
+	"response_code" integer,
+	"response_body" text,
+	"attempts" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "webhook_deliveries" ADD CONSTRAINT "webhook_deliveries_tenant_id_tenants_id_fk" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE cascade;
+--> statement-breakpoint
+ALTER TABLE "webhook_deliveries" ADD CONSTRAINT "webhook_deliveries_insight_id_insights_id_fk" FOREIGN KEY ("insight_id") REFERENCES "core"."insights"("id") ON DELETE set null;
+--> statement-breakpoint
+ALTER TABLE "webhook_deliveries" ADD CONSTRAINT "webhook_deliveries_report_id_reports_id_fk" FOREIGN KEY ("report_id") REFERENCES "public"."reports"("id") ON DELETE set null;
+--> statement-breakpoint
+CREATE INDEX "webhook_deliveries_tenant_id_idx" ON "webhook_deliveries" USING btree ("tenant_id");
+--> statement-breakpoint
+CREATE INDEX "webhook_deliveries_insight_id_idx" ON "webhook_deliveries" USING btree ("insight_id");
+--> statement-breakpoint
+CREATE INDEX "webhook_deliveries_report_id_idx" ON "webhook_deliveries" USING btree ("report_id");
+--> statement-breakpoint
+ALTER TABLE "webhook_deliveries" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation_webhook_deliveries ON "webhook_deliveries" USING (tenant_id = current_setting('app.current_tenant_id')::uuid);

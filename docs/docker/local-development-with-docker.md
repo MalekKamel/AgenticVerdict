@@ -122,9 +122,11 @@ When dependency metadata changes (for example lockfile or workspace config), pre
 Once containers are running:
 
 - Apply schema sync: `make db-migrate`
+- Generate migration files: `make db-generate`
 - Seed test data: `make db-seed`
 - Reset local DB (destructive): `make db-reset`
 - Open psql shell: `make shell-db`
+- Open Drizzle Studio: `make db-studio`
 
 ### Optional pgAdmin for DB inspection
 

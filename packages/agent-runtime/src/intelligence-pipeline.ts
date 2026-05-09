@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { Verdict, ProvenanceInfo } from "@agenticverdict/types";
+import type { Verdict, ProvenanceInfo, PipelineStatus } from "@agenticverdict/types";
 import { requireTenantContext } from "@agenticverdict/core";
 import {
   recordVerdictParseAttempt,
@@ -9,8 +9,14 @@ import {
   recordVerdictParseFailureField,
 } from "@agenticverdict/observability";
 
+export type { PipelineStatus };
+
 import type { AgentFactory } from "./agent-factory";
-import { createAgentMessage, type AgentMessageContext, type AgentMessage } from "./agent-protocol";
+import {
+  createAgentMessage,
+  type AgentMessageContext,
+  type AgentMessage,
+} from "@agenticverdict/types";
 import type { AgentInvocationContext, AgentRunResult, IAgent } from "./interfaces";
 import {
   createPipelineAgentConfig,
@@ -27,18 +33,22 @@ import {
   parseVerdictFromAgentText,
   resolveWorkflowAnalysisUuid,
 } from "./agent-verdict-json";
-import { VerdictParseError } from "./verdict-schema";
+import { VerdictParseError } from "@agenticverdict/types";
 import { AGENT_RUNTIME_PACKAGE_VERSION } from "./version";
 
 import type { ToolRegistry } from "./tools";
+import type { AnalysisResult, InsightsResult } from "@agenticverdict/types";
+
+export interface StructuredPipelineResults {
+  analysis?: AnalysisResult;
+  insights?: InsightsResult;
+}
 
 export interface PipelineStageRecord {
   stage: PipelineAgentKind;
   result: AgentRunResult;
   durationMs: number;
 }
-
-export type PipelineStatus = "completed" | "failed" | "degraded";
 
 export interface PipelineState {
   workflowId: string;
@@ -50,6 +60,8 @@ export interface PipelineState {
   /** Present when verdict JSON could not be parsed but the text answer is retained. */
   verdictRawAnswer?: string;
   error?: { stage: PipelineAgentKind; message: string; cause?: unknown };
+  /** Structured results from pipeline stages (Phase 6). */
+  structuredResults?: StructuredPipelineResults;
 }
 
 export interface WorkflowProgressEvent {
@@ -86,6 +98,8 @@ export interface RunPipelineOptions {
     | "factoryConfig"
     | "platformDeps"
     | "tenantContextDeps"
+    | "metricsStore"
+    | "outputLanguage"
   >;
   /** When true, uses production chat models (requires keys). */
   useProductionModels?: boolean;
@@ -117,6 +131,113 @@ function buildExecutionContext(
     workflowId,
     stage,
   };
+}
+
+/**
+ * Robustly extracts a JSON block from LLM output text.
+ *
+ * Strategy:
+ * 1. Find the first `{` in the text.
+ * 2. Use brace counting to locate the matching closing `}`.
+ * 3. Attempt `JSON.parse()` on the extracted substring.
+ * 4. If the parsed object does not contain `requiredKey` at top level,
+ *    recursively search nested objects for a match.
+ * 5. Return the JSON string if found, or `null` on failure.
+ */
+function extractJsonBlock(text: string, requiredKey: string): string | null {
+  const firstBrace = text.indexOf("{");
+  if (firstBrace < 0) {
+    return null;
+  }
+
+  // Brace counting to find the matching closing brace.
+  let depth = 0;
+  let inString = false;
+  let escapeNext = false;
+  let endBrace = -1;
+
+  for (let i = firstBrace; i < text.length; i++) {
+    const ch = text[i];
+
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+
+    if (ch === "\\") {
+      escapeNext = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) {
+      continue;
+    }
+
+    if (ch === "{") {
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        endBrace = i;
+        break;
+      }
+    }
+  }
+
+  if (endBrace < 0) {
+    return null;
+  }
+
+  const candidate = text.slice(firstBrace, endBrace + 1);
+
+  try {
+    const parsed = JSON.parse(candidate) as Record<string, unknown>;
+    if (requiredKey in parsed) {
+      return candidate;
+    }
+    // Recursively search nested objects for the required key.
+    const found = findObjectWithKey(parsed, requiredKey);
+    if (found !== null) {
+      return JSON.stringify(found);
+    }
+  } catch {
+    // Malformed JSON — fall through to null.
+  }
+
+  return null;
+}
+
+/**
+ * Recursively searches an object (and its nested objects/arrays) for one
+ * that contains `requiredKey` at the top level. Returns that object or null.
+ */
+function findObjectWithKey(obj: unknown, requiredKey: string): Record<string, unknown> | null {
+  if (obj !== null && typeof obj === "object" && !Array.isArray(obj)) {
+    const record = obj as Record<string, unknown>;
+    if (requiredKey in record) {
+      return record;
+    }
+    for (const value of Object.values(record)) {
+      const found = findObjectWithKey(value, requiredKey);
+      if (found !== null) {
+        return found;
+      }
+    }
+  }
+  if (Array.isArray(obj)) {
+    for (const item of obj) {
+      const found = findObjectWithKey(item, requiredKey);
+      if (found !== null) {
+        return found;
+      }
+    }
+  }
+  return null;
 }
 
 function truncateForContext(text: string, maxChars: number): string {
@@ -218,6 +339,17 @@ export async function runIntelligencePipeline(options: RunPipelineOptions): Prom
       parameters: { stage: "analysis", durationMs: analysisTimed.durationMs },
     });
 
+    // Parse structured analysis result if available (JSON in text output)
+    let structuredAnalysis: AnalysisResult | undefined;
+    try {
+      const jsonBlock = extractJsonBlock(analysisTimed.result.answer, "platformSummaries");
+      if (jsonBlock) {
+        structuredAnalysis = JSON.parse(jsonBlock) as AnalysisResult;
+      }
+    } catch {
+      // Fall back to text-only mode
+    }
+
     emit({
       from: PIPELINE_AGENT_NAMES.analysis,
       to: HANDOFF_RECIPIENT.analysis,
@@ -227,11 +359,18 @@ export async function runIntelligencePipeline(options: RunPipelineOptions): Prom
     });
 
     const insightsAgentResult = await createAgent("insights");
+
+    // Build insights goal with structured data if available
+    let insightsGoal = options.goal;
+    if (structuredAnalysis) {
+      insightsGoal = `${options.goal}\n\nUse the following structured analysis data as primary evidence:\n${JSON.stringify(structuredAnalysis, null, 2)}\n\nRaw text analysis:\n${truncateForContext(analysisTimed.result.answer, 20_000)}`;
+    } else {
+      insightsGoal = `${options.goal}\n\nUse the cross-platform analysis below as primary evidence:\n${truncateForContext(analysisTimed.result.answer, 20_000)}`;
+    }
+
     const insightsTimed = await timedRun(
       insightsAgentResult.agent,
-      {
-        goal: `${options.goal}\n\nUse the cross-platform analysis below as primary evidence:\n${truncateForContext(analysisTimed.result.answer, 20_000)}`,
-      },
+      { goal: insightsGoal },
       options.ctx,
     );
     stages.push({ stage: "insights", ...insightsTimed });
@@ -243,6 +382,17 @@ export async function runIntelligencePipeline(options: RunPipelineOptions): Prom
       parameters: { stage: "insights", durationMs: insightsTimed.durationMs },
     });
 
+    // Parse structured insights result if available
+    let structuredInsights: InsightsResult | undefined;
+    try {
+      const jsonBlock = extractJsonBlock(insightsTimed.result.answer, "insights");
+      if (jsonBlock) {
+        structuredInsights = JSON.parse(jsonBlock) as InsightsResult;
+      }
+    } catch {
+      // Fall back to text-only mode
+    }
+
     emit({
       from: PIPELINE_AGENT_NAMES.insights,
       to: HANDOFF_RECIPIENT.insights,
@@ -253,15 +403,21 @@ export async function runIntelligencePipeline(options: RunPipelineOptions): Prom
 
     const verdictAgentResult = await createAgent("verdict");
     const analysisUuid = resolveWorkflowAnalysisUuid(options.ctx.tenantId, workflowId);
-    const verdictGoal = `${options.goal}
 
-Tenant context (must appear exactly in your JSON): tenantId="${options.ctx.tenantId}", analysisId="${analysisUuid}".
+    // Build verdict goal with structured data if available
+    let verdictGoal = `${options.goal}
 
-Incorporate the following analysis into your verdict:
+Tenant context (must appear exactly in your JSON): tenantId="${options.ctx.tenantId}", analysisId="${analysisUuid}".`;
+
+    if (structuredAnalysis && structuredInsights) {
+      verdictGoal += `\n\nStructured analysis:\n${JSON.stringify(structuredAnalysis, null, 2)}\n\nStructured insights:\n${JSON.stringify(structuredInsights, null, 2)}`;
+    } else {
+      verdictGoal += `\n\nIncorporate the following analysis into your verdict:
 1) Cross-platform analysis:
 ${truncateForContext(analysisTimed.result.answer, 12_000)}
 2) Insights:
 ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
+    }
 
     const verdictTimed = await timedRun(
       verdictAgentResult.agent,
@@ -304,6 +460,10 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
         stages,
         verdict,
         provenance: provenanceTracker.getCurrentProvenance(),
+        structuredResults: {
+          analysis: structuredAnalysis,
+          insights: structuredInsights,
+        },
       };
       options.onPipelineTiming?.(pipelineTimingToLogFields(completed));
       return completed;
@@ -338,6 +498,10 @@ ${truncateForContext(insightsTimed.result.answer, 12_000)}`;
             cause: e,
           },
           provenance: provenanceTracker.getCurrentProvenance(),
+          structuredResults: {
+            analysis: structuredAnalysis,
+            insights: structuredInsights,
+          },
         };
         options.onPipelineTiming?.(pipelineTimingToLogFields(degraded));
         return degraded;

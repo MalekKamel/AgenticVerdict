@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { useAuthStore } from "@/features/auth/model/state/auth-store";
-import { type Role } from "@AgenticVerdict/types";
+import { type Role } from "@agenticverdict/types";
 
 /**
  * Result object returned by useRoles hook.

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import type { Queue } from "bullmq";
 
-import type { ReportGenerationJobData, ReportScheduleJobData } from "./job-types";
+import type { ReportGenerationJobData, ReportScheduleJobData } from "@agenticverdict/types";
 
 /** Minimal queue surface for schedule ticks (avoids import cycles in production-flow scenarios). */
 export type ReportGenerationQueueAdd = Pick<Queue<ReportGenerationJobData>, "add">;

@@ -1,8 +1,9 @@
 "use client";
 
-import { Stack, Group, Box, Text, Badge, Button, Checkbox } from "@mantine/core";
+import { Stack, Group, Text, Badge, Button, Checkbox, Card } from "@mantine/core";
 import { IconPlugConnected, IconPlugX, IconPlus } from "@tabler/icons-react";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "@/i18n/react";
 
 interface Connector {
   id: string;
@@ -31,6 +32,7 @@ export function ConnectorSelectionStep({
   loading,
   error,
 }: ConnectorSelectionStepProps) {
+  const t = useTranslations("insights");
   const {
     watch,
     setValue,
@@ -54,7 +56,7 @@ export function ConnectorSelectionStep({
   if (loading) {
     return (
       <Stack align="center" gap="md" p="lg">
-        <Text c="dimmed">Loading connectors...</Text>
+        <Text c="dimmed">{t("wizard.steps.connectors.loading")}</Text>
       </Stack>
     );
   }
@@ -62,9 +64,9 @@ export function ConnectorSelectionStep({
   if (error) {
     return (
       <Stack align="center" gap="md" p="lg">
-        <Text c="red">Failed to load connectors</Text>
+        <Text c="red">{t("wizard.steps.connectors.error")}</Text>
         <Button variant="outline" size="sm" onClick={onManageConnectors}>
-          Try Again
+          {t("wizard.steps.connectors.tryAgain")}
         </Button>
       </Stack>
     );
@@ -73,9 +75,9 @@ export function ConnectorSelectionStep({
   if (connectors.length === 0) {
     return (
       <Stack align="center" gap="md" p="lg">
-        <Text c="dimmed">No connectors available</Text>
+        <Text c="dimmed">{t("wizard.steps.connectors.empty")}</Text>
         <Button leftSection={<IconPlus size={16} />} onClick={onManageConnectors}>
-          Add Connector
+          {t("wizard.steps.connectors.addConnector")}
         </Button>
       </Stack>
     );
@@ -84,21 +86,19 @@ export function ConnectorSelectionStep({
   return (
     <Stack gap="md">
       <Group justify="space-between">
-        <Text fw={500}>Select Connectors</Text>
+        <Text fw={500}>{t("wizard.steps.connectors.selectTitle")}</Text>
         <Button variant="subtle" size="sm" onClick={onManageConnectors}>
-          Manage Connectors
+          {t("wizard.steps.connectors.manage")}
         </Button>
       </Group>
 
       {connectors.map((connector) => (
-        <Box
+        <Card
           key={connector.id}
+          withBorder
+          radius="md"
           p="md"
-          style={{
-            border: "1px solid #e9ecef",
-            borderRadius: 8,
-            backgroundColor: selectedIds.includes(connector.id) ? "#f8f9fa" : "transparent",
-          }}
+          bg={selectedIds.includes(connector.id) ? "var(--mantine-color-gray-0)" : "transparent"}
         >
           <Group justify="space-between">
             <Group gap="md">
@@ -120,18 +120,20 @@ export function ConnectorSelectionStep({
                       )
                     }
                   >
-                    {connector.isHealthy ? "Connected" : "Disconnected"}
+                    {connector.isHealthy
+                      ? t("wizard.steps.connectors.connected")
+                      : t("wizard.steps.connectors.disconnected")}
                   </Badge>
                 </Group>
                 <Text size="sm" c="dimmed">
                   {connector.type}
                   {connector.lastSyncedAt &&
-                    ` • Last synced: ${connector.lastSyncedAt.toLocaleDateString()}`}
+                    ` • ${t("wizard.steps.connectors.lastSynced")}: ${connector.lastSyncedAt.toLocaleDateString()}`}
                 </Text>
               </Stack>
             </Group>
           </Group>
-        </Box>
+        </Card>
       ))}
 
       {errors.connectorIds && (

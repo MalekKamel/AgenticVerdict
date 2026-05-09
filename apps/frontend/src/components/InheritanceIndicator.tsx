@@ -2,11 +2,12 @@
 
 import { Stack, Group, Text, ThemeIcon, Box, Tooltip, Badge } from "@mantine/core";
 import { IconHeartCancel, IconArrowRight, IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import type { ConfigScope } from "@agenticverdict/types";
 
 import { useTranslations } from "@/i18n/react";
 
 interface InheritanceIndicatorProps {
-  level: "tenant" | "domain" | "connector";
+  level: ConfigScope;
   inheritedFrom?: "tenant" | "domain";
   hasOverride?: boolean;
   providerName?: string;

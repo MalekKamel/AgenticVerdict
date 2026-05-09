@@ -1,19 +1,7 @@
 import { recordBackoffAttemptOutcome } from "@agenticverdict/observability";
+import type { ExponentialBackoffOptions, ExponentialBackoffTelemetry } from "@agenticverdict/types";
 
 import { isRetryableConnectorError } from "./error-classifier";
-
-export interface ExponentialBackoffOptions {
-  /** First delay in milliseconds (1s per Phase 1 execution plan). */
-  initialDelayMs: number;
-  /** Multiplier applied after each retryable failure. */
-  factor: number;
-  /** Hard cap on delay between attempts (16s cap in plan). */
-  maxDelayMs: number;
-  /** Maximum attempts including the first try (1 + 5 retries → 6 for full 1s…16s ladder). */
-  maxAttempts: number;
-  /** When true, the final error is rethrown after exhausting attempts. */
-  retryOn: (error: unknown) => boolean;
-}
 
 /**
  * Jitter ±20% to reduce thundering herd (Task 1.5).
@@ -30,11 +18,6 @@ export const defaultBackoffOptions: ExponentialBackoffOptions = {
   maxAttempts: 6,
   retryOn: isRetryableConnectorError,
 };
-
-export interface ExponentialBackoffTelemetry {
-  platform: string;
-  operation: string;
-}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {

@@ -1,7 +1,7 @@
 import { randomBytes, scryptSync } from "node:crypto";
 
 import { faker } from "@faker-js/faker";
-import type { SystemRole } from "@agenticverdict/types";
+import type { SystemRole, TenantType } from "@agenticverdict/types";
 
 faker.seed(12345);
 
@@ -23,8 +23,6 @@ export interface SeedUser {
   passwordHash: string;
   emailVerified: boolean;
 }
-
-export type TenantType = "direct_business" | "agency_partner" | "agency_managed";
 
 export class UserFactory {
   static create(

@@ -22,12 +22,13 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@agenticverdict/types": "workspace:*",
     "@agenticverdict/config": "workspace:*",
     "@agenticverdict/core": "workspace:*",
     "@agenticverdict/observability": "workspace:*",
+    "@agenticverdict/types": "workspace:*",
     "@upstash/redis": "^1.37.0",
     "drizzle-orm": "^0.38.3",
+    "pino": "^10.3.1",
     "postgres": "^3.4.5"
   },
   "devDependencies": {

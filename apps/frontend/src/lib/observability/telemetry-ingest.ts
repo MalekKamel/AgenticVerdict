@@ -9,8 +9,6 @@ import type { TelemetryEnvelope } from "@agenticverdict/types";
 
 import { parseTelemetrySampleRate } from "./telemetry-sample-rate";
 
-export type { TelemetryEnvelope } from "@agenticverdict/types";
-
 export function getTelemetryIngestUrl(): string | undefined {
   const raw = import.meta.env.VITE_PUBLIC_TELEMETRY_INGEST_URL?.trim();
   return raw && raw.length > 0 ? raw : undefined;

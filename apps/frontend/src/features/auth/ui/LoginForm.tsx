@@ -12,7 +12,7 @@ import { PasswordInput } from "@/features/auth/ui/PasswordInput";
 import { AUTH_TEXT_LINK_CLASS, getDirectionalSectionProps } from "@/features/auth/ui/authUi";
 import { Alert, Button, Checkbox, Text, TextInput } from "@mantine/core";
 import { useLocale, useTranslations } from "@/i18n/react";
-import { useForm, zodResolver } from "@mantine/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrandApple,
   IconBrandGoogleFilled,
@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { getDirection } from "@/i18n/locales";
+import { useForm } from "react-hook-form";
 
 export interface LoginFormProps {
   onSuccess?: () => void;
@@ -99,9 +100,9 @@ export function LoginForm({
   const visibleOauthProviders = oauthEnabled ? oauthProviders : [];
 
   const form = useForm<LoginFormData>({
-    mode: "uncontrolled",
-    validate: zodResolver(loginSchema),
-    initialValues: {
+    mode: "onSubmit",
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
       email: defaultEmail || "",
       password: "",
       rememberMe: false,
@@ -135,7 +136,7 @@ export function LoginForm({
     }
   }, [error, t]);
 
-  const handleSubmit = async (values: LoginFormData) => {
+  const onSubmit = async (values: LoginFormData) => {
     clearError();
     setOauthFallbackMessage(null);
 
@@ -150,8 +151,14 @@ export function LoginForm({
     }
   };
 
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors },
+  } = form;
+
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)} className={className} noValidate>
+    <form onSubmit={handleFormSubmit(onSubmit)} className={className} noValidate>
       <div className="flex flex-col gap-5">
         {sessionExpired ? (
           <div role="status" aria-live="polite">
@@ -207,8 +214,8 @@ export function LoginForm({
         ) : null}
 
         <TextInput
-          key={form.key("email")}
           id="login-email"
+          {...register("email")}
           label={t("login.fields.email")}
           type="email"
           required
@@ -216,11 +223,10 @@ export function LoginForm({
           radius="md"
           w="100%"
           error={
-            typeof form.errors.email === "string"
-              ? resolveLoginErrorMessage(form.errors.email, t)
+            typeof errors.email?.message === "string"
+              ? resolveLoginErrorMessage(errors.email.message, t)
               : undefined
           }
-          {...form.getInputProps("email")}
         />
 
         <PasswordInput
@@ -228,22 +234,17 @@ export function LoginForm({
           placeholder={t("login.fields.passwordPlaceholder")}
           required
           autoComplete="current-password"
-          key={form.key("password")}
+          {...register("password")}
           error={
-            typeof form.errors.password === "string"
-              ? resolveLoginErrorMessage(form.errors.password, t)
+            typeof errors.password?.message === "string"
+              ? resolveLoginErrorMessage(errors.password.message, t)
               : undefined
           }
           radius="md"
-          {...form.getInputProps("password")}
         />
 
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <Checkbox
-            key={form.key("rememberMe")}
-            label={t("login.fields.rememberMe")}
-            {...form.getInputProps("rememberMe", { type: "checkbox" })}
-          />
+          <Checkbox {...register("rememberMe")} label={t("login.fields.rememberMe")} />
 
           <Link href="/auth/forgot-password" className={AUTH_TEXT_LINK_CLASS}>
             {t("login.buttons.forgotPassword")}

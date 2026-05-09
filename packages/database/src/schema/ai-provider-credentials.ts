@@ -9,6 +9,8 @@ import {
   unique,
   index,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { tenants } from "./tenants";
 
 /**
  * AI Provider Credentials Schema (Task 1.14, 3.46)
@@ -22,7 +24,9 @@ export const aiProviderCredentials = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
 
     /** Tenant ID - scoped for multi-tenancy */
-    tenantId: uuid("tenant_id").notNull(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
 
     /** Provider identifier (openai, anthropic, google, etc.) */
     providerId: varchar("provider_id", { length: 64 }).notNull(),
@@ -73,7 +77,7 @@ export const aiProviderCredentials = pgTable(
     unique("ai_provider_credentials_tenant_provider_unique").on(t.tenantId, t.providerId),
 
     /** Index for fast tenant lookup */
-    unique("ai_provider_credentials_tenant_idx").on(t.tenantId),
+    index("ai_provider_credentials_tenant_idx").on(t.tenantId),
   ],
 );
 
@@ -88,7 +92,9 @@ export const aiProviderUsage = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
 
     /** Tenant ID */
-    tenantId: uuid("tenant_id").notNull(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
 
     /** Provider ID */
     providerId: varchar("provider_id", { length: 64 }).notNull(),
@@ -149,7 +155,7 @@ export const aiProviderHealth = pgTable(
     providerId: varchar("provider_id", { length: 64 }).notNull(),
 
     /** Tenant ID (null for global health) */
-    tenantId: uuid("tenant_id"),
+    tenantId: uuid("tenant_id").references(() => tenants.id, { onDelete: "cascade" }),
 
     /** Error rate (0.0 - 1.0) */
     errorRate: integer("error_rate").notNull().default(0), // stored as basis points (0-10000)
@@ -186,6 +192,28 @@ export const aiProviderHealth = pgTable(
     unique("ai_provider_health_provider_tenant_unique").on(t.providerId, t.tenantId),
   ],
 );
+
+// Relations
+export const aiProviderCredentialsRelations = relations(aiProviderCredentials, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [aiProviderCredentials.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+export const aiProviderUsageRelations = relations(aiProviderUsage, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [aiProviderUsage.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+export const aiProviderHealthRelations = relations(aiProviderHealth, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [aiProviderHealth.tenantId],
+    references: [tenants.id],
+  }),
+}));
 
 // Type exports
 export type AiProviderCredential = typeof aiProviderCredentials.$inferSelect;

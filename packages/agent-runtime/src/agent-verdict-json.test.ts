@@ -8,10 +8,10 @@ import {
   safeParseVerdictFromAgentText,
 } from "./agent-verdict-json";
 import { buildVerdictFixture } from "./test-utils/verdict-fixtures";
-import { VerdictParseError } from "./verdict-schema";
+import { VerdictParseError } from "@agenticverdict/types";
 
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
-const ANALYSIS = "bbbbbbbb-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+const ANALYSIS = "bbbbbbbb-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 describe("agent-verdict-json", () => {
   it("extractJsonObjectText handles fenced JSON", () => {
@@ -106,10 +106,10 @@ describe("agent-verdict-json", () => {
       analysisId: ANALYSIS,
     });
     const v = applyVerdictPipelineContext(parsed, {
-      tenantId: "cccccccc-cccc-4ccc-cccc-cccccccccccc",
+      tenantId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
       analysisId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
     });
-    expect(v.tenantId).toBe("cccccccc-cccc-4ccc-cccc-cccccccccccc");
+    expect(v.tenantId).toBe("cccccccc-cccc-4ccc-8ccc-cccccccccccc");
     expect(v.analysisId).toBe("dddddddd-dddd-4ddd-8ddd-dddddddddddd");
   });
 });
