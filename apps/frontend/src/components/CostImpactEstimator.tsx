@@ -51,7 +51,7 @@ export function CostImpactEstimator({
   onCancel,
   showRecommendation = true,
 }: CostImpactEstimatorProps) {
-  const t = useTranslations("components.costImpactEstimator");
+  const t = useTranslations("components");
 
   const currentMultiplier = TIER_MULTIPLIERS[estimate.currentTier];
   const proposedMultiplier = TIER_MULTIPLIERS[estimate.proposedTier];
@@ -67,17 +67,17 @@ export function CostImpactEstimator({
     if (estimate.monthlyRequests < 1000) {
       return {
         tier: "economy" as CostTier,
-        reason: t("recommendations.lowUsage"),
+        reason: t("costImpactEstimator.recommendations.lowUsage"),
       };
     } else if (estimate.monthlyRequests < 10000) {
       return {
         tier: "standard" as CostTier,
-        reason: t("recommendations.mediumUsage"),
+        reason: t("costImpactEstimator.recommendations.mediumUsage"),
       };
     } else {
       return {
         tier: "premium" as CostTier,
-        reason: t("recommendations.highUsage"),
+        reason: t("costImpactEstimator.recommendations.highUsage"),
       };
     }
   };
@@ -103,11 +103,11 @@ export function CostImpactEstimator({
         {/* Header */}
         <Group justify="space-between">
           <Text fw={600} size="lg">
-            {t("title")}
+            {t("costImpactEstimator.title")}
           </Text>
           {isRecommended && recommendation && (
             <Badge color="green" variant="light" leftSection={<IconCheck size={14} />}>
-              {t("recommended")}
+              {t("costImpactEstimator.recommended")}
             </Badge>
           )}
         </Group>
@@ -116,7 +116,7 @@ export function CostImpactEstimator({
         <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
           <Box>
             <Text size="sm" c="dimmed">
-              {t("metrics.requests")}
+              {t("costImpactEstimator.metrics.requests")}
             </Text>
             <Text size="xl" fw={700}>
               {formatNumber(estimate.monthlyRequests)}
@@ -124,7 +124,7 @@ export function CostImpactEstimator({
           </Box>
           <Box>
             <Text size="sm" c="dimmed">
-              {t("metrics.avgTokens")}
+              {t("costImpactEstimator.metrics.avgTokens")}
             </Text>
             <Text size="xl" fw={700}>
               {formatNumber(estimate.avgTokensPerRequest)}
@@ -132,7 +132,7 @@ export function CostImpactEstimator({
           </Box>
           <Box>
             <Text size="sm" c="dimmed">
-              {t("metrics.totalTokens")}
+              {t("costImpactEstimator.metrics.totalTokens")}
             </Text>
             <Text size="xl" fw={700}>
               {formatNumber(estimate.monthlyRequests * estimate.avgTokensPerRequest)}
@@ -144,12 +144,12 @@ export function CostImpactEstimator({
 
         {/* Cost Comparison */}
         <Stack gap="sm">
-          <Text fw={600}>{t("costComparison")}</Text>
+          <Text fw={600}>{t("costImpactEstimator.costComparison")}</Text>
 
           <Group justify="space-between">
             <Stack gap="xs" style={{ flex: 1 }}>
               <Text size="sm" c="dimmed">
-                {t("currentTier", { tier: estimate.currentTier })}
+                {t("costImpactEstimator.currentTier", { tier: estimate.currentTier })}
               </Text>
               <Text size="xl" fw={700}>
                 {formatCurrency(estimate.currentMonthlyCost)}
@@ -158,7 +158,7 @@ export function CostImpactEstimator({
                 {formatCurrency(
                   estimate.currentMonthlyCost / Math.max(estimate.monthlyRequests, 1),
                 )}{" "}
-                / {t("perRequest")}
+                / {t("costImpactEstimator.perRequest")}
               </Text>
             </Stack>
 
@@ -178,14 +178,14 @@ export function CostImpactEstimator({
 
             <Stack gap="xs" style={{ flex: 1 }} align="flex-end">
               <Text size="sm" c="dimmed">
-                {t("proposedTier", { tier: estimate.proposedTier })}
+                {t("costImpactEstimator.proposedTier", { tier: estimate.proposedTier })}
               </Text>
               <Text size="xl" fw={700} c={isUpgrade ? "red" : isDowngrade ? "green" : "blue"}>
                 {formatCurrency(newMonthlyCost)}
               </Text>
               <Text size="xs" c="dimmed">
                 {formatCurrency(newMonthlyCost / Math.max(estimate.monthlyRequests, 1))} /{" "}
-                {t("perRequest")}
+                {t("costImpactEstimator.perRequest")}
               </Text>
             </Stack>
           </Group>
@@ -198,13 +198,19 @@ export function CostImpactEstimator({
             color={costDifference > 0 ? "orange" : "green"}
             title={
               costDifference > 0
-                ? t("alerts.costIncrease", { amount: formatCurrency(costDifference) })
-                : t("alerts.costSavings", { amount: formatCurrency(Math.abs(costDifference)) })
+                ? t("costImpactEstimator.alerts.costIncrease", {
+                    amount: formatCurrency(costDifference),
+                  })
+                : t("costImpactEstimator.alerts.costSavings", {
+                    amount: formatCurrency(Math.abs(costDifference)),
+                  })
             }
           >
             {costDifference > 0
-              ? t("alerts.increaseDescription", { amount: formatCurrency(costDifference * 12) })
-              : t("alerts.savingsDescription", {
+              ? t("costImpactEstimator.alerts.increaseDescription", {
+                  amount: formatCurrency(costDifference * 12),
+                })
+              : t("costImpactEstimator.alerts.savingsDescription", {
                   amount: formatCurrency(Math.abs(costDifference) * 12),
                 })}
           </Alert>
@@ -214,7 +220,7 @@ export function CostImpactEstimator({
         <Stack gap="xs">
           <Group justify="space-between">
             <Text size="sm" fw={500}>
-              {t("monthlyBudgetImpact")}
+              {t("costImpactEstimator.monthlyBudgetImpact")}
             </Text>
             <Text size="sm" fw={700} c={isUpgrade ? "red" : "green"}>
               {costDifference >= 0 ? "+" : ""}
@@ -232,10 +238,10 @@ export function CostImpactEstimator({
         {showRecommendation && recommendation && (
           <Alert color="blue" icon={<IconCurrencyDollar size={16} />}>
             <Text size="sm" fw={600} mb="xs">
-              {t("recommendation.title")}
+              {t("costImpactEstimator.recommendation.title")}
             </Text>
             <Text size="sm">
-              {t("recommendation.description", {
+              {t("costImpactEstimator.recommendation.description", {
                 tier: recommendation.tier,
                 reason: recommendation.reason,
               })}
@@ -248,12 +254,14 @@ export function CostImpactEstimator({
           <Group justify="flex-end" mt="md">
             {onCancel && (
               <Button variant="default" onClick={onCancel}>
-                {t("actions.cancel")}
+                {t("costImpactEstimator.actions.cancel")}
               </Button>
             )}
             {onConfirm && (
               <Button onClick={onConfirm} color={isUpgrade ? "orange" : "green"}>
-                {isUpgrade ? t("actions.upgrade") : t("actions.downgrade")}
+                {isUpgrade
+                  ? t("costImpactEstimator.actions.upgrade")
+                  : t("costImpactEstimator.actions.downgrade")}
               </Button>
             )}
           </Group>
@@ -276,7 +284,7 @@ export function QuickCostEstimate({
   currentCost,
   compact = false,
 }: QuickEstimateProps) {
-  const t = useTranslations("components.costImpactEstimator");
+  const t = useTranslations("components");
 
   const currentMultiplier = TIER_MULTIPLIERS[currentTier];
   const proposedMultiplier = TIER_MULTIPLIERS[proposedTier];
@@ -303,7 +311,7 @@ export function QuickCostEstimate({
   return (
     <Group gap="xs">
       <Text size="sm" c="dimmed">
-        {t("impact")}:
+        {t("costImpactEstimator.impact")}:
       </Text>
       <Text size="sm" fw={700} c={difference > 0 ? "red" : difference < 0 ? "green" : "dimmed"}>
         {difference >= 0 ? "+" : ""}
@@ -311,7 +319,7 @@ export function QuickCostEstimate({
       </Text>
       {difference !== 0 && (
         <Text size="xs" c="dimmed">
-          ({formatCurrency(newCost)} {t("total")})
+          ({formatCurrency(newCost)} {t("costImpactEstimator.total")})
         </Text>
       )}
     </Group>

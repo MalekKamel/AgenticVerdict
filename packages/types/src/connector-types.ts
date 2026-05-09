@@ -8,9 +8,10 @@
 import { z } from "zod";
 
 /** Supported connector platforms. */
-export type ConnectorType = "meta" | "ga4" | "gsc" | "gbp" | "tiktok";
+export const CONNECTOR_PLATFORMS = ["meta", "ga4", "gsc", "gbp", "tiktok"] as const;
+export type ConnectorType = (typeof CONNECTOR_PLATFORMS)[number];
 
-export const connectorTypeSchema = z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]);
+export const connectorTypeSchema = z.enum(CONNECTOR_PLATFORMS);
 
 /** Connector status values. */
 export const connectorStatusSchema = z.enum(["healthy", "warning", "error", "inactive", "syncing"]);
@@ -76,12 +77,12 @@ export const connectorDetailOutputSchema = z.object({
   name: z.string(),
   status: connectorStatusSchema,
   domainId: z.string().uuid().nullable(),
-  config: z.record(z.unknown()),
+  config: z.record(z.string(), z.unknown()),
   metrics: z.array(z.string()),
   syncFrequency: z.string().nullable(),
   retentionDays: z.number().int().nullable(),
-  notifications: z.record(z.boolean()),
-  advancedOptions: z.record(z.unknown()),
+  notifications: z.record(z.string(), z.boolean()),
+  advancedOptions: z.record(z.string(), z.unknown()),
   lastSyncAt: z.string().nullable(),
   nextSyncAt: z.string().nullable(),
   lastSyncStatus: syncStatusSchema.nullable(),
@@ -115,12 +116,12 @@ export const connectorCreateInputSchema = z.object({
   platform: connectorTypeSchema,
   name: z.string().min(1).max(255),
   domainId: z.string().uuid().optional(),
-  config: z.record(z.unknown()).default({}),
+  config: z.record(z.string(), z.unknown()).default({}),
   metrics: z.array(z.string()).default([]),
   syncFrequency: z.string().optional(),
   retentionDays: z.number().int().optional(),
-  notifications: z.record(z.boolean()).default({}),
-  advancedOptions: z.record(z.unknown()).default({}),
+  notifications: z.record(z.string(), z.boolean()).default({}),
+  advancedOptions: z.record(z.string(), z.unknown()).default({}),
 });
 
 export type ConnectorCreateInput = z.infer<typeof connectorCreateInputSchema>;
@@ -138,12 +139,12 @@ export const connectorUpdateInputSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255).optional(),
   domainId: z.string().uuid().optional(),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
   metrics: z.array(z.string()).optional(),
   syncFrequency: z.string().optional(),
   retentionDays: z.number().int().optional(),
-  notifications: z.record(z.boolean()).optional(),
-  advancedOptions: z.record(z.unknown()).optional(),
+  notifications: z.record(z.string(), z.boolean()).optional(),
+  advancedOptions: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type ConnectorUpdateInput = z.infer<typeof connectorUpdateInputSchema>;
@@ -233,3 +234,16 @@ export const connectorRemovalPreviewSchema = z.object({
 });
 
 export type ConnectorRemovalPreview = z.infer<typeof connectorRemovalPreviewSchema>;
+
+export const SYNC_FREQUENCIES = ["hourly", "daily", "weekly", "monthly"] as const;
+export const syncFrequencySchema = z.enum(SYNC_FREQUENCIES);
+export type SyncFrequency = (typeof SYNC_FREQUENCIES)[number];
+
+export const connectorConfigSchema = z.record(z.string(), z.unknown()).default({});
+export type ConnectorConfig = z.infer<typeof connectorConfigSchema>;
+
+export const connectorNotificationsSchema = z.record(z.string(), z.boolean()).default({});
+export type ConnectorNotifications = z.infer<typeof connectorNotificationsSchema>;
+
+export const connectorAdvancedOptionsSchema = z.record(z.string(), z.unknown()).default({});
+export type ConnectorAdvancedOptions = z.infer<typeof connectorAdvancedOptionsSchema>;

@@ -46,27 +46,6 @@ Full guardrails → `multi-tenant-guardrails` skill.
 
 ---
 
-## Skill System
-
-Task-conditional workflows live in `.agents/skills/`. The trigger matrix in `CLAUDE.md` determines which skill to load:
-
-| Skill                     | Trigger                                          |
-| ------------------------- | ------------------------------------------------ |
-| `architecture-governance` | Monorepo structure, service boundaries, adapters |
-| `coding-standards`        | TypeScript, error handling, logging, security    |
-| `ci-governance`           | CI/CD pipeline, PR workflow, bundle gates        |
-| `frontend-governance`     | `apps/frontend`, `packages/ui`, routes, UI/UX    |
-| `multi-tenant-guardrails` | API/worker/database/auth/tenant isolation        |
-| `runtime-config-docker`   | Dockerfiles, compose, runtime config             |
-| `testing-policy`          | Behavior-changing implementation, refactors      |
-| `backend-patterns`        | `apps/api`, `apps/worker`, backend packages      |
-| `docs-navigation`         | Planning/research needing SSOT discovery         |
-| `roadmap-context`         | Phase planning, milestone execution              |
-
-Full skill reference → `docs/05-reference/skills-reference.md`.
-
----
-
 ## Command Order
 
 ```bash
@@ -74,9 +53,3 @@ lint -> typecheck -> test -> build
 ```
 
 Full CI/CD details → `ci-governance` skill.
-
----
-
-## Troubleshooting
-
-Common issues and resolutions → `docs/05-reference/skills-reference.md` or domain-specific skills above.

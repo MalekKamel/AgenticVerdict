@@ -1,0 +1,21 @@
+{
+  "tenantId": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+  "tenantName": "API contract tenant A",
+  "localization": {
+    "language": "en",
+    "region": "US",
+    "timezone": "UTC",
+    "currency": "USD"
+  },
+  "marketing": {
+    "channels": [{ "platform": "ga4", "enabled": true }]
+  },
+  "ai": {
+    "primaryModel": "gpt-4o",
+    "provider": "openai"
+  },
+  "features": {
+    "enableInsights": true,
+    "enableVerdict": true
+  }
+}

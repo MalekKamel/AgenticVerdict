@@ -35,7 +35,7 @@ vi.mock("@/lib/api/trpc-client", () => ({
         useMutation: vi.fn(),
       },
     },
-    useContext: vi.fn(),
+    useUtils: vi.fn(),
   },
 }));
 
@@ -268,14 +268,14 @@ describe("useConnectorDelete", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.connector.delete.useMutation).mockReturnValue(mockMutation);
 
     const { result } = renderHook(() => useConnectorDelete(), {
       wrapper: createWrapper(),
     });
 
-    expect(trpc.useContext).toHaveBeenCalled();
+    expect(trpc.useUtils).toHaveBeenCalled();
     expect(trpc.connector.delete.useMutation).toHaveBeenCalledWith({
       onSuccess: expect.any(Function),
     });
@@ -297,7 +297,7 @@ describe("useConnectorDelete", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.connector.delete.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();
@@ -333,14 +333,14 @@ describe("useConnectorSync", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.connector.sync.useMutation).mockReturnValue(mockMutation);
 
     const { result } = renderHook(() => useConnectorSync(), {
       wrapper: createWrapper(),
     });
 
-    expect(trpc.useContext).toHaveBeenCalled();
+    expect(trpc.useUtils).toHaveBeenCalled();
     expect(trpc.connector.sync.useMutation).toHaveBeenCalledWith({
       onSuccess: expect.any(Function),
     });
@@ -362,7 +362,7 @@ describe("useConnectorSync", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.connector.sync.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();

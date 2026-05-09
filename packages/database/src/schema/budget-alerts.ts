@@ -1,3 +1,4 @@
+import type { NotificationChannel, BudgetAlertMetadata } from "@agenticverdict/types";
 import {
   pgTable,
   uuid,
@@ -33,13 +34,6 @@ export const alertTimeWindowEnum = pgEnum("alert_time_window", [
 export const alertStatusEnum = pgEnum("alert_status", ["active", "paused", "triggered"]);
 export const notificationTypeEnum = pgEnum("notification_type", ["email", "webhook", "slack"]);
 
-// Type exports for enums
-export type AlertType = (typeof alertTypeEnum.enumValues)[number];
-export type AlertThresholdType = (typeof alertThresholdTypeEnum.enumValues)[number];
-export type AlertTimeWindow = (typeof alertTimeWindowEnum.enumValues)[number];
-export type AlertStatus = (typeof alertStatusEnum.enumValues)[number];
-export type NotificationType = (typeof notificationTypeEnum.enumValues)[number];
-
 export const budgetAlerts = pgTable(
   "budget_alerts",
   {
@@ -73,16 +67,7 @@ export const budgetAlerts = pgTable(
     status: alertStatusEnum("status").notNull().default("active"),
 
     /** Notification channels (JSON) */
-    notifications: jsonb("notifications")
-      .$type<
-        Array<{
-          id?: string;
-          type: string;
-          target: string;
-          isEnabled: boolean;
-        }>
-      >()
-      .notNull(),
+    notifications: jsonb("notifications").$type<NotificationChannel[]>().notNull(),
 
     /** Last triggered timestamp */
     lastTriggeredAt: timestamp("last_triggered_at", { withTimezone: true }),
@@ -103,7 +88,7 @@ export const budgetAlerts = pgTable(
     createdById: uuid("created_by_id"),
 
     /** Metadata */
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<BudgetAlertMetadata>(),
 
     /** Created timestamp */
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

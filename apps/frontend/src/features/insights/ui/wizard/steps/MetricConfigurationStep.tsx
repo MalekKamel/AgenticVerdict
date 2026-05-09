@@ -2,6 +2,7 @@
 
 import { Stack, Group, Box, Text, Checkbox, ScrollArea, Divider } from "@mantine/core";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "@/i18n/react";
 
 interface Metric {
   id: string;
@@ -28,6 +29,7 @@ export function MetricConfigurationStep({
   connectorMetrics,
   loading,
 }: MetricConfigurationStepProps) {
+  const t = useTranslations("insights");
   const {
     watch,
     setValue,
@@ -39,7 +41,7 @@ export function MetricConfigurationStep({
   if (loading) {
     return (
       <Stack align="center" gap="md" p="lg">
-        <Text c="dimmed">Loading metrics...</Text>
+        <Text c="dimmed">{t("wizard.steps.metrics.loading")}</Text>
       </Stack>
     );
   }
@@ -47,7 +49,7 @@ export function MetricConfigurationStep({
   if (connectorMetrics.length === 0) {
     return (
       <Stack align="center" gap="md" p="lg">
-        <Text c="dimmed">No metrics available. Select connectors first.</Text>
+        <Text c="dimmed">{t("wizard.steps.metrics.empty")}</Text>
       </Stack>
     );
   }
@@ -91,7 +93,7 @@ export function MetricConfigurationStep({
 
   return (
     <Stack gap="md">
-      <Text fw={500}>Select Metrics for Each Connector</Text>
+      <Text fw={500}>{t("wizard.steps.metrics.title")}</Text>
 
       <ScrollArea.Autosize mah={400}>
         <Stack gap="md">
@@ -154,7 +156,7 @@ export function MetricConfigurationStep({
         <Text size="sm" c="red">
           {typeof errors.selectedMetrics.message === "string"
             ? errors.selectedMetrics.message
-            : "Please select metrics"}
+            : t("wizard.steps.metrics.selectRequired")}
         </Text>
       )}
     </Stack>

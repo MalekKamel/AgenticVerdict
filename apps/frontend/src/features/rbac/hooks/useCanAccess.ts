@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { type Permission, type Role } from "@AgenticVerdict/types";
+import { type Permission, type Role } from "@agenticverdict/types";
 
 import { usePermissions } from "./usePermissions";
 import { useRoles } from "./useRoles";

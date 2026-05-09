@@ -14,7 +14,6 @@ import {
   useInsightUpdate,
   useInsightDelete,
   useInsightRun,
-  useInsightById,
   useAuditTrail,
   useAIInsights,
   useGenerateAIInsights,
@@ -55,7 +54,7 @@ vi.mock("@/lib/api/trpc-client", () => ({
         useMutation: vi.fn(),
       },
     },
-    useContext: vi.fn(),
+    useUtils: vi.fn(),
   },
 }));
 
@@ -95,6 +94,9 @@ describe("useInsightList", () => {
       {
         status: "all",
         search: undefined,
+        domain: undefined,
+        sortField: "createdAt",
+        sortDirection: "desc",
         page: 1,
         pageSize: 20,
       },
@@ -134,6 +136,9 @@ describe("useInsightList", () => {
       {
         status: "enabled",
         search: "test",
+        domain: undefined,
+        sortField: "createdAt",
+        sortDirection: "desc",
         page: 2,
         pageSize: 10,
       },
@@ -211,63 +216,6 @@ describe("useInsightDetail", () => {
   });
 });
 
-describe("useInsightById", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("should fetch insight by id", () => {
-    const mockInsight = {
-      id: "insight-123",
-      name: "Test Insight",
-      enabled: true,
-    };
-
-    const mockUseQuery = vi.fn().mockReturnValue({
-      data: mockInsight,
-      isLoading: false,
-      isError: false,
-    });
-
-    vi.mocked(trpc.insight.getById.useQuery).mockImplementation(mockUseQuery);
-
-    const { result } = renderHook(() => useInsightById("insight-123"), {
-      wrapper: createWrapper(),
-    });
-
-    expect(trpc.insight.getById.useQuery).toHaveBeenCalledWith(
-      { id: "insight-123" },
-      {
-        enabled: true,
-        retry: false,
-      },
-    );
-    expect(result.current.data).toEqual(mockInsight);
-  });
-
-  it("should disable query when insightId is missing", () => {
-    const mockUseQuery = vi.fn().mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: false,
-    });
-
-    vi.mocked(trpc.insight.getById.useQuery).mockImplementation(mockUseQuery);
-
-    renderHook(() => useInsightById(""), {
-      wrapper: createWrapper(),
-    });
-
-    expect(trpc.insight.getById.useQuery).toHaveBeenCalledWith(
-      { id: "" },
-      {
-        enabled: false,
-        retry: false,
-      },
-    );
-  });
-});
-
 describe("useInsightCreate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -290,14 +238,14 @@ describe("useInsightCreate", () => {
       },
     });
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.insight.create.useMutation).mockReturnValue(mockMutation);
 
     const { result } = renderHook(() => useInsightCreate(), {
       wrapper: createWrapper(),
     });
 
-    expect(trpc.useContext).toHaveBeenCalled();
+    expect(trpc.useUtils).toHaveBeenCalled();
     expect(trpc.insight.create.useMutation).toHaveBeenCalledWith({
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
@@ -403,12 +351,12 @@ describe("useAuditTrail", () => {
 
     vi.mocked(trpc.insight.getAuditTrail.useQuery).mockImplementation(mockUseQuery);
 
-    const { result } = renderHook(() => useAuditTrail("tenant-456", "insight-123"), {
+    const { result } = renderHook(() => useAuditTrail("insight-123"), {
       wrapper: createWrapper(),
     });
 
     expect(trpc.insight.getAuditTrail.useQuery).toHaveBeenCalledWith(
-      { tenantId: "tenant-456", insightId: "insight-123" },
+      { insightId: "insight-123" },
       {
         enabled: true,
         retry: false,
@@ -426,12 +374,12 @@ describe("useAuditTrail", () => {
 
     vi.mocked(trpc.insight.getAuditTrail.useQuery).mockImplementation(mockUseQuery);
 
-    renderHook(() => useAuditTrail("", "insight-123"), {
+    renderHook(() => useAuditTrail(""), {
       wrapper: createWrapper(),
     });
 
     expect(trpc.insight.getAuditTrail.useQuery).toHaveBeenCalledWith(
-      { tenantId: "", insightId: "insight-123" },
+      { insightId: "" },
       {
         enabled: false,
         retry: false,

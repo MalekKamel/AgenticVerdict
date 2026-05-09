@@ -435,7 +435,7 @@ Perform mutations with automatic cache updates:
 import { trpc } from '@/lib/trpc'
 
 function ConnectorSettings() {
-  const utils = trpc.useContext()
+  const utils = trpc.useUtils()
 
   const authenticate = trpc.connectors.authenticate.useMutation({
     onSuccess: () => {

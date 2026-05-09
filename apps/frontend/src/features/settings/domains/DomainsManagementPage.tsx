@@ -56,7 +56,7 @@ function DomainCard({
   onEdit: (domain: BusinessDomain) => void;
   onDelete: (domain: BusinessDomain) => void;
 }) {
-  const t = useTranslations("settings.domains");
+  const t = useTranslations("settings");
 
   return (
     <Paper p="md" withBorder>
@@ -107,7 +107,7 @@ function DomainCard({
 }
 
 export function DomainsManagementPage() {
-  const t = useTranslations("settings.domains");
+  const t = useTranslations("settings");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editDomain, setEditDomain] = useState<BusinessDomain | null>(null);
   const [domainToDelete, setDomainToDelete] = useState<BusinessDomain | null>(null);

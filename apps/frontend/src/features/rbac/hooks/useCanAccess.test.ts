@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderHook } from "@testing-library/react";
 
-import { PERMISSIONS } from "@AgenticVerdict/types";
+import { PERMISSIONS } from "@agenticverdict/types";
 
 import { useCanAccess } from "./useCanAccess";
 import { authStore } from "@/features/auth/model/state/auth-store";

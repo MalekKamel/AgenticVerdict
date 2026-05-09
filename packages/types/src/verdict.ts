@@ -91,10 +91,10 @@ export const historicalTrendSchema = z.object({
 
 export type HistoricalTrend = z.infer<typeof historicalTrendSchema>;
 
-export const dataSourcePlatformSchema = z.enum(["meta", "ga4", "gsc", "gbp", "tiktok"]);
+import { connectorTypeSchema } from "./connector-types";
 
 export const dataSourceInfoSchema = z.object({
-  platform: dataSourcePlatformSchema,
+  platform: connectorTypeSchema,
   metrics: z.array(z.string().min(1)).min(1),
   dateRange: dateRangeSchema,
   freshness: z.number().nonnegative(),
@@ -163,3 +163,10 @@ export const verdictSchema = z.object({
 });
 
 export type Verdict = z.infer<typeof verdictSchema>;
+
+export class VerdictParseError extends Error {
+  constructor(message: string, options?: { cause?: unknown }) {
+    super(message, options);
+    this.name = "VerdictParseError";
+  }
+}

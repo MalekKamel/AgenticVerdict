@@ -226,9 +226,99 @@ export function isAppFault(value: unknown): value is AppFault {
   );
 }
 
+const TRPC_CODE_TO_FAULT: Record<string, Partial<AppFaultInit>> = {
+  UNAUTHORIZED: {
+    code: "AUTH_UNAUTHORIZED",
+    category: "authentication",
+    httpStatus: 401,
+    retryable: false,
+  },
+  FORBIDDEN: {
+    code: "AUTH_FORBIDDEN",
+    category: "authorization",
+    httpStatus: 403,
+    retryable: false,
+  },
+  NOT_FOUND: {
+    code: "RESOURCE_NOT_FOUND",
+    category: "data_access",
+    httpStatus: 404,
+    retryable: false,
+  },
+  CONFLICT: {
+    code: "DB_CONFLICT",
+    category: "conflict",
+    httpStatus: 409,
+    retryable: false,
+  },
+  TIMEOUT: {
+    code: "CONNECTOR_TIMEOUT",
+    category: "timeout",
+    httpStatus: 504,
+    retryable: true,
+  },
+  TOO_MANY_REQUESTS: {
+    code: "INTERNAL_ERROR",
+    category: "rate_limit",
+    httpStatus: 429,
+    retryable: true,
+  },
+  INTERNAL_SERVER_ERROR: {
+    code: "INTERNAL_ERROR",
+    category: "internal",
+    httpStatus: 500,
+    retryable: false,
+  },
+  BAD_REQUEST: {
+    code: "VALIDATION_FAILED",
+    category: "validation",
+    httpStatus: 422,
+    retryable: false,
+  },
+  PARSE_ERROR: {
+    code: "VALIDATION_FAILED",
+    category: "validation",
+    httpStatus: 400,
+    retryable: false,
+  },
+  METHOD_NOT_SUPPORTED: {
+    code: "VALIDATION_FAILED",
+    category: "validation",
+    httpStatus: 405,
+    retryable: false,
+  },
+};
+
+function isTrpcError(error: unknown): error is { code: string; message?: string } {
+  return (
+    error !== null &&
+    typeof error === "object" &&
+    "code" in error &&
+    typeof (error as { code?: unknown }).code === "string" &&
+    TRPC_CODE_TO_FAULT[(error as { code: string }).code] !== undefined
+  );
+}
+
 export function toAppFault(error: unknown, context: FaultNormalizationContext = {}): AppFault {
   if (isAppFault(error)) {
     return error;
+  }
+
+  if (isTrpcError(error)) {
+    const trpcMapping = TRPC_CODE_TO_FAULT[error.code];
+    const safeMessage =
+      typeof error.message === "string" && error.message.startsWith("errors.")
+        ? error.message
+        : (context.fallbackMessage ?? trpcMapping.code ?? "errors.common.unknownError");
+    return new AppFault({
+      code: trpcMapping.code!,
+      category: trpcMapping.category!,
+      httpStatus: trpcMapping.httpStatus!,
+      retryable: trpcMapping.retryable!,
+      safeMessage,
+      surface: context.surface,
+      cause: error,
+    });
   }
 
   const fallbackCode = context.fallbackCode ?? "INTERNAL_ERROR";

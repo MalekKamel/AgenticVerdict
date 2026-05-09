@@ -8,7 +8,7 @@ import { buildApiServer } from "../../server";
 import { resetBullmqConnectionForTests } from "../../services/report-bullmq";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 describe("production-flow test routes (Phase 2 observability)", () => {
   let app: Awaited<ReturnType<typeof buildApiServer>>;
@@ -51,7 +51,9 @@ describe("production-flow test routes (Phase 2 observability)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("GET /metrics exposes Prometheus text without auth", async () => {

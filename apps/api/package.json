@@ -33,13 +33,14 @@
     "@trpc/server": "^11.16.0",
     "@upstash/redis": "^1.37.0",
     "bullmq": "^5.40.0",
+    "cron-parser": "^4.9.0",
     "drizzle-orm": "^0.38.4",
     "fastify": "^5.2.1",
     "ioredis": "^5.5.0",
     "jose": "^5.10.0",
     "superjson": "^2.2.6",
     "tsx": "^4.21.0",
-    "zod": "^3.24.1"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@agenticverdict/testing": "workspace:*",

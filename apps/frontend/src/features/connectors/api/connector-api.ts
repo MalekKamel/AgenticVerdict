@@ -32,7 +32,7 @@ export function useConnectorUpdate() {
 }
 
 export function useConnectorDelete() {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   return trpc.connector.delete.useMutation({
     onSuccess: () => {
       utils.connector.list.invalidate();
@@ -42,7 +42,7 @@ export function useConnectorDelete() {
 }
 
 export function useConnectorSync() {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   return trpc.connector.sync.useMutation({
     onSuccess: () => {
       utils.connector.list.invalidate();

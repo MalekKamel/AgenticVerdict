@@ -32,6 +32,8 @@ export interface DatabaseClientOptions {
 
 type PostgresSql = ReturnType<typeof postgres>;
 
+export type { PostgresSql as Sql };
+
 function attachPostgresQueryMetrics(
   sql: PostgresSql,
   slowThresholdMs: number,

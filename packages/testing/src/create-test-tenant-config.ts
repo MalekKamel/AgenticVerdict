@@ -16,8 +16,7 @@ function defaultConfig(): TenantConfig {
       channels: [{ platform: "ga4", enabled: false }],
     },
     ai: {
-      primaryModel: "claude-3-5-sonnet-20241022",
-      provider: "anthropic",
+      primaryProvider: "anthropic",
     },
     features: {
       enableInsights: false,

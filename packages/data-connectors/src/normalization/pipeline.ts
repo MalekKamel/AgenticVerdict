@@ -1,6 +1,6 @@
 import { detectMetricValueOutliers } from "../validation/outliers";
 import { computeDataQualityScore } from "../validation/scoring";
-import type { OutlierFlag, ValidationIssue } from "../validation/types";
+import type { OutlierFlag, ValidationIssue } from "@agenticverdict/types";
 import {
   validateCrossFieldCtr,
   validateNormalizedSnapshot,

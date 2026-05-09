@@ -95,10 +95,31 @@ const TAG_MAPPINGS: { connectorId: string; connectorTagId: string }[] = [
 ];
 
 /**
+ * Validates that all connectors in the registry have at least one tag mapping.
+ * Throws an error if any connector is missing tags.
+ */
+export function validateConnectorTags(): void {
+  const connectorIds = CONNECTOR_ROWS.map((c) => c.id);
+  const taggedConnectorIds = new Set(TAG_MAPPINGS.map((m) => m.connectorId));
+
+  const untaggedConnectors = connectorIds.filter((id) => !taggedConnectorIds.has(id));
+
+  if (untaggedConnectors.length > 0) {
+    throw new Error(
+      `Connectors missing domain tags: ${untaggedConnectors.join(", ")}. ` +
+        "All connectors must have at least one tag mapping in TAG_MAPPINGS.",
+    );
+  }
+}
+
+/**
  * Idempotently seeds the global connector registry, domain tags, and tag mappings.
  * Safe to run on every deploy; conflicts are ignored.
  */
 export async function seedConnectorRegistry(db: Database): Promise<void> {
+  // Validate tags before seeding
+  validateConnectorTags();
+
   for (const row of CONNECTOR_ROWS) {
     await db
       .insert(dataConnectors)

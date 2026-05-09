@@ -26,6 +26,7 @@ import {
   IconDeviceFloppy,
 } from "@tabler/icons-react";
 
+import { trpc } from "@/lib/api/trpc-client";
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import { useAiDomains, useMapConnector, useUnmapConnector } from "@/hooks/useAiDomains";
@@ -35,6 +36,7 @@ import {
   showSuccessNotification,
 } from "@/lib/notifications";
 import { ROUTE_PATHS } from "@/router/utils/route-paths";
+import { useTenantConnectors } from "./connector-api";
 import type { BusinessDomain, Connector } from "@agenticverdict/types";
 
 interface DraggableConnectorProps {
@@ -43,7 +45,7 @@ interface DraggableConnectorProps {
 }
 
 function DraggableConnector({ connector, onDragStart }: DraggableConnectorProps) {
-  const t = useTranslations("components.domainMapper");
+  const t = useTranslations("components");
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("connectorId", connector.id);
@@ -53,8 +55,12 @@ function DraggableConnector({ connector, onDragStart }: DraggableConnectorProps)
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
+      case "healthy":
         return "green";
+      case "syncing":
+        return "blue";
+      case "warning":
+        return "yellow";
       case "inactive":
         return "gray";
       case "error":
@@ -103,7 +109,7 @@ function DraggableConnector({ connector, onDragStart }: DraggableConnectorProps)
         </Text>
         {connector.lastSyncedAt && (
           <Text size="xs" c="dimmed">
-            {t("lastSynced")}: {new Date(connector.lastSyncedAt).toLocaleDateString()}
+            {t("domainMapper.lastSynced")}: {new Date(connector.lastSyncedAt).toLocaleDateString()}
           </Text>
         )}
       </Stack>
@@ -119,7 +125,7 @@ interface DroppableDomainProps {
 }
 
 function DroppableDomain({ domain, connectors, onDrop, onRemoveConnector }: DroppableDomainProps) {
-  const t = useTranslations("components.domainMapper");
+  const t = useTranslations("components");
   const [isOver, setIsOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -163,7 +169,7 @@ function DroppableDomain({ domain, connectors, onDrop, onRemoveConnector }: Drop
             <IconFolder size={20} color="#666" />
             <Text fw={600}>{domain.name}</Text>
             <Badge size="xs" variant="outline">
-              {connectors.length} {t("connectors")}
+              {connectors.length} {t("domainMapper.connectors")}
             </Badge>
           </Group>
         </Group>
@@ -214,7 +220,7 @@ function DroppableDomain({ domain, connectors, onDrop, onRemoveConnector }: Drop
             }}
           >
             <IconPlug size={32} style={{ marginBottom: 8 }} />
-            <Text size="sm">{t("dropConnector")}</Text>
+            <Text size="sm">{t("domainMapper.dropConnector")}</Text>
           </Box>
         )}
       </Stack>
@@ -223,7 +229,7 @@ function DroppableDomain({ domain, connectors, onDrop, onRemoveConnector }: Drop
 }
 
 export function DomainMapper() {
-  const t = useTranslations("settings.domainMapper");
+  const t = useTranslations("settings");
   const [searchQuery, setSearchQuery] = useState("");
   const [pendingChanges, setPendingChanges] = useState<
     Array<{ domainId: string; connectorId: string; action: "assign" | "remove" }>
@@ -232,26 +238,33 @@ export function DomainMapper() {
   useAppShellHeader({
     breadcrumbs: [
       { label: t("common.settings"), href: ROUTE_PATHS.SETTINGS_DOMAINS },
-      { label: t("pageTitle") },
+      { label: t("domainMapper.pageTitle") },
     ],
   });
 
   const { data: domains = [], isLoading } = useAiDomains();
+  const { data: connectorsData, isLoading: connectorsLoading } = useTenantConnectors();
   const mapConnectorMutation = useMapConnector();
   const unmapConnectorMutation = useUnmapConnector();
+  const queryClient = trpc.useUtils();
 
-  // Mock connectors - in real implementation, this would come from a hook
-  const connectors: Connector[] = useMemo(
-    () => [
-      // This would be fetched from useConnectors hook
-    ],
-    [],
-  );
+  const connectors: Connector[] = useMemo(() => {
+    if (!connectorsData?.items) return [];
+    return connectorsData.items.map((item) => ({
+      id: item.id,
+      platform: item.platform,
+      name: item.name,
+      type: item.platform,
+      status: item.status,
+      domainId: item.domainId,
+      lastSyncedAt: item.lastSyncAt,
+    }));
+  }, [connectorsData]);
 
   const filteredConnectors = connectors.filter(
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.platform?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()),
+      c.platform.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const unassignedConnectors = connectors.filter((c) => !c.domainId);
@@ -268,7 +281,7 @@ export function DomainMapper() {
     if (pendingChanges.length === 0) {
       showInfoNotification({
         title: t("actions.save"),
-        message: t("pendingChanges", { count: 0 }),
+        message: t("domainMapper.pendingChanges", { count: 0 }),
       });
       return;
     }
@@ -290,21 +303,24 @@ export function DomainMapper() {
         }),
       );
       setPendingChanges([]);
+      queryClient.aiDomains.list.invalidate();
+      queryClient.connector.list.invalidate();
       showSuccessNotification({
         title: t("actions.save"),
-        message: t("pendingChanges", { count: 0 }),
+        message: t("domainMapper.changes.saved", { count: pendingChanges.length }),
       });
     } catch {
       showErrorNotification({
         title: t("messages.error"),
+        message: t("messages.saveError"),
       });
     }
   };
 
-  if (isLoading) {
+  if (isLoading || connectorsLoading) {
     return (
       <Container size="xl" py="xl">
-        <Text c="dimmed">{t("loading")}</Text>
+        <Text c="dimmed">{t("domainMapper.loading")}</Text>
       </Container>
     );
   }
@@ -314,7 +330,7 @@ export function DomainMapper() {
       <Stack gap="xl">
         {/* Header */}
         <Group justify="space-between">
-          <Title order={2}>{t("pageTitle")}</Title>
+          <Title order={2}>{t("domainMapper.pageTitle")}</Title>
           <Button
             leftSection={<IconDeviceFloppy size={18} />}
             onClick={handleSave}
@@ -326,7 +342,7 @@ export function DomainMapper() {
 
         {/* Info Alert */}
         <Alert icon={<IconAlertCircle size={20} />} color="blue">
-          {t("info")}
+          {t("domainMapper.info")}
         </Alert>
 
         {/* Two-Column Layout */}
@@ -335,7 +351,7 @@ export function DomainMapper() {
           <Paper p="md" withBorder style={{ flex: 1, minWidth: 300 }}>
             <Stack gap="md">
               <Group justify="space-between">
-                <Text fw={600}>{t("availableConnectors")}</Text>
+                <Text fw={600}>{t("domainMapper.availableConnectors")}</Text>
                 <Badge variant="outline">{unassignedConnectors.length}</Badge>
               </Group>
 
@@ -354,7 +370,7 @@ export function DomainMapper() {
                     ))
                   ) : (
                     <Text c="dimmed" ta="center" py="xl">
-                      {t("noConnectors")}
+                      {t("domainMapper.noConnectors")}
                     </Text>
                   )}
                 </Stack>
@@ -370,7 +386,7 @@ export function DomainMapper() {
           {/* Right Column: Domains */}
           <Paper p="md" withBorder style={{ flex: 1, minWidth: 400 }}>
             <Stack gap="md">
-              <Text fw={600}>{t("businessDomains")}</Text>
+              <Text fw={600}>{t("domainMapper.businessDomains")}</Text>
 
               <ScrollArea.Autosize mah={600}>
                 <Stack gap="sm">
@@ -394,7 +410,7 @@ export function DomainMapper() {
           <Alert
             icon={<IconAlertCircle size={20} />}
             color="yellow"
-            title={t("pendingChanges", { count: pendingChanges.length })}
+            title={t("domainMapper.pendingChanges", { count: pendingChanges.length })}
           >
             <Stack gap="xs">
               {pendingChanges.map((change, index) => (

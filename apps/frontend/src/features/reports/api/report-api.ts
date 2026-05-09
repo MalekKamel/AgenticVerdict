@@ -16,6 +16,7 @@ export function useReportList(input: {
   dateTo?: string;
   page?: number;
   pageSize?: number;
+  insightId?: string;
 }) {
   return trpc.report.list.useQuery(
     {
@@ -26,6 +27,7 @@ export function useReportList(input: {
       dateTo: input.dateTo,
       page: input.page ?? 1,
       pageSize: input.pageSize ?? 20,
+      insightId: input.insightId,
     },
     {
       retry: false,
@@ -45,7 +47,7 @@ export function useReportContent(id: string, format: "pdf" | "excel") {
 }
 
 export function useReportDelete() {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   return trpc.report.delete.useMutation({
     onSuccess: () => {
       utils.report.list.invalidate();
@@ -65,7 +67,7 @@ export function useReportDelete() {
 }
 
 export function useReportDeleteMany() {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   return trpc.report.deleteMany.useMutation({
     onSuccess: () => {
       utils.report.list.invalidate();

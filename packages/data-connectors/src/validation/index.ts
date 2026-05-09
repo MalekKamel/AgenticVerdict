@@ -9,7 +9,7 @@ export {
   qualityScoreFromFlags,
   type DataQualityScoreInput,
 } from "./scoring";
-export type { OutlierFlag, ValidationIssue, ValidationSeverity } from "./types";
+export type { ValidationSeverity, ValidationIssue, OutlierFlag } from "@agenticverdict/types";
 export {
   validateCrossFieldCtr,
   validateNormalizedSnapshot,

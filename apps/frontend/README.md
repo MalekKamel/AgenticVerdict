@@ -319,7 +319,7 @@ Use `useLocale` / `useTranslations` from `@/i18n/react`, and locale-aware `Link`
 
 ### Adding Translations
 
-Translation files are in `/messages/{locale}.json`:
+Translation files are maintained in the shared `@agenticverdict/i18n` package at `packages/i18n/src/locales/{locale}.json`:
 
 ```json
 {
@@ -338,8 +338,8 @@ Usage in components:
 import { useTranslations } from "@/i18n/react";
 
 function LoginForm() {
-  const t = useTranslations("auth.login");
-  return <h1>{t("title")}</h1>; // "Sign In"
+  const t = useTranslations("auth");
+  return <h1>{t("login.title")}</h1>; // "Sign In"
 }
 ```
 

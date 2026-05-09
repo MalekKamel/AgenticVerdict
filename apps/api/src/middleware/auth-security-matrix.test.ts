@@ -10,13 +10,12 @@ import { __resetDeliveryAnalyticsForTests } from "../services/delivery-analytics
 import { resetBullmqConnectionForTests } from "../services/report-bullmq";
 import { __resetReportAuditForTests } from "../services/report-audit-store";
 import { __resetReportStoreForTests } from "../services/report-store";
-import { __resetScheduleStoreForTests } from "../services/schedule-store";
 import { __resetShareStoreForTests } from "../services/share-store";
 import { __resetTemplateCustomizationStoreForTests } from "../services/template-customization-store";
 import { __resetTranslationStoreForTests } from "../services/translation-store";
 
 const JWT_SECRET = "test-jwt-secret-auth-matrix-32chars!!";
-const TENANT_A = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT_A = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 const TENANT_B = "99999999-9999-4999-8999-999999999999";
 
 async function signToken(
@@ -46,7 +45,6 @@ const ANALYST_GET_ROUTES: [string, string][] = [
   ["reports list", "/api/v1/reports"],
   ["delivery-metrics", "/api/v1/reports/delivery-metrics"],
   ["translations meta", "/api/v1/translations/meta"],
-  ["report-schedules", "/api/v1/report-schedules"],
   ["report-templates catalog", "/api/v1/report-templates"],
 ];
 
@@ -74,7 +72,6 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     resetBullmqConnectionForTests();
     __resetReportStoreForTests();
     __resetReportAuditForTests();
-    __resetScheduleStoreForTests();
     __resetShareStoreForTests();
     __resetDeliveryAnalyticsForTests();
     __resetTemplateCustomizationStoreForTests();
@@ -82,7 +79,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   describe("401 without Authorization on protected GET routes", () => {
@@ -151,7 +150,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     });
 
     afterAll(async () => {
-      await unit.close();
+      if (unit) {
+        await unit.close();
+      }
     });
 
     it.each([
@@ -331,7 +332,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     });
 
     afterAll(async () => {
-      await lax.close();
+      if (lax) {
+        await lax.close();
+      }
     });
 
     it("allows request without Authorization when required is false", async () => {
@@ -366,7 +369,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     });
 
     afterAll(async () => {
-      await unit.close();
+      if (unit) {
+        await unit.close();
+      }
     });
 
     it.each(["eyJhbGciOiJIUzI1NiJ9.e30.signature", "a.b", "a.b.c.d", "not-even-jwt", ""])(
@@ -401,7 +406,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     });
 
     afterAll(async () => {
-      await adminRoute.close();
+      if (adminRoute) {
+        await adminRoute.close();
+      }
     });
 
     it("analyst token cannot access admin route", async () => {
@@ -451,7 +458,9 @@ describe("P0 auth security matrix (JWT + tenant context)", () => {
     });
 
     afterAll(async () => {
-      await ctxApp.close();
+      if (ctxApp) {
+        await ctxApp.close();
+      }
     });
 
     it("returns 403 when tenant UUID is valid JWT but no tenant JSON exists", async () => {

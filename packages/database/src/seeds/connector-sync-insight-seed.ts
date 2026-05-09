@@ -4,7 +4,6 @@ import type { TenantConfig } from "@agenticverdict/config";
 import type { Database } from "../client";
 import { dbScoped } from "../db-scoped";
 import { connectorSyncHistory, tenantConnectors } from "../schema/core/connectors";
-import { insights, insightConnectors } from "../schema/core/insights";
 import { eq } from "drizzle-orm";
 
 function createMinimalTenantConfig(tenantId: string): TenantConfig {
@@ -65,56 +64,6 @@ export async function seedConnectorSyncHistoryForTenant(
           startedAt,
           completedAt,
         });
-      }
-    });
-  });
-}
-
-export interface SeedInsightConnector {
-  insightName: string;
-  connectorPlatform: string;
-}
-
-export async function seedInsightConnectorsForTenant(
-  db: Database,
-  tenantId: string,
-  assignments: SeedInsightConnector[],
-): Promise<void> {
-  const context = createTenantContext({
-    tenantId,
-    tenantType: "direct_business",
-    tenantStatus: "active",
-    requestId: `seed-insight-connectors-${Date.now()}`,
-    config: createMinimalTenantConfig(tenantId),
-  });
-
-  await runWithTenantContext(context, async () => {
-    await dbScoped(db, async (tx) => {
-      for (const assignment of assignments) {
-        const insight = await tx
-          .select()
-          .from(insights)
-          .where(eq(insights.tenantId, tenantId) && eq(insights.name, assignment.insightName))
-          .limit(1);
-
-        const connector = await tx
-          .select()
-          .from(tenantConnectors)
-          .where(
-            eq(tenantConnectors.tenantId, tenantId) &&
-              eq(tenantConnectors.platform, assignment.connectorPlatform),
-          )
-          .limit(1);
-
-        if (insight.length === 0 || connector.length === 0) continue;
-
-        await tx
-          .insert(insightConnectors)
-          .values({
-            insightId: insight[0].id,
-            connectorId: connector[0].id,
-          })
-          .onConflictDoNothing();
       }
     });
   });

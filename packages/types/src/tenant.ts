@@ -39,14 +39,85 @@ export const tenantFeaturesSchema = z.object({
 });
 export type TenantFeatures = z.infer<typeof tenantFeaturesSchema>;
 
-// AI configuration
+// Provider ID - must match registered providers in ProviderRegistry
+export const providerIdSchema = z
+  .string()
+  .min(1)
+  .max(64)
+  .regex(/^[a-z0-9-]+$/, "Provider ID must contain only lowercase letters, numbers, and hyphens");
+
+// Model configuration per provider
+export const providerModelConfigSchema = z.object({
+  providerId: providerIdSchema,
+  modelId: z.string().min(1).max(128),
+  displayName: z.string().max(128).optional(),
+});
+
+// Role-based model configuration
+export const roleBasedModelConfigSchema = z.object({
+  analysis: providerModelConfigSchema.optional(),
+  insights: providerModelConfigSchema.optional(),
+  reports: providerModelConfigSchema.optional(),
+  custom: z.record(providerIdSchema, providerModelConfigSchema).optional(),
+});
+
+// Budget configuration
+export const budgetConfigSchema = z.object({
+  monthlyLimit: z.number().positive().optional(),
+  alertThreshold: z.number().min(0).max(100).default(80),
+  hardLimit: z.boolean().default(false),
+  alertRecipients: z.array(z.string().email()).optional(),
+});
+
+// Failover configuration
+export const failoverConfigSchema = z.object({
+  fallbackProviders: z.array(providerIdSchema).min(0).max(5).default([]),
+  enabled: z.boolean().default(true),
+  providerTimeout: z.number().positive().max(30000).default(10000),
+  maxRetriesPerProvider: z.number().min(0).max(5).default(1),
+});
+
+// Circuit breaker configuration
+export const circuitBreakerConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  failureThreshold: z.number().positive().default(5),
+  failureWindow: z.number().positive().default(30),
+  recoveryTimeout: z.number().positive().default(60),
+  halfOpenMaxRequests: z.number().positive().default(3),
+});
+
+// Rich AI configuration (replaces simple stub)
 export const tenantAIConfigSchema = z.object({
+  primaryProvider: providerIdSchema.default("anthropic"),
+  defaultModel: providerModelConfigSchema.optional(),
+  roleBasedModels: roleBasedModelConfigSchema.optional(),
+  budget: budgetConfigSchema.optional(),
+  failover: failoverConfigSchema.optional(),
+  circuitBreaker: circuitBreakerConfigSchema.optional(),
+  providerSettings: z.record(providerIdSchema, z.record(z.string(), z.unknown())).optional(),
+  defaultDetailLevel: z.string().optional(),
+  defaultFrequency: z.string().optional(),
+  defaultFormat: z.string().optional(),
+  updatedAt: z.iso.datetime().optional(),
+  updatedBy: z.string().uuid().optional(),
+});
+
+// Type exports
+export type ProviderModelConfig = z.infer<typeof providerModelConfigSchema>;
+export type RoleBasedModelConfig = z.infer<typeof roleBasedModelConfigSchema>;
+export type BudgetConfig = z.infer<typeof budgetConfigSchema>;
+export type FailoverConfig = z.infer<typeof failoverConfigSchema>;
+export type CircuitBreakerConfig = z.infer<typeof circuitBreakerConfigSchema>;
+export type TenantAIConfig = z.infer<typeof tenantAIConfigSchema>;
+
+// Legacy simple AI configuration (deprecated, kept for backward compat with tenantSchema)
+export const simpleTenantAIConfigSchema = z.object({
   provider: z.enum(["anthropic", "openai"]),
   model: z.string(),
   qualityLevel: z.enum(["standard", "premium"]),
   customizationLevel: z.enum(["balanced", "creative", "precise"]),
 });
-export type TenantAIConfig = z.infer<typeof tenantAIConfigSchema>;
+export type SimpleTenantAIConfig = z.infer<typeof simpleTenantAIConfigSchema>;
 
 // Complete tenant schema
 export const tenantSchema = z.object({
@@ -59,13 +130,13 @@ export const tenantSchema = z.object({
   agencyPartnerId: z.string().uuid().nullable().optional(),
   localization: tenantLocalizationSchema,
   features: tenantFeaturesSchema,
-  aiConfig: tenantAIConfigSchema,
-  suspendedAt: z.string().datetime().nullable().optional(),
+  aiConfig: simpleTenantAIConfigSchema,
+  suspendedAt: z.iso.datetime().nullable().optional(),
   suspendedReason: z.string().nullable().optional(),
-  archivedAt: z.string().datetime().nullable().optional(),
-  deletedAt: z.string().datetime().nullable().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  archivedAt: z.iso.datetime().nullable().optional(),
+  deletedAt: z.iso.datetime().nullable().optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 export type Tenant = z.infer<typeof tenantSchema>;
 
@@ -78,10 +149,10 @@ export const agencyPartnerSchema = z.object({
   commissionRate: z.number().positive().max(100),
   maxClients: z.number().int().positive(),
   whiteLabelEnabled: z.boolean(),
-  partnerSince: z.string().datetime().nullable().optional(),
-  certifiedAt: z.string().datetime().nullable().optional(),
-  settings: z.record(z.unknown()),
-  createdAt: z.string().datetime(),
+  partnerSince: z.iso.datetime().nullable().optional(),
+  certifiedAt: z.iso.datetime().nullable().optional(),
+  settings: z.record(z.string(), z.unknown()),
+  createdAt: z.iso.datetime(),
 });
 export type AgencyPartner = z.infer<typeof agencyPartnerSchema>;
 
@@ -96,3 +167,26 @@ export const tenantCapabilitiesSchema = z.object({
   canSwitchClientContext: z.boolean(),
 });
 export type TenantCapabilities = z.infer<typeof tenantCapabilitiesSchema>;
+
+export interface FailoverChainConfig {
+  providers: string[];
+  skipUnhealthy?: boolean;
+}
+
+export interface FailoverEvent {
+  tenantId: string;
+  fromProvider: string;
+  toProvider: string;
+  error: Error;
+  timestamp: Date;
+  attemptNumber: number;
+}
+
+export interface FailoverCircuitBreakerOptions {
+  enabled: boolean;
+  failureThreshold: number;
+  failureWindow: number;
+  recoveryTimeout: number;
+  halfOpenMaxRequests: number;
+  tenantId?: string;
+}

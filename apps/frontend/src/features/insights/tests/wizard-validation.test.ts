@@ -37,7 +37,7 @@ describe("basicInfoSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Name must be at least 3 characters");
+      expect(result.error.issues[0].message).toBe("NAME_TOO_SHORT");
     }
   });
 
@@ -52,7 +52,7 @@ describe("basicInfoSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Name must be less than 100 characters");
+      expect(result.error.issues[0].message).toBe("NAME_TOO_LONG");
     }
   });
 
@@ -67,7 +67,7 @@ describe("basicInfoSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Domain is required");
+      expect(result.error.issues[0].message).toBe("DOMAIN_REQUIRED");
     }
   });
 
@@ -113,7 +113,7 @@ describe("connectorSelectionSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Select at least one connector");
+      expect(result.error.issues[0].message).toBe("CONNECTOR_REQUIRED");
     }
   });
 });
@@ -168,7 +168,7 @@ describe("aiSettingsSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Model is required");
+      expect(result.error.issues[0].message).toBe("MODEL_REQUIRED");
     }
   });
 
@@ -242,7 +242,7 @@ describe("scheduleDeliverySchema", () => {
   it("should pass with valid schedule", () => {
     const validData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: ["user@example.com"],
     };
@@ -258,7 +258,7 @@ describe("scheduleDeliverySchema", () => {
     frequencies.forEach((frequency) => {
       const validData = {
         frequency,
-        time: "09:00",
+        time: 9,
         format: "pdf" as const,
         emailRecipients: [],
       };
@@ -273,7 +273,7 @@ describe("scheduleDeliverySchema", () => {
     formats.forEach((format) => {
       const validData = {
         frequency: "weekly" as const,
-        time: "09:00",
+        time: 9,
         format,
         emailRecipients: [],
       };
@@ -285,7 +285,7 @@ describe("scheduleDeliverySchema", () => {
   it("should fail with invalid email", () => {
     const invalidData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: ["invalid-email"],
     };
@@ -294,14 +294,15 @@ describe("scheduleDeliverySchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Invalid email address");
+      const issues = result.error.issues || result.error.errors;
+      expect(issues[0].message).toBe("EMAIL_INVALID");
     }
   });
 
   it("should accept multiple valid emails", () => {
     const validData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: ["user1@example.com", "user2@example.com"],
     };
@@ -314,7 +315,7 @@ describe("scheduleDeliverySchema", () => {
   it("should accept empty email list", () => {
     const validData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: [],
     };
@@ -327,7 +328,7 @@ describe("scheduleDeliverySchema", () => {
   it("should accept valid webhook URL", () => {
     const validData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: [],
       enableWebhook: true,
@@ -342,7 +343,7 @@ describe("scheduleDeliverySchema", () => {
   it("should fail with invalid webhook URL", () => {
     const invalidData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: [],
       enableWebhook: true,
@@ -353,14 +354,14 @@ describe("scheduleDeliverySchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toBe("Must be a valid URL");
+      expect(result.error.issues[0].message).toBe("WEBHOOK_URL_INVALID");
     }
   });
 
   it("should accept empty string for webhookUrl", () => {
     const validData = {
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: [],
       enableWebhook: false,
@@ -389,7 +390,7 @@ describe("createInsightWizardSchema", () => {
       detailLevel: "standard",
       customPrompt: "Focus on ROI analysis",
       frequency: "weekly",
-      time: "09:00",
+      time: 9,
       format: "pdf",
       emailRecipients: ["manager@example.com"],
       enableWebhook: false,
@@ -412,7 +413,7 @@ describe("createInsightWizardSchema", () => {
       quality: 50,
       detailLevel: "standard" as const,
       frequency: "weekly" as const,
-      time: "09:00",
+      time: 9,
       format: "pdf" as const,
       emailRecipients: [],
     };

@@ -99,13 +99,13 @@ describe("AiDomainsService", () => {
     it("should detect circular reference", async () => {
       const domainData = {
         name: "Child",
-        parentId: "00000000-0000-0000-0000-000000000001",
+        parentId: "00000000-0000-4000-8000-000000000001",
         order: 2,
       };
 
       vi.spyOn(mockRepository, "isNameUnique").mockResolvedValue(true);
       vi.spyOn(mockRepository, "findById").mockResolvedValue({
-        id: "00000000-0000-0000-0000-000000000001",
+        id: "00000000-0000-4000-8000-000000000001",
       } as unknown);
       vi.spyOn(mockRepository, "wouldCreateCycle").mockResolvedValue(true);
 

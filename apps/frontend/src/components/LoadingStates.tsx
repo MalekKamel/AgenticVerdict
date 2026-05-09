@@ -11,13 +11,13 @@ interface LoadingStateProps {
 }
 
 export function LoadingState({ message, fullScreen = false }: LoadingStateProps) {
-  const t = useTranslations("components.loadingStates");
+  const t = useTranslations("components");
 
   const content = (
     <Center py="xl">
       <Stack align="center" gap="md">
         <Loader size="lg" />
-        <Text c="dimmed">{message || t("loading")}</Text>
+        <Text c="dimmed">{message || t("loadingStates.loading")}</Text>
       </Stack>
     </Center>
   );
@@ -36,10 +36,15 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ message, onRetry, error }: ErrorStateProps) {
-  const t = useTranslations("components.loadingStates");
+  const t = useTranslations("components");
 
   return (
-    <Alert icon={<IconAlertCircle size={20} />} color="red" title={message || t("error")} p="md">
+    <Alert
+      icon={<IconAlertCircle size={20} />}
+      color="red"
+      title={message || t("loadingStates.error")}
+      p="md"
+    >
       <Stack gap="sm">
         {error && (
           <Text size="sm" c="red">
@@ -53,7 +58,7 @@ export function ErrorState({ message, onRetry, error }: ErrorStateProps) {
             leftSection={<IconRefresh size={14} />}
             onClick={onRetry}
           >
-            {t("retry")}
+            {t("loadingStates.retry")}
           </Button>
         )}
       </Stack>
@@ -69,14 +74,14 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ message, actionLabel, onAction, icon }: EmptyStateProps) {
-  const t = useTranslations("components.loadingStates");
+  const t = useTranslations("components");
 
   return (
     <Center py="xl">
       <Stack align="center" gap="sm">
         {icon || <IconWifiOff size={48} color="#adb5bd" />}
         <Text c="dimmed" ta="center">
-          {message || t("empty")}
+          {message || t("loadingStates.empty")}
         </Text>
         {actionLabel && onAction && (
           <Button variant="light" leftSection={<IconRefresh size={16} />} onClick={onAction}>
@@ -94,10 +99,15 @@ interface TimeoutStateProps {
 }
 
 export function TimeoutState({ onRetry, message }: TimeoutStateProps) {
-  const t = useTranslations("components.loadingStates");
+  const t = useTranslations("components");
 
   return (
-    <Alert icon={<IconClock size={20} />} color="yellow" title={message || t("timeout")} p="md">
+    <Alert
+      icon={<IconClock size={20} />}
+      color="yellow"
+      title={message || t("loadingStates.timeout")}
+      p="md"
+    >
       {onRetry && (
         <Button
           variant="outline"
@@ -106,7 +116,7 @@ export function TimeoutState({ onRetry, message }: TimeoutStateProps) {
           onClick={onRetry}
           mt="sm"
         >
-          {t("retry")}
+          {t("loadingStates.retry")}
         </Button>
       )}
     </Alert>

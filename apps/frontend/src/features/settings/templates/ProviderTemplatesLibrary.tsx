@@ -51,7 +51,7 @@ function TemplateCard({
   onDeploy: (template: AiTemplate) => void;
   onDelete: (template: AiTemplate) => void;
 }) {
-  const t = useTranslations("settings.templates");
+  const t = useTranslations("settings");
 
   return (
     <Paper p="md" withBorder>
@@ -130,7 +130,7 @@ function TemplateCard({
 }
 
 export function ProviderTemplatesLibrary() {
-  const t = useTranslations("settings.templates");
+  const t = useTranslations("settings");
   const isSmallScreen = useMediaQuery("(max-width: 576px)");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);

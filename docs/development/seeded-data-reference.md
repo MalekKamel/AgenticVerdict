@@ -858,7 +858,6 @@ The seed implementation provides multiple functions for different scenarios:
 | `seedAuditLogsForTenant()`                  | Seed audit log entries               | `audit-seed.ts`                  |
 | `seedAuditTrailForTenant()`                 | Seed audit trail events              | `audit-seed.ts`                  |
 | `seedConnectorSyncHistoryForTenant()`       | Seed sync history                    | `connector-sync-insight-seed.ts` |
-| `seedInsightConnectorsForTenant()`          | Link insights to connectors          | `connector-sync-insight-seed.ts` |
 
 ### Example: Seed Direct Business Tenant
 

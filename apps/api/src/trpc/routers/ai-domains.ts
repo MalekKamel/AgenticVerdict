@@ -10,7 +10,9 @@ import {
   updateDomainSchema,
   assignConnectorToDomainSchema,
   paginationSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+  domainProviderConfigSchema,
+  domainMetadataSchema,
+} from "@agenticverdict/types";
 
 // ============================================================================
 // Input Schemas
@@ -46,11 +48,7 @@ const getDomainTreeInputSchema = z.object({
 
 const updateProviderConfigInputSchema = z.object({
   domainId: z.string().uuid(),
-  providerConfig: z.object({
-    providerId: z.string(),
-    modelId: z.string(),
-    costTier: z.enum(["premium", "standard", "economy"]),
-  }),
+  providerConfig: domainProviderConfigSchema,
 });
 
 // ============================================================================
@@ -64,15 +62,9 @@ const domainOutputSchema = z.object({
   description: z.string().nullable(),
   parentId: z.string().uuid().nullable(),
   order: z.number().int(),
-  providerConfig: z
-    .object({
-      providerId: z.string(),
-      modelId: z.string(),
-      costTier: z.string(),
-    })
-    .nullable(),
+  providerConfig: domainProviderConfigSchema.nullable(),
   usesTenantDefault: z.boolean(),
-  metadata: z.record(z.unknown()).nullable(),
+  metadata: domainMetadataSchema.nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -97,13 +89,7 @@ const domainHierarchyOutputSchema = z.array(
     connectorIds: z.array(z.string().uuid()).default([]),
     childDomains: z.array(z.lazy(() => z.any())).optional(),
     usesTenantDefault: z.boolean(),
-    providerConfig: z
-      .object({
-        providerId: z.string(),
-        modelId: z.string(),
-        costTier: z.string(),
-      })
-      .optional(),
+    providerConfig: domainProviderConfigSchema.optional(),
   }),
 );
 
@@ -168,7 +154,7 @@ export const aiDomainsRouter = t.router({
             ? {
                 providerId: node.providerConfig.providerId,
                 modelId: node.providerConfig.modelId,
-                costTier: node.providerConfig.costTier,
+                costTier: node.providerConfig.costTier as "premium" | "standard" | "economy",
               }
             : undefined,
         }));
@@ -561,7 +547,7 @@ export const aiDomainsRouter = t.router({
             ? {
                 providerId: node.providerConfig.providerId,
                 modelId: node.providerConfig.modelId,
-                costTier: node.providerConfig.costTier,
+                costTier: node.providerConfig.costTier as "premium" | "standard" | "economy",
               }
             : undefined,
         }));

@@ -1,6 +1,6 @@
 import type { NormalizedMetricRecord, NormalizedConnectorSnapshot } from "../normalization/types";
 
-import type { ValidationIssue } from "./types";
+import type { ValidationIssue } from "@agenticverdict/types";
 
 const NEGATIVE_COUNT_RE = /\.(impressions|clicks|reach|conversions)$/i;
 const SPEND_RE = /\.(spend|cost)$/i;

@@ -1,3 +1,8 @@
+import type {
+  ConnectorConfig,
+  ConnectorNotifications,
+  ConnectorAdvancedOptions,
+} from "@agenticverdict/types";
 import { sql } from "drizzle-orm";
 import {
   boolean,
@@ -65,7 +70,7 @@ export const tenantConnectors = pgTable(
     status: varchar("status", { length: 32 }).notNull().default("inactive"),
     domainId: uuid("domain_id").references(() => businessDomains.id, { onDelete: "set null" }),
     config: jsonb("config")
-      .$type<Record<string, unknown>>()
+      .$type<ConnectorConfig>()
       .notNull()
       .default(sql`'{}'::jsonb`),
     metrics: jsonb("metrics")
@@ -75,11 +80,11 @@ export const tenantConnectors = pgTable(
     syncFrequency: varchar("sync_frequency", { length: 32 }).default("daily"),
     retentionDays: integer("retention_days").default(90),
     notifications: jsonb("notifications")
-      .$type<Record<string, boolean>>()
+      .$type<ConnectorNotifications>()
       .notNull()
       .default(sql`'{}'::jsonb`),
     advancedOptions: jsonb("advanced_options")
-      .$type<Record<string, unknown>>()
+      .$type<ConnectorAdvancedOptions>()
       .notNull()
       .default(sql`'{}'::jsonb`),
     lastSyncAt: timestamp("last_sync_at", { withTimezone: true }),

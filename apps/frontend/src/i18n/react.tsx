@@ -4,16 +4,14 @@
 import IntlMessageFormat from "intl-messageformat";
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import _enMessages from "../../messages/en.json";
 import { initializeNotificationTranslations } from "@/lib/notifications-i18n";
 import type { AppLocale } from "./routing";
+import type { NamespaceKeys, NamespaceType } from "@agenticverdict/i18n/types";
 
 type Messages = Record<string, unknown>;
 type TranslationValues = Record<string, string | number | boolean | Date | null | undefined>;
 
-// Allow any string for namespace since we support dotted paths via getNested
-export type TranslationNamespace = string;
+export type TranslationNamespace = NamespaceType;
 
 const I18nContext = createContext<{
   locale: AppLocale;
@@ -95,9 +93,12 @@ interface TranslationOptions {
   [key: string]: unknown;
 }
 
-type TranslateFunction = {
+type TranslateFunction<N extends TranslationNamespace> = {
+  (key: NamespaceKeys<N>, values?: TranslationValues): string;
   (key: string, values?: TranslationValues): string;
+  (key: NamespaceKeys<N>, options: { returnNull: true } & TranslationOptions): string | null;
   (key: string, options: { returnNull: true } & TranslationOptions): string | null;
+  (key: NamespaceKeys<N>, options: TranslationOptions): string;
   (key: string, options: TranslationOptions): string;
 };
 
@@ -105,7 +106,9 @@ type TranslateFunction = {
  * Namespace-first translation hook.
  * Callers must provide a top-level namespace from the message schema.
  */
-export function useTranslations(namespace: TranslationNamespace): TranslateFunction {
+export function useTranslations<N extends TranslationNamespace>(
+  namespace: N,
+): TranslateFunction<N> {
   const ctx = useContext(I18nContext);
   if (!ctx) {
     throw new Error("useTranslations must be used within I18nProvider");
@@ -130,7 +133,7 @@ export function useTranslations(namespace: TranslationNamespace): TranslateFunct
       );
     },
     [locale, messages, namespace],
-  ) as TranslateFunction;
+  ) as TranslateFunction<N>;
 }
 
 /**

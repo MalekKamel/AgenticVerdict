@@ -9,7 +9,7 @@ import { __resetReportAuditForTests } from "../../services/report-audit-store";
 import { resetBullmqConnectionForTests } from "../../services/report-bullmq";
 
 const JWT_SECRET = "test-jwt-secret-load-matrix-32chars-xx";
-const TENANT_A = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT_A = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 /** Burst sizes from audit P1 load matrix (CI runs all; keep each burst short). */
 const BURST_SIZES = [1, 5, 10, 25, 50] as const;
@@ -45,7 +45,9 @@ describe("P1 report API concurrent load matrix (authenticated GET fan-out)", () 
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it.each(BURST_SIZES)("parallel GET /api/v1/reports × %i succeeds", async (n) => {

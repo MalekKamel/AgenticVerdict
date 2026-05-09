@@ -1,26 +1,5 @@
 import { randomUUID } from "node:crypto";
-
-export type ReportAuditAction =
-  | "report.created"
-  | "report.content_uploaded"
-  | "report.archived"
-  | "report.unarchived"
-  | "report.retention_updated"
-  | "report.versions_compared"
-  | "report.retention_sweep"
-  | "compliance.audit_viewed"
-  | "compliance.summary_viewed";
-
-export interface ReportAuditEvent {
-  id: string;
-  tenantId: string;
-  actorSub: string;
-  action: ReportAuditAction;
-  reportId?: string | undefined;
-  at: string;
-  requestId?: string | undefined;
-  details?: Record<string, string | number | boolean> | undefined;
-}
+import type { ReportAuditEvent } from "@agenticverdict/types";
 
 const events: ReportAuditEvent[] = [];
 const maxEvents = 10_000;

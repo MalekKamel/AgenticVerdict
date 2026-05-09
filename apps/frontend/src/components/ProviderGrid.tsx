@@ -51,7 +51,7 @@ export function ProviderGrid({
   onToggle,
   readOnly = false,
 }: ProviderGridProps) {
-  const t = useTranslations("components.providerGrid");
+  const t = useTranslations("components");
   const testMutation = useTestAiProviderConnection();
 
   const [testingId, setTestingId] = useState<string | null>(null);
@@ -93,7 +93,7 @@ export function ProviderGrid({
     return (
       <Box py="xl">
         <Text c="dimmed" ta="center">
-          {t("noProviders")}
+          {t("providerGrid.noProviders")}
         </Text>
       </Box>
     );
@@ -124,7 +124,7 @@ export function ProviderGrid({
                         leftSection={<IconSettings size={14} />}
                         onClick={() => onEdit(provider)}
                       >
-                        {t("actions.edit")}
+                        {t("providerGrid.actions.edit")}
                       </Menu.Item>
                     )}
                     <Menu.Item
@@ -132,7 +132,7 @@ export function ProviderGrid({
                       onClick={() => handleTestConnection(provider)}
                       disabled={testingId === provider.id}
                     >
-                      {t("actions.testConnection")}
+                      {t("providerGrid.actions.testConnection")}
                     </Menu.Item>
                     {onDelete && (
                       <Menu.Item
@@ -140,7 +140,7 @@ export function ProviderGrid({
                         leftSection={<IconAlertCircle size={14} />}
                         onClick={() => onDelete(provider)}
                       >
-                        {t("actions.delete")}
+                        {t("providerGrid.actions.delete")}
                       </Menu.Item>
                     )}
                   </Menu.Dropdown>
@@ -161,18 +161,18 @@ export function ProviderGrid({
             {/* Badges */}
             <Group gap="xs">
               <Badge color={getStatusColor(provider.status)} variant="light" size="sm">
-                {t(`status.${provider.status}`)}
+                {t(`providerGrid.status.${provider.status}`)}
               </Badge>
 
               {provider.costTier && (
                 <Badge color={getCostTierColor(provider.costTier)} variant="outline" size="sm">
-                  {t(`costTier.${provider.costTier}`)}
+                  {t(`providerGrid.costTier.${provider.costTier}`)}
                 </Badge>
               )}
 
               {provider.isDefault && (
                 <Badge color="blue" variant="light" size="sm">
-                  {t("badges.default")}
+                  {t("providerGrid.badges.default")}
                 </Badge>
               )}
             </Group>
@@ -180,7 +180,7 @@ export function ProviderGrid({
             {/* Enabled toggle */}
             {!readOnly && onToggle && (
               <Group justify="space-between" mt="xs">
-                <Text size="sm">{t("common.enabled")}</Text>
+                <Text size="sm">{t("providerGrid.common.enabled")}</Text>
                 <Switch checked={provider.enabled} onChange={() => onToggle(provider)} size="sm" />
               </Group>
             )}
@@ -188,21 +188,21 @@ export function ProviderGrid({
             {/* Connection test result */}
             {testingId === provider.id && (
               <Text size="xs" c="blue">
-                {t("messages.testingConnection")}
+                {t("providerGrid.messages.testingConnection")}
               </Text>
             )}
 
             {testMutation.error && testingId === provider.id && (
               <Group gap="xs" c="red">
                 <IconAlertCircle size={14} />
-                <Text size="xs">{t("messages.connectionFailed")}</Text>
+                <Text size="xs">{t("providerGrid.messages.connectionFailed")}</Text>
               </Group>
             )}
 
             {testMutation.isSuccess && testingId === provider.id && (
               <Group gap="xs" c="green">
                 <IconCheck size={14} />
-                <Text size="xs">{t("messages.connectionSuccess")}</Text>
+                <Text size="xs">{t("providerGrid.messages.connectionSuccess")}</Text>
               </Group>
             )}
 

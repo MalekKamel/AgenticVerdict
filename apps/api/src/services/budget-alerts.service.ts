@@ -1,9 +1,6 @@
 import { BudgetAlertsRepository } from "@agenticverdict/database";
-import type { AlertTimeWindow, AlertStatus } from "@agenticverdict/database";
-import {
-  createBudgetAlertSchema,
-  updateBudgetAlertSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+import type { SyncFrequency, AlertStatus } from "@agenticverdict/types";
+import { createBudgetAlertSchema, updateBudgetAlertSchema } from "@agenticverdict/types";
 import type { z } from "zod";
 
 /**
@@ -349,7 +346,7 @@ export class BudgetAlertsService {
    */
   async updatePeriodSummary(
     tenantId: string,
-    periodType: AlertTimeWindow,
+    periodType: SyncFrequency,
     periodStart: Date,
     updates: {
       totalCostCents?: number;

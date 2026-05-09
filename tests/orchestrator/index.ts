@@ -5,6 +5,7 @@ import {
   type AssertionCheckOutcome,
   type ProductionFlowAssertion,
 } from "./assertions";
+import { type ScenarioCategory, type MockDataScenario } from "@agenticverdict/testing";
 
 export type { ProductionFlowAssertion } from "./assertions";
 

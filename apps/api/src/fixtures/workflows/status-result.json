@@ -8,7 +8,7 @@
   "insights": [
     {
       "id": "bbbbbbbb-1234-4234-8234-bbbbbbbbbbbb",
-      "type": "trend",
+      "type": "observation",
       "title": "Cross-platform trend",
       "description": "Trend narrative",
       "confidence": 0.84

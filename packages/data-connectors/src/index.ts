@@ -163,7 +163,6 @@ export {
   config,
   createConnectorAdapter,
   isMockEnabledForConnector,
-  connectorAdapterTypes,
   type AdapterFactoryConfig,
 } from "./adapter-factory";
 export {
@@ -215,13 +214,7 @@ export {
   type AdapterFactory,
   type ConnectorAdapterRegistry,
 } from "./registry";
-export {
-  applyBackoffJitter,
-  defaultBackoffOptions,
-  type ExponentialBackoffOptions,
-  type ExponentialBackoffTelemetry,
-  withExponentialBackoff,
-} from "./rate-limit";
+export { applyBackoffJitter, defaultBackoffOptions, withExponentialBackoff } from "./rate-limit";
 export { createOptionalUpstashRedis } from "./redis-env";
 export { TokenBucket } from "./token-bucket";
 export {

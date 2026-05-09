@@ -11,6 +11,7 @@ import {
   type NewAiProviderFailover,
 } from "../schema/ai-providers";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
+import type { ConfigScope } from "@agenticverdict/types";
 
 /**
  * AI Provider Repository
@@ -70,7 +71,7 @@ export class AiProviderRepository {
    */
   async findByScope(
     tenantId: string,
-    scope: "tenant" | "domain" | "connector",
+    scope: ConfigScope,
     parentId?: string,
   ): Promise<AiProvider[]> {
     const conditions = [eq(aiProviders.tenantId, tenantId), eq(aiProviders.scope, scope)];

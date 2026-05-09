@@ -1,5 +1,8 @@
 import { BudgetAlertsRepository } from "@agenticverdict/database";
 import type { BudgetAlert } from "@agenticverdict/database";
+import type { BudgetAlertConfig, AlertCheckResult, AlertNotification } from "@agenticverdict/types";
+
+export type { BudgetAlertConfig, AlertCheckResult, AlertNotification };
 
 type NotificationChannel = {
   id?: string;
@@ -15,42 +18,6 @@ type NotificationChannel = {
  * Monitors AI spending against configured budget thresholds.
  * Triggers alerts via email/webhook when thresholds are exceeded.
  */
-
-export interface BudgetAlertConfig {
-  tenantId: string;
-  name: string;
-  description?: string;
-  type: "threshold" | "percentage" | "rate";
-  threshold: number;
-  thresholdType: "cost" | "tokens" | "requests";
-  timeWindow: "hourly" | "daily" | "weekly" | "monthly";
-  notifications: Array<{
-    id?: string;
-    type: "email" | "webhook" | "slack";
-    target: string;
-    isEnabled: boolean;
-  }>;
-  cooldownMinutes?: number;
-  metadata?: Record<string, unknown>;
-}
-
-export interface AlertCheckResult {
-  currentSpending: number;
-  threshold: number;
-  usagePercentage: number;
-  thresholdExceeded: boolean;
-  alertsSent: AlertNotification[];
-}
-
-export interface AlertNotification {
-  id: string;
-  alertId: string;
-  channel: string;
-  recipient: string;
-  status: "sent" | "failed" | "pending";
-  timestamp: Date;
-  errorMessage?: string;
-}
 
 export class BudgetAlertsService {
   private alertsRepo: BudgetAlertsRepository;

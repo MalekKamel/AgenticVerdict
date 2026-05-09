@@ -9,7 +9,7 @@ import { buildApiServer } from "../server";
 import { resetBullmqConnectionForTests } from "../services/report-bullmq";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 const apiPackageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 describe("API integration — workflows & secured reads", () => {
@@ -41,7 +41,9 @@ describe("API integration — workflows & secured reads", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("POST /api/v1/workflows/trigger returns 401 without auth", async () => {

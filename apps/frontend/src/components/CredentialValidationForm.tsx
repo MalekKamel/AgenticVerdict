@@ -43,7 +43,7 @@ export function CredentialValidationForm({
   initialData,
   testConnectionEnabled = true,
 }: CredentialValidationFormProps) {
-  const t = useTranslations("components.credentialForm");
+  const t = useTranslations("components");
   const testMutation = useTestAiProviderConnection();
 
   const [selectedProvider, setSelectedProvider] = useState<AiProviderType | "">(
@@ -68,7 +68,7 @@ export function CredentialValidationForm({
     if (!form.getValues("providerType")) {
       form.setError("providerType", {
         type: "required",
-        message: t("errors.selectProvider"),
+        message: t("credentialForm.errors.selectProvider"),
       });
       return;
     }
@@ -119,14 +119,14 @@ export function CredentialValidationForm({
       <Stack gap="md">
         {/* Provider Type Selection */}
         <Select
-          label={t("fields.providerType")}
-          placeholder={t("fields.selectProvider")}
+          label={t("credentialForm.fields.providerType")}
+          placeholder={t("credentialForm.fields.selectProvider")}
           data={[
             { value: "openai", label: "OpenAI" },
             { value: "anthropic", label: "Anthropic" },
           ]}
           {...form.register("providerType", {
-            required: t("errors.providerTypeRequired"),
+            required: t("credentialForm.errors.providerTypeRequired"),
           })}
           error={form.formState.errors.providerType?.message}
           onChange={(value) => {
@@ -141,24 +141,24 @@ export function CredentialValidationForm({
         {/* API Key */}
         {fields.requiresApiKey && (
           <PasswordInput
-            label={t("fields.apiKey")}
-            placeholder={t("fields.apiKeyPlaceholder")}
+            label={t("credentialForm.fields.apiKey")}
+            placeholder={t("credentialForm.fields.apiKeyPlaceholder")}
             {...form.register("apiKey", {
-              required: t("errors.apiKeyRequired"),
+              required: t("credentialForm.errors.apiKeyRequired"),
             })}
             error={form.formState.errors.apiKey?.message}
             leftSection={<IconLock size={16} />}
-            description={t("fields.apiKeyDescription")}
+            description={t("credentialForm.fields.apiKeyDescription")}
           />
         )}
 
         {/* API Secret */}
         {fields.requiresApiSecret && (
           <PasswordInput
-            label={t("fields.apiSecret")}
-            placeholder={t("fields.apiSecretPlaceholder")}
+            label={t("credentialForm.fields.apiSecret")}
+            placeholder={t("credentialForm.fields.apiSecretPlaceholder")}
             {...form.register("apiSecret", {
-              required: t("errors.apiSecretRequired"),
+              required: t("credentialForm.errors.apiSecretRequired"),
             })}
             error={form.formState.errors.apiSecret?.message}
             leftSection={<IconLock size={16} />}
@@ -168,19 +168,19 @@ export function CredentialValidationForm({
         {/* Organization ID */}
         {fields.requiresOrganizationId && (
           <TextInput
-            label={t("fields.organizationId")}
-            placeholder={t("fields.organizationIdPlaceholder")}
+            label={t("credentialForm.fields.organizationId")}
+            placeholder={t("credentialForm.fields.organizationIdPlaceholder")}
             {...form.register("organizationId")}
             error={form.formState.errors.organizationId?.message}
-            description={t("fields.organizationIdDescription")}
+            description={t("credentialForm.fields.organizationIdDescription")}
           />
         )}
 
         {/* Project ID */}
         {fields.requiresProjectId && (
           <TextInput
-            label={t("fields.projectId")}
-            placeholder={t("fields.projectIdPlaceholder")}
+            label={t("credentialForm.fields.projectId")}
+            placeholder={t("credentialForm.fields.projectIdPlaceholder")}
             {...form.register("projectId")}
             error={form.formState.errors.projectId?.message}
           />
@@ -189,11 +189,11 @@ export function CredentialValidationForm({
         {/* Custom Endpoint */}
         {fields.requiresEndpoint && (
           <TextInput
-            label={t("fields.endpoint")}
-            placeholder={t("fields.endpointPlaceholder")}
+            label={t("credentialForm.fields.endpoint")}
+            placeholder={t("credentialForm.fields.endpointPlaceholder")}
             {...form.register("endpoint")}
             error={form.formState.errors.endpoint?.message}
-            description={t("fields.endpointDescription")}
+            description={t("credentialForm.fields.endpointDescription")}
           />
         )}
 
@@ -208,14 +208,14 @@ export function CredentialValidationForm({
                 loading={testMutation.isPending}
                 type="button"
               >
-                {t("actions.testConnection")}
+                {t("credentialForm.actions.testConnection")}
               </Button>
 
               {testMutation.isPending && (
                 <Group gap="xs">
                   <Loader size="xs" />
                   <Text size="sm" c="dimmed">
-                    {t("messages.testing")}
+                    {t("credentialForm.messages.testing")}
                   </Text>
                 </Group>
               )}
@@ -226,9 +226,9 @@ export function CredentialValidationForm({
                 icon={<IconCheck size={16} />}
                 color="green"
                 mt="sm"
-                title={t("alerts.connectionSuccess")}
+                title={t("credentialForm.alerts.connectionSuccess")}
               >
-                {t("messages.connectionValid")}
+                {t("credentialForm.messages.connectionValid")}
               </Alert>
             )}
 
@@ -237,9 +237,9 @@ export function CredentialValidationForm({
                 icon={<IconAlertCircle size={16} />}
                 color="red"
                 mt="sm"
-                title={t("alerts.connectionFailed")}
+                title={t("credentialForm.alerts.connectionFailed")}
               >
-                {t("messages.connectionInvalid")}
+                {t("credentialForm.messages.connectionInvalid")}
               </Alert>
             )}
           </Box>
@@ -248,13 +248,13 @@ export function CredentialValidationForm({
         {/* Submit Button */}
         <Group justify="flex-end" mt="md">
           <Button type="submit" loading={isSubmitting}>
-            {t("actions.save")}
+            {t("credentialForm.actions.save")}
           </Button>
         </Group>
 
         {/* Security Notice */}
         <Alert color="blue" mt="md" icon={<IconLock size={16} />}>
-          <Text size="xs">{t("securityNotice")}</Text>
+          <Text size="xs">{t("credentialForm.securityNotice")}</Text>
         </Alert>
       </Stack>
     </form>

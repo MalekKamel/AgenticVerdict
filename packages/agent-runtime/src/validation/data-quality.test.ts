@@ -9,15 +9,15 @@ import {
 import { buildMinimalVerdict } from "../test-utils/verdict-fixtures";
 import { DataQualityService, ValidationService } from "./data-quality";
 
-const TENANT_ID = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
-const ANALYSIS_ID = "bbbbbbbb-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT_ID = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+const ANALYSIS_ID = "bbbbbbbb-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 function parseInsight(overrides: Partial<GeneratedInsight> = {}) {
   return generatedInsightSchema.parse({
     id: "12345678-1234-4123-8123-123456789abc",
     tenantId: TENANT_ID,
     analysisId: ANALYSIS_ID,
-    type: "trend",
+    type: "observation",
     title: "Clear title for validation",
     description:
       "This description is intentionally long enough to satisfy minimum length requirements for report readiness validation.",

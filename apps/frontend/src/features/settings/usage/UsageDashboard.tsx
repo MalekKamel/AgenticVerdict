@@ -86,7 +86,7 @@ const UsageSummaryCard = ({ title, value, trend, icon, color }: UsageSummaryCard
 };
 
 export function UsageDashboard() {
-  const t = useTranslations("settings.usage");
+  const t = useTranslations("settings");
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     new Date(new Date().setMonth(new Date().getMonth() - 1)),
     new Date(),

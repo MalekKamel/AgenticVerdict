@@ -1,25 +1,5 @@
 import { z } from "zod";
-
-/**
- * Provider configuration schema (Task 3.43)
- * Zod schema for validating provider configurations per tenant
- */
-
-/** Provider type enumeration */
-export const ProviderTypeSchema = z.enum([
-  "openai",
-  "anthropic",
-  "google",
-  "bedrock",
-  "deepseek",
-  "groq",
-  "mistral",
-  "moonshot",
-  "togetherai",
-  "openai-compatible",
-]);
-
-export type ProviderType = z.infer<typeof ProviderTypeSchema>;
+import { type AiProviderType, aiProviderTypeSchema } from "@agenticverdict/types";
 
 /** Credential configuration for a provider */
 export const ProviderCredentialSchema = z.object({
@@ -40,7 +20,7 @@ export type ProviderCredential = z.infer<typeof ProviderCredentialSchema>;
 /** Provider-specific configuration */
 export const ProviderConfigSchema = z.object({
   /** Provider identifier */
-  providerId: ProviderTypeSchema,
+  providerId: aiProviderTypeSchema,
   /** Display name for UI */
   displayName: z.string().min(1),
   /** Whether this provider is enabled for the tenant */
@@ -50,13 +30,13 @@ export const ProviderConfigSchema = z.object({
   /** Credential configuration */
   credentials: ProviderCredentialSchema,
   /** Optional model overrides */
-  modelOverrides: z.record(z.string()).optional(),
+  modelOverrides: z.record(z.string(), z.string()).optional(),
   /** Optional rate limit overrides (requests per minute) */
   rateLimitOverride: z.number().int().min(1).optional(),
   /** Optional timeout override (milliseconds) */
   timeoutOverride: z.number().int().min(1000).optional(),
   /** Failover chain - ordered list of backup provider IDs */
-  failoverChain: z.array(ProviderTypeSchema).optional(),
+  failoverChain: z.array(aiProviderTypeSchema).optional(),
 });
 
 export type ProviderConfig = z.infer<typeof ProviderConfigSchema>;
@@ -66,11 +46,11 @@ export const TenantProviderConfigSchema = z.object({
   /** Tenant ID */
   tenantId: z.string().uuid(),
   /** Map of provider configurations */
-  providers: z.record(ProviderConfigSchema),
+  providers: z.record(z.string(), ProviderConfigSchema),
   /** Default provider for this tenant */
-  defaultProvider: ProviderTypeSchema,
+  defaultProvider: aiProviderTypeSchema,
   /** Fallback provider if default fails */
-  fallbackProvider: ProviderTypeSchema.optional(),
+  fallbackProvider: aiProviderTypeSchema.optional(),
   /** Whether to enable automatic failover */
   enableAutoFailover: z.boolean().default(true),
   /** Maximum retry attempts per provider */
@@ -88,11 +68,11 @@ export const AgencyProviderConfigSchema = z.object({
   /** Agency ID */
   agencyId: z.string().uuid(),
   /** Map of tenant IDs to their provider configs */
-  tenantConfigs: z.record(TenantProviderConfigSchema),
+  tenantConfigs: z.record(z.string(), TenantProviderConfigSchema),
   /** Agency-level budget limit (in USD cents) */
   agencyMonthlyBudgetCents: z.number().int().min(0).optional(),
   /** Shared credentials pool for cost optimization */
-  sharedCredentialPools: z.record(z.array(z.string())).optional(),
+  sharedCredentialPools: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 export type AgencyProviderConfig = z.infer<typeof AgencyProviderConfigSchema>;
@@ -121,7 +101,10 @@ export const ProviderConfigValidation = {
 };
 
 /** Default configuration templates (Task 3.45) */
-export const DefaultProviderTemplates: Record<ProviderType, Omit<ProviderConfig, "credentials">> = {
+export const DefaultProviderTemplates: Record<
+  AiProviderType,
+  Omit<ProviderConfig, "credentials">
+> = {
   openai: {
     providerId: "openai",
     displayName: "OpenAI",

@@ -4,6 +4,7 @@ import {
   verdictSchema,
   type GeneratedInsight,
   type Verdict,
+  type ValidationConfig,
 } from "@agenticverdict/types";
 
 const VALIDATOR_VERSION = "1.0.0";
@@ -42,13 +43,6 @@ export interface ValidationResult {
       staleSourcesCount: number;
     };
   };
-}
-
-export interface ValidationConfig {
-  /** Minimum insight description length for report readiness (default 50). */
-  minInsightDescriptionLength?: number;
-  /** Minimum unified verdict summary length (default 10, schema enforces). */
-  minVerdictSummaryLength?: number;
 }
 
 export interface DataQualityValidator {

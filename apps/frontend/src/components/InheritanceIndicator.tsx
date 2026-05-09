@@ -2,11 +2,12 @@
 
 import { Stack, Group, Text, ThemeIcon, Box, Tooltip, Badge } from "@mantine/core";
 import { IconHeartCancel, IconArrowRight, IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import type { ConfigScope } from "@agenticverdict/types";
 
 import { useTranslations } from "@/i18n/react";
 
 interface InheritanceIndicatorProps {
-  level: "tenant" | "domain" | "connector";
+  level: ConfigScope;
   inheritedFrom?: "tenant" | "domain";
   hasOverride?: boolean;
   providerName?: string;
@@ -22,25 +23,25 @@ export function InheritanceIndicator({
   showTooltip = true,
   compact = false,
 }: InheritanceIndicatorProps) {
-  const t = useTranslations("components.inheritanceIndicator");
+  const t = useTranslations("components");
 
   const getLevelInfo = () => {
     switch (level) {
       case "tenant":
         return {
-          label: t("levels.tenant"),
+          label: t("inheritanceIndicator.levels.tenant"),
           color: "blue",
           icon: IconHeartCancel,
         };
       case "domain":
         return {
-          label: t("levels.domain"),
+          label: t("inheritanceIndicator.levels.domain"),
           color: "green",
           icon: IconArrowRight,
         };
       case "connector":
         return {
-          label: t("levels.connector"),
+          label: t("inheritanceIndicator.levels.connector"),
           color: "orange",
           icon: IconArrowRight,
         };
@@ -50,7 +51,7 @@ export function InheritanceIndicator({
   const getStatusInfo = () => {
     if (level === "tenant") {
       return {
-        label: t("status.source"),
+        label: t("inheritanceIndicator.status.source"),
         color: "blue" as const,
         icon: IconCheck,
       };
@@ -58,7 +59,7 @@ export function InheritanceIndicator({
 
     if (hasOverride) {
       return {
-        label: t("status.override"),
+        label: t("inheritanceIndicator.status.override"),
         color: "green" as const,
         icon: IconCheck,
       };
@@ -66,14 +67,16 @@ export function InheritanceIndicator({
 
     if (inheritedFrom) {
       return {
-        label: t("status.inherited", { from: t(`levels.${inheritedFrom}`) }),
+        label: t("inheritanceIndicator.status.inherited", {
+          from: t(`inheritanceIndicator.levels.${inheritedFrom}`),
+        }),
         color: "gray" as const,
         icon: IconHeartCancel,
       };
     }
 
     return {
-      label: t("status.unknown"),
+      label: t("inheritanceIndicator.status.unknown"),
       color: "gray" as const,
       icon: IconAlertCircle,
     };
@@ -112,7 +115,7 @@ export function InheritanceIndicator({
 
         {providerName && (
           <Text size={compact ? "xs" : "sm"} c="dimmed">
-            {t("usingProvider", { name: providerName })}
+            {t("inheritanceIndicator.usingProvider", { name: providerName })}
           </Text>
         )}
       </Stack>
@@ -123,18 +126,18 @@ export function InheritanceIndicator({
     const tooltipContent = (
       <Stack gap="xs" style={{ maxWidth: 250 }}>
         <Text fw={600} size="sm">
-          {t("tooltip.title")}
+          {t("inheritanceIndicator.tooltip.title")}
         </Text>
         <Text size="xs">
           {level === "tenant"
-            ? t("tooltip.tenant")
+            ? t("inheritanceIndicator.tooltip.tenant")
             : level === "domain"
               ? hasOverride
-                ? t("tooltip.domainOverride")
-                : t("tooltip.domainInherited")
+                ? t("inheritanceIndicator.tooltip.domainOverride")
+                : t("inheritanceIndicator.tooltip.domainInherited")
               : hasOverride
-                ? t("tooltip.connectorOverride")
-                : t("tooltip.connectorInherited")}
+                ? t("inheritanceIndicator.tooltip.connectorOverride")
+                : t("inheritanceIndicator.tooltip.connectorInherited")}
         </Text>
       </Stack>
     );
@@ -158,7 +161,7 @@ export function InheritanceChain({
   connectorProvider,
   compact = false,
 }: InheritanceChainProps) {
-  const t = useTranslations("components.inheritanceIndicator");
+  const t = useTranslations("components");
 
   const effectiveProvider = connectorProvider || domainProvider || tenantProvider;
   const effectiveLevel = connectorProvider ? "connector" : domainProvider ? "domain" : "tenant";
@@ -211,13 +214,13 @@ export function InheritanceChain({
           <Group gap="xs">
             <IconCheck size={16} color="#228be6" />
             <Text size={compact ? "xs" : "sm"} fw={500}>
-              {t("effectiveProvider")}
+              {t("inheritanceIndicator.effectiveProvider")}
             </Text>
             <Text size={compact ? "xs" : "sm"} fw={700} c="blue">
-              {effectiveProvider || t("noProvider")}
+              {effectiveProvider || t("inheritanceIndicator.noProvider")}
             </Text>
             <Text size={compact ? "xs" : "sm"} c="dimmed">
-              ({t(`levels.${effectiveLevel}`)})
+              ({t(`inheritanceIndicator.levels.${effectiveLevel}`)})
             </Text>
           </Group>
         </Box>

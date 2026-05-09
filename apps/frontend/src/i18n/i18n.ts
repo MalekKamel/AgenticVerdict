@@ -1,107 +1,61 @@
 /**
  * i18n configuration
  *
- * Internationalization setup for the web application.
- * Configures language detection, fallbacks, and message loading.
+ * Thin adapter layer delegating to @agenticverdict/i18n for all locale logic.
+ * Only framework-specific glue remains here.
  */
 
+import { en, ar, fr, es, zh } from "@agenticverdict/i18n/locales";
 import {
-  defaultLocale,
-  getDirection,
-  getLocaleName,
-  isSupportedLocale,
-  localeMeta,
-  supportedLocales,
-  type LocaleCode,
-} from "./locales";
+  detectPreferredBrowserLocale,
+  normalizeToAppLocale,
+} from "@agenticverdict/i18n/language-detection";
+import {
+  createLocalizationFormatters,
+  type AppLocale as BaseAppLocale,
+} from "@agenticverdict/i18n/formatters";
+import { textDirection, type TextDirection } from "@agenticverdict/i18n/rtl";
 import { getPreferredLocale } from "@agenticverdict/core/storage/locale-storage";
+import { defaultLocale, isSupportedLocale, type LocaleCode } from "./locales";
+
+const localeMessages: Record<string, Record<string, unknown>> = { en, ar, fr, es, zh };
+
+// Re-exports from locales adapter
+export { defaultLocale, getDirection, getLocaleName, supportedLocales } from "./locales";
+export { textDirection, type TextDirection };
+export { flattenMessages, type MessageDictionary } from "@agenticverdict/i18n/message-utils";
+export {
+  LANGUAGE_NATIVE_NAMES,
+  intlLocaleTag,
+  LOCALE_DISPLAY_METADATA,
+} from "@agenticverdict/i18n/formatters";
 
 /**
- * Get direction for a locale
- */
-export { defaultLocale, getDirection, getLocaleName, supportedLocales };
-
-export async function loadMessages(locale: LocaleCode): Promise<Record<string, unknown>> {
-  try {
-    // JSON lives at `apps/frontend/messages/`; this module is under `src/i18n/`.
-    const mod = await import(`../../messages/${locale}.json`);
-    const messages = mod.default ?? mod;
-    return messages as Record<string, unknown>;
-  } catch {
-    // Fallback to default locale
-    if (locale !== defaultLocale) {
-      return loadMessages(defaultLocale);
-    }
-    return {};
-  }
-}
-
-/**
- * Detect user's preferred language
+ * Detect user's preferred language (browser context).
+ * Checks persisted preference first, then browser languages, then default.
  */
 export function detectLocale(): LocaleCode {
   if (typeof window === "undefined") {
     return defaultLocale;
   }
-
-  const persistedLocale = getPreferredLocale();
-  if (persistedLocale && isSupportedLocale(persistedLocale)) {
-    return persistedLocale;
+  const persisted = getPreferredLocale();
+  if (persisted && isSupportedLocale(persisted)) {
+    return persisted as LocaleCode;
   }
-
-  const browserLanguages = navigator.languages || [navigator.language];
-
-  for (const lang of browserLanguages) {
-    const code = lang.split("-")[0] as LocaleCode;
-    if (isSupportedLocale(code)) {
-      return code;
-    }
-  }
-
-  return defaultLocale;
+  const detected = detectPreferredBrowserLocale(getPreferredLocale, defaultLocale as BaseAppLocale);
+  return normalizeToAppLocale(detected, defaultLocale as BaseAppLocale) as LocaleCode;
 }
 
 /**
- * Format date according to locale
+ * Load messages for a locale (sync, from package cache).
+ * For next-intl, use the framework's message provider instead.
  */
-export function formatDate(
-  date: Date,
-  locale: LocaleCode,
-  options?: Intl.DateTimeFormatOptions,
-): string {
-  return new Intl.DateTimeFormat(localeMeta[locale]?.intlLocale ?? "en-US", options).format(date);
+export async function loadMessages(locale: LocaleCode): Promise<Record<string, unknown>> {
+  return localeMessages[locale] ?? localeMessages[defaultLocale] ?? {};
 }
 
 /**
- * Format number according to locale
+ * Create formatters bound to a locale and tenant localization config.
+ * Usage: const formatters = createLocalizationFormatters(locale, tenant.localization);
  */
-export function formatNumber(
-  value: number,
-  locale: LocaleCode,
-  options?: Intl.NumberFormatOptions,
-): string {
-  return new Intl.NumberFormat(localeMeta[locale]?.intlLocale ?? "en-US", options).format(value);
-}
-
-/**
- * Format currency according to locale
- */
-export function formatCurrency(value: number, locale: LocaleCode, currency?: string): string {
-  const localeConfig = localeMeta[locale];
-  const curr = currency ?? localeConfig.currency;
-  const symbol = localeConfig.currencySymbol;
-  const position = localeConfig.currencySymbolPosition;
-
-  const formatted = new Intl.NumberFormat(localeConfig.intlLocale, {
-    style: "currency",
-    currency: curr,
-  }).format(value);
-
-  // If the symbol is already included, return as-is
-  if (formatted.includes(symbol)) {
-    return formatted;
-  }
-
-  // Add symbol according to position
-  return position === "before" ? `${symbol}${formatted}` : `${formatted} ${symbol}`;
-}
+export { createLocalizationFormatters };

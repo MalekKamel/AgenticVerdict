@@ -3,6 +3,20 @@ import type { Redis } from "@upstash/redis";
 import { suppressRecipientForTenant } from "@agenticverdict/worker";
 import { toHttpErrorResponse } from "@agenticverdict/core";
 import { z } from "zod";
+import {
+  reportCreateBodySchema,
+  reportDeliveryBodySchema,
+  deliveryWebhookBodySchema,
+  resendWebhookBodySchema,
+  sendgridWebhookBodySchema,
+  reportShareBodySchema,
+  reportCompareVersionsBodySchema,
+  reportRetentionBodySchema,
+  REPORT_READ_ROLES,
+  REPORT_WRITE_ROLES,
+  REPORT_SHARE_ROLES,
+  REPORT_DELIVERY_STATUS_CODES,
+} from "@agenticverdict/types";
 
 import { jwtAuth } from "../../middleware/auth";
 import { bindJwtTenantAsyncContext } from "../../middleware/jwt-tenant-context";
@@ -35,62 +49,12 @@ import {
 import { enqueueReportDelivery, getBullmqRedisConnection } from "../../services/report-bullmq";
 import { createShareGrant, resolveShareGrant } from "../../services/share-store";
 
-const createBodySchema = z.object({
-  title: z.string().min(1).max(512),
-});
-
-const deliveryBodySchema = z.object({
-  recipientEmail: z.string().email().max(320),
-  format: z.enum(["pdf", "docx", "xlsx"]),
-  subject: z.string().min(1).max(512).optional(),
-  completionWebhookUrl: z.string().url().max(2048).optional(),
-});
-
-const deliveryWebhookBodySchema = z.object({
-  tenantId: z.string().min(1).max(128),
-  reportId: z.string().uuid().optional(),
-  provider: z.enum(["resend", "sendgrid", "unknown"]).default("unknown"),
-  event: z.enum(["delivered", "failed", "bounced", "complaint"]),
-  recipientEmail: z.string().email().max(320).optional(),
-  messageId: z.string().min(1).max(512).optional(),
-  reason: z.string().min(1).max(2048).optional(),
-  metadata: z.record(z.union([z.string(), z.number(), z.boolean()])).optional(),
-});
-
-const resendWebhookBodySchema = z.object({
-  type: z.enum(["email.delivered", "email.bounced", "email.complained", "email.delivery_delayed"]),
-  data: z.object({
-    email_id: z.string().min(1).optional(),
-    to: z.array(z.string().email()).optional(),
-    created_at: z.string().optional(),
-    reason: z.string().optional(),
-    tags: z.record(z.string()).optional(),
-  }),
-});
-
-const sendgridWebhookBodySchema = z.object({
-  event: z.enum(["delivered", "bounce", "dropped", "spamreport"]),
-  sg_message_id: z.string().optional(),
-  email: z.string().email().optional(),
-  reason: z.string().optional(),
-  tenant_id: z.string().optional(),
-  report_id: z.string().optional(),
-});
-
-type CanonicalDeliveryWebhookInput = z.infer<typeof deliveryWebhookBodySchema>;
+type CanonicalDeliveryWebhookInput = typeof deliveryWebhookBodySchema._output;
 
 function isReportDeliveryStatusCode(
   statusCode: number,
-): statusCode is 202 | 400 | 401 | 403 | 404 | 429 | 503 {
-  return (
-    statusCode === 202 ||
-    statusCode === 400 ||
-    statusCode === 401 ||
-    statusCode === 403 ||
-    statusCode === 404 ||
-    statusCode === 429 ||
-    statusCode === 503
-  );
+): statusCode is (typeof REPORT_DELIVERY_STATUS_CODES)[number] {
+  return (REPORT_DELIVERY_STATUS_CODES as readonly number[]).includes(statusCode);
 }
 
 function parseCanonicalDeliveryWebhookBody(
@@ -156,42 +120,25 @@ function parseCanonicalDeliveryWebhookBody(
   return undefined;
 }
 
-const shareBodySchema = z.object({
-  expiresInHours: z.number().int().min(1).max(720).optional().default(168),
-});
-
-const compareVersionsBodySchema = z.object({
-  versionA: z.number().int().min(1),
-  versionB: z.number().int().min(1),
-});
-
-const retentionBodySchema = z.object({
-  retentionDays: z.number().int().min(1).max(3650),
-});
-
-const readRoles = ["analyst", "reports:read", "admin"] as const;
-const writeRoles = ["reports:write", "admin"] as const;
-const shareRoles = ["admin", "reports:share", "reports:write"] as const;
-
 export function registerReportRoutes(app: FastifyInstance, redis: Redis | null): void {
   const readChain = [
     jwtAuth({ required: true }),
     bindJwtTenantAsyncContext(),
-    requireAnyRole(...readRoles),
+    requireAnyRole(...REPORT_READ_ROLES),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 120, keyPrefix: "v1:reports:read" }),
   ];
 
   const writeChain = [
     jwtAuth({ required: true }),
     bindJwtTenantAsyncContext(),
-    requireAnyRole(...writeRoles),
+    requireAnyRole(...REPORT_WRITE_ROLES),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:reports:write" }),
   ];
 
   const shareChain = [
     jwtAuth({ required: true }),
     bindJwtTenantAsyncContext(),
-    requireAnyRole(...shareRoles),
+    requireAnyRole(...REPORT_SHARE_ROLES),
     rateLimit(redis, { windowMs: 60_000, maxRequests: 60, keyPrefix: "v1:reports:share" }),
   ];
 
@@ -577,7 +524,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       },
     },
     async (request, reply) => {
-      const parsed = createBodySchema.safeParse(request.body);
+      const parsed = reportCreateBodySchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
@@ -645,7 +592,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       },
     },
     async (request, reply) => {
-      const parsed = deliveryBodySchema.safeParse(request.body);
+      const parsed = reportDeliveryBodySchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
@@ -729,7 +676,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       },
     },
     async (request, reply) => {
-      const parsed = shareBodySchema.safeParse(request.body ?? {});
+      const parsed = reportShareBodySchema.safeParse(request.body ?? {});
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
@@ -1005,7 +952,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       },
     },
     async (request, reply) => {
-      const parsed = compareVersionsBodySchema.safeParse(request.body);
+      const parsed = reportCompareVersionsBodySchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.status(400).send({
           error: {
@@ -1186,7 +1133,7 @@ export function registerReportRoutes(app: FastifyInstance, redis: Redis | null):
       },
     },
     async (request, reply) => {
-      const parsed = retentionBodySchema.safeParse(request.body);
+      const parsed = reportRetentionBodySchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.status(400).send({
           error: {

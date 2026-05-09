@@ -37,7 +37,7 @@ vi.mock("@/lib/api/trpc-client", () => ({
         useMutation: vi.fn(),
       },
     },
-    useContext: vi.fn(),
+    useUtils: vi.fn(),
   },
 }));
 
@@ -275,14 +275,14 @@ describe("useReportDelete", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.report.delete.useMutation).mockReturnValue(mockMutation);
 
     const { result } = renderHook(() => useReportDelete(), {
       wrapper: createWrapper(),
     });
 
-    expect(trpc.useContext).toHaveBeenCalled();
+    expect(trpc.useUtils).toHaveBeenCalled();
     expect(trpc.report.delete.useMutation).toHaveBeenCalledWith({
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
@@ -305,7 +305,7 @@ describe("useReportDelete", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.report.delete.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();
@@ -341,14 +341,14 @@ describe("useReportDeleteMany", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.report.deleteMany.useMutation).mockReturnValue(mockMutation);
 
     const { result } = renderHook(() => useReportDeleteMany(), {
       wrapper: createWrapper(),
     });
 
-    expect(trpc.useContext).toHaveBeenCalled();
+    expect(trpc.useUtils).toHaveBeenCalled();
     expect(trpc.report.deleteMany.useMutation).toHaveBeenCalledWith({
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
@@ -371,7 +371,7 @@ describe("useReportDeleteMany", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.report.deleteMany.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();

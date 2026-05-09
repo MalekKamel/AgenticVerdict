@@ -32,3 +32,9 @@ export {
   setupUnhandledErrorHandlers,
 } from "./test-cleanup";
 export { TestResourceManager, createResourceManager } from "./test-resource-manager";
+export {
+  SCENARIO_CATEGORIES,
+  MOCK_SCENARIOS,
+  type ScenarioCategory,
+  type MockDataScenario,
+} from "./scenario-types";

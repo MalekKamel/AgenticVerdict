@@ -509,7 +509,7 @@ DELIVERING → FAILED (delivery error)
 ```typescript
 function InsightCard({ insight }: { insight: Insight }) {
   const generate = trpc.insights.generate.useMutation()
-  const utils = trpc.useContext()
+  const utils = trpc.useUtils()
 
   return (
     <Card>

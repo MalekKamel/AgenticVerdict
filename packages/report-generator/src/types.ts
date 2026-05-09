@@ -1,7 +1,7 @@
-export const REPORT_FORMATS = ["pdf", "docx", "xlsx", "html", "json"] as const;
-export type ReportFormat = (typeof REPORT_FORMATS)[number];
+import { REPORT_FORMATS } from "@agenticverdict/types";
+import type { ReportFormat, TextDirection } from "@agenticverdict/types";
 
-import type { ReportTextDirection } from "@agenticverdict/i18n";
+export { REPORT_FORMATS, type ReportFormat };
 
 export interface ReportGenerationContext {
   tenantId: string;
@@ -9,7 +9,7 @@ export interface ReportGenerationContext {
   locale: string;
   templateId: string;
   /** When set, overrides locale-derived direction for the HTML document root. */
-  textDirection?: ReportTextDirection | undefined;
+  textDirection?: TextDirection | undefined;
 }
 
 export interface FormatGeneratorInput {

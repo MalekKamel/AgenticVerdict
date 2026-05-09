@@ -9,7 +9,7 @@ import { bindJwtTenantAsyncContext } from "./jwt-tenant-context";
 import { registerTenantAlsRouteWrapping } from "./tenant-route-als";
 
 const JWT_SECRET = "test-jwt-secret-tenant-ctx-mw-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
 
 describe("bindJwtTenantAsyncContext middleware", () => {
   let app: Awaited<ReturnType<typeof buildApp>>;

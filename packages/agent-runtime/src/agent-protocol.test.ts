@@ -5,7 +5,7 @@ import {
   AgentMessageLogger,
   AgentProtocolError,
   createAgentMessage,
-} from "./agent-protocol";
+} from "@agenticverdict/types";
 
 describe("agent-protocol", () => {
   it("createAgentMessage aligns correlationId with context", () => {

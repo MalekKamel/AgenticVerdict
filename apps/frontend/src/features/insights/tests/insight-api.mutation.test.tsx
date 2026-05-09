@@ -35,7 +35,7 @@ vi.mock("@/lib/api/trpc-client", () => ({
         useMutation: vi.fn(),
       },
     },
-    useContext: vi.fn(),
+    useUtils: vi.fn(),
   },
 }));
 
@@ -122,7 +122,7 @@ describe("useInsightCreate", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.insight.create.useMutation).mockImplementation((options) => {
       // Call onSuccess to verify invalidation
       if (options?.onSuccess) {
@@ -212,7 +212,7 @@ describe("useInsightUpdate", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.insight.update.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();
@@ -291,7 +291,7 @@ describe("useInsightDelete", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.insight.delete.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess();
@@ -435,7 +435,7 @@ describe("useGenerateAIInsights", () => {
       isError: false,
     };
 
-    vi.mocked(trpc.useContext).mockImplementation(mockUseContext);
+    vi.mocked(trpc.useUtils).mockImplementation(mockUseContext);
     vi.mocked(trpc.insight.generateAIInsights.useMutation).mockImplementation((options) => {
       if (options?.onSuccess) {
         options.onSuccess(undefined, { insightId: "insight-123" });

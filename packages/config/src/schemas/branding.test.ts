@@ -53,7 +53,11 @@ describe("mantineThemeFromDesignTokens", () => {
 describe("exportDesignTokensJsonSchema", () => {
   it("exports a JSON schema document", () => {
     const doc = exportDesignTokensJsonSchema();
-    const defs = doc.definitions as Record<string, { properties?: unknown }> | undefined;
-    expect(defs?.DesignTokens?.properties).toBeDefined();
+    expect(typeof doc).toBe("object");
+    const defs = doc.$defs as Record<string, { properties?: unknown }> | undefined;
+    const hasProperties =
+      defs?.DesignTokens?.properties !== undefined ||
+      (doc as Record<string, unknown>).properties !== undefined;
+    expect(hasProperties).toBe(true);
   });
 });

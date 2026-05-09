@@ -19,7 +19,6 @@ import {
   Table,
   Pagination,
   TextInput,
-  Select,
   Modal,
 } from "@mantine/core";
 import {
@@ -33,31 +32,31 @@ import {
   IconDownload,
   IconShare,
   IconEye,
+  IconCheck,
+  IconX,
 } from "@tabler/icons-react";
-import JSZip from "jszip";
 import { useParams, useNavigate } from "@/router/hooks";
 import { ROUTE_PATHS } from "@/router/utils/route-paths";
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import {
   useInsightDetail,
-  useInsightRun,
   useInsightDelete,
-  useInsightUpdate,
   useAIInsights,
   useGenerateAIInsights,
+  useTenantConfig,
 } from "@/features/insights/api/insight-api";
+import { useInsightRunMutation } from "@/features/insights/hooks";
 import { PageErrorBoundary } from "@/components/error-boundaries";
 import { useReportList } from "@/features/reports/api/report-api";
-import {
-  showSuccessNotification,
-  showErrorNotification,
-  showInfoNotification,
-} from "@/lib/notifications";
-import { getReportErrorMessage } from "@/features/reports/utils/error-translator";
-import type { ReportListItem } from "@/features/reports/types";
-import type { InsightListItem } from "../schemas";
+import { trpc } from "@/lib/api/trpc-client";
+import { downloadReport, bulkDownloadReports } from "@/lib/download";
+import { showSuccessNotification } from "@/lib/notifications";
+import type { ReportListItem, InsightOutput } from "@agenticverdict/types";
 import { AuditTrailTimeline } from "../ui/audit-trail/AuditTrailTimeline";
+import { JobStatusBadge } from "../ui/common/JobStatusBadge";
+import { ScheduleStatusBadge } from "@/features/shared/ui/ScheduleStatusBadge";
+import { scheduleService } from "@/features/schedules/services/schedule-service";
 
 function PageHeader({
   insight,
@@ -67,7 +66,7 @@ function PageHeader({
   onDelete,
   isRunning,
 }: {
-  insight: InsightListItem;
+  insight: InsightOutput;
   onBack: () => void;
   onEdit: () => void;
   onRunNow: () => void;
@@ -75,6 +74,12 @@ function PageHeader({
   isRunning: boolean;
 }) {
   const t = useTranslations("insights");
+
+  const handleDeleteClick = () => {
+    if (confirm(t("list.actions.deleteConfirm"))) {
+      onDelete();
+    }
+  };
 
   return (
     <Group justify="space-between">
@@ -106,15 +111,7 @@ function PageHeader({
         <Button variant="outline" leftSection={<IconSettings size={16} />} onClick={onEdit}>
           {t("detail.edit")}
         </Button>
-        <ActionIcon
-          variant="outline"
-          color="red"
-          onClick={() => {
-            if (confirm(t("detail.deleteConfirm"))) {
-              onDelete();
-            }
-          }}
-        >
+        <ActionIcon variant="outline" color="red" onClick={handleDeleteClick}>
           <IconTrash size={16} />
         </ActionIcon>
       </Group>
@@ -122,7 +119,7 @@ function PageHeader({
   );
 }
 
-function ConfigurationSummary({ insight }: { insight: InsightListItem }) {
+function ConfigurationSummary({ insight }: { insight: InsightOutput }) {
   const t = useTranslations("insights");
 
   const connectorCount = insight.connectors.length;
@@ -175,11 +172,20 @@ function ConfigurationSummary({ insight }: { insight: InsightListItem }) {
                 {t("detail.overview.connectedDomains")}
               </Text>
               <Group gap="xs">
-                {insight.connectors.map((c: { id: string; connectorId: string }) => (
-                  <Badge key={c.id} size="sm" variant="outline">
-                    {c.connectorId}
-                  </Badge>
-                ))}
+                {insight.connectors.map(
+                  (c: { id: string; connectorId: string; enabled?: boolean }) => (
+                    <Badge
+                      key={c.id}
+                      size="sm"
+                      variant="outline"
+                      leftSection={
+                        c.enabled !== false ? <IconCheck size={12} /> : <IconX size={12} />
+                      }
+                    >
+                      {c.connectorId}
+                    </Badge>
+                  ),
+                )}
               </Group>
             </Stack>
           </>
@@ -231,10 +237,12 @@ function ReportTableSkeleton() {
 }
 
 function RecentReports({
+  insightId,
   onViewReport,
   onDownloadReport,
   onShareReport,
 }: {
+  insightId: string;
   onViewReport: (reportId: string) => void;
   onDownloadReport: (report: ReportListItem) => void;
   onShareReport: (report: ReportListItem) => void;
@@ -243,6 +251,7 @@ function RecentReports({
   const { data, isLoading, error } = useReportList({
     page: 1,
     pageSize: 5,
+    insightId,
   });
 
   if (isLoading) {
@@ -322,11 +331,25 @@ function RecentReports({
   );
 }
 
-function AIInsightsCard({ insight }: { insight: InsightListItem }) {
+function AIInsightsCard({ insight }: { insight: InsightOutput }) {
   const t = useTranslations("insights");
   const { data: aiInsights, isLoading, error, refetch } = useAIInsights(insight.id);
   const generateMutation = useGenerateAIInsights();
   const isGenerating = generateMutation.isPending;
+
+  const { data: reportsData } = useReportList({
+    page: 1,
+    pageSize: 1,
+    insightId: insight.id,
+  });
+  const latestReportId = reportsData?.reports?.[0]?.id;
+
+  const handleGenerateInsights = () => {
+    generateMutation.mutate({
+      insightId: insight.id,
+      reportId: latestReportId,
+    });
+  };
 
   if (isLoading || isGenerating) {
     return (
@@ -352,7 +375,7 @@ function AIInsightsCard({ insight }: { insight: InsightListItem }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => generateMutation.mutate({ insightId: insight.id, reportId: "" })}
+            onClick={handleGenerateInsights}
             loading={isGenerating}
           >
             {t("detail.overview.generateAIInsights")}
@@ -407,7 +430,7 @@ function AIInsightsCard({ insight }: { insight: InsightListItem }) {
           <Button
             variant="default"
             size="sm"
-            onClick={() => generateMutation.mutate({ insightId: insight.id, reportId: "" })}
+            onClick={handleGenerateInsights}
             loading={isGenerating}
           >
             {t("detail.overview.regenerateAIInsights")}
@@ -424,7 +447,7 @@ function OverviewTab({
   onDownloadReport,
   onShareReport,
 }: {
-  insight: InsightListItem;
+  insight: InsightOutput;
   onViewReport: (reportId: string) => void;
   onDownloadReport: (report: ReportListItem) => void;
   onShareReport: (report: ReportListItem) => void;
@@ -432,7 +455,33 @@ function OverviewTab({
   return (
     <Stack gap="lg">
       <ConfigurationSummary insight={insight} />
+      <Card withBorder>
+        <Stack gap="md">
+          <Title order={3}>Schedule</Title>
+          <ScheduleStatusBadge
+            schedule={
+              scheduleService.getScheduleStatus(null) === "manual"
+                ? null
+                : {
+                    id: insight.id,
+                    tenantId: insight.tenantId,
+                    entityType: "insight",
+                    entityId: insight.id,
+                    cronExpression: "",
+                    timezone: "UTC",
+                    enabled: insight.enabled,
+                    metadata: {},
+                    nextRunAt: null,
+                    lastRunAt: null,
+                    createdAt: insight.createdAt,
+                    updatedAt: insight.createdAt,
+                  }
+            }
+          />
+        </Stack>
+      </Card>
       <RecentReports
+        insightId={insight.id}
         onViewReport={onViewReport}
         onDownloadReport={onDownloadReport}
         onShareReport={onShareReport}
@@ -443,10 +492,12 @@ function OverviewTab({
 }
 
 function ReportsTab({
+  insightId,
   onViewReport,
   onDownloadReport,
   onShareReport,
 }: {
+  insightId: string;
   onViewReport: (reportId: string) => void;
   onDownloadReport: (report: ReportListItem) => void;
   onShareReport: (report: ReportListItem) => void;
@@ -457,6 +508,7 @@ function ReportsTab({
   const { data, isLoading, error } = useReportList({
     page,
     pageSize,
+    insightId,
   });
 
   if (isLoading) {
@@ -545,96 +597,6 @@ function ReportsTab({
   );
 }
 
-function SettingsTab({ insightId, insight }: { insightId: string; insight: InsightListItem }) {
-  const updateMutation = useInsightUpdate();
-  const [formData, setFormData] = useState({
-    name: insight.name,
-    description: insight.description || "",
-    enabled: insight.enabled,
-    model: (insight.aiConfig as { model?: string })?.model || "claude-3-5-sonnet",
-    detailLevel:
-      (insight.aiConfig as { detailLevel?: "executive" | "standard" | "comprehensive" })
-        ?.detailLevel || "standard",
-  });
-
-  const handleSubmit = () => {
-    updateMutation.mutate(
-      {
-        id: insightId,
-        data: {
-          name: formData.name,
-          description: formData.description,
-          enabled: formData.enabled,
-          aiConfig: { model: formData.model, detailLevel: formData.detailLevel },
-        },
-      },
-      {
-        onSuccess: () => {
-          // TODO: Show success toast
-        },
-        onError: () => {
-          // TODO: Show error toast
-        },
-      },
-    );
-  };
-
-  return (
-    <Card withBorder>
-      <Stack gap="md">
-        <Title order={3}>Insight Settings</Title>
-        <Stack gap="sm">
-          <Text fw={500}>Name</Text>
-          <TextInput
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.currentTarget.value })}
-            placeholder="Enter insight name"
-          />
-        </Stack>
-        <Stack gap="sm">
-          <Text fw={500}>Description</Text>
-          <TextInput
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.currentTarget.value })}
-            placeholder="Enter description"
-          />
-        </Stack>
-        <Stack gap="sm">
-          <Text fw={500}>Status</Text>
-          <Group>
-            <Button
-              variant={formData.enabled ? "filled" : "outline"}
-              onClick={() => setFormData({ ...formData, enabled: true })}
-            >
-              Enabled
-            </Button>
-            <Button
-              variant={!formData.enabled ? "filled" : "outline"}
-              onClick={() => setFormData({ ...formData, enabled: false })}
-            >
-              Disabled
-            </Button>
-          </Group>
-        </Stack>
-        <Stack gap="sm">
-          <Text fw={500}>AI Model</Text>
-          <Select
-            value={formData.model}
-            onChange={(value) => value && setFormData({ ...formData, model: value })}
-            data={[
-              { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet" },
-              { value: "gpt-4o", label: "GPT-4o" },
-            ]}
-          />
-        </Stack>
-        <Button onClick={handleSubmit} loading={updateMutation.isPending}>
-          Save Changes
-        </Button>
-      </Stack>
-    </Card>
-  );
-}
-
 function HistoryTab({ insightId }: { insightId: string }) {
   return <AuditTrailTimeline insightId={insightId} />;
 }
@@ -667,124 +629,51 @@ function InsightDetailContent() {
   const insightId = params.id;
 
   const [activeTab, setActiveTab] = useState<string | null>("overview");
-  const [isRunning, setIsRunning] = useState(false);
   const [shareModalOpened, setShareModalOpened] = useState(false);
   const [selectedReport, setSelectedReport] = useState<ReportListItem | null>(null);
+  const [generatedShareUrl, setGeneratedShareUrl] = useState<string | null>(null);
+
+  const createShareMutation = trpc.report.createShareLink.useMutation({
+    onSuccess: (data) => {
+      setGeneratedShareUrl(data.shareUrl);
+    },
+  });
 
   const { data: insight, isLoading, error } = useInsightDetail(insightId || "");
-  const runMutation = useInsightRun();
+  const { status: runStatus, runInsight } = useInsightRunMutation(insightId || "");
   const deleteMutation = useInsightDelete();
+  const { data: tenantConfig } = useTenantConfig();
+  const shareExpiryHours = tenantConfig?.shareLinkExpiryHours ?? 168; // 7 days default
 
   const handleViewReport = (reportId: string) => {
     navigate.push(ROUTE_PATHS.DASHBOARD_REPORTS_DETAIL.replace("$reportId", reportId));
   };
 
   const handleDownloadReport = async (report: ReportListItem) => {
-    try {
-      showInfoNotification({
-        title: "Downloading report",
-        message: "Your report is being downloaded",
-      });
-
-      // TODO: Implement actual download logic with tRPC endpoint
-      // For now, show a success message
-      showSuccessNotification({
-        title: "Download started",
-        message: `Downloading ${report.title}`,
-      });
-    } catch (error) {
-      showErrorNotification({
-        title: "Download failed",
-        message: getReportErrorMessage(error),
-      });
-    }
+    await downloadReport({
+      reportId: report.id,
+      fileName: report.title,
+      metadata: report.metadata,
+    });
   };
 
   const handleShareReport = (report: ReportListItem) => {
     setSelectedReport(report);
+    setGeneratedShareUrl(null);
     setShareModalOpened(true);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleBulkDownload = async (reports: ReportListItem[]) => {
     if (reports.length === 0) return;
-
-    if (reports.length > 10) {
-      showErrorNotification({
-        title: "Too many reports",
-        message: "Please select at most 10 reports for bulk download",
-      });
-      return;
-    }
-
-    try {
-      if (reports.length >= 3) {
-        showInfoNotification({
-          title: "Preparing download",
-          message: `Preparing ${reports.length} reports for download...`,
-        });
-      }
-
-      const zip = new JSZip();
-      const reportsFolder = zip.folder("reports");
-
-      // Download all reports and add to ZIP
-      await Promise.all(
-        reports.map(async (report) => {
-          try {
-            // TODO: Implement actual report fetching
-            // For now, just add a placeholder file
-            reportsFolder?.file(
-              `${report.title}.txt`,
-              `Report: ${report.title}\nGenerated: ${report.createdAt}`,
-            );
-          } catch (error) {
-            console.error(`Failed to download report ${report.id}:`, error);
-          }
-        }),
-      );
-
-      // Generate and download ZIP
-      const content = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(content);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `reports-${new Date().toISOString().split("T")[0]}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      showSuccessNotification({
-        title: "Download complete",
-        message: `${reports.length} reports downloaded successfully`,
-      });
-    } catch (error) {
-      showErrorNotification({
-        title: "Bulk download failed",
-        message: getReportErrorMessage(error),
-      });
-    }
+    await bulkDownloadReports({ reports });
   };
 
-  const typedInsight = insight as InsightListItem;
+  const typedInsight = insight as InsightOutput;
 
   const handleRunNow = () => {
     if (!insightId) return;
-    setIsRunning(true);
-    runMutation.mutate(
-      { id: insightId },
-      {
-        onSuccess: () => {
-          setIsRunning(false);
-          // TODO: Show success toast
-        },
-        onError: () => {
-          setIsRunning(false);
-          // TODO: Show error toast
-        },
-      },
-    );
+    runInsight(insightId);
   };
 
   const handleDelete = () => {
@@ -839,14 +728,22 @@ function InsightDetailContent() {
           }
           onRunNow={handleRunNow}
           onDelete={handleDelete}
-          isRunning={isRunning}
+          isRunning={runStatus.status === "active" || runStatus.status === "waiting"}
         />
+
+        {runStatus.status && (
+          <JobStatusBadge
+            status={runStatus.status}
+            progress={runStatus.progress}
+            error={runStatus.error}
+            onRetry={runStatus.status === "failed" ? handleRunNow : undefined}
+          />
+        )}
 
         <Tabs value={activeTab} onChange={setActiveTab}>
           <Tabs.List>
             <Tabs.Tab value="overview">{t("detail.tabs.overview")}</Tabs.Tab>
             <Tabs.Tab value="reports">{t("detail.tabs.reports")}</Tabs.Tab>
-            <Tabs.Tab value="settings">{t("detail.tabs.settings")}</Tabs.Tab>
             <Tabs.Tab value="history">{t("detail.tabs.history")}</Tabs.Tab>
           </Tabs.List>
 
@@ -861,14 +758,11 @@ function InsightDetailContent() {
 
           <Tabs.Panel value="reports" pt="md">
             <ReportsTab
+              insightId={typedInsight.id}
               onViewReport={handleViewReport}
               onDownloadReport={handleDownloadReport}
               onShareReport={handleShareReport}
             />
-          </Tabs.Panel>
-
-          <Tabs.Panel value="settings" pt="md">
-            <SettingsTab insightId={typedInsight.id} insight={typedInsight} />
           </Tabs.Panel>
 
           <Tabs.Panel value="history" pt="md">
@@ -886,28 +780,36 @@ function InsightDetailContent() {
           <Text>
             Share report: <strong>{selectedReport?.title}</strong>
           </Text>
-          <TextInput
-            label="Share via link"
-            value={
-              selectedReport ? `${window.location.origin}/shared/reports/${selectedReport.id}` : ""
-            }
-            readOnly
-          />
-          <Button
-            onClick={() => {
-              if (selectedReport) {
-                navigator.clipboard.writeText(
-                  `${window.location.origin}/shared/reports/${selectedReport.id}`,
-                );
-                showSuccessNotification({
-                  title: "Link copied",
-                  message: "Share link copied to clipboard",
-                });
-              }
-            }}
-          >
-            Copy Link
-          </Button>
+          {!generatedShareUrl ? (
+            <Button
+              onClick={() => {
+                if (selectedReport) {
+                  createShareMutation.mutate({
+                    reportId: selectedReport.id,
+                    expiresAt: new Date(Date.now() + shareExpiryHours * 60 * 60 * 1000),
+                  });
+                }
+              }}
+              loading={createShareMutation.isPending}
+            >
+              Generate Share Link
+            </Button>
+          ) : (
+            <>
+              <TextInput label="Share via link" value={generatedShareUrl} readOnly />
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedShareUrl);
+                  showSuccessNotification({
+                    title: "Link copied",
+                    message: "Share link copied to clipboard",
+                  });
+                }}
+              >
+                Copy Link
+              </Button>
+            </>
+          )}
         </Stack>
       </Modal>
     </Container>

@@ -8,7 +8,8 @@ import {
   updateTemplateSchema,
   deployTemplateSchema,
   paginationSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+  templateVariableSchema,
+} from "@agenticverdict/types";
 
 const logger = console;
 
@@ -35,8 +36,8 @@ const deployTemplateInputSchema = deployTemplateSchema;
 
 const getUsageInputSchema = z.object({
   templateId: z.string().uuid(),
-  startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional(),
+  startDate: z.iso.datetime().optional(),
+  endDate: z.iso.datetime().optional(),
 });
 
 // Output schemas
@@ -48,17 +49,7 @@ const templateOutputSchema = z.object({
   type: z.enum(["prompt", "configuration", "workflow"]),
   version: z.string(),
   content: z.string(),
-  variables: z
-    .array(
-      z.object({
-        name: z.string(),
-        type: z.string(),
-        required: z.boolean(),
-        defaultValue: z.unknown().optional(),
-        description: z.string().optional(),
-      }),
-    )
-    .nullable(),
+  variables: z.array(templateVariableSchema).nullable(),
   providerId: z.string().nullable(),
   modelId: z.string().nullable(),
   domainId: z.string().uuid().nullable(),

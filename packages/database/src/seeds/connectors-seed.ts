@@ -21,8 +21,28 @@ function createMinimalTenantConfig(tenantId: string): TenantConfig {
       kpis: [],
     },
     ai: {
-      primaryModel: "claude-3-5-sonnet-20241022",
-      provider: "anthropic",
+      primaryProvider: "anthropic",
+      defaultModel: {
+        providerId: "anthropic",
+        modelId: "claude-3-5-sonnet-20241022",
+      },
+      budget: {
+        alertThreshold: 80,
+        hardLimit: false,
+      },
+      failover: {
+        fallbackProviders: ["openai", "google"],
+        enabled: true,
+        providerTimeout: 10000,
+        maxRetriesPerProvider: 1,
+      },
+      circuitBreaker: {
+        enabled: true,
+        failureThreshold: 5,
+        failureWindow: 30,
+        recoveryTimeout: 60,
+        halfOpenMaxRequests: 3,
+      },
     },
     features: {
       enableInsights: true,
@@ -53,7 +73,7 @@ export async function seedTenantConnectors(
             tenantId,
             platform: cfg.platform,
             name: cfg.name,
-            domain: cfg.domain,
+            domainId: cfg.domainId,
             status: cfg.status ?? "inactive",
             syncFrequency: cfg.syncFrequency ?? "daily",
             metrics: cfg.metrics ?? [],

@@ -21,39 +21,40 @@ import {
   IconMail,
   IconAlertCircle,
   IconCheck,
+  IconSparkles,
+  IconPlus,
+  IconPencil,
+  IconTrash,
 } from "@tabler/icons-react";
-import { useTenantContext } from "@/lib/tenant-context";
 import { trpc } from "@/lib/api/trpc-client";
-
-export interface AuditTrailEvent {
-  id: string;
-  insightId: string;
-  eventType: "run" | "config_change" | "delivery" | "error";
-  status: "success" | "failed" | "pending";
-  timestamp: string;
-  duration?: number;
-  metadata?: Record<string, unknown>;
-}
+import {
+  AuditEventType,
+  AUDIT_EVENT_TYPE_LABELS,
+  type AuditTrailEvent,
+} from "@agenticverdict/types";
 
 interface AuditTrailTimelineProps {
   insightId: string;
 }
 
-const EVENT_TYPE_LABELS = {
-  run: "Report Run",
-  config_change: "Configuration Change",
-  delivery: "Delivery",
-  error: "Error",
+const EVENT_TYPE_ICONS: Record<AuditEventType, typeof IconCheck> = {
+  [AuditEventType.RUN]: IconPlayerPlay,
+  [AuditEventType.CONFIG_CHANGE]: IconSettings,
+  [AuditEventType.DELIVERY]: IconMail,
+  [AuditEventType.ERROR]: IconAlertCircle,
+  [AuditEventType.AI_GENERATED]: IconSparkles,
+  [AuditEventType.CREATED]: IconPlus,
+  [AuditEventType.UPDATED]: IconPencil,
+  [AuditEventType.DELETED]: IconTrash,
 };
 
 export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
-  const { tenantId } = useTenantContext();
   const [eventTypeFilter, setEventTypeFilter] = useState<string | null>(null);
 
   const { data, isLoading } = trpc.insight.getAuditTrail.useQuery(
-    { tenantId: tenantId!, insightId },
+    { insightId },
     {
-      enabled: !!tenantId && !!insightId,
+      enabled: !!insightId,
     },
   );
 
@@ -66,25 +67,13 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
 
   const getEventIcon = (eventType: string, status: string) => {
     if (status === "failed") return IconAlertCircle;
-    if (status === "success") return IconCheck;
-
-    switch (eventType) {
-      case "run":
-        return IconPlayerPlay;
-      case "config_change":
-        return IconSettings;
-      case "delivery":
-        return IconMail;
-      case "error":
-        return IconAlertCircle;
-      default:
-        return IconAlertCircle;
-    }
+    if (status === "success") return EVENT_TYPE_ICONS[eventType as AuditEventType] ?? IconCheck;
+    return EVENT_TYPE_ICONS[eventType as AuditEventType] ?? IconAlertCircle;
   };
 
   const renderEventDetails = (event: AuditTrailEvent) => {
     switch (event.eventType) {
-      case "run":
+      case AuditEventType.RUN:
         return (
           <Stack gap="xs">
             <Group gap="xs">
@@ -98,7 +87,7 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
           </Stack>
         );
 
-      case "config_change": {
+      case AuditEventType.CONFIG_CHANGE: {
         const changes = event.metadata?.changes as Record<string, unknown> | undefined;
         return (
           <Stack gap="xs">
@@ -121,7 +110,7 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
         );
       }
 
-      case "delivery": {
+      case AuditEventType.DELIVERY: {
         const recipient = event.metadata?.recipient as string | undefined;
         const webhookUrl = event.metadata?.webhookUrl as string | undefined;
         return (
@@ -146,7 +135,7 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
         );
       }
 
-      case "error":
+      case AuditEventType.ERROR:
         return (
           <Text size="sm" c="red">
             {typeof event.metadata?.errorMessage === "string"
@@ -155,8 +144,32 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
           </Text>
         );
 
+      case AuditEventType.AI_GENERATED:
+        return (
+          <Stack gap="xs">
+            <Text size="sm">AI insights generated</Text>
+            {(() => {
+              const reportId = (event.metadata as Record<string, unknown>)?.reportId as
+                | string
+                | undefined;
+              if (reportId) {
+                return (
+                  <Text size="sm">
+                    Report: <Code>{reportId}</Code>
+                  </Text>
+                );
+              }
+              return null;
+            })()}
+          </Stack>
+        );
+
       default:
-        return null;
+        return (
+          <Text size="sm" c="dimmed">
+            {AUDIT_EVENT_TYPE_LABELS[event.eventType as AuditEventType] ?? event.eventType}
+          </Text>
+        );
     }
   };
 
@@ -178,7 +191,7 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
           <Select
             label="Event Type"
             placeholder="All events"
-            data={Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => ({
+            data={Object.entries(AUDIT_EVENT_TYPE_LABELS).map(([value, label]) => ({
               value,
               label,
             }))}
@@ -201,7 +214,8 @@ export function AuditTrailTimeline({ insightId }: AuditTrailTimelineProps) {
                 title={
                   <Group justify="space-between">
                     <Text size="sm" fw={500}>
-                      {EVENT_TYPE_LABELS[event.eventType as keyof typeof EVENT_TYPE_LABELS]}
+                      {AUDIT_EVENT_TYPE_LABELS[event.eventType as AuditEventType] ??
+                        event.eventType}
                     </Text>
                     <Badge
                       size="sm"

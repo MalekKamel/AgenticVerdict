@@ -35,6 +35,10 @@ import {
   type ConfirmPasswordResetInput,
   type AuthErrorCode,
   type AuthErrorResponse,
+  type AuthUserData as BaseAuthUserData,
+  type GetSessionOutput,
+  type Permission,
+  type Role,
 } from "@agenticverdict/types";
 import type { AppRouter } from "@agenticverdict/api/trpc";
 import type { TRPCClientError } from "@trpc/client";
@@ -157,27 +161,19 @@ export type AuthApiResponse<T = unknown> = AuthApiSuccess<T> | AuthApiFailure;
 
 /**
  * User data type from login/register responses
+ * Extends base AuthUserData with frontend-specific fields.
  */
-export type AuthUserData = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  emailVerified: boolean;
-  tenantId: string;
+export type AuthUserData = BaseAuthUserData & {
   tenantType: string;
   tenantStatus: string;
-  roles: string[];
-  permissions: string[];
+  roles: Role[];
+  permissions: Permission[];
 };
 
 /**
- * Session data type
+ * Session data type - alias for GetSessionOutput from types.
  */
-export type SessionData = {
-  user: AuthUserData | null;
-  sessionExpiresAt: string | null;
-};
+export type SessionData = GetSessionOutput;
 
 /**
  * Extract error code from tRPC error
@@ -389,8 +385,8 @@ export const authApi = {
       const sessionExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const merged = mergePreSessionTenantInput(input);
       const mockTenant = isTenantUuid(merged.tenantId) ? merged.tenantId : MOCK_DEFAULT_TENANT_ID;
-      const roles: string[] = ["viewer"];
-      const permissions: string[] = [PERMISSIONS.REPORTS_READ];
+      const roles: Role[] = ["viewer" as Role];
+      const permissions: Permission[] = [PERMISSIONS.REPORTS_READ];
       const user: AuthUserData = {
         id: "mock-user-id",
         email: input.email,

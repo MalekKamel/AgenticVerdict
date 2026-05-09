@@ -24,6 +24,9 @@ export type LogLevel = z.infer<typeof logLevelSchema>;
  * Resolves Pino log level from the environment (defaults: **info** in production, **debug** otherwise).
  */
 export function resolveLogLevel(): LogLevel {
+  if (process.env.VITEST === "true") {
+    return "silent";
+  }
   const parsed = observabilityEnvSchema.safeParse({
     LOG_LEVEL: process.env.LOG_LEVEL,
     LOG_FILE: process.env.LOG_FILE,

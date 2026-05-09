@@ -78,8 +78,8 @@ export const roleDbSchema = z.object({
   description: z.string().max(512).optional(),
   isSystemRole: z.boolean(),
   isCustomRole: z.boolean(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 export type RoleDb = z.infer<typeof roleDbSchema>;
@@ -93,7 +93,7 @@ export const permissionDbSchema = z.object({
   resource: z.string().min(1).max(128),
   action: z.string().min(1).max(64),
   description: z.string().max(512).optional(),
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
 });
 
 export type PermissionDb = z.infer<typeof permissionDbSchema>;
@@ -106,8 +106,8 @@ export const userRoleSchema = z.object({
   userId: z.string().uuid(),
   roleId: z.string().uuid(),
   grantedBy: z.string().uuid().optional(),
-  grantedAt: z.string().datetime(),
-  expiresAt: z.string().datetime().optional(),
+  grantedAt: z.iso.datetime(),
+  expiresAt: z.iso.datetime().optional(),
 });
 
 export type UserRole = z.infer<typeof userRoleSchema>;
@@ -119,7 +119,7 @@ export const rolePermissionSchema = z.object({
   id: z.string().uuid(),
   roleId: z.string().uuid(),
   permissionId: z.string().uuid(),
-  grantedAt: z.string().datetime(),
+  grantedAt: z.iso.datetime(),
 });
 
 export type RolePermission = z.infer<typeof rolePermissionSchema>;

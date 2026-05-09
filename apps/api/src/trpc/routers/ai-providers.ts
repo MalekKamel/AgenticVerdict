@@ -9,7 +9,8 @@ import {
   providerCredentialsSchema,
   providerHealthSchema,
   paginationSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+  configScopeSchema,
+} from "@agenticverdict/types";
 
 const logger = console;
 
@@ -18,7 +19,7 @@ const logger = console;
 // ============================================================================
 
 const listProvidersInputSchema = paginationSchema.extend({
-  scope: z.enum(["tenant", "domain", "connector"]).optional(),
+  scope: configScopeSchema.optional(),
   parentId: z.string().uuid().optional(),
 });
 
@@ -73,7 +74,7 @@ const providerOutputSchema = z.object({
       outputCostPer1k: z.number(),
     })
     .nullable(),
-  scope: z.enum(["tenant", "domain", "connector"]),
+  scope: configScopeSchema,
   parentId: z.string().uuid().nullable(),
   isEnabled: z.boolean(),
   status: z.enum(["active", "inactive", "error"]),

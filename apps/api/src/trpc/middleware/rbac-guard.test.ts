@@ -2,14 +2,14 @@
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PERMISSIONS } from "@AgenticVerdict/types";
+import { PERMISSIONS } from "@agenticverdict/types";
 
 // Mock the RBAC service before importing middleware
-vi.mock("@AgenticVerdict/database", () => ({
+vi.mock("@agenticverdict/database", () => ({
   getRbacService: vi.fn(),
 }));
 
-import { getRbacService } from "@AgenticVerdict/database";
+import { getRbacService } from "@agenticverdict/database";
 
 const mockGetRbacService = vi.mocked(getRbacService);
 
@@ -102,13 +102,11 @@ describe("requirePermission middleware", () => {
 
   it("throws UNAUTHORIZED when user is not authenticated", async () => {
     const { requirePermission } = await import("./rbac-guard");
-    const middleware = requirePermission(PERMISSIONS.REPORTS_READ);
+    const middlewareFn = requirePermission(PERMISSIONS.REPORTS_READ);
     const opts = createMockOpts({});
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("UNAUTHORIZED");
@@ -122,17 +120,15 @@ describe("requirePermission middleware", () => {
     mockRbacService.hasPermission.mockResolvedValue(false);
 
     const { requirePermission } = await import("./rbac-guard");
-    const middleware = requirePermission(PERMISSIONS.REPORTS_DELETE);
+    const middlewareFn = requirePermission(PERMISSIONS.REPORTS_DELETE);
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["viewer"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("FORBIDDEN");
@@ -150,15 +146,14 @@ describe("requirePermission middleware", () => {
     mockRbacService.hasPermission.mockResolvedValue(true);
 
     const { requirePermission } = await import("./rbac-guard");
-    const middleware = requirePermission(PERMISSIONS.REPORTS_WRITE);
+    const middlewareFn = requirePermission(PERMISSIONS.REPORTS_WRITE);
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["editor"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-    await middlewareFn(opts);
+    await (middlewareFn as any)(opts);
 
     expect(opts.next).toHaveBeenCalled();
     const nextCtx = (opts.next as ReturnType<typeof vi.fn>).mock.calls[0][0].ctx;
@@ -172,17 +167,15 @@ describe("requirePermission middleware", () => {
     mockRbacService.hasPermission.mockRejectedValue(new Error("Database connection failed"));
 
     const { requirePermission } = await import("./rbac-guard");
-    const middleware = requirePermission(PERMISSIONS.REPORTS_READ);
+    const middlewareFn = requirePermission(PERMISSIONS.REPORTS_READ);
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("INTERNAL_SERVER_ERROR");
@@ -199,17 +192,15 @@ describe("requirePermission middleware", () => {
     );
 
     const { requirePermission } = await import("./rbac-guard");
-    const middleware = requirePermission(PERMISSIONS.REPORTS_READ);
+    const middlewareFn = requirePermission(PERMISSIONS.REPORTS_READ);
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("BAD_REQUEST");
@@ -240,13 +231,11 @@ describe("requireRole middleware", () => {
 
   it("throws UNAUTHORIZED when user is not authenticated", async () => {
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("admin");
+    const middlewareFn = requireRole("admin");
     const opts = createMockOpts({});
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("UNAUTHORIZED");
@@ -260,17 +249,15 @@ describe("requireRole middleware", () => {
     mockRbacService.getUserRoles.mockResolvedValue(["viewer"]);
 
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("admin");
+    const middlewareFn = requireRole("admin");
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["viewer"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("FORBIDDEN");
@@ -284,15 +271,14 @@ describe("requireRole middleware", () => {
     mockRbacService.getUserRoles.mockResolvedValue(["admin"]);
 
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("admin");
+    const middlewareFn = requireRole("admin");
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-    await middlewareFn(opts);
+    await (middlewareFn as any)(opts);
 
     expect(opts.next).toHaveBeenCalled();
     const nextCtx = (opts.next as ReturnType<typeof vi.fn>).mock.calls[0][0].ctx;
@@ -306,15 +292,14 @@ describe("requireRole middleware", () => {
     mockRbacService.getUserRoles.mockResolvedValue(["editor"]);
 
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("editor");
+    const middlewareFn = requireRole("editor");
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["viewer"], // JWT has viewer, but DB has editor
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-    await middlewareFn(opts);
+    await (middlewareFn as any)(opts);
 
     expect(opts.next).toHaveBeenCalled();
     expect(mockRbacService.getUserRoles).toHaveBeenCalledWith(USER_ID);
@@ -324,15 +309,14 @@ describe("requireRole middleware", () => {
     mockRbacService.getUserRoles.mockResolvedValue([]);
 
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("admin");
+    const middlewareFn = requireRole("admin");
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-    await middlewareFn(opts);
+    await (middlewareFn as any)(opts);
 
     expect(opts.next).toHaveBeenCalled();
     expect(mockRbacService.getUserRoles).toHaveBeenCalledWith(USER_ID);
@@ -342,17 +326,15 @@ describe("requireRole middleware", () => {
     mockRbacService.getUserRoles.mockRejectedValue(new Error("Database connection failed"));
 
     const { requireRole } = await import("./rbac-guard");
-    const middleware = requireRole("admin");
+    const middlewareFn = requireRole("admin");
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("INTERNAL_SERVER_ERROR");
@@ -372,7 +354,7 @@ describe("validateTenantContext middleware", () => {
 
   it("allows access when tenant context matches auth tenant", async () => {
     const { validateTenantContext } = await import("./rbac-guard");
-    const middleware = validateTenantContext();
+    const middlewareFn = validateTenantContext();
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
@@ -380,25 +362,22 @@ describe("validateTenantContext middleware", () => {
       tenant: { tenantId: TENANT_A },
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-    await middlewareFn(opts);
+    await (middlewareFn as any)(opts);
 
     expect(opts.next).toHaveBeenCalled();
   });
 
   it("throws FORBIDDEN when tenant context is missing", async () => {
     const { validateTenantContext } = await import("./rbac-guard");
-    const middleware = validateTenantContext();
+    const middlewareFn = validateTenantContext();
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
       roles: ["admin"],
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("FORBIDDEN");
@@ -408,7 +387,7 @@ describe("validateTenantContext middleware", () => {
 
   it("throws FORBIDDEN when tenant context mismatches auth tenant", async () => {
     const { validateTenantContext } = await import("./rbac-guard");
-    const middleware = validateTenantContext();
+    const middlewareFn = validateTenantContext();
     const opts = createMockOpts({
       userId: USER_ID,
       tenantId: TENANT_A,
@@ -416,10 +395,8 @@ describe("validateTenantContext middleware", () => {
       tenant: { tenantId: TENANT_B },
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("FORBIDDEN");
@@ -429,15 +406,13 @@ describe("validateTenantContext middleware", () => {
 
   it("throws FORBIDDEN when auth context is missing", async () => {
     const { validateTenantContext } = await import("./rbac-guard");
-    const middleware = validateTenantContext();
+    const middlewareFn = validateTenantContext();
     const opts = createMockOpts({
       tenant: { tenantId: TENANT_A },
     });
 
-    const middlewareFn = (middleware as any)._def.middlewares[0];
-
     try {
-      await middlewareFn(opts);
+      await (middlewareFn as any)(opts);
     } catch (error) {
       expect(error).toBeInstanceOf(TRPCError);
       expect((error as TRPCError).code).toBe("FORBIDDEN");

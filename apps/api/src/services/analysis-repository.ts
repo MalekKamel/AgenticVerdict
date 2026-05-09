@@ -1,5 +1,5 @@
 import { createDatabaseClient, provenanceRecords } from "@agenticverdict/database";
-import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
+import type { WorkflowTriggerJobResult } from "@agenticverdict/types";
 import type { AnalysisResultResponse, ProvenanceInfo } from "@agenticverdict/types";
 import { provenanceInfoSchema } from "@agenticverdict/types";
 import { and, desc, eq } from "drizzle-orm";

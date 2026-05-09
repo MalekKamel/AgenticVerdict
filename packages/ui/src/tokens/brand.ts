@@ -3,7 +3,7 @@
  * These tokens allow multi-tenant theming without code changes
  */
 
-import type { BrandTokens } from "./types";
+import type { BrandTokens } from "@agenticverdict/types";
 import { globalTokens } from "./global";
 
 /**
@@ -73,30 +73,3 @@ export function getBrandCSSVariables(theme: BrandTokens = defaultBrandTheme) {
     "--brand-app-name": theme.branding.appName || "AgenticVerdict",
   } as const;
 }
-
-/**
- * Theme validation schema using Zod
- */
-import { z } from "zod";
-
-export const brandTokensSchema = z.object({
-  colors: z.object({
-    primary: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    secondary: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    success: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    warning: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    danger: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    info: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-  }),
-  typography: z.object({
-    fontFamily: z.string(),
-    fontFamilySecondary: z.string().optional(),
-  }),
-  branding: z.object({
-    logoUrl: z.string().optional(),
-    logoHeight: z.string().optional(),
-    appName: z.string().optional(),
-  }),
-});
-
-export type BrandTokensInput = z.infer<typeof brandTokensSchema>;

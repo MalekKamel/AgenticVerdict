@@ -5,6 +5,36 @@ export type AppLocale = (typeof APP_LOCALES)[number];
 
 export type LocalizationFormatConfig = Pick<LocalizationConfig, "region" | "timezone" | "currency">;
 
+/** Native language names for each locale, used in UI and prompt context. */
+export const LANGUAGE_NATIVE_NAMES: Record<AppLocale, string> = {
+  en: "English",
+  ar: "العربية",
+  fr: "Français",
+  es: "Español",
+  zh: "中文",
+};
+
+/** Display metadata for each locale (currency, symbols, native name). */
+export type LocaleDisplayMetadata = {
+  name: string;
+  currency: string;
+  currencySymbol: string;
+  currencySymbolPosition: "before" | "after";
+};
+
+export const LOCALE_DISPLAY_METADATA: Record<AppLocale, LocaleDisplayMetadata> = {
+  en: { name: "English", currency: "USD", currencySymbol: "$", currencySymbolPosition: "before" },
+  ar: { name: "العربية", currency: "SAR", currencySymbol: "ر.س", currencySymbolPosition: "after" },
+  fr: { name: "Français", currency: "EUR", currencySymbol: "€", currencySymbolPosition: "after" },
+  es: { name: "Español", currency: "EUR", currencySymbol: "€", currencySymbolPosition: "after" },
+  zh: { name: "中文", currency: "CNY", currencySymbol: "¥", currencySymbolPosition: "before" },
+};
+
+/** Returns the native display name for a locale. */
+export function getLocaleDisplayName(locale: AppLocale): string {
+  return LOCALE_DISPLAY_METADATA[locale]?.name ?? locale;
+}
+
 /**
  * BCP 47 tag for Intl formatters, combining UI locale with tenant region (e.g. en-SA, ar-SA).
  */

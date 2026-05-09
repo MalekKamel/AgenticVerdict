@@ -6,8 +6,9 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { BrandTokens } from "../tokens/types";
-import { defaultBrandTheme, getBrandCSSVariables, brandTokensSchema } from "../tokens/brand";
+import type { BrandTokens } from "@agenticverdict/types";
+import { brandTokensSchema } from "@agenticverdict/types";
+import { defaultBrandTheme, getBrandCSSVariables } from "../tokens/brand";
 
 /**
  * Theme context interface

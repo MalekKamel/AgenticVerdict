@@ -3,6 +3,7 @@ import { renderCallout } from "../../components/callout";
 import { renderDataTable } from "../../components/data-table";
 import { renderFigurePlaceholder } from "../../components/figure";
 import { escapeHtml } from "../../html-utils";
+import { getReportStrings } from "../../i18n/report-strings";
 import {
   renderDataQualityIndicatorsBlock,
   renderInsightContextBlock,
@@ -36,33 +37,34 @@ export class ExecutiveSummaryTemplate extends BaseReportTemplate {
   async renderHtml(context: ReportGenerationContext, model: unknown): Promise<string> {
     const vm = coerceReportTemplateViewModel(model);
     const dir = resolveContextTextDirection(context);
+    const t = getReportStrings(context.locale);
     const tocEntries: { id: string; label: string }[] = [];
     if (vm.verdictScorecard) {
-      tocEntries.push({ id: "sec-verdict-scorecard", label: "Verdict" });
+      tocEntries.push({ id: "sec-verdict-scorecard", label: t.verdict });
     }
     if (vm.dataQualityIndicators?.length) {
-      tocEntries.push({ id: "sec-data-quality", label: "Data quality" });
+      tocEntries.push({ id: "sec-data-quality", label: t.dataQuality });
     }
-    tocEntries.push({ id: "sec-summary", label: "Summary" });
+    tocEntries.push({ id: "sec-summary", label: t.summary });
     tocEntries.push(
-      ...vm.keyFindings.map((_, i) => ({ id: `sec-finding-${i}`, label: `Finding ${i + 1}` })),
+      ...vm.keyFindings.map((_, i) => ({ id: `sec-finding-${i}`, label: t.finding(i + 1) })),
     );
     if (vm.verdictRecommendations?.length) {
-      tocEntries.push({ id: "sec-recommendations", label: "Recommendations" });
+      tocEntries.push({ id: "sec-recommendations", label: t.recommendations });
     }
     if (vm.insightHighlights?.length) {
-      tocEntries.push({ id: "sec-insight-context", label: "Insights" });
+      tocEntries.push({ id: "sec-insight-context", label: t.insights });
     }
     if (vm.statisticalSummaries?.length) {
-      tocEntries.push({ id: "sec-statistical-summaries", label: "Statistics" });
+      tocEntries.push({ id: "sec-statistical-summaries", label: t.statistics });
     }
     if (vm.metrics.columns.length > 0) {
-      tocEntries.push({ id: "sec-metrics", label: "Key metrics" });
+      tocEntries.push({ id: "sec-metrics", label: t.keyMetrics });
     }
     const findings =
       vm.keyFindings.length > 0
         ? `<section id="sec-findings" style="margin-top:20px;">
-  <h2 style="font-size:18px;">Key findings</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.keyFindings)}</h2>
   <ol style="padding-left:20px;line-height:1.6;">
     ${vm.keyFindings.map((f, i) => `<li id="sec-finding-${i}" style="margin:6px 0;">${escapeHtml(f)}</li>`).join("")}
   </ol>
@@ -72,38 +74,39 @@ export class ExecutiveSummaryTemplate extends BaseReportTemplate {
     const summaryBlock =
       vm.executiveSummary.length > 0
         ? `<section id="sec-summary" style="margin-top:8px;">
-  <h2 style="font-size:18px;">Summary</h2>
-  ${renderCallout("info", "Executive overview", vm.executiveSummary)}
+  <h2 style="font-size:18px;">${escapeHtml(t.summary)}</h2>
+  ${renderCallout("info", t.summary, vm.executiveSummary)}
 </section>`
-        : `<section id="sec-summary"><p style="color:#9ca3af;">No executive summary text provided.</p></section>`;
+        : `<section id="sec-summary"><p style="color:#9ca3af;">${escapeHtml(t.noSummaryText)}</p></section>`;
 
     const firstChart = vm.charts[0];
     const chartBlock = firstChart
-      ? `<section style="margin-top:20px;" aria-label="Chart">${renderChartFromSpec(firstChart)}</section>`
-      : renderFigurePlaceholder("Chart placeholder — supply charts[0] in the view model.");
+      ? `<section style="margin-top:20px;" aria-label="${escapeHtml(t.charts)}">${renderChartFromSpec(firstChart)}</section>`
+      : renderFigurePlaceholder(t.noChartData);
 
     const metricsBlock =
       vm.metrics.columns.length > 0
         ? `<section id="sec-metrics" style="margin-top:24px;">
-  <h2 style="font-size:18px;">Key metrics</h2>
-  ${renderDataTable({ ...vm.metrics, caption: "Snapshot", striped: true })}
+  <h2 style="font-size:18px;">${escapeHtml(t.keyMetrics)}</h2>
+  ${renderDataTable({ ...vm.metrics, caption: t.keyMetrics, striped: true })}
 </section>`
         : "";
 
-    const phase2Banner = renderPhase2IntegrationBanner(vm);
-    const verdictBlock = renderVerdictScorecardBlock(vm);
-    const dqBlock = renderDataQualityIndicatorsBlock(vm);
-    const recBlock = renderRecommendationEngineBlock(vm);
-    const insightBlock = renderInsightContextBlock(vm);
-    const statsBlock = renderStatisticalSummariesBlock(vm);
+    const phase2Banner = renderPhase2IntegrationBanner(vm, context.locale);
+    const verdictBlock = renderVerdictScorecardBlock(vm, context.locale);
+    const dqBlock = renderDataQualityIndicatorsBlock(vm, context.locale);
+    const recBlock = renderRecommendationEngineBlock(vm, context.locale);
+    const insightBlock = renderInsightContextBlock(vm, context.locale);
+    const statsBlock = renderStatisticalSummariesBlock(vm, context.locale);
 
     const body = `${renderCoverBlock({
       title: vm.title,
       tenantName: vm.tenantName,
       periodLabel: vm.periodLabel,
       accentColor: vm.brandAccentColor,
+      locale: context.locale,
     })}
-${renderTableOfContents(tocEntries)}
+${renderTableOfContents(tocEntries, context.locale)}
 ${phase2Banner}
 ${verdictBlock}
 ${dqBlock}

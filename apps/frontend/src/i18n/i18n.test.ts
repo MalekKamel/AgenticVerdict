@@ -19,7 +19,7 @@ describe("detectLocale", () => {
   });
 
   it("falls back to browser language when persisted locale is unsupported", () => {
-    window.localStorage.setItem("preferred-locale", "es");
+    window.localStorage.setItem("preferred-locale", "de");
     Object.defineProperty(window.navigator, "languages", {
       configurable: true,
       value: ["ar-SA", "en-US"],

@@ -2,6 +2,7 @@
 
 import { Stack, Select, Slider, Textarea, Group, Text, Box } from "@mantine/core";
 import { useFormContext, Controller } from "react-hook-form";
+import { useTranslations } from "@/i18n/react";
 
 interface AISettingsValues {
   model: string;
@@ -12,9 +13,11 @@ interface AISettingsValues {
 
 interface AISettingsStepProps {
   models: { value: string; label: string }[];
+  detailLevelOptions: { value: string; label: string }[];
 }
 
-export function AISettingsStep({ models }: AISettingsStepProps) {
+export function AISettingsStep({ models, detailLevelOptions }: AISettingsStepProps) {
+  const t = useTranslations("insights");
   const { register, control, watch, setValue } = useFormContext<AISettingsValues>();
 
   const quality = watch("quality") ?? 50;
@@ -25,23 +28,23 @@ export function AISettingsStep({ models }: AISettingsStepProps) {
         name="model"
         control={control}
         rules={{
-          required: "Model is required",
+          required: "MODEL_REQUIRED",
         }}
         render={({ field, fieldState: { error } }) => (
           <Select
-            label="AI Model"
-            placeholder="Select model"
+            label={t("wizard.steps.ai.modelLabel")}
+            placeholder={t("wizard.steps.ai.modelPlaceholder")}
             data={models}
             {...field}
             error={error?.message}
-            description="Claude 3.5 Sonnet recommended for best results"
+            description={t("wizard.steps.ai.modelDescription")}
           />
         )}
       />
 
       <Box>
         <Group justify="space-between" mb="xs">
-          <Text fw={500}>Analysis Quality</Text>
+          <Text fw={500}>{t("wizard.steps.ai.qualityLabel")}</Text>
           <Text size="sm" c="dimmed">
             {quality}%
           </Text>
@@ -56,17 +59,17 @@ export function AISettingsStep({ models }: AISettingsStepProps) {
             });
           }}
           marks={[
-            { value: 25, label: "Fast" },
-            { value: 50, label: "Balanced" },
-            { value: 75, label: "Detailed" },
-            { value: 100, label: "Comprehensive" },
+            { value: 25, label: t("wizard.steps.ai.qualityFast") },
+            { value: 50, label: t("wizard.steps.ai.qualityBalanced") },
+            { value: 75, label: t("wizard.steps.ai.qualityDetailed") },
+            { value: 100, label: t("wizard.steps.ai.qualityComprehensive") },
           ]}
           step={25}
           min={0}
           max={100}
         />
         <Text size="xs" c="dimmed" mt="xs">
-          Higher quality provides more detailed analysis but takes longer to generate
+          {t("wizard.steps.ai.qualityDescription")}
         </Text>
       </Box>
 
@@ -74,17 +77,13 @@ export function AISettingsStep({ models }: AISettingsStepProps) {
         name="detailLevel"
         control={control}
         rules={{
-          required: "Detail level is required",
+          required: "DETAIL_LEVEL_REQUIRED",
         }}
         render={({ field, fieldState: { error } }) => (
           <Select
-            label="Detail Level"
-            placeholder="Select detail level"
-            data={[
-              { value: "executive", label: "Executive Summary" },
-              { value: "standard", label: "Standard Analysis" },
-              { value: "comprehensive", label: "Comprehensive Report" },
-            ]}
+            label={t("wizard.steps.ai.detailLevelLabel")}
+            placeholder={t("wizard.steps.ai.detailLevelPlaceholder")}
+            data={detailLevelOptions}
             {...field}
             error={error?.message}
           />
@@ -92,12 +91,12 @@ export function AISettingsStep({ models }: AISettingsStepProps) {
       />
 
       <Textarea
-        label="Custom Instructions (Optional)"
-        placeholder="Add specific instructions for the AI analyst..."
+        label={t("wizard.steps.ai.customPromptLabel")}
+        placeholder={t("wizard.steps.ai.customPromptPlaceholder")}
         autosize
         minRows={4}
         {...register("customPrompt")}
-        description="Guide the AI to focus on specific aspects of your data"
+        description={t("wizard.steps.ai.customPromptDescription")}
       />
     </Stack>
   );

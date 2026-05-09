@@ -159,29 +159,6 @@ export interface ColorScale {
 }
 
 /**
- * Brand tokens - tenant-specific theme overrides
- */
-export interface BrandTokens {
-  colors: {
-    primary: string;
-    secondary: string;
-    success: string;
-    warning: string;
-    danger: string;
-    info: string;
-  };
-  typography: {
-    fontFamily: string;
-    fontFamilySecondary?: string;
-  };
-  branding: {
-    logoUrl?: string;
-    logoHeight?: string;
-    appName?: string;
-  };
-}
-
-/**
  * Component tokens - composed from global and brand tokens
  */
 export interface ComponentTokens {

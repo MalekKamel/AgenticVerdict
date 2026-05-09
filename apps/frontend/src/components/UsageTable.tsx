@@ -47,7 +47,7 @@ interface UsageTableProps {
 }
 
 export function UsageTable({ data = [], onRowClick, enableExport = true }: UsageTableProps) {
-  const t = useTranslations("components.usageTable");
+  const t = useTranslations("components");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<keyof UsageRecord>("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -123,7 +123,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
 
     return (
       <Badge color={colors[status]} variant="light" size="sm">
-        {t(`status.${status}`)}
+        {t(`usageTable.status.${status}`)}
       </Badge>
     );
   };
@@ -134,9 +134,9 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
         {/* Filters */}
         <Group gap="md">
           <TextInput
-            placeholder={t("filters.search")}
-            label={t("filters.searchLabel")}
-            aria-label={t("filters.searchAriaLabel")}
+            placeholder={t("usageTable.filters.search")}
+            label={t("usageTable.filters.searchLabel")}
+            aria-label={t("usageTable.filters.searchAriaLabel")}
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.currentTarget.value)}
@@ -146,8 +146,8 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
             <Menu.Target>
               <ActionIcon
                 variant="outline"
-                aria-label={t("actions.menuLabel")}
-                title={t("actions.menuTitle")}
+                aria-label={t("usageTable.actions.menuLabel")}
+                title={t("usageTable.actions.menuTitle")}
               >
                 <IconDotsVertical size={16} />
               </ActionIcon>
@@ -159,7 +159,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                   // Toggle columns
                 }}
               >
-                {t("actions.toggleColumns")}
+                {t("usageTable.actions.toggleColumns")}
               </Menu.Item>
               {enableExport && (
                 <>
@@ -170,7 +170,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       // Export to CSV
                     }}
                   >
-                    {t("actions.exportCSV")}
+                    {t("usageTable.actions.exportCSV")}
                   </Menu.Item>
                 </>
               )}
@@ -179,13 +179,13 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
         </Group>
 
         {/* Table */}
-        <ScrollArea aria-label={t("table.ariaLabel")} type="scroll" scrollHideDelay={0}>
+        <ScrollArea aria-label={t("usageTable.table.ariaLabel")} type="scroll" scrollHideDelay={0}>
           <Table role="grid" aria-rowcount={filteredAndSortedData.length + 1}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>
                   <Group gap="xs">
-                    {t("columns.date")}
+                    {t("usageTable.columns.date")}
                     <ActionIcon
                       variant="subtle"
                       size="xs"
@@ -193,9 +193,9 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       aria-label={
                         sortField === "date"
                           ? sortDirection === "asc"
-                            ? t("columns.sortDesc")
-                            : t("columns.sortAsc")
-                          : t("columns.sortBy", { field: t("columns.date") })
+                            ? t("usageTable.columns.sortDesc")
+                            : t("usageTable.columns.sortAsc")
+                          : t("usageTable.columns.sortBy", { field: t("usageTable.columns.date") })
                       }
                     >
                       <SortIcon field="date" />
@@ -204,7 +204,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                 </Table.Th>
                 <Table.Th>
                   <Group gap="xs">
-                    {t("columns.provider")}
+                    {t("usageTable.columns.provider")}
                     <ActionIcon
                       variant="subtle"
                       size="xs"
@@ -212,10 +212,10 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       aria-label={
                         sortField === "provider"
                           ? sortDirection === "asc"
-                            ? t("columns.sortDesc")
-                            : t("columns.sortAsc")
-                          : t("columns.sortBy", {
-                              field: t("columns.provider"),
+                            ? t("usageTable.columns.sortDesc")
+                            : t("usageTable.columns.sortAsc")
+                          : t("usageTable.columns.sortBy", {
+                              field: t("usageTable.columns.provider"),
                             })
                       }
                     >
@@ -223,11 +223,11 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                     </ActionIcon>
                   </Group>
                 </Table.Th>
-                <Table.Th>{t("columns.model")}</Table.Th>
-                <Table.Th>{t("columns.domain")}</Table.Th>
+                <Table.Th>{t("usageTable.columns.model")}</Table.Th>
+                <Table.Th>{t("usageTable.columns.domain")}</Table.Th>
                 <Table.Th>
                   <Group gap="xs">
-                    {t("columns.tokens")}
+                    {t("usageTable.columns.tokens")}
                     <ActionIcon
                       variant="subtle"
                       size="xs"
@@ -235,10 +235,10 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       aria-label={
                         sortField === "tokens"
                           ? sortDirection === "asc"
-                            ? t("columns.sortDesc")
-                            : t("columns.sortAsc")
-                          : t("columns.sortBy", {
-                              field: t("columns.tokens"),
+                            ? t("usageTable.columns.sortDesc")
+                            : t("usageTable.columns.sortAsc")
+                          : t("usageTable.columns.sortBy", {
+                              field: t("usageTable.columns.tokens"),
                             })
                       }
                     >
@@ -248,7 +248,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                 </Table.Th>
                 <Table.Th>
                   <Group gap="xs">
-                    {t("columns.cost")}
+                    {t("usageTable.columns.cost")}
                     <ActionIcon
                       variant="subtle"
                       size="xs"
@@ -256,9 +256,9 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       aria-label={
                         sortField === "cost"
                           ? sortDirection === "asc"
-                            ? t("columns.sortDesc")
-                            : t("columns.sortAsc")
-                          : t("columns.sortBy", { field: t("columns.cost") })
+                            ? t("usageTable.columns.sortDesc")
+                            : t("usageTable.columns.sortAsc")
+                          : t("usageTable.columns.sortBy", { field: t("usageTable.columns.cost") })
                       }
                     >
                       <SortIcon field="cost" />
@@ -267,7 +267,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                 </Table.Th>
                 <Table.Th>
                   <Group gap="xs">
-                    {t("columns.requests")}
+                    {t("usageTable.columns.requests")}
                     <ActionIcon
                       variant="subtle"
                       size="xs"
@@ -275,10 +275,10 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                       aria-label={
                         sortField === "requests"
                           ? sortDirection === "asc"
-                            ? t("columns.sortDesc")
-                            : t("columns.sortAsc")
-                          : t("columns.sortBy", {
-                              field: t("columns.requests"),
+                            ? t("usageTable.columns.sortDesc")
+                            : t("usageTable.columns.sortAsc")
+                          : t("usageTable.columns.sortBy", {
+                              field: t("usageTable.columns.requests"),
                             })
                       }
                     >
@@ -286,8 +286,8 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
                     </ActionIcon>
                   </Group>
                 </Table.Th>
-                <Table.Th>{t("columns.latency")}</Table.Th>
-                <Table.Th>{t("columns.status")}</Table.Th>
+                <Table.Th>{t("usageTable.columns.latency")}</Table.Th>
+                <Table.Th>{t("usageTable.columns.status")}</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -329,7 +329,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
         {filteredAndSortedData.length === 0 && (
           <Box py="xl" role="status">
             <Text c="dimmed" ta="center">
-              {t("noData")}
+              {t("usageTable.noData")}
             </Text>
           </Box>
         )}
@@ -338,7 +338,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
         {filteredAndSortedData.length > 0 && (
           <Group justify="space-between" pt="md" role="status">
             <Text size="sm" c="dimmed">
-              {t("showing", {
+              {t("usageTable.showing", {
                 from: 1,
                 to: filteredAndSortedData.length,
                 total: data.length,
@@ -346,7 +346,7 @@ export function UsageTable({ data = [], onRowClick, enableExport = true }: Usage
             </Text>
             <Group gap="xs">
               <Text size="sm" fw={600}>
-                {t("summary.totalCost")}:
+                {t("usageTable.summary.totalCost")}:
               </Text>
               <Text size="sm" fw={700} c="blue">
                 {formatCurrency(filteredAndSortedData.reduce((sum, r) => sum + r.cost, 0))}

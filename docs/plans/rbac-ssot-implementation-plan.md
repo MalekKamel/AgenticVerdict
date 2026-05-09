@@ -354,8 +354,8 @@ This plan implements a database-driven Role-Based Access Control (RBAC) system t
      description: z.string().optional(),
      isSystemRole: z.boolean(),
      isCustomRole: z.boolean(),
-     createdAt: z.string().datetime(),
-     updatedAt: z.string().datetime(),
+     createdAt: z.iso.datetime(),
+     updatedAt: z.iso.datetime(),
    });
 
    export const permissionSchema = z.object({
@@ -364,7 +364,7 @@ This plan implements a database-driven Role-Based Access Control (RBAC) system t
      resource: z.string().min(1).max(128),
      action: z.string().min(1).max(64),
      description: z.string().optional(),
-     createdAt: z.string().datetime(),
+     createdAt: z.iso.datetime(),
    });
 
    export const userRoleSchema = z.object({
@@ -372,8 +372,8 @@ This plan implements a database-driven Role-Based Access Control (RBAC) system t
      userId: z.string().uuid(),
      roleId: z.string().uuid(),
      grantedBy: z.string().uuid().optional(),
-     grantedAt: z.string().datetime(),
-     expiresAt: z.string().datetime().optional(),
+     grantedAt: z.iso.datetime(),
+     expiresAt: z.iso.datetime().optional(),
    });
    ```
 

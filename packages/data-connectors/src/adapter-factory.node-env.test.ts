@@ -1,13 +1,15 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("createConnectorAdapter with NODE_ENV=production (fresh module graph)", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
+  beforeEach(() => {
     vi.resetModules();
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("uses production adapters and ignores mock master flag", async () => {
-    vi.resetModules();
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("AGENTICVERDICT_MOCK_MODE", "all");
     const [{ createConnectorAdapter }, { MetaConnectorAdapter }] = await Promise.all([

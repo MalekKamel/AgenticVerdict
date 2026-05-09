@@ -6,11 +6,9 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import type { TextDirection } from "@agenticverdict/types";
 
-/**
- * Text direction type
- */
-export type TextDirection = "ltr" | "rtl";
+export type { TextDirection };
 
 /**
  * Locale to direction mapping

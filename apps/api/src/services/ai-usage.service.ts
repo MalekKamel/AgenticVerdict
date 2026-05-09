@@ -1,5 +1,5 @@
 import { AiUsageRepository } from "@agenticverdict/database";
-import { usageReportSchema } from "@agenticverdict/core/schemas/ai-provider";
+import { usageReportSchema } from "@agenticverdict/types";
 // calculateCost is available for future use
 import type { z } from "zod";
 

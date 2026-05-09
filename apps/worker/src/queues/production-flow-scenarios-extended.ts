@@ -32,7 +32,7 @@ import type {
   ReportGenerationJobData,
   WorkflowTriggerJobData,
   WorkflowTriggerJobResult,
-} from "./job-types";
+} from "@agenticverdict/types";
 import {
   enqueueScheduledReportGeneration,
   type ReportGenerationQueueAdd,
@@ -191,7 +191,7 @@ async function runR04(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
   });
   const wbAr = new ExcelJS.Workbook();
   await wbAr.xlsx.read(Readable.from(Buffer.from(bytesAr)));
-  const sheetAr = wbAr.getWorksheet("Report");
+  const sheetAr = wbAr.getWorksheet("التقرير");
   if (
     !sheetAr ||
     sheetAr.getCell("A1").text !== "المقياس" ||
@@ -236,7 +236,7 @@ async function runR05(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
     id: randomUUID(),
     tenantId,
     analysisId,
-    type: "trend",
+    type: "observation",
     title: "Cross-platform lift",
     description: "Meta and GA4 trends align with GSC visibility.",
     confidence: 0.82,
@@ -335,7 +335,7 @@ async function runR08(data: WorkflowTriggerJobData): Promise<WorkflowTriggerJobR
   );
   const hasLang = html.includes('lang="en"');
   const hasTitle = html.includes("Weekly performance");
-  const hasOverview = /Executive overview|executive/i.test(html);
+  const hasOverview = /Summary|summary/i.test(html);
   if (!hasLang || !hasTitle || !hasOverview) {
     throw new Error("production_flow_r08:template_landmarks_missing");
   }

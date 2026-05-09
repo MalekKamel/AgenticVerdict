@@ -767,7 +767,7 @@ describe("ConnectorAuthForm with tRPC mutations", () => {
       error: null,
     });
 
-    const { invalidate } = trpc.useContext();
+    const { invalidate } = trpc.useUtils();
     render(<ConnectorAuthForm connector="meta" onSuccess={() => invalidate()} />);
 
     await waitFor(() => {

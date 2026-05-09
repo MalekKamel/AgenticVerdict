@@ -1,118 +1,2049 @@
 {
-  "accessibility.skipToContent": "跳转到主要内容",
-  "auth.layout.mainContent": "身份验证表单",
-  "auth.login.title": "登录您的账户",
-  "auth.login.description": "欢迎回来！请输入您的信息。",
-  "auth.login.emailLabel": "电子邮件地址",
-  "auth.login.emailPlaceholder": "请输入电子邮件",
-  "auth.login.passwordLabel": "密码",
-  "auth.login.passwordPlaceholder": "请输入密码",
-  "auth.login.rememberMe": "记住我",
-  "auth.login.submitButton": "登录",
-  "auth.login.submittingButton": "正在登录...",
-  "auth.login.showPassword": "显示密码",
-  "auth.login.hidePassword": "隐藏密码",
-  "auth.login.forgotPassword": "忘记密码？",
-  "auth.login.noAccount": "没有账户？",
-  "auth.login.createAccount": "创建账户",
-  "auth.login.successTitle": "登录成功",
-  "auth.login.successMessage": "欢迎回来！正在跳转到控制台...",
-  "auth.login.errors.email.required": "请输入电子邮件",
-  "auth.login.errors.email.invalid": "请输入有效的电子邮件地址",
-  "auth.login.errors.password.required": "请输入密码",
-  "auth.login.errors.password.tooShort": "密码至少需要 8 个字符",
-  "auth.login.errors.invalidCredentials": "电子邮件或密码无效",
-  "auth.login.errors.networkError": "网络错误。请检查连接后重试。",
-  "auth.login.errors.unknownError": "发生错误。请重试。",
-  "auth.errors.invalidCredentials": "电子邮件或密码无效",
-  "auth.errors.forbidden": "禁止访问",
-  "auth.errors.notFound": "未找到资源",
-  "auth.errors.conflict": "发生冲突",
-  "auth.errors.badRequest": "请求无效",
-  "auth.errors.rateLimitExceeded": "尝试次数过多。请稍后再试。",
-  "auth.errors.emailNotVerified": "请验证您的电子邮件地址",
-  "auth.errors.weakPassword": "密码强度不足",
-  "auth.errors.tokenExpired": "链接已过期。请重试。",
-  "auth.errors.internalError": "发生错误。请重试。",
-  "auth.errors.networkError": "网络错误。请检查您的连接。",
-  "common.ok": "确定",
-  "common.cancel": "取消",
-  "navigation.insights": "洞察",
-  "navigation.reports": "报告",
-  "reports.title": "报告",
-  "reports.ready": "您的报告已就绪",
-  "reports.download": "下载",
-  "home.kpi.totalInsights": "总洞察数",
-  "home.kpi.activeConnectors": "活动连接器",
-  "home.kpi.reportsThisMonth": "本月报告",
-  "home.kpi.deltaUp": "↑",
-  "home.kpi.connectorsHealthy": "健康",
-  "home.kpi.deltaPercent": "% 变化",
-  "home.kpi.title": "关键指标",
-  "home.kpi.emptyTitle": "暂无指标",
-  "home.kpi.emptyDescription": "连接数据源以查看指标",
-  "home.insights.sampleTime": "最近更新",
-  "home.insights.emptyTitle": "暂无洞察",
-  "home.insights.emptyDescription": "分析数据后将显示洞察",
-  "home.insights.title": "最近洞察",
-  "dashboard.insights.body.default": "{period}指标和分析",
-  "dashboard.insights.relativeTime.updatedRecently": "最近更新",
-  "dashboard.insights.relativeTime.justNow": "刚刚",
-  "dashboard.insights.relativeTime.minutesAgo": "{minutes}分钟前",
-  "dashboard.insights.relativeTime.hoursAgo": "{hours}小时前",
-  "dashboard.insights.relativeTime.daysAgo": "{days}天前",
-  "dashboard.insights.ariaLabels.insightCard": "{domains}的{title}洞察",
-  "dashboard.insights.ariaLabels.default": "业务洞察",
-  "home.connectors.title": "数据源",
-  "home.connectors.emptyTitle": "无连接器",
-  "home.connectors.emptyDescription": "添加第一个数据连接器开始使用",
-  "home.connectors.ga4": "Google Analytics 4",
-  "home.connectors.meta": "Meta 广告",
-  "home.connectors.gsc": "Google Search Console",
-  "home.connectors.gbp": "Google Business Profile",
-  "home.connectors.tiktok": "TikTok 广告",
-  "home.quickActions.title": "快速操作",
-  "home.quickActions.domainSample": "查看营销仪表板",
-  "home.quickActions.createInsight": "创建洞察",
-  "home.quickActions.export": "导出数据",
-  "home.quickActions.customize": "自定义仪表板",
-  "home.quickActions.agency": "代理视图",
-  "home.title": "仪表板",
-  "home.subtitle": "欢迎回来，{email}",
-  "home.ariaMain": "仪表板主要内容",
-  "domain.marketing.primaryKpi": "营销表现",
-  "domain.finance.primaryKpi": "财务指标",
-  "domain.operations.primaryKpi": "运营概览",
-  "domain.seo.primaryKpi": "SEO 表现",
-  "domain.social.primaryKpi": "社交媒体指标",
-  "domain.local.primaryKpi": "本地业务指标",
-  "agency.kpi.clients": "客户总数",
-  "agency.kpi.insights": "洞察总数",
-  "agency.clientContext": "查看客户数据：{id}",
-  "connectorStatus.healthy": "健康",
-  "connectorStatus.degraded": "降级",
-  "connectorStatus.disconnected": "断开连接",
-  "domains.marketing": "营销",
-  "domains.finance": "财务",
-  "domains.operations": "运营",
-  "domains.seo": "SEO",
-  "domains.social": "社交",
-  "domains.local": "本地",
-  "toolbar.preset": "预设",
-  "toolbar.comparison": "比较",
-  "toolbar.refresh": "刷新",
-  "toolbar.freshness": "已更新{time}",
-  "toolbar.presets.last7": "最近 7 天",
-  "toolbar.presets.last30": "最近 30 天",
-  "toolbar.presets.thisMonth": "本月",
-  "toolbar.presets.lastMonth": "上月",
-  "async.loadingHome": "正在加载仪表板...",
-  "async.errorHome": "加载仪表板失败",
-  "async.readyHome": "仪表板已加载",
-  "async.loadingSection": "正在加载部分...",
-  "errors.sectionTitle": "无法加载数据",
-  "errors.generic": "出现错误",
-  "errors.tenantRequired": "需要租户上下文",
-  "actions.retry": "重试",
-  "errors.common.unknownError": "发生意外错误。请重试。"
+  "accessibility": {
+    "skipToContent": "跳到内容",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "openDialog": "打开对话框",
+    "closeDialog": "关闭对话框",
+    "toggleTheme": "切换主题",
+    "toggleLanguage": "切换语言",
+    "searchPlaceholder": "搜索...",
+    "clearSearch": "清除搜索",
+    "selectDate": "选择日期",
+    "selectOption": "选择选项"
+  },
+  "auth": {
+    "layout": {
+      "mainContent": "身份验证表单",
+      "footerNav": "其他登录选项",
+      "poweredBy": "由 AgenticVerdict 提供支持",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "前往 {brand} 首页",
+      "legalNavLabel": "法律和帮助",
+      "terms": "服务条款",
+      "privacy": "隐私政策",
+      "help": "帮助",
+      "backToSignIn": "返回登录",
+      "forgotPasswordShort": "忘记密码？"
+    },
+    "login": {
+      "title": "登录",
+      "description": "欢迎回来！请登录您的账户。",
+      "emailLabel": "电子邮件地址",
+      "emailPlaceholder": "请输入电子邮件",
+      "passwordLabel": "密码",
+      "passwordPlaceholder": "请输入密码",
+      "rememberMe": "记住我",
+      "submitButton": "登录",
+      "submittingButton": "正在登录...",
+      "showPassword": "显示密码",
+      "hidePassword": "隐藏密码",
+      "forgotPassword": "忘记密码？",
+      "noAccount": "没有账户？",
+      "createAccount": "创建账户",
+      "successTitle": "登录成功",
+      "successMessage": "欢迎回来！正在跳转到仪表板...",
+      "errors": {
+        "email": {
+          "required": "请输入邮箱地址",
+          "invalid": "请输入有效的邮箱地址"
+        },
+        "password": {
+          "required": "请输入密码",
+          "tooShort": "密码至少需要8个字符"
+        },
+        "invalidCredentials": "邮箱或密码错误",
+        "networkError": "网络错误。请检查连接后重试。",
+        "unknownError": "发生错误。请重试。",
+        "accountLocked": "由于多次尝试失败，账户已被锁定",
+        "emailNotVerified": "请在登录前验证您的邮箱地址"
+      },
+      "session": {
+        "expiredTitle": "会话已过期",
+        "expiredMessage": "请重新登录以继续。"
+      },
+      "oauth": {
+        "or": "或使用以下方式继续",
+        "continueWith": "使用 {provider} 继续",
+        "redirecting": "正在跳转到单点登录提供商...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "我们无法自动启动单点登录。请使用以下选项之一。",
+        "unavailable": "单点登录暂时不可用。请使用邮箱和密码登录。"
+      },
+      "rateLimit": {
+        "title": "尝试次数过多",
+        "message": "登录尝试次数过多。请稍后重试。",
+        "retryAfter": "登录尝试次数过多。请在 {seconds} 秒后重试。"
+      },
+      "lockout": {
+        "title": "账户暂时锁定",
+        "message": "由于多次登录尝试失败，您的账户已被暂时锁定。"
+      },
+      "fields": {
+        "email": "邮箱",
+        "password": "密码",
+        "emailPlaceholder": "输入您的邮箱",
+        "passwordPlaceholder": "输入您的密码",
+        "rememberMe": "记住我"
+      },
+      "buttons": {
+        "submit": "登录",
+        "submitting": "正在登录...",
+        "forgotPassword": "忘记密码？",
+        "noAccount": "没有账户？",
+        "register": "注册",
+        "createAccount": "创建账户"
+      },
+      "success": "登录成功"
+    },
+    "errors": {
+      "invalidCredentials": "邮箱或密码错误。请重试。",
+      "forbidden": "您没有权限执行此操作。",
+      "notFound": "未找到请求的资源。",
+      "conflict": "由于冲突，无法完成此请求。",
+      "badRequest": "请求无法处理。请检查您的输入后重试。",
+      "rateLimitExceeded": "请求过多。请等待后重试。",
+      "emailNotVerified": "请在继续前验证您的邮箱地址。",
+      "weakPassword": "请选择符合要求的更强密码。",
+      "tokenExpired": "此链接或会话已过期。请重新开始。",
+      "internalError": "我们这边出了点问题。请稍后重试。",
+      "networkError": "我们无法连接到服务器。请检查您的连接后重试。",
+      "accountLocked": "由于多次尝试失败，您的账户已被锁定。",
+      "tooManyAttempts": "尝试次数过多。请稍后重试。",
+      "tenantContextRequired": "缺少组织上下文。请刷新页面或重新打开邀请链接。",
+      "tenantMismatch": "此请求中的组织不匹配。请刷新或使用正确的工作区链接。"
+    },
+    "register": {
+      "title": "创建账户",
+      "description": "加入 AgenticVerdict 开始获取业务洞察。",
+      "fields": {
+        "email": {
+          "label": "邮箱",
+          "placeholder": "输入您的邮箱"
+        },
+        "password": {
+          "label": "密码",
+          "placeholder": "创建强密码"
+        },
+        "confirmPassword": {
+          "label": "确认密码",
+          "placeholder": "确认您的密码"
+        },
+        "firstName": {
+          "label": "名字",
+          "placeholder": "输入您的名字"
+        },
+        "lastName": {
+          "label": "姓氏",
+          "placeholder": "输入您的姓氏"
+        },
+        "acceptTerms": {
+          "label": "我同意服务条款和隐私政策",
+          "description": "创建账户即表示您同意我们的",
+          "termsLink": "服务条款",
+          "and": "和",
+          "privacyLink": "隐私政策"
+        }
+      },
+      "buttons": {
+        "submit": "创建账户",
+        "createAccount": "创建账户",
+        "creatingAccount": "正在创建账户...",
+        "hasAccount": "已有账户？",
+        "signIn": "登录",
+        "next": "下一步",
+        "back": "返回"
+      },
+      "errors": {
+        "apiError": "注册失败",
+        "passwordsDoNotMatch": "密码不匹配",
+        "passwordsMatch": "密码匹配",
+        "acceptTerms": {
+          "required": "您必须同意条款才能继续"
+        },
+        "email": {
+          "required": "请输入邮箱地址",
+          "invalid": "请输入有效的邮箱地址",
+          "alreadyExists": "该邮箱已存在账户"
+        },
+        "password": {
+          "required": "请输入密码",
+          "tooShort": "密码至少需要8个字符",
+          "noUppercase": "密码必须包含至少一个大写字母",
+          "noLowercase": "密码必须包含至少一个小写字母",
+          "noNumber": "密码必须包含至少一个数字",
+          "noSpecial": "密码必须包含至少一个特殊字符"
+        },
+        "confirmPassword": {
+          "required": "请确认您的密码",
+          "mismatch": "密码不匹配"
+        },
+        "firstName": {
+          "required": "请输入名字",
+          "tooShort": "名字至少需要2个字符",
+          "tooLong": "名字不能超过50个字符"
+        },
+        "lastName": {
+          "required": "请输入姓氏",
+          "tooShort": "姓氏至少需要2个字符",
+          "tooLong": "姓氏不能超过50个字符"
+        }
+      },
+      "success": "账户创建成功。请检查您的邮箱以验证账户。",
+      "steps": {
+        "progress": "第 {current} 步，共 {total} 步",
+        "accountType": {
+          "title": "选择账户类型",
+          "label": "账户类型",
+          "options": {
+            "business": "企业账户",
+            "individual": "个人账户"
+          },
+          "errors": {
+            "required": "请选择账户类型"
+          }
+        },
+        "tenant": {
+          "title": "租户信息",
+          "fields": {
+            "tenantName": {
+              "label": "租户名称"
+            },
+            "tenantSize": {
+              "label": "租户规模",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "租户网站（可选）"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "请输入租户名称",
+            "tenantNameTooLong": "租户名称过长",
+            "tenantSizeRequired": "请选择租户规模",
+            "tenantWebsiteInvalid": "请输入有效的网站地址"
+          }
+        },
+        "confirmation": {
+          "title": "注册完成",
+          "description": "您的账户已创建。请验证邮箱以继续。",
+          "checkEmail": "我们已向 {email} 发送了6位验证码。",
+          "cta": "验证邮箱"
+        }
+      }
+    },
+    "forgotPassword": {
+      "title": "忘记密码",
+      "description": "输入您的邮箱地址，我们将向您发送重置密码的链接。",
+      "alerts": {
+        "successTitle": "请检查您的邮箱"
+      },
+      "fields": {
+        "email": "邮箱"
+      },
+      "buttons": {
+        "submit": "发送重置链接",
+        "submitting": "发送中...",
+        "retryCountdown": "{seconds}秒后重试",
+        "backToLogin": "返回登录"
+      },
+      "states": {
+        "rateLimited": "重置请求过多。请在 {seconds} 秒后重试。"
+      },
+      "errors": {
+        "email": {
+          "required": "请输入邮箱地址",
+          "invalid": "请输入有效的邮箱地址"
+        },
+        "notFound": "未找到该邮箱对应的账户",
+        "tooManyRequests": "重置请求过多。请稍后重试。"
+      },
+      "success": "密码重置链接已发送到您的邮箱。该链接将在1小时后过期。"
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "description": "在下方输入您的新密码。",
+      "fields": {
+        "password": "新密码",
+        "confirmPassword": "确认新密码"
+      },
+      "buttons": {
+        "submit": "重置密码",
+        "backToLogin": "返回登录",
+        "resetting": "重置中...",
+        "requestNew": "请求新链接"
+      },
+      "states": {
+        "rateLimited": "重置尝试过多。请在 {seconds} 秒后请求新链接。"
+      },
+      "errors": {
+        "password": {
+          "required": "请输入密码",
+          "tooShort": "密码至少需要8个字符",
+          "noUppercase": "密码必须包含至少一个大写字母",
+          "noLowercase": "密码必须包含至少一个小写字母",
+          "noNumber": "密码必须包含至少一个数字",
+          "noSpecial": "密码必须包含至少一个特殊字符"
+        },
+        "confirmPassword": {
+          "required": "请确认您的密码",
+          "mismatch": "密码不匹配"
+        },
+        "invalidToken": "重置链接无效或已过期。请请求新链接。",
+        "tooManyAttempts": "尝试次数过多。请请求新的重置链接。"
+      },
+      "success": "密码重置成功。您现在可以使用新密码登录。"
+    },
+    "verifyEmail": {
+      "title": "验证邮箱",
+      "description": "我们已向您的邮箱发送了验证码。请在下方输入。",
+      "fields": {
+        "code": "验证码"
+      },
+      "buttons": {
+        "submit": "验证",
+        "resend": "重新发送",
+        "resendCountdown": "重新发送 ({seconds}秒)",
+        "signIn": "登录",
+        "backToRegister": "返回注册"
+      },
+      "errors": {
+        "noToken": "未找到验证令牌",
+        "code": {
+          "required": "请输入验证码",
+          "invalidLength": "验证码必须为6位数字",
+          "invalidFormat": "验证码只能包含数字"
+        },
+        "invalidCode": "验证码无效",
+        "expiredCode": "验证码已过期。请请求新的验证码。",
+        "tooManyAttempts": "尝试失败次数过多。请请求新的验证码。"
+      },
+      "success": "邮箱验证成功。",
+      "resendSuccess": "新的验证码已发送到您的邮箱。",
+      "status": {
+        "verifying": "正在验证您的邮箱...",
+        "success": "邮箱验证成功",
+        "successMessage": "您的邮箱已验证。您现在可以登录账户。",
+        "error": "验证失败",
+        "expired": "链接已过期",
+        "expiredMessage": "此验证链接已过期。请请求新的链接。",
+        "invalid": "链接无效",
+        "invalidMessage": "此验证链接无效。请尝试重新注册。",
+        "resendSuccess": "新的验证邮件已发送。请检查您的收件箱。",
+        "attemptsRemaining": "剩余尝试次数：{count}",
+        "retryAfter": "请等待 {seconds} 秒后再试。"
+      }
+    },
+    "password": {
+      "showPassword": "显示密码",
+      "hidePassword": "隐藏密码",
+      "requirements": {
+        "minLength": "至少8个字符",
+        "uppercase": "包含大写字母",
+        "lowercase": "包含小写字母",
+        "number": "包含数字",
+        "special": "包含特殊字符",
+        "ariaLabel": "密码要求"
+      },
+      "strength": {
+        "label": "密码强度",
+        "ariaLabel": "密码强度指示器",
+        "veryWeak": "非常弱",
+        "weak": "弱",
+        "fair": "一般",
+        "good": "良好",
+        "strong": "强"
+      },
+      "errors": {
+        "tooShort": "密码至少需要8个字符",
+        "tooLong": "密码不能超过128个字符",
+        "noUppercase": "密码必须包含至少一个大写字母",
+        "noLowercase": "密码必须包含至少一个小写字母",
+        "noNumber": "密码必须包含至少一个数字",
+        "noSpecial": "密码必须包含至少一个特殊字符",
+        "commonPattern": "请选择更安全的密码"
+      }
+    },
+    "seo": {
+      "login": {
+        "title": "登录 | {brand}",
+        "description": "登录您的 {brand} 账户以访问工作区、数据源和洞察。"
+      },
+      "register": {
+        "title": "创建账户 | {brand}",
+        "description": "创建 {brand} 账户以连接数据源并探索业务洞察。"
+      },
+      "forgotPassword": {
+        "title": "忘记密码 | {brand}",
+        "description": "请求安全链接以重置您的 {brand} 账户密码。"
+      },
+      "resetPassword": {
+        "title": "重置密码 | {brand}",
+        "description": "设置新密码以重新访问您的 {brand} 账户。"
+      },
+      "verifyEmail": {
+        "title": "验证邮箱 | {brand}",
+        "description": "确认您的邮箱地址以完成 {brand} 账户设置。"
+      },
+      "terms": {
+        "title": "服务条款 | {brand}",
+        "description": "使用 {brand} 平台及相关服务的服务条款。"
+      },
+      "privacy": {
+        "title": "隐私政策 | {brand}",
+        "description": "{brand} 如何收集、使用和保护个人及业务相关数据。"
+      },
+      "help": {
+        "title": "帮助与支持 | {brand}",
+        "description": "获取登录、邮箱验证或联系 {brand} 支持的帮助。"
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "服务条款",
+        "lastUpdated": "最后更新：2026年4月。此页面为占位符；请在生产发布前替换为法律审核的条款。",
+        "section1Title": "协议",
+        "section1Body": "访问或使用 {brand} 服务即表示您同意遵守这些条款及所有适用法律。如果您不同意，请勿使用本服务。",
+        "section2Title": "账户与安全",
+        "section2Body": "您有责任保护您的凭据以及您账户下的活动。如果您怀疑存在未经授权的访问，请立即通知支持团队。",
+        "section3Title": "变更",
+        "section3Body": "我们可能会不时更新这些条款。重大变更将通过产品或电子邮件（如适用）进行通知。",
+        "footerNote": "对这些条款有疑问？",
+        "backToSignIn": "返回登录"
+      },
+      "privacy": {
+        "title": "隐私政策",
+        "lastUpdated": "最后更新：2026年4月。此页面为占位符；请在生产发布前替换为法律审核的隐私披露。",
+        "section1Title": "我们处理的信息",
+        "section1Body": "我们处理您提供的信息（如账户和业务数据）以运营、保护和改进平台。类别和用途将在您的最终政策中详细说明。",
+        "section2Title": "保留与安全",
+        "section2Body": "我们采用旨在保护个人数据的管理、技术和组织措施。保留期限遵循您的配置、法律义务和运营需求。",
+        "section3Title": "您的选择",
+        "section3Body": "根据您所在的地区，您可能有权访问、更正、删除或导出个人数据。请联系支持团队以行使适用权利。",
+        "footerNote": "对隐私有疑问？",
+        "backToSignIn": "返回登录"
+      }
+    },
+    "help": {
+      "title": "帮助与支持",
+      "description": "需要登录、验证邮箱或重置密码的帮助？请使用以下选项或联系我们的团队。",
+      "supportIntro": "邮箱：",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "支持服务时间和响应目标取决于您的订阅和地区。",
+      "backToSignIn": "返回登录"
+    }
+  },
+  "common": {
+    "ok": "确定",
+    "cancel": "取消",
+    "appName": "AgenticVerdict",
+    "welcome": "欢迎",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一页",
+    "submit": "提交",
+    "confirm": "确认",
+    "yes": "是",
+    "no": "否",
+    "retry": "重试",
+    "contactSupport": "联系支持",
+    "required": "必填",
+    "optional": "可选",
+    "clear": "清除"
+  },
+  "navigation": {
+    "insights": "洞察",
+    "reports": "报告",
+    "dashboard": "仪表板",
+    "onboarding": "入门引导",
+    "featureFlags": "功能标志",
+    "connectors": "连接器",
+    "agency": "代理",
+    "settings": "设置",
+    "home": "首页",
+    "about": "关于",
+    "contact": "联系"
+  },
+  "reports": {
+    "title": "报告",
+    "ready": "您的报告已就绪",
+    "download": "下载",
+    "list": {
+      "pageTitle": "报告",
+      "pageSubtitle": "查看和管理您的报告",
+      "newReport": "新建报告",
+      "searchPlaceholder": "搜索报告...",
+      "filterByStatus": "按状态筛选",
+      "filterByFormat": "按格式筛选",
+      "filterByDate": "日期范围",
+      "previous": "上一页",
+      "next": "下一页",
+      "page": "页",
+      "actions": {
+        "view": "查看",
+        "download": "下载",
+        "share": "分享",
+        "delete": "删除",
+        "deleteConfirm": "确定要删除此报告吗？"
+      },
+      "emptyState": {
+        "title": "暂无报告",
+        "createFirst": "生成您的第一个报告",
+        "clearFilters": "清除筛选"
+      },
+      "bulkActions": {
+        "download": "下载已选",
+        "delete": "删除已选",
+        "deleteConfirm": "确定要删除 {count} 个报告吗？"
+      },
+      "bulk": {
+        "delete": "删除已选",
+        "download": "下载已选",
+        "selected": "已选 {count} 项"
+      },
+      "columns": {
+        "actions": "操作",
+        "date": "日期",
+        "format": "格式",
+        "name": "名称",
+        "status": "状态"
+      },
+      "dateFrom": "起始日期",
+      "dateTo": "结束日期",
+      "deleteConfirm": {
+        "cancel": "取消",
+        "delete": "删除",
+        "multiple": "确定要删除 {count} 个报告吗？",
+        "single": "确定要删除此报告吗？",
+        "title": "删除报告"
+      },
+      "errorLoading": "加载报告失败",
+      "format": {
+        "all": "所有格式"
+      },
+      "status": {
+        "all": "全部",
+        "failed": "失败",
+        "generating": "生成中",
+        "ready": "就绪"
+      }
+    },
+    "status": {
+      "all": "全部",
+      "ready": "就绪",
+      "generating": "生成中",
+      "failed": "失败"
+    },
+    "formats": {
+      "all": "所有格式",
+      "pdf": "PDF",
+      "excel": "Excel"
+    },
+    "viewer": {
+      "loading": "加载报告中...",
+      "error": "加载报告失败",
+      "zoom": "缩放",
+      "page": "页",
+      "of": "共"
+    },
+    "notifications": {
+      "created": {
+        "title": "洞察已创建",
+        "message": "您的洞察已成功创建"
+      },
+      "updated": {
+        "title": "洞察已更新",
+        "message": "您的洞察已成功更新"
+      },
+      "deleted": {
+        "title": "洞察已删除",
+        "message": "您的洞察已成功删除"
+      },
+      "running": {
+        "title": "洞察运行中",
+        "message": "您的洞察正在生成报告"
+      },
+      "failed": {
+        "createTitle": "创建洞察失败",
+        "updateTitle": "更新洞察失败",
+        "deleteTitle": "删除洞察失败",
+        "runTitle": "运行洞察失败"
+      }
+    }
+  },
+  "dashboard": {
+    "insights": {
+      "body": {
+        "default": "{period} 指标和分析"
+      },
+      "relativeTime": {
+        "updatedRecently": "最近更新",
+        "justNow": "刚刚",
+        "minutesAgo": "{minutes} 分钟前",
+        "hoursAgo": "{hours} 小时前",
+        "daysAgo": "{days} 天前"
+      },
+      "ariaLabels": {
+        "insightCard": "{domains} 的 {title} 洞察",
+        "default": "业务洞察"
+      }
+    },
+    "actions": {
+      "retry": "重试此部分"
+    },
+    "async": {
+      "loadingHome": "加载仪表板部分",
+      "readyHome": "仪表板数据已就绪",
+      "errorHome": "部分仪表板部分加载失败",
+      "loadingSection": "加载中…"
+    },
+    "toolbar": {
+      "preset": "日期范围",
+      "comparison": "与上一周期比较",
+      "refresh": "刷新数据",
+      "freshness": "最后更新于 {time}",
+      "presets": {
+        "last7": "最近 7 天",
+        "last30": "最近 30 天",
+        "thisMonth": "本月",
+        "lastMonth": "上月"
+      }
+    },
+    "errors": {
+      "generic": "加载此仪表板时出现问题。",
+      "sectionTitle": "此部分无法加载",
+      "tenantRequired": "加载仪表板数据前需要租户上下文。",
+      "tenantMismatch": "您的会话与请求的租户范围不匹配。",
+      "network": "我们无法连接到服务器。请检查您的连接后重试。",
+      "validation": "仪表板响应与预期协议不匹配。",
+      "invalidDomain": "该仪表板领域不可用。"
+    },
+    "domains": {
+      "marketing": "营销",
+      "finance": "财务",
+      "operations": "运营",
+      "seo": "SEO",
+      "social": "社交",
+      "local": "本地"
+    },
+    "connectorStatus": {
+      "healthy": "健康",
+      "degraded": "需关注",
+      "disconnected": "已断开"
+    },
+    "home": {
+      "title": "仪表板",
+      "subtitle": "已登录为 {email}",
+      "ariaMain": "首页仪表板",
+      "kpi": {
+        "title": "关键指标",
+        "emptyTitle": "暂无 KPI",
+        "emptyDescription": "连接数据源以填充指标。",
+        "totalInsights": "总洞察数",
+        "activeConnectors": "活跃连接器",
+        "reportsThisMonth": "本月报告",
+        "deltaUp": "较上周 +2",
+        "connectorsHealthy": "所有连接器正常",
+        "deltaPercent": "较上期 +12%"
+      },
+      "insights": {
+        "title": "最近洞察",
+        "emptyTitle": "暂无洞察",
+        "emptyDescription": "创建洞察以在此处查看摘要。",
+        "sampleTitle": "营销表现快照",
+        "sampleBody": "ROAS 改善，支出效率稳定。",
+        "sampleTime": "约2小时前更新",
+        "body": {
+          "default": "{period} 指标和分析"
+        },
+        "relativeTime": {
+          "updatedRecently": "最近更新",
+          "justNow": "刚刚",
+          "minutesAgo": "{minutes} 分钟前",
+          "hoursAgo": "{hours} 小时前",
+          "daysAgo": "{days} 天前"
+        },
+        "ariaLabels": {
+          "insightCard": "{domains} 的 {title} 洞察",
+          "default": "业务洞察"
+        }
+      },
+      "connectors": {
+        "title": "连接器健康状态",
+        "emptyTitle": "暂无连接器",
+        "emptyDescription": "添加连接器以监控数据摄入健康状态。",
+        "ga4": "GA4",
+        "meta": "Meta 广告",
+        "gsc": "Google Search Console"
+      },
+      "quickActions": {
+        "title": "快速操作",
+        "domainSample": "打开营销仪表板",
+        "createInsight": "创建洞察",
+        "export": "导出报告",
+        "customize": "自定义布局",
+        "agency": "代理概览"
+      }
+    },
+    "domain": {
+      "title": "{domain} 仪表板",
+      "subtitle": "共享筛选器与您的首页仪表板保持同步。",
+      "primaryKpi": "主要领域信号",
+      "ariaMain": "领域仪表板"
+    },
+    "agency": {
+      "title": "代理概览",
+      "subtitle": "聚合指标仅使用允许的客户租户。",
+      "clientContext": "客户上下文：{id}",
+      "ariaMain": "代理仪表板",
+      "clientList": "客户",
+      "viewTenant": "打开客户仪表板",
+      "blocked": "此客户不在您的允许范围内。",
+      "kpi": {
+        "clients": "活跃客户",
+        "insights": "洞察（允许的客户）"
+      }
+    },
+    "widgets": {
+      "kpi_grid": "KPI 概览",
+      "insights": "洞察摘要",
+      "connectors": "连接器健康状态",
+      "quick_actions": "快速操作"
+    },
+    "customize": {
+      "title": "自定义仪表板",
+      "subtitle": "重新排列小部件，然后保存或重置。在此预览中，编辑需要管理员权限。",
+      "ariaMain": "仪表板自定义",
+      "editMode": "编辑布局",
+      "viewMode": "查看布局",
+      "save": "保存布局",
+      "reset": "恢复默认",
+      "palette": "可用小部件",
+      "hint": "小屏幕上未启用拖动手柄；请在桌面端使用添加/删除。",
+      "noPermission": "您没有编辑此布局的权限。"
+    }
+  },
+  "toolbar": {
+    "preset": "预设",
+    "comparison": "比较",
+    "refresh": "刷新",
+    "freshness": "已更新{time}",
+    "presets": {
+      "last7": "最近 7 天",
+      "last30": "最近 30 天",
+      "thisMonth": "本月",
+      "lastMonth": "上月"
+    }
+  },
+  "async": {
+    "loadingHome": "正在加载仪表板...",
+    "errorHome": "加载仪表板失败",
+    "readyHome": "仪表板已加载",
+    "loadingSection": "正在加载部分..."
+  },
+  "errors": {
+    "sectionTitle": "无法加载数据",
+    "generic": "出现错误",
+    "tenantRequired": "需要租户上下文",
+    "common": {
+      "unknownError": "发生意外错误。请重试。",
+      "tryAgain": "请重试。",
+      "contactSupport": "如果问题仍然存在，请联系支持。"
+    },
+    "notFound": "页面未找到",
+    "serverError": "服务器错误",
+    "networkError": "网络连接错误",
+    "unauthorized": "您无权访问此页面",
+    "forbidden": "访问被禁止",
+    "somethingWentWrong": "出现问题",
+    "tryAgain": "重试",
+    "network": {
+      "offline": "您似乎处于离线状态。请检查您的网络连接后重试。",
+      "timeout": "请求超时。请检查您的连接后重试。",
+      "connectionFailed": "连接失败。请检查您的网络连接。",
+      "serverUnreachable": "服务器无法访问。请稍后重试。"
+    },
+    "auth": {
+      "invalidCredentials": "邮箱或密码错误。请重试。",
+      "sessionExpired": "您的会话已过期。请重新登录。",
+      "tokenInvalid": "令牌无效。请重新登录。",
+      "tokenExpired": "您的令牌已过期。请重新登录。",
+      "unauthorized": "您无权执行此操作。",
+      "forbidden": "访问被禁止。您没有权限访问此资源。",
+      "emailNotVerified": "请在继续前验证您的邮箱地址。",
+      "accountLocked": "由于多次尝试失败，您的账户已被锁定。请联系支持。",
+      "tooManyAttempts": "尝试失败次数过多。请稍后重试。"
+    },
+    "server": {
+      "internalError": "发生内部服务器错误。请稍后重试。",
+      "badGateway": "无法连接到服务。请稍后重试。",
+      "serviceUnavailable": "服务暂时不可用。请稍后重试。",
+      "gatewayTimeout": "请求超时。请稍后重试。",
+      "notImplemented": "此功能尚未实现。"
+    },
+    "rateLimit": {
+      "exceeded": "您已超过速率限制。请在 {retryAfter} 秒后重试。",
+      "tooManyRequests": "请求过多。请放慢速度后重试。"
+    }
+  },
+  "actions": {
+    "retry": "重试",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "download": "下载",
+    "upload": "上传",
+    "export": "导出",
+    "import": "导入",
+    "refresh": "刷新",
+    "apply": "应用",
+    "reset": "重置",
+    "clear": "清除"
+  },
+  "insights": {
+    "title": "洞察",
+    "list": {
+      "title": "业务洞察",
+      "newInsight": "新建洞察",
+      "searchPlaceholder": "搜索洞察...",
+      "filter": {
+        "status": "状态",
+        "domain": "领域"
+      },
+      "status": {
+        "enabled": "已启用",
+        "disabled": "已禁用",
+        "running": "运行中",
+        "failed": "失败"
+      },
+      "empty": {
+        "title": "暂无洞察",
+        "description": "创建您的第一个洞察以开始",
+        "createButton": "创建洞察"
+      },
+      "actions": {
+        "view": "查看",
+        "edit": "编辑",
+        "runNow": "立即运行",
+        "delete": "删除",
+        "deleteConfirm": "确定要删除此洞察吗？",
+        "viewDetails": "查看详情"
+      },
+      "pageTitle": "洞察",
+      "pageSubtitle": "管理您的 AI 驱动洞察",
+      "filterByStatus": "按状态筛选",
+      "filterByDomain": "按领域筛选",
+      "sortBy": "排序方式",
+      "sort": {
+        "nameAsc": "名称 (A-Z)",
+        "nameDesc": "名称 (Z-A)",
+        "createdAtAsc": "创建时间（最早）",
+        "createdAtDesc": "创建时间（最新）",
+        "lastRunAtAsc": "最后运行（最早）",
+        "lastRunAtDesc": "最后运行（最近）",
+        "statusAsc": "状态（活跃优先）",
+        "statusDesc": "状态（非活跃优先）"
+      },
+      "connectors": "个连接器",
+      "created": "创建时间",
+      "lastRun": "最后运行",
+      "previous": "上一页",
+      "next": "下一页",
+      "page": "页",
+      "emptyState": {
+        "title": "暂无洞察",
+        "createFirst": "创建您的第一个洞察"
+      },
+      "errorTitle": "加载洞察出错",
+      "errorMessage": "加载洞察失败。请重试。",
+      "lastRunStatus": {
+        "running": "运行中",
+        "completed": "已完成",
+        "failed": "失败"
+      },
+      "neverRun": "从未运行"
+    },
+    "wizard": {
+      "title": "创建洞察",
+      "editTitle": "编辑洞察",
+      "step1": "基本信息",
+      "step2": "连接器",
+      "step3": "指标",
+      "step4": "AI 设置",
+      "step5": "计划",
+      "step6": "审查",
+      "next": "下一步",
+      "back": "返回",
+      "create": "创建洞察",
+      "save": "保存更改",
+      "cancel": "取消",
+      "cancelConfirm": "确定要取消吗？您的进度将丢失。",
+      "success": "洞察创建成功",
+      "updateSuccess": "洞察更新成功",
+      "steps": {
+        "basicInfo": {
+          "title": "基本信息",
+          "nameLabel": "洞察名称",
+          "namePlaceholder": "例如：营销表现概览",
+          "domainLabel": "领域",
+          "descriptionLabel": "描述",
+          "descriptionPlaceholder": "此洞察应分析什么？"
+        },
+        "connectors": {
+          "title": "选择连接器",
+          "description": "选择要包含的数据源",
+          "manage": "管理连接器"
+        },
+        "metrics": {
+          "title": "配置指标",
+          "description": "选择要分析的指标"
+        },
+        "ai": {
+          "title": "AI 设置",
+          "modelLabel": "AI 模型",
+          "qualityLabel": "分析质量",
+          "qualityFast": "快速",
+          "qualityBalanced": "均衡",
+          "qualityDetailed": "详细",
+          "qualityComprehensive": "全面",
+          "qualityDescription": "更高质量提供更详细分析，但生成时间更长",
+          "detailLevelLabel": "详细程度",
+          "detailLevelPlaceholder": "选择详细程度",
+          "detailExecutive": "执行摘要",
+          "detailStandard": "标准分析",
+          "detailComprehensive": "全面报告",
+          "customPromptLabel": "自定义提示（可选）",
+          "customPromptPlaceholder": "为 AI 分析师添加具体说明...",
+          "customPromptDescription": "引导 AI 专注于数据的特定方面",
+          "modelDescription": "推荐使用 Claude 3.5 Sonnet 获得最佳结果",
+          "modelPlaceholder": "选择模型"
+        },
+        "schedule": {
+          "title": "计划与交付",
+          "frequencyLabel": "频率",
+          "frequencyPlaceholder": "选择频率",
+          "freqDaily": "每日",
+          "freqWeekly": "每周",
+          "freqMonthly": "每月",
+          "freqQuarterly": "每季度",
+          "timeLabel": "交付时间",
+          "timePlaceholder": "例如：9 表示上午 9 点",
+          "timeValidation": "小时必须在 0 到 23 之间",
+          "formatLabel": "报告格式",
+          "formatPlaceholder": "选择格式",
+          "formatPdf": "PDF",
+          "formatExcel": "Excel",
+          "formatBoth": "PDF 和 Excel",
+          "recipientsLabel": "收件人"
+        },
+        "review": {
+          "title": "审查并创建",
+          "description": "创建前审查您的配置"
+        }
+      }
+    },
+    "detail": {
+      "overview": {
+        "0": "概",
+        "1": "览",
+        "aiInsightsTitle": "AI 洞察",
+        "aiModel": "AI 模型",
+        "configTitle": "配置概览",
+        "connectedDomains": "已连接的领域",
+        "connectors": "连接器",
+        "connectorsLabel": "个连接器",
+        "defaultModel": "默认模型",
+        "description": "描述",
+        "download": "下载",
+        "generateAIInsights": "生成 AI 洞察",
+        "keyFindings": "主要发现",
+        "metrics": "指标",
+        "metricsLabel": "个指标",
+        "noAIInsightsYet": "暂无 AI 洞察。生成洞察以开始。",
+        "noDescription": "未提供描述",
+        "noReportsYet": "尚未生成报告",
+        "performanceSummary": "性能摘要",
+        "recommendations": "建议",
+        "regenerateAIInsights": "重新生成 AI 洞察",
+        "reportsError": "加载相关报告失败",
+        "view": "查看"
+      },
+      "reports": "报告",
+      "settings": "设置",
+      "history": "历史",
+      "reportsTab": {
+        "comingSoon": "报告标签即将推出"
+      },
+      "settingsTab": {
+        "comingSoon": "设置标签即将推出"
+      },
+      "historyTab": {
+        "comingSoon": "历史标签即将推出"
+      },
+      "runNow": "立即运行",
+      "running": "运行中...",
+      "retry": "重试",
+      "tabs": {
+        "overview": "概览",
+        "reports": "报告",
+        "settings": "设置",
+        "history": "历史"
+      },
+      "created": "创建时间",
+      "deleteConfirm": "确定要删除此洞察吗？",
+      "edit": "编辑",
+      "errorLoading": "加载洞察详情失败。请重试。",
+      "loading": "加载洞察中..."
+    },
+    "errors": {
+      "insightNotFound": "未找到洞察",
+      "createFailed": "创建洞察失败",
+      "updateFailed": "更新洞察失败",
+      "deleteFailed": "删除洞察失败",
+      "runFailed": "运行洞察失败",
+      "invalidConfig": "洞察配置无效",
+      "connectorRequired": "至少需要一个连接器",
+      "metricsRequired": "每个连接器至少需要一个指标",
+      "permissionDenied": "您没有执行此操作的权限",
+      "tenantMismatch": "检测到租户不匹配",
+      "validationFailed": "验证失败",
+      "aiGenerationFailed": "生成 AI 洞察失败",
+      "reportNotFound": "未找到报告",
+      "reportDownloadFailed": "下载报告失败",
+      "reportShareFailed": "分享报告失败",
+      "rateLimited": "请求过于频繁，请稍后重试",
+      "connectorNotFound": "未找到连接器",
+      "connectorUnhealthy": "连接器状态不健康",
+      "duplicateName": "已存在同名资源",
+      "insightDisabled": "无法运行已禁用的洞察，请先启用",
+      "modelNotSupported": "所选提供商不支持该模型",
+      "providerNotAvailable": "提供商不可用",
+      "unknown": "发生意外错误"
+    },
+    "status": {
+      "all": "全部",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "running": "运行中",
+      "failed": "失败"
+    },
+    "create": {
+      "title": "创建洞察",
+      "next": "下一步",
+      "back": "返回",
+      "cancel": "取消",
+      "cancelConfirm": "放弃进度并返回洞察？",
+      "pageTitle": "创建洞察",
+      "pageSubtitle": "从已连接的数据源构建 AI 驱动洞察"
+    },
+    "actions": {
+      "refresh": "刷新"
+    },
+    "edit": {
+      "cancelMessage": "您有未保存的更改。确定要离开此页面吗？",
+      "cancelTitle": "放弃更改？",
+      "continueEditing": "继续编辑",
+      "discardChanges": "放弃更改",
+      "errorLoading": "加载洞察以编辑失败。",
+      "loading": "加载洞察编辑器...",
+      "pageTitle": "编辑洞察",
+      "pageSubtitle": "更新您的洞察设置和计划",
+      "resetToDefault": "恢复默认",
+      "sections": {
+        "aiSettings": "AI 设置",
+        "basicInfo": "基本信息",
+        "connectors": "连接器",
+        "metrics": "指标",
+        "schedule": "计划与交付"
+      },
+      "unsavedChanges": "未保存的更改"
+    },
+    "templates": {
+      "title": "模板",
+      "searchPlaceholder": "搜索模板...",
+      "allDomains": "所有领域",
+      "all": "全部",
+      "noTemplatesFound": "未找到模板",
+      "noTemplatesFoundAction": "未找到模板。从头开始创建您的洞察。",
+      "preview": "预览",
+      "previewTitle": "模板预览",
+      "connectors": "连接器",
+      "schedule": "计划",
+      "delivery": "交付",
+      "applyTemplate": "应用模板",
+      "applyAndCustomize": "应用并自定义",
+      "close": "关闭",
+      "cancel": "取消",
+      "useTemplate": "使用模板",
+      "useATemplate": "使用模板",
+      "startFromScratch": "从头开始",
+      "chooseStartingPoint": "选择起点",
+      "chooseStartingPointDesc": "选择模板或从头构建您的洞察。",
+      "failedToLoad": "加载模板失败。请稍后重试。",
+      "loading": "加载模板中...",
+      "templateNotFound": "未找到模板。",
+      "loadingDetails": "加载模板详情中...",
+      "appliedTemplate": "已应用模板：{name}。所有字段均可编辑。",
+      "templateApplied": "模板已应用",
+      "connectorCount": "{count} 个连接器",
+      "frequency": {
+        "daily": "每日",
+        "weekly": "每周",
+        "monthly": "每月",
+        "quarterly": "每季度"
+      },
+      "format": {
+        "pdf": "PDF",
+        "excel": "Excel",
+        "both": "PDF + Excel"
+      },
+      "domains": "领域",
+      "connectorsMetrics": "连接器与指标",
+      "formatLabel": "格式",
+      "webhookEnabled": "Webhook 已启用",
+      "plusMore": "+{count}"
+    }
+  },
+  "report": {
+    "marketingIntelligence": "营销情报",
+    "contents": "目录",
+    "verdict": "评估结果",
+    "dataQuality": "数据质量",
+    "summary": "摘要",
+    "keyFindings": "主要发现",
+    "finding": "发现 {n}",
+    "recommendations": "建议",
+    "insights": "洞察",
+    "statistics": "统计数据",
+    "keyMetrics": "关键指标",
+    "metrics": "指标",
+    "charts": "图表",
+    "analysisBody": "分析正文",
+    "visuals": "可视化",
+    "referenceTables": "参考表格",
+    "referenceMetrics": "参考指标",
+    "phase2Integration": "第二阶段集成",
+    "verdictScore": "评估得分",
+    "verdictOverview": "评估概览",
+    "type": "类型",
+    "sentiment": "情感",
+    "modelConfidence": "模型置信度",
+    "insightContext": "洞察背景",
+    "statisticalSummaries": "统计摘要",
+    "measure": "度量",
+    "value": "值",
+    "note": "备注",
+    "dataQualityIndicators": "数据质量指标",
+    "noSummaryText": "未提供执行摘要文本。",
+    "noChartData": "图表占位符 — 在视图模型中提供 charts[0]。",
+    "noMetricsText": "无可用指标数据",
+    "noSectionsText": "添加叙述部分以填充此模板。",
+    "noAppendixText": "未提供附录部分。",
+    "noInsightsText": "此负载中未包含图表规范。",
+    "sections": "部分",
+    "xlsxReport": "报告",
+    "xlsxReportSummary": "报告摘要",
+    "xlsxInsight": "洞察",
+    "xlsxDateRange": "日期范围",
+    "xlsxTenantId": "租户 ID",
+    "xlsxReportId": "报告 ID",
+    "xlsxTemplate": "模板",
+    "xlsxKeyMetrics": "关键指标",
+    "xlsxTenantInfo": "租户信息",
+    "xlsxAiInsights": "AI 洞察",
+    "xlsxTitle": "标题",
+    "xlsxType": "类型",
+    "xlsxConfidence": "置信度",
+    "xlsxDescription": "描述",
+    "xlsxTimestamp": "时间戳",
+    "xlsxNoData": "无可用指标数据",
+    "xlsxNoTableRows": "在渲染的模板中未找到表格行"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "fr": "Français",
+    "es": "Español",
+    "zh": "中文"
+  },
+  "Layout": {
+    "openNav": "打开导航菜单",
+    "closeNav": "关闭导航菜单",
+    "brand": "AgenticVerdict",
+    "skipToMain": "跳到主要内容",
+    "navLabel": "主导航",
+    "navHint": "使用导航菜单访问应用程序的不同部分。",
+    "breadcrumbsLabel": "当前页面路径",
+    "collapseDesktopNav": "折叠导航侧栏",
+    "expandDesktopNav": "展开导航侧栏",
+    "shellErrorTitle": "导航不可用",
+    "shellErrorMessage": "我们无法加载您的界面状态。请重试。",
+    "shellEmptyTitle": "无可用模块",
+    "shellEmptyMessage": "您的账户目前没有访问任何导航模块的权限。",
+    "retry": "重试",
+    "shellLoadingLive": "加载界面导航",
+    "shellErrorLive": "界面导航加载失败",
+    "shellEmptyLive": "无可用的界面导航模块",
+    "openCommandPalette": "打开命令面板",
+    "commandPaletteTitle": "快速切换器",
+    "commandPalettePlaceholder": "搜索导航目标",
+    "commandPaletteHint": "快速跳转到任何核心目标",
+    "commandPaletteEmpty": "无匹配的目标",
+    "toggleLight": "切换到浅色模式",
+    "toggleDark": "切换到深色模式"
+  },
+  "Home": {
+    "breadcrumbHome": "首页",
+    "title": "欢迎",
+    "subtitle": "为您的组织提供多业务领域智能。",
+    "tenantLabel": "租户",
+    "languageLabel": "语言",
+    "regionLabel": "地区",
+    "previewTitle": "预览",
+    "formTab": "表单",
+    "sampleCurrencyLabel": "示例货币",
+    "sampleDateLabel": "示例日期",
+    "pluralLabel": "复数示例",
+    "itemCount": "{count, plural, =0 {无项目} one {# 个项目} other {# 个项目}}",
+    "tableName": "姓名",
+    "tableRole": "角色",
+    "rowAnalyst": "分析师",
+    "rowAdmin": "管理员",
+    "badgeNew": "新"
+  },
+  "admin": {
+    "featureFlags": {
+      "title": "功能标志",
+      "liveTitle": "实时租户快照",
+      "liveDescription": "默认值和解析值来自 Postgres，通过 admin.featureFlags.list (createFeatureFlagService) 获取您已登录租户的数据。",
+      "columnKey": "标志",
+      "columnType": "类型",
+      "columnDefault": "默认值",
+      "columnResolved": "解析值"
+    }
+  },
+  "connectors": {
+    "common": {
+      "title": "连接器",
+      "add": "添加",
+      "remove": "移除",
+      "configure": "配置",
+      "connector": "连接器",
+      "connectorName": "连接器名称",
+      "domain": "域名",
+      "domainPlaceholder": "example.com",
+      "metrics": "指标",
+      "syncFrequency": "同步频率",
+      "dataRetention": "数据保留",
+      "retentionDays": "{days} 天",
+      "notFound": "未找到连接器",
+      "testConnection": "测试连接",
+      "continue": "继续",
+      "finish": "完成"
+    },
+    "status": {
+      "healthy": "活跃",
+      "warning": "需关注",
+      "error": "错误",
+      "inactive": "未激活",
+      "syncing": "同步中..."
+    },
+    "frequency": {
+      "hourly": "每小时",
+      "daily": "每天",
+      "weekly": "每周"
+    },
+    "freshness": {
+      "realTime": "实时",
+      "recent": "最近",
+      "stale": "过期",
+      "outdated": "过时"
+    },
+    "alerts": {
+      "connectionSuccessfulTitle": "连接成功",
+      "connectionSuccessfulBody": "您的连接器已就绪。",
+      "limitedPermissionsTitle": "权限受限",
+      "limitedPermissionsBody": "连接可用但数据访问受限。",
+      "connectionFailedTitle": "连接失败",
+      "connectionFailedBody": "请检查您的凭据后重试。"
+    },
+    "platforms": {
+      "ga4": {
+        "name": "Google Analytics 4",
+        "description": "网站流量和转化"
+      },
+      "meta": {
+        "name": "Meta 广告",
+        "description": "Facebook 和 Instagram 广告"
+      },
+      "gsc": {
+        "name": "Google Search Console",
+        "description": "搜索性能和索引"
+      },
+      "tiktok": {
+        "name": "TikTok 广告",
+        "description": "TikTok 广告活动"
+      },
+      "gbp": {
+        "name": "Google Business Profile",
+        "description": "本地业务展示"
+      }
+    },
+    "metrics": {
+      "sessions": "会话",
+      "users": "用户",
+      "conversions": "转化",
+      "revenue": "收入",
+      "bounceRate": "跳出率",
+      "pageViews": "页面浏览量",
+      "impressions": "展示次数",
+      "clicks": "点击次数",
+      "ctr": "点击率",
+      "cpc": "每次点击成本",
+      "spend": "花费",
+      "position": "排名",
+      "pages": "页面",
+      "queries": "查询",
+      "videoViews": "视频观看次数",
+      "views": "观看次数",
+      "calls": "电话",
+      "directions": "路线",
+      "reviews": "评论",
+      "photos": "照片"
+    },
+    "list": {
+      "actions": {
+        "viewDetails": "查看详情",
+        "syncNow": "立即同步",
+        "disconnect": "断开连接",
+        "addConnector": "添加连接器",
+        "addFirstConnector": "添加您的第一个连接器"
+      },
+      "filters": {
+        "allStatuses": "所有状态",
+        "allDomains": "所有领域",
+        "searchPlaceholder": "搜索连接器..."
+      },
+      "card": {
+        "lastSync": "最后同步：{date}",
+        "noSyncHistory": "无同步历史"
+      },
+      "empty": {
+        "noConnectors": "暂无连接器",
+        "noFilteredResults": "没有连接器匹配您的筛选"
+      },
+      "results": {
+        "showing": "显示 {shown} / {total} 个连接器"
+      }
+    },
+    "add": {
+      "title": "添加连接器",
+      "cancelConfirm": "放弃进度并返回连接器？",
+      "steps": {
+        "platform": {
+          "label": "平台",
+          "description": "选择数据源"
+        },
+        "auth": {
+          "label": "认证",
+          "description": "连接账户"
+        },
+        "config": {
+          "label": "配置",
+          "description": "选择指标"
+        },
+        "confirm": {
+          "label": "确认",
+          "description": "测试连接"
+        }
+      },
+      "platform": {
+        "searchPlaceholder": "搜索平台..."
+      },
+      "auth": {
+        "authenticateWith": "使用 {platform} 认证",
+        "connectOAuth": "使用 OAuth 连接",
+        "orApiCredentials": "或输入 API 凭据：",
+        "apiKey": "API 密钥",
+        "continueApiKey": "使用 API 密钥继续"
+      },
+      "config": {
+        "connectorNamePlaceholder": "我的 GA4 连接器"
+      },
+      "confirm": {
+        "summary": "摘要",
+        "platform": "平台：{platform}",
+        "name": "名称：{name}",
+        "domain": "域名：{domain}",
+        "metrics": "指标：{metrics}",
+        "frequency": "频率：{frequency}",
+        "retention": "保留：{days} 天"
+      }
+    },
+    "configure": {
+      "title": "配置 {name}",
+      "sections": {
+        "account": "账户",
+        "syncPreferences": "同步偏好",
+        "notifications": "通知",
+        "advanced": "高级"
+      },
+      "actions": {
+        "selectAll": "全选",
+        "saveChanges": "保存更改"
+      },
+      "notifications": {
+        "syncFailure": "同步失败警报",
+        "authExpiration": "认证过期警告",
+        "weeklySummary": "每周摘要"
+      },
+      "advanced": {
+        "customTags": "自定义标签",
+        "customTagsPlaceholder": "添加标签并按回车",
+        "excludeInternalTraffic": "排除内部流量（IP 过滤）"
+      },
+      "testFailed": "连接失败。请检查您的设置。"
+    },
+    "detail": {
+      "actions": {
+        "backToConnectors": "返回连接器",
+        "viewAll": "查看全部",
+        "manage": "管理"
+      },
+      "sections": {
+        "health": "健康状态",
+        "recentData": "最近数据",
+        "syncHistory": "同步历史",
+        "connectedMetrics": "已连接指标",
+        "troubleshooting": "故障排除"
+      },
+      "health": {
+        "lastSync": "最后同步：{date}",
+        "nextSync": "下次同步：{date}"
+      },
+      "recentData": {
+        "empty": "无最近可用数据"
+      },
+      "syncHistory": {
+        "empty": "暂无同步历史",
+        "columns": {
+          "date": "日期",
+          "status": "状态",
+          "records": "记录数"
+        }
+      },
+      "connectedMetrics": {
+        "empty": "未选择指标"
+      }
+    },
+    "remove": {
+      "title": "移除 {name}",
+      "warningTitle": "警告",
+      "warningBody": "移除此连接器将产生以下后果：",
+      "impacts": {
+        "dataCollectionStops": "数据收集将停止",
+        "historicalInsightsOnly": "现有洞察将仅显示历史数据",
+        "noNewReports": "新报告将不再包含此连接器",
+        "historicalRetention": "历史数据将保留 90 天",
+        "canReconnectAnytime": "连接器可随时重新连接"
+      },
+      "affectedInsightsTitle": "受影响的洞察",
+      "alternativeOptionsTitle": "替代选项",
+      "options": {
+        "pause": "暂停数据收集（保留连接器，停止同步）",
+        "remove": "完全移除连接器（断开连接并移除配置）"
+      },
+      "exportTitle": "导出历史数据",
+      "exportDescription": "在移除前下载您的历史数据。",
+      "exportAction": "导出历史数据",
+      "confirmTitle": "确认移除",
+      "confirmInstructions": "输入 REMOVE 以确认：",
+      "actions": {
+        "pauseConnector": "暂停连接器",
+        "confirmRemoval": "确认移除"
+      }
+    }
+  },
+  "onboarding": {
+    "title": "欢迎加入",
+    "subtitle": "为您的工作区提供简短的引导设置。",
+    "continue": "继续",
+    "finish": "前往仪表板",
+    "stepWelcomeLabel": "欢迎",
+    "stepWelcomeDescription": "概览",
+    "stepWelcomeBody": "您已准备好连接数据源并探索洞察。",
+    "stepPreferencesLabel": "偏好设置",
+    "stepPreferencesDescription": "区域默认值",
+    "stepPreferencesBody": "连接后，区域设置、货币和通知将由 TenantConfig 驱动。",
+    "stepDoneLabel": "完成",
+    "stepDoneDescription": "全部完成",
+    "stepDoneBody": "您可以随时从应用中访问设置。"
+  },
+  "components": {
+    "costImpactEstimator": {
+      "title": "Cost Impact Estimator",
+      "recommended": "Recommended",
+      "costComparison": "Cost Comparison",
+      "perRequest": "per request",
+      "monthlyBudgetImpact": "Monthly Budget Impact",
+      "impact": "Impact",
+      "total": "total",
+      "metrics": {
+        "requests": "Monthly Requests",
+        "avgTokens": "Avg Tokens/Request",
+        "totalTokens": "Total Monthly Tokens"
+      },
+      "currentTier": "Current: {tier}",
+      "proposedTier": "Proposed: {tier}",
+      "recommendations": {
+        "lowUsage": "Low usage — Economy tier is sufficient",
+        "mediumUsage": "Medium usage — Standard tier offers best value",
+        "highUsage": "High usage — Premium tier for maximum performance"
+      },
+      "recommendation": {
+        "title": "Recommendation",
+        "description": "We recommend the {tier} tier. {reason}"
+      },
+      "alerts": {
+        "costIncrease": "Estimated increase: {amount}/month",
+        "costSavings": "Estimated savings: {amount}/month",
+        "increaseDescription": "This adds approximately {amount} to your annual costs.",
+        "savingsDescription": "This saves approximately {amount} annually."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "upgrade": "Upgrade",
+        "downgrade": "Downgrade"
+      }
+    },
+    "costTierSelector": {
+      "label": "Cost Tier",
+      "tooltip": "Select the pricing tier for this resource",
+      "currentSelection": "Current Selection",
+      "notSelected": "Not selected",
+      "priceIncrease": "Price increases by {percent}%",
+      "priceDecrease": "Price decreases by {percent}%",
+      "tiers": {
+        "economy": {
+          "label": "Economy",
+          "description": "Best for development and testing"
+        },
+        "standard": {
+          "label": "Standard",
+          "description": "Balanced performance and cost"
+        },
+        "premium": {
+          "label": "Premium",
+          "description": "Maximum performance and priority"
+        }
+      }
+    },
+    "credentialForm": {
+      "securityNotice": "Credentials are encrypted at rest and never logged.",
+      "fields": {
+        "providerType": "Provider Type",
+        "selectProvider": "Select a provider",
+        "apiKey": "API Key",
+        "apiKeyPlaceholder": "Enter your API key",
+        "apiKeyDescription": "Found in your provider dashboard",
+        "apiSecret": "API Secret",
+        "apiSecretPlaceholder": "Enter your API secret",
+        "organizationId": "Organization ID",
+        "organizationIdPlaceholder": "Enter your organization ID",
+        "organizationIdDescription": "Required for organization-scoped access",
+        "projectId": "Project ID",
+        "projectIdPlaceholder": "Enter your project ID",
+        "endpoint": "Custom Endpoint",
+        "endpointPlaceholder": "https://api.example.com",
+        "endpointDescription": "Override the default API endpoint"
+      },
+      "errors": {
+        "selectProvider": "Please select a provider first",
+        "providerTypeRequired": "Provider type is required",
+        "apiKeyRequired": "API key is required",
+        "apiSecretRequired": "API secret is required"
+      },
+      "actions": {
+        "testConnection": "Test Connection",
+        "save": "Save"
+      },
+      "alerts": {
+        "connectionSuccess": "Connection Successful",
+        "connectionFailed": "Connection Failed"
+      },
+      "messages": {
+        "testing": "Testing connection...",
+        "connectionValid": "Your credentials are valid and the connection is working.",
+        "connectionInvalid": "Unable to connect. Please verify your credentials."
+      }
+    },
+    "domainCard": {
+      "actions": {
+        "edit": "Edit",
+        "editOverride": "Edit Override",
+        "overrideProvider": "Override Provider",
+        "revertToInherited": "Revert to Inherited",
+        "delete": "Delete"
+      },
+      "badges": {
+        "connectors": "{count} Connectors"
+      },
+      "provider": {
+        "override": "Override",
+        "inherited": "Inherited",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "overrideInfo": "This domain has a custom provider configuration."
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      }
+    },
+    "domainMapper": {
+      "lastSynced": "Last synced",
+      "connectors": "connectors",
+      "dropConnector": "Drop connector here",
+      "connectorStatus": {
+        "healthy": "Healthy",
+        "syncing": "Syncing",
+        "warning": "Warning",
+        "inactive": "Inactive",
+        "error": "Error"
+      }
+    },
+    "inheritanceIndicator": {
+      "usingProvider": "Using {name}",
+      "effectiveProvider": "Effective Provider:",
+      "noProvider": "No provider configured",
+      "levels": {
+        "tenant": "Tenant",
+        "domain": "Domain",
+        "connector": "Connector"
+      },
+      "status": {
+        "source": "Source",
+        "override": "Override",
+        "inherited": "Inherited from {from}",
+        "unknown": "Unknown"
+      },
+      "tooltip": {
+        "title": "Configuration Inheritance",
+        "tenant": "This is the top-level tenant configuration.",
+        "domainOverride": "This domain overrides the tenant provider.",
+        "domainInherited": "This domain inherits the tenant provider.",
+        "connectorOverride": "This connector overrides the domain provider.",
+        "connectorInherited": "This connector inherits from its parent."
+      }
+    },
+    "insightAIConfig": {
+      "title": "AI Insight Configuration",
+      "description": "Configure how AI-generated insights are produced for your reports.",
+      "disabledMessage": "AI insights are currently disabled.",
+      "insightsEnabled": "AI Insights",
+      "defaults": {
+        "systemPrompt": "You are a helpful analyst assistant. Provide clear, data-driven insights."
+      },
+      "common": {
+        "enabled": "Enable AI Insights",
+        "disabled": "Disabled"
+      },
+      "sections": {
+        "provider": "AI Provider",
+        "output": "Output Settings",
+        "customization": "Customization"
+      },
+      "fields": {
+        "providerType": "Provider",
+        "model": "Model",
+        "language": "Language",
+        "tone": "Tone",
+        "maxLength": "Max Length (characters)",
+        "maxLengthDescription": "Maximum length for generated insights",
+        "includeDataSources": "Include Data Sources",
+        "includeConfidenceScore": "Include Confidence Score",
+        "systemPrompt": "System Prompt",
+        "systemPromptPlaceholder": "Enter the system prompt for the AI...",
+        "systemPromptDescription": "Instructions that guide the AI's behavior",
+        "customInstructions": "Custom Instructions",
+        "customInstructionsPlaceholder": "Add any additional instructions...",
+        "customInstructionsDescription": "Extra context for insight generation"
+      },
+      "languages": {
+        "en": "English",
+        "ar": "Arabic"
+      },
+      "tones": {
+        "professional": "Professional",
+        "casual": "Casual",
+        "technical": "Technical",
+        "executive": "Executive"
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "item1": "Keep system prompts concise and specific.",
+        "item2": "Test with different tones to find the best fit.",
+        "item3": "Review generated insights regularly for accuracy."
+      },
+      "actions": {
+        "save": "Save Configuration"
+      }
+    },
+    "loadingStates": {
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "retry": "Retry",
+      "empty": "No data available",
+      "timeout": "Request timed out"
+    },
+    "providerGrid": {
+      "noProviders": "No AI providers configured.",
+      "common": {
+        "enabled": "Enabled"
+      },
+      "actions": {
+        "edit": "Edit",
+        "testConnection": "Test Connection",
+        "delete": "Delete"
+      },
+      "status": {
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "messages": {
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection test failed",
+        "connectionSuccess": "Connection successful"
+      }
+    },
+    "templateBrowser": {
+      "loading": "Loading templates...",
+      "noTemplates": "No templates found.",
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete"
+      }
+    },
+    "templatePreview": {
+      "content": "Template Content",
+      "variables": "Variables",
+      "required": "Required",
+      "deploymentInfo": "Deploying this template will apply it to the selected scope.",
+      "readyToDeploy": "Template is ready to deploy.",
+      "actions": {
+        "deploy": "Deploy"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usageChart": {
+      "noData": "No data available",
+      "noDataAria": "Chart with no data to display",
+      "max": "Max",
+      "avg": "Average"
+    },
+    "usageTable": {
+      "noData": "No usage records found.",
+      "showing": "Showing {from}–{to} of {total}",
+      "filters": {
+        "search": "Search by provider, model, or domain...",
+        "searchLabel": "Search",
+        "searchAriaLabel": "Search usage records"
+      },
+      "actions": {
+        "menuLabel": "Table actions",
+        "menuTitle": "More options",
+        "toggleColumns": "Toggle Columns",
+        "exportCSV": "Export CSV"
+      },
+      "table": {
+        "ariaLabel": "Usage data table"
+      },
+      "columns": {
+        "date": "Date",
+        "provider": "Provider",
+        "model": "Model",
+        "domain": "Domain",
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "requests": "Requests",
+        "latency": "Latency",
+        "status": "Status",
+        "sortAsc": "Sort ascending",
+        "sortDesc": "Sort descending",
+        "sortBy": "Sort by {field}"
+      },
+      "status": {
+        "success": "Success",
+        "error": "Error",
+        "partial": "Partial"
+      },
+      "summary": {
+        "totalCost": "Total Cost"
+      }
+    }
+  },
+  "settings": {
+    "domains": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "noDescription": "No description"
+      },
+      "actions": {
+        "delete": "Delete",
+        "addDomain": "Add Domain",
+        "create": "Create",
+        "update": "Update"
+      },
+      "badges": {
+        "connectors": "{count} connectors"
+      },
+      "management": {
+        "pageTitle": "Domain Management",
+        "info": "Domains group your connectors by business area."
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load domains.",
+        "noDomains": "No domains found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeleteWithConnectors": "Are you sure you want to delete \"{name}\"? It has {count} connector(s) that will be unassigned."
+      },
+      "modals": {
+        "addDomain": "Add Domain",
+        "editDomain": "Edit Domain"
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Enter domain name",
+        "nameRequired": "Domain name is required",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter domain description"
+      },
+      "providers": {
+        "pageTitle": "Domain Providers",
+        "description": "Configure AI providers per domain.",
+        "info": "Domains inherit tenant providers by default. You can override a provider for a specific domain.",
+        "overrideProvider": "Override Provider",
+        "inheritFromTenant": "Inherit from Tenant",
+        "usingOverride": "Using Override",
+        "inheritedFromTenant": "Inherited from Tenant"
+      },
+      "filters": {
+        "status": "Filter by status"
+      },
+      "status": {
+        "override": "Override",
+        "inherited": "Inherited"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "unknown": "Unknown"
+      }
+    },
+    "providers": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "pageTitle": "AI Providers",
+      "actions": {
+        "addProvider": "Add Provider",
+        "remove": "Remove",
+        "testConnection": "Test Connection"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "filters": {
+        "search": "Search providers...",
+        "status": "Filter by status"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load providers.",
+        "noProviders": "No providers configured.",
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection failed.",
+        "connectionSuccess": "Connection successful.",
+        "confirmDelete": "Are you sure you want to remove \"{name}\"?",
+        "formComingSoon": "Provider form coming soon."
+      },
+      "modals": {
+        "addProvider": "Add Provider",
+        "editProvider": "Edit Provider"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "error": "Error",
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      }
+    },
+    "templates": {
+      "common": {
+        "settings": "Settings",
+        "cancel": "Cancel"
+      },
+      "library": {
+        "pageTitle": "Template Library",
+        "info": "Templates are reusable AI provider configurations."
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete",
+        "createTemplate": "Create Template"
+      },
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load templates.",
+        "noTemplates": "No templates found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeploy": "Are you sure you want to deploy \"{name}\"?"
+      },
+      "modals": {
+        "preview": "Preview Template",
+        "deploy": "Deploy Template"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usage": {
+      "common": {
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "pageTitle": "Usage Dashboard",
+        "usageTrend": "Usage Trend",
+        "costTrend": "Cost Trend",
+        "costByProvider": "Cost by Provider",
+        "detailedView": "Detailed View"
+      },
+      "filters": {
+        "ariaLabel": "Usage filters",
+        "dateRange": "Date Range",
+        "dateRangeDescription": "Select a date range to filter usage data",
+        "granularity": "Granularity",
+        "granularityDescription": "Select the granularity of the usage chart"
+      },
+      "summary": {
+        "ariaLabel": "Usage summary",
+        "totalCost": "Total Cost",
+        "totalTokens": "Total Tokens",
+        "totalRequests": "Total Requests",
+        "avgResponseTime": "Avg Response Time"
+      },
+      "granularity": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load usage data.",
+        "noData": "No data available."
+      }
+    },
+    "domainMapper": {
+      "common": {
+        "settings": "Settings"
+      },
+      "pageTitle": "Domain Mapper",
+      "info": "Drag and drop connectors onto domains to assign them.",
+      "loading": "Loading...",
+      "availableConnectors": "Available Connectors",
+      "businessDomains": "Business Domains",
+      "noConnectors": "No connectors available.",
+      "pendingChanges": "{count} pending change(s)",
+      "filters": {
+        "search": "Search connectors..."
+      },
+      "actions": {
+        "save": "Save"
+      },
+      "changes": {
+        "saved": "{count} change(s) saved successfully.",
+        "assign": "Connector assigned",
+        "remove": "Connector removed"
+      },
+      "messages": {
+        "error": "Error",
+        "saveError": "Failed to save changes."
+      }
+    }
+  }
 }

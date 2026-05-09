@@ -75,6 +75,37 @@ jobs:
       - name: Hardcoded provider reference scan
         run: pnpm run scan:providers
 
+      - name: i18n type freshness gate
+        run: |
+          pnpm --filter @agenticverdict/i18n generate:types
+          if ! git diff --exit-code -- packages/i18n/src/types/generated.ts; then
+            echo "::error::i18n types are stale. Run 'pnpm --filter @agenticverdict/i18n generate:types' and commit the changes."
+            exit 1
+          fi
+
+      - name: i18n translation parity gate
+        run: pnpm --filter @agenticverdict/i18n exec vitest run src/translation-parity.test.ts
+
+      - name: i18n structural quality gate
+        run: pnpm --filter @agenticverdict/i18n exec vitest run src/locale-structural-ci.test.ts
+
+      - name: i18n dead key report (informational)
+        continue-on-error: true
+        run: pnpm --filter @agenticverdict/i18n validate:dead-keys
+
+      - name: i18n frontend key extraction (informational)
+        continue-on-error: true
+        run: pnpm --filter @agenticverdict/frontend i18n:extract
+
+      - name: Upload i18n reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-reports
+          path: |
+            apps/frontend/.i18n-reports/
+          if-no-files-found: ignore
+
       - name: Unit tests with coverage (Vitest)
         run: pnpm exec vitest run --coverage
 

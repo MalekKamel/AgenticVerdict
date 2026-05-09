@@ -46,7 +46,7 @@ export function DomainCard({
   showProviderInfo = true,
   readOnly = false,
 }: DomainCardProps) {
-  const t = useTranslations("components.domainCard");
+  const t = useTranslations("components");
 
   const hasOverride = domain.providerConfig?.scope === "domain";
 
@@ -86,17 +86,19 @@ export function DomainCard({
               <Menu.Dropdown>
                 {onEdit && (
                   <Menu.Item leftSection={<IconEdit size={14} />} onClick={() => onEdit(domain)}>
-                    {t("actions.edit")}
+                    {t("domainCard.actions.edit")}
                   </Menu.Item>
                 )}
                 {showProviderInfo && onOverrideProvider && (
                   <Menu.Item leftSection={<IconSettings size={14} />} onClick={handleOverride}>
-                    {hasOverride ? t("actions.editOverride") : t("actions.overrideProvider")}
+                    {hasOverride
+                      ? t("domainCard.actions.editOverride")
+                      : t("domainCard.actions.overrideProvider")}
                   </Menu.Item>
                 )}
                 {hasOverride && onRevertToInherited && (
                   <Menu.Item leftSection={<IconHeartCancel size={14} />} onClick={handleRevert}>
-                    {t("actions.revertToInherited")}
+                    {t("domainCard.actions.revertToInherited")}
                   </Menu.Item>
                 )}
                 <Divider />
@@ -106,7 +108,7 @@ export function DomainCard({
                     leftSection={<IconTrash size={14} />}
                     onClick={() => onDelete(domain)}
                   >
-                    {t("actions.delete")}
+                    {t("domainCard.actions.delete")}
                   </Menu.Item>
                 )}
               </Menu.Dropdown>
@@ -124,18 +126,18 @@ export function DomainCard({
         {/* Metadata badges */}
         <Group gap="xs">
           <Badge variant="outline" leftSection={<IconUsers size={12} />}>
-            {t("badges.connectors", { count: domain.connectorCount || 0 })}
+            {t("domainCard.badges.connectors", { count: domain.connectorCount || 0 })}
           </Badge>
 
           {showProviderInfo && (
             <>
               {hasOverride ? (
                 <Badge color="blue" variant="light" size="sm">
-                  {t("provider.override")}
+                  {t("domainCard.provider.override")}
                 </Badge>
               ) : (
                 <Badge color="gray" variant="outline" size="sm">
-                  {t("provider.inherited")}
+                  {t("domainCard.provider.inherited")}
                 </Badge>
               )}
             </>
@@ -175,13 +177,15 @@ export function DomainCard({
                           : "green"
                     }
                   >
-                    {t(`costTier.${domain.providerConfig.costTier}`)}
+                    {t(`domainCard.costTier.${domain.providerConfig.costTier}`)}
                   </Badge>
                 )}
 
                 <Tooltip
                   label={
-                    domain.providerConfig.enabled ? t("provider.enabled") : t("provider.disabled")
+                    domain.providerConfig.enabled
+                      ? t("domainCard.provider.enabled")
+                      : t("domainCard.provider.disabled")
                   }
                 >
                   <Badge
@@ -196,7 +200,7 @@ export function DomainCard({
 
               {hasOverride && (
                 <Text size="xs" c="dimmed" mt="xs">
-                  {t("provider.overrideInfo")}
+                  {t("domainCard.provider.overrideInfo")}
                 </Text>
               )}
             </Stack>

@@ -14,7 +14,7 @@ runIfRedis("report-bullmq redis smoke (opt-in)", () => {
     const executionId = await enqueueWorkflowTrigger({
       workflowId: "marketing-analysis",
       testMode: true,
-      tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee77",
+      tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee77",
       config: {
         platforms: ["meta", "ga4"],
         analysisDepth: "quick",

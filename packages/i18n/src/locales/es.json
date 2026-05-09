@@ -1,252 +1,2081 @@
 {
-  "accessibility.skipToContent": "Ir al contenido principal",
-  "auth.layout.mainContent": "Formulario de autenticación",
-  "auth.login.title": "Inicie sesión en su cuenta",
-  "auth.login.description": "¡Bienvenido de nuevo! Introduzca sus datos.",
-  "auth.login.emailLabel": "Correo electrónico",
-  "auth.login.emailPlaceholder": "Introduzca su correo electrónico",
-  "auth.login.passwordLabel": "Contraseña",
-  "auth.login.passwordPlaceholder": "Introduzca su contraseña",
-  "auth.login.rememberMe": "Recordarme",
-  "auth.login.submitButton": "Iniciar sesión",
-  "auth.login.submittingButton": "Iniciando sesión...",
-  "auth.login.showPassword": "Mostrar contraseña",
-  "auth.login.hidePassword": "Ocultar contraseña",
-  "auth.login.forgotPassword": "¿Ha olvidado su contraseña?",
-  "auth.login.noAccount": "¿No tiene cuenta?",
-  "auth.login.createAccount": "Crear cuenta",
-  "auth.login.successTitle": "Inicio de sesión correcto",
-  "auth.login.successMessage": "¡Bienvenido de nuevo! Redirigiendo al panel...",
-  "auth.login.errors.email.required": "El correo electrónico es obligatorio",
-  "auth.login.errors.email.invalid": "Introduzca una dirección de correo electrónico válida",
-  "auth.login.errors.password.required": "La contraseña es obligatoria",
-  "auth.login.errors.password.tooShort": "La contraseña debe tener al menos 8 caracteres",
-  "auth.login.errors.invalidCredentials": "Correo electrónico o contraseña incorrectos",
-  "auth.login.errors.networkError": "Error de red. Compruebe su conexión e inténtelo de nuevo.",
-  "auth.login.errors.unknownError": "Ha ocurrido un error. Inténtelo de nuevo.",
-  "auth.errors.invalidCredentials": "Correo electrónico o contraseña incorrectos",
-  "auth.errors.forbidden": "Acceso denegado",
-  "auth.errors.notFound": "Recurso no encontrado",
-  "auth.errors.conflict": "Se ha producido un conflicto",
-  "auth.errors.badRequest": "Solicitud no válida",
-  "auth.errors.rateLimitExceeded": "Demasiados intentos. Inténtelo más tarde.",
-  "auth.errors.emailNotVerified": "Verifique su dirección de correo electrónico",
-  "auth.errors.weakPassword": "La contraseña es demasiado débil",
-  "auth.errors.tokenExpired": "El enlace ha caducado. Inténtelo de nuevo.",
-  "auth.errors.internalError": "Ha ocurrido un error. Inténtelo de nuevo.",
-  "auth.errors.networkError": "Error de red. Compruebe su conexión.",
-  "common.ok": "Aceptar",
-  "common.cancel": "Cancelar",
-  "navigation.insights": "Información",
-  "navigation.reports": "Informes",
-  "reports.title": "Informes",
-  "reports.ready": "Su informe está listo",
-  "reports.download": "Descargar",
-  "home.kpi.totalInsights": "Total de información",
-  "home.kpi.activeConnectors": "Conectores activos",
-  "home.kpi.reportsThisMonth": "Informes este mes",
-  "home.kpi.deltaUp": "↑",
-  "home.kpi.connectorsHealthy": "Saludable",
-  "home.kpi.deltaPercent": "% cambio",
-  "home.kpi.title": "Métricas clave",
-  "home.kpi.emptyTitle": "No hay métricas disponibles",
-  "home.kpi.emptyDescription": "Conecte sus fuentes de datos para ver las métricas",
-  "home.insights.sampleTime": "Actualizado recientemente",
-  "home.insights.emptyTitle": "Aún no hay información",
-  "home.insights.emptyDescription": "La información aparecerá aquí a medida que se analicen sus datos",
-  "home.insights.title": "Información reciente",
-  "dashboard.insights.body.default": "Métricas y análisis de {period}",
-  "dashboard.insights.relativeTime.updatedRecently": "Actualizado recientemente",
-  "dashboard.insights.relativeTime.justNow": "Justo ahora",
-  "dashboard.insights.relativeTime.minutesAgo": "Hace {minutes} minutos",
-  "dashboard.insights.relativeTime.hoursAgo": "Hace {hours} horas",
-  "dashboard.insights.relativeTime.daysAgo": "Hace {days} días",
-  "dashboard.insights.ariaLabels.insightCard": "Información de {title} para {domains}",
-  "dashboard.insights.ariaLabels.default": "Información empresarial",
-  "home.connectors.title": "Fuentes de datos",
-  "home.connectors.emptyTitle": "Sin conectores",
-  "home.connectors.emptyDescription": "Añada su primer conector de datos para comenzar",
-  "home.connectors.ga4": "Google Analytics 4",
-  "home.connectors.meta": "Anuncios Meta",
-  "home.connectors.gsc": "Consola de Búsqueda Google",
-  "home.connectors.gbp": "Perfil de Negocio Google",
-  "home.connectors.tiktok": "Anuncios TikTok",
-  "home.quickActions.title": "Acciones rápidas",
-  "home.quickActions.domainSample": "Ver panel de marketing",
-  "home.quickActions.createInsight": "Crear información",
-  "home.quickActions.export": "Exportar datos",
-  "home.quickActions.customize": "Personalizar panel",
-  "home.quickActions.agency": "Vista de agencia",
-  "home.title": "Panel",
-  "home.subtitle": "Bienvenido de nuevo, {email}",
-  "home.ariaMain": "Contenido principal del panel",
-  "domain.marketing.primaryKpi": "Rendimiento de marketing",
-  "domain.finance.primaryKpi": "Métricas financieras",
-  "domain.operations.primaryKpi": "Resumen de operaciones",
-  "domain.seo.primaryKpi": "Rendimiento SEO",
-  "domain.social.primaryKpi": "Métricas de redes sociales",
-  "domain.local.primaryKpi": "Métricas de negocios locales",
-  "agency.kpi.clients": "Total de clientes",
-  "agency.kpi.insights": "Total de información",
-  "agency.clientContext": "Viendo datos del cliente: {id}",
-  "connectorStatus.healthy": "Saludable",
-  "connectorStatus.degraded": "Degradado",
-  "connectorStatus.disconnected": "Desconectado",
-  "domains.marketing": "Marketing",
-  "domains.finance": "Finanzas",
-  "domains.operations": "Operaciones",
-  "domains.seo": "SEO",
-  "domains.social": "Social",
-  "domains.local": "Local",
-  "toolbar.preset": "Preestablecido",
-  "toolbar.comparison": "Comparación",
-  "toolbar.refresh": "Actualizar",
-  "toolbar.freshness": "Actualizado {time}",
-  "toolbar.presets.last7": "Últimos 7 días",
-  "toolbar.presets.last30": "Últimos 30 días",
-  "toolbar.presets.thisMonth": "Este mes",
-  "toolbar.presets.lastMonth": "Mes pasado",
-  "async.loadingHome": "Cargando panel...",
-  "async.errorHome": "Error al cargar el panel",
-  "async.readyHome": "Panel cargado",
-  "async.loadingSection": "Cargando sección...",
-  "errors.sectionTitle": "No se pudieron cargar los datos",
-  "errors.generic": "Algo salió mal",
-  "errors.tenantRequired": "Se requiere el contexto del inquilino",
-  "actions.retry": "Reintentar",
-  "actions.refresh": "Actualizar",
-  "insights.title": "Información",
-  "insights.list.title": "Información empresarial",
-  "insights.list.newInsight": "Nueva información",
-  "insights.list.searchPlaceholder": "Buscar información...",
-  "insights.list.filter.status": "Estado",
-  "insights.list.filter.domain": "Dominio",
-  "insights.list.status.enabled": "Habilitado",
-  "insights.list.status.disabled": "Deshabilitado",
-  "insights.list.status.running": "Ejecutando",
-  "insights.list.status.failed": "Fallido",
-  "insights.list.empty.title": "Aún no hay información",
-  "insights.list.empty.description": "Cree su primera información para comenzar",
-  "insights.list.empty.createButton": "Crear información",
-  "insights.list.actions.view": "Ver",
-  "insights.list.actions.edit": "Editar",
-  "insights.list.actions.runNow": "Ejecutar ahora",
-  "insights.list.actions.delete": "Eliminar",
-  "insights.list.actions.deleteConfirm": "¿Está seguro de que desea eliminar esta información?",
-  "insights.wizard.title": "Crear información",
-  "insights.wizard.editTitle": "Editar información",
-  "insights.wizard.step1": "Información básica",
-  "insights.wizard.step2": "Conectores",
-  "insights.wizard.step3": "Métricas",
-  "insights.wizard.step4": "Configuración de IA",
-  "insights.wizard.step5": "Programa",
-  "insights.wizard.step6": "Revisar",
-  "insights.wizard.next": "Siguiente",
-  "insights.wizard.back": "Atrás",
-  "insights.wizard.create": "Crear información",
-  "insights.wizard.save": "Guardar cambios",
-  "insights.wizard.cancel": "Cancelar",
-  "insights.wizard.cancelConfirm": "¿Está seguro de que desea cancelar? Se perderá su progreso.",
-  "insights.wizard.success": "Información creada con éxito",
-  "insights.wizard.updateSuccess": "Información actualizada con éxito",
-  "insights.wizard.steps.basicInfo.title": "Información básica",
-  "insights.wizard.steps.basicInfo.nameLabel": "Nombre de la información",
-  "insights.wizard.steps.basicInfo.namePlaceholder": "ej., Resumen de rendimiento de marketing",
-  "insights.wizard.steps.basicInfo.domainLabel": "Dominio",
-  "insights.wizard.steps.basicInfo.descriptionLabel": "Descripción",
-  "insights.wizard.steps.basicInfo.descriptionPlaceholder": "¿Qué debe analizar esta información?",
-  "insights.wizard.steps.connectors.title": "Seleccionar conectores",
-  "insights.wizard.steps.connectors.description": "Elija las fuentes de datos a incluir",
-  "insights.wizard.steps.connectors.manage": "Gestionar conectores",
-  "insights.wizard.steps.metrics.title": "Configurar métricas",
-  "insights.wizard.steps.metrics.description": "Seleccione qué métricas analizar",
-  "insights.wizard.steps.ai.title": "Configuración de IA",
-  "insights.wizard.steps.ai.modelLabel": "Modelo de IA",
-  "insights.wizard.steps.ai.qualityLabel": "Calidad del análisis",
-  "insights.wizard.steps.ai.detailLevelLabel": "Nivel de detalle",
-  "insights.wizard.steps.ai.customPromptLabel": "Prompt personalizado (opcional)",
-  "insights.wizard.steps.schedule.title": "Programa y entrega",
-  "insights.wizard.steps.schedule.frequencyLabel": "Frecuencia",
-  "insights.wizard.steps.schedule.timeLabel": "Hora de entrega",
-  "insights.wizard.steps.schedule.formatLabel": "Formato de informe",
-  "insights.wizard.steps.schedule.recipientsLabel": "Destinatarios",
-  "insights.wizard.steps.review.title": "Revisar y crear",
-  "insights.wizard.steps.review.description": "Revise su configuración antes de crear",
-  "insights.detail.overview": "Resumen",
-  "insights.detail.reports": "Informes",
-  "insights.detail.settings": "Configuración",
-  "insights.detail.history": "Historial",
-  "insights.detail.overview.configTitle": "Configuración",
-  "insights.detail.overview.recentReports": "Informes recientes",
-  "insights.detail.overview.aiInsightsTitle": "Información generada por IA",
-  "insights.detail.overview.performanceSummary": "Resumen de rendimiento",
-  "insights.detail.overview.keyFindings": "Hallazgos clave",
-  "insights.detail.overview.recommendations": "Recomendaciones",
-  "insights.detail.overview.noAIInsightsYet": "La información de IA aparecerá aquí después de que se ejecute el primer análisis",
-  "insights.detail.overview.generateAIInsights": "Generar información de IA",
-  "insights.detail.overview.regenerateAIInsights": "Regenerar",
-  "insights.detail.overview.view": "Ver",
-  "insights.detail.overview.download": "Descargar",
-  "insights.detail.reportsTab.comingSoon": "La pestaña de informes estará disponible pronto",
-  "insights.detail.settingsTab.comingSoon": "La pestaña de configuración estará disponible pronto",
-  "insights.detail.historyTab.comingSoon": "La pestaña de historial estará disponible pronto",
-  "insights.detail.runNow": "Ejecutar ahora",
-  "insights.detail.running": "Ejecutando...",
-  "insights.detail.retry": "Reintentar",
-  "reports.viewer.title": "Visor de informes",
-  "reports.viewer.zoom": "Zoom",
-  "reports.viewer.print": "Imprimir",
-  "reports.viewer.download": "Descargar",
-  "reports.viewer.share": "Compartir",
-  "reports.viewer.version": "Versión",
-  "reports.viewer.loading": "Cargando contenido del informe...",
-  "reports.viewer.error": "Error al cargar el informe",
-  "reports.viewer.goBack": "Volver",
-  "reports.list.title": "Todos los informes",
-  "reports.list.downloadSelected": "Descargar seleccionados",
-  "reports.list.deleteSelected": "Eliminar seleccionados",
-  "reports.list.bulkActions": "{count} seleccionados",
-  "reports.share.title": "Compartir informe",
-  "reports.share.expirationLabel": "Vencimiento",
-  "reports.share.generateLink": "Generar enlace para compartir",
-  "reports.share.linkCreated": "Enlace creado con éxito",
-  "reports.share.copyLink": "Copiar enlace",
-  "reports.share.copied": "Copiado",
-  "reports.share.activeShares": "Compartidos activos",
-  "reports.share.noShares": "Sin compartidos activos",
-  "reports.share.revokeAccess": "Revocar acceso",
-  "reports.share.revoked": "Revocado",
-  "reports.share.expires": "Vence {date}",
-  "reports.share.expiration.1h": "1 hora",
-  "reports.share.expiration.24h": "24 horas",
-  "reports.share.expiration.7d": "7 días",
-  "reports.share.expiration.30d": "30 días",
-  "auditTrail.eventType.run": "Ejecución de informe",
-  "auditTrail.eventType.config_change": "Cambio de configuración",
-  "auditTrail.eventType.delivery": "Entrega",
-  "auditTrail.eventType.error": "Error",
-  "auditTrail.status.success": "Éxito",
-  "auditTrail.status.failed": "Fallido",
-  "auditTrail.status.pending": "Pendiente",
-  "auditTrail.filters.eventType": "Tipo de evento",
-  "auditTrail.filters.dateRange": "Rango de fechas",
-  "auditTrail.noEvents": "No se encontraron eventos de auditoría",
-  "auditTrail.duration": "Duración: {duration}",
-  "auditTrail.method": "Método: {method}",
-  "auditTrail.recipient": "Destinatario: {recipient}",
-  "common.loading": "Cargando...",
-  "common.error": "Error",
-  "common.success": "Éxito",
-  "common.delete": "Eliminar",
-  "common.close": "Cerrar",
-  "common.save": "Guardar",
-  "common.edit": "Editar",
-  "common.view": "Ver",
-  "common.downloadStarted": "Descarga iniciada",
-  "common.failedToLoad": "Error al cargar",
-  "validation.required": "Este campo es obligatorio",
-  "validation.invalidEmail": "Introduzca una dirección de correo electrónico válida",
-  "validation.tooShort": "Debe tener al menos {min} caracteres",
-  "validation.tooLong": "Debe tener como máximo {max} caracteres",
-  "errors.common.unknownError": "Ha ocurrido un error inesperado. Inténtelo de nuevo."
+  "accessibility": {
+    "skipToContent": "Saltar al contenido",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "openDialog": "Abrir diálogo",
+    "closeDialog": "Cerrar diálogo",
+    "toggleTheme": "Cambiar tema",
+    "toggleLanguage": "Cambiar idioma",
+    "searchPlaceholder": "Buscar...",
+    "clearSearch": "Limpiar búsqueda",
+    "selectDate": "Seleccionar fecha",
+    "selectOption": "Seleccionar opción"
+  },
+  "auth": {
+    "layout": {
+      "mainContent": "Formulario de autenticación",
+      "footerNav": "Otras opciones de inicio de sesión",
+      "poweredBy": "Desarrollado por AgenticVerdict",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "Ir al inicio de {brand}",
+      "legalNavLabel": "Legal y ayuda",
+      "terms": "Términos de servicio",
+      "privacy": "Política de privacidad",
+      "help": "Ayuda",
+      "backToSignIn": "Volver al inicio de sesión",
+      "forgotPasswordShort": "¿Olvidó su contraseña?"
+    },
+    "login": {
+      "title": "Sign In",
+      "description": "¡Bienvenido de nuevo! Inicie sesión en su cuenta.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "Introduzca su correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Introduzca su contraseña",
+      "rememberMe": "Recordarme",
+      "submitButton": "Iniciar sesión",
+      "submittingButton": "Iniciando sesión...",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "forgotPassword": "¿Ha olvidado su contraseña?",
+      "noAccount": "¿No tiene cuenta?",
+      "createAccount": "Crear cuenta",
+      "successTitle": "Inicio de sesión correcto",
+      "successMessage": "¡Bienvenido de nuevo! Redirigiendo al panel...",
+      "errors": {
+        "email": {
+          "required": "El correo electrónico es obligatorio",
+          "invalid": "Introduzca una dirección de correo electrónico válida"
+        },
+        "password": {
+          "required": "La contraseña es obligatoria",
+          "tooShort": "La contraseña debe tener al menos 8 caracteres"
+        },
+        "invalidCredentials": "Correo electrónico o contraseña no válidos",
+        "networkError": "Error de red. Compruebe su conexión e inténtelo de nuevo.",
+        "unknownError": "Ha ocurrido un error. Inténtelo de nuevo.",
+        "accountLocked": "La cuenta ha sido bloqueada debido a demasiados intentos fallidos",
+        "emailNotVerified": "Verifique su dirección de correo electrónico antes de iniciar sesión"
+      },
+      "session": {
+        "expiredTitle": "Sesión expirada",
+        "expiredMessage": "Inicie sesión de nuevo para continuar de forma segura."
+      },
+      "oauth": {
+        "or": "o continúe con",
+        "continueWith": "Continuar con {provider}",
+        "redirecting": "Redirigiendo al proveedor de inicio de sesión único...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "No pudimos iniciar el inicio de sesión único automáticamente. Use una de las opciones a continuación.",
+        "unavailable": "El inicio de sesión único no está disponible temporalmente. Inicie sesión con correo electrónico y contraseña."
+      },
+      "rateLimit": {
+        "title": "Demasiados intentos",
+        "message": "Demasiados intentos de inicio de sesión. Inténtelo de nuevo en breve.",
+        "retryAfter": "Demasiados intentos de inicio de sesión. Inténtelo de nuevo en {seconds} segundos."
+      },
+      "lockout": {
+        "title": "Cuenta bloqueada temporalmente",
+        "message": "Su cuenta está bloqueada temporalmente después de repetidos intentos fallidos de inicio de sesión."
+      },
+      "fields": {
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "emailPlaceholder": "Introduzca su correo electrónico",
+        "passwordPlaceholder": "Introduzca su contraseña",
+        "rememberMe": "Recordarme"
+      },
+      "buttons": {
+        "submit": "Iniciar sesión",
+        "submitting": "Iniciando sesión...",
+        "forgotPassword": "¿Olvidó su contraseña?",
+        "noAccount": "¿No tiene cuenta?",
+        "register": "Registrarse",
+        "createAccount": "Crear cuenta"
+      },
+      "success": "Inicio de sesión exitoso"
+    },
+    "errors": {
+      "invalidCredentials": "Correo electrónico o contraseña no válidos. Inténtelo de nuevo.",
+      "forbidden": "No tiene permiso para realizar esta acción.",
+      "notFound": "El recurso solicitado no se encontró.",
+      "conflict": "Esta solicitud no se pudo completar debido a un conflicto.",
+      "badRequest": "La solicitud no se pudo procesar. Verifique sus datos e intente de nuevo.",
+      "rateLimitExceeded": "Demasiadas solicitudes. Espere e intente de nuevo.",
+      "emailNotVerified": "Verifique su dirección de correo electrónico antes de continuar.",
+      "weakPassword": "Elija una contraseña más fuerte que cumpla con los requisitos.",
+      "tokenExpired": "Este enlace o sesión ha expirado. Comience de nuevo.",
+      "internalError": "Algo salió mal de nuestro lado. Inténtelo de nuevo más tarde.",
+      "networkError": "No pudimos conectarnos al servidor. Verifique su conexión e intente de nuevo.",
+      "accountLocked": "Su cuenta ha sido bloqueada debido a demasiados intentos fallidos.",
+      "tooManyAttempts": "Demasiados intentos. Inténtelo de nuevo más tarde.",
+      "tenantContextRequired": "Falta el contexto de la organización. Actualice la página o abra el enlace de su invitación de nuevo.",
+      "tenantMismatch": "La organización en esta solicitud no coincide. Actualice o use el enlace del espacio de trabajo correcto."
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "description": "Únase a AgenticVerdict para comenzar a obtener información empresarial.",
+      "fields": {
+        "email": {
+          "label": "Correo electrónico",
+          "placeholder": "Introduzca su correo electrónico"
+        },
+        "password": {
+          "label": "Contraseña",
+          "placeholder": "Cree una contraseña segura"
+        },
+        "confirmPassword": {
+          "label": "Confirmar contraseña",
+          "placeholder": "Confirme su contraseña"
+        },
+        "firstName": {
+          "label": "Nombre",
+          "placeholder": "Introduzca su nombre"
+        },
+        "lastName": {
+          "label": "Apellido",
+          "placeholder": "Introduzca su apellido"
+        },
+        "acceptTerms": {
+          "label": "Acepto los Términos de servicio y la Política de privacidad",
+          "description": "Al crear una cuenta, acepta nuestros",
+          "termsLink": "Términos de servicio",
+          "and": "y",
+          "privacyLink": "Política de privacidad"
+        }
+      },
+      "buttons": {
+        "submit": "Crear cuenta",
+        "createAccount": "Crear cuenta",
+        "creatingAccount": "Creando cuenta...",
+        "hasAccount": "¿Ya tiene una cuenta?",
+        "signIn": "Iniciar sesión",
+        "next": "Siguiente",
+        "back": "Atrás"
+      },
+      "errors": {
+        "apiError": "Error en el registro",
+        "passwordsDoNotMatch": "Las contraseñas no coinciden",
+        "passwordsMatch": "Las contraseñas coinciden",
+        "acceptTerms": {
+          "required": "Debe aceptar los términos para continuar"
+        },
+        "email": {
+          "required": "El correo electrónico es obligatorio",
+          "invalid": "Introduzca una dirección de correo electrónico válida",
+          "alreadyExists": "Ya existe una cuenta con este correo electrónico"
+        },
+        "password": {
+          "required": "La contraseña es obligatoria",
+          "tooShort": "La contraseña debe tener al menos 8 caracteres",
+          "noUppercase": "La contraseña debe contener al menos una letra mayúscula",
+          "noLowercase": "La contraseña debe contener al menos una letra minúscula",
+          "noNumber": "La contraseña debe contener al menos un número",
+          "noSpecial": "La contraseña debe contener al menos un carácter especial"
+        },
+        "confirmPassword": {
+          "required": "Confirme su contraseña",
+          "mismatch": "Las contraseñas no coinciden"
+        },
+        "firstName": {
+          "required": "El nombre es obligatorio",
+          "tooShort": "El nombre debe tener al menos 2 caracteres",
+          "tooLong": "El nombre no debe exceder los 50 caracteres"
+        },
+        "lastName": {
+          "required": "El apellido es obligatorio",
+          "tooShort": "El apellido debe tener al menos 2 caracteres",
+          "tooLong": "El apellido no debe exceder los 50 caracteres"
+        }
+      },
+      "success": "Cuenta creada exitosamente. Verifique su correo electrónico para continuar.",
+      "steps": {
+        "progress": "Paso {current} de {total}",
+        "accountType": {
+          "title": "Elija el tipo de cuenta",
+          "label": "Tipo de cuenta",
+          "options": {
+            "business": "Cuenta empresarial",
+            "individual": "Cuenta individual"
+          },
+          "errors": {
+            "required": "Elija un tipo de cuenta"
+          }
+        },
+        "tenant": {
+          "title": "Información del inquilino",
+          "fields": {
+            "tenantName": {
+              "label": "Nombre del inquilino"
+            },
+            "tenantSize": {
+              "label": "Tamaño del inquilino",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "Sitio web del inquilino (opcional)"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "El nombre del inquilino es obligatorio",
+            "tenantNameTooLong": "El nombre del inquilino es demasiado largo",
+            "tenantSizeRequired": "El tamaño del inquilino es obligatorio",
+            "tenantWebsiteInvalid": "Introduzca una URL de sitio web válida"
+          }
+        },
+        "confirmation": {
+          "title": "Registro completado",
+          "description": "Su cuenta ha sido creada. Verifique su correo electrónico para continuar.",
+          "checkEmail": "Enviamos un código de 6 dígitos a {email}.",
+          "cta": "Verificar correo electrónico"
+        }
+      }
+    },
+    "forgotPassword": {
+      "title": "Olvidé mi contraseña",
+      "description": "Introduzca su dirección de correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
+      "alerts": {
+        "successTitle": "Revise su correo electrónico"
+      },
+      "fields": {
+        "email": "Correo electrónico"
+      },
+      "buttons": {
+        "submit": "Enviar enlace de restablecimiento",
+        "submitting": "Enviando...",
+        "retryCountdown": "Inténtelo de nuevo en {seconds}s",
+        "backToLogin": "Volver al inicio de sesión"
+      },
+      "states": {
+        "rateLimited": "Demasiadas solicitudes de restablecimiento. Inténtelo de nuevo en {seconds} segundos."
+      },
+      "errors": {
+        "email": {
+          "required": "El correo electrónico es obligatorio",
+          "invalid": "Introduzca una dirección de correo electrónico válida"
+        },
+        "notFound": "No se encontró ninguna cuenta con esta dirección de correo electrónico",
+        "tooManyRequests": "Demasiadas solicitudes de restablecimiento. Inténtelo de nuevo más tarde."
+      },
+      "success": "Enlace de restablecimiento de contraseña enviado a su correo electrónico. El enlace expirará en 1 hora."
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "description": "Introduzca su nueva contraseña a continuación.",
+      "fields": {
+        "password": "Nueva contraseña",
+        "confirmPassword": "Confirmar nueva contraseña"
+      },
+      "buttons": {
+        "submit": "Restablecer contraseña",
+        "backToLogin": "Volver al inicio de sesión",
+        "resetting": "Restableciendo...",
+        "requestNew": "Solicitar uno nuevo"
+      },
+      "states": {
+        "rateLimited": "Demasiados intentos de restablecimiento. Solicite un nuevo enlace en {seconds} segundos."
+      },
+      "errors": {
+        "password": {
+          "required": "La contraseña es obligatoria",
+          "tooShort": "La contraseña debe tener al menos 8 caracteres",
+          "noUppercase": "La contraseña debe contener al menos una letra mayúscula",
+          "noLowercase": "La contraseña debe contener al menos una letra minúscula",
+          "noNumber": "La contraseña debe contener al menos un número",
+          "noSpecial": "La contraseña debe contener al menos un carácter especial"
+        },
+        "confirmPassword": {
+          "required": "Confirme su contraseña",
+          "mismatch": "Las contraseñas no coinciden"
+        },
+        "invalidToken": "Enlace de restablecimiento no válido o expirado. Solicite uno nuevo.",
+        "tooManyAttempts": "Demasiados intentos. Solicite un nuevo enlace de restablecimiento."
+      },
+      "success": "Contraseña restablecida exitosamente. Ahora puede iniciar sesión con su nueva contraseña."
+    },
+    "verifyEmail": {
+      "title": "Verificar correo electrónico",
+      "description": "Hemos enviado un código de verificación a su correo electrónico. Introdúzcalo a continuación.",
+      "fields": {
+        "code": "Código de verificación"
+      },
+      "buttons": {
+        "submit": "Verificar",
+        "resend": "Reenviar",
+        "resendCountdown": "Reenviar ({seconds}s)",
+        "signIn": "Iniciar sesión",
+        "backToRegister": "Volver al registro"
+      },
+      "errors": {
+        "noToken": "No se encontró ningún token de verificación",
+        "code": {
+          "required": "El código de verificación es obligatorio",
+          "invalidLength": "El código de verificación debe tener 6 dígitos",
+          "invalidFormat": "El código de verificación debe contener solo números"
+        },
+        "invalidCode": "Código de verificación no válido",
+        "expiredCode": "El código de verificación ha expirado. Solicite uno nuevo.",
+        "tooManyAttempts": "Demasiados intentos fallidos. Solicite un nuevo código."
+      },
+      "success": "Correo electrónico verificado exitosamente.",
+      "resendSuccess": "Nuevo código de verificación enviado a su correo electrónico.",
+      "status": {
+        "verifying": "Verificando su correo electrónico...",
+        "success": "Correo electrónico verificado exitosamente",
+        "successMessage": "Su correo electrónico ha sido verificado. Ahora puede iniciar sesión en su cuenta.",
+        "error": "Verificación fallida",
+        "expired": "Enlace expirado",
+        "expiredMessage": "Este enlace de verificación ha expirado. Solicite uno nuevo.",
+        "invalid": "Enlace no válido",
+        "invalidMessage": "Este enlace de verificación no es válido. Intente registrarse de nuevo.",
+        "resendSuccess": "Se ha enviado un nuevo correo de verificación. Revise su bandeja de entrada.",
+        "attemptsRemaining": "Intentos restantes: {count}",
+        "retryAfter": "Espere {seconds} segundos antes de intentar de nuevo."
+      }
+    },
+    "password": {
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "requirements": {
+        "minLength": "Al menos 8 caracteres",
+        "uppercase": "Contiene letra mayúscula",
+        "lowercase": "Contiene letra minúscula",
+        "number": "Contiene número",
+        "special": "Contiene carácter especial",
+        "ariaLabel": "Requisitos de contraseña"
+      },
+      "strength": {
+        "label": "Seguridad de la contraseña",
+        "ariaLabel": "Indicador de seguridad de contraseña",
+        "veryWeak": "Muy débil",
+        "weak": "Débil",
+        "fair": "Regular",
+        "good": "Buena",
+        "strong": "Fuerte"
+      },
+      "errors": {
+        "tooShort": "La contraseña debe tener al menos 8 caracteres",
+        "tooLong": "La contraseña no debe exceder los 128 caracteres",
+        "noUppercase": "La contraseña debe contener al menos una letra mayúscula",
+        "noLowercase": "La contraseña debe contener al menos una letra minúscula",
+        "noNumber": "La contraseña debe contener al menos un número",
+        "noSpecial": "La contraseña debe contener al menos un carácter especial",
+        "commonPattern": "Elija una contraseña más segura"
+      }
+    },
+    "seo": {
+      "login": {
+        "title": "Iniciar sesión | {brand}",
+        "description": "Inicie sesión en su cuenta de {brand} para acceder a su espacio de trabajo, datos de flota e información."
+      },
+      "register": {
+        "title": "Crear cuenta | {brand}",
+        "description": "Cree una cuenta de {brand} para conectar fuentes de datos y explorar información de flota y empresarial."
+      },
+      "forgotPassword": {
+        "title": "Olvidé mi contraseña | {brand}",
+        "description": "Solicite un enlace seguro para restablecer la contraseña de su cuenta de {brand}."
+      },
+      "resetPassword": {
+        "title": "Restablecer contraseña | {brand}",
+        "description": "Elija una nueva contraseña para recuperar el acceso a su cuenta de {brand}."
+      },
+      "verifyEmail": {
+        "title": "Verificar correo electrónico | {brand}",
+        "description": "Confirme su dirección de correo electrónico para finalizar la configuración de su cuenta de {brand}."
+      },
+      "terms": {
+        "title": "Términos de servicio | {brand}",
+        "description": "Términos de servicio para usar la plataforma {brand} y servicios relacionados."
+      },
+      "privacy": {
+        "title": "Política de privacidad | {brand}",
+        "description": "Cómo {brand} recopila, usa y protege datos personales y relacionados con la flota."
+      },
+      "help": {
+        "title": "Ayuda y soporte | {brand}",
+        "description": "Obtenga ayuda para iniciar sesión, verificar su correo electrónico o contactar al soporte de {brand}."
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "Términos de servicio",
+        "lastUpdated": "Última actualización: abril de 2026. Esta página es un marcador de posición; reemplace con términos aprobados por asesoría legal antes del lanzamiento a producción.",
+        "section1Title": "Acuerdo",
+        "section1Body": "Al acceder o usar los servicios de {brand}, acepta seguir estos términos y todas las leyes aplicables. Si no está de acuerdo, no use el servicio.",
+        "section2Title": "Cuentas y seguridad",
+        "section2Body": "Usted es responsable de proteger sus credenciales y de la actividad bajo su cuenta. Notifique al soporte inmediatamente si sospecha acceso no autorizado.",
+        "section3Title": "Cambios",
+        "section3Body": "Podemos actualizar estos términos de vez en cuando. Los cambios materiales se comunicarán a través del producto o por correo electrónico cuando corresponda.",
+        "footerNote": "¿Preguntas sobre estos términos?",
+        "backToSignIn": "Volver al inicio de sesión"
+      },
+      "privacy": {
+        "title": "Política de privacidad",
+        "lastUpdated": "Última actualización: abril de 2026. Esta página es un marcador de posición; reemplace con divulgaciones de privacidad aprobadas por asesoría legal antes del lanzamiento a producción.",
+        "section1Title": "Información que procesamos",
+        "section1Body": "Procesamos información que usted proporciona (como datos de cuenta y flota) para operar, asegurar y mejorar la plataforma. Las categorías y propósitos se detallarán en su política final.",
+        "section2Title": "Retención y seguridad",
+        "section2Body": "Aplicamos medidas administrativas, técnicas y organizativas diseñadas para proteger los datos personales. La retención sigue su configuración, obligaciones legales y necesidades operativas.",
+        "section3Title": "Sus opciones",
+        "section3Body": "Dependiendo de su región, puede tener derechos para acceder, corregir, eliminar o exportar datos personales. Contacte al soporte para ejercer los derechos aplicables.",
+        "footerNote": "¿Preguntas sobre privacidad?",
+        "backToSignIn": "Volver al inicio de sesión"
+      }
+    },
+    "help": {
+      "title": "Ayuda y soporte",
+      "description": "¿Necesita ayuda para iniciar sesión, verificar su correo electrónico o restablecer su contraseña? Use las opciones a continuación o contacte a nuestro equipo.",
+      "supportIntro": "Correo electrónico:",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "Los horarios de soporte y los objetivos de respuesta dependen de su suscripción y región.",
+      "backToSignIn": "Volver al inicio de sesión"
+    }
+  },
+  "common": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "delete": "Eliminar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "view": "Ver",
+    "downloadStarted": "Descarga iniciada",
+    "failedToLoad": "Error al cargar",
+    "appName": "AgenticVerdict",
+    "welcome": "Bienvenido",
+    "create": "Crear",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "retry": "Reintentar",
+    "contactSupport": "Contactar soporte",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "clear": "Limpiar"
+  },
+  "navigation": {
+    "insights": "Información",
+    "reports": "Informes",
+    "dashboard": "Panel",
+    "onboarding": "Bienvenida",
+    "featureFlags": "Indicadores de función",
+    "connectors": "Conectores",
+    "agency": "Agencia",
+    "settings": "Configuración",
+    "home": "Inicio",
+    "about": "Acerca de",
+    "contact": "Contacto"
+  },
+  "reports": {
+    "title": "Informes",
+    "ready": "Su informe está listo",
+    "download": "Descargar",
+    "viewer": {
+      "title": "Visor de informes",
+      "zoom": "Zoom",
+      "print": "Imprimir",
+      "download": "Descargar",
+      "share": "Compartir",
+      "version": "Versión",
+      "loading": "Cargando informe...",
+      "error": "Error al cargar el informe",
+      "goBack": "Volver",
+      "page": "Página",
+      "of": "de"
+    },
+    "list": {
+      "title": "Todos los informes",
+      "downloadSelected": "Descargar seleccionados",
+      "deleteSelected": "Eliminar seleccionados",
+      "bulkActions": "{count} seleccionados",
+      "pageTitle": "Informes",
+      "pageSubtitle": "Ver y gestionar sus informes",
+      "newReport": "Nuevo informe",
+      "searchPlaceholder": "Buscar informes...",
+      "filterByStatus": "Filtrar por estado",
+      "filterByFormat": "Filtrar por formato",
+      "filterByDate": "Rango de fechas",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página",
+      "actions": {
+        "view": "Ver",
+        "download": "Descargar",
+        "share": "Compartir",
+        "delete": "Eliminar",
+        "deleteConfirm": "¿Está seguro de que desea eliminar este informe?"
+      },
+      "emptyState": {
+        "title": "Aún no hay informes",
+        "createFirst": "Genere su primer informe",
+        "clearFilters": "Limpiar filtros"
+      },
+      "bulk": {
+        "delete": "Eliminar seleccionados",
+        "download": "Descargar seleccionados",
+        "selected": "{count} seleccionados"
+      },
+      "columns": {
+        "actions": "Acciones",
+        "date": "Fecha",
+        "format": "Formato",
+        "name": "Nombre",
+        "status": "Estado"
+      },
+      "dateFrom": "Fecha desde",
+      "dateTo": "Fecha hasta",
+      "deleteConfirm": {
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "multiple": "¿Está seguro de que desea eliminar {count} informes?",
+        "single": "¿Está seguro de que desea eliminar este informe?",
+        "title": "Eliminar informes"
+      },
+      "errorLoading": "Error al cargar los informes",
+      "format": {
+        "all": "Todos los formatos"
+      },
+      "status": {
+        "all": "Todos",
+        "failed": "Fallido",
+        "generating": "Generando",
+        "ready": "Listo"
+      }
+    },
+    "share": {
+      "title": "Compartir informe",
+      "expirationLabel": "Vencimiento",
+      "generateLink": "Generar enlace para compartir",
+      "linkCreated": "Enlace creado con éxito",
+      "copyLink": "Copiar enlace",
+      "copied": "Copiado",
+      "activeShares": "Compartidos activos",
+      "noShares": "Sin compartidos activos",
+      "revokeAccess": "Revocar acceso",
+      "revoked": "Revocado",
+      "expires": "Vence {date}",
+      "expiration": {
+        "1h": "1 hora",
+        "24h": "24 horas",
+        "7d": "7 días",
+        "30d": "30 días"
+      }
+    },
+    "status": {
+      "all": "Todos",
+      "ready": "Listo",
+      "generating": "Generando",
+      "failed": "Fallido"
+    },
+    "formats": {
+      "all": "Todos los formatos",
+      "pdf": "PDF",
+      "excel": "Excel"
+    },
+    "notifications": {
+      "created": {
+        "title": "Información creada",
+        "message": "Su información ha sido creada exitosamente"
+      },
+      "updated": {
+        "title": "Información actualizada",
+        "message": "Su información ha sido actualizada exitosamente"
+      },
+      "deleted": {
+        "title": "Información eliminada",
+        "message": "Su información ha sido eliminada exitosamente"
+      },
+      "running": {
+        "title": "Información en ejecución",
+        "message": "Su información está generando un informe"
+      },
+      "failed": {
+        "createTitle": "Error al crear la información",
+        "updateTitle": "Error al actualizar la información",
+        "deleteTitle": "Error al eliminar la información",
+        "runTitle": "Error al ejecutar la información"
+      }
+    }
+  },
+  "dashboard": {
+    "insights": {
+      "body": {
+        "default": "Métricas y análisis de {period}"
+      },
+      "relativeTime": {
+        "updatedRecently": "Actualizado recientemente",
+        "justNow": "Justo ahora",
+        "minutesAgo": "Hace {minutes} minutos",
+        "hoursAgo": "Hace {hours} horas",
+        "daysAgo": "Hace {days} días"
+      },
+      "ariaLabels": {
+        "insightCard": "Información de {title} para {domains}",
+        "default": "Información empresarial"
+      }
+    },
+    "actions": {
+      "retry": "Reintentar sección"
+    },
+    "async": {
+      "loadingHome": "Cargando secciones del panel",
+      "readyHome": "Los datos del panel están listos",
+      "errorHome": "Algunas secciones del panel no se pudieron cargar",
+      "loadingSection": "Cargando…"
+    },
+    "toolbar": {
+      "preset": "Rango de fechas",
+      "comparison": "Comparar con período anterior",
+      "refresh": "Actualizar datos",
+      "freshness": "Última actualización a las {time}",
+      "presets": {
+        "last7": "Últimos 7 días",
+        "last30": "Últimos 30 días",
+        "thisMonth": "Este mes",
+        "lastMonth": "Mes pasado"
+      }
+    },
+    "errors": {
+      "generic": "Algo salió mal al cargar este panel.",
+      "sectionTitle": "Esta sección no se pudo cargar",
+      "tenantRequired": "Se requiere el contexto del inquilino antes de que se puedan cargar los datos del panel.",
+      "tenantMismatch": "Su sesión no coincide con el ámbito de inquilino solicitado.",
+      "network": "No pudimos conectarnos al servidor. Verifique su conexión e intente de nuevo.",
+      "validation": "La respuesta del panel no coincidió con el contrato esperado.",
+      "invalidDomain": "Ese dominio del panel no está disponible."
+    },
+    "domains": {
+      "marketing": "Marketing",
+      "finance": "Finanzas",
+      "operations": "Operaciones",
+      "seo": "SEO",
+      "social": "Redes sociales",
+      "local": "Local"
+    },
+    "connectorStatus": {
+      "healthy": "Saludable",
+      "degraded": "Necesita atención",
+      "disconnected": "Desconectado"
+    },
+    "home": {
+      "title": "Panel",
+      "subtitle": "Sesión iniciada como {email}",
+      "ariaMain": "Panel de inicio",
+      "kpi": {
+        "title": "Métricas clave",
+        "emptyTitle": "Aún no hay KPI",
+        "emptyDescription": "Conecte fuentes de datos para completar las métricas.",
+        "totalInsights": "Total de información",
+        "activeConnectors": "Conectores activos",
+        "reportsThisMonth": "Informes este mes",
+        "deltaUp": "+2 vs semana anterior",
+        "connectorsHealthy": "Todos los conectores saludables",
+        "deltaPercent": "+12% vs período anterior"
+      },
+      "insights": {
+        "title": "Información reciente",
+        "emptyTitle": "Aún no hay información",
+        "emptyDescription": "Cree una información para ver resúmenes aquí.",
+        "sampleTitle": "Resumen de rendimiento de marketing",
+        "sampleBody": "ROAS mejoró con eficiencia de gasto estable.",
+        "sampleTime": "Actualizado hace aproximadamente 2 horas",
+        "body": {
+          "default": "Métricas y análisis de {period}"
+        },
+        "relativeTime": {
+          "updatedRecently": "Actualizado recientemente",
+          "justNow": "Justo ahora",
+          "minutesAgo": "Hace {minutes} minutos",
+          "hoursAgo": "Hace {hours} horas",
+          "daysAgo": "Hace {days} días"
+        },
+        "ariaLabels": {
+          "insightCard": "Información de {title} para {domains}",
+          "default": "Información empresarial"
+        }
+      },
+      "connectors": {
+        "title": "Estado de conectores",
+        "emptyTitle": "Sin conectores",
+        "emptyDescription": "Agregue un conector para monitorear el estado de ingesta.",
+        "ga4": "GA4",
+        "meta": "Meta Ads",
+        "gsc": "Google Search Console"
+      },
+      "quickActions": {
+        "title": "Acciones rápidas",
+        "domainSample": "Abrir panel de marketing",
+        "createInsight": "Crear información",
+        "export": "Exportar informe",
+        "customize": "Personalizar diseño",
+        "agency": "Resumen de agencia"
+      }
+    },
+    "domain": {
+      "title": "Panel de {domain}",
+      "subtitle": "Los filtros compartidos se mantienen sincronizados con su panel de inicio.",
+      "primaryKpi": "Señal principal del dominio",
+      "ariaMain": "Panel de dominio"
+    },
+    "agency": {
+      "title": "Resumen de agencia",
+      "subtitle": "Las métricas agregadas usan solo inquilinos de clientes permitidos.",
+      "clientContext": "Contexto del cliente: {id}",
+      "ariaMain": "Panel de agencia",
+      "clientList": "Clientes",
+      "viewTenant": "Abrir panel del cliente",
+      "blocked": "Este cliente no está en su ámbito permitido.",
+      "kpi": {
+        "clients": "Clientes activos",
+        "insights": "Información (clientes permitidos)"
+      }
+    },
+    "widgets": {
+      "kpi_grid": "Resumen de KPI",
+      "insights": "Resumen de información",
+      "connectors": "Estado de conectores",
+      "quick_actions": "Acciones rápidas"
+    },
+    "customize": {
+      "title": "Personalizar panel",
+      "subtitle": "Reordene los widgets, luego guarde o restablezca. La edición requiere acceso de administrador en esta vista previa.",
+      "ariaMain": "Personalización del panel",
+      "editMode": "Editar diseño",
+      "viewMode": "Ver diseño",
+      "save": "Guardar diseño",
+      "reset": "Restablecer predeterminado",
+      "palette": "Widgets disponibles",
+      "hint": "Los controles de arrastre no están habilitados en pantallas pequeñas; use agregar/eliminar en el escritorio.",
+      "noPermission": "No tiene permiso para editar este diseño."
+    }
+  },
+  "toolbar": {
+    "preset": "Preestablecido",
+    "comparison": "Comparación",
+    "refresh": "Actualizar",
+    "freshness": "Actualizado {time}",
+    "presets": {
+      "last7": "Últimos 7 días",
+      "last30": "Últimos 30 días",
+      "thisMonth": "Este mes",
+      "lastMonth": "Mes pasado"
+    }
+  },
+  "async": {
+    "loadingHome": "Cargando panel...",
+    "errorHome": "Error al cargar el panel",
+    "readyHome": "Panel cargado",
+    "loadingSection": "Cargando sección..."
+  },
+  "errors": {
+    "sectionTitle": "No se pudieron cargar los datos",
+    "generic": "Algo salió mal",
+    "tenantRequired": "Se requiere el contexto del inquilino",
+    "common": {
+      "unknownError": "Ocurrió un error inesperado. Inténtelo de nuevo.",
+      "tryAgain": "Inténtelo de nuevo.",
+      "contactSupport": "Si el problema persiste, contacte al soporte."
+    },
+    "notFound": "Página no encontrada",
+    "serverError": "Error del servidor",
+    "networkError": "Error de conexión de red",
+    "unauthorized": "No está autorizado para acceder a esta página",
+    "forbidden": "Acceso prohibido",
+    "somethingWentWrong": "Algo salió mal",
+    "tryAgain": "Inténtelo de nuevo",
+    "network": {
+      "offline": "Parece que está sin conexión. Verifique su conexión a internet e intente de nuevo.",
+      "timeout": "La solicitud ha expirado. Verifique su conexión e intente de nuevo.",
+      "connectionFailed": "Conexión fallida. Verifique su conexión a internet.",
+      "serverUnreachable": "El servidor no está accesible. Inténtelo de nuevo más tarde."
+    },
+    "auth": {
+      "invalidCredentials": "Correo electrónico o contraseña no válidos. Inténtelo de nuevo.",
+      "sessionExpired": "Su sesión ha expirado. Inicie sesión de nuevo.",
+      "tokenInvalid": "Token no válido. Inicie sesión de nuevo.",
+      "tokenExpired": "Su token ha expirado. Inicie sesión de nuevo.",
+      "unauthorized": "No está autorizado para realizar esta acción.",
+      "forbidden": "Acceso prohibido. No tiene permiso para acceder a este recurso.",
+      "emailNotVerified": "Verifique su dirección de correo electrónico antes de continuar.",
+      "accountLocked": "Su cuenta ha sido bloqueada debido a demasiados intentos fallidos. Contacte al soporte.",
+      "tooManyAttempts": "Demasiados intentos fallidos. Inténtelo de nuevo más tarde."
+    },
+    "server": {
+      "internalError": "Ocurrió un error interno del servidor. Inténtelo de nuevo más tarde.",
+      "badGateway": "No se pudo conectar al servicio. Inténtelo de nuevo más tarde.",
+      "serviceUnavailable": "El servicio no está disponible temporalmente. Inténtelo de nuevo más tarde.",
+      "gatewayTimeout": "La solicitud ha expirado. Inténtelo de nuevo más tarde.",
+      "notImplemented": "Esta función aún no está implementada."
+    },
+    "rateLimit": {
+      "exceeded": "Ha excedido el límite de solicitudes. Inténtelo de nuevo en {retryAfter} segundos.",
+      "tooManyRequests": "Demasiadas solicitudes. Reduzca la velocidad e intente de nuevo más tarde."
+    }
+  },
+  "actions": {
+    "retry": "Reintentar",
+    "refresh": "Actualizar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "download": "Descargar",
+    "upload": "Subir",
+    "export": "Exportar",
+    "import": "Importar",
+    "apply": "Aplicar",
+    "reset": "Restablecer",
+    "clear": "Limpiar"
+  },
+  "insights": {
+    "title": "Información",
+    "list": {
+      "title": "Información empresarial",
+      "newInsight": "Nueva información",
+      "searchPlaceholder": "Buscar información...",
+      "filter": {
+        "status": "Estado",
+        "domain": "Dominio"
+      },
+      "status": {
+        "enabled": "Habilitado",
+        "disabled": "Deshabilitado",
+        "running": "Ejecutando",
+        "failed": "Fallido"
+      },
+      "empty": {
+        "title": "Aún no hay información",
+        "description": "Cree su primera información para comenzar",
+        "createButton": "Crear información"
+      },
+      "actions": {
+        "view": "Ver",
+        "edit": "Editar",
+        "runNow": "Ejecutar ahora",
+        "delete": "Eliminar",
+        "deleteConfirm": "¿Está seguro de que desea eliminar esta información?",
+        "viewDetails": "Ver detalles"
+      },
+      "pageTitle": "Información",
+      "pageSubtitle": "Gestione su información impulsada por IA",
+      "filterByStatus": "Filtrar por estado",
+      "filterByDomain": "Filtrar por dominio",
+      "sortBy": "Ordenar por",
+      "sort": {
+        "nameAsc": "Nombre (A-Z)",
+        "nameDesc": "Nombre (Z-A)",
+        "createdAtAsc": "Creado (Más antiguo)",
+        "createdAtDesc": "Creado (Más reciente)",
+        "lastRunAtAsc": "Última ejecución (Más antigua)",
+        "lastRunAtDesc": "Última ejecución (Reciente)",
+        "statusAsc": "Estado (Activo primero)",
+        "statusDesc": "Estado (Inactivo primero)"
+      },
+      "connectors": "conectores",
+      "created": "Creado",
+      "lastRun": "Última ejecución",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página",
+      "emptyState": {
+        "title": "Aún no hay información",
+        "createFirst": "Cree su primera información"
+      },
+      "errorTitle": "Error al cargar la información",
+      "errorMessage": "Error al cargar la información. Inténtelo de nuevo.",
+      "lastRunStatus": {
+        "running": "Ejecutando",
+        "completed": "Completado",
+        "failed": "Fallido"
+      },
+      "neverRun": "Nunca ejecutado"
+    },
+    "wizard": {
+      "title": "Crear información",
+      "editTitle": "Editar información",
+      "step1": "Información básica",
+      "step2": "Conectores",
+      "step3": "Métricas",
+      "step4": "Configuración de IA",
+      "step5": "Programa",
+      "step6": "Revisar",
+      "next": "Siguiente",
+      "back": "Atrás",
+      "create": "Crear información",
+      "save": "Guardar cambios",
+      "cancel": "Cancelar",
+      "cancelConfirm": "¿Está seguro de que desea cancelar? Se perderá su progreso.",
+      "success": "Información creada con éxito",
+      "updateSuccess": "Información actualizada con éxito",
+      "steps": {
+        "basicInfo": {
+          "title": "Información básica",
+          "nameLabel": "Nombre de la información",
+          "namePlaceholder": "ej., Resumen de rendimiento de marketing",
+          "domainLabel": "Dominio",
+          "descriptionLabel": "Descripción",
+          "descriptionPlaceholder": "¿Qué debe analizar esta información?"
+        },
+        "connectors": {
+          "title": "Seleccionar conectores",
+          "description": "Elija las fuentes de datos a incluir",
+          "manage": "Gestionar conectores"
+        },
+        "metrics": {
+          "title": "Configurar métricas",
+          "description": "Seleccione qué métricas analizar"
+        },
+        "ai": {
+          "title": "Configuración de IA",
+          "modelLabel": "Modelo de IA",
+          "qualityLabel": "Calidad del análisis",
+          "qualityFast": "Rápido",
+          "qualityBalanced": "Equilibrado",
+          "qualityDetailed": "Detallado",
+          "qualityComprehensive": "Exhaustivo",
+          "qualityDescription": "Mayor calidad proporciona análisis más detallado pero tarda más",
+          "detailLevelLabel": "Nivel de detalle",
+          "detailLevelPlaceholder": "Seleccionar nivel de detalle",
+          "detailExecutive": "Resumen ejecutivo",
+          "detailStandard": "Análisis estándar",
+          "detailComprehensive": "Informe exhaustivo",
+          "customPromptLabel": "Prompt personalizado (opcional)",
+          "customPromptPlaceholder": "Añadir instrucciones específicas para el analista IA...",
+          "customPromptDescription": "Guía a la IA para enfocarse en aspectos específicos de tus datos",
+          "modelDescription": "Claude 3.5 Sonnet recomendado para mejores resultados",
+          "modelPlaceholder": "Seleccionar modelo"
+        },
+        "schedule": {
+          "title": "Programa y entrega",
+          "frequencyLabel": "Frecuencia",
+          "frequencyPlaceholder": "Seleccionar frecuencia",
+          "freqDaily": "Diario",
+          "freqWeekly": "Semanal",
+          "freqMonthly": "Mensual",
+          "freqQuarterly": "Trimestral",
+          "timeLabel": "Hora de entrega",
+          "timePlaceholder": "ej. 9 para 9 AM",
+          "timeValidation": "La hora debe estar entre 0 y 23",
+          "formatLabel": "Formato de informe",
+          "formatPlaceholder": "Seleccionar formato",
+          "formatPdf": "PDF",
+          "formatExcel": "Excel",
+          "formatBoth": "Ambos PDF y Excel",
+          "recipientsLabel": "Destinatarios"
+        },
+        "review": {
+          "title": "Revisar y crear",
+          "description": "Revise su configuración antes de crear"
+        }
+      }
+    },
+    "detail": {
+      "overview": {
+        "0": "R",
+        "1": "e",
+        "2": "s",
+        "3": "u",
+        "4": "m",
+        "5": "e",
+        "6": "n",
+        "aiInsightsTitle": "Información de IA",
+        "aiModel": "Modelo de IA",
+        "configTitle": "Resumen de configuración",
+        "connectedDomains": "Dominios conectados",
+        "connectors": "Conectores",
+        "connectorsLabel": "conectores",
+        "defaultModel": "Modelo predeterminado",
+        "description": "Descripción",
+        "download": "Descargar",
+        "generateAIInsights": "Generar información de IA",
+        "keyFindings": "Hallazgos clave",
+        "metrics": "Métricas",
+        "metricsLabel": "métricas",
+        "noAIInsightsYet": "Aún no hay información de IA. Genere información para comenzar.",
+        "noDescription": "No se proporcionó descripción",
+        "noReportsYet": "Aún no se generaron informes",
+        "performanceSummary": "Resumen de rendimiento",
+        "recommendations": "Recomendaciones",
+        "regenerateAIInsights": "Regenerar información de IA",
+        "reportsError": "Error al cargar informes relacionados",
+        "view": "Ver"
+      },
+      "reports": "Informes",
+      "settings": "Configuración",
+      "history": "Historial",
+      "reportsTab": {
+        "comingSoon": "La pestaña de informes estará disponible pronto"
+      },
+      "settingsTab": {
+        "comingSoon": "La pestaña de configuración estará disponible pronto"
+      },
+      "historyTab": {
+        "comingSoon": "La pestaña de historial estará disponible pronto"
+      },
+      "runNow": "Ejecutar ahora",
+      "running": "Ejecutando...",
+      "retry": "Reintentar",
+      "tabs": {
+        "overview": "Resumen",
+        "reports": "Informes",
+        "settings": "Configuración",
+        "history": "Historial"
+      },
+      "created": "Creado",
+      "deleteConfirm": "¿Está seguro de que desea eliminar esta información?",
+      "edit": "Editar",
+      "errorLoading": "Error al cargar los detalles de la información. Inténtelo de nuevo.",
+      "loading": "Cargando información..."
+    },
+    "errors": {
+      "insightNotFound": "Análisis no encontrado",
+      "createFailed": "Error al crear el análisis",
+      "updateFailed": "Error al actualizar el análisis",
+      "deleteFailed": "Error al eliminar el análisis",
+      "runFailed": "Error al ejecutar el análisis",
+      "invalidConfig": "Configuración de análisis no válida",
+      "connectorRequired": "Se requiere al menos un conector",
+      "metricsRequired": "Se requiere al menos una métrica por conector",
+      "permissionDenied": "No tiene permiso para realizar esta acción",
+      "tenantMismatch": "Se detectó incompatibilidad de inquilino",
+      "validationFailed": "Error de validación",
+      "aiGenerationFailed": "Error al generar análisis de IA",
+      "reportNotFound": "Informe no encontrado",
+      "reportDownloadFailed": "Error al descargar el informe",
+      "reportShareFailed": "Error al compartir el informe",
+      "rateLimited": "Demasiadas solicitudes. Inténtelo de nuevo más tarde",
+      "connectorNotFound": "Conector no encontrado",
+      "connectorUnhealthy": "El conector no está saludable",
+      "duplicateName": "Ya existe un recurso con este nombre",
+      "insightDisabled": "No se puede ejecutar un análisis deshabilitado. Habilítelo primero",
+      "modelNotSupported": "El modelo no es compatible con el proveedor seleccionado",
+      "providerNotAvailable": "El proveedor no está disponible",
+      "unknown": "Ocurrió un error inesperado"
+    },
+    "status": {
+      "all": "Todos",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "running": "Ejecutando",
+      "failed": "Fallido"
+    },
+    "create": {
+      "title": "Crear información",
+      "next": "Siguiente",
+      "back": "Atrás",
+      "cancel": "Cancelar",
+      "cancelConfirm": "¿Descartar el progreso y volver a la información?",
+      "pageTitle": "Crear información",
+      "pageSubtitle": "Cree información impulsada por IA a partir de sus fuentes de datos conectadas"
+    },
+    "actions": {
+      "refresh": "Actualizar"
+    },
+    "edit": {
+      "cancelMessage": "Tiene cambios sin guardar. ¿Está seguro de que desea salir de esta página?",
+      "cancelTitle": "¿Descartar cambios?",
+      "continueEditing": "Continuar editando",
+      "discardChanges": "Descartar cambios",
+      "errorLoading": "Error al cargar la información para editar.",
+      "loading": "Cargando editor de información...",
+      "pageTitle": "Editar información",
+      "pageSubtitle": "Actualice la configuración y el programa de su información",
+      "resetToDefault": "Restablecer predeterminado",
+      "sections": {
+        "aiSettings": "Configuración de IA",
+        "basicInfo": "Información básica",
+        "connectors": "Conectores",
+        "metrics": "Métricas",
+        "schedule": "Programa y entrega"
+      },
+      "unsavedChanges": "Cambios sin guardar"
+    },
+    "templates": {
+      "title": "Plantillas",
+      "searchPlaceholder": "Buscar plantillas...",
+      "allDomains": "Todos los dominios",
+      "all": "Todos",
+      "noTemplatesFound": "No se encontraron plantillas",
+      "noTemplatesFoundAction": "No se encontraron plantillas. Comience desde cero para crear su información.",
+      "preview": "Vista previa",
+      "previewTitle": "Vista previa de plantilla",
+      "connectors": "Conectores",
+      "schedule": "Programa",
+      "delivery": "Entrega",
+      "applyTemplate": "Aplicar plantilla",
+      "applyAndCustomize": "Aplicar y personalizar",
+      "close": "Cerrar",
+      "cancel": "Cancelar",
+      "useTemplate": "Usar plantilla",
+      "useATemplate": "Usar una plantilla",
+      "startFromScratch": "Comenzar desde cero",
+      "chooseStartingPoint": "Elija un punto de partida",
+      "chooseStartingPointDesc": "Elija una plantilla o cree su información desde cero.",
+      "failedToLoad": "Error al cargar las plantillas. Inténtelo de nuevo más tarde.",
+      "loading": "Cargando plantillas...",
+      "templateNotFound": "Plantilla no encontrada.",
+      "loadingDetails": "Cargando detalles de la plantilla...",
+      "appliedTemplate": "Plantilla aplicada: {name}. Todos los campos son editables.",
+      "templateApplied": "Plantilla aplicada",
+      "connectorCount": "{count, plural, one {# conector} other {# conectores}}",
+      "frequency": {
+        "daily": "Diario",
+        "weekly": "Semanal",
+        "monthly": "Mensual",
+        "quarterly": "Trimestral"
+      },
+      "format": {
+        "pdf": "PDF",
+        "excel": "Excel",
+        "both": "PDF + Excel"
+      },
+      "domains": "Dominios",
+      "connectorsMetrics": "Conectores y métricas",
+      "formatLabel": "Formato",
+      "webhookEnabled": "Webhook habilitado",
+      "plusMore": "+{count}"
+    }
+  },
+  "report": {
+    "marketingIntelligence": "Inteligencia de marketing",
+    "contents": "Contenido",
+    "verdict": "Veredicto",
+    "dataQuality": "Calidad de datos",
+    "summary": "Resumen",
+    "keyFindings": "Hallazgos clave",
+    "finding": "Hallazgo {n}",
+    "recommendations": "Recomendaciones",
+    "insights": "Perspectivas",
+    "statistics": "Estadísticas",
+    "keyMetrics": "Métricas clave",
+    "metrics": "Métricas",
+    "charts": "Gráficos",
+    "analysisBody": "Cuerpo del análisis",
+    "visuals": "Visuales",
+    "referenceTables": "Tablas de referencia",
+    "referenceMetrics": "Métricas de referencia",
+    "phase2Integration": "Integración fase 2",
+    "verdictScore": "Puntuación del veredicto",
+    "verdictOverview": "Resumen del veredicto",
+    "type": "Tipo",
+    "sentiment": "Sentimiento",
+    "modelConfidence": "Confianza del modelo",
+    "insightContext": "Contexto de la perspectiva",
+    "statisticalSummaries": "Resúmenes estadísticos",
+    "measure": "Medida",
+    "value": "Valor",
+    "note": "Nota",
+    "dataQualityIndicators": "Indicadores de calidad de datos",
+    "noSummaryText": "No se proporcionó texto de resumen ejecutivo.",
+    "noChartData": "Marcador de posición de gráfico — proporcione charts[0] en el modelo de vista.",
+    "noMetricsText": "No hay datos de métricas disponibles",
+    "noSectionsText": "Agregue secciones narrativas para completar esta plantilla.",
+    "noAppendixText": "No se proporcionaron secciones de apéndice.",
+    "noInsightsText": "No se incluyeron especificaciones de gráficos en esta carga.",
+    "sections": "Secciones",
+    "xlsxReport": "Informe",
+    "xlsxReportSummary": "Resumen del informe",
+    "xlsxInsight": "Perspectiva",
+    "xlsxDateRange": "Rango de fechas",
+    "xlsxTenantId": "ID del inquilino",
+    "xlsxReportId": "ID del informe",
+    "xlsxTemplate": "Plantilla",
+    "xlsxKeyMetrics": "Métricas clave",
+    "xlsxTenantInfo": "Info del inquilino",
+    "xlsxAiInsights": "Perspectivas de IA",
+    "xlsxTitle": "Título",
+    "xlsxType": "Tipo",
+    "xlsxConfidence": "Confianza",
+    "xlsxDescription": "Descripción",
+    "xlsxTimestamp": "Marca de tiempo",
+    "xlsxNoData": "No hay datos de métricas disponibles",
+    "xlsxNoTableRows": "No se encontraron filas de tabla en la plantilla renderizada"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "fr": "Français",
+    "es": "Español",
+    "zh": "中文"
+  },
+  "Layout": {
+    "openNav": "Abrir menú de navegación",
+    "closeNav": "Cerrar menú de navegación",
+    "brand": "AgenticVerdict",
+    "skipToMain": "Saltar al contenido principal",
+    "navLabel": "Navegación principal",
+    "navHint": "Use el menú de navegación para acceder a diferentes secciones de la aplicación.",
+    "breadcrumbsLabel": "Ruta de la página actual",
+    "collapseDesktopNav": "Contraer barra lateral de navegación",
+    "expandDesktopNav": "Expandir barra lateral de navegación",
+    "shellErrorTitle": "Navegación no disponible",
+    "shellErrorMessage": "No pudimos cargar el estado de su interfaz. Intente de nuevo.",
+    "shellEmptyTitle": "No hay módulos disponibles",
+    "shellEmptyMessage": "Su cuenta no tiene acceso actualmente a ningún módulo de navegación.",
+    "retry": "Reintentar",
+    "shellLoadingLive": "Cargando navegación de la interfaz",
+    "shellErrorLive": "Error al cargar la navegación de la interfaz",
+    "shellEmptyLive": "No hay módulos de navegación de interfaz disponibles",
+    "openCommandPalette": "Abrir paleta de comandos",
+    "commandPaletteTitle": "Cambiador rápido",
+    "commandPalettePlaceholder": "Buscar destinos de navegación",
+    "commandPaletteHint": "Acceda rápidamente a cualquier destino principal",
+    "commandPaletteEmpty": "No hay destinos coincidentes",
+    "toggleLight": "Cambiar a modo claro",
+    "toggleDark": "Cambiar a modo oscuro"
+  },
+  "Home": {
+    "breadcrumbHome": "Inicio",
+    "title": "Bienvenido",
+    "subtitle": "Información de múltiples dominios empresariales para su organización.",
+    "tenantLabel": "Inquilino",
+    "languageLabel": "Idioma",
+    "regionLabel": "Región",
+    "previewTitle": "Vista previa",
+    "formTab": "Formulario",
+    "sampleCurrencyLabel": "Moneda de ejemplo",
+    "sampleDateLabel": "Fecha de ejemplo",
+    "pluralLabel": "Ejemplos plurales",
+    "itemCount": "{count, plural, =0 {Sin elementos} one {# elemento} other {# elementos}}",
+    "tableName": "Nombre",
+    "tableRole": "Rol",
+    "rowAnalyst": "Analista",
+    "rowAdmin": "Administrador",
+    "badgeNew": "Nuevo"
+  },
+  "admin": {
+    "featureFlags": {
+      "title": "Indicadores de función",
+      "liveTitle": "Instantánea del inquilino en vivo",
+      "liveDescription": "Los valores predeterminados y resueltos provienen de Postgres a través de admin.featureFlags.list (createFeatureFlagService) para su inquilino con sesión iniciada.",
+      "columnKey": "Indicador",
+      "columnType": "Tipo",
+      "columnDefault": "Predeterminado",
+      "columnResolved": "Resuelto"
+    }
+  },
+  "connectors": {
+    "common": {
+      "title": "Conectores",
+      "add": "Agregar",
+      "remove": "Eliminar",
+      "configure": "Configurar",
+      "connector": "Conector",
+      "connectorName": "Nombre del conector",
+      "domain": "Dominio",
+      "domainPlaceholder": "ejemplo.com",
+      "metrics": "Métricas",
+      "syncFrequency": "Frecuencia de sincronización",
+      "dataRetention": "Retención de datos",
+      "retentionDays": "{days} días",
+      "notFound": "Conector no encontrado",
+      "testConnection": "Probar conexión",
+      "continue": "Continuar",
+      "finish": "Finalizar"
+    },
+    "status": {
+      "healthy": "Activo",
+      "warning": "Necesita atención",
+      "error": "Error",
+      "inactive": "Inactivo",
+      "syncing": "Sincronizando..."
+    },
+    "frequency": {
+      "hourly": "Cada hora",
+      "daily": "Diario",
+      "weekly": "Semanal"
+    },
+    "freshness": {
+      "realTime": "Tiempo real",
+      "recent": "Reciente",
+      "stale": "Desactualizado",
+      "outdated": "Antiguo"
+    },
+    "alerts": {
+      "connectionSuccessfulTitle": "Conexión exitosa",
+      "connectionSuccessfulBody": "Su conector está listo.",
+      "limitedPermissionsTitle": "Permisos limitados",
+      "limitedPermissionsBody": "La conexión funciona pero con acceso limitado a datos.",
+      "connectionFailedTitle": "Conexión fallida",
+      "connectionFailedBody": "Verifique sus credenciales e intente de nuevo."
+    },
+    "platforms": {
+      "ga4": {
+        "name": "Google Analytics 4",
+        "description": "Tráfico web y conversiones"
+      },
+      "meta": {
+        "name": "Meta Ads",
+        "description": "Publicidad en Facebook e Instagram"
+      },
+      "gsc": {
+        "name": "Google Search Console",
+        "description": "Rendimiento de búsqueda e indexación"
+      },
+      "tiktok": {
+        "name": "TikTok Ads",
+        "description": "Campañas publicitarias en TikTok"
+      },
+      "gbp": {
+        "name": "Google Business Profile",
+        "description": "Presencia de negocios locales"
+      }
+    },
+    "metrics": {
+      "sessions": "Sesiones",
+      "users": "Usuarios",
+      "conversions": "Conversiones",
+      "revenue": "Ingresos",
+      "bounceRate": "Tasa de rebote",
+      "pageViews": "Páginas vistas",
+      "impressions": "Impresiones",
+      "clicks": "Clics",
+      "ctr": "CTR",
+      "cpc": "CPC",
+      "spend": "Gasto",
+      "position": "Posición",
+      "pages": "Páginas",
+      "queries": "Consultas",
+      "videoViews": "Vistas de video",
+      "views": "Vistas",
+      "calls": "Llamadas",
+      "directions": "Indicaciones",
+      "reviews": "Reseñas",
+      "photos": "Fotos"
+    },
+    "list": {
+      "actions": {
+        "viewDetails": "Ver detalles",
+        "syncNow": "Sincronizar ahora",
+        "disconnect": "Desconectar",
+        "addConnector": "Agregar conector",
+        "addFirstConnector": "Agregue su primer conector"
+      },
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "allDomains": "Todos los dominios",
+        "searchPlaceholder": "Buscar conectores..."
+      },
+      "card": {
+        "lastSync": "Última sincronización: {date}",
+        "noSyncHistory": "Sin historial de sincronización"
+      },
+      "empty": {
+        "noConnectors": "Aún no hay conectores",
+        "noFilteredResults": "Ningún conector coincide con sus filtros"
+      },
+      "results": {
+        "showing": "Mostrando {shown} de {total} conectores"
+      }
+    },
+    "add": {
+      "title": "Agregar conector",
+      "cancelConfirm": "¿Descartar el progreso y volver a los conectores?",
+      "steps": {
+        "platform": {
+          "label": "Plataforma",
+          "description": "Seleccionar fuente de datos"
+        },
+        "auth": {
+          "label": "Autenticación",
+          "description": "Conectar cuenta"
+        },
+        "config": {
+          "label": "Configuración",
+          "description": "Elegir métricas"
+        },
+        "confirm": {
+          "label": "Confirmar",
+          "description": "Probar conexión"
+        }
+      },
+      "platform": {
+        "searchPlaceholder": "Buscar plataformas..."
+      },
+      "auth": {
+        "authenticateWith": "Autenticar con {platform}",
+        "connectOAuth": "Conectar con OAuth",
+        "orApiCredentials": "O ingrese credenciales de API:",
+        "apiKey": "Clave de API",
+        "continueApiKey": "Continuar con clave de API"
+      },
+      "config": {
+        "connectorNamePlaceholder": "Mi conector de GA4"
+      },
+      "confirm": {
+        "summary": "Resumen",
+        "platform": "Plataforma: {platform}",
+        "name": "Nombre: {name}",
+        "domain": "Dominio: {domain}",
+        "metrics": "Métricas: {metrics}",
+        "frequency": "Frecuencia: {frequency}",
+        "retention": "Retención: {days} días"
+      }
+    },
+    "configure": {
+      "title": "Configurar {name}",
+      "sections": {
+        "account": "Cuenta",
+        "syncPreferences": "Preferencias de sincronización",
+        "notifications": "Notificaciones",
+        "advanced": "Avanzado"
+      },
+      "actions": {
+        "selectAll": "Seleccionar todo",
+        "saveChanges": "Guardar cambios"
+      },
+      "notifications": {
+        "syncFailure": "Alertas de fallo de sincronización",
+        "authExpiration": "Advertencias de expiración de autenticación",
+        "weeklySummary": "Resúmenes semanales"
+      },
+      "advanced": {
+        "customTags": "Etiquetas personalizadas",
+        "customTagsPlaceholder": "Agregue etiqueta y presione Enter",
+        "excludeInternalTraffic": "Excluir tráfico interno (filtro IP)"
+      },
+      "testFailed": "Conexión fallida. Verifique su configuración."
+    },
+    "detail": {
+      "actions": {
+        "backToConnectors": "Volver a conectores",
+        "viewAll": "Ver todo",
+        "manage": "Gestionar"
+      },
+      "sections": {
+        "health": "Estado",
+        "recentData": "Datos recientes",
+        "syncHistory": "Historial de sincronización",
+        "connectedMetrics": "Métricas conectadas",
+        "troubleshooting": "Solución de problemas"
+      },
+      "health": {
+        "lastSync": "Última sincronización: {date}",
+        "nextSync": "Próxima sincronización: {date}"
+      },
+      "recentData": {
+        "empty": "No hay datos recientes disponibles"
+      },
+      "syncHistory": {
+        "empty": "Aún no hay historial de sincronización",
+        "columns": {
+          "date": "Fecha",
+          "status": "Estado",
+          "records": "Registros"
+        }
+      },
+      "connectedMetrics": {
+        "empty": "No se seleccionaron métricas"
+      }
+    },
+    "remove": {
+      "title": "Eliminar {name}",
+      "warningTitle": "Advertencia",
+      "warningBody": "Eliminar este conector tendrá las siguientes consecuencias:",
+      "impacts": {
+        "dataCollectionStops": "La recopilación de datos se detendrá",
+        "historicalInsightsOnly": "Las información existentes mostrarán solo datos históricos",
+        "noNewReports": "No se incluirán nuevos informes con este conector",
+        "historicalRetention": "Los datos históricos se conservarán durante 90 días",
+        "canReconnectAnytime": "El conector se puede reconectar en cualquier momento"
+      },
+      "affectedInsightsTitle": "Información afectada",
+      "alternativeOptionsTitle": "Opciones alternativas",
+      "options": {
+        "pause": "Pausar recopilación de datos (mantener conector, detener sincronización)",
+        "remove": "Eliminar conector completamente (desconectar y eliminar configuración)"
+      },
+      "exportTitle": "Exportar datos históricos",
+      "exportDescription": "Descargue sus datos históricos antes de eliminar.",
+      "exportAction": "Exportar datos históricos",
+      "confirmTitle": "Confirmar eliminación",
+      "confirmInstructions": "Escriba ELIMINAR para confirmar:",
+      "actions": {
+        "pauseConnector": "Pausar conector",
+        "confirmRemoval": "Confirmar eliminación"
+      }
+    }
+  },
+  "onboarding": {
+    "title": "Bienvenido a bordo",
+    "subtitle": "Una configuración guiada breve para su espacio de trabajo.",
+    "continue": "Continuar",
+    "finish": "Ir al panel",
+    "stepWelcomeLabel": "Bienvenido",
+    "stepWelcomeDescription": "Resumen",
+    "stepWelcomeBody": "Está listo para conectar fuentes de datos y explorar información.",
+    "stepPreferencesLabel": "Preferencias",
+    "stepPreferencesDescription": "Predeterminados regionales",
+    "stepPreferencesBody": "La configuración regional, moneda y notificaciones serán gestionadas por TenantConfig una vez conectado.",
+    "stepDoneLabel": "Listo",
+    "stepDoneDescription": "Todo configurado",
+    "stepDoneBody": "Puede volver a la configuración en cualquier momento desde la aplicación."
+  },
+  "components": {
+    "costImpactEstimator": {
+      "title": "Cost Impact Estimator",
+      "recommended": "Recommended",
+      "costComparison": "Cost Comparison",
+      "perRequest": "per request",
+      "monthlyBudgetImpact": "Monthly Budget Impact",
+      "impact": "Impact",
+      "total": "total",
+      "metrics": {
+        "requests": "Monthly Requests",
+        "avgTokens": "Avg Tokens/Request",
+        "totalTokens": "Total Monthly Tokens"
+      },
+      "currentTier": "Current: {tier}",
+      "proposedTier": "Proposed: {tier}",
+      "recommendations": {
+        "lowUsage": "Low usage — Economy tier is sufficient",
+        "mediumUsage": "Medium usage — Standard tier offers best value",
+        "highUsage": "High usage — Premium tier for maximum performance"
+      },
+      "recommendation": {
+        "title": "Recommendation",
+        "description": "We recommend the {tier} tier. {reason}"
+      },
+      "alerts": {
+        "costIncrease": "Estimated increase: {amount}/month",
+        "costSavings": "Estimated savings: {amount}/month",
+        "increaseDescription": "This adds approximately {amount} to your annual costs.",
+        "savingsDescription": "This saves approximately {amount} annually."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "upgrade": "Upgrade",
+        "downgrade": "Downgrade"
+      }
+    },
+    "costTierSelector": {
+      "label": "Cost Tier",
+      "tooltip": "Select the pricing tier for this resource",
+      "currentSelection": "Current Selection",
+      "notSelected": "Not selected",
+      "priceIncrease": "Price increases by {percent}%",
+      "priceDecrease": "Price decreases by {percent}%",
+      "tiers": {
+        "economy": {
+          "label": "Economy",
+          "description": "Best for development and testing"
+        },
+        "standard": {
+          "label": "Standard",
+          "description": "Balanced performance and cost"
+        },
+        "premium": {
+          "label": "Premium",
+          "description": "Maximum performance and priority"
+        }
+      }
+    },
+    "credentialForm": {
+      "securityNotice": "Credentials are encrypted at rest and never logged.",
+      "fields": {
+        "providerType": "Provider Type",
+        "selectProvider": "Select a provider",
+        "apiKey": "API Key",
+        "apiKeyPlaceholder": "Enter your API key",
+        "apiKeyDescription": "Found in your provider dashboard",
+        "apiSecret": "API Secret",
+        "apiSecretPlaceholder": "Enter your API secret",
+        "organizationId": "Organization ID",
+        "organizationIdPlaceholder": "Enter your organization ID",
+        "organizationIdDescription": "Required for organization-scoped access",
+        "projectId": "Project ID",
+        "projectIdPlaceholder": "Enter your project ID",
+        "endpoint": "Custom Endpoint",
+        "endpointPlaceholder": "https://api.example.com",
+        "endpointDescription": "Override the default API endpoint"
+      },
+      "errors": {
+        "selectProvider": "Please select a provider first",
+        "providerTypeRequired": "Provider type is required",
+        "apiKeyRequired": "API key is required",
+        "apiSecretRequired": "API secret is required"
+      },
+      "actions": {
+        "testConnection": "Test Connection",
+        "save": "Save"
+      },
+      "alerts": {
+        "connectionSuccess": "Connection Successful",
+        "connectionFailed": "Connection Failed"
+      },
+      "messages": {
+        "testing": "Testing connection...",
+        "connectionValid": "Your credentials are valid and the connection is working.",
+        "connectionInvalid": "Unable to connect. Please verify your credentials."
+      }
+    },
+    "domainCard": {
+      "actions": {
+        "edit": "Edit",
+        "editOverride": "Edit Override",
+        "overrideProvider": "Override Provider",
+        "revertToInherited": "Revert to Inherited",
+        "delete": "Delete"
+      },
+      "badges": {
+        "connectors": "{count} Connectors"
+      },
+      "provider": {
+        "override": "Override",
+        "inherited": "Inherited",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "overrideInfo": "This domain has a custom provider configuration."
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      }
+    },
+    "domainMapper": {
+      "lastSynced": "Last synced",
+      "connectors": "connectors",
+      "dropConnector": "Drop connector here",
+      "connectorStatus": {
+        "healthy": "Healthy",
+        "syncing": "Syncing",
+        "warning": "Warning",
+        "inactive": "Inactive",
+        "error": "Error"
+      }
+    },
+    "inheritanceIndicator": {
+      "usingProvider": "Using {name}",
+      "effectiveProvider": "Effective Provider:",
+      "noProvider": "No provider configured",
+      "levels": {
+        "tenant": "Tenant",
+        "domain": "Domain",
+        "connector": "Connector"
+      },
+      "status": {
+        "source": "Source",
+        "override": "Override",
+        "inherited": "Inherited from {from}",
+        "unknown": "Unknown"
+      },
+      "tooltip": {
+        "title": "Configuration Inheritance",
+        "tenant": "This is the top-level tenant configuration.",
+        "domainOverride": "This domain overrides the tenant provider.",
+        "domainInherited": "This domain inherits the tenant provider.",
+        "connectorOverride": "This connector overrides the domain provider.",
+        "connectorInherited": "This connector inherits from its parent."
+      }
+    },
+    "insightAIConfig": {
+      "title": "AI Insight Configuration",
+      "description": "Configure how AI-generated insights are produced for your reports.",
+      "disabledMessage": "AI insights are currently disabled.",
+      "insightsEnabled": "AI Insights",
+      "defaults": {
+        "systemPrompt": "You are a helpful analyst assistant. Provide clear, data-driven insights."
+      },
+      "common": {
+        "enabled": "Enable AI Insights",
+        "disabled": "Disabled"
+      },
+      "sections": {
+        "provider": "AI Provider",
+        "output": "Output Settings",
+        "customization": "Customization"
+      },
+      "fields": {
+        "providerType": "Provider",
+        "model": "Model",
+        "language": "Language",
+        "tone": "Tone",
+        "maxLength": "Max Length (characters)",
+        "maxLengthDescription": "Maximum length for generated insights",
+        "includeDataSources": "Include Data Sources",
+        "includeConfidenceScore": "Include Confidence Score",
+        "systemPrompt": "System Prompt",
+        "systemPromptPlaceholder": "Enter the system prompt for the AI...",
+        "systemPromptDescription": "Instructions that guide the AI's behavior",
+        "customInstructions": "Custom Instructions",
+        "customInstructionsPlaceholder": "Add any additional instructions...",
+        "customInstructionsDescription": "Extra context for insight generation"
+      },
+      "languages": {
+        "en": "English",
+        "ar": "Arabic"
+      },
+      "tones": {
+        "professional": "Professional",
+        "casual": "Casual",
+        "technical": "Technical",
+        "executive": "Executive"
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "item1": "Keep system prompts concise and specific.",
+        "item2": "Test with different tones to find the best fit.",
+        "item3": "Review generated insights regularly for accuracy."
+      },
+      "actions": {
+        "save": "Save Configuration"
+      }
+    },
+    "loadingStates": {
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "retry": "Retry",
+      "empty": "No data available",
+      "timeout": "Request timed out"
+    },
+    "providerGrid": {
+      "noProviders": "No AI providers configured.",
+      "common": {
+        "enabled": "Enabled"
+      },
+      "actions": {
+        "edit": "Edit",
+        "testConnection": "Test Connection",
+        "delete": "Delete"
+      },
+      "status": {
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "messages": {
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection test failed",
+        "connectionSuccess": "Connection successful"
+      }
+    },
+    "templateBrowser": {
+      "loading": "Loading templates...",
+      "noTemplates": "No templates found.",
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete"
+      }
+    },
+    "templatePreview": {
+      "content": "Template Content",
+      "variables": "Variables",
+      "required": "Required",
+      "deploymentInfo": "Deploying this template will apply it to the selected scope.",
+      "readyToDeploy": "Template is ready to deploy.",
+      "actions": {
+        "deploy": "Deploy"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usageChart": {
+      "noData": "No data available",
+      "noDataAria": "Chart with no data to display",
+      "max": "Max",
+      "avg": "Average"
+    },
+    "usageTable": {
+      "noData": "No usage records found.",
+      "showing": "Showing {from}–{to} of {total}",
+      "filters": {
+        "search": "Search by provider, model, or domain...",
+        "searchLabel": "Search",
+        "searchAriaLabel": "Search usage records"
+      },
+      "actions": {
+        "menuLabel": "Table actions",
+        "menuTitle": "More options",
+        "toggleColumns": "Toggle Columns",
+        "exportCSV": "Export CSV"
+      },
+      "table": {
+        "ariaLabel": "Usage data table"
+      },
+      "columns": {
+        "date": "Date",
+        "provider": "Provider",
+        "model": "Model",
+        "domain": "Domain",
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "requests": "Requests",
+        "latency": "Latency",
+        "status": "Status",
+        "sortAsc": "Sort ascending",
+        "sortDesc": "Sort descending",
+        "sortBy": "Sort by {field}"
+      },
+      "status": {
+        "success": "Success",
+        "error": "Error",
+        "partial": "Partial"
+      },
+      "summary": {
+        "totalCost": "Total Cost"
+      }
+    }
+  },
+  "settings": {
+    "domains": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "noDescription": "No description"
+      },
+      "actions": {
+        "delete": "Delete",
+        "addDomain": "Add Domain",
+        "create": "Create",
+        "update": "Update"
+      },
+      "badges": {
+        "connectors": "{count} connectors"
+      },
+      "management": {
+        "pageTitle": "Domain Management",
+        "info": "Domains group your connectors by business area."
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load domains.",
+        "noDomains": "No domains found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeleteWithConnectors": "Are you sure you want to delete \"{name}\"? It has {count} connector(s) that will be unassigned."
+      },
+      "modals": {
+        "addDomain": "Add Domain",
+        "editDomain": "Edit Domain"
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Enter domain name",
+        "nameRequired": "Domain name is required",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter domain description"
+      },
+      "providers": {
+        "pageTitle": "Domain Providers",
+        "description": "Configure AI providers per domain.",
+        "info": "Domains inherit tenant providers by default. You can override a provider for a specific domain.",
+        "overrideProvider": "Override Provider",
+        "inheritFromTenant": "Inherit from Tenant",
+        "usingOverride": "Using Override",
+        "inheritedFromTenant": "Inherited from Tenant"
+      },
+      "filters": {
+        "status": "Filter by status"
+      },
+      "status": {
+        "override": "Override",
+        "inherited": "Inherited"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "unknown": "Unknown"
+      }
+    },
+    "providers": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "pageTitle": "AI Providers",
+      "actions": {
+        "addProvider": "Add Provider",
+        "remove": "Remove",
+        "testConnection": "Test Connection"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "filters": {
+        "search": "Search providers...",
+        "status": "Filter by status"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load providers.",
+        "noProviders": "No providers configured.",
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection failed.",
+        "connectionSuccess": "Connection successful.",
+        "confirmDelete": "Are you sure you want to remove \"{name}\"?",
+        "formComingSoon": "Provider form coming soon."
+      },
+      "modals": {
+        "addProvider": "Add Provider",
+        "editProvider": "Edit Provider"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "error": "Error",
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      }
+    },
+    "templates": {
+      "common": {
+        "settings": "Settings",
+        "cancel": "Cancel"
+      },
+      "library": {
+        "pageTitle": "Template Library",
+        "info": "Templates are reusable AI provider configurations."
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete",
+        "createTemplate": "Create Template"
+      },
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load templates.",
+        "noTemplates": "No templates found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeploy": "Are you sure you want to deploy \"{name}\"?"
+      },
+      "modals": {
+        "preview": "Preview Template",
+        "deploy": "Deploy Template"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usage": {
+      "common": {
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "pageTitle": "Usage Dashboard",
+        "usageTrend": "Usage Trend",
+        "costTrend": "Cost Trend",
+        "costByProvider": "Cost by Provider",
+        "detailedView": "Detailed View"
+      },
+      "filters": {
+        "ariaLabel": "Usage filters",
+        "dateRange": "Date Range",
+        "dateRangeDescription": "Select a date range to filter usage data",
+        "granularity": "Granularity",
+        "granularityDescription": "Select the granularity of the usage chart"
+      },
+      "summary": {
+        "ariaLabel": "Usage summary",
+        "totalCost": "Total Cost",
+        "totalTokens": "Total Tokens",
+        "totalRequests": "Total Requests",
+        "avgResponseTime": "Avg Response Time"
+      },
+      "granularity": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load usage data.",
+        "noData": "No data available."
+      }
+    },
+    "domainMapper": {
+      "common": {
+        "settings": "Settings"
+      },
+      "pageTitle": "Domain Mapper",
+      "info": "Drag and drop connectors onto domains to assign them.",
+      "loading": "Loading...",
+      "availableConnectors": "Available Connectors",
+      "businessDomains": "Business Domains",
+      "noConnectors": "No connectors available.",
+      "pendingChanges": "{count} pending change(s)",
+      "filters": {
+        "search": "Search connectors..."
+      },
+      "actions": {
+        "save": "Save"
+      },
+      "changes": {
+        "saved": "{count} change(s) saved successfully.",
+        "assign": "Connector assigned",
+        "remove": "Connector removed"
+      },
+      "messages": {
+        "error": "Error",
+        "saveError": "Failed to save changes."
+      }
+    }
+  }
 }

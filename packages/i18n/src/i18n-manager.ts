@@ -1,12 +1,13 @@
 import type { AppLocale } from "./formatters";
-import type { ReportTextDirection } from "./document-direction";
+import type { TextDirection } from "./rtl";
 import { loadMessagesSync, resolveLocaleOrFallback, type MessageDictionary } from "./load-messages";
 import { textDirection } from "./rtl";
+import type { MessageKey } from "./types/generated";
 
 export class I18nManager {
   private locale: AppLocale;
   private messages: MessageDictionary;
-  private directionOverride: ReportTextDirection | undefined;
+  private directionOverride: TextDirection | undefined;
 
   constructor(initialLocale: AppLocale) {
     this.locale = initialLocale;
@@ -30,7 +31,7 @@ export class I18nManager {
   }
 
   /** Force LTR/RTL regardless of locale (e.g. user preference). Pass undefined to clear. */
-  setTextDirectionOverride(override: ReportTextDirection | undefined): void {
+  setTextDirectionOverride(override: TextDirection | undefined): void {
     this.directionOverride = override;
   }
 
@@ -45,11 +46,26 @@ export class I18nManager {
   }
 
   /** ICU-style key with optional fallback when the key is missing. */
+  t(key: MessageKey, fallback?: string): string;
+  t(key: string, fallback?: string): string;
   t(key: string, fallback?: string): string {
     const v = this.messages[key];
     if (v !== undefined) {
       return v;
     }
     return fallback ?? key;
+  }
+
+  /**
+   * Escape hatch for genuinely dynamic keys that cannot be statically typed.
+   * Logs a warning in development mode to encourage migration to typed keys.
+   */
+  tDynamic(key: string, fallback?: string): string {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        `[i18n] tDynamic() used for key "${key}". Consider migrating to typed t() if possible.`,
+      );
+    }
+    return this.t(key as MessageKey, fallback);
   }
 }

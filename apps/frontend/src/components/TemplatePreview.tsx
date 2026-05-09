@@ -25,7 +25,7 @@ interface TemplatePreviewProps {
 }
 
 export function TemplatePreview({ template, onDeploy, isDeploying = false }: TemplatePreviewProps) {
-  const t = useTranslations("components.templatePreview");
+  const t = useTranslations("components");
 
   const handleDeploy = () => {
     // Default deployment to tenant level
@@ -47,14 +47,14 @@ export function TemplatePreview({ template, onDeploy, isDeploying = false }: Tem
             }
             variant="light"
           >
-            {t(`status.${template.status}`)}
+            {t(`templatePreview.status.${template.status}`)}
           </Badge>
           <Button
             leftSection={<IconDownload size={16} />}
             onClick={handleDeploy}
             loading={isDeploying}
           >
-            {t("actions.deploy")}
+            {t("templatePreview.actions.deploy")}
           </Button>
         </Group>
 
@@ -86,7 +86,7 @@ export function TemplatePreview({ template, onDeploy, isDeploying = false }: Tem
         {/* Template Content */}
         <Stack gap="xs">
           <Text fw={600} size="sm">
-            {t("content")}
+            {t("templatePreview.content")}
           </Text>
           <ScrollArea.Autosize mah={400}>
             <Box
@@ -109,7 +109,7 @@ export function TemplatePreview({ template, onDeploy, isDeploying = false }: Tem
         {template.variables && template.variables.length > 0 && (
           <Stack gap="xs">
             <Text fw={600} size="sm">
-              {t("variables")}
+              {t("templatePreview.variables")}
             </Text>
             <Stack gap="xs">
               {template.variables.map((variable, index) => (
@@ -129,7 +129,7 @@ export function TemplatePreview({ template, onDeploy, isDeploying = false }: Tem
                   )}
                   {variable.required && (
                     <Badge size="xs" color="red" variant="light" mt="xs">
-                      {t("required")}
+                      {t("templatePreview.required")}
                     </Badge>
                   )}
                 </Paper>
@@ -140,13 +140,13 @@ export function TemplatePreview({ template, onDeploy, isDeploying = false }: Tem
 
         {/* Deployment Info */}
         <Alert icon={<IconAlertCircle size={16} />} color="blue">
-          <Text size="xs">{t("deploymentInfo")}</Text>
+          <Text size="xs">{t("templatePreview.deploymentInfo")}</Text>
         </Alert>
 
         {/* Success Message */}
         {!isDeploying && (
           <Alert icon={<IconCheck size={16} />} color="green">
-            <Text size="xs">{t("readyToDeploy")}</Text>
+            <Text size="xs">{t("templatePreview.readyToDeploy")}</Text>
           </Alert>
         )}
       </Stack>

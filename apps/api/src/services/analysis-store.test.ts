@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { WorkflowTriggerJobResult } from "@agenticverdict/worker";
+import type { WorkflowTriggerJobResult } from "@agenticverdict/types";
 
 import {
   getAnalysisBundleForTenant,
@@ -11,7 +11,7 @@ import {
 
 describe("analysis-store persistence from workflow results", () => {
   it("persists a workflow result bundle and serves it back", () => {
-    const tenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee11";
+    const tenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee11";
     const analysisId = "11111111-1111-4111-8111-111111111111";
     const result: WorkflowTriggerJobResult = {
       workflowId: "verdict-generation",
@@ -23,7 +23,7 @@ describe("analysis-store persistence from workflow results", () => {
       insights: [
         {
           id: "22222222-2222-4222-8222-222222222222",
-          type: "trend",
+          type: "observation",
           title: "Pipeline trend",
           description: "Cross-channel trend detected",
           confidence: 0.8,
@@ -47,7 +47,7 @@ describe("analysis-store persistence from workflow results", () => {
   });
 
   it("exposes persisted insights and verdicts in list endpoints", () => {
-    const tenantId = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee22";
+    const tenantId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee22";
     const analysisId = "33333333-3333-4333-8333-333333333333";
     const result: WorkflowTriggerJobResult = {
       workflowId: "verdict-generation",
@@ -59,7 +59,7 @@ describe("analysis-store persistence from workflow results", () => {
       insights: [
         {
           id: "44444444-4444-4444-8444-444444444444",
-          type: "warning",
+          type: "risk",
           title: "Pipeline warning",
           description: "CPA increase",
           confidence: 0.7,

@@ -3,7 +3,6 @@
 import {
   Stack,
   Select,
-  NumberInput,
   TextInput,
   Group,
   Text,
@@ -15,17 +14,21 @@ import {
 import { IconX } from "@tabler/icons-react";
 import { useFormContext, Controller } from "react-hook-form";
 import { useState } from "react";
+import { useTranslations } from "@/i18n/react";
 
 interface ScheduleDeliveryValues {
-  frequency: string;
-  time: string;
   format: string;
   emailRecipients: string[];
   webhookUrl?: string;
   enableWebhook: boolean;
 }
 
-export function ScheduleDeliveryStep() {
+interface ScheduleDeliveryStepProps {
+  formatOptions: { value: string; label: string }[];
+}
+
+export function ScheduleDeliveryStep({ formatOptions }: ScheduleDeliveryStepProps) {
+  const t = useTranslations("insights");
   const {
     register,
     control,
@@ -34,7 +37,6 @@ export function ScheduleDeliveryStep() {
     formState: { errors },
   } = useFormContext<ScheduleDeliveryValues>();
 
-  const frequency = watch("frequency");
   const emailRecipients = watch("emailRecipients") || [];
   const enableWebhook = watch("enableWebhook") ?? false;
   const [newRecipient, setNewRecipient] = useState("");
@@ -62,65 +64,16 @@ export function ScheduleDeliveryStep() {
   return (
     <Stack gap="md">
       <Controller
-        name="frequency"
-        control={control}
-        rules={{
-          required: "Frequency is required",
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <Select
-            label="Frequency"
-            placeholder="Select frequency"
-            data={[
-              { value: "daily", label: "Daily" },
-              { value: "weekly", label: "Weekly" },
-              { value: "monthly", label: "Monthly" },
-              { value: "quarterly", label: "Quarterly" },
-            ]}
-            {...field}
-            error={error?.message}
-          />
-        )}
-      />
-
-      {frequency && (
-        <Controller
-          name="time"
-          control={control}
-          rules={{
-            required: "Time is required",
-            validate: (value) => {
-              const num = Number(value);
-              return (num >= 0 && num <= 23) || "Hour must be between 0 and 23";
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <NumberInput
-              label="Hour of Day (24-hour format)"
-              placeholder="e.g., 9 for 9 AM"
-              value={field.value ?? 9}
-              onChange={field.onChange}
-              error={error?.message}
-            />
-          )}
-        />
-      )}
-
-      <Controller
         name="format"
         control={control}
         rules={{
-          required: "Format is required",
+          required: "FORMAT_REQUIRED",
         }}
         render={({ field, fieldState: { error } }) => (
           <Select
-            label="Report Format"
-            placeholder="Select format"
-            data={[
-              { value: "pdf", label: "PDF" },
-              { value: "excel", label: "Excel" },
-              { value: "both", label: "Both PDF & Excel" },
-            ]}
+            label={t("wizard.steps.delivery.formatLabel")}
+            placeholder={t("wizard.steps.delivery.formatPlaceholder")}
+            data={formatOptions}
             {...field}
             error={error?.message}
           />
@@ -131,19 +84,19 @@ export function ScheduleDeliveryStep() {
 
       <Box>
         <Text fw={500} mb="xs">
-          Email Recipients
+          {t("wizard.steps.delivery.recipientsLabel")}
         </Text>
 
         <Group gap="xs" mb="xs">
           <TextInput
-            placeholder="email@example.com"
+            placeholder={t("wizard.steps.delivery.recipientPlaceholder")}
             value={newRecipient}
             onChange={(e) => setNewRecipient(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddRecipient())}
             style={{ flex: 1 }}
           />
           <Button onClick={handleAddRecipient} disabled={!newRecipient}>
-            Add
+            {t("wizard.steps.delivery.addRecipient")}
           </Button>
         </Group>
 
@@ -172,7 +125,7 @@ export function ScheduleDeliveryStep() {
       </Box>
 
       <Checkbox
-        label="Enable Webhook Delivery"
+        label={t("wizard.steps.delivery.enableWebhook")}
         checked={enableWebhook}
         onChange={(e) =>
           setValue("enableWebhook", e.currentTarget.checked, {
@@ -185,14 +138,14 @@ export function ScheduleDeliveryStep() {
 
       {enableWebhook && (
         <TextInput
-          label="Webhook URL"
-          placeholder="https://your-domain.com/webhook"
+          label={t("wizard.steps.delivery.webhookUrlLabel")}
+          placeholder={t("wizard.steps.delivery.webhookUrlPlaceholder")}
           required
           {...register("webhookUrl", {
-            required: enableWebhook ? "Webhook URL is required" : false,
+            required: enableWebhook ? "WEBHOOK_URL_REQUIRED" : false,
             pattern: {
               value: /^https?:\/\/.+/i,
-              message: "Must be a valid URL",
+              message: "WEBHOOK_URL_INVALID",
             },
           })}
           error={errors.webhookUrl?.message}

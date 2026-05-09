@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Stack,
@@ -13,174 +13,36 @@ import {
   SimpleGrid,
   Badge,
   ActionIcon,
-  Menu,
-  Box,
   Center,
   Title,
+  Switch,
+  Tooltip,
+  Card,
 } from "@mantine/core";
 import { useSearch } from "@/router/hooks/useSearch";
 import { useRouter } from "@/i18n/navigation";
 import { ROUTE_PATHS } from "@/router/utils/route-paths";
-import {
-  IconSearch,
-  IconPlus,
-  IconDotsVertical,
-  IconTrash,
-  IconSettings,
-  IconEye,
-  IconPlayerPlay,
-} from "@tabler/icons-react";
+import { IconSearch, IconPlus, IconSettings, IconEye, IconPlayerPlay } from "@tabler/icons-react";
 
 import { useAppShellHeader } from "@/features/shell/ui/app-shell-context";
 import { useTranslations } from "@/i18n/react";
 import {
   useInsightList,
-  useInsightDelete,
   useInsightRun,
+  useInsightUpdate,
+  useConnectorDomains,
 } from "@/features/insights/api/insight-api";
 import { PageErrorBoundary } from "@/components/error-boundaries";
 import { getInsightErrorMessage } from "../utils/error-translator";
-import type { InsightListItem } from "../schemas";
-
-function InsightCard({ insight: insightRaw }: { insight: InsightListItem }) {
-  const t = useTranslations("insights");
-  const router = useRouter();
-  const deleteMutation = useInsightDelete();
-  const runMutation = useInsightRun();
-
-  const insight = insightRaw as InsightListItem;
-
-  const status = insight.enabled ? "enabled" : "disabled";
-  const isRunning = insight.status === "running";
-  const connectorCount = insight.connectors.length;
-  const domain =
-    (insight as { domain?: string }).domain || insight.connectors[0]?.connectorId || "Unknown";
-  const lastRunAt = insight.lastRunAt;
-  const lastRunStatus = insight.lastRunStatus || "idle";
-
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "enabled":
-        return "success";
-      case "disabled":
-        return "default";
-      case "running":
-        return "blue";
-      case "failed":
-        return "red";
-      default:
-        return "default";
-    }
-  };
-
-  return (
-    <Box p="md" style={{ border: "1px solid #e9ecef", borderRadius: 8 }}>
-      <Stack gap="xs">
-        <Group justify="space-between">
-          <Group gap="xs">
-            <Badge variant={getStatusVariant(status)}>{t(`status.${status}`)}</Badge>
-            {isRunning && (
-              <Badge
-                variant="blue"
-                leftSection={
-                  <span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>
-                    ⟳
-                  </span>
-                }
-              >
-                {t("status.running")}
-              </Badge>
-            )}
-            {lastRunStatus && lastRunStatus !== "idle" && !isRunning && (
-              <Badge variant={lastRunStatus === "completed" ? "success" : "red"}>
-                {t(`list.lastRunStatus.${lastRunStatus}`)}
-              </Badge>
-            )}
-          </Group>
-          <Menu withinPortal>
-            <Menu.Target>
-              <ActionIcon variant="subtle" size="sm">
-                <IconDotsVertical size={16} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconEye size={14} />}
-                onClick={() =>
-                  router.push(ROUTE_PATHS.DASHBOARD_INSIGHTS_DETAIL.replace("$id", insight.id))
-                }
-              >
-                {t("list.actions.viewDetails")}
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconPlayerPlay size={14} />}
-                onClick={() => runMutation.mutate({ id: insight.id })}
-                disabled={isRunning}
-              >
-                {t("list.actions.runNow")}
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconSettings size={14} />}
-                onClick={() =>
-                  router.push(ROUTE_PATHS.DASHBOARD_INSIGHTS_EDIT.replace("$id", insight.id))
-                }
-              >
-                {t("list.actions.edit")}
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                leftSection={<IconTrash size={14} />}
-                onClick={() => {
-                  if (confirm(t("list.actions.deleteConfirm"))) {
-                    deleteMutation.mutate({ id: insight.id });
-                  }
-                }}
-              >
-                {t("list.actions.delete")}
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-        <Text fw={600} size="lg">
-          {insight.name}
-        </Text>
-        {insight.description && (
-          <Text size="sm" c="dimmed">
-            {insight.description}
-          </Text>
-        )}
-        <Group gap="xs">
-          <Badge size="sm" variant="outline">
-            {domain}
-          </Badge>
-          <Badge size="sm" variant="outline">
-            {connectorCount} {t("list.connectors")}
-          </Badge>
-        </Group>
-        <Group gap="xs" style={{ fontSize: 12, color: "#6c757d" }}>
-          <Text>{t("list.created")}:</Text>
-          <Text>{new Date(insight.createdAt).toLocaleDateString()}</Text>
-        </Group>
-        {lastRunAt ? (
-          <Group gap="xs" style={{ fontSize: 12, color: "#6c757d" }}>
-            <Text>{t("list.lastRun")}:</Text>
-            <Text>{new Date(lastRunAt).toLocaleString()}</Text>
-          </Group>
-        ) : (
-          <Text size="xs" c="dimmed">
-            {t("list.neverRun")}
-          </Text>
-        )}
-      </Stack>
-    </Box>
-  );
-}
+import type { InsightOutput } from "@agenticverdict/types";
+import { ScheduleStatusBadge } from "@/features/shared/ui/ScheduleStatusBadge";
+import { scheduleService } from "@/features/schedules/services/schedule-service";
 
 function InsightListSkeleton() {
   return (
     <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
       {[...Array(6)].map((_, i) => (
-        <Box key={i} p="md" style={{ border: "1px solid #e9ecef", borderRadius: 8 }}>
+        <Card key={i} withBorder radius="md" p="md">
           <Stack gap="xs">
             <Skeleton height={20} width={100} />
             <Skeleton height={30} />
@@ -190,7 +52,7 @@ function InsightListSkeleton() {
               <Skeleton height={20} width={80} />
             </Group>
           </Stack>
-        </Box>
+        </Card>
       ))}
     </SimpleGrid>
   );
@@ -230,11 +92,42 @@ function InsightListContent() {
     domain: searchParams?.domain || "",
     search: searchParams?.search || "",
     page: parseInt(searchParams?.page || "1", 10),
+    sortField: (searchParams?.sortField || "createdAt") as
+      | "name"
+      | "createdAt"
+      | "lastRunAt"
+      | "status",
+    sortDirection: (searchParams?.sortDirection || "desc") as "asc" | "desc",
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.status !== "all") params.set("status", filters.status);
+    if (filters.domain) params.set("domain", filters.domain);
+    if (filters.search) params.set("search", filters.search);
+    if (filters.page > 1) params.set("page", String(filters.page));
+    if (filters.sortField !== "createdAt") params.set("sortField", filters.sortField);
+    if (filters.sortDirection !== "desc") params.set("sortDirection", filters.sortDirection);
+
+    const queryString = params.toString();
+    const newPath = queryString
+      ? `${ROUTE_PATHS.DASHBOARD_INSIGHTS}?${queryString}`
+      : ROUTE_PATHS.DASHBOARD_INSIGHTS;
+    router.replace(newPath);
+  }, [filters]);
+
+  const updateMutation = useInsightUpdate();
+  const runMutation = useInsightRun();
+
+  const { data: domainData } = useConnectorDomains();
+  const domainOptions = domainData?.domains.map((d) => ({ value: d.value, label: d.label })) || [];
 
   const { data, isLoading, error } = useInsightList({
     status: filters.status === "all" ? undefined : (filters.status as "enabled" | "disabled"),
     search: filters.search || undefined,
+    domain: filters.domain || undefined,
+    sortField: filters.sortField,
+    sortDirection: filters.sortDirection,
     page: filters.page,
     pageSize: 20,
   });
@@ -275,6 +168,13 @@ function InsightListContent() {
     );
   }
 
+  const handleToggleEnabled = (insight: InsightOutput) => {
+    updateMutation.mutate({
+      id: insight.id,
+      data: { enabled: !insight.enabled },
+    });
+  };
+
   return (
     <Container size="xl">
       <Stack gap="md">
@@ -297,6 +197,37 @@ function InsightListContent() {
             ]}
             style={{ width: 200 }}
           />
+          <Select
+            placeholder={t("list.filterByDomain")}
+            value={filters.domain || undefined}
+            onChange={(value) => setFilters({ ...filters, domain: value || "", page: 1 })}
+            data={domainOptions}
+            clearable
+            style={{ width: 180 }}
+          />
+          <Select
+            placeholder={t("list.sortBy")}
+            value={`${filters.sortField}-${filters.sortDirection}`}
+            onChange={(value) => {
+              if (!value) return;
+              const [field, direction] = value.split("-") as [
+                "name" | "createdAt" | "lastRunAt" | "status",
+                "asc" | "desc",
+              ];
+              setFilters({ ...filters, sortField: field, sortDirection: direction, page: 1 });
+            }}
+            data={[
+              { value: "name-asc", label: t("list.sort.nameAsc") },
+              { value: "name-desc", label: t("list.sort.nameDesc") },
+              { value: "createdAt-desc", label: t("list.sort.createdAtDesc") },
+              { value: "createdAt-asc", label: t("list.sort.createdAtAsc") },
+              { value: "lastRunAt-desc", label: t("list.sort.lastRunAtDesc") },
+              { value: "lastRunAt-asc", label: t("list.sort.lastRunAtAsc") },
+              { value: "status-asc", label: t("list.sort.statusAsc") },
+              { value: "status-desc", label: t("list.sort.statusDesc") },
+            ]}
+            style={{ width: 200 }}
+          />
         </Group>
 
         {isLoading ? (
@@ -307,7 +238,141 @@ function InsightListContent() {
           <>
             <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
               {insights.map((insight) => (
-                <InsightCard key={insight.id} insight={insight as InsightListItem} />
+                <Card key={insight.id} withBorder radius="md" p="md">
+                  <Stack gap="xs">
+                    <Group justify="space-between">
+                      <Group gap="xs">
+                        <Badge variant={insight.enabled ? "success" : "default"}>
+                          {t(`status.${insight.enabled ? "enabled" : "disabled"}`)}
+                        </Badge>
+                        {insight.status === "running" && (
+                          <Badge
+                            variant="blue"
+                            leftSection={
+                              <span
+                                style={{
+                                  animation: "spin 1s linear infinite",
+                                  display: "inline-block",
+                                }}
+                              >
+                                ⟳
+                              </span>
+                            }
+                          >
+                            {t("status.running")}
+                          </Badge>
+                        )}
+                      </Group>
+                      <Tooltip label={insight.enabled ? t("list.disable") : t("list.enable")}>
+                        <Switch
+                          size="sm"
+                          checked={insight.enabled}
+                          onChange={() => handleToggleEnabled(insight as InsightOutput)}
+                          disabled={updateMutation.isPending}
+                        />
+                      </Tooltip>
+                    </Group>
+                    <Text fw={600} size="lg">
+                      {insight.name}
+                    </Text>
+                    {insight.description && (
+                      <Text size="sm" c="dimmed">
+                        {insight.description}
+                      </Text>
+                    )}
+                    <Group gap="xs">
+                      {insight.domains && insight.domains.length > 0 ? (
+                        insight.domains.map((domain) => (
+                          <Badge key={domain} size="sm" variant="outline">
+                            {domain}
+                          </Badge>
+                        ))
+                      ) : (
+                        <Badge size="sm" variant="outline">
+                          {insight.domain || insight.connectors[0]?.connectorId || "Unknown"}
+                        </Badge>
+                      )}
+                      <Badge size="sm" variant="outline">
+                        {insight.connectors.length} {t("list.connectors")}
+                      </Badge>
+                      <ScheduleStatusBadge
+                        schedule={
+                          scheduleService.getScheduleStatus(null) === "manual"
+                            ? null
+                            : {
+                                id: insight.id,
+                                tenantId: insight.tenantId,
+                                entityType: "insight",
+                                entityId: insight.id,
+                                cronExpression: "",
+                                timezone: "UTC",
+                                enabled: insight.enabled,
+                                metadata: {},
+                                nextRunAt: null,
+                                lastRunAt: null,
+                                createdAt: insight.createdAt,
+                                updatedAt: insight.createdAt,
+                              }
+                        }
+                      />
+                    </Group>
+                    <Group gap="xs">
+                      <Text size="xs" c="dimmed">
+                        {t("list.created")}:
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        {new Date(insight.createdAt).toLocaleDateString()}
+                      </Text>
+                    </Group>
+                    {insight.lastRunAt ? (
+                      <Group gap="xs">
+                        <Text size="xs" c="dimmed">
+                          {t("list.lastRun")}:
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {new Date(insight.lastRunAt).toLocaleString()}
+                        </Text>
+                      </Group>
+                    ) : (
+                      <Text size="xs" c="dimmed">
+                        {t("list.neverRun")}
+                      </Text>
+                    )}
+                    <Group justify="flex-end" gap="xs">
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() =>
+                          router.push(
+                            ROUTE_PATHS.DASHBOARD_INSIGHTS_DETAIL.replace("$id", insight.id),
+                          )
+                        }
+                      >
+                        <IconEye size={16} />
+                      </ActionIcon>
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() =>
+                          router.push(
+                            ROUTE_PATHS.DASHBOARD_INSIGHTS_EDIT.replace("$id", insight.id),
+                          )
+                        }
+                      >
+                        <IconSettings size={16} />
+                      </ActionIcon>
+                      <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        color="blue"
+                        onClick={() => runMutation.mutate({ id: insight.id })}
+                        disabled={insight.status === "running"}
+                      >
+                        <IconPlayerPlay size={16} />
+                      </ActionIcon>
+                    </Group>
+                  </Stack>
+                </Card>
               ))}
             </SimpleGrid>
 

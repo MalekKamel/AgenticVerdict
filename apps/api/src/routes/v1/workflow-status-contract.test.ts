@@ -5,8 +5,8 @@ import type { WorkflowTriggerStatusPayload } from "../../services/report-bullmq"
 import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee66";
-const OTHER_TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee67";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee66";
+const OTHER_TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee67";
 
 const completedSnapshot: WorkflowTriggerStatusPayload = {
   executionId: "status-contract-exec-1",
@@ -27,7 +27,7 @@ const completedSnapshot: WorkflowTriggerStatusPayload = {
     insights: [
       {
         id: "bbbbbbbb-6666-4666-8666-bbbbbbbbbbbb",
-        type: "trend",
+        type: "observation",
         title: "Status contract trend",
         description: "Trend text\u0007",
         confidence: 0.8,
@@ -122,7 +122,9 @@ describe("workflow status endpoint contract", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("returns stable status/result envelope fields for completed execution", async () => {
@@ -185,7 +187,10 @@ describe("workflow status endpoint contract", () => {
     });
     expect(res.statusCode).toBe(200);
     const body = res.json() as { error?: string };
-    expect(body.error).toBe("errors.common.unknownError");
-    expect(body.error).not.toContain("secret");
+    // R-M07: toSafeWorkflowFailureMessage now returns the actual error string
+    // (sanitized for control characters) instead of always returning unknownError
+    expect(body.error).toBe("raw secret token leaked");
+    expect(body.error).not.toContain("\u0000");
+    expect(body.error).not.toContain("\u001f");
   });
 });

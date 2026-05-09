@@ -3,7 +3,7 @@ import type { Queue } from "bullmq";
 import type IORedis from "ioredis";
 
 import * as email from "../services/email";
-import type { ReportGenerationJobData } from "./job-types";
+import type { ReportGenerationJobData } from "@agenticverdict/types";
 import {
   createDefaultReportScheduleProcessor,
   defaultReportDeliveryProcessor,

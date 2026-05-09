@@ -3,7 +3,7 @@ import {
   createTemplateSchema,
   updateTemplateSchema,
   deployTemplateSchema,
-} from "@agenticverdict/core/schemas/ai-provider";
+} from "@agenticverdict/types";
 import type { z } from "zod";
 
 /**

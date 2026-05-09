@@ -59,7 +59,7 @@ export function CostTierSelector({
   showPriceImpact = false,
   basePrice = 0,
 }: CostTierSelectorProps) {
-  const t = useTranslations("components.costTierSelector");
+  const t = useTranslations("components");
 
   const handleTierChange = (tierValue: string) => {
     if (!disabled && onChange) {
@@ -80,8 +80,8 @@ export function CostTierSelector({
   return (
     <Stack gap="md">
       <Group gap="xs">
-        <Text fw={600}>{t("label")}</Text>
-        <Tooltip label={t("tooltip")}>
+        <Text fw={600}>{t("costTierSelector.label")}</Text>
+        <Tooltip label={t("costTierSelector.tooltip")}>
           <IconInfoCircle size={16} color="#666" />
         </Tooltip>
       </Group>
@@ -109,7 +109,7 @@ export function CostTierSelector({
                   <Group justify="space-between" mb="xs">
                     <Group gap="xs">
                       <Text fw={600} size="lg">
-                        {t(`tiers.${tier.value}.label`)}
+                        {t(`costTierSelector.tiers.${tier.value}.label`)}
                       </Text>
                       <Badge color={tier.color} variant="light" size="sm">
                         {tier.label}
@@ -128,7 +128,7 @@ export function CostTierSelector({
 
                   {showDescriptions && (
                     <Text size="sm" c="dimmed" mb="xs">
-                      {t(`tiers.${tier.value}.description`)}
+                      {t(`costTierSelector.tiers.${tier.value}.description`)}
                     </Text>
                   )}
 
@@ -148,10 +148,10 @@ export function CostTierSelector({
                       p="xs"
                     >
                       {tier.priceMultiplier > 1
-                        ? t("priceIncrease", {
+                        ? t("costTierSelector.priceIncrease", {
                             percent: ((tier.priceMultiplier - 1) * 100).toFixed(0),
                           })
-                        : t("priceDecrease", {
+                        : t("costTierSelector.priceDecrease", {
                             percent: ((1 - tier.priceMultiplier) * 100).toFixed(0),
                           })}
                     </Alert>
@@ -167,10 +167,12 @@ export function CostTierSelector({
         <Box mt="md" p="sm" style={{ background: "#f8f9fa", borderRadius: 8 }}>
           <Group justify="space-between">
             <Text size="sm" c="dimmed">
-              {t("currentSelection")}
+              {t("costTierSelector.currentSelection")}
             </Text>
             <Text size="sm" fw={600}>
-              {value ? t(`tiers.${value}.label`) : t("notSelected")}
+              {value
+                ? t(`costTierSelector.tiers.${value}.label`)
+                : t("costTierSelector.notSelected")}
               {value && basePrice && (
                 <Text component="span" ml="xs" c="blue">
                   (
@@ -194,7 +196,7 @@ interface CostTierDisplayProps {
 }
 
 export function CostTierDisplay({ tier, compact = false }: CostTierDisplayProps) {
-  const t = useTranslations("components.costTierSelector");
+  const t = useTranslations("components");
 
   const tierInfo = TIER_OPTIONS.find((t) => t.value === tier);
 
@@ -203,7 +205,7 @@ export function CostTierDisplay({ tier, compact = false }: CostTierDisplayProps)
   if (compact) {
     return (
       <Badge color={tierInfo.color} variant="light" size="sm">
-        {t(`tiers.${tier}.label`)}
+        {t(`costTierSelector.tiers.${tier}.label`)}
       </Badge>
     );
   }
@@ -212,10 +214,10 @@ export function CostTierDisplay({ tier, compact = false }: CostTierDisplayProps)
     <Stack gap="xs">
       <Group gap="xs">
         <Badge color={tierInfo.color} size="md">
-          {t(`tiers.${tier}.label`)}
+          {t(`costTierSelector.tiers.${tier}.label`)}
         </Badge>
         <Text size="sm" c="dimmed">
-          {t(`tiers.${tier}.description`)}
+          {t(`costTierSelector.tiers.${tier}.description`)}
         </Text>
       </Group>
       <Group gap="xs">

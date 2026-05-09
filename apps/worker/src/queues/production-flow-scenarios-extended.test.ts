@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import type { ProductionFlowScenarioId, WorkflowTriggerJobData } from "./job-types";
+import type { ProductionFlowScenarioId, WorkflowTriggerJobData } from "@agenticverdict/types";
 import { runExtendedProductionFlowScenario } from "./production-flow-scenarios-extended";
 
 const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee";

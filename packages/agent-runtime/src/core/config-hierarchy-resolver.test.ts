@@ -8,6 +8,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ConfigHierarchyResolver } from "./config-hierarchy-resolver";
 import { AiProviderRepository, BusinessDomainsRepository } from "@agenticverdict/database";
+import type { ConfigScope, CostTier, AiProviderStatus } from "@agenticverdict/types";
 
 type AiProvider = {
   id: string;
@@ -16,12 +17,12 @@ type AiProvider = {
   providerName: string;
   modelId: string;
   modelName: string | null;
-  costTier: "premium" | "standard" | "economy";
+  costTier: CostTier;
   customPricing: { inputCostPer1k: number; outputCostPer1k: number } | null;
-  scope: "tenant" | "domain" | "connector";
+  scope: ConfigScope;
   parentId: string | null;
   isEnabled: boolean;
-  status: "active" | "inactive" | "error";
+  status: AiProviderStatus;
   priority: number;
   rateLimitOverride: number | null;
   timeoutOverride: number | null;

@@ -1,9 +1,12 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("createConnectorAdapter integration (dynamic NODE_ENV)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
   afterEach(() => {
     vi.unstubAllEnvs();
-    vi.resetModules();
   });
 
   it("returns mock adapter in development when master mock flag is on", async () => {

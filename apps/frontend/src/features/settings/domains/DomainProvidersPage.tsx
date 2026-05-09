@@ -39,7 +39,7 @@ function DomainProviderRow({
   onOverride: (domainId: string) => void;
   onInherit: (domainId: string) => void;
 }) {
-  const t = useTranslations("settings.domains");
+  const t = useTranslations("settings");
 
   const hasOverride = domain.providerConfig?.scope === "domain";
 
@@ -120,7 +120,7 @@ function DomainProviderRow({
 }
 
 export function DomainProvidersPage() {
-  const t = useTranslations("settings.domains");
+  const t = useTranslations("settings");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   useAppShellHeader({

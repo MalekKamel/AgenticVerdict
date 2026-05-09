@@ -1,3 +1,4 @@
+import type { ReportMetadata } from "@agenticverdict/types";
 import { index, jsonb, pgTable, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { tenants } from "./tenants";
@@ -11,7 +12,7 @@ export const reports = pgTable(
       .references(() => tenants.id, { onDelete: "cascade" }),
     title: varchar("title", { length: 512 }).notNull(),
     status: varchar("status", { length: 64 }).notNull().default("draft"),
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<ReportMetadata>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

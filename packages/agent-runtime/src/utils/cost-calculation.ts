@@ -1,4 +1,4 @@
-import type { CostTier } from "@agenticverdict/core/types/ai-models";
+import type { CostTier } from "@agenticverdict/types";
 
 /**
  * Cost Calculation Utilities

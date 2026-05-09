@@ -1,259 +1,2096 @@
 {
-  "accessibility.skipToContent": "انتقل إلى المحتوى الرئيسي",
-  "auth.layout.mainContent": "نموذج المصادقة",
-  "auth.login.title": "تسجيل الدخول إلى حسابك",
-  "auth.login.description": "مرحباً بعودتك! يرجى إدخال تفاصيلك.",
-  "auth.login.emailLabel": "البريد الإلكتروني",
-  "auth.login.emailPlaceholder": "أدخل بريدك الإلكتروني",
-  "auth.login.passwordLabel": "كلمة المرور",
-  "auth.login.passwordPlaceholder": "أدخل كلمة المرور",
-  "auth.login.rememberMe": "تذكرني",
-  "auth.login.submitButton": "تسجيل الدخول",
-  "auth.login.submittingButton": "جاري تسجيل الدخول...",
-  "auth.login.showPassword": "إظهار كلمة المرور",
-  "auth.login.hidePassword": "إخفاء كلمة المرور",
-  "auth.login.forgotPassword": "نسيت كلمة المرور؟",
-  "auth.login.noAccount": "ليس لديك حساب؟",
-  "auth.login.createAccount": "إنشاء حساب",
-  "auth.login.successTitle": "تم تسجيل الدخول بنجاح",
-  "auth.login.successMessage": "مرحباً بعودتك! جاري التوجيه إلى لوحة التحكم...",
-  "auth.login.errors.email.required": "البريد الإلكتروني مطلوب",
-  "auth.login.errors.email.invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
-  "auth.login.errors.password.required": "كلمة المرور مطلوبة",
-  "auth.login.errors.password.tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
-  "auth.login.errors.invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-  "auth.login.errors.networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
-  "auth.login.errors.unknownError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
-  "auth.errors.invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-  "auth.errors.forbidden": "الوصول ممنوع",
-  "auth.errors.notFound": "المورد غير موجود",
-  "auth.errors.conflict": "حدث تعارض",
-  "auth.errors.badRequest": "طلب غير صالح",
-  "auth.errors.rateLimitExceeded": "محاولات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً.",
-  "auth.errors.emailNotVerified": "يرجى التحقق من بريدك الإلكتروني",
-  "auth.errors.weakPassword": "كلمة المرور ضعيفة جداً",
-  "auth.errors.tokenExpired": "انتهت صلاحية الرابط. يرجى المحاولة مرة أخرى.",
-  "auth.errors.internalError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
-  "auth.errors.networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
-  "common.ok": "حسناً",
-  "common.cancel": "إلغاء",
-  "navigation.insights": "الرؤى",
-  "navigation.reports": "التقارير",
-  "reports.title": "التقارير",
-  "reports.ready": "تقريرك جاهز",
-  "reports.download": "تنزيل",
-  "home.kpi.totalInsights": "إجمالي الرؤى",
-  "home.kpi.activeConnectors": "الموصلات النشطة",
-  "home.kpi.reportsThisMonth": "التقارير هذا الشهر",
-  "home.kpi.deltaUp": "↑ ارتفاع",
-  "home.kpi.connectorsHealthy": "سليمة",
-  "home.kpi.deltaPercent": "% تغيير",
-  "home.kpi.title": "المقاييس الرئيسية",
-  "home.kpi.emptyTitle": "لا توجد مقاييس متاحة",
-  "home.kpi.emptyDescription": "قم بتوصيل مصادر البيانات الخاصة بك لرؤية المقاييس",
-  "home.insights.sampleTime": "تم التحديث مؤخراً",
-  "home.insights.emptyTitle": "لا توجد رؤى بعد",
-  "home.insights.emptyDescription": "ستظهر الرؤى هنا عند تحليل بياناتك",
-  "home.insights.title": "أحدث الرؤى",
-  "dashboard.insights.body.default": "مقاييس وتحليلات {period}",
-  "dashboard.insights.relativeTime.updatedRecently": "تم التحديث مؤخراً",
-  "dashboard.insights.relativeTime.justNow": "الآن",
-  "dashboard.insights.relativeTime.minutesAgo": "قبل {minutes} دقائق",
-  "dashboard.insights.relativeTime.hoursAgo": "قبل {hours} ساعات",
-  "dashboard.insights.relativeTime.daysAgo": "قبل {days} أيام",
-  "dashboard.insights.ariaLabels.insightCard": "رؤية {title} لـ {domains}",
-  "dashboard.insights.ariaLabels.default": "رؤية أعمال",
-  "home.connectors.title": "مصادر البيانات",
-  "home.connectors.emptyTitle": "لا توجد موصلات",
-  "home.connectors.emptyDescription": "أضف أول موصل بيانات للبدء",
-  "home.connectors.ga4": "جوجل أناليتكس 4",
-  "home.connectors.meta": "إعلانات Meta",
-  "home.connectors.gsc": "وحدة تحكم بحث Google",
-  "home.connectors.gbp": "الملف التجاري لـ Google",
-  "home.connectors.tiktok": "إعلانات TikTok",
-  "home.quickActions.title": "إجراءات سريعة",
-  "home.quickActions.domainSample": "عرض لوحة التسويق",
-  "home.quickActions.createInsight": "إنشاء رؤية",
-  "home.quickActions.export": "تصدير البيانات",
-  "home.quickActions.customize": "تخصيص لوحة التحكم",
-  "home.quickActions.agency": "عرض الوكالة",
-  "home.title": "لوحة التحكم",
-  "home.subtitle": "مرحباً بعودتك، {email}",
-  "home.ariaMain": "محتوى لوحة التحكم الرئيسي",
-  "domain.marketing.primaryKpi": "أداء التسويق",
-  "domain.finance.primaryKpi": "المقاييس المالية",
-  "domain.operations.primaryKpi": "نظرة عامة على العمليات",
-  "domain.seo.primaryKpi": "أداء تحسين محركات البحث",
-  "domain.social.primaryKpi": "مقاييس وسائل التواصل الاجتماعي",
-  "domain.local.primaryKpi": "مقاييس الأعمال المحلية",
-  "agency.kpi.clients": "إجمالي العملاء",
-  "agency.kpi.insights": "إجمالي الرؤى",
-  "agency.clientContext": "عرض بيانات العميل: {id}",
-  "connectorStatus.healthy": "سليم",
-  "connectorStatus.degraded": "متدهور",
-  "connectorStatus.disconnected": "غير متصل",
-  "domains.marketing": "التسويق",
-  "domains.finance": "المالية",
-  "domains.operations": "العمليات",
-  "domains.seo": "تحسين محركات البحث",
-  "domains.social": "التواصل الاجتماعي",
-  "domains.local": "محلي",
-  "toolbar.preset": "إعداد مسبق",
-  "toolbar.comparison": "مقارنة",
-  "toolbar.refresh": "تحديث",
-  "toolbar.freshness": "تم التحديث {time}",
-  "toolbar.presets.last7": "آخر 7 أيام",
-  "toolbar.presets.last30": "آخر 30 يوماً",
-  "toolbar.presets.thisMonth": "هذا الشهر",
-  "toolbar.presets.lastMonth": "الشهر الماضي",
-  "async.loadingHome": "جاري تحميل لوحة التحكم...",
-  "async.errorHome": "فشل تحميل لوحة التحكم",
-  "async.readyHome": "تم تحميل لوحة التحكم",
-  "async.loadingSection": "جاري تحميل القسم...",
-  "errors.sectionTitle": "تعذر تحميل البيانات",
-  "errors.generic": "حدث خطأ ما",
-  "errors.tenantRequired": "مطلوب سياق المستأجر",
-  "actions.retry": "إعادة المحاولة",
-  "actions.refresh": "تحديث",
-  "insights.title": "الرؤى",
-  "insights.list.title": "رؤى الأعمال",
-  "insights.list.newInsight": "رؤية جديدة",
-  "insights.list.searchPlaceholder": "بحث في الرؤى...",
-  "insights.list.filter.status": "الحالة",
-  "insights.list.filter.domain": "المجال",
-  "insights.list.status.enabled": "مفعّل",
-  "insights.list.status.disabled": "معطّل",
-  "insights.list.status.running": "جاري التشغيل",
-  "insights.list.status.failed": "فشل",
-  "insights.list.empty.title": "لا توجد رؤى بعد",
-  "insights.list.empty.description": "أنشئ أول رؤية للبدء",
-  "insights.list.empty.createButton": "إنشاء رؤية",
-  "insights.list.actions.view": "عرض",
-  "insights.list.actions.edit": "تعديل",
-  "insights.list.actions.runNow": "تشغيل الآن",
-  "insights.list.actions.delete": "حذف",
-  "insights.list.actions.deleteConfirm": "هل أنت متأكد من حذف هذه الرؤية؟",
-  "insights.wizard.title": "إنشاء رؤية",
-  "insights.wizard.editTitle": "تعديل الرؤية",
-  "insights.wizard.step1": "المعلومات الأساسية",
-  "insights.wizard.step2": "الموصلات",
-  "insights.wizard.step3": "المقاييس",
-  "insights.wizard.step4": "إعدادات الذكاء الاصطناعي",
-  "insights.wizard.step5": "الجدول الزمني",
-  "insights.wizard.step6": "المراجعة",
-  "insights.wizard.next": "التالي",
-  "insights.wizard.back": "رجوع",
-  "insights.wizard.create": "إنشاء رؤية",
-  "insights.wizard.save": "حفظ التغييرات",
-  "insights.wizard.cancel": "إلغاء",
-  "insights.wizard.cancelConfirm": "هل أنت متأكد من الإلغاء؟ ستفقد تقدمك.",
-  "insights.wizard.success": "تم إنشاء الرؤية بنجاح",
-  "insights.wizard.updateSuccess": "تم تعديل الرؤية بنجاح",
-  "insights.wizard.steps.basicInfo.title": "المعلومات الأساسية",
-  "insights.wizard.steps.basicInfo.nameLabel": "اسم الرؤية",
-  "insights.wizard.steps.basicInfo.namePlaceholder": "مثال: نظرة عامة على أداء التسويق",
-  "insights.wizard.steps.basicInfo.domainLabel": "المجال",
-  "insights.wizard.steps.basicInfo.descriptionLabel": "الوصف",
-  "insights.wizard.steps.basicInfo.descriptionPlaceholder": "ماذا يجب أن تحلل هذه الرؤية؟",
-  "insights.wizard.steps.connectors.title": "اختيار الموصلات",
-  "insights.wizard.steps.connectors.description": "اختر مصادر البيانات لتضمينها",
-  "insights.wizard.steps.connectors.manage": "إدارة الموصلات",
-  "insights.wizard.steps.metrics.title": "تكوين المقاييس",
-  "insights.wizard.steps.metrics.description": "اختر المقاييس المراد تحليلها",
-  "insights.wizard.steps.ai.title": "إعدادات الذكاء الاصطناعي",
-  "insights.wizard.steps.ai.modelLabel": "نموذج الذكاء الاصطناعي",
-  "insights.wizard.steps.ai.qualityLabel": "جودة التحليل",
-  "insights.wizard.steps.ai.detailLevelLabel": "مستوى التفاصيل",
-  "insights.wizard.steps.ai.customPromptLabel": "مطلب مخصص (اختياري)",
-  "insights.wizard.steps.schedule.title": "الجدول الزمني والتسليم",
-  "insights.wizard.steps.schedule.frequencyLabel": "التكرار",
-  "insights.wizard.steps.schedule.timeLabel": "وقت التسليم",
-  "insights.wizard.steps.schedule.formatLabel": "تنسيق التقرير",
-  "insights.wizard.steps.schedule.recipientsLabel": "المستلمون",
-  "insights.wizard.steps.review.title": "المراجعة والإنشاء",
-  "insights.wizard.steps.review.description": "راجع التكوين قبل الإنشاء",
-  "insights.detail.overview": "نظرة عامة",
-  "insights.detail.reports": "التقارير",
-  "insights.detail.settings": "الإعدادات",
-  "insights.detail.history": "السجل",
-  "insights.detail.overview.configTitle": "التكوين",
-  "insights.detail.overview.recentReports": "التقارير الأخيرة",
-  "insights.detail.overview.aiInsightsTitle": "رؤى الذكاء الاصطناعي",
-  "insights.detail.overview.performanceSummary": "ملخص الأداء",
-  "insights.detail.overview.keyFindings": "النتائج الرئيسية",
-  "insights.detail.overview.recommendations": "التوصيات",
-  "insights.detail.overview.noAIInsightsYet": "ستظهر رؤى الذكاء الاصطناعي هنا بعد تشغيل أول تحليل",
-  "insights.detail.overview.generateAIInsights": "إنشاء رؤى الذكاء الاصطناعي",
-  "insights.detail.overview.regenerateAIInsights": "إعادة إنشاء",
-  "insights.detail.overview.view": "عرض",
-  "insights.detail.overview.download": "تنزيل",
-  "insights.detail.reportsTab.comingSoon": "قريباً",
-  "insights.detail.settingsTab.comingSoon": "قريباً",
-  "insights.detail.historyTab.comingSoon": "قريباً",
-  "insights.detail.runNow": "تشغيل الآن",
-  "insights.detail.running": "جاري التشغيل...",
-  "insights.detail.retry": "إعادة المحاولة",
-  "reports.viewer.title": "عارض التقارير",
-  "reports.viewer.zoom": "تكبير",
-  "reports.viewer.print": "طباعة",
-  "reports.viewer.download": "تنزيل",
-  "reports.viewer.share": "مشاركة",
-  "reports.viewer.version": "الإصدار",
-  "reports.viewer.loading": "جاري تحميل التقرير...",
-  "reports.viewer.error": "فشل تحميل التقرير",
-  "reports.viewer.goBack": "رجوع",
-  "reports.list.title": "جميع التقارير",
-  "reports.list.downloadSelected": "تنزيل المحدد",
-  "reports.list.deleteSelected": "حذف المحدد",
-  "reports.list.bulkActions": "{count} محدد",
-  "reports.share.title": "مشاركة التقرير",
-  "reports.share.expirationLabel": "انتهاء الصلاحية",
-  "reports.share.generateLink": "إنشاء رابط مشاركة",
-  "reports.share.linkCreated": "تم إنشاء الرابط",
-  "reports.share.copyLink": "نسخ الرابط",
-  "reports.share.copied": "تم النسخ",
-  "reports.share.activeShares": "المشاركات النشطة",
-  "reports.share.noShares": "لا توجد مشاركات نشطة",
-  "reports.share.revokeAccess": "إلغاء الوصول",
-  "reports.share.revoked": "تم الإلغاء",
-  "reports.share.expires": "تنتهي في {date}",
-  "reports.share.expiration.1h": "ساعة واحدة",
-  "reports.share.expiration.24h": "24 ساعة",
-  "reports.share.expiration.7d": "7 أيام",
-  "reports.share.expiration.30d": "30 يوماً",
-  "auditTrail.eventType.run": "تشغيل التقرير",
-  "auditTrail.eventType.config_change": "تغيير التكوين",
-  "auditTrail.eventType.delivery": "التسليم",
-  "auditTrail.eventType.error": "خطأ",
-  "auditTrail.status.success": "ناجح",
-  "auditTrail.status.failed": "فشل",
-  "auditTrail.status.pending": "قيد الانتظار",
-  "auditTrail.filters.eventType": "نوع الحدث",
-  "auditTrail.filters.dateRange": "نطاق التاريخ",
-  "auditTrail.noEvents": "لم يتم العثور على أحداث سجل التدقيق",
-  "auditTrail.duration": "المدة: {duration}",
-  "auditTrail.method": "الطريقة: {method}",
-  "auditTrail.recipient": "المستلم: {recipient}",
-  "common.loading": "جاري التحميل...",
-  "common.error": "خطأ",
-  "common.success": "نجاح",
-  "common.delete": "حذف",
-  "common.close": "إغلاق",
-  "common.save": "حفظ",
-  "common.edit": "تعديل",
-  "common.view": "عرض",
-  "common.downloadStarted": "بدأ التنزيل",
-  "common.failedToLoad": "فشل التحميل",
-  "validation.required": "هذا الحقل مطلوب",
-  "validation.invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
-  "validation.tooShort": "يجب أن يكون {min} أحرف على الأقل",
-  "validation.tooLong": "يجب أن يكون {max} أحرف كحد أقصى",
-  "errors.reports.notFound": "التقرير غير موجود",
-  "errors.reports.contentNotFound": "محتوى التقرير غير موجود في التخزين",
-  "errors.reports.tenantSecurityFailed": "فشلت عملية التحقق من أمان المستأجر",
-  "errors.reports.shareLinkNotFound": "رابط المشاركة غير موجود",
-  "errors.reports.shareLinkRevoked": "تم إلغاء رابط المشاركة",
-  "errors.reports.shareLinkExpired": "انتهت صلاحية رابط المشاركة",
-  "errors.reports.createShareFailed": "فشل إنشاء رابط المشاركة",
-  "errors.common.unknownError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+  "accessibility": {
+    "skipToContent": "تخطي إلى المحتوى",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "openDialog": "فتح الحوار",
+    "closeDialog": "إغلاق الحوار",
+    "toggleTheme": "تبديل السمة",
+    "toggleLanguage": "تبديل اللغة",
+    "searchPlaceholder": "بحث...",
+    "clearSearch": "مسح البحث",
+    "selectDate": "اختر التاريخ",
+    "selectOption": "اختر خياراً"
+  },
+  "auth": {
+    "layout": {
+      "mainContent": "نموذج المصادقة",
+      "footerNav": "خيارات تسجيل الدخول الأخرى",
+      "poweredBy": "مدعوم من AgenticVerdict",
+      "brandName": "AgenticVerdict",
+      "homeAriaLabel": "الانتقال إلى الصفحة الرئيسية لـ {brand}",
+      "legalNavLabel": "قانوني ومساعدة",
+      "terms": "شروط الخدمة",
+      "privacy": "سياسة الخصوصية",
+      "help": "المساعدة",
+      "backToSignIn": "العودة إلى تسجيل الدخول",
+      "forgotPasswordShort": "نسيت كلمة المرور؟"
+    },
+    "login": {
+      "title": "تسجيل الدخول",
+      "description": "مرحباً بعودتك! يرجى تسجيل الدخول إلى حسابك.",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "rememberMe": "تذكرني",
+      "submitButton": "تسجيل الدخول",
+      "submittingButton": "جاري تسجيل الدخول...",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "noAccount": "ليس لديك حساب؟",
+      "createAccount": "إنشاء حساب",
+      "successTitle": "تم تسجيل الدخول بنجاح",
+      "successMessage": "مرحباً بعودتك! جاري التوجيه إلى لوحة التحكم...",
+      "errors": {
+        "email": {
+          "required": "البريد الإلكتروني مطلوب",
+          "invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح"
+        },
+        "password": {
+          "required": "كلمة المرور مطلوبة",
+          "tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل"
+        },
+        "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+        "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+        "unknownError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+        "accountLocked": "تم إيقاف الحساب بسبب عدد كبير من المحاولات الفاشلة",
+        "emailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل تسجيل الدخول"
+      },
+      "session": {
+        "expiredTitle": "انتهت الجلسة",
+        "expiredMessage": "يرجى تسجيل الدخول مرة أخرى للمتابعة بأمان."
+      },
+      "oauth": {
+        "or": "أو المتابعة عبر",
+        "continueWith": "المتابعة عبر {provider}",
+        "redirecting": "جارٍ إعادة التوجيه إلى موفّر تسجيل الدخول الموحد...",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple"
+        },
+        "autoTriggerFallback": "تعذر بدء تسجيل الدخول الموحد تلقائياً. استخدم أحد الخيارات التالية.",
+        "unavailable": "تسجيل الدخول الموحد غير متاح مؤقتاً. يرجى تسجيل الدخول بالبريد الإلكتروني وكلمة المرور."
+      },
+      "rateLimit": {
+        "title": "محاولات كثيرة",
+        "message": "محاولات تسجيل دخول كثيرة جداً. يرجى المحاولة بعد قليل.",
+        "retryAfter": "محاولات تسجيل دخول كثيرة جداً. يرجى المحاولة بعد {seconds} ثانية."
+      },
+      "lockout": {
+        "title": "تم قفل الحساب مؤقتاً",
+        "message": "تم قفل حسابك مؤقتاً بعد تكرار محاولات تسجيل الدخول الفاشلة."
+      },
+      "fields": {
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "rememberMe": "تذكرني"
+      },
+      "buttons": {
+        "submit": "تسجيل الدخول",
+        "submitting": "جاري تسجيل الدخول...",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "noAccount": "ليس لديك حساب؟",
+        "register": "إنشاء حساب",
+        "createAccount": "إنشاء حساب"
+      },
+      "success": "تم تسجيل الدخول بنجاح"
+    },
+    "errors": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+      "forbidden": "ليست لديك صلاحية لتنفيذ هذا الإجراء.",
+      "notFound": "لم يُعثر على المورد المطلوب.",
+      "conflict": "تعذر إكمال الطلب بسبب تعارض.",
+      "badRequest": "تعذر معالجة الطلب. تحقق من المدخلات وحاول مرة أخرى.",
+      "rateLimitExceeded": "طلبات كثيرة جداً. يرجى الانتظار ثم المحاولة.",
+      "emailNotVerified": "يرجى التحقق من بريدك الإلكتروني قبل المتابعة.",
+      "weakPassword": "يرجى اختيار كلمة مرور أقوى تستوفي المتطلبات.",
+      "tokenExpired": "انتهت صلاحية هذا الرابط أو الجلسة. يرجى البدء من جديد.",
+      "internalError": "حدث خطأ من جهتنا. يرجى المحاولة لاحقاً.",
+      "networkError": "تعذر الوصول إلى الخادم. تحقق من اتصالك وحاول مرة أخرى.",
+      "accountLocked": "تم إيقاف حسابك بسبب محاولات فاشلة كثيرة.",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
+      "tenantContextRequired": "سياق المؤسسة غير متوفر. حدّث الصفحة أو افتح الرابط من الدعوة.",
+      "tenantMismatch": "المؤسسة في هذا الطلب غير متطابقة. حدّث أو استخدم رابط مساحة العمل الصحيح."
+    },
+    "register": {
+      "title": "إنشاء حساب",
+      "description": "انضم إلى AgenticVerdict لبدء الحصول على رؤى الأعمال.",
+      "fields": {
+        "email": {
+          "label": "البريد الإلكتروني",
+          "placeholder": "أدخل بريدك الإلكتروني"
+        },
+        "password": {
+          "label": "كلمة المرور",
+          "placeholder": "أنشئ كلمة مرور قوية"
+        },
+        "confirmPassword": {
+          "label": "تأكيد كلمة المرور",
+          "placeholder": "أكد كلمة المرور"
+        },
+        "firstName": {
+          "label": "الاسم الأول",
+          "placeholder": "أدخل اسمك الأول"
+        },
+        "lastName": {
+          "label": "اسم العائلة",
+          "placeholder": "أدخل اسم العائلة"
+        },
+        "acceptTerms": {
+          "label": "أوافق على شروط الخدمة وسياسة الخصوصية",
+          "description": "بإنشاء حساب، فإنك توافق على",
+          "termsLink": "شروط الخدمة",
+          "and": "و",
+          "privacyLink": "سياسة الخصوصية"
+        }
+      },
+      "buttons": {
+        "submit": "إنشاء حساب",
+        "createAccount": "إنشاء حساب",
+        "creatingAccount": "جارٍ إنشاء الحساب...",
+        "hasAccount": "لديك حساب بالفعل؟",
+        "signIn": "تسجيل الدخول",
+        "next": "التالي",
+        "back": "رجوع"
+      },
+      "errors": {
+        "apiError": "فشل إنشاء الحساب",
+        "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين",
+        "passwordsMatch": "كلمتا المرور متطابقتان",
+        "acceptTerms": {
+          "required": "يجب الموافقة على الشروط للمتابعة"
+        },
+        "email": {
+          "required": "البريد الإلكتروني مطلوب",
+          "invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+          "alreadyExists": "الحساب بهذا البريد الإلكتروني موجود بالفعل"
+        },
+        "password": {
+          "required": "كلمة المرور مطلوبة",
+          "tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+          "noUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
+          "noLowercase": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
+          "noNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+          "noSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل"
+        },
+        "confirmPassword": {
+          "required": "يرجى تأكيد كلمة المرور",
+          "mismatch": "كلمات المرور غير متطابقة"
+        },
+        "firstName": {
+          "required": "الاسم الأول مطلوب",
+          "tooShort": "يجب أن يكون الاسم الأول حرفين على الأقل",
+          "tooLong": "يجب ألا يتجاوز الاسم الأول 50 حرفاً"
+        },
+        "lastName": {
+          "required": "اسم العائلة مطلوب",
+          "tooShort": "يجب أن يكون اسم العائلة حرفين على الأقل",
+          "tooLong": "يجب ألا يتجاوز اسم العائلة 50 حرفاً"
+        }
+      },
+      "success": "تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.",
+      "steps": {
+        "progress": "الخطوة {current} من {total}",
+        "accountType": {
+          "title": "اختر نوع الحساب",
+          "label": "نوع الحساب",
+          "options": {
+            "business": "حساب أعمال",
+            "individual": "حساب فردي"
+          },
+          "errors": {
+            "required": "يرجى اختيار نوع الحساب"
+          }
+        },
+        "tenant": {
+          "title": "معلومات المؤسسة",
+          "fields": {
+            "tenantName": {
+              "label": "اسم المؤسسة"
+            },
+            "tenantSize": {
+              "label": "حجم المؤسسة",
+              "options": {
+                "1_10": "1-10",
+                "11_50": "11-50",
+                "51_250": "51-250",
+                "251_plus": "251+"
+              }
+            },
+            "tenantWebsite": {
+              "label": "موقع المؤسسة (اختياري)"
+            }
+          },
+          "errors": {
+            "tenantNameRequired": "اسم المؤسسة مطلوب",
+            "tenantNameTooLong": "اسم المؤسسة طويل جداً",
+            "tenantSizeRequired": "حجم المؤسسة مطلوب",
+            "tenantWebsiteInvalid": "يرجى إدخال عنوان موقع صحيح"
+          }
+        },
+        "confirmation": {
+          "title": "اكتمل التسجيل",
+          "description": "تم إنشاء حسابك. تحقق من بريدك الإلكتروني للمتابعة.",
+          "checkEmail": "أرسلنا رمزاً مكوناً من 6 أرقام إلى {email}.",
+          "cta": "التحقق من البريد الإلكتروني"
+        }
+      }
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور",
+      "description": "أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+      "alerts": {
+        "successTitle": "تحقق من بريدك الإلكتروني"
+      },
+      "fields": {
+        "email": "البريد الإلكتروني"
+      },
+      "buttons": {
+        "submit": "إرسال رابط إعادة التعيين",
+        "submitting": "جارٍ الإرسال...",
+        "retryCountdown": "أعد المحاولة بعد {seconds}ث",
+        "backToLogin": "العودة إلى تسجيل الدخول"
+      },
+      "states": {
+        "rateLimited": "طلبات إعادة تعيين كثيرة جداً. يرجى المحاولة بعد {seconds} ثانية."
+      },
+      "errors": {
+        "email": {
+          "required": "البريد الإلكتروني مطلوب",
+          "invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح"
+        },
+        "notFound": "لم يتم العثور على حساب بهذا البريد الإلكتروني",
+        "tooManyRequests": "طلبات إعادة تعيين كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً."
+      },
+      "success": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. الرابط سينتهي خلال ساعة واحدة."
+    },
+    "resetPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "description": "أدخل كلمة المرور الجديدة أدناه.",
+      "fields": {
+        "password": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور الجديدة"
+      },
+      "buttons": {
+        "submit": "إعادة تعيين كلمة المرور",
+        "backToLogin": "العودة إلى تسجيل الدخول",
+        "resetting": "جاري إعادة التعيين...",
+        "requestNew": "طلب رابط جديد"
+      },
+      "states": {
+        "rateLimited": "محاولات إعادة تعيين كثيرة جداً. يرجى طلب رابط جديد بعد {seconds} ثانية."
+      },
+      "errors": {
+        "password": {
+          "required": "كلمة المرور مطلوبة",
+          "tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+          "noUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
+          "noLowercase": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
+          "noNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+          "noSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل"
+        },
+        "confirmPassword": {
+          "required": "يرجى تأكيد كلمة المرور",
+          "mismatch": "كلمات المرور غير متطابقة"
+        },
+        "invalidToken": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.",
+        "tooManyAttempts": "محاولات كثيرة جداً. يرجى طلب رابط إعادة تعيين جديد."
+      },
+      "success": "تم إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
+    },
+    "verifyEmail": {
+      "title": "التحقق من البريد الإلكتروني",
+      "description": "أرسلنا رمز التحقق إلى بريدك الإلكتروني. يرجى إدخاله أدناه.",
+      "fields": {
+        "code": "رمز التحقق"
+      },
+      "buttons": {
+        "submit": "التحقق",
+        "resend": "إعادة إرسال الرمز",
+        "resendCountdown": "إعادة الإرسال ({seconds}ث)",
+        "signIn": "تسجيل الدخول",
+        "backToRegister": "العودة إلى التسجيل"
+      },
+      "errors": {
+        "noToken": "لم يتم العثور على رمز التحقق",
+        "code": {
+          "required": "رمز التحقق مطلوب",
+          "invalidLength": "يجب أن يكون رمز التحقق 6 أرقام",
+          "invalidFormat": "يجب أن يحتوي رمز التحقق على أرقام فقط"
+        },
+        "invalidCode": "رمز التحقق غير صحيح",
+        "expiredCode": "رمز التحقق منتهي الصلاحية. يرجى طلب رمز جديد.",
+        "tooManyAttempts": "محاولات فاشلة كثيرة جداً. يرجى طلب رمز جديد."
+      },
+      "success": "تم التحقق من البريد الإلكتروني بنجاح.",
+      "resendSuccess": "تم إرسال رمز التحقق الجديد إلى بريدك الإلكتروني.",
+      "status": {
+        "verifying": "جارٍ التحقق من بريدك الإلكتروني...",
+        "success": "تم التحقق من البريد الإلكتروني بنجاح",
+        "successMessage": "تم التحقق من بريدك الإلكتروني. يمكنك الآن تسجيل الدخول إلى حسابك.",
+        "error": "فشل التحقق",
+        "expired": "انتهت صلاحية الرابط",
+        "expiredMessage": "انتهت صلاحية رابط التحقق هذا. يرجى طلب رابط جديد.",
+        "invalid": "رابط غير صالح",
+        "invalidMessage": "رابط التحقق هذا غير صالح. يرجى إعادة التسجيل.",
+        "resendSuccess": "تم إرسال رسالة تحقق جديدة. يرجى التحقق من صندوق الوارد.",
+        "attemptsRemaining": "المحاولات المتبقية: {count}",
+        "retryAfter": "يرجى الانتظار {seconds} ثانية قبل المحاولة مرة أخرى."
+      }
+    },
+    "password": {
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "requirements": {
+        "minLength": "8 أحرف على الأقل",
+        "uppercase": "يحتوي على حرف كبير",
+        "lowercase": "يحتوي على حرف صغير",
+        "number": "يحتوي على رقم",
+        "special": "يحتوي على رمز خاص",
+        "ariaLabel": "متطلبات كلمة المرور"
+      },
+      "strength": {
+        "label": "قوة كلمة المرور",
+        "ariaLabel": "مؤشر قوة كلمة المرور",
+        "veryWeak": "ضعيفة جداً",
+        "weak": "ضعيفة",
+        "fair": "متوسطة",
+        "good": "جيدة",
+        "strong": "قوية"
+      },
+      "errors": {
+        "tooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+        "tooLong": "يجب ألا تتجاوز كلمة المرور 128 حرفاً",
+        "noUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
+        "noLowercase": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
+        "noNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+        "noSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل",
+        "commonPattern": "يرجى اختيار كلمة مرور أكثر أماناً"
+      }
+    },
+    "seo": {
+      "login": {
+        "title": "تسجيل الدخول | {brand}",
+        "description": "سجّل الدخول إلى حساب {brand} للوصول إلى مساحة العمل وبيانات الأسطول والرؤى."
+      },
+      "register": {
+        "title": "إنشاء حساب | {brand}",
+        "description": "أنشئ حساب {brand} لربط مصادر البيانات واستكشاف رؤى الأسطول والأعمال."
+      },
+      "forgotPassword": {
+        "title": "نسيت كلمة المرور | {brand}",
+        "description": "اطلب رابطاً آمناً لإعادة تعيين كلمة مرور حساب {brand}."
+      },
+      "resetPassword": {
+        "title": "إعادة تعيين كلمة المرور | {brand}",
+        "description": "اختر كلمة مرور جديدة لاستعادة الوصول إلى حساب {brand}."
+      },
+      "verifyEmail": {
+        "title": "التحقق من البريد | {brand}",
+        "description": "أكد عنوان بريدك الإلكتروني لإكمال إعداد حساب {brand}."
+      },
+      "terms": {
+        "title": "شروط الخدمة | {brand}",
+        "description": "شروط استخدام منصة {brand} والخدمات ذات الصلة."
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية | {brand}",
+        "description": "كيف تجمع {brand} وتستخدم وتؤمّن البيانات الشخصية والمتعلقة بالأسطول."
+      },
+      "help": {
+        "title": "المساعدة والدعم | {brand}",
+        "description": "احصل على مساعدة في تسجيل الدخول أو التحقق من البريد أو التواصل مع دعم {brand}."
+      }
+    },
+    "legal": {
+      "terms": {
+        "title": "شروط الخدمة",
+        "lastUpdated": "آخر تحديث: أبريل 2026. هذه صفحة مبدئية؛ استبدلها بشروط معتمدة قانونياً قبل الإطلاق التجاري.",
+        "section1Title": "الموافقة",
+        "section1Body": "باستخدامك لخدمات {brand} فإنك توافق على هذه الشروط والقوانين المعمول بها. إذا لم توافق، فلا تستخدم الخدمة.",
+        "section2Title": "الحسابات والأمان",
+        "section2Body": "أنت مسؤول عن حماية بيانات الدخول وعن النشاط الذي يتم عبر حسابك. أبلغ الدعم فوراً إذا اشتبهت في وصول غير مصرح به.",
+        "section3Title": "التغييرات",
+        "section3Body": "قد نحدّث هذه الشروط من وقت لآخر. سيتم إبلاغك بالتغييرات الجوهرية عبر المنتج أو البريد الإلكتروني عند الاقتضاء.",
+        "footerNote": "أسئلة حول الشروط؟",
+        "backToSignIn": "العودة إلى تسجيل الدخول"
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية",
+        "lastUpdated": "آخر تحديث: أبريل 2026. هذه صفحة مبدئية؛ استبدلها بإفصاحات خصوصية معتمدة قانونياً قبل الإطلاق التجاري.",
+        "section1Title": "المعلومات التي نعالجها",
+        "section1Body": "نعالج المعلومات التي تقدمها (مثل بيانات الحساس والأسطول) لتشغيل المنصة وتأمينها وتحسينها. ستُفصَّل الفئات والأغراض في السياسة النهائية.",
+        "section2Title": "الاحتفاظ والأمان",
+        "section2Body": "نطبق تدابير إدارية وتقنية وتنظيمية لحماية البيانات الشخصية. يتبع الاحتفاظ إعداداتك والالتزامات القانونية واحتياجات التشغيل.",
+        "section3Title": "خياراتك",
+        "section3Body": "بحسب منطقتك قد يكون لديك حقوق في الوصول أو التصحيح أو الحذف أو التصدير. تواصل مع الدعم لممارسة الحقوق المعمول بها.",
+        "footerNote": "أسئلة حول الخصوصية؟",
+        "backToSignIn": "العودة إلى تسجيل الدخول"
+      }
+    },
+    "help": {
+      "title": "المساعدة والدعم",
+      "description": "تحتاج مساعدة في تسجيل الدخول أو التحقق من البريد أو إعادة تعيين كلمة المرور؟ استخدم الخيارات أدناه أو تواصل مع فريقنا.",
+      "supportIntro": "البريد الإلكتروني:",
+      "supportEmailDefault": "support@agenticverdict.com",
+      "hoursNote": "تختلف ساعات الدعم وأهداف زمن الاستجابة حسب اشتراكك ومنطقتك.",
+      "backToSignIn": "العودة إلى تسجيل الدخول"
+    }
+  },
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "view": "عرض",
+    "downloadStarted": "بدأ التنزيل",
+    "failedToLoad": "فشل التحميل",
+    "appName": "AgenticVerdict",
+    "welcome": "مرحباً",
+    "create": "إنشاء",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "retry": "إعادة المحاولة",
+    "contactSupport": "التواصل مع الدعم",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "clear": "مسح"
+  },
+  "navigation": {
+    "insights": "الرؤى",
+    "reports": "التقارير",
+    "dashboard": "لوحة التحكم",
+    "onboarding": "الإعداد الموجز",
+    "featureFlags": "ميزات التبديل",
+    "connectors": "الموصلات",
+    "agency": "الوكالة",
+    "settings": "الإعدادات",
+    "home": "الرئيسية",
+    "about": "حول",
+    "contact": "اتصل بنا"
+  },
+  "reports": {
+    "title": "التقارير",
+    "ready": "تقريرك جاهز",
+    "download": "تنزيل",
+    "viewer": {
+      "title": "عارض التقارير",
+      "zoom": "تكبير",
+      "print": "طباعة",
+      "download": "تنزيل",
+      "share": "مشاركة",
+      "version": "الإصدار",
+      "loading": "جاري تحميل التقرير...",
+      "error": "فشل تحميل التقرير",
+      "goBack": "رجوع",
+      "page": "صفحة",
+      "of": "من"
+    },
+    "list": {
+      "title": "جميع التقارير",
+      "downloadSelected": "تنزيل المحدد",
+      "deleteSelected": "حذف المحدد",
+      "bulkActions": {
+        "download": "تنزيل المحدد",
+        "delete": "حذف المحدد",
+        "deleteConfirm": "هل أنت متأكد من حذف {count} تقارير؟"
+      },
+      "pageTitle": "التقارير",
+      "pageSubtitle": "عرض وإدارة التقارير",
+      "newReport": "تقرير جديد",
+      "searchPlaceholder": "البحث في التقارير...",
+      "filterByStatus": "تصفية حسب الحالة",
+      "filterByFormat": "تصفية حسب التنسيق",
+      "filterByDate": "نطاق التاريخ",
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "صفحة",
+      "actions": {
+        "view": "عرض",
+        "download": "تنزيل",
+        "share": "مشاركة",
+        "delete": "حذف",
+        "deleteConfirm": "هل أنت متأكد من حذف هذا التقرير؟"
+      },
+      "emptyState": {
+        "title": "لا توجد تقارير بعد",
+        "createFirst": "إنشاء تقريرك الأول",
+        "clearFilters": "مسح عوامل التصفية"
+      },
+      "bulk": {
+        "delete": "حذف المحدد",
+        "download": "تنزيل المحدد",
+        "selected": "تم تحديد {count}"
+      },
+      "columns": {
+        "actions": "الإجراءات",
+        "date": "التاريخ",
+        "format": "التنسيق",
+        "name": "الاسم",
+        "status": "الحالة"
+      },
+      "dateFrom": "من تاريخ",
+      "dateTo": "إلى تاريخ",
+      "deleteConfirm": {
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "multiple": "هل أنت متأكد أنك تريد حذف {count} تقريرًا؟",
+        "single": "هل أنت متأكد أنك تريد حذف هذا التقرير؟",
+        "title": "حذف التقارير"
+      },
+      "errorLoading": "فشل تحميل التقارير",
+      "format": {
+        "all": "كل التنسيقات"
+      },
+      "status": {
+        "all": "الكل",
+        "failed": "فشل",
+        "generating": "جارٍ الإنشاء",
+        "ready": "جاهز"
+      }
+    },
+    "share": {
+      "title": "مشاركة التقرير",
+      "expirationLabel": "انتهاء الصلاحية",
+      "generateLink": "إنشاء رابط مشاركة",
+      "linkCreated": "تم إنشاء الرابط",
+      "copyLink": "نسخ الرابط",
+      "copied": "تم النسخ",
+      "activeShares": "المشاركات النشطة",
+      "noShares": "لا توجد مشاركات نشطة",
+      "revokeAccess": "إلغاء الوصول",
+      "revoked": "تم الإلغاء",
+      "expires": "تنتهي في {date}",
+      "expiration": {
+        "1h": "ساعة واحدة",
+        "24h": "24 ساعة",
+        "7d": "7 أيام",
+        "30d": "30 يوماً"
+      }
+    },
+    "status": {
+      "all": "الكل",
+      "ready": "جاهز",
+      "generating": "قيد الإنشاء",
+      "failed": "فشل"
+    },
+    "formats": {
+      "all": "كل التنسيقات",
+      "pdf": "PDF",
+      "excel": "Excel"
+    },
+    "notifications": {
+      "created": {
+        "title": "تم إنشاء الرؤية",
+        "message": "تم إنشاء رؤيتك بنجاح"
+      },
+      "updated": {
+        "title": "تم تحديث الرؤية",
+        "message": "تم تحديث رؤيتك بنجاح"
+      },
+      "deleted": {
+        "title": "تم حذف الرؤية",
+        "message": "تم حذف رؤيتك بنجاح"
+      },
+      "running": {
+        "title": "الرؤية قيد التشغيل",
+        "message": "رؤيتك تقوم الآن بإنشاء تقرير"
+      },
+      "failed": {
+        "createTitle": "فشل إنشاء الرؤية",
+        "updateTitle": "فشل تحديث الرؤية",
+        "deleteTitle": "فشل حذف الرؤية",
+        "runTitle": "فشل تشغيل الرؤية"
+      }
+    }
+  },
+  "dashboard": {
+    "insights": {
+      "body": {
+        "default": "مقاييس وتحليلات {period}"
+      },
+      "relativeTime": {
+        "updatedRecently": "تم التحديث مؤخراً",
+        "justNow": "الآن",
+        "minutesAgo": "قبل {minutes} دقائق",
+        "hoursAgo": "قبل {hours} ساعات",
+        "daysAgo": "قبل {days} أيام"
+      },
+      "ariaLabels": {
+        "insightCard": "رؤية {title} لـ {domains}",
+        "default": "رؤية أعمال"
+      }
+    },
+    "actions": {
+      "retry": "إعادة تحميل القسم"
+    },
+    "async": {
+      "loadingHome": "جاري تحميل أقسام لوحة التحكم",
+      "readyHome": "بيانات لوحة التحكم جاهزة",
+      "errorHome": "تعذر تحميل بعض أقسام لوحة التحكم",
+      "loadingSection": "جاري التحميل…"
+    },
+    "toolbar": {
+      "preset": "نطاق التاريخ",
+      "comparison": "مقارنة بالفترة السابقة",
+      "refresh": "تحديث البيانات",
+      "freshness": "آخر تحديث في {time}",
+      "presets": {
+        "last7": "آخر 7 أيام",
+        "last30": "آخر 30 يوماً",
+        "thisMonth": "هذا الشهر",
+        "lastMonth": "الشهر الماضي"
+      }
+    },
+    "errors": {
+      "generic": "حدث خطأ أثناء تحميل لوحة التحكم.",
+      "sectionTitle": "تعذر تحميل هذا القسم",
+      "tenantRequired": "يلزم سياق المستأجر قبل تحميل بيانات لوحة التحكم.",
+      "tenantMismatch": "جلسة المستخدم لا تطابق نطاق المستأجر المطلوب.",
+      "network": "تعذر الوصول إلى الخادم. تحقق من الاتصال وحاول مرة أخرى.",
+      "validation": "استجابة لوحة التحكم لا تطابق العقد المتوقع.",
+      "invalidDomain": "مجال لوحة التحكم هذا غير متاح."
+    },
+    "domains": {
+      "marketing": "التسويق",
+      "finance": "المالية",
+      "operations": "العمليات",
+      "seo": "تحسين محركات البحث",
+      "social": "وسائل التواصل",
+      "local": "الأعمال المحلية"
+    },
+    "connectorStatus": {
+      "healthy": "سليم",
+      "degraded": "يحتاج انتباه",
+      "disconnected": "غير متصل"
+    },
+    "home": {
+      "title": "لوحة التحكم",
+      "subtitle": "تم تسجيل الدخول كـ {email}",
+      "ariaMain": "لوحة التحكم الرئيسية",
+      "kpi": {
+        "title": "المؤشرات الرئيسية",
+        "emptyTitle": "لا توجد مؤشرات بعد",
+        "emptyDescription": "اربط مصادر البيانات لعرض المؤشرات.",
+        "totalInsights": "إجمالي الرؤى",
+        "activeConnectors": "الموصلات النشطة",
+        "reportsThisMonth": "التقارير هذا الشهر",
+        "deltaUp": "+2 مقارنة بالأسبوع السابق",
+        "connectorsHealthy": "جميع الموصلات سليمة",
+        "deltaPercent": "+12% مقارنة بالفترة السابقة"
+      },
+      "insights": {
+        "title": "أحدث الرؤى",
+        "emptyTitle": "لا توجد رؤى بعد",
+        "emptyDescription": "أنشئ رؤية لعرض الملخصات هنا.",
+        "sampleTitle": "لمحة أداء تسويقية",
+        "sampleBody": "تحسن العائد على الإنفاق الإعلاني مع كفاءة إنفاق مستقرة.",
+        "sampleTime": "تم التحديث منذ حوالي ساعتين",
+        "body": {
+          "default": "مقاييس وتحليلات {period}"
+        },
+        "relativeTime": {
+          "updatedRecently": "تم التحديث مؤخراً",
+          "justNow": "الآن",
+          "minutesAgo": "قبل {minutes} دقائق",
+          "hoursAgo": "قبل {hours} ساعات",
+          "daysAgo": "قبل {days} أيام"
+        },
+        "ariaLabels": {
+          "insightCard": "رؤية {title} لـ {domains}",
+          "default": "رؤية أعمال"
+        }
+      },
+      "connectors": {
+        "title": "صحة الموصلات",
+        "emptyTitle": "لا توجد موصلات",
+        "emptyDescription": "أضف موصلاً لمراقبة صحة الاستيعاب.",
+        "ga4": "GA4",
+        "meta": "إعلانات ميتا",
+        "gsc": "Google Search Console"
+      },
+      "quickActions": {
+        "title": "إجراءات سريعة",
+        "domainSample": "فتح لوحة تسويق",
+        "createInsight": "إنشاء رؤية",
+        "export": "تصدير تقرير",
+        "customize": "تخصيص التخطيط",
+        "agency": "نظرة وكالة"
+      }
+    },
+    "domain": {
+      "title": "لوحة {domain}",
+      "subtitle": "تبقى المرشحات المشتركة متزامنة مع الصفحة الرئيسية.",
+      "primaryKpi": "إشارة المجال الأساسية",
+      "ariaMain": "لوحة المجال"
+    },
+    "agency": {
+      "title": "نظرة الوكالة",
+      "subtitle": "تستخدم المقاييس المجمعة عملاءً مسموحاً بهم فقط.",
+      "clientContext": "سياق العميل: {id}",
+      "ariaMain": "لوحة الوكالة",
+      "clientList": "العملاء",
+      "viewTenant": "فتح لوحة العميل",
+      "blocked": "هذا العميل خارج النطاق المسموح.",
+      "kpi": {
+        "clients": "العملاء النشطون",
+        "insights": "الرؤى (للعملاء المسموحين)"
+      }
+    },
+    "widgets": {
+      "kpi_grid": "نظرة مؤشرات الأداء",
+      "insights": "ملخص الرؤى",
+      "connectors": "صحة الموصلات",
+      "quick_actions": "إجراءات سريعة"
+    },
+    "customize": {
+      "title": "تخصيص لوحة التحكم",
+      "subtitle": "أعد ترتيب الأدوات ثم احفظ أو أعد الضبط. يتطلب التحرير صلاحيات مسؤول في هذه المعاينة.",
+      "ariaMain": "تخصيص لوحة التحكم",
+      "editMode": "تحرير التخطيط",
+      "viewMode": "وضع العرض",
+      "save": "حفظ التخطيط",
+      "reset": "استعادة الافتراضي",
+      "palette": "الأدوات المتاحة",
+      "hint": "مقابض السحب غير مفعّلة على الشاشات الصغيرة؛ استخدم الإضافة/الإزالة على سطح المكتب.",
+      "noPermission": "ليست لديك صلاحية لتعديل هذا التخطيط."
+    }
+  },
+  "toolbar": {
+    "preset": "إعداد مسبق",
+    "comparison": "مقارنة",
+    "refresh": "تحديث",
+    "freshness": "تم التحديث {time}",
+    "presets": {
+      "last7": "آخر 7 أيام",
+      "last30": "آخر 30 يوماً",
+      "thisMonth": "هذا الشهر",
+      "lastMonth": "الشهر الماضي"
+    }
+  },
+  "async": {
+    "loadingHome": "جاري تحميل لوحة التحكم...",
+    "errorHome": "فشل تحميل لوحة التحكم",
+    "readyHome": "تم تحميل لوحة التحكم",
+    "loadingSection": "جاري تحميل القسم..."
+  },
+  "errors": {
+    "sectionTitle": "تعذر تحميل البيانات",
+    "generic": "حدث خطأ ما",
+    "tenantRequired": "مطلوب سياق المستأجر",
+    "reports": {
+      "notFound": "التقرير غير موجود",
+      "contentNotFound": "محتوى التقرير غير موجود في التخزين",
+      "tenantSecurityFailed": "فشلت عملية التحقق من أمان المستأجر",
+      "shareLinkNotFound": "رابط المشاركة غير موجود",
+      "shareLinkRevoked": "تم إلغاء رابط المشاركة",
+      "shareLinkExpired": "انتهت صلاحية رابط المشاركة",
+      "createShareFailed": "فشل إنشاء رابط المشاركة"
+    },
+    "common": {
+      "unknownError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+      "tryAgain": "يرجى المحاولة مرة أخرى.",
+      "contactSupport": "إذا استمرت المشكلة، يرجى الاتصال بالدعم."
+    },
+    "notFound": "الصفحة غير موجودة",
+    "serverError": "حدث خطأ في الخادم",
+    "networkError": "خطأ في اتصال الشبكة",
+    "unauthorized": "غير مصرح لك بالوصول إلى هذه الصفحة",
+    "forbidden": "الوصول محظور",
+    "somethingWentWrong": "حدث خطأ ما",
+    "tryAgain": "حاول مرة أخرى",
+    "network": {
+      "offline": "يبدو أنك غير متصل بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+      "timeout": "انتهت مهلة الطلب. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+      "connectionFailed": "فشل الاتصال. يرجى التحقق من اتصال الإنترنت الخاص بك.",
+      "serverUnreachable": "الخادم غير متصل. يرجى المحاولة مرة أخرى لاحقاً."
+    },
+    "auth": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+      "sessionExpired": "انتهت مهلة جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "tokenInvalid": "الرمز غير صالح. يرجى تسجيل الدخول مرة أخرى.",
+      "tokenExpired": "انتهت صلاحية الرمز الخاص بك. يرجى تسجيل الدخول مرة أخرى.",
+      "unauthorized": "غير مصرح لك بأداء هذا الإجراء.",
+      "forbidden": "الوصول محظور. ليس لديك إذن للوصول إلى هذا المورد.",
+      "emailNotVerified": "يرجى التحقق من عنوان بريدك الإلكتروني قبل المتابعة.",
+      "accountLocked": "تم قفل حسابك بسبب العديد من المحاولات الفاشلة. يرجى الاتصال بالدعم.",
+      "tooManyAttempts": "محاولات فاشلة كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً."
+    },
+    "server": {
+      "internalError": "حدث خطأ داخلي في الخادم. يرجى المحاولة مرة أخرى لاحقاً.",
+      "badGateway": "تعذر الاتصال بالخدمة. يرجى المحاولة مرة أخرى لاحقاً.",
+      "serviceUnavailable": "الخدمة غير متاحة مؤقتاً. يرجى المحاولة مرة أخرى لاحقاً.",
+      "gatewayTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى لاحقاً.",
+      "notImplemented": "هذه الميزة غير مطبقة بعد."
+    },
+    "rateLimit": {
+      "exceeded": "لقد تجاوزت حد المعدل. يرجى المحاولة مرة أخرى خلال {retryAfter} ثانية.",
+      "tooManyRequests": "طلبات كثيرة جداً. يرجى التباطؤ والمحاولة مرة أخرى لاحقاً."
+    }
+  },
+  "actions": {
+    "retry": "إعادة المحاولة",
+    "refresh": "تحديث",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "search": "بحث",
+    "download": "تحميل",
+    "upload": "رفع",
+    "export": "تصدير",
+    "import": "استيراد",
+    "apply": "تطبيق",
+    "reset": "إعادة تعيين",
+    "clear": "مسح"
+  },
+  "insights": {
+    "title": "الرؤى",
+    "list": {
+      "title": "رؤى الأعمال",
+      "newInsight": "رؤية جديدة",
+      "searchPlaceholder": "البحث في الرؤى...",
+      "filter": {
+        "status": "الحالة",
+        "domain": "المجال"
+      },
+      "status": {
+        "enabled": "مفعّل",
+        "disabled": "معطّل",
+        "running": "جاري التشغيل",
+        "failed": "فشل"
+      },
+      "empty": {
+        "title": "لا توجد رؤى بعد",
+        "description": "أنشئ أول رؤية للبدء",
+        "createButton": "إنشاء رؤية"
+      },
+      "actions": {
+        "view": "عرض",
+        "edit": "تحرير",
+        "runNow": "تشغيل الآن",
+        "delete": "حذف",
+        "deleteConfirm": "هل أنت متأكد من حذف هذه الرؤية؟",
+        "viewDetails": "عرض التفاصيل"
+      },
+      "pageTitle": "الرؤى",
+      "pageSubtitle": "إدارة الرؤى المدعومة بالذكاء الاصطناعي",
+      "filterByStatus": "تصفية حسب الحالة",
+      "filterByDomain": "تصفية حسب النطاق",
+      "sortBy": "ترتيب حسب",
+      "sort": {
+        "nameAsc": "الاسم (أ-ي)",
+        "nameDesc": "الاسم (ي-أ)",
+        "createdAtAsc": "تاريخ الإنشاء (الأقدم)",
+        "createdAtDesc": "تاريخ الإنشاء (الأحدث)",
+        "lastRunAtAsc": "آخر تشغيل (الأقدم)",
+        "lastRunAtDesc": "آخر تشغيل (الأحدث)",
+        "statusAsc": "الحالة (نشط أولاً)",
+        "statusDesc": "الحالة (غير نشط أولاً)"
+      },
+      "connectors": "موصلات",
+      "created": "تاريخ الإنشاء",
+      "lastRun": "آخر تشغيل",
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "صفحة",
+      "emptyState": {
+        "title": "لا توجد رؤى بعد",
+        "createFirst": "إنشاء رؤيتك الأولى"
+      },
+      "errorTitle": "خطأ في تحميل الرؤى",
+      "errorMessage": "فشل تحميل الرؤى. يرجى المحاولة مرة أخرى.",
+      "lastRunStatus": {
+        "running": "قيد التشغيل",
+        "completed": "مكتمل",
+        "failed": "فشل"
+      },
+      "neverRun": "لم يتم التشغيل أبداً"
+    },
+    "wizard": {
+      "title": "إنشاء رؤية",
+      "editTitle": "تعديل الرؤية",
+      "step1": "المعلومات الأساسية",
+      "step2": "الموصلات",
+      "step3": "المقاييس",
+      "step4": "إعدادات الذكاء الاصطناعي",
+      "step5": "الجدول الزمني",
+      "step6": "المراجعة",
+      "next": "التالي",
+      "back": "رجوع",
+      "create": "إنشاء رؤية",
+      "save": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "cancelConfirm": "هل أنت متأكد من الإلغاء؟ ستفقد تقدمك.",
+      "success": "تم إنشاء الرؤية بنجاح",
+      "updateSuccess": "تم تعديل الرؤية بنجاح",
+      "steps": {
+        "basicInfo": {
+          "title": "المعلومات الأساسية",
+          "nameLabel": "اسم الرؤية",
+          "namePlaceholder": "مثال: نظرة عامة على أداء التسويق",
+          "domainLabel": "المجال",
+          "descriptionLabel": "الوصف",
+          "descriptionPlaceholder": "ماذا يجب أن تحلل هذه الرؤية؟"
+        },
+        "connectors": {
+          "title": "اختيار الموصلات",
+          "description": "اختر مصادر البيانات لتضمينها",
+          "manage": "إدارة الموصلات"
+        },
+        "metrics": {
+          "title": "تكوين المقاييس",
+          "description": "اختر المقاييس المراد تحليلها"
+        },
+        "ai": {
+          "title": "إعدادات الذكاء الاصطناعي",
+          "modelLabel": "نموذج الذكاء الاصطناعي",
+          "qualityLabel": "جودة التحليل",
+          "qualityFast": "سريع",
+          "qualityBalanced": "متوازن",
+          "qualityDetailed": "مفصل",
+          "qualityComprehensive": "شامل",
+          "qualityDescription": "جودة أعلى توفر تحليلاً أكثر تفصيلاً ولكن يستغرق وقتاً أطول",
+          "detailLevelLabel": "مستوى التفاصيل",
+          "detailLevelPlaceholder": "اختر مستوى التفاصيل",
+          "detailExecutive": "ملخص تنفيذي",
+          "detailStandard": "تحليل قياسي",
+          "detailComprehensive": "تقرير شامل",
+          "customPromptLabel": "مطلب مخصص (اختياري)",
+          "customPromptPlaceholder": "أضف تعليمات محددة لمحلل الذكاء الاصطناعي...",
+          "customPromptDescription": "وجّه الذكاء الاصطناعي للتركيز على جوانب محددة من بياناتك",
+          "modelDescription": "يوصى بـ Claude 3.5 Sonnet للحصول على أفضل النتائج",
+          "modelPlaceholder": "اختر النموذج"
+        },
+        "schedule": {
+          "title": "الجدول الزمني والتسليم",
+          "frequencyLabel": "التكرار",
+          "frequencyPlaceholder": "اختر التكرار",
+          "freqDaily": "يومي",
+          "freqWeekly": "أسبوعي",
+          "freqMonthly": "شهري",
+          "freqQuarterly": "ربع سنوي",
+          "timeLabel": "وقت التسليم",
+          "timePlaceholder": "مثال: 9 للصباح",
+          "timeValidation": "يجب أن تكون الساعة بين 0 و 23",
+          "formatLabel": "تنسيق التقرير",
+          "formatPlaceholder": "اختر التنسيق",
+          "formatPdf": "PDF",
+          "formatExcel": "Excel",
+          "formatBoth": "كلاهما PDF و Excel",
+          "recipientsLabel": "المستلمون"
+        },
+        "review": {
+          "title": "المراجعة والإنشاء",
+          "description": "راجع التكوين قبل الإنشاء"
+        }
+      }
+    },
+    "detail": {
+      "overview": {
+        "0": "ن",
+        "1": "ظ",
+        "2": "ر",
+        "3": "ة",
+        "4": " ",
+        "5": "ع",
+        "6": "ا",
+        "7": "م",
+        "8": "ة",
+        "aiInsightsTitle": "رؤى الذكاء الاصطناعي",
+        "aiModel": "نموذج الذكاء الاصطناعي",
+        "configTitle": "نظرة عامة على الإعدادات",
+        "connectedDomains": "النطاقات المتصلة",
+        "connectors": "الموصلات",
+        "connectorsLabel": "موصلات",
+        "defaultModel": "النموذج الافتراضي",
+        "description": "الوصف",
+        "download": "تنزيل",
+        "generateAIInsights": "إنشاء رؤى بالذكاء الاصطناعي",
+        "keyFindings": "أهم النتائج",
+        "metrics": "المقاييس",
+        "metricsLabel": "مقاييس",
+        "noAIInsightsYet": "لا توجد رؤى ذكاء اصطناعي بعد. أنشئ رؤى للبدء.",
+        "noDescription": "لا يوجد وصف",
+        "noReportsYet": "لا توجد تقارير بعد",
+        "performanceSummary": "ملخص الأداء",
+        "recommendations": "التوصيات",
+        "regenerateAIInsights": "إعادة إنشاء رؤى الذكاء الاصطناعي",
+        "reportsError": "فشل تحميل التقارير المرتبطة",
+        "view": "عرض"
+      },
+      "reports": "التقارير",
+      "settings": "الإعدادات",
+      "history": "السجل",
+      "reportsTab": {
+        "comingSoon": "قريباً"
+      },
+      "settingsTab": {
+        "comingSoon": "قريباً"
+      },
+      "historyTab": {
+        "comingSoon": "قريباً"
+      },
+      "runNow": "تشغيل الآن",
+      "running": "جاري التشغيل...",
+      "retry": "إعادة المحاولة",
+      "tabs": {
+        "overview": "نظرة عامة",
+        "reports": "التقارير",
+        "settings": "الإعدادات",
+        "history": "السجل"
+      },
+      "created": "تاريخ الإنشاء",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذه الرؤية؟",
+      "edit": "تعديل",
+      "errorLoading": "فشل تحميل تفاصيل الرؤية. حاول مرة أخرى.",
+      "loading": "جارٍ تحميل الرؤية..."
+    },
+    "errors": {
+      "insightNotFound": "لم يتم العثور على التحليل",
+      "createFailed": "فشل في إنشاء التحليل",
+      "updateFailed": "فشل في تحديث التحليل",
+      "deleteFailed": "فشل في حذف التحليل",
+      "runFailed": "فشل في تشغيل التحليل",
+      "invalidConfig": "تكوين التحليل غير صالح",
+      "connectorRequired": "مطلوب موصل واحد على الأقل",
+      "metricsRequired": "مطلوب مقياس واحد على الأقل لكل موصل",
+      "permissionDenied": "ليس لديك صلاحية تنفيذ هذا الإجراء",
+      "tenantMismatch": "تم اكتشاف عدم تطابق المستأجر",
+      "validationFailed": "فشل التحقق",
+      "aiGenerationFailed": "فشل في إنشاء تحليلات الذكاء الاصطناعي",
+      "reportNotFound": "لم يتم العثور على التقرير",
+      "reportDownloadFailed": "فشل في تنزيل التقرير",
+      "reportShareFailed": "فشل في مشاركة التقرير",
+      "rateLimited": "طلبات كثيرة جداً. يرجى المحاولة لاحقاً",
+      "connectorNotFound": "لم يتم العثور على الموصل",
+      "connectorUnhealthy": "الموصل غير سليم",
+      "duplicateName": "يوجد بالفعل مورد بهذا الاسم",
+      "insightDisabled": "لا يمكن تشغيل تحليل معطل. يرجى تمكينه أولاً",
+      "modelNotSupported": "النموذج غير مدعوم للمزود المحدد",
+      "providerNotAvailable": "المزود غير متاح",
+      "unknown": "حدث خطأ غير متوقع"
+    },
+    "status": {
+      "all": "الكل",
+      "enabled": "مفعلة",
+      "disabled": "معطلة",
+      "running": "قيد التشغيل",
+      "failed": "فشل"
+    },
+    "create": {
+      "title": "إنشاء رؤية",
+      "next": "التالي",
+      "back": "رجوع",
+      "cancel": "إلغاء",
+      "cancelConfirm": "تجاهل التقدم والعودة إلى الرؤى؟",
+      "pageTitle": "إنشاء رؤى",
+      "pageSubtitle": "أنشئ رؤى مدعومة بالذكاء الاصطناعي من مصادر بياناتك المتصلة"
+    },
+    "actions": {
+      "refresh": "تحديث"
+    },
+    "edit": {
+      "cancelMessage": "لديك تغييرات غير محفوظة. هل تريد مغادرة الصفحة؟",
+      "cancelTitle": "تجاهل التغييرات؟",
+      "continueEditing": "متابعة التعديل",
+      "discardChanges": "تجاهل التغييرات",
+      "errorLoading": "فشل تحميل الرؤية للتعديل.",
+      "loading": "جارٍ تحميل محرر الرؤية...",
+      "pageTitle": "تعديل الرؤية",
+      "pageSubtitle": "حدّث إعدادات الرؤية وجدولها",
+      "resetToDefault": "إعادة للقيم الافتراضية",
+      "sections": {
+        "aiSettings": "إعدادات الذكاء الاصطناعي",
+        "basicInfo": "المعلومات الأساسية",
+        "connectors": "الموصلات",
+        "metrics": "المقاييس",
+        "schedule": "الجدولة والتسليم"
+      },
+      "unsavedChanges": "تغييرات غير محفوظة"
+    },
+    "templates": {
+      "title": "القوالب",
+      "searchPlaceholder": "البحث في القوالب...",
+      "allDomains": "جميع المجالات",
+      "all": "الكل",
+      "noTemplatesFound": "لم يتم العثور على قوالب",
+      "noTemplatesFoundAction": "لم يتم العثور على قوالب. ابدأ من الصفر لإنشاء رؤيتك.",
+      "preview": "معاينة",
+      "previewTitle": "معاينة القالب",
+      "connectors": "الموصلات",
+      "schedule": "الجدول الزمني",
+      "delivery": "التسليم",
+      "applyTemplate": "تطبيق القالب",
+      "applyAndCustomize": "تطبيق وتخصيص",
+      "close": "إغلاق",
+      "cancel": "إلغاء",
+      "useTemplate": "استخدام القالب",
+      "useATemplate": "استخدام قالب",
+      "startFromScratch": "البدء من الصفر",
+      "chooseStartingPoint": "اختر نقطة بداية",
+      "chooseStartingPointDesc": "ابدأ من قالب أو ابنِ رؤيتك من الصفر.",
+      "failedToLoad": "فشل تحميل القوالب. يرجى المحاولة مرة أخرى لاحقًا.",
+      "loading": "جاري تحميل القوالب...",
+      "templateNotFound": "لم يتم العثور على القالب.",
+      "loadingDetails": "جاري تحميل تفاصيل القالب...",
+      "appliedTemplate": "تم تطبيق القالب: {name}. جميع الحقول قابلة للتعديل.",
+      "templateApplied": "تم تطبيق القالب",
+      "connectorCount": "{count, plural, one {# موصل} other {# موصلات}}",
+      "frequency": {
+        "daily": "يوميًا",
+        "weekly": "أسبوعيًا",
+        "monthly": "شهريًا",
+        "quarterly": "ربع سنوي"
+      },
+      "format": {
+        "pdf": "PDF",
+        "excel": "Excel",
+        "both": "PDF + Excel"
+      },
+      "domains": "المجالات",
+      "connectorsMetrics": "الموصلات والمقاييس",
+      "formatLabel": "التنسيق",
+      "webhookEnabled": "Webhook مفعّل",
+      "plusMore": "+{count}"
+    }
+  },
+  "report": {
+    "marketingIntelligence": "استخبارات التسويق",
+    "contents": "المحتويات",
+    "verdict": "الحكم",
+    "dataQuality": "جودة البيانات",
+    "summary": "الملخص",
+    "keyFindings": "النتائج الرئيسية",
+    "finding": "النتيجة {n}",
+    "recommendations": "التوصيات",
+    "insights": "الرؤى",
+    "statistics": "الإحصائيات",
+    "keyMetrics": "المقاييس الرئيسية",
+    "metrics": "المقاييس",
+    "charts": "الرسوم البيانية",
+    "analysisBody": "نص التحليل",
+    "visuals": "المرئيات",
+    "referenceTables": "الجداول المرجعية",
+    "referenceMetrics": "المقاييس المرجعية",
+    "phase2Integration": "تكامل المرحلة 2",
+    "verdictScore": "درجة الحكم",
+    "verdictOverview": "نظرة عامة على الحكم",
+    "type": "النوع",
+    "sentiment": "النبرة",
+    "modelConfidence": "ثقة النموذج",
+    "insightContext": "سياق الرؤية",
+    "statisticalSummaries": "الملخصات الإحصائية",
+    "measure": "المقياس",
+    "value": "القيمة",
+    "note": "ملاحظة",
+    "dataQualityIndicators": "مؤشرات جودة البيانات",
+    "noSummaryText": "لم يتم توفير نص الملخص التنفيذي.",
+    "noChartData": "عنصر نائب للرسم البياني — قم بتوفير charts[0] في نموذج العرض.",
+    "noMetricsText": "لا توجد بيانات مقاييس متاحة",
+    "noSectionsText": "أضف أقسامًا سردية لملء هذا القالب.",
+    "noAppendixText": "لم يتم توفير أقسام ملحق.",
+    "noInsightsText": "لم يتم تضمين مواصفات الرسم البياني في هذه الحمولة.",
+    "sections": "الأقسام",
+    "xlsxReport": "التقرير",
+    "xlsxReportSummary": "ملخص التقرير",
+    "xlsxInsight": "رؤية",
+    "xlsxDateRange": "نطاق التاريخ",
+    "xlsxTenantId": "معرف المستأجر",
+    "xlsxReportId": "معرف التقرير",
+    "xlsxTemplate": "القالب",
+    "xlsxKeyMetrics": "المقاييس الرئيسية",
+    "xlsxTenantInfo": "معلومات المستأجر",
+    "xlsxAiInsights": "رؤى الذكاء الاصطناعي",
+    "xlsxTitle": "العنوان",
+    "xlsxType": "النوع",
+    "xlsxConfidence": "الثقة",
+    "xlsxDescription": "الوصف",
+    "xlsxTimestamp": "الطابع الزمني",
+    "xlsxNoData": "لا توجد بيانات مقاييس متاحة",
+    "xlsxNoTableRows": "لم يتم العثور على صفوف جدول في القالب المعروض"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية",
+    "fr": "Français",
+    "es": "Español",
+    "zh": "中文"
+  },
+  "Layout": {
+    "openNav": "فتح قائمة التنقل",
+    "closeNav": "إغلاق قائمة التنقل",
+    "brand": "AgenticVerdict",
+    "skipToMain": "تخطي إلى المحتوى الرئيسي",
+    "navLabel": "التنقل الرئيسي",
+    "navHint": "استخدم قائمة التنقل للوصول إلى أقسام التطبيق المختلفة.",
+    "breadcrumbsLabel": "مسار الصفحة الحالية",
+    "collapseDesktopNav": "طي الشريط الجانبي للتنقل",
+    "expandDesktopNav": "توسيع الشريط الجانبي للتنقل",
+    "shellErrorTitle": "التنقل غير متاح",
+    "shellErrorMessage": "تعذر تحميل حالة القشرة. حاول مرة أخرى.",
+    "shellEmptyTitle": "لا توجد وحدات متاحة",
+    "shellEmptyMessage": "حسابك لا يملك حالياً صلاحية الوصول إلى أي وحدات تنقل.",
+    "retry": "إعادة المحاولة",
+    "shellLoadingLive": "جارٍ تحميل تنقل التطبيق",
+    "shellErrorLive": "فشل تحميل تنقل التطبيق",
+    "shellEmptyLive": "لا توجد وحدات تنقل متاحة",
+    "openCommandPalette": "فتح لوحة الأوامر",
+    "commandPaletteTitle": "مبدّل سريع",
+    "commandPalettePlaceholder": "ابحث عن وجهات التنقل",
+    "commandPaletteHint": "انتقل سريعاً إلى أي وجهة أساسية",
+    "commandPaletteEmpty": "لا توجد وجهات مطابقة",
+    "toggleLight": "التبديل إلى الوضع الفاتح",
+    "toggleDark": "التبديل إلى الوضع الداكن"
+  },
+  "Home": {
+    "breadcrumbHome": "الرئيسية",
+    "title": "مرحباً",
+    "subtitle": "ذكاء متعدد المجالات لمؤسستك.",
+    "tenantLabel": "الشركة",
+    "languageLabel": "اللغة",
+    "regionLabel": "المنطقة",
+    "previewTitle": "معاينة",
+    "formTab": "نموذج",
+    "sampleCurrencyLabel": "عينة عملة",
+    "sampleDateLabel": "عينة تاريخ",
+    "pluralLabel": "أمثلة الجمع",
+    "itemCount": "{count, plural, =0 {لا عناصر} one {عنصر واحد} other {# عناصر}}",
+    "tableName": "الاسم",
+    "tableRole": "الدور",
+    "rowAnalyst": "محلل",
+    "rowAdmin": "مسؤول",
+    "badgeNew": "جديد"
+  },
+  "admin": {
+    "featureFlags": {
+      "title": "ميزات التبديل",
+      "liveTitle": "لقطة مباشرة للمستأجر",
+      "liveDescription": "تأتي القيم الافتراضية والمحسومة من Postgres عبر admin.featureFlags.list (createFeatureFlagService) للمستأجر المسجَّل دخوله.",
+      "columnKey": "المفتاح",
+      "columnType": "النوع",
+      "columnDefault": "الافتراضي",
+      "columnResolved": "القيمة الفعلية"
+    }
+  },
+  "connectors": {
+    "common": {
+      "title": "الموصلات",
+      "add": "إضافة",
+      "remove": "إزالة",
+      "configure": "تكوين",
+      "connector": "موصل",
+      "connectorName": "اسم الموصل",
+      "domain": "النطاق",
+      "domainPlaceholder": "example.com",
+      "metrics": "المقاييس",
+      "syncFrequency": "تكرار المزامنة",
+      "dataRetention": "الاحتفاظ بالبيانات",
+      "retentionDays": "{days} أيام",
+      "notFound": "لم يتم العثور على الموصل",
+      "testConnection": "اختبار الاتصال",
+      "continue": "متابعة",
+      "finish": "إنهاء"
+    },
+    "status": {
+      "healthy": "نشط",
+      "warning": "يحتاج انتباه",
+      "error": "خطأ",
+      "inactive": "غير نشط",
+      "syncing": "جاري المزامنة..."
+    },
+    "frequency": {
+      "hourly": "كل ساعة",
+      "daily": "يومي",
+      "weekly": "أسبوعي"
+    },
+    "freshness": {
+      "realTime": "فوري",
+      "recent": "حديث",
+      "stale": "قديم",
+      "outdated": "منتهي"
+    },
+    "alerts": {
+      "connectionSuccessfulTitle": "تم الاتصال بنجاح",
+      "connectionSuccessfulBody": "موصلك جاهز.",
+      "limitedPermissionsTitle": "صلاحيات محدودة",
+      "limitedPermissionsBody": "الاتصال يعمل ولكن بصلاحيات وصول محدودة للبيانات.",
+      "connectionFailedTitle": "فشل الاتصال",
+      "connectionFailedBody": "يرجى التحقق من بيانات الاعتماد والمحاولة مرة أخرى."
+    },
+    "platforms": {
+      "ga4": {
+        "name": "جوجل أناليتكس 4",
+        "description": "حركة المرور والتحويلات على الموقع"
+      },
+      "meta": {
+        "name": "إعلانات Meta",
+        "description": "الإعلان على فيسبوك وإنستغرام"
+      },
+      "gsc": {
+        "name": "وحدة تحكم بحث Google",
+        "description": "أداء البحث والفهرسة"
+      },
+      "tiktok": {
+        "name": "إعلانات TikTok",
+        "description": "حملات الإعلان على TikTok"
+      },
+      "gbp": {
+        "name": "الملف التجاري لـ Google",
+        "description": "الوجود التجاري المحلي"
+      }
+    },
+    "metrics": {
+      "sessions": "الجلسات",
+      "users": "المستخدمون",
+      "conversions": "التحويلات",
+      "revenue": "الإيرادات",
+      "bounceRate": "معدل الارتداد",
+      "pageViews": "مشاهدات الصفحة",
+      "impressions": "مرات الظهور",
+      "clicks": "النقرات",
+      "ctr": "نسبة النقر إلى الظهور",
+      "cpc": "التكلفة لكل نقرة",
+      "spend": "الإنفاق",
+      "position": "المرتبة",
+      "pages": "الصفحات",
+      "queries": "استعلامات البحث",
+      "videoViews": "مشاهدات الفيديو",
+      "views": "المشاهدات",
+      "calls": "المكالمات",
+      "directions": "اتجاهات القيادة",
+      "reviews": "التقييمات",
+      "photos": "الصور"
+    },
+    "list": {
+      "actions": {
+        "viewDetails": "عرض التفاصيل",
+        "syncNow": "مزامنة الآن",
+        "disconnect": "قطع الاتصال",
+        "addConnector": "إضافة موصل",
+        "addFirstConnector": "أضف أول موصل لك"
+      },
+      "filters": {
+        "allStatuses": "جميع الحالات",
+        "allDomains": "جميع النطاقات",
+        "searchPlaceholder": "البحث في الموصلات..."
+      },
+      "card": {
+        "lastSync": "آخر مزامنة: {date}",
+        "noSyncHistory": "لا يوجد سجل مزامنة"
+      },
+      "empty": {
+        "noConnectors": "لا توجد موصلات بعد",
+        "noFilteredResults": "لا توجد موصلات تطابق عوامل التصفية"
+      },
+      "results": {
+        "showing": "عرض {shown} من أصل {total} موصل"
+      }
+    },
+    "add": {
+      "title": "إضافة موصل",
+      "cancelConfirm": "تجاهل التقدم والعودة إلى الموصلات؟",
+      "steps": {
+        "platform": {
+          "label": "المنصة",
+          "description": "اختر مصدر البيانات"
+        },
+        "auth": {
+          "label": "المصادقة",
+          "description": "ربط الحساب"
+        },
+        "config": {
+          "label": "التكوين",
+          "description": "اختر المقاييس"
+        },
+        "confirm": {
+          "label": "التأكيد",
+          "description": "اختبار الاتصال"
+        }
+      },
+      "platform": {
+        "searchPlaceholder": "البحث في المنصات..."
+      },
+      "auth": {
+        "authenticateWith": "المصادقة عبر {platform}",
+        "connectOAuth": "الاتصال عبر OAuth",
+        "orApiCredentials": "أو أدخل بيانات اعتماد API:",
+        "apiKey": "مفتاح API",
+        "continueApiKey": "متابعة بمفتاح API"
+      },
+      "config": {
+        "connectorNamePlaceholder": "موصل GA4 الخاص بي"
+      },
+      "confirm": {
+        "summary": "الملخص",
+        "platform": "المنصة: {platform}",
+        "name": "الاسم: {name}",
+        "domain": "النطاق: {domain}",
+        "metrics": "المقاييس: {metrics}",
+        "frequency": "التكرار: {frequency}",
+        "retention": "الاحتفاظ: {days} أيام"
+      }
+    },
+    "configure": {
+      "title": "تكوين {name}",
+      "sections": {
+        "account": "الحساب",
+        "syncPreferences": "تفضيلات المزامنة",
+        "notifications": "الإشعارات",
+        "advanced": "متقدم"
+      },
+      "actions": {
+        "selectAll": "تحديد الكل",
+        "saveChanges": "حفظ التغييرات"
+      },
+      "notifications": {
+        "syncFailure": "تنبيهات فشل المزامنة",
+        "authExpiration": "تحذيرات انتهاء المصادقة",
+        "weeklySummary": "الملخصات الأسبوعية"
+      },
+      "advanced": {
+        "customTags": "علامات مخصصة",
+        "customTagsPlaceholder": "أضف علامة واضغط Enter",
+        "excludeInternalTraffic": "استبعاد الحركة الداخلية (فلتر IP)"
+      },
+      "testFailed": "فشل الاتصال. يرجى التحقق من إعداداتك."
+    },
+    "detail": {
+      "actions": {
+        "backToConnectors": "العودة إلى الموصلات",
+        "viewAll": "عرض الكل",
+        "manage": "إدارة"
+      },
+      "sections": {
+        "health": "الحالة",
+        "recentData": "البيانات الأخيرة",
+        "syncHistory": "سجل المزامنة",
+        "connectedMetrics": "المقاييس المتصلة",
+        "troubleshooting": "استكشاف الأخطاء"
+      },
+      "health": {
+        "lastSync": "آخر مزامنة: {date}",
+        "nextSync": "المزامنة التالية: {date}"
+      },
+      "recentData": {
+        "empty": "لا توجد بيانات أخيرة متاحة"
+      },
+      "syncHistory": {
+        "empty": "لا يوجد سجل مزامنة بعد",
+        "columns": {
+          "date": "التاريخ",
+          "status": "الحالة",
+          "records": "السجلات"
+        }
+      },
+      "connectedMetrics": {
+        "empty": "لم يتم اختيار مقاييس"
+      }
+    },
+    "remove": {
+      "title": "إزالة {name}",
+      "warningTitle": "تحذير",
+      "warningBody": "ستكون لإزالة هذا الموصل العواقب التالية:",
+      "impacts": {
+        "dataCollectionStops": "ستتوقف عملية جمع البيانات",
+        "historicalInsightsOnly": "ستعرض الرؤى الحالية البيانات التاريخية فقط",
+        "noNewReports": "لن تتضمن أي تقارير جديدة هذا الموصل",
+        "historicalRetention": "سيتم الاحتفاظ بالبيانات التاريخية لمدة 90 يوماً",
+        "canReconnectAnytime": "يمكن إعادة توصيل الموصل في أي وقت"
+      },
+      "affectedInsightsTitle": "الرؤى المتأثرة",
+      "alternativeOptionsTitle": "خيارات بديلة",
+      "options": {
+        "pause": "إيقاف جمع البيانات مؤقتاً (الاحتفاظ بالموصل، إيقاف المزامنة)",
+        "remove": "إزالة الموصل بالكامل (قطع الاتصال وإزالة التكوين)"
+      },
+      "exportTitle": "تصدير البيانات التاريخية",
+      "exportDescription": "قم بتنزيل بياناتك التاريخية قبل الإزالة.",
+      "exportAction": "تصدير البيانات التاريخية",
+      "confirmTitle": "تأكيد الإزالة",
+      "confirmInstructions": "اكتب REMOVE للتأكيد:",
+      "actions": {
+        "pauseConnector": "إيقاف الموصل مؤقتاً",
+        "confirmRemoval": "تأكيد الإزالة"
+      }
+    }
+  },
+  "onboarding": {
+    "title": "مرحباً بك",
+    "subtitle": "إعداد موجز لمساحة العمل.",
+    "continue": "متابعة",
+    "finish": "الانتقال إلى لوحة التحكم",
+    "stepWelcomeLabel": "ترحيب",
+    "stepWelcomeDescription": "نظرة عامة",
+    "stepWelcomeBody": "يمكنك الآن ربط مصادر البيانات واستكشاف الرؤى.",
+    "stepPreferencesLabel": "التفضيلات",
+    "stepPreferencesDescription": "الإعدادات الإقليمية",
+    "stepPreferencesBody": "ستُحدَّد اللغة والعملة والإشعارات عبر TenantConfig عند الربط.",
+    "stepDoneLabel": "تم",
+    "stepDoneDescription": "جاهز",
+    "stepDoneBody": "يمكنك مراجعة الإعدادات في أي وقت من التطبيق."
+  },
+  "components": {
+    "costImpactEstimator": {
+      "title": "Cost Impact Estimator",
+      "recommended": "Recommended",
+      "costComparison": "Cost Comparison",
+      "perRequest": "per request",
+      "monthlyBudgetImpact": "Monthly Budget Impact",
+      "impact": "Impact",
+      "total": "total",
+      "metrics": {
+        "requests": "Monthly Requests",
+        "avgTokens": "Avg Tokens/Request",
+        "totalTokens": "Total Monthly Tokens"
+      },
+      "currentTier": "Current: {tier}",
+      "proposedTier": "Proposed: {tier}",
+      "recommendations": {
+        "lowUsage": "Low usage — Economy tier is sufficient",
+        "mediumUsage": "Medium usage — Standard tier offers best value",
+        "highUsage": "High usage — Premium tier for maximum performance"
+      },
+      "recommendation": {
+        "title": "Recommendation",
+        "description": "We recommend the {tier} tier. {reason}"
+      },
+      "alerts": {
+        "costIncrease": "Estimated increase: {amount}/month",
+        "costSavings": "Estimated savings: {amount}/month",
+        "increaseDescription": "This adds approximately {amount} to your annual costs.",
+        "savingsDescription": "This saves approximately {amount} annually."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "upgrade": "Upgrade",
+        "downgrade": "Downgrade"
+      }
+    },
+    "costTierSelector": {
+      "label": "Cost Tier",
+      "tooltip": "Select the pricing tier for this resource",
+      "currentSelection": "Current Selection",
+      "notSelected": "Not selected",
+      "priceIncrease": "Price increases by {percent}%",
+      "priceDecrease": "Price decreases by {percent}%",
+      "tiers": {
+        "economy": {
+          "label": "Economy",
+          "description": "Best for development and testing"
+        },
+        "standard": {
+          "label": "Standard",
+          "description": "Balanced performance and cost"
+        },
+        "premium": {
+          "label": "Premium",
+          "description": "Maximum performance and priority"
+        }
+      }
+    },
+    "credentialForm": {
+      "securityNotice": "Credentials are encrypted at rest and never logged.",
+      "fields": {
+        "providerType": "Provider Type",
+        "selectProvider": "Select a provider",
+        "apiKey": "API Key",
+        "apiKeyPlaceholder": "Enter your API key",
+        "apiKeyDescription": "Found in your provider dashboard",
+        "apiSecret": "API Secret",
+        "apiSecretPlaceholder": "Enter your API secret",
+        "organizationId": "Organization ID",
+        "organizationIdPlaceholder": "Enter your organization ID",
+        "organizationIdDescription": "Required for organization-scoped access",
+        "projectId": "Project ID",
+        "projectIdPlaceholder": "Enter your project ID",
+        "endpoint": "Custom Endpoint",
+        "endpointPlaceholder": "https://api.example.com",
+        "endpointDescription": "Override the default API endpoint"
+      },
+      "errors": {
+        "selectProvider": "Please select a provider first",
+        "providerTypeRequired": "Provider type is required",
+        "apiKeyRequired": "API key is required",
+        "apiSecretRequired": "API secret is required"
+      },
+      "actions": {
+        "testConnection": "Test Connection",
+        "save": "Save"
+      },
+      "alerts": {
+        "connectionSuccess": "Connection Successful",
+        "connectionFailed": "Connection Failed"
+      },
+      "messages": {
+        "testing": "Testing connection...",
+        "connectionValid": "Your credentials are valid and the connection is working.",
+        "connectionInvalid": "Unable to connect. Please verify your credentials."
+      }
+    },
+    "domainCard": {
+      "actions": {
+        "edit": "Edit",
+        "editOverride": "Edit Override",
+        "overrideProvider": "Override Provider",
+        "revertToInherited": "Revert to Inherited",
+        "delete": "Delete"
+      },
+      "badges": {
+        "connectors": "{count} Connectors"
+      },
+      "provider": {
+        "override": "Override",
+        "inherited": "Inherited",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "overrideInfo": "This domain has a custom provider configuration."
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      }
+    },
+    "domainMapper": {
+      "lastSynced": "Last synced",
+      "connectors": "connectors",
+      "dropConnector": "Drop connector here",
+      "connectorStatus": {
+        "healthy": "Healthy",
+        "syncing": "Syncing",
+        "warning": "Warning",
+        "inactive": "Inactive",
+        "error": "Error"
+      }
+    },
+    "inheritanceIndicator": {
+      "usingProvider": "Using {name}",
+      "effectiveProvider": "Effective Provider:",
+      "noProvider": "No provider configured",
+      "levels": {
+        "tenant": "Tenant",
+        "domain": "Domain",
+        "connector": "Connector"
+      },
+      "status": {
+        "source": "Source",
+        "override": "Override",
+        "inherited": "Inherited from {from}",
+        "unknown": "Unknown"
+      },
+      "tooltip": {
+        "title": "Configuration Inheritance",
+        "tenant": "This is the top-level tenant configuration.",
+        "domainOverride": "This domain overrides the tenant provider.",
+        "domainInherited": "This domain inherits the tenant provider.",
+        "connectorOverride": "This connector overrides the domain provider.",
+        "connectorInherited": "This connector inherits from its parent."
+      }
+    },
+    "insightAIConfig": {
+      "title": "AI Insight Configuration",
+      "description": "Configure how AI-generated insights are produced for your reports.",
+      "disabledMessage": "AI insights are currently disabled.",
+      "insightsEnabled": "AI Insights",
+      "defaults": {
+        "systemPrompt": "You are a helpful analyst assistant. Provide clear, data-driven insights."
+      },
+      "common": {
+        "enabled": "Enable AI Insights",
+        "disabled": "Disabled"
+      },
+      "sections": {
+        "provider": "AI Provider",
+        "output": "Output Settings",
+        "customization": "Customization"
+      },
+      "fields": {
+        "providerType": "Provider",
+        "model": "Model",
+        "language": "Language",
+        "tone": "Tone",
+        "maxLength": "Max Length (characters)",
+        "maxLengthDescription": "Maximum length for generated insights",
+        "includeDataSources": "Include Data Sources",
+        "includeConfidenceScore": "Include Confidence Score",
+        "systemPrompt": "System Prompt",
+        "systemPromptPlaceholder": "Enter the system prompt for the AI...",
+        "systemPromptDescription": "Instructions that guide the AI's behavior",
+        "customInstructions": "Custom Instructions",
+        "customInstructionsPlaceholder": "Add any additional instructions...",
+        "customInstructionsDescription": "Extra context for insight generation"
+      },
+      "languages": {
+        "en": "English",
+        "ar": "Arabic"
+      },
+      "tones": {
+        "professional": "Professional",
+        "casual": "Casual",
+        "technical": "Technical",
+        "executive": "Executive"
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "item1": "Keep system prompts concise and specific.",
+        "item2": "Test with different tones to find the best fit.",
+        "item3": "Review generated insights regularly for accuracy."
+      },
+      "actions": {
+        "save": "Save Configuration"
+      }
+    },
+    "loadingStates": {
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "retry": "Retry",
+      "empty": "No data available",
+      "timeout": "Request timed out"
+    },
+    "providerGrid": {
+      "noProviders": "No AI providers configured.",
+      "common": {
+        "enabled": "Enabled"
+      },
+      "actions": {
+        "edit": "Edit",
+        "testConnection": "Test Connection",
+        "delete": "Delete"
+      },
+      "status": {
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "economy": "Economy",
+        "standard": "Standard",
+        "premium": "Premium"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "messages": {
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection test failed",
+        "connectionSuccess": "Connection successful"
+      }
+    },
+    "templateBrowser": {
+      "loading": "Loading templates...",
+      "noTemplates": "No templates found.",
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete"
+      }
+    },
+    "templatePreview": {
+      "content": "Template Content",
+      "variables": "Variables",
+      "required": "Required",
+      "deploymentInfo": "Deploying this template will apply it to the selected scope.",
+      "readyToDeploy": "Template is ready to deploy.",
+      "actions": {
+        "deploy": "Deploy"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usageChart": {
+      "noData": "No data available",
+      "noDataAria": "Chart with no data to display",
+      "max": "Max",
+      "avg": "Average"
+    },
+    "usageTable": {
+      "noData": "No usage records found.",
+      "showing": "Showing {from}–{to} of {total}",
+      "filters": {
+        "search": "Search by provider, model, or domain...",
+        "searchLabel": "Search",
+        "searchAriaLabel": "Search usage records"
+      },
+      "actions": {
+        "menuLabel": "Table actions",
+        "menuTitle": "More options",
+        "toggleColumns": "Toggle Columns",
+        "exportCSV": "Export CSV"
+      },
+      "table": {
+        "ariaLabel": "Usage data table"
+      },
+      "columns": {
+        "date": "Date",
+        "provider": "Provider",
+        "model": "Model",
+        "domain": "Domain",
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "requests": "Requests",
+        "latency": "Latency",
+        "status": "Status",
+        "sortAsc": "Sort ascending",
+        "sortDesc": "Sort descending",
+        "sortBy": "Sort by {field}"
+      },
+      "status": {
+        "success": "Success",
+        "error": "Error",
+        "partial": "Partial"
+      },
+      "summary": {
+        "totalCost": "Total Cost"
+      }
+    }
+  },
+  "settings": {
+    "domains": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "noDescription": "No description"
+      },
+      "actions": {
+        "delete": "Delete",
+        "addDomain": "Add Domain",
+        "create": "Create",
+        "update": "Update"
+      },
+      "badges": {
+        "connectors": "{count} connectors"
+      },
+      "management": {
+        "pageTitle": "Domain Management",
+        "info": "Domains group your connectors by business area."
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load domains.",
+        "noDomains": "No domains found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeleteWithConnectors": "Are you sure you want to delete \"{name}\"? It has {count} connector(s) that will be unassigned."
+      },
+      "modals": {
+        "addDomain": "Add Domain",
+        "editDomain": "Edit Domain"
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Enter domain name",
+        "nameRequired": "Domain name is required",
+        "description": "Description",
+        "descriptionPlaceholder": "Enter domain description"
+      },
+      "providers": {
+        "pageTitle": "Domain Providers",
+        "description": "Configure AI providers per domain.",
+        "info": "Domains inherit tenant providers by default. You can override a provider for a specific domain.",
+        "overrideProvider": "Override Provider",
+        "inheritFromTenant": "Inherit from Tenant",
+        "usingOverride": "Using Override",
+        "inheritedFromTenant": "Inherited from Tenant"
+      },
+      "filters": {
+        "status": "Filter by status"
+      },
+      "status": {
+        "override": "Override",
+        "inherited": "Inherited"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "unknown": "Unknown"
+      }
+    },
+    "providers": {
+      "common": {
+        "settings": "Settings",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "pageTitle": "AI Providers",
+      "actions": {
+        "addProvider": "Add Provider",
+        "remove": "Remove",
+        "testConnection": "Test Connection"
+      },
+      "badges": {
+        "default": "Default"
+      },
+      "filters": {
+        "search": "Search providers...",
+        "status": "Filter by status"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load providers.",
+        "noProviders": "No providers configured.",
+        "testingConnection": "Testing connection...",
+        "connectionFailed": "Connection failed.",
+        "connectionSuccess": "Connection successful.",
+        "confirmDelete": "Are you sure you want to remove \"{name}\"?",
+        "formComingSoon": "Provider form coming soon."
+      },
+      "modals": {
+        "addProvider": "Add Provider",
+        "editProvider": "Edit Provider"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "error": "Error",
+        "healthy": "Healthy",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      },
+      "costTier": {
+        "free": "Free",
+        "standard": "Standard",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      }
+    },
+    "templates": {
+      "common": {
+        "settings": "Settings",
+        "cancel": "Cancel"
+      },
+      "library": {
+        "pageTitle": "Template Library",
+        "info": "Templates are reusable AI provider configurations."
+      },
+      "actions": {
+        "preview": "Preview",
+        "deploy": "Deploy",
+        "delete": "Delete",
+        "createTemplate": "Create Template"
+      },
+      "filters": {
+        "search": "Search templates...",
+        "status": "Filter by status",
+        "type": "Filter by type"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load templates.",
+        "noTemplates": "No templates found.",
+        "confirmDelete": "Are you sure you want to delete \"{name}\"?",
+        "confirmDeploy": "Are you sure you want to deploy \"{name}\"?"
+      },
+      "modals": {
+        "preview": "Preview Template",
+        "deploy": "Deploy Template"
+      },
+      "status": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "usage": {
+      "common": {
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "pageTitle": "Usage Dashboard",
+        "usageTrend": "Usage Trend",
+        "costTrend": "Cost Trend",
+        "costByProvider": "Cost by Provider",
+        "detailedView": "Detailed View"
+      },
+      "filters": {
+        "ariaLabel": "Usage filters",
+        "dateRange": "Date Range",
+        "dateRangeDescription": "Select a date range to filter usage data",
+        "granularity": "Granularity",
+        "granularityDescription": "Select the granularity of the usage chart"
+      },
+      "summary": {
+        "ariaLabel": "Usage summary",
+        "totalCost": "Total Cost",
+        "totalTokens": "Total Tokens",
+        "totalRequests": "Total Requests",
+        "avgResponseTime": "Avg Response Time"
+      },
+      "granularity": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "messages": {
+        "error": "Error",
+        "failedToLoad": "Failed to load usage data.",
+        "noData": "No data available."
+      }
+    },
+    "domainMapper": {
+      "common": {
+        "settings": "Settings"
+      },
+      "pageTitle": "Domain Mapper",
+      "info": "Drag and drop connectors onto domains to assign them.",
+      "loading": "Loading...",
+      "availableConnectors": "Available Connectors",
+      "businessDomains": "Business Domains",
+      "noConnectors": "No connectors available.",
+      "pendingChanges": "{count} pending change(s)",
+      "filters": {
+        "search": "Search connectors..."
+      },
+      "actions": {
+        "save": "Save"
+      },
+      "changes": {
+        "saved": "{count} change(s) saved successfully.",
+        "assign": "Connector assigned",
+        "remove": "Connector removed"
+      },
+      "messages": {
+        "error": "Error",
+        "saveError": "Failed to save changes."
+      }
+    }
+  }
 }

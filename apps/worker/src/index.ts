@@ -3,6 +3,7 @@
  */
 export const WORKER_PACKAGE_VERSION = "0.4.3";
 
+export { checkDatabaseHealth, closeDatabase, getDatabase } from "./database";
 export {
   createEmailDeliveryServiceFromEnv,
   ResendEmailDeliveryService,
@@ -16,31 +17,20 @@ export {
   isRecipientSuppressed,
   suppressRecipientForTenant,
 } from "./services/delivery-suppression-redis";
-
-export type {
-  ProductionFlowPdfScenarioId,
-  ProductionFlowScenarioId,
-  ReportDeliveryJobData,
-  ReportGenerationJobData,
-  ReportScheduleJobData,
-  WorkflowTriggerJobConfig,
-  WorkflowTriggerJobData,
-  WorkflowTriggerJobResult,
-  WorkflowTriggerPdfValidation,
-  WorkflowTriggerPhase,
-  WorkflowTriggerWorkflowId,
-} from "./queues/job-types";
-export { isProductionFlowScenarioId, PRODUCTION_FLOW_SCENARIO_IDS } from "./queues/job-types";
 export {
-  workflowTriggerJobConfigSchema,
-  workflowTriggerJobDataSchema,
-  workflowTriggerJobResultSchema,
-} from "./queues/job-types";
+  fetchPlatformCredentials,
+  decryptCredential,
+  getDecryptedPlatformCredentials,
+  type DecryptedCredential,
+} from "./services/credential-store";
+
 export {
   REPORT_DELIVERY_QUEUE,
   REPORT_GENERATION_QUEUE,
   REPORT_SCHEDULE_QUEUE,
   WORKFLOW_TRIGGER_QUEUE,
+  INSIGHT_EXECUTION_QUEUE,
+  INSIGHT_SCHEDULE_QUEUE,
 } from "./queues/queue-names";
 export { createBullmqConnectionFromEnv } from "./queues/redis-connection";
 export {
@@ -49,16 +39,22 @@ export {
   createReportGenerationQueue,
   createReportScheduleQueue,
   createWorkflowTriggerQueue,
+  createInsightExecutionQueue,
   defaultReportDeliveryProcessor,
   defaultReportGenerationProcessor,
   defaultWorkflowTriggerProcessor,
+  defaultInsightExecutionProcessor,
   refreshBullmqQueueDepthMetrics,
   registerReportWorkers,
   type RegisteredReportWorkers,
   type ReportDeliveryProcessorOptions,
-  type ReportDeliveryWebhookPayload,
   type ReportWorkersOptions,
 } from "./queues/report-queues";
+export { recoverSchedules } from "./queues/schedule-recovery";
+export {
+  createInsightScheduleQueue,
+  defaultInsightScheduleProcessor,
+} from "./queues/schedule-tick-insight";
 export {
   checkBullmqRedisHealth,
   snapshotQueueCounts,

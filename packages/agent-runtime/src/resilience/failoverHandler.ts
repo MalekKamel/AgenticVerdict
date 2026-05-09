@@ -1,4 +1,7 @@
 import { CircuitBreaker, CircuitState } from "./circuitBreaker";
+import type { FailoverChainConfig, FailoverEvent } from "@agenticverdict/types";
+
+export type { FailoverChainConfig, FailoverEvent };
 
 export interface ProviderHealth {
   providerId: string;
@@ -6,22 +9,6 @@ export interface ProviderHealth {
   lastChecked: Date;
   errorRate?: number;
   latencyMs?: number;
-}
-
-export interface FailoverChainConfig {
-  /** Ordered list of provider IDs (primary, secondary, tertiary, ...) */
-  providers: string[];
-  /** Skip unhealthy providers automatically */
-  skipUnhealthy?: boolean;
-}
-
-export interface FailoverEvent {
-  tenantId: string;
-  fromProvider: string;
-  toProvider: string;
-  error: Error;
-  timestamp: Date;
-  attemptNumber: number;
 }
 
 export interface FailoverHandlerOptions {

@@ -916,27 +916,30 @@ Pre-merge (< 2h):
 
 ```bash
 # Development
-pnpm dev                          # Start all apps
-pnpm build                        # Build all packages
-turbo run build                   # Same as above
+make dev                              # Start dev stack (Docker)
+make build-all                        # Build all packages (turbo)
+
+# Pipeline
+make ci                               # Full CI: lint -> typecheck -> test -> build
+make lint                             # Lint all packages
+make typecheck                        # Type-check all packages
+make test                             # Run all unit tests
 
 # Testing
-pnpm run test                     # All unit tests
-pnpm run test:integration         # Integration tests
-pnpm run test:e2e                 # E2E tests
-pnpm run test:scenario R02         # Single scenario
-pnpm run test:scenarios:all        # All scenarios (R01–R12)
-pnpm run test:scenarios:group system  # R11 + R12
+make test-integration                 # Integration tests
+make test-e2e                         # E2E tests
+make test-production-flow             # Production flow scenarios
+make test-unit                        # Root-level unit tests
 
 # Database
-pnpm --filter @agenticverdict/database db:push
-pnpm --filter @agenticverdict/database db:migrate
-pnpm --filter @agenticverdict/database db:studio
+make db-migrate                       # Apply migrations
+make db-generate                      # Generate migration files
+make db-studio                        # Open Drizzle Studio
 
 # Docker
-docker compose up -d              # Start infrastructure
-docker compose -f docker-compose.apps.yml up -d  # Start apps
-./scripts/health-check.sh        # Verify health
+make infra-up                         # Start infrastructure
+make apps-up                          # Start apps (production-like)
+make health                           # Verify health
 ```
 
 ### Environment Variables

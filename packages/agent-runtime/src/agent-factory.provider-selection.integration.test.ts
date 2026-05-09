@@ -460,9 +460,9 @@ describe("AgentFactory - Provider Selection Integration Tests", () => {
         };
 
         return createTestTenantContext({
-          tenantId: `00000000-0000-0000-0000-00000000000${i}`,
+          tenantId: `00000000-0000-4000-8000-00000000000${i}`,
           tenantConfig: createTestTenantConfig({
-            tenantId: `00000000-0000-0000-0000-00000000000${i}`,
+            tenantId: `00000000-0000-4000-8000-00000000000${i}`,
             ai: tenantConfig,
           }),
         });

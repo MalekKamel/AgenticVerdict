@@ -5,6 +5,16 @@ import { BedrockProvider } from "../providers/bedrock";
 import { GoogleProvider } from "../providers/google";
 import { OpenAIProvider } from "../providers/openai";
 import { OpenAICompatibleProvider } from "../providers/openai-compatible";
+import type { AiProviderType } from "@agenticverdict/types";
+
+/**
+ * Provider IDs that have actual runtime implementations in this package.
+ * This is a subset of the canonical AiProviderType from @agenticverdict/types.
+ */
+export type ImplementedProvider = Extract<
+  AiProviderType,
+  "openai" | "anthropic" | "google" | "bedrock" | "openai-compatible"
+>;
 
 export class ProviderFactory {
   static register(
@@ -32,7 +42,7 @@ export class ProviderFactory {
 
   static registerDefaultProviders(): void {
     const defaultProviders: Array<{
-      id: "openai" | "anthropic" | "google" | "bedrock" | "openai-compatible";
+      id: ImplementedProvider;
       providerClass: new (config: ProviderConfig) => ProviderRuntime;
     }> = [
       {

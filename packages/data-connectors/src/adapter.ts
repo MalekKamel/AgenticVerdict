@@ -1,4 +1,4 @@
-import type { ConnectorType } from "@agenticverdict/types";
+import type { ConnectorType, ExponentialBackoffOptions } from "@agenticverdict/types";
 
 import type { AdapterMethodMetrics } from "./adapter-metrics";
 import { buildAdapterCacheKey } from "./cache/cache-keys";
@@ -10,11 +10,7 @@ import type { DateRangeIso } from "./date-range";
 import type { DeadLetterQueue } from "./dead-letter-queue";
 import { PlatformCircuitOpenError, PlatformError } from "./errors";
 import type { NormalizedConnectorSnapshot } from "./normalization";
-import {
-  defaultBackoffOptions,
-  type ExponentialBackoffOptions,
-  withExponentialBackoff,
-} from "./rate-limit";
+import { defaultBackoffOptions, withExponentialBackoff } from "./rate-limit";
 import type { TokenBucket } from "./token-bucket";
 
 /**

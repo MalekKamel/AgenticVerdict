@@ -8,9 +8,7 @@
 
 import { getTrpcSafeUserMessage } from "@/lib/api/trpc-error-message";
 import { logWebClientError } from "@/lib/observability/client-log";
-import arMessages from "../../../messages/ar.json";
-import enMessages from "../../../messages/en.json";
-import frMessages from "../../../messages/fr.json";
+import { ar as arMessages, en as enMessages, fr as frMessages } from "@agenticverdict/i18n/locales";
 import { defaultLocale, parseLocaleFromPathname, type AppLocale } from "@/i18n/locales";
 import { I18nProvider, useI18nContextOptional, useTranslations } from "@/i18n/react";
 import { useEffect, type ReactNode } from "react";

@@ -289,7 +289,7 @@ export const connectorsRouter = t.router({
 import { trpc } from '@/lib/trpc'
 
 function ConnectorCard({ connector }: { connector: string }) {
-  const utils = trpc.useContext()
+  const utils = trpc.useUtils()
 
   const { data } = trpc.connectors.fetchMetrics.useQuery({
     connector,
@@ -584,13 +584,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Lint
-        run: pnpm lint
+        run: make lint
       - name: Typecheck
-        run: pnpm typecheck
+        run: make typecheck
       - name: Test (all domains)
-        run: pnpm test
+        run: make test
       - name: Build
-        run: pnpm build
+        run: make build-all
 ```
 
 ### 5.5 Production Deployment
@@ -691,8 +691,8 @@ jobs:
 
 1. Create feature branch from `main`
 2. Implement feature with tests
-3. Run `pnpm lint` and `pnpm typecheck`
-4. Run `pnpm test` for unit tests
+3. Run `make lint` and `make typecheck`
+4. Run `make test` for unit tests
 5. Create pull request
 6. Address review feedback
 7. Merge after approval
@@ -730,21 +730,25 @@ jobs:
 
 ```bash
 # Development
-pnpm dev                          # Start all apps
-pnpm build                        # Build all packages
-pnpm lint                         # Run linter
-pnpm typecheck                    # Type check
-pnpm test                         # Run tests
+make dev                              # Start dev stack (Docker)
+make build-all                        # Build all packages (turbo)
+make lint                             # Run linter
+make typecheck                        # Type check
+make test                             # Run tests
+make ci                               # Full CI pipeline: lint -> typecheck -> test -> build
 
 # Database
-pnpm --filter @agenticverdict/database db:push
-pnpm --filter @agenticverdict/database db:migrate
-pnpm --filter @agenticverdict/database db:studio
+make db-migrate                       # Apply migrations
+make db-generate                      # Generate migration files
+make db-studio                        # Open Drizzle Studio
+make db-seed                          # Seed test data
+make db-reset                         # Reset local DB (destructive)
 
 # Docker
-make dev                          # Start dev stack
-make validate                     # Run validation
-make logs                         # View logs
+make dev                              # Start dev stack
+make validate                         # Run validation
+make logs                             # View logs
+make health                           # Run health checks
 ```
 
 ### A.2 Important Files

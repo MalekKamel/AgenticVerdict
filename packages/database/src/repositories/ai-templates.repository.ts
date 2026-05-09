@@ -3,7 +3,7 @@ import {
   aiTemplates,
   templateDeployments,
   templateUsageAnalytics,
-  type AiTemplate,
+  type AiTemplateDb,
   type NewAiTemplate,
   type TemplateDeployment,
   type NewTemplateDeployment,
@@ -46,7 +46,7 @@ export class AiTemplatesRepository {
   /**
    * Find all templates for a tenant
    */
-  async findAllByTenant(tenantId: string, status?: AiTemplateStatus): Promise<AiTemplate[]> {
+  async findAllByTenant(tenantId: string, status?: AiTemplateStatus): Promise<AiTemplateDb[]> {
     const conditions = [eq(aiTemplates.tenantId, tenantId)];
 
     if (status) {
@@ -63,7 +63,7 @@ export class AiTemplatesRepository {
   /**
    * Find template by ID with tenant isolation
    */
-  async findById(tenantId: string, id: string): Promise<AiTemplate | null> {
+  async findById(tenantId: string, id: string): Promise<AiTemplateDb | null> {
     const results = await this.db
       .select()
       .from(aiTemplates)
@@ -80,7 +80,7 @@ export class AiTemplatesRepository {
     tenantId: string,
     name: string,
     domainId?: string,
-  ): Promise<AiTemplate | null> {
+  ): Promise<AiTemplateDb | null> {
     const conditions = [
       eq(aiTemplates.tenantId, tenantId),
       eq(aiTemplates.name, name),
@@ -103,7 +103,7 @@ export class AiTemplatesRepository {
   /**
    * Create new template (with versioning)
    */
-  async create(data: NewAiTemplate): Promise<AiTemplate> {
+  async create(data: NewAiTemplate): Promise<AiTemplateDb> {
     // If creating a new version, mark old version as not latest
     if (data.parentVersionId) {
       await this.db
@@ -129,7 +129,7 @@ export class AiTemplatesRepository {
     tenantId: string,
     id: string,
     data: Partial<NewAiTemplate>,
-  ): Promise<AiTemplate | null> {
+  ): Promise<AiTemplateDb | null> {
     const results = await this.db
       .update(aiTemplates)
       .set({
@@ -157,7 +157,7 @@ export class AiTemplatesRepository {
   /**
    * Publish template
    */
-  async publish(tenantId: string, id: string): Promise<AiTemplate | null> {
+  async publish(tenantId: string, id: string): Promise<AiTemplateDb | null> {
     return this.update(tenantId, id, {
       status: "published",
       isLatestVersion: true,
@@ -167,7 +167,7 @@ export class AiTemplatesRepository {
   /**
    * Archive template
    */
-  async archive(tenantId: string, id: string): Promise<AiTemplate | null> {
+  async archive(tenantId: string, id: string): Promise<AiTemplateDb | null> {
     return this.update(tenantId, id, {
       status: "archived",
       isLatestVersion: false,
@@ -181,7 +181,7 @@ export class AiTemplatesRepository {
   /**
    * Get all versions of a template
    */
-  async getVersions(tenantId: string, name: string, domainId?: string): Promise<AiTemplate[]> {
+  async getVersions(tenantId: string, name: string, domainId?: string): Promise<AiTemplateDb[]> {
     const conditions = [eq(aiTemplates.tenantId, tenantId), eq(aiTemplates.name, name)];
 
     if (domainId) {
@@ -198,7 +198,7 @@ export class AiTemplatesRepository {
   /**
    * Get version history
    */
-  async getVersionHistory(tenantId: string, templateId: string): Promise<AiTemplate[]> {
+  async getVersionHistory(tenantId: string, templateId: string): Promise<AiTemplateDb[]> {
     // Get the template first to find its name
     const template = await this.findById(tenantId, templateId);
     if (!template) {
@@ -223,7 +223,7 @@ export class AiTemplatesRepository {
       description?: string;
       pattern?: string;
     }>,
-  ): Promise<AiTemplate> {
+  ): Promise<AiTemplateDb> {
     const source = await this.findById(tenantId, sourceTemplateId);
     if (!source) {
       throw new Error("Template not found");
@@ -443,7 +443,7 @@ export class AiTemplatesRepository {
     tenantId: string,
     type: "prompt" | "configuration" | "workflow",
     domainId?: string,
-  ): Promise<AiTemplate[]> {
+  ): Promise<AiTemplateDb[]> {
     const conditions = [
       eq(aiTemplates.tenantId, tenantId),
       eq(aiTemplates.type, type),
@@ -464,7 +464,7 @@ export class AiTemplatesRepository {
   /**
    * Search templates by name
    */
-  async searchByName(tenantId: string, query: string): Promise<AiTemplate[]> {
+  async searchByName(tenantId: string, query: string): Promise<AiTemplateDb[]> {
     return this.db
       .select()
       .from(aiTemplates)

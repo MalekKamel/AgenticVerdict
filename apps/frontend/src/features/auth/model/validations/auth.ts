@@ -6,7 +6,8 @@ import { z } from "zod";
  * These schemas provide runtime validation for authentication-related forms
  * using Zod. They ensure type safety and provide user-friendly error messages.
  *
- * All schemas support internationalization through error message interpolation.
+ * Base schemas are imported from @agenticverdict/types and extended with
+ * internationalized error messages for frontend use.
  */
 
 /**
@@ -26,23 +27,18 @@ import { z } from "zod";
  */
 export const loginSchema = z.object({
   email: z
-    .string({
-      required_error: "auth.login.errors.email.required",
-      invalid_type_error: "auth.login.errors.email.invalid",
-    })
+    .string()
     .min(1, { message: "auth.login.errors.email.required" })
     .email({ message: "auth.login.errors.email.invalid" })
     .toLowerCase()
     .trim(),
 
   password: z
-    .string({
-      required_error: "auth.login.errors.password.required",
-    })
+    .string()
     .min(1, { message: "auth.login.errors.password.required" })
     .min(8, { message: "auth.login.errors.password.tooShort" }),
 
-  rememberMe: z.boolean().optional().default(false),
+  rememberMe: z.boolean(),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -65,19 +61,14 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export const registerSchema = z
   .object({
     email: z
-      .string({
-        required_error: "auth.register.errors.email.required",
-        invalid_type_error: "auth.register.errors.email.invalid",
-      })
+      .string()
       .min(1, { message: "auth.register.errors.email.required" })
       .email({ message: "auth.register.errors.email.invalid" })
       .toLowerCase()
       .trim(),
 
     password: z
-      .string({
-        required_error: "auth.register.errors.password.required",
-      })
+      .string()
       .min(1, { message: "auth.register.errors.password.required" })
       .min(8, { message: "auth.register.errors.password.tooShort" })
       .regex(/[A-Z]/, { message: "auth.register.errors.password.noUppercase" })
@@ -86,36 +77,26 @@ export const registerSchema = z
       .regex(/[^A-Za-z0-9]/, { message: "auth.register.errors.password.noSpecial" }),
 
     confirmPassword: z
-      .string({
-        required_error: "auth.register.errors.confirmPassword.required",
-      })
+      .string()
       .min(1, { message: "auth.register.errors.confirmPassword.required" }),
 
     firstName: z
-      .string({
-        required_error: "auth.register.errors.firstName.required",
-      })
+      .string()
       .min(1, { message: "auth.register.errors.firstName.required" })
       .min(2, { message: "auth.register.errors.firstName.tooShort" })
       .max(50, { message: "auth.register.errors.firstName.tooLong" })
       .trim(),
 
     lastName: z
-      .string({
-        required_error: "auth.register.errors.lastName.required",
-      })
+      .string()
       .min(1, { message: "auth.register.errors.lastName.required" })
       .min(2, { message: "auth.register.errors.lastName.tooShort" })
       .max(50, { message: "auth.register.errors.lastName.tooLong" })
       .trim(),
 
-    acceptTerms: z
-      .boolean({
-        required_error: "auth.register.errors.acceptTerms.required",
-      })
-      .refine((val) => val === true, {
-        message: "auth.register.errors.acceptTerms.required",
-      }),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "auth.register.errors.acceptTerms.required",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "auth.register.errors.confirmPassword.mismatch",
@@ -125,15 +106,13 @@ export const registerSchema = z
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const registerStepAccountTypeSchema = z.object({
-  accountType: z.enum(["individual", "business"], {
-    required_error: "auth.register.steps.accountType.errors.required",
-  }),
+  accountType: z.enum(["individual", "business"] as const),
 });
 
 export const registerStepTenantSchema = z.object({
   tenantName: z
-    .string({ required_error: "auth.register.steps.tenant.errors.tenantNameRequired" })
-    .min(2, { message: "auth.register.steps.tenant.errors.tenantNameTooLong" })
+    .string()
+    .min(2, { message: "auth.register.steps.tenant.errors.tenantNameRequired" })
     .max(120, { message: "auth.register.steps.tenant.errors.tenantNameTooLong" })
     .trim(),
   tenantWebsite: z
@@ -144,9 +123,7 @@ export const registerStepTenantSchema = z.object({
       (value) => !value || /^https?:\/\/.+/i.test(value),
       "auth.register.steps.tenant.errors.tenantWebsiteInvalid",
     ),
-  tenantSize: z.enum(["1-10", "11-50", "51-250", "251+"], {
-    required_error: "auth.register.steps.tenant.errors.tenantSizeRequired",
-  }),
+  tenantSize: z.enum(["1-10", "11-50", "51-250", "251+"] as const),
 });
 
 export const registerStepUserAccountSchema = registerSchema;
@@ -174,10 +151,7 @@ export type RegisterMultiStepData = RegisterStepAccountTypeData &
  */
 export const forgotPasswordSchema = z.object({
   email: z
-    .string({
-      required_error: "auth.forgotPassword.errors.email.required",
-      invalid_type_error: "auth.forgotPassword.errors.email.invalid",
-    })
+    .string()
     .min(1, { message: "auth.forgotPassword.errors.email.required" })
     .email({ message: "auth.forgotPassword.errors.email.invalid" })
     .toLowerCase()
@@ -204,9 +178,7 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export const resetPasswordSchema = z
   .object({
     password: z
-      .string({
-        required_error: "auth.resetPassword.errors.password.required",
-      })
+      .string()
       .min(1, { message: "auth.resetPassword.errors.password.tooShort" })
       .min(8, { message: "auth.resetPassword.errors.password.tooShort" })
       .regex(/[A-Z]/, { message: "auth.resetPassword.errors.password.noUppercase" })
@@ -215,9 +187,7 @@ export const resetPasswordSchema = z
       .regex(/[^A-Za-z0-9]/, { message: "auth.resetPassword.errors.password.noSpecial" }),
 
     confirmPassword: z
-      .string({
-        required_error: "auth.resetPassword.errors.confirmPassword.required",
-      })
+      .string()
       .min(1, { message: "auth.resetPassword.errors.confirmPassword.required" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -234,9 +204,7 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
  */
 export const verifyEmailSchema = z.object({
   code: z
-    .string({
-      required_error: "auth.verifyEmail.errors.code.required",
-    })
+    .string()
     .min(1, { message: "auth.verifyEmail.errors.code.required" })
     .length(6, { message: "auth.verifyEmail.errors.code.invalidLength" })
     .regex(/^\d+$/, { message: "auth.verifyEmail.errors.code.invalidFormat" }),

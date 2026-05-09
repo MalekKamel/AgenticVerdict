@@ -1,28 +1,24 @@
-import localeConfig from "./locales.config.json";
+import {
+  LOCALE_DISPLAY_METADATA,
+  type AppLocale as BaseAppLocale,
+} from "@agenticverdict/i18n/formatters";
+import { textDirection, type TextDirection } from "@agenticverdict/i18n/rtl";
 
-export const defaultLocale = localeConfig.defaultLocale;
-export const supportedLocales = localeConfig.shippingLocales;
-export const draftLocales = localeConfig.draftLocales;
-export const allConfiguredLocales = [...supportedLocales, ...draftLocales] as const;
+// Default locale (matches @agenticverdict/i18n DEFAULT_APP_LOCALE)
+const DEFAULT_APP_LOCALE = "en";
 
-export type AppLocale = (typeof supportedLocales)[number];
+// App-specific shipping configuration (can be env-driven in future)
+export const shippingLocales = ["en", "ar", "fr", "zh", "es"] as const;
+export const draftLocales = [] as const;
+export const allConfiguredLocales = [...shippingLocales, ...draftLocales] as const;
+
+export type AppLocale = (typeof shippingLocales)[number];
 export type DraftLocale = (typeof draftLocales)[number];
 export type LocaleCode = (typeof allConfiguredLocales)[number];
-export type TextDirection = "ltr" | "rtl";
-
-export type LocaleMeta = {
-  name: string;
-  direction: TextDirection;
-  currency: string;
-  currencySymbol: string;
-  currencySymbolPosition: "before" | "after";
-  intlLocale: string;
-};
-
-export const localeMeta = localeConfig.metadata as Record<LocaleCode, LocaleMeta>;
+export type { TextDirection };
 
 export function isSupportedLocale(value: string): value is AppLocale {
-  return (supportedLocales as readonly string[]).includes(value);
+  return (shippingLocales as readonly string[]).includes(value as AppLocale);
 }
 
 export function isConfiguredLocale(value: string): value is LocaleCode {
@@ -30,17 +26,20 @@ export function isConfiguredLocale(value: string): value is LocaleCode {
 }
 
 export function getDirection(locale: LocaleCode): TextDirection {
-  return localeMeta[locale]?.direction ?? "ltr";
+  return textDirection(locale);
 }
 
 export function getLocaleName(locale: LocaleCode): string {
-  return localeMeta[locale]?.name ?? locale;
+  return LOCALE_DISPLAY_METADATA[locale as BaseAppLocale]?.name ?? locale;
 }
 
 export function parseLocaleFromPathname(pathname: string): AppLocale {
   const segment = pathname.split("/").filter(Boolean)[0];
   if (segment && isSupportedLocale(segment)) {
-    return segment;
+    return segment as AppLocale;
   }
-  return defaultLocale;
+  return DEFAULT_APP_LOCALE as AppLocale;
 }
+
+export const defaultLocale: AppLocale = DEFAULT_APP_LOCALE as AppLocale;
+export const supportedLocales = shippingLocales;

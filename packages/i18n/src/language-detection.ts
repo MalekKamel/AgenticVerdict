@@ -1,5 +1,5 @@
 import { APP_LOCALES, type AppLocale } from "./formatters";
-import { resolveLocaleOrFallback } from "./load-messages";
+import { resolveLocaleOrFallback } from "./message-utils";
 
 function parseAcceptLanguage(header: string): { tag: string; q: number }[] {
   return header
@@ -66,4 +66,33 @@ export function normalizeToAppLocale(tag: string | undefined, fallback: AppLocal
   }
   const base = tag.trim().toLowerCase().split("-")[0] ?? "";
   return resolveLocaleOrFallback(base, fallback);
+}
+
+/**
+ * Detects the preferred locale from browser language settings, with a persisted preference fallback.
+ */
+export function detectPreferredBrowserLocale(
+  getPreferredLocale: () => string | null,
+  fallback: AppLocale,
+): AppLocale {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  const browserLocales = window.navigator.languages;
+  if (browserLocales) {
+    for (const tag of browserLocales) {
+      const mapped = appLocaleFromLanguageTag(tag);
+      if (mapped) {
+        return mapped;
+      }
+    }
+  }
+
+  const persisted = getPreferredLocale();
+  if (persisted) {
+    return normalizeToAppLocale(persisted, fallback);
+  }
+
+  return fallback;
 }

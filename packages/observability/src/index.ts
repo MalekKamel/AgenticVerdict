@@ -38,3 +38,8 @@ export {
   type StorageUploadMetric,
   type StorageDownloadMetric,
 } from "./storage-metrics";
+export {
+  recordInsightsGenerationDuration,
+  recordInsightsGenerationEvent,
+  recordInsightsCount,
+} from "./insights-metrics";

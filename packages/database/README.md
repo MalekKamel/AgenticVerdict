@@ -1,10 +1,10 @@
 # @agenticverdict/database
 
-## Schema apply (no checked-in SQL migrations)
+## Schema apply (single baseline)
 
-Versioned **`packages/database/migrations/*.sql`** files are not used. Apply schema with Drizzle Kit against a **fresh or disposable** database:
+The complete database schema is consolidated in **`scripts/baseline-schema.sql`**. This single file contains all table definitions, constraints, indexes, foreign keys, and row-level security (RLS) policies. Apply it against a **fresh or disposable** database:
 
-- **`pnpm db:push`** — Syncs the live database to `src/schema` (use `--force` when the CLI prompts for destructive changes). Run this before seeds when standing up a new database. On an **empty** database, ensure schema **`core` exists** before pushing (`CREATE SCHEMA IF NOT EXISTS core;`), or use **`pnpm db:reset`** for a known-good baseline apply.
+- **`pnpm db:push`** — Syncs the live database to `src/schema` via Drizzle Kit (use `--force` when the CLI prompts for destructive changes). Run this before seeds when standing up a new database. On an **empty** database, ensure schema **`core` exists** before pushing (`CREATE SCHEMA IF NOT EXISTS core;`), or use **`pnpm db:reset`** for a known-good baseline apply.
 
 - **`pnpm db:generate`** — Optional: emit SQL into **`.drizzle-out/`** (gitignored) if you want migration-like artifacts locally; the repo does not commit them.
 

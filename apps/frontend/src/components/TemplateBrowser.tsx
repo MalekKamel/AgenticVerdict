@@ -40,7 +40,7 @@ export function TemplateBrowser({
   onDeploy,
   onDelete,
 }: TemplateBrowserProps) {
-  const t = useTranslations("components.templateBrowser");
+  const t = useTranslations("components");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
@@ -61,18 +61,18 @@ export function TemplateBrowser({
       {/* Filters */}
       <Group gap="md">
         <TextInput
-          placeholder={t("filters.search")}
+          placeholder={t("templateBrowser.filters.search")}
           leftSection={<IconSearch size={16} />}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.currentTarget.value)}
           style={{ flex: 1 }}
         />
         <Select
-          placeholder={t("filters.status")}
+          placeholder={t("templateBrowser.filters.status")}
           data={[
-            { value: "active", label: t("status.active") },
-            { value: "draft", label: t("status.draft") },
-            { value: "archived", label: t("status.archived") },
+            { value: "active", label: t("templateBrowser.status.active") },
+            { value: "draft", label: t("templateBrowser.status.draft") },
+            { value: "archived", label: t("templateBrowser.status.archived") },
           ]}
           value={statusFilter}
           onChange={setStatusFilter}
@@ -80,7 +80,7 @@ export function TemplateBrowser({
           style={{ width: 150 }}
         />
         <Select
-          placeholder={t("filters.type")}
+          placeholder={t("templateBrowser.filters.type")}
           data={[
             { value: "openai", label: "OpenAI" },
             { value: "anthropic", label: "Anthropic" },
@@ -95,7 +95,7 @@ export function TemplateBrowser({
       {/* Template Grid */}
       {isLoading ? (
         <Text c="dimmed" ta="center">
-          {t("loading")}
+          {t("templateBrowser.loading")}
         </Text>
       ) : filteredTemplates.length > 0 ? (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
@@ -113,7 +113,7 @@ export function TemplateBrowser({
                     }
                     variant="light"
                   >
-                    {t(`status.${template.status}`)}
+                    {t(`templateBrowser.status.${template.status}`)}
                   </Badge>
                   <Menu withinPortal>
                     <Menu.Target>
@@ -126,13 +126,13 @@ export function TemplateBrowser({
                         leftSection={<IconEye size={14} />}
                         onClick={() => onPreview?.(template)}
                       >
-                        {t("actions.preview")}
+                        {t("templateBrowser.actions.preview")}
                       </Menu.Item>
                       <Menu.Item
                         leftSection={<IconDownload size={14} />}
                         onClick={() => onDeploy?.(template)}
                       >
-                        {t("actions.deploy")}
+                        {t("templateBrowser.actions.deploy")}
                       </Menu.Item>
                       <Divider />
                       <Menu.Item
@@ -140,7 +140,7 @@ export function TemplateBrowser({
                         leftSection={<IconTrash size={14} />}
                         onClick={() => onDelete?.(template)}
                       >
-                        {t("actions.delete")}
+                        {t("templateBrowser.actions.delete")}
                       </Menu.Item>
                     </Menu.Dropdown>
                   </Menu>
@@ -176,7 +176,7 @@ export function TemplateBrowser({
         </SimpleGrid>
       ) : (
         <Text c="dimmed" ta="center">
-          {t("noTemplates")}
+          {t("templateBrowser.noTemplates")}
         </Text>
       )}
     </Stack>

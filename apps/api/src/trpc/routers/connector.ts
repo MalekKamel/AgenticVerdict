@@ -15,12 +15,16 @@ import {
   connectorUpdateInputSchema,
   connectorUpdateOutputSchema,
   connectorRemovalPreviewSchema,
+  connectorTypeSchema,
+  connectorStatusSchema,
+  syncStatusSchema,
+  PERMISSIONS,
 } from "@agenticverdict/types";
 import { dbScoped, tenantConnectors, connectorSyncHistory } from "@agenticverdict/database";
 import { and, desc, eq, ilike, sql } from "drizzle-orm";
 
 import { t } from "../init";
-import { authedProcedure } from "../procedures";
+import { authedProcedure, authedProcedureWithPermission } from "../procedures";
 import { requireTrpcDatabase } from "../database";
 
 function toIsoDateString(value: Date | string): string {
@@ -82,12 +86,12 @@ export const connectorRouter = t.router({
 
         const items = rows.map((row) => ({
           id: row.id,
-          platform: row.platform as "meta" | "ga4" | "gsc" | "gbp" | "tiktok",
+          platform: connectorTypeSchema.parse(row.platform),
           name: row.name,
-          status: row.status as "healthy" | "warning" | "error" | "inactive" | "syncing",
+          status: connectorStatusSchema.parse(row.status),
           domainId: row.domainId ?? null,
           lastSyncAt: toIsoDateStringOrNull(row.lastSyncAt),
-          lastSyncStatus: row.lastSyncStatus as "success" | "warning" | "error" | null,
+          lastSyncStatus: syncStatusSchema.nullable().parse(row.lastSyncStatus),
           metricsCount: Array.isArray(row.metrics) ? row.metrics.length : 0,
         }));
 
@@ -127,9 +131,9 @@ export const connectorRouter = t.router({
 
         return {
           id: row.id,
-          platform: row.platform as "meta" | "ga4" | "gsc" | "gbp" | "tiktok",
+          platform: connectorTypeSchema.parse(row.platform),
           name: row.name,
-          status: row.status as "healthy" | "warning" | "error" | "inactive" | "syncing",
+          status: connectorStatusSchema.parse(row.status),
           domainId: row.domainId ?? null,
           config: (row.config as Record<string, unknown>) ?? {},
           metrics: Array.isArray(row.metrics) ? row.metrics : [],
@@ -139,14 +143,14 @@ export const connectorRouter = t.router({
           advancedOptions: (row.advancedOptions as Record<string, unknown>) ?? {},
           lastSyncAt: toIsoDateStringOrNull(row.lastSyncAt),
           nextSyncAt: toIsoDateStringOrNull(row.nextSyncAt),
-          lastSyncStatus: row.lastSyncStatus as "success" | "warning" | "error" | null,
+          lastSyncStatus: syncStatusSchema.nullable().parse(row.lastSyncStatus),
           lastSyncRecords: row.lastSyncRecords ?? null,
           paused: row.paused,
           createdAt: toIsoDateString(row.createdAt),
           updatedAt: toIsoDateString(row.updatedAt),
           syncHistory: historyRows.map((h) => ({
             id: h.id,
-            status: h.status as "success" | "warning" | "error",
+            status: syncStatusSchema.parse(h.status),
             records: h.records ?? null,
             message: h.message ?? null,
             startedAt: toIsoDateString(h.startedAt),
@@ -159,7 +163,7 @@ export const connectorRouter = t.router({
       });
     }),
 
-  create: authedProcedure
+  create: authedProcedureWithPermission(PERMISSIONS.CONNECTORS_WRITE)
     .input(connectorCreateInputSchema)
     .output(connectorCreateOutputSchema)
     .mutation(async ({ input, ctx }) => {
@@ -195,7 +199,7 @@ export const connectorRouter = t.router({
       });
     }),
 
-  update: authedProcedure
+  update: authedProcedureWithPermission(PERMISSIONS.CONNECTORS_WRITE)
     .input(connectorUpdateInputSchema)
     .output(connectorUpdateOutputSchema)
     .mutation(async ({ input, ctx }) => {
@@ -222,7 +226,7 @@ export const connectorRouter = t.router({
       });
     }),
 
-  delete: authedProcedure
+  delete: authedProcedureWithPermission(PERMISSIONS.CONNECTORS_DELETE)
     .input(connectorDeleteInputSchema)
     .output(connectorDeleteOutputSchema)
     .mutation(async ({ input, ctx }) => {
@@ -244,7 +248,7 @@ export const connectorRouter = t.router({
       });
     }),
 
-  sync: authedProcedure
+  sync: authedProcedureWithPermission(PERMISSIONS.CONNECTORS_WRITE)
     .input(connectorSyncInputSchema)
     .output(connectorSyncOutputSchema)
     .mutation(async ({ input, ctx }) => {
@@ -279,7 +283,7 @@ export const connectorRouter = t.router({
       });
     }),
 
-  test: authedProcedure
+  test: authedProcedureWithPermission(PERMISSIONS.CONNECTORS_WRITE)
     .input(connectorTestInputSchema)
     .output(connectorTestOutputSchema)
     .mutation(async ({ input, ctx }) => {
@@ -297,8 +301,81 @@ export const connectorRouter = t.router({
           throw new TRPCError({ code: "NOT_FOUND", message: "Connector not found" });
         }
 
-        // Stub: always returns success for MVP
-        return { success: true, message: "Connection successful", severity: "success" };
+        // Test connectivity by attempting a lightweight API call
+        const platform = row.platform.toLowerCase();
+        const config = row.config as Record<string, unknown> | undefined;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        try {
+          // Attempt a lightweight connectivity check based on platform
+          const testUrls: Record<string, string> = {
+            meta: "https://graph.facebook.com/v18.0/me?fields=id,name",
+            ga4: "https://analyticsadmin.googleapis.com/v1beta/accountSummaries",
+            gsc: "https://www.googleapis.com/webmasters/v3/sites",
+            gbp: "https://mybusiness.googleapis.com/v4/accounts",
+            tiktok: "https://business-api.tiktok.com/open_api/v1.3/oauth2/advertiser/get",
+          };
+
+          const testUrl = testUrls[platform];
+          if (!testUrl) {
+            return {
+              success: false,
+              message: `Unsupported platform: ${platform}`,
+              severity: "error",
+            };
+          }
+
+          const headers: Record<string, string> = {
+            "User-Agent": "AgenticVerdict/1.0",
+          };
+
+          // Add auth header if available in config
+          if (config?.access_token) {
+            headers["Authorization"] = `Bearer ${config.access_token}`;
+          }
+
+          const response = await fetch(testUrl, {
+            method: "GET",
+            headers,
+            signal: controller.signal,
+          });
+
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            return { success: true, message: "Connection successful", severity: "success" };
+          } else if (response.status === 401 || response.status === 403) {
+            return {
+              success: false,
+              message: "Authentication failed. Please reconfigure credentials.",
+              severity: "error",
+            };
+          } else if (response.status === 429) {
+            return {
+              success: false,
+              message: "Rate limited. Please try again later.",
+              severity: "warning",
+            };
+          } else {
+            return {
+              success: false,
+              message: `Connection failed: HTTP ${response.status}`,
+              severity: "error",
+            };
+          }
+        } catch (error) {
+          clearTimeout(timeoutId);
+          if (error instanceof Error && error.name === "AbortError") {
+            return { success: false, message: "Connection timed out after 10s", severity: "error" };
+          }
+          return {
+            success: false,
+            message: `Connection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+            severity: "error",
+          };
+        }
       });
     }),
 
@@ -324,7 +401,7 @@ export const connectorRouter = t.router({
           connector: {
             id: row.id,
             name: row.name,
-            platform: row.platform as "meta" | "ga4" | "gsc" | "gbp" | "tiktok",
+            platform: connectorTypeSchema.parse(row.platform),
           },
           impacts: [
             "Data collection will stop",

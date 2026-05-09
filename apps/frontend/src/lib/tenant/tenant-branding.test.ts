@@ -1,5 +1,6 @@
 import { tenantConfigSchema } from "@agenticverdict/config";
-import { brandTokensSchema, defaultBrandTheme, masafhTheme } from "@agenticverdict/ui";
+import { brandTokensSchema } from "@agenticverdict/types";
+import { defaultBrandTheme, masafhTheme } from "@agenticverdict/ui";
 import { describe, expect, it } from "vitest";
 
 import { MASAFH_REFERENCE_TENANT_ID, resolveBrandTokensForTenantId } from "./tenant-branding";

@@ -25,7 +25,7 @@ export function UsageChart({
   height = 300,
   showTooltip = true,
 }: UsageChartProps) {
-  const t = useTranslations("components.usageChart");
+  const t = useTranslations("components");
 
   const maxValue = Math.max(...data.map((d) => d.value), 0);
   const minValue = Math.min(...data.map((d) => d.value), 0);
@@ -63,9 +63,9 @@ export function UsageChart({
           justifyContent: "center",
         }}
         role="img"
-        aria-label={t("noDataAria")}
+        aria-label={t("usageChart.noDataAria")}
       >
-        <Text c="dimmed">{t("noData")}</Text>
+        <Text c="dimmed">{t("usageChart.noData")}</Text>
       </Box>
     );
   }
@@ -80,10 +80,10 @@ export function UsageChart({
             </Text>
             <Group gap="xs">
               <Badge variant="outline">
-                {t("max")}: {formatValue(maxValue)}
+                {t("usageChart.max")}: {formatValue(maxValue)}
               </Badge>
               <Badge variant="outline">
-                {t("avg")}: {formatValue(avgValue)}
+                {t("usageChart.avg")}: {formatValue(avgValue)}
               </Badge>
             </Group>
           </Group>
@@ -234,7 +234,7 @@ interface UsageTrendChartProps {
 }
 
 export function UsageTrendChart({ data = [], title, height = 250 }: UsageTrendChartProps) {
-  const t = useTranslations("components.usageChart");
+  const t = useTranslations("components");
 
   if (data.length === 0) {
     return (
@@ -248,9 +248,9 @@ export function UsageTrendChart({ data = [], title, height = 250 }: UsageTrendCh
           justifyContent: "center",
         }}
         role="img"
-        aria-label={t("noDataAria")}
+        aria-label={t("usageChart.noDataAria")}
       >
-        <Text c="dimmed">{t("noData")}</Text>
+        <Text c="dimmed">{t("usageChart.noData")}</Text>
       </Box>
     );
   }

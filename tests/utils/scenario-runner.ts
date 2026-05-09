@@ -3,7 +3,10 @@
  * Primary execution path is production-flow orchestrator Vitest (`pnpm run test:scenarios:all`).
  */
 
-export type ScenarioCategory = "generation" | "integration" | "delivery" | "scheduling" | "system";
+import { SCENARIO_CATEGORIES, type ScenarioCategory } from "@agenticverdict/testing";
+
+// Re-export for backward compatibility
+export { SCENARIO_CATEGORIES, type ScenarioCategory };
 
 export interface ScenarioMeta {
   readonly id: string;

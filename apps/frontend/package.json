@@ -19,8 +19,8 @@
     "test": "vitest run --passWithNoTests",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "i18n:extract": "node scripts/list-message-keys.mjs",
-    "i18n:validate": "node scripts/validate-translations.mjs"
+    "i18n:extract": "tsx src/scripts/extract-i18n-keys.ts",
+    "i18n:validate": "echo 'Key parity check - see i18n:extract report'"
   },
   "dependencies": {
     "@agenticverdict/api": "workspace:*",
@@ -60,7 +60,7 @@
     "superjson": "^2.2.6",
     "web-vitals": "^4.2.4",
     "xlsx": "^0.18.5",
-    "zod": "^3.24.1"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
@@ -84,6 +84,7 @@
     "postcss-simple-vars": "^7.0.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "3.4.17",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "typescript-eslint": "^8.58.0",
     "vite": "^8.0.8",

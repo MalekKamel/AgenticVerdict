@@ -1,181 +1,66 @@
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import {
+  templateConfigSchema,
+  templateSectionSchema,
+  templateVariableSchema,
+  templateStylingSchema,
+  templateComponentSpecSchema,
+  templateBrandingSchema,
+  templateValidationSchema,
+  templateInheritanceSchema,
+  type TemplateSection,
+  type TemplateVariable,
+  type TemplateStyling,
+  type TemplateComponentSpec,
+  type TemplateBranding,
+  type TemplateValidation,
+  type TemplateInheritance,
+  type TemplateConfig,
+} from "@agenticverdict/types";
 
-const sectionStylingSchema = z
-  .object({
-    className: z.string().optional(),
-    padding: z.string().optional(),
-    margin: z.string().optional(),
-    backgroundColor: z.string().optional(),
-  })
-  .optional();
-
-const conditionalRuleSchema = z
-  .object({
-    when: z.string().min(1),
-    equals: z.unknown().optional(),
-  })
-  .optional();
-
-export const templateSectionSchema = z.object({
-  id: z.string().uuid(),
-  type: z.enum(["header", "content", "chart", "table", "footer", "callout", "divider"]),
-  order: z.number().int(),
-  content: z.string().optional(),
-  dataSource: z.string().optional(),
-  styling: sectionStylingSchema,
-  conditional: conditionalRuleSchema,
-  repeatable: z.boolean().optional(),
-});
-
-export type TemplateSection = z.infer<typeof templateSectionSchema>;
-
-const templateVariableTypeSchema = z.enum([
-  "string",
-  "number",
-  "date",
-  "boolean",
-  "array",
-  "object",
-]);
-
-export const templateVariableSchema = z.object({
-  name: z.string().min(1).max(128),
-  type: templateVariableTypeSchema,
-  defaultValue: z.unknown().optional(),
-  required: z.boolean(),
-  description: z.string().optional(),
-});
-
-export type TemplateVariable = z.infer<typeof templateVariableSchema>;
-
-export const templateStylingSchema = z.object({
-  primaryColor: z.string().optional(),
-  secondaryColor: z.string().optional(),
-  fontFamily: z.string().optional(),
-  fontSize: z
-    .object({
-      base: z.string(),
-      headings: z.string(),
-      captions: z.string(),
-    })
-    .optional(),
-  spacing: z
-    .object({
-      margins: z.string(),
-      padding: z.string(),
-    })
-    .optional(),
-  layout: z
-    .object({
-      columns: z.number().int().min(1).max(12),
-      maxWidth: z.string(),
-    })
-    .optional(),
-});
-
-export type TemplateStyling = z.infer<typeof templateStylingSchema>;
-
-const templateComponentTypeSchema = z.enum([
-  "chart",
-  "callout",
-  "data-table",
-  "figure",
-  "section-divider",
-  "kpi-grid",
-  "markdown",
-]);
-
-const templateComponentBindingSchema = z.object({
-  source: z.string().min(1).max(128),
-  path: z.string().min(1).max(512),
-  required: z.boolean().optional(),
-  fallback: z.unknown().optional(),
-});
-
-export const templateComponentSpecSchema = z.object({
-  id: z.string().min(1).max(128),
-  type: templateComponentTypeSchema,
-  sectionId: z.string().uuid().optional(),
-  props: z.record(z.unknown()).optional(),
-  bindings: z.array(templateComponentBindingSchema).optional(),
-  visibleWhen: z.string().min(1).optional(),
-  order: z.number().int().nonnegative().optional(),
-});
-
-export type TemplateComponentSpec = z.infer<typeof templateComponentSpecSchema>;
-
-/** Branding block embedded in a report template (logos / palette). */
-export const templateBrandingSchema = z.object({
-  logo: z.string().min(1).optional(),
-  colors: z.array(z.string()).min(1),
-  fonts: z.array(z.string()).min(1),
-});
-
-export type TemplateBranding = z.infer<typeof templateBrandingSchema>;
-
-export const templateValidationSchema = z.object({
-  requiredSections: z.array(z.string().min(1)).min(1),
-  maxSections: z.number().int().positive().optional(),
-  allowedVariables: z.array(z.string().min(1)).min(1),
-});
-
-export type TemplateValidation = z.infer<typeof templateValidationSchema>;
-
-export const templateInheritanceSchema = z.object({
-  extendsTemplateId: z.string().uuid(),
-  mode: z.enum(["replace", "merge"]),
-  sectionOverrides: z.array(templateSectionSchema).optional(),
-  variableOverrides: z.array(templateVariableSchema).optional(),
-});
-
-export type TemplateInheritance = z.infer<typeof templateInheritanceSchema>;
-
-export const templateConfigSchema = z
-  .object({
-    id: z.string().uuid(),
-    name: z.string().min(1).max(100),
-    version: z.string().regex(/^\d+\.\d+\.\d+$/),
-    type: z.enum(["executive-summary", "detailed-analysis", "technical-appendix", "custom"]),
-    sections: z.array(templateSectionSchema).min(1),
-    components: z.array(templateComponentSpecSchema).optional(),
-    inheritance: templateInheritanceSchema.optional(),
-    styling: templateStylingSchema,
-    variables: z.array(templateVariableSchema),
-    branding: templateBrandingSchema,
-    validation: templateValidationSchema,
-    metadata: z.object({
-      createdAt: z.coerce.date(),
-      updatedAt: z.coerce.date(),
-      createdBy: z.string().min(1),
-      description: z.string().optional(),
-    }),
-  })
-  .superRefine((config, ctx) => {
-    const sortedOrders = [...config.sections.map((s) => s.order)].sort((a, b) => a - b);
-    const inDeclaredOrder = config.sections.map((s) => s.order);
-    if (sortedOrders.some((value, idx) => value !== inDeclaredOrder[idx])) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["sections"],
-        message: "sections must be sorted by ascending order",
-      });
-    }
-
-    if (config.inheritance && config.inheritance.extendsTemplateId === config.id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["inheritance", "extendsTemplateId"],
-        message: "extendsTemplateId must not equal template id",
-      });
-    }
-  });
-
-export type TemplateConfig = z.infer<typeof templateConfigSchema>;
+// Re-export all template types from @agenticverdict/types
+export {
+  templateConfigSchema,
+  templateSectionSchema,
+  templateVariableSchema,
+  templateStylingSchema,
+  templateComponentSpecSchema,
+  templateBrandingSchema,
+  templateValidationSchema,
+  templateInheritanceSchema,
+};
+export type {
+  TemplateSection,
+  TemplateVariable,
+  TemplateStyling,
+  TemplateComponentSpec,
+  TemplateBranding,
+  TemplateValidation,
+  TemplateInheritance,
+  TemplateConfig,
+};
 
 export function exportTemplateConfigJsonSchema(): Record<string, unknown> {
-  return zodToJsonSchema(templateConfigSchema, {
-    name: "TemplateConfig",
-    $refStrategy: "none",
-  }) as Record<string, unknown>;
+  // Date fields cannot be represented in JSON Schema, so we catch the error
+  // and return a simplified schema without date validation
+  try {
+    return templateConfigSchema.toJSONSchema() as Record<string, unknown>;
+  } catch {
+    // Return a minimal schema document that indicates the limitation
+    return {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      title: "TemplateConfig",
+      description:
+        "JSON schema export is limited: Date fields (metadata.createdAt, metadata.updatedAt) cannot be represented in JSON Schema.",
+      type: "object",
+      properties: {
+        id: { type: "string", format: "uuid" },
+        name: { type: "string", minLength: 1, maxLength: 100 },
+        version: { type: "string", pattern: "^\\d+\\.\\d+\\.\\d+$" },
+        type: {
+          type: "string",
+          enum: ["executive-summary", "detailed-analysis", "technical-appendix", "custom"],
+        },
+      },
+    };
+  }
 }

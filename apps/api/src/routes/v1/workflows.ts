@@ -7,7 +7,7 @@ import { AppFault, toHttpErrorResponse } from "@agenticverdict/core";
 import {
   workflowTriggerJobDataSchema,
   workflowTriggerJobResultSchema,
-} from "@agenticverdict/worker";
+} from "@agenticverdict/types";
 import { z } from "zod";
 
 import { jwtAuth } from "../../middleware/auth";
@@ -134,8 +134,8 @@ function sendCanonicalFault(
 }
 
 function toSafeWorkflowFailureMessage(error: unknown): string {
-  if (typeof error !== "string" || error.length === 0) {
-    return "errors.common.unknownError";
+  if (typeof error === "string" && error.length > 0) {
+    return replaceAsciiControlChars(error);
   }
   return "errors.common.unknownError";
 }

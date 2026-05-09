@@ -17,7 +17,7 @@ describe("I18nManager", () => {
 
   it("falls back to key or explicit fallback", () => {
     const i18n = new I18nManager("en");
-    expect(i18n.t("missing.key", "fallback")).toBe("fallback");
+    expect(i18n.tDynamic("missing.key", "fallback")).toBe("fallback");
   });
 
   it("setLocaleFromTag switches dictionary", () => {
@@ -34,5 +34,11 @@ describe("I18nManager", () => {
     expect(i18n.direction()).toBe("ltr");
     i18n.setTextDirectionOverride(undefined);
     expect(i18n.direction()).toBe("rtl");
+  });
+
+  it("tDynamic provides escape hatch for dynamic keys", () => {
+    const i18n = new I18nManager("en");
+    expect(i18n.tDynamic("reports.title")).toBe("Reports");
+    expect(i18n.tDynamic("nonexistent.key", "fallback")).toBe("fallback");
   });
 });

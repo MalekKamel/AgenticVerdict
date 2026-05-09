@@ -31,7 +31,7 @@ describe("built-in template rendering", () => {
     });
     expect(html).toContain('lang="ar"');
     expect(html).toContain('dir="rtl"');
-    expect(html).toContain("Executive overview");
+    expect(html).toContain("الملخص");
     expect(html).toContain("تقرير");
   });
 

@@ -354,12 +354,12 @@ export const tenantSchema = z.object({
   localization: tenantLocalizationSchema,
   features: tenantFeaturesSchema,
   aiConfig: tenantAIConfigSchema,
-  suspendedAt: z.string().datetime().nullable().optional(),
+  suspendedAt: z.iso.datetime().nullable().optional(),
   suspendedReason: z.string().nullable().optional(),
-  archivedAt: z.string().datetime().nullable().optional(),
-  deletedAt: z.string().datetime().nullable().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  archivedAt: z.iso.datetime().nullable().optional(),
+  deletedAt: z.iso.datetime().nullable().optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 export type Tenant = z.infer<typeof tenantSchema>;
 
@@ -372,10 +372,10 @@ export const agencyPartnerSchema = z.object({
   commissionRate: z.number().positive().max(100),
   maxClients: z.number().int().positive(),
   whiteLabelEnabled: z.boolean(),
-  partnerSince: z.string().datetime().nullable().optional(),
-  certifiedAt: z.string().datetime().nullable().optional(),
+  partnerSince: z.iso.datetime().nullable().optional(),
+  certifiedAt: z.iso.datetime().nullable().optional(),
   settings: z.record(z.unknown()),
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
 });
 export type AgencyPartner = z.infer<typeof agencyPartnerSchema>;
 
@@ -853,8 +853,8 @@ export const agencyRouter = t.router({
     .input(
       z.object({
         dateRange: z.object({
-          start: z.string().datetime(),
-          end: z.string().datetime(),
+          start: z.iso.datetime(),
+          end: z.iso.datetime(),
         }),
       }),
     )

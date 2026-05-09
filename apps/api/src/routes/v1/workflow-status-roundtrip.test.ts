@@ -6,12 +6,12 @@ import { __clearRateLimitMemoryForTests } from "../../middleware/rate-limit";
 
 const statusSnapshot: WorkflowTriggerStatusPayload = {
   executionId: "exec-roundtrip-1",
-  tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee44",
+  tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee44",
   status: "completed",
   bullmqState: "completed",
   result: {
     workflowId: "verdict-generation",
-    tenantId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee44",
+    tenantId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee44",
     testMode: true,
     phase: "verdict-generation",
     message: "verdict-generation_processed",
@@ -19,7 +19,7 @@ const statusSnapshot: WorkflowTriggerStatusPayload = {
     insights: [
       {
         id: "bbbbbbbb-4444-4444-8444-bbbbbbbbbbbb",
-        type: "trend",
+        type: "observation",
         title: "Roundtrip insight",
         description: "Persisted from workflow status",
         confidence: 0.85,
@@ -50,7 +50,7 @@ vi.mock("../../services/report-bullmq", async () => {
 import { buildApiServer } from "../../server";
 
 const JWT_SECRET = "test-jwt-secret-for-ci-only-32chars";
-const TENANT = "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeee44";
+const TENANT = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeee44";
 
 describe("workflow status roundtrip persistence", () => {
   let app: Awaited<ReturnType<typeof buildApiServer>>;
@@ -78,7 +78,9 @@ describe("workflow status roundtrip persistence", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it("persists status result and serves it via analysis-results endpoint", async () => {

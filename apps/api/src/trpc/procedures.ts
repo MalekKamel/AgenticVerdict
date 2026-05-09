@@ -1,8 +1,58 @@
 import { TRPCError } from "@trpc/server";
 import { TenantSecurityError } from "@agenticverdict/core";
+import type { Permission } from "@agenticverdict/types";
 
 import { verifyBearerSessionFromRequest } from "../middleware/auth";
 import { t } from "./init";
+import { requirePermission as rbacRequirePermission } from "./middleware";
+
+// In-memory rate limit store for tRPC mutations
+const trpcRateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+/**
+ * Check rate limit for a given key. Returns true if allowed, false if rate limited.
+ */
+function checkTrpcRateLimit(key: string, windowMs: number, maxRequests: number): boolean {
+  const now = Date.now();
+  let w = trpcRateLimitStore.get(key);
+  if (!w || now >= w.resetAt) {
+    w = { count: 0, resetAt: now + windowMs };
+    trpcRateLimitStore.set(key, w);
+  }
+  w.count += 1;
+  return w.count <= maxRequests;
+}
+
+/**
+ * Creates a middleware that enforces rate limiting on mutations.
+ * @param maxRequests Maximum requests allowed in the window
+ * @param windowMs Time window in milliseconds (default: 60000 = 1 minute)
+ */
+export function rateLimitMiddleware(maxRequests: number, windowMs = 60_000) {
+  return t.middleware(async ({ ctx, next, path }) => {
+    const tenantId = ctx.tenant?.tenantId ?? "anonymous";
+    const key = `trpc-rl:${tenantId}:${path}`;
+
+    if (!checkTrpcRateLimit(key, windowMs, maxRequests)) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "errors.rateLimit.tooManyRequests",
+      });
+    }
+
+    return next({ ctx });
+  }) as ReturnType<typeof t.middleware>;
+}
+
+/**
+ * Creates a procedure that enforces rate limiting on mutations.
+ * @deprecated Use rateLimitMiddleware with .use() instead
+ * @param maxRequests Maximum requests allowed in the window
+ * @param windowMs Time window in milliseconds (default: 60000 = 1 minute)
+ */
+export function rateLimitedProcedure(maxRequests: number, windowMs = 60_000) {
+  return authedProcedure.use(rateLimitMiddleware(maxRequests, windowMs));
+}
 
 /**
  * Session JWT required, plus a resolved `TenantContext` (ALS + RLS) consistent with the JWT
@@ -43,3 +93,13 @@ export const authedProcedure = t.procedure.use(async ({ ctx, next }) => {
     },
   });
 });
+
+/**
+ * Creates a procedure that requires both authentication and a specific permission.
+ * Usage: authedProcedureWithPermission(PERMISSIONS.INSIGHTS_WRITE)
+ */
+export function authedProcedureWithPermission(permission: Permission) {
+  return authedProcedure.use(
+    rbacRequirePermission(permission) as unknown as Parameters<typeof authedProcedure.use>[0],
+  );
+}

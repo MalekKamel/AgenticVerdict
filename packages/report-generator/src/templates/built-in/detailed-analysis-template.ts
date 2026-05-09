@@ -3,6 +3,7 @@ import { renderCallout } from "../../components/callout";
 import { renderDataTable } from "../../components/data-table";
 import { renderSectionDivider } from "../../components/section-divider";
 import { escapeHtml, sanitizeDomId } from "../../html-utils";
+import { getReportStrings } from "../../i18n/report-strings";
 import {
   renderDataQualityIndicatorsBlock,
   renderInsightContextBlock,
@@ -36,12 +37,13 @@ export class DetailedAnalysisTemplate extends BaseReportTemplate {
   async renderHtml(context: ReportGenerationContext, model: unknown): Promise<string> {
     const vm = coerceReportTemplateViewModel(model);
     const dir = resolveContextTextDirection(context);
+    const t = getReportStrings(context.locale);
     const tocEntries: { id: string; label: string }[] = [];
     if (vm.verdictScorecard) {
-      tocEntries.push({ id: "sec-verdict-scorecard", label: "Verdict" });
+      tocEntries.push({ id: "sec-verdict-scorecard", label: t.verdict });
     }
     if (vm.insightHighlights?.length) {
-      tocEntries.push({ id: "sec-insight-context", label: "Insights" });
+      tocEntries.push({ id: "sec-insight-context", label: t.insights });
     }
     tocEntries.push(
       ...vm.narrativeSections.map((s) => ({
@@ -50,10 +52,10 @@ export class DetailedAnalysisTemplate extends BaseReportTemplate {
       })),
     );
     if (vm.metrics.columns.length > 0) {
-      tocEntries.push({ id: "detailed-metrics", label: "Metrics" });
+      tocEntries.push({ id: "detailed-metrics", label: t.metrics });
     }
     if (vm.charts.length > 0) {
-      tocEntries.push({ id: "detailed-charts", label: "Charts" });
+      tocEntries.push({ id: "detailed-charts", label: t.charts });
     }
 
     const narrative = vm.narrativeSections
@@ -68,49 +70,46 @@ export class DetailedAnalysisTemplate extends BaseReportTemplate {
     const chartsBlock =
       vm.charts.length > 0
         ? `<section id="detailed-charts" style="margin-top:28px;">
-  <h2 style="font-size:18px;">Charts</h2>
+  <h2 style="font-size:18px;">${escapeHtml(t.charts)}</h2>
   <div style="display:flex;flex-wrap:wrap;gap:16px;">
     ${vm.charts.map((c) => `<div style="flex:1 1 280px;">${renderChartFromSpec(c)}</div>`).join("")}
   </div>
 </section>`
-        : renderCallout(
-            "warning",
-            "Charts",
-            "No chart specifications were included in this payload.",
-          );
+        : renderCallout("warning", t.charts, t.noInsightsText);
 
     const metricsBlock =
       vm.metrics.columns.length > 0
         ? `<section id="detailed-metrics" style="margin-top:28px;">
-  <h2 style="font-size:18px;">Metrics</h2>
-  ${renderDataTable({ ...vm.metrics, caption: "Full metric extract", striped: true })}
+  <h2 style="font-size:18px;">${escapeHtml(t.metrics)}</h2>
+  ${renderDataTable({ ...vm.metrics, caption: t.keyMetrics, striped: true })}
 </section>`
         : "";
 
-    const phase2Banner = renderPhase2IntegrationBanner(vm);
-    const verdictBlock = renderVerdictScorecardBlock(vm);
-    const insightBlock = renderInsightContextBlock(vm);
-    const recBlock = renderRecommendationEngineBlock(vm);
-    const statsBlock = renderStatisticalSummariesBlock(vm);
-    const dqBlock = renderDataQualityIndicatorsBlock(vm);
+    const phase2Banner = renderPhase2IntegrationBanner(vm, context.locale);
+    const verdictBlock = renderVerdictScorecardBlock(vm, context.locale);
+    const insightBlock = renderInsightContextBlock(vm, context.locale);
+    const recBlock = renderRecommendationEngineBlock(vm, context.locale);
+    const statsBlock = renderStatisticalSummariesBlock(vm, context.locale);
+    const dqBlock = renderDataQualityIndicatorsBlock(vm, context.locale);
 
     const body = `${renderCoverBlock({
       title: vm.title,
       tenantName: vm.tenantName,
       periodLabel: vm.periodLabel,
       accentColor: vm.brandAccentColor,
+      locale: context.locale,
     })}
 ${renderRunningHeader({ title: vm.title, accentColor: vm.brandAccentColor })}
-${renderTableOfContents(tocEntries)}
+${renderTableOfContents(tocEntries, context.locale)}
 ${phase2Banner}
 ${verdictBlock}
 ${dqBlock}
 ${insightBlock}
 ${recBlock}
 ${statsBlock}
-${renderSectionDivider("Analysis body")}
-${narrative.length > 0 ? narrative : renderCallout("info", "Sections", "Add narrativeSections to populate this template.")}
-${renderSectionDivider("Visuals")}
+${renderSectionDivider(t.analysisBody)}
+${narrative.length > 0 ? narrative : renderCallout("info", t.sections, t.noSectionsText)}
+${renderSectionDivider(t.visuals)}
 ${chartsBlock}
 ${metricsBlock}`;
 

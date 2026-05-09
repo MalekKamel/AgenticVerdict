@@ -1,4 +1,5 @@
 import type { TenantConfig } from "@agenticverdict/config";
+import { LANGUAGE_NATIVE_NAMES } from "@agenticverdict/i18n";
 
 import { estimateApproximateTokenCount } from "./render";
 
@@ -50,6 +51,16 @@ const DEFAULT_PRIORITY: Record<PromptContextSectionKey, number> = {
   ai_preferences: 35,
 };
 
+function getLanguageName(languageCode: string): string {
+  const normalized = languageCode.toLowerCase();
+  for (const [key, value] of Object.entries(LANGUAGE_NATIVE_NAMES) as [string, string][]) {
+    if (key.toLowerCase() === normalized) {
+      return value;
+    }
+  }
+  return "English";
+}
+
 function formatChannelSummary(config: TenantConfig): string {
   const lines = config.marketing.channels
     .filter((c) => c.enabled)
@@ -73,7 +84,7 @@ export function buildTenantPromptContextSections(config: TenantConfig): PromptCo
     {
       key: "localization",
       priority: priorities.localization,
-      text: `Locale: language=${config.localization.language}, region=${config.localization.region}, timezone=${config.localization.timezone}, currency=${config.localization.currency}`,
+      text: `Locale: language=${config.localization.language}, region=${config.localization.region}, timezone=${config.localization.timezone}, currency=${config.localization.currency}\nIMPORTANT: All analysis, insights, recommendations, and JSON field values must be written in ${getLanguageName(config.localization.language)}.`,
     },
   ];
 
@@ -156,7 +167,7 @@ function compactSection(
   if (section.key === "localization") {
     return {
       ...section,
-      text: `Locale: ${config.localization.language}/${config.localization.region}`,
+      text: `Locale: ${config.localization.language}/${config.localization.region}\nIMPORTANT: All output must be written in ${getLanguageName(config.localization.language)}.`,
     };
   }
   return undefined;

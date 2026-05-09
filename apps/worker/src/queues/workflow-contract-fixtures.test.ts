@@ -4,7 +4,10 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { workflowTriggerJobDataSchema, workflowTriggerJobResultSchema } from "./job-types";
+import {
+  workflowTriggerJobDataSchema,
+  workflowTriggerJobResultSchema,
+} from "@agenticverdict/types";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "../fixtures/workflows");
 

@@ -1,14 +1,5 @@
 import { z } from "zod";
-
-import type { ConnectorType } from "@agenticverdict/types";
-
-const connectorTypeSchema = z.enum([
-  "meta",
-  "ga4",
-  "gsc",
-  "gbp",
-  "tiktok",
-]) as z.ZodType<ConnectorType>;
+import { connectorTypeSchema } from "@agenticverdict/types";
 
 /** Single KPI definition used in marketing configuration. */
 export const kpiConfigSchema = z.object({

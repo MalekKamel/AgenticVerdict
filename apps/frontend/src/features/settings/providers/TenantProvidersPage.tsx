@@ -53,7 +53,7 @@ function ProviderCard({
   onEdit: (provider: AiProviderDetail) => void;
   onDelete: (provider: AiProviderDetail) => void;
 }) {
-  const t = useTranslations("settings.providers");
+  const t = useTranslations("settings");
   const testMutation = useTestAiProviderConnection();
 
   const handleTestConnection = () => {
@@ -154,7 +154,7 @@ function ProviderCard({
 }
 
 export function TenantProvidersPage() {
-  const t = useTranslations("settings.providers");
+  const t = useTranslations("settings");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -164,7 +164,7 @@ export function TenantProvidersPage() {
   useAppShellHeader({
     breadcrumbs: [
       { label: t("common.settings"), href: ROUTE_PATHS.SETTINGS_DOMAINS },
-      { label: t("pageTitle") },
+      { label: t("providers.pageTitle") },
     ],
   });
 
@@ -216,7 +216,7 @@ export function TenantProvidersPage() {
       <Stack gap="xl">
         {/* Header */}
         <Group justify="space-between">
-          <Title order={2}>{t("pageTitle")}</Title>
+          <Title order={2}>{t("providers.pageTitle")}</Title>
           <Button leftSection={<IconPlus size={18} />} onClick={() => setCreateModalOpen(true)}>
             {t("actions.addProvider")}
           </Button>

@@ -338,29 +338,35 @@ To run **Postgres, Redis, web, api, and worker** in Docker, use the root **`Make
 ### Development Workflow
 
 ```bash
-# Build all packages in dependency order
-turbo run build
+# Full CI pipeline: lint -> typecheck -> test -> build
+make ci
+
+# Or run individual pipeline steps
+make lint              # Lint all packages (turbo)
+make typecheck         # Type-check all packages (turbo)
+make test              # Monorepo unit tests (host)
+make build-all         # Build all packages (turbo)
 
 # Unit tests (Vitest workspace at repo root)
-pnpm run test:unit
+make test-unit
 
 # Unit tests with coverage (thresholds in vitest.config.ts)
-pnpm run test:coverage
+make test-coverage
 
 # Production flow scenarios (R01-R12)
-pnpm run test:production-flow
+make test-production-flow
 
 # Browser E2E (Playwright; starts Next.js via webServer when needed)
-pnpm run test:e2e
+make test-e2e
 
-# Package-scoped test via Turbo (same as CI package tasks)
-turbo run test
+# Format code
+make format
 
-# Type-check all packages
-turbo run typecheck
+# Check formatting
+make format-check
 
-# Lint all packages
-turbo run lint
+# Run all quality checks (cycles, error governance, tenant boundaries)
+make check-all
 ```
 
 ### Mock Adapter Mode (Local Development)
@@ -401,13 +407,19 @@ The health response includes `mockMode` and `mockPlatforms` when mock adapters a
 
 ```bash
 # Generate migration from schema changes
-pnpm --filter @agenticverdict/database db:generate
+make db-generate
 
 # Apply migrations
-pnpm --filter @agenticverdict/database db:push
+make db-migrate
 
 # Open database studio (Drizzle Kit)
-pnpm --filter @agenticverdict/database db:studio
+make db-studio
+
+# Seed test data
+make db-seed
+
+# Reset local DB (destructive)
+make db-reset
 ```
 
 ---

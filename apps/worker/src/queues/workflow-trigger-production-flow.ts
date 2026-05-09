@@ -12,7 +12,7 @@ import type {
   WorkflowTriggerJobData,
   WorkflowTriggerJobResult,
   WorkflowTriggerPdfValidation,
-} from "./job-types";
+} from "@agenticverdict/types";
 import { runExtendedProductionFlowScenario } from "./production-flow-scenarios-extended";
 
 type PdfProductionFlowScenarioId = Extract<ProductionFlowScenarioId, "R01" | "R02">;

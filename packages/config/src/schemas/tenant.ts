@@ -64,8 +64,43 @@ export const tenantConfigSchema = z.object({
               }),
             )
             .default([]),
+          detailLevelOptions: z
+            .array(
+              z.object({
+                value: z.string(),
+                labelKey: z.string(),
+                order: z.number().optional(),
+              }),
+            )
+            .default([]),
+          frequencyOptions: z
+            .array(
+              z.object({
+                value: z.string(),
+                labelKey: z.string(),
+                order: z.number().optional(),
+              }),
+            )
+            .default([]),
+          formatOptions: z
+            .array(
+              z.object({
+                value: z.string(),
+                labelKey: z.string(),
+                order: z.number().optional(),
+              }),
+            )
+            .default([]),
         })
-        .default({}),
+        .default({
+          types: [],
+          metricClasses: [],
+          periods: [],
+          domains: [],
+          detailLevelOptions: [],
+          frequencyOptions: [],
+          formatOptions: [],
+        }),
     })
     .optional(),
 });

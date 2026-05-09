@@ -1,4 +1,4 @@
-import type { ValidationIssue } from "./types";
+import type { ValidationIssue } from "@agenticverdict/types";
 
 export function partitionIssuesBySeverity(
   issues: readonly ValidationIssue[],
